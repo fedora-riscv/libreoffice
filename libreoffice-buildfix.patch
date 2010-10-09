@@ -1,0 +1,113 @@
+--- a/sysui/util/checksize.pl	2010-09-24 16:35:55.000000000 +0100
++++ b/sysui/util/checksize.pl	2010-09-24 16:35:55.000000000 +0100
+@@ -79,7 +79,7 @@
+     my $file = shift;
+     print "$path$file\n" if ((-e "$path$file") && $is_debug);
+     # don't check dpc,flag,rpmflag,sdf [obj for UNX] files, or etc subdirectory
+-    return if ( ($file =~ /.+\.(dpc|\w*?flag)/) || ($file =~ /.+\.obj/ && $ENV{GUI} eq 'UNX') || ($path =~ /.+etc/) || ($path =~ /.+logs/) || ($path =~ /.+sdf/) );
++    return if ( ($file =~ /.+\.(dpc|\w*?flag)/) || ($file =~ /.+\.obj/ && $ENV{GUI} eq 'UNX') || ($path =~ /.+etc/) || ($path =~ /.+logs/) || ($file =~ /.+sdf/) );
+     if ( -z "$path$file" ) {
+         print "Error: $path$file 0 Bytes!\n";
+         $err++;
+--- a/solenv/inc/postset.mk	2010-09-29 12:55:57.000000000 +0100
++++ b/solenv/inc/postset.mk	2010-09-29 12:58:29.000000000 +0100
+@@ -33,15 +33,13 @@
+ # Complete list of all supported ISO codes
+ completelangiso=af \
+ ar \
+-as-IN \
++as \
+ be-BY \
+ bo \
+ bg \
+ br \
+ brx \
+ bn \
+-bn-BD \
+-bn-IN \
+ bs \
+ by \
+ ca \
+@@ -66,9 +64,8 @@
+ gd \
+ gl \
+ gu \
+-gu-IN \
+ he \
+-hi-IN \
++hi \
+ hr \
+ hu \
+ is \
+@@ -92,8 +89,8 @@
+ mn \
+ mni \
+ ms \
+-ml-IN \
+-mr-IN \
++ml \
++mr \
+ my \
+ ne \
+ nb \
+@@ -103,7 +100,7 @@
+ ns \
+ om \
+ oc \
+-or-IN \
++or \
+ pap \
+ pa-IN \
+ pl \
+@@ -127,16 +124,16 @@
+ sv \
+ sw \
+ sw-TZ \
+-te-IN \
+-ti-ER \
+-ta-IN \
++te \
++ti \
++ta \
+ th \
+ tn \
+ tr \
+ ts \
+ tg \
+ ug \
+-ur-IN \
++ur \
+ uk \
+ uz \
+ ve \
+--- a/configure.in	Thu Sep 30 12:57:20 2010 +0200
++++ a/configure.in	Wed Oct 06 09:59:39 2010 +0200
+@@ -5077,6 +5077,7 @@ 
+ 	SYSTEM_REDLAND=NO
+ fi
+ AC_SUBST(SYSTEM_REDLAND)
++AC_SUBST(REDLAND_CFLAGS)
+ AC_SUBST(REDLAND_LIBS)
+ 
+ dnl ===================================================================
+--- a/set_soenv.in	Thu Sep 30 12:57:20 2010 +0200
++++ a/set_soenv.in	Wed Oct 06 09:59:39 2010 +0200
+@@ -1917,6 +1917,7 @@ 
+ ToFile( "USE_XINERAMA",      "@USE_XINERAMA@",     "e" );
+ ToFile( "XINERAMA_LINK",     "@XINERAMA_LINK@",    "e" );
+ ToFile( "SYSTEM_REDLAND",    "@SYSTEM_REDLAND@",   "e" );
++ToFile( "REDLAND_CFLAGS",    "@REDLAND_CFLAGS@",   "e" );
+ ToFile( "REDLAND_LIBS",      "@REDLAND_LIBS@",     "e" );
+ ToFile( "SYSTEM_HUNSPELL",   "@SYSTEM_HUNSPELL@",  "e" );
+ ToFile( "HUNSPELL_CFLAGS",   "@HUNSPELL_CFLAGS@",  "e" );
+--- a/unoxml/source/rdf/librdf_repository.cxx	Thu Sep 30 12:57:20 2010 +0200
++++ a/unoxml/source/rdf/librdf_repository.cxx	Wed Oct 06 09:59:39 2010 +0200
+@@ -39,7 +39,7 @@ 
+ #include <boost/shared_array.hpp>
+ #include <boost/bind.hpp>
+ 
+-#include <librdf.h>
++#include <redland.h>
+ 
+ #include <com/sun/star/lang/XServiceInfo.hpp>
+ #include <com/sun/star/lang/XInitialization.hpp>

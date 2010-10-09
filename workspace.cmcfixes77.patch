@@ -1,0 +1,1378 @@
+diff -r 85e7cfbbb08a configure.in
+--- a/configure.in	Tue Jun 29 15:31:44 2010 +0200
++++ b/configure.in	Tue Jul 20 09:57:11 2010 +0100
+@@ -546,6 +546,12 @@
+ AC_ARG_WITH(system-lpsolve,
+ [  --with-system-lpsolve         Use lpsolve already on system
+ ],,)
++AC_ARG_WITH(system-libtextcat,
++[  --with-system-libtextcat      Use libtextcat already on system
++],,)
++AC_ARG_WITH(system-libtextcat-data,
++[  --with-system-libtextcat-data Use libtextcat data already on system
++],,)
+ AC_ARG_WITH(system-cppunit,
+ [  --with-system-cppunit         Use cppunit already on system
+ ],,)
+@@ -5142,6 +5148,38 @@
+ fi
+ AC_SUBST(SYSTEM_LPSOLVE)
+ 
++dnl ===================================================================
++dnl Checking for libtextcat
++dnl ===================================================================
++AC_MSG_CHECKING([which libtextcat to use])
++if test -n "$with_system_libtextcat" && test "$with_system_libtextcat" != "no"; then
++    AC_MSG_RESULT([external])
++    SYSTEM_LIBTEXTCAT=YES
++    AC_CHECK_HEADER(libtextcat/textcat.h, [],
++       [ AC_MSG_ERROR(libtextcat headers not found.)], [])
++    AC_CHECK_LIB(textcat, special_textcat_Init, ,
++        [ AC_MSG_ERROR(libtextcat library not found or not suitable. libtextcat typically needs to be patched)], [])
++else
++    AC_MSG_RESULT([internal])
++    SYSTEM_LIBTEXTCAT=NO
++    BUILD_TYPE="$BUILD_TYPE LIBTEXTCAT"
++fi
++AC_SUBST(SYSTEM_LIBTEXTCAT)
++
++AC_MSG_CHECKING([which libtextcat data directory to use])
++if test -n "$with_system_libtextcat_data" && test "$with_system_libtextcat_data" != "no"; then
++    if test "$with_system_libtextcat_data" = "yes"; then
++        SYSTEM_LIBTEXTCAT_DATA=file:///usr/share/libtextcat
++    else
++        SYSTEM_LIBTEXTCAT_DATA=file://$with_system_libtextcat_data
++    fi
++    AC_MSG_RESULT([$SYSTEM_LIBTEXTCAT_DATA])
++else
++    AC_MSG_RESULT([internal])
++    BUILD_TYPE="$BUILD_TYPE LIBTEXTCATDATA"
++fi
++AC_SUBST(SYSTEM_LIBTEXTCAT_DATA)
++
+ dnl ***************************************
+ dnl testing libc version for Linux...
+ dnl ***************************************
+@@ -6504,6 +6542,7 @@
+ AC_MSG_CHECKING([whether to include AFMs])
+ if test "$with_afms" != "no"; then
+   AC_MSG_RESULT([yes])
++  BUILD_TYPE="$BUILD_TYPE AFMS"
+ else
+   AC_MSG_RESULT([no])
+   WITHOUT_AFMS=YES
+diff -r 85e7cfbbb08a libtextcat/makefile.mk
+--- a/libtextcat/makefile.mk	Tue Jun 29 15:31:44 2010 +0200
++++ b/libtextcat/makefile.mk	Tue Jul 20 09:57:11 2010 +0100
+@@ -30,6 +30,12 @@
+ PRJNAME=libtextcat
+ TARGET=libtextcat
+ 
++.IF "$(SYSTEM_LIBTEXTCAT)" == "YES"
++all:
++        @echo "An already available installation of libtextcat should exist on your system."
++        @echo "Therefore the version provided here does not need to be built in addition."
++.ENDIF
++
+ # --- Settings -----------------------------------------------------
+ 
+ .INCLUDE :	settings.mk
+diff -r 85e7cfbbb08a lingucomponent/prj/build.lst
+--- a/lingucomponent/prj/build.lst	Tue Jun 29 15:31:44 2010 +0200
++++ b/lingucomponent/prj/build.lst	Tue Jul 20 09:57:11 2010 +0100
+@@ -1,4 +1,4 @@
+-lc  lingucomponent  :      linguistic libtextcat svl HYPHEN:hyphen HUNSPELL:hunspell MYTHES:mythes NULL
++lc  lingucomponent  :      linguistic LIBTEXTCAT:libtextcat LIBTEXTCATDATA:libtextcat svl HYPHEN:hyphen HUNSPELL:hunspell MYTHES:mythes NULL
+ lc	lingucomponent								usr1	-	all	lc_mkout NULL
+ lc  lingucomponent\inc                                      nmake   -   all lc_inc NULL
+ lc  lingucomponent\source\lingutil                          nmake   -   all lc_util lc_inc NULL
+diff -r 85e7cfbbb08a officecfg/registry/data/org/openoffice/Office/Paths.xcu
+--- a/officecfg/registry/data/org/openoffice/Office/Paths.xcu	Tue Jun 29 15:31:44 2010 +0200
++++ b/officecfg/registry/data/org/openoffice/Office/Paths.xcu	Tue Jul 20 09:57:11 2010 +0100
+@@ -169,7 +169,8 @@
+ 
+                 <node oor:name="Fingerprint" oor:op="fuse" oor:mandatory="true">
+                         <node oor:name="InternalPaths">
+-                              <node oor:name="$(insturl)/share/fingerprint" oor:op="fuse" />
++                              <node install:module="internallibtextcatdata" oor:name="$(insturl)/share/fingerprint" oor:op="fuse"/>
++                              <node install:module="externallibtextcatdata" oor:name="${SYSTEM_LIBTEXTCAT_DATA}" oor:op="fuse"/>
+                         </node>
+                 </node>
+ 
+diff -r 85e7cfbbb08a officecfg/registry/data/org/openoffice/Office/makefile.mk
+--- a/officecfg/registry/data/org/openoffice/Office/makefile.mk	Tue Jun 29 15:31:44 2010 +0200
++++ b/officecfg/registry/data/org/openoffice/Office/makefile.mk	Tue Jul 20 09:57:11 2010 +0100
+@@ -87,6 +87,8 @@
+     Paths-macosx.xcu    \
+     Paths-unxwnt.xcu    \
+     Paths-unixdesktop.xcu \
++    Paths-internallibtextcatdata.xcu \
++    Paths-externallibtextcatdata.xcu \
+     Writer-cjk.xcu \
+     Impress-ogltrans.xcu \
+     Embedding-calc.xcu   \
+diff -r 85e7cfbbb08a postprocess/packregistry/makefile.mk
+--- a/postprocess/packregistry/makefile.mk	Tue Jun 29 15:31:44 2010 +0200
++++ b/postprocess/packregistry/makefile.mk	Tue Jul 20 09:57:11 2010 +0100
+@@ -343,6 +343,11 @@
+ MY_FILES_main += $(MY_MOD)/DataAccess/mozab2.xcu
+ .END
+ .END
++.IF "$(SYSTEM_LIBTEXTCAT_DATA)" != ""
++MY_FILES_main += $(MY_MOD)/org/openoffice/Office/Paths-externallibtextcatdata.xcu
++.ELSE
++MY_FILES_main += $(MY_MOD)/org/openoffice/Office/Paths-internallibtextcatdata.xcu
++.END
+ 
+ MY_DEPS_math = main
+ MY_FILES_math = \
+diff -r 85e7cfbbb08a psprint_config/prj/build.lst
+--- a/psprint_config/prj/build.lst	Tue Jun 29 15:31:44 2010 +0200
++++ b/psprint_config/prj/build.lst	Tue Jul 20 09:57:11 2010 +0100
+@@ -1,4 +1,4 @@
+-pc	psprint_config	: soltools afms NULL
++pc	psprint_config	: soltools AFMS:afms NULL
+ pc	psprint_config							usr1	-	all	pc_mkout NULL
+ pc	psprint_config\configuration			nmake   -   u	pc_conf NULL
+ pc	psprint_config\configuration\ppds		nmake	-	u	pc_ppds NULL
+diff -r 85e7cfbbb08a scp2/source/ooo/file_library_ooo.scp
+--- a/scp2/source/ooo/file_library_ooo.scp	Tue Jun 29 15:31:44 2010 +0200
++++ b/scp2/source/ooo/file_library_ooo.scp	Tue Jul 20 09:57:11 2010 +0100
+@@ -1669,6 +1669,7 @@
+   #endif
+ End
+ 
++#ifndef SYSTEM_LIBTEXTCAT
+ File gid_File_Lib_Libtextcat
+     TXT_FILE_BODY;
+     Styles = (PACKED);
+@@ -1679,6 +1680,7 @@
+     Name = "libtextcat.dll";
+   #endif
+ End
++#endif
+ 
+ STD_UNO_LIB_FILE( gid_File_Lib_Guesslang, guesslang )
+ 
+diff -r 85e7cfbbb08a scp2/source/ooo/file_ooo.scp
+--- a/scp2/source/ooo/file_ooo.scp	Tue Jun 29 15:31:44 2010 +0200
++++ b/scp2/source/ooo/file_ooo.scp	Tue Jul 20 09:57:11 2010 +0100
+@@ -523,6 +523,7 @@
+ #endif
+ #endif
+ 
++#ifndef SYSTEM_LIBTEXTCAT_DATA
+ // fingerprint files (lm)
+ 
+ File gid_File_Conf_Fpdb
+@@ -1036,7 +1037,7 @@
+     Dir = gid_Dir_Share_Fingerprint;
+     Styles = (PACKED);
+ End
+-
++#endif
+ 
+ 
+ // mod files
+diff -r 85e7cfbbb08a scp2/source/ooo/makefile.mk
+--- a/scp2/source/ooo/makefile.mk	Tue Jun 29 15:31:44 2010 +0200
++++ b/scp2/source/ooo/makefile.mk	Tue Jul 20 09:57:11 2010 +0100
+@@ -233,6 +233,14 @@
+ SCPDEFS+=-DSYSTEM_PYTHON
+ .ENDIF
+ 
++.IF "$(SYSTEM_LIBTEXTCAT)" == "YES"
++SCPDEFS+=-DSYSTEM_LIBTEXTCAT
++.ENDIF
++
++.IF "$(SYSTEM_LIBTEXTCAT_DATA)" != ""
++SCPDEFS+=-DSYSTEM_LIBTEXTCAT_DATA
++.ENDIF
++
+ .IF "$(ENABLE_SVCTAGS)" == "YES"
+ SCPDEFS+=-DENABLE_SVCTAGS
+ .ENDIF
+diff -r 85e7cfbbb08a set_soenv.in
+--- a/set_soenv.in	Tue Jun 29 15:31:44 2010 +0200
++++ b/set_soenv.in	Tue Jul 20 09:57:11 2010 +0100
+@@ -1926,6 +1926,8 @@
+ ToFile( "SYSTEM_MYTHES",     "@SYSTEM_MYTHES@",    "e" );
+ ToFile( "MYTHES_CFLAGS",     "@MYTHES_CFLAGS@",    "e" );
+ ToFile( "MYTHES_LIBS",       "@MYTHES_LIBS@",      "e" );
++ToFile( "SYSTEM_LIBTEXTCAT", "@SYSTEM_LIBTEXTCAT@","e" );
++ToFile( "SYSTEM_LIBTEXTCAT_DATA","@SYSTEM_LIBTEXTCAT_DATA@","e" );
+ ToFile( "PAM",               "@PAM@",              "e" );
+ ToFile( "NEW_SHADOW_API",    "@NEW_SHADOW_API@",   "e" );
+ ToFile( "PAM_LINK",          "@PAM_LINK@",         "e" );
+diff -r 85e7cfbbb08a solenv/bin/modules/installer/ziplist.pm
+--- a/solenv/bin/modules/installer/ziplist.pm	Tue Jun 29 15:31:44 2010 +0200
++++ b/solenv/bin/modules/installer/ziplist.pm	Tue Jul 20 09:57:11 2010 +0100
+@@ -806,6 +806,7 @@
+ 	$variableshashref->{'PRODUCTMINOR'} = $localminor;
+ 
+ 	$variableshashref->{'PRODUCTBUILDID'} = $installer::globals::buildid;
++	$variableshashref->{'SYSTEM_LIBTEXTCAT_DATA'} = $ENV{'SYSTEM_LIBTEXTCAT_DATA'} , if( defined $ENV{'SYSTEM_LIBTEXTCAT_DATA'} && $ENV{'SYSTEM_LIBTEXTCAT_DATA'} ne "" );
+ }
+ 
+ 1;
+diff -r 85e7cfbbb08a solenv/config/sooo330.ini
+--- a/solenv/config/sooo330.ini	Tue Jun 29 15:31:44 2010 +0200
++++ b/solenv/config/sooo330.ini	Tue Jul 20 09:57:11 2010 +0100
+@@ -9,7 +9,7 @@
+ 			BMP_WRITES_FLAG TRUE
+ 			BUILD_SPECIAL TRUE
+ 			BUILD_STAX YES
+-			BUILD_TYPE SO OOo EXT BINFILTER MORE_FONTS BSH CURL DICTIONARIES HSQLDB HUNSPELL HYPHEN MYTHES JPEG LIBXML2 LIBXMLSEC LPSOLVE MOZ NEON TWAIN PYTHON ZLIB SANE UNIXODBC X11_EXTENSIONS LIBWPD EPM ODK MSFONTEXTRACT MATHMLDTD BOOST MDDS EXPAT CRASHREP BERKELEYDB LIBXSLT SUN AGG GTK ICU SYSTRAY_GTK JAVAINSTALLER2 VIGRA OPENSSL JFREEREPORT APACHE_COMMONS TOMCAT REPORTBUILDER SDEXT SWEXT XPDF LUCENE REDLAND SAXON WRITER2LATEX NSS L10N GRAPHITE MYSQLCPPCONN MYSQLC CPPUNIT
++			BUILD_TYPE SO OOo EXT BINFILTER MORE_FONTS BSH CURL DICTIONARIES HSQLDB HUNSPELL HYPHEN MYTHES JPEG LIBXML2 LIBXMLSEC LPSOLVE MOZ NEON TWAIN PYTHON ZLIB SANE UNIXODBC X11_EXTENSIONS LIBWPD EPM ODK MSFONTEXTRACT MATHMLDTD BOOST MDDS EXPAT CRASHREP BERKELEYDB LIBXSLT SUN AGG GTK ICU SYSTRAY_GTK JAVAINSTALLER2 VIGRA OPENSSL JFREEREPORT APACHE_COMMONS TOMCAT REPORTBUILDER SDEXT SWEXT XPDF LUCENE REDLAND SAXON WRITER2LATEX NSS L10N GRAPHITE MYSQLCPPCONN MYSQLC CPPUNIT LIBTEXTCAT LIBTEXTCATDATA AFMS
+ 			common_build TRUE
+ 			COMMON_OUTDIR common
+ 			CONFIG_PROJECT config_office
+--- a/configure.in	2010-07-07 12:32:33.000000000 +0100
++++ b/configure.in	2010-07-07 12:33:27.000000000 +0100
+@@ -3853,7 +3856,11 @@
+             [
+               AC_CHECK_FILE(/usr/share/java/lucene-core.jar, 
+                 [ LUCENE_CORE_JAR=/usr/share/java/lucene-core.jar ],
+-                [ AC_MSG_ERROR(lucene-core.jar replacement not found)]
++                [ AC_CHECK_FILE(/usr/share/java/lucene.jar, 
++                   [ LUCENE_CORE_JAR=/usr/share/java/lucene.jar ],
++                   [ AC_MSG_ERROR(lucene-core.jar replacement not found)]
++                  )
++                ]
+               )
+             ]
+           )
+@@ -3876,22 +3883,6 @@
+           AC_CHECK_FILE($LUCENE_CORE_JAR, [],
+                [ AC_MSG_ERROR(lucene-analyzers.jar not found.)], [])
+         fi
+-        AC_MSG_CHECKING([whether lucene is version 2.x])
+-        export LUCENE_CORE_JAR
+-        if $PERL -e 'use Archive::Zip;
+-            my $file = "$ENV{'LUCENE_CORE_JAR'}";
+-            my $zip = Archive::Zip->new( $file );
+-            my $mf = $zip->contents ( "META-INF/MANIFEST.MF" );
+-            if ( $mf =~ m/Specification-Version: 2.*/ ) {
+-                exit 0;
+-            } else {
+-                exit 1;
+-            }'; then
+-            AC_MSG_RESULT([yes])
+-         else
+-            AC_MSG_ERROR([no, you need lucene 2])
+-         fi
+-
+ else
+     AC_MSG_RESULT([internal])
+     SYSTEM_LUCENE=NO
+--- a/svtools/source/config/menuoptions.cxx	2010-07-30 12:52:42.000000000 +0100
++++ b/svtools/source/config/menuoptions.cxx	2010-07-30 12:52:53.000000000 +0100
+@@ -245,8 +245,15 @@
+ 	// Follow assignment use order of values in relation to our list of key names!
+ 	DBG_ASSERT( !(seqNames.getLength()!=seqValues.getLength()), "SvtMenuOptions_Impl::SvtMenuOptions_Impl()\nI miss some values of configuration keys!\n" );
+ 
+-    sal_Bool bMenuIcons = true;
+-    sal_Bool bSystemMenuIcons = true;
++    sal_Bool bMenuIcons = sal_True;
++    sal_Bool bSystemMenuIcons = sal_True;
++    if (m_nMenuIcons == 2)
++        bMenuIcons = (sal_Bool)(Application::GetSettings().GetStyleSettings().GetUseImagesInMenus());
++    else
++    {
++        bSystemMenuIcons = sal_False;
++        bMenuIcons = m_nMenuIcons ? sal_True : sal_False;
++    }
+ 
+ 	// Copy values from list in right order to ouer internal member.
+ 	sal_Int32 nPropertyCount	=	seqValues.getLength()	;
+diff -r a1a3b75faa8a basebmp/test/basictest.cxx
+--- a/basebmp/test/basictest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/basictest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,10 +27,12 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
+ #include "cppunit/plugin/TestPlugIn.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/point/b2ipoint.hxx>
+diff -r a1a3b75faa8a basebmp/test/bmpmasktest.cxx
+--- a/basebmp/test/bmpmasktest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/bmpmasktest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/range/b2irange.hxx>
+diff -r a1a3b75faa8a basebmp/test/bmptest.cxx
+--- a/basebmp/test/bmptest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/bmptest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/range/b2irange.hxx>
+diff -r a1a3b75faa8a basebmp/test/cliptest.cxx
+--- a/basebmp/test/cliptest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/cliptest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/point/b2ipoint.hxx>
+diff -r a1a3b75faa8a basebmp/test/filltest.cxx
+--- a/basebmp/test/filltest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/filltest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/range/b2drange.hxx>
+diff -r a1a3b75faa8a basebmp/test/linetest.cxx
+--- a/basebmp/test/linetest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/linetest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/point/b2ipoint.hxx>
+diff -r a1a3b75faa8a basebmp/test/makefile.mk
+--- a/basebmp/test/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -60,6 +60,13 @@
+ .ENDIF
+ .ENDIF
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
+ # --- Common ----------------------------------------------------------
+diff -r a1a3b75faa8a basebmp/test/masktest.cxx
+--- a/basebmp/test/masktest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/masktest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/range/b2irange.hxx>
+diff -r a1a3b75faa8a basebmp/test/polytest.cxx
+--- a/basebmp/test/polytest.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basebmp/test/polytest.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,9 +27,11 @@
+ 
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/vector/b2isize.hxx>
+ #include <basegfx/range/b2irange.hxx>
+diff -r a1a3b75faa8a basegfx/test/basegfx1d.cxx
+--- a/basegfx/test/basegfx1d.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/basegfx1d.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,10 +30,12 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
+ #include "cppunit/plugin/TestPlugIn.h"
++#include "postextstl.h"
+ 
+ namespace basegfx1d
+ {
+diff -r a1a3b75faa8a basegfx/test/basegfx2d.cxx
+--- a/basegfx/test/basegfx2d.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/basegfx2d.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/matrix/b2dhommatrix.hxx>
+ #include <basegfx/polygon/b2dpolygon.hxx>
+diff -r a1a3b75faa8a basegfx/test/basegfx3d.cxx
+--- a/basegfx/test/basegfx3d.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/basegfx3d.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ namespace basegfx3d
+ {
+diff -r a1a3b75faa8a basegfx/test/basegfxtools.cxx
+--- a/basegfx/test/basegfxtools.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/basegfxtools.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/tools/keystoplerp.hxx>
+ #include <basegfx/numeric/ftools.hxx>
+diff -r a1a3b75faa8a basegfx/test/boxclipper.cxx
+--- a/basegfx/test/boxclipper.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/boxclipper.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/matrix/b2dhommatrix.hxx>
+ #include <basegfx/curve/b2dcubicbezier.hxx>
+diff -r a1a3b75faa8a basegfx/test/clipstate.cxx
+--- a/basegfx/test/clipstate.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/clipstate.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/tools/b2dclipstate.hxx>
+ #include <basegfx/range/b2dpolyrange.hxx>
+diff -r a1a3b75faa8a basegfx/test/genericclipper.cxx
+--- a/basegfx/test/genericclipper.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/genericclipper.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -30,9 +30,11 @@
+ #include "precompiled_basegfx.hxx"
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <basegfx/matrix/b2dhommatrix.hxx>
+ #include <basegfx/curve/b2dcubicbezier.hxx>
+diff -r a1a3b75faa8a basegfx/test/makefile.mk
+--- a/basegfx/test/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/basegfx/test/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -36,6 +36,13 @@
+ 
+ .INCLUDE :  settings.mk
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
+ # --- Common ----------------------------------------------------------
+diff -r a1a3b75faa8a configure.in
+--- a/configure.in	Fri Jul 30 12:58:40 2010 +0100
++++ b/configure.in	Fri Jul 30 13:40:34 2010 +0100
+@@ -3613,12 +3613,6 @@
+     # a system-cppunit before the first version using a proper cppunit
+     # (and that being 1.12.1) anyway
+     PKG_CHECK_MODULES( CPPUNIT, cppunit >= 1.12.1 )
+-    AC_MSG_CHECKING([STL compatibility])
+-    if test "$WITH_STLPORT" != "no"; then
+-	AC_MSG_ERROR([to use system cppunit you need to use --without-stlport])
+-    else
+-	AC_MSG_RESULT([OK])	
+-    fi
+ else
+     AC_MSG_RESULT([internal])
+     SYSTEM_CPPUNIT=NO
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_connection.cxx
+--- a/mysqlc/source/mysqlc_connection.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_connection.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -35,13 +35,13 @@
+ #include "mysqlc_preparedstatement.hxx"
+ #include "mysqlc_general.hxx"
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/driver.h>
+ #include <cppconn/connection.h>
+ #include <cppconn/statement.h>
+ #include <cppconn/metadata.h>
+ #include <cppconn/exception.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ #include <com/sun/star/sdbc/ColumnValue.hpp>
+ #include <com/sun/star/sdbc/XRow.hpp>
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_connection.hxx
+--- a/mysqlc/source/mysqlc_connection.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_connection.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -46,9 +46,9 @@
+ #include <com/sun/star/sdbc/XWarningsSupplier.hpp>
+ #include <com/sun/star/util/XStringSubstitution.hpp>
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/driver.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ #include <cppuhelper/compbase3.hxx>
+ #include <cppuhelper/weakref.hxx>
+ #include <rtl/string.hxx>
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_databasemetadata.cxx
+--- a/mysqlc/source/mysqlc_databasemetadata.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_databasemetadata.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -54,13 +54,13 @@
+ using ::rtl::OUString;
+ using mysqlc_sdbc_driver::getStringFromAny;
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/connection.h>
+ #include <cppconn/resultset.h>
+ #include <cppconn/metadata.h>
+ #include <cppconn/statement.h>
+ #include <cppconn/prepared_statement.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ static ext_std::string wild("%");
+ 
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_databasemetadata.hxx
+--- a/mysqlc/source/mysqlc_databasemetadata.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_databasemetadata.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -39,9 +39,9 @@
+ #include <cppuhelper/implbase1.hxx>
+ #endif
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/metadata.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ namespace connectivity
+ {
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_driver.cxx
+--- a/mysqlc/source/mysqlc_driver.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_driver.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -38,13 +38,12 @@
+ using ::rtl::OUString;
+ #include <stdio.h>
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/exception.h>
+-
+ #ifdef SYSTEM_MYSQL_CPPCONN
+     #include <mysql_driver.h>
+ #endif
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ 
+ /* {{{ MysqlCDriver::MysqlCDriver() -I- */
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_driver.hxx
+--- a/mysqlc/source/mysqlc_driver.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_driver.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -36,9 +36,9 @@
+ #include <com/sun/star/lang/XServiceInfo.hpp>
+ 
+ #include <cppuhelper/compbase2.hxx>
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/driver.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ #include <osl/module.h>
+ 
+ namespace connectivity
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_general.hxx
+--- a/mysqlc/source/mysqlc_general.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_general.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -33,9 +33,9 @@
+ #include <com/sun/star/uno/XInterface.hpp>
+ #include <com/sun/star/sdbc/SQLException.hpp>
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/exception.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ namespace mysqlc_sdbc_driver
+ {
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_preparedstatement.hxx
+--- a/mysqlc/source/mysqlc_preparedstatement.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_preparedstatement.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -48,9 +48,9 @@
+ #include <com/sun/star/io/XInputStream.hpp>
+ #endif
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/prepared_statement.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ namespace connectivity
+ {
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_resultsetmetadata.hxx
+--- a/mysqlc/source/mysqlc_resultsetmetadata.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_resultsetmetadata.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -35,9 +35,9 @@
+ #include <com/sun/star/sdbc/XResultSetMetaData.hpp>
+ 
+ #include <cppuhelper/implbase1.hxx>
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/resultset_metadata.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ namespace connectivity
+ {
+diff -r a1a3b75faa8a mysqlc/source/mysqlc_statement.hxx
+--- a/mysqlc/source/mysqlc_statement.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/mysqlc/source/mysqlc_statement.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -13,9 +13,9 @@
+ #include <com/sun/star/sdbc/XWarningsSupplier.hpp>
+ #include <com/sun/star/util/XCancellable.hpp>
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <cppconn/statement.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ #include <cppuhelper/compbase5.hxx>
+ #include <list>
+ 
+diff -r a1a3b75faa8a o3tl/qa/makefile.mk
+--- a/o3tl/qa/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/o3tl/qa/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -36,6 +36,13 @@
+ 
+ .INCLUDE :  settings.mk
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
+ .IF "$(L10N_framework)"==""
+diff -r a1a3b75faa8a o3tl/qa/test-cow_wrapper.cxx
+--- a/o3tl/qa/test-cow_wrapper.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/o3tl/qa/test-cow_wrapper.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -1,9 +1,11 @@
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
+ #include "cppunit/plugin/TestPlugIn.h"
++#include "postextstl.h"
+ 
+ #include "cow_wrapper_clients.hxx"
+ 
+diff -r a1a3b75faa8a o3tl/qa/test-heap_ptr.cxx
+--- a/o3tl/qa/test-heap_ptr.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/o3tl/qa/test-heap_ptr.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -25,9 +25,11 @@
+  *
+  ************************************************************************/
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <o3tl/heap_ptr.hxx>
+ 
+diff -r a1a3b75faa8a o3tl/qa/test-range.cxx
+--- a/o3tl/qa/test-range.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/o3tl/qa/test-range.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -25,9 +25,11 @@
+  *
+  ************************************************************************/
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <o3tl/range.hxx>
+ #include <vector>
+diff -r a1a3b75faa8a o3tl/qa/test-vector_pool.cxx
+--- a/o3tl/qa/test-vector_pool.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/o3tl/qa/test-vector_pool.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -1,8 +1,10 @@
+ // autogenerated file with codegen.pl
+ 
++#include "preextstl.h"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
++#include "postextstl.h"
+ 
+ #include <o3tl/vector_pool.hxx>
+ 
+diff -r a1a3b75faa8a sal/cppunittester/cppunittester.cxx
+--- a/sal/cppunittester/cppunittester.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/sal/cppunittester/cppunittester.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -31,6 +31,7 @@
+ #include <cstdlib>
+ #include <iostream>
+ 
++#include "preextstl.h"
+ #include "cppunit/CompilerOutputter.h"
+ #include "cppunit/TestResult.h"
+ #include "cppunit/TestResultCollector.h"
+@@ -38,6 +39,7 @@
+ #include "cppunit/extensions/TestFactoryRegistry.h"
+ #include "cppunit/plugin/PlugInManager.h"
+ #include "cppunit/portability/Stream.h"
++#include "postextstl.h"
+ #include "osl/thread.h"
+ #include "rtl/process.h"
+ #include "rtl/string.hxx"
+diff -r a1a3b75faa8a sal/cppunittester/makefile.mk
+--- a/sal/cppunittester/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/sal/cppunittester/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -33,6 +33,13 @@
+ 
+ .INCLUDE: settings.mk
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
+ OBJFILES = $(APP1OBJS)
+diff -r a1a3b75faa8a sax/qa/cppunit/makefile.mk
+--- a/sax/qa/cppunit/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/sax/qa/cppunit/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -35,6 +35,13 @@
+ 
+ .INCLUDE :  settings.mk
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ DLLPRE = # no leading "lib" on .so files
+ 
+diff -r a1a3b75faa8a sax/qa/cppunit/test_converter.cxx
+--- a/sax/qa/cppunit/test_converter.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/sax/qa/cppunit/test_converter.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -25,10 +25,12 @@
+  *
+  ************************************************************************/
+ 
++#include "preextstl.h"
+ #include <cppunit/TestAssert.h>
+ #include <cppunit/TestFixture.h>
+ #include <cppunit/extensions/HelperMacros.h>
+ #include <cppunit/plugin/TestPlugIn.h>
++#include "postextstl.h"
+ 
+ #include <rtl/ustrbuf.hxx>
+ 
+diff -r a1a3b75faa8a sfx2/qa/cppunit/makefile.mk
+--- a/sfx2/qa/cppunit/makefile.mk	Fri Jul 30 12:58:40 2010 +0100
++++ b/sfx2/qa/cppunit/makefile.mk	Fri Jul 30 13:40:34 2010 +0100
+@@ -35,6 +35,13 @@
+ 
+ .INCLUDE :  settings.mk
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ DLLPRE = # no leading "lib" on .so files
+ 
+diff -r a1a3b75faa8a sfx2/qa/cppunit/test_metadatable.cxx
+--- a/sfx2/qa/cppunit/test_metadatable.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/sfx2/qa/cppunit/test_metadatable.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -27,10 +27,12 @@
+ 
+ #include "precompiled_sfx2.hxx"
+ 
++#include "preextstl.h"
+ #include <cppunit/TestAssert.h>
+ #include <cppunit/TestFixture.h>
+ #include <cppunit/extensions/HelperMacros.h>
+ #include <cppunit/plugin/TestPlugIn.h>
++#include "postextstl.h"
+ 
+ #include <rtl/ustrbuf.hxx>
+ 
+diff -r a1a3b75faa8a stlport/prj/d.lst
+--- a/stlport/prj/d.lst	Fri Jul 30 12:58:40 2010 +0100
++++ b/stlport/prj/d.lst	Fri Jul 30 13:40:34 2010 +0100
+@@ -17,6 +17,7 @@
+ ..\%__SRC%\inc\stlport\using\h\* %_DEST%\inc%_EXT%\stl\using\h\*
+ ..\%__SRC%\inc\stlport\wrap_std\* %_DEST%\inc%_EXT%\stl\wrap_std\*
+ ..\%__SRC%\inc\stlport\wrap_std\h\* %_DEST%\inc%_EXT%\stl\wrap_std\h\*
++..\systemstlguards\*.h %_DEST%\inc%_EXT%\stl\*.h
+ ..\%__SRC%\lib\lib*.so %_DEST%\lib%_EXT%\lib*.so
+ ..\%__SRC%\lib\lib*.a %_DEST%\lib%_EXT%\lib*.a
+ ..\%__SRC%\lib\*.lib %_DEST%\lib%_EXT%\*.lib
+diff -r a1a3b75faa8a tools/inc/tools/postextstl.h
+--- a/tools/inc/tools/postextstl.h	Fri Jul 30 12:58:40 2010 +0100
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,36 +0,0 @@
+-/*************************************************************************
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- * 
+- * Copyright 2000, 2010 Oracle and/or its affiliates.
+- *
+- * OpenOffice.org - a multi-platform office productivity suite
+- *
+- * This file is part of OpenOffice.org.
+- *
+- * OpenOffice.org is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU Lesser General Public License version 3
+- * only, as published by the Free Software Foundation.
+- *
+- * OpenOffice.org is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU Lesser General Public License version 3 for more details
+- * (a copy is included in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU Lesser General Public License
+- * version 3 along with OpenOffice.org.  If not, see
+- * <http://www.openoffice.org/license.html>
+- * for a copy of the LGPLv3 License.
+- *
+- ************************************************************************/
+-
+-#ifdef std_was_redefined_as_stlport
+-//  put things back the way they were
+-#   define std std_was_redefined_as_stlport
+-#   undef _STLP_OUTERMOST_HEADER_ID
+-//  force config to be re-read
+-#   undef _STLP_NOTHROW_INHERENTLY
+-#   undef _STLP_CONFIG_H
+-#   include <stddef.h>
+-#endif
+diff -r a1a3b75faa8a tools/inc/tools/preextstl.h
+--- a/tools/inc/tools/preextstl.h	Fri Jul 30 12:58:40 2010 +0100
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,71 +0,0 @@
+-/*************************************************************************
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- * 
+- * Copyright 2000, 2010 Oracle and/or its affiliates.
+- *
+- * OpenOffice.org - a multi-platform office productivity suite
+- *
+- * This file is part of OpenOffice.org.
+- *
+- * OpenOffice.org is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU Lesser General Public License version 3
+- * only, as published by the Free Software Foundation.
+- *
+- * OpenOffice.org is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU Lesser General Public License version 3 for more details
+- * (a copy is included in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU Lesser General Public License
+- * version 3 along with OpenOffice.org.  If not, see
+- * <http://www.openoffice.org/license.html>
+- * for a copy of the LGPLv3 License.
+- *
+- ************************************************************************/
+-//1. Force inclusion of a std:: using header to ensure the stlport define
+-//of std as "stlport"
+-#include <algorithm>
+-#if defined(ADAPT_EXT_STL)
+-//2. Force inclusion of stlport headers to get their stlport:: definitions
+-#   include <ostream>
+-#   include <istream>
+-#   include <fstream>
+-#   include <iostream>
+-#   include <vector>
+-#   include <list>
+-#   include <map>
+-//3. Now force inclusion of native headers to get their std:: definitions
+-#   if defined(std)
+-#       define std_was_redefined_as_stlport std
+-#       undef std
+-#       define _STLP_OUTERMOST_HEADER_ID 0xdeadbeaf
+-#       if defined(_GNUC__)
+-#           pragma GCC visibility push(default)
+-#       endif
+-#       include _STLP_NATIVE_HEADER(exception_defines.h)
+-#       include _STLP_NATIVE_HEADER(limits)
+-#       include _STLP_NATIVE_HEADER(memory)
+-#       include _STLP_NATIVE_HEADER(exception)
+-#       include _STLP_NATIVE_HEADER(iosfwd)
+-#       include _STLP_NATIVE_HEADER(algorithm)
+-#       include _STLP_NATIVE_HEADER(string)
+-#       include _STLP_NATIVE_HEADER(streambuf)
+-#       include _STLP_NATIVE_HEADER(ios)
+-#       include _STLP_NATIVE_HEADER(locale)
+-#       include _STLP_NATIVE_HEADER(stdexcept)
+-#       include _STLP_NATIVE_HEADER(ostream)
+-#       include _STLP_NATIVE_HEADER(istream)
+-#       include _STLP_NATIVE_HEADER(iostream)
+-#       include _STLP_NATIVE_HEADER(vector)
+-#       include _STLP_NATIVE_HEADER(list)
+-#       include _STLP_NATIVE_HEADER(map)
+-#       if defined(_GNUC__)
+-#           pragma GCC visibility pop
+-#       endif
+-#   endif
+-#endif
+-//ext_std resolves to the std that external c++ libs, e.g. Graphite were built
+-//against regardless of whether that is stlport or system stl
+-namespace ext_std = std;
+diff -r a1a3b75faa8a tools/prj/d.lst
+--- a/tools/prj/d.lst	Fri Jul 30 12:58:40 2010 +0100
++++ b/tools/prj/d.lst	Fri Jul 30 13:40:34 2010 +0100
+@@ -34,9 +34,6 @@
+ ..\inc\tools\postx.h %_DEST%\inc%_EXT%\tools\postx.h
+ ..\inc\tools\prex.h %_DEST%\inc%_EXT%\tools\prex.h
+ 
+-..\inc\tools\postextstl.h %_DEST%\inc%_EXT%\tools\postextstl.h
+-..\inc\tools\preextstl.h %_DEST%\inc%_EXT%\tools\preextstl.h
+-
+ ..\inc\tools\svlibrary.hxx %_DEST%\inc%_EXT%\tools\svlibrary.hxx
+ ..\inc\tools\solarmutex.hxx %_DEST%\inc%_EXT%\tools\solarmutex.hxx
+ ..\inc\tools\wintypes.hxx %_DEST%\inc%_EXT%\tools\wintypes.hxx
+diff -r a1a3b75faa8a vcl/inc/vcl/graphite_adaptors.hxx
+--- a/vcl/inc/vcl/graphite_adaptors.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/inc/vcl/graphite_adaptors.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -55,11 +55,11 @@
+ #include "vcl/dllapi.h"
+ 
+ // Libraries
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Font.h>
+ #include <graphite/ITextSource.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ // Module type definitions and forward declarations.
+ //
+diff -r a1a3b75faa8a vcl/inc/vcl/graphite_features.hxx
+--- a/vcl/inc/vcl/graphite_features.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/inc/vcl/graphite_features.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -29,11 +29,11 @@
+ // Parse a string of features specified as ; separated pairs.
+ // e.g.
+ // 1001=1&2002=2&fav1=0
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Font.h>
+ #include <graphite/GrFeature.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ namespace grutils
+ {
+diff -r a1a3b75faa8a vcl/inc/vcl/graphite_layout.hxx
+--- a/vcl/inc/vcl/graphite_layout.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/inc/vcl/graphite_layout.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -40,13 +40,13 @@
+ #include <vector>
+ #include <utility>
+ // Libraries
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Font.h>
+ #include <graphite/GrConstants.h>
+ #include <graphite/GrAppData.h>
+ #include <graphite/SegmentAux.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ // Platform
+ #include <vcl/sallayout.hxx>
+ #include <vcl/dllapi.h>
+diff -r a1a3b75faa8a vcl/source/glyphs/graphite_cache.cxx
+--- a/vcl/source/glyphs/graphite_cache.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/source/glyphs/graphite_cache.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -36,10 +36,10 @@
+ #include <tools/debug.hxx>
+ #include <vcl/sallayout.hxx>
+ 
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Segment.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ #include <rtl/ustring.hxx>
+ #include <vcl/graphite_layout.hxx>
+diff -r a1a3b75faa8a vcl/source/glyphs/graphite_layout.cxx
+--- a/vcl/source/glyphs/graphite_layout.cxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/source/glyphs/graphite_layout.cxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -63,13 +63,13 @@
+ #include <unicode/uscript.h>
+ 
+ // Graphite Libraries (must be after vcl headers on windows)
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Font.h>
+ #include <graphite/ITextSource.h>
+ #include <graphite/Segment.h>
+ #include <graphite/SegmentPainter.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ #include <vcl/graphite_layout.hxx>
+ #include <vcl/graphite_features.hxx>
+diff -r a1a3b75faa8a vcl/source/glyphs/graphite_textsrc.hxx
+--- a/vcl/source/glyphs/graphite_textsrc.hxx	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/source/glyphs/graphite_textsrc.hxx	Fri Jul 30 13:40:34 2010 +0100
+@@ -59,11 +59,11 @@
+ #include "vcl/dllapi.h"
+ 
+ // Libraries
+-#include <tools/preextstl.h>
++#include <preextstl.h>
+ #include <graphite/GrClient.h>
+ #include <graphite/Font.h>
+ #include <graphite/ITextSource.h>
+-#include <tools/postextstl.h>
++#include <postextstl.h>
+ 
+ // Module type definitions and forward declarations.
+ //
+diff -r a1a3b75faa8a vcl/util/makefile2.pmk
+--- a/vcl/util/makefile2.pmk	Fri Jul 30 12:58:40 2010 +0100
++++ b/vcl/util/makefile2.pmk	Fri Jul 30 13:40:34 2010 +0100
+@@ -36,6 +36,6 @@
+ #building with stlport, but graphite was not built with stlport
+ .IF "$(USE_SYSTEM_STL)"!="YES"
+ .IF "$(SYSTEM_GRAPHITE)"=="YES"
+-CDEFS += -DADAPT_EXT_STL
++CFLAGSCXX+=-DADAPT_EXT_STL
+ .ENDIF
+ .ENDIF
+--- a/test/source/cpp/officeconnection.cxx	2010-07-31 15:23:28.000000000 +0100
++++ b/test/source/cpp/officeconnection.cxx	2010-07-31 15:24:37.000000000 +0100
+@@ -33,7 +33,9 @@
+ #include "com/sun/star/lang/XMultiServiceFactory.hpp"
+ #include "com/sun/star/uno/Reference.hxx"
+ #include "cppuhelper/bootstrap.hxx"
++#include <preextstl.h>
+ #include "cppunit/TestAssert.h"
++#include <postextstl.h>
+ #include "osl/process.h"
+ #include "osl/time.h"
+ #include "sal/types.h"
+--- a/test/source/cpp/makefile.mk	2010-07-31 15:27:19.000000000 +0100
++++ b/test/source/cpp/makefile.mk	2010-07-31 15:23:28.000000000 +0100
+@@ -35,6 +35,13 @@
+ CDEFS += -DOOO_DLLIMPLEMENTATION_TEST
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ SLOFILES = \
+     $(SLO)/getargument.obj \
+     $(SLO)/officeconnection.obj \
+--- a/smoketestoo_native/makefile.mk	2010-07-31 19:54:31.000000000 +0100
++++ b/smoketestoo_native/makefile.mk	2010-07-31 20:03:00.000000000 +0100
+@@ -33,6 +33,13 @@
+ 
+ CFLAGSCXX += $(CPPUNIT_CFLAGS)
+ 
++#building with stlport, but cppunit was not built with stlport
++.IF "$(USE_SYSTEM_STL)"!="YES"
++.IF "$(SYSTEM_CPPUNIT)"=="YES"
++CFLAGSCXX+=-DADAPT_EXT_STL
++.ENDIF
++.ENDIF
++
+ SLOFILES = $(SHL1OBJS)
+ 
+ SHL1TARGET = smoketest
+--- a/smoketestoo_native/smoketest.cxx	2010-07-31 19:54:32.000000000 +0100
++++ b/smoketestoo_native/smoketest.cxx	2010-07-31 19:58:06.000000000 +0100
+@@ -44,11 +44,13 @@
+ #include "com/sun/star/uno/RuntimeException.hpp"
+ #include "com/sun/star/uno/Sequence.hxx"
+ #include "com/sun/star/util/URL.hpp"
++#include <preextstl.h>
+ #include "cppuhelper/implbase1.hxx"
+ #include "cppunit/TestAssert.h"
+ #include "cppunit/TestFixture.h"
+ #include "cppunit/extensions/HelperMacros.h"
+ #include "cppunit/plugin/TestPlugIn.h"
++#include <postextstl.h>
+ #include "osl/conditn.hxx"
+ #include "osl/diagnose.h"
+ #include "rtl/ustring.h"
+diff -r a4c016dc07ba forms/source/component/Button.cxx
+--- a/forms/source/component/Button.cxx	Tue Aug 03 12:19:44 2010 +0100
++++ b/forms/source/component/Button.cxx	Wed Aug 04 18:51:57 2010 +0100
+@@ -439,7 +439,7 @@
+ void OButtonControl::actionPerformed(const ActionEvent& /*rEvent*/) throw ( ::com::sun::star::uno::RuntimeException)
+ {
+ 	// Asynchron fuer starutil::URL-Button
+-	sal_uInt32 n = Application::PostUserEvent( LINK(this, OButtonControl,OnClick) );
++	ULONG n = Application::PostUserEvent( LINK(this, OButtonControl,OnClick) );
+ 	{
+ 		::osl::MutexGuard aGuard( m_aMutex );
+ 		m_nClickEvent = n;
+diff -r a4c016dc07ba forms/source/component/Button.hxx
+--- a/forms/source/component/Button.hxx	Tue Aug 03 12:19:44 2010 +0100
++++ b/forms/source/component/Button.hxx	Wed Aug 04 18:51:57 2010 +0100
+@@ -127,7 +127,7 @@
+                         ,public OFormNavigationHelper
+ {
+ private:
+-	sal_uInt32  m_nClickEvent;
++	ULONG m_nClickEvent;
+     sal_Int16   m_nTargetUrlFeatureId;
+     /// caches the value of the "Enabled" property of our model
+     sal_Bool    m_bEnabledByPropertyValue;
+diff -r b96c661a8f96 canvas/source/cairo/cairo_textlayout.cxx
+--- a/canvas/source/cairo/cairo_textlayout.cxx	Fri Aug 06 11:55:33 2010 +0200
++++ b/canvas/source/cairo/cairo_textlayout.cxx	Fri Aug 06 13:30:27 2010 +0200
+@@ -521,8 +521,8 @@
+             nWidth = aFont.GetHeight();
+         } else {
+             // any scaling needs to be relative to the platform-dependent definition
+-            // of width of the font
+-            nWidth = aFont.GetHeight() * aFont.GetWidth() / aMetric.GetWidth();
++            // of height of the font
++            nWidth = aFont.GetWidth() * aFont.GetHeight() / aMetric.GetHeight();
+         }
+         
+         cairo_matrix_init_identity(&m);
+diff -r a1a3b75faa8a stlport/systemstlguards/postextstl.h
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/stlport/systemstlguards/postextstl.h	Fri Jul 30 13:40:34 2010 +0100
+@@ -0,0 +1,36 @@
++/*************************************************************************
++ *
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ * 
++ * Copyright 2000, 2010 Oracle and/or its affiliates.
++ *
++ * OpenOffice.org - a multi-platform office productivity suite
++ *
++ * This file is part of OpenOffice.org.
++ *
++ * OpenOffice.org is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License version 3
++ * only, as published by the Free Software Foundation.
++ *
++ * OpenOffice.org is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License version 3 for more details
++ * (a copy is included in the LICENSE file that accompanied this code).
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * version 3 along with OpenOffice.org.  If not, see
++ * <http://www.openoffice.org/license.html>
++ * for a copy of the LGPLv3 License.
++ *
++ ************************************************************************/
++
++#ifdef std_was_redefined_as_stlport
++//  put things back the way they were
++#   define std std_was_redefined_as_stlport
++#   undef _STLP_OUTERMOST_HEADER_ID
++//  force config to be re-read
++#   undef _STLP_NOTHROW_INHERENTLY
++#   undef _STLP_CONFIG_H
++#   include <stddef.h>
++#endif
+diff -r a1a3b75faa8a stlport/systemstlguards/preextstl.h
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/stlport/systemstlguards/preextstl.h	Fri Jul 30 13:40:34 2010 +0100
+@@ -0,0 +1,77 @@
++/*************************************************************************
++ *
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ * 
++ * Copyright 2000, 2010 Oracle and/or its affiliates.
++ *
++ * OpenOffice.org - a multi-platform office productivity suite
++ *
++ * This file is part of OpenOffice.org.
++ *
++ * OpenOffice.org is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Lesser General Public License version 3
++ * only, as published by the Free Software Foundation.
++ *
++ * OpenOffice.org is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU Lesser General Public License version 3 for more details
++ * (a copy is included in the LICENSE file that accompanied this code).
++ *
++ * You should have received a copy of the GNU Lesser General Public License
++ * version 3 along with OpenOffice.org.  If not, see
++ * <http://www.openoffice.org/license.html>
++ * for a copy of the LGPLv3 License.
++ *
++ ************************************************************************/
++//1. Force inclusion of a std:: using header to ensure the stlport define
++//of std as "stlport"
++#include <algorithm>
++#if defined(ADAPT_EXT_STL)
++//2. Force inclusion of stlport headers to get their stlport:: definitions
++#   include <ostream>
++#   include <istream>
++#   include <fstream>
++#   include <iostream>
++#   include <sstream>
++#   include <vector>
++#   include <deque>
++#   include <set>
++#   include <list>
++#   include <map>
++//3. Now force inclusion of native headers to get their std:: definitions
++#   if defined(std)
++#       define std_was_redefined_as_stlport std
++#       undef std
++#       define _STLP_OUTERMOST_HEADER_ID 0xdeadbeaf
++#       if defined(_GNUC__)
++#           pragma GCC visibility push(default)
++#       endif
++#       include _STLP_NATIVE_HEADER(exception_defines.h)
++#       include _STLP_NATIVE_HEADER(limits)
++#       include _STLP_NATIVE_HEADER(memory)
++#       include _STLP_NATIVE_HEADER(exception)
++#       include _STLP_NATIVE_HEADER(iosfwd)
++#       include _STLP_NATIVE_HEADER(algorithm)
++#       include _STLP_NATIVE_HEADER(string)
++#       include _STLP_NATIVE_HEADER(streambuf)
++#       include _STLP_NATIVE_HEADER(ios)
++#       include _STLP_NATIVE_HEADER(locale)
++#       include _STLP_NATIVE_HEADER(stdexcept)
++#       include _STLP_NATIVE_HEADER(ostream)
++#       include _STLP_NATIVE_HEADER(istream)
++#       include _STLP_NATIVE_HEADER(iostream)
++#       include _STLP_NATIVE_HEADER(sstream)
++#       include _STLP_NATIVE_HEADER(vector)
++#       include _STLP_NATIVE_HEADER(deque)
++#       include _STLP_NATIVE_HEADER(set)
++#       include _STLP_NATIVE_HEADER(list)
++#       include _STLP_NATIVE_HEADER(map)
++#       if defined(_GNUC__)
++#           pragma GCC visibility pop
++#       endif
++#   endif
++#endif
++//ext_std resolves to the std that external c++ libs, e.g. Graphite were built
++//against regardless of whether that is stlport or system stl
++namespace ext_std = std;

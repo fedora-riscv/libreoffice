@@ -1,0 +1,2761 @@
+diff -ru svtools.orig/inc/svtools/svtools.hrc svtools/inc/svtools/svtools.hrc
+--- svtools/inc/svtools/svtools.hrc	2009-01-14 15:52:54.000000000 +0000
++++ svtools/inc/svtools/svtools.hrc	2009-01-14 15:53:18.000000000 +0000
+@@ -73,6 +73,7 @@
+ #define RID_FILEOPEN_INVALIDFOLDER		(RID_SVTOOLS_START + 34)
+ #define RID_FILEOPEN_NOTEXISTENTFILE	(RID_SVTOOLS_START + 35)
+ #define STR_SVT_NOREMOVABLEDEVICE       (RID_SVTOOLS_START + 36)
++#define STR_SVT_ALLFORMATS				(RID_SVTOOLS_START + 37)
+ 
+ // doc template dialog
+ #define DLG_DOCTEMPLATE					(RID_SVTOOLS_START+50)
+diff -ru fpicker.orig/source/office/iodlg.src fpicker/source/office/iodlg.src
+--- fpicker/source/office/iodlg.src	2009-01-14 11:56:02.000000000 +0000
++++ fpicker/source/office/iodlg.src	2009-01-14 15:59:44.000000000 +0000
+@@ -317,5 +312,10 @@
+     Text [ en-US ] = "No removable storage device detected.\nMake sure it is plugged in properly and try again." ;
+ };
+ 
++String STR_SVT_ALLFORMATS
++{
++	Text [ en-US ] = "All Formats" ;
++};
++
+ //******************************************************************** EOF
+ 
+diff -ru fpicker.orig/source/unx/gnome/resourceprovider.cxx fpicker/source/unx/gnome/resourceprovider.cxx
+--- fpicker/source/unx/gnome/resourceprovider.cxx	2009-01-14 11:56:02.000000000 +0000
++++ fpicker/source/unx/gnome/resourceprovider.cxx	2009-01-14 15:42:26.000000000 +0000
+@@ -85,7 +85,8 @@
+     { CHECKBOX_SELECTION,                       STR_SVT_FILEPICKER_SELECTION },
+     { FOLDERPICKER_TITLE,                       STR_SVT_FOLDERPICKER_DEFAULT_TITLE },
+     { FOLDER_PICKER_DEF_DESCRIPTION,            STR_SVT_FOLDERPICKER_DEFAULT_DESCRIPTION },
+-    { FILE_PICKER_OVERWRITE,                    STR_SVT_ALREADYEXISTOVERWRITE }
++    { FILE_PICKER_OVERWRITE,                    STR_SVT_ALREADYEXISTOVERWRITE },
++    { FILE_PICKER_ALLFORMATS,                   STR_SVT_ALLFORMATS }
+ };
+ 
+ _Entry OtherCtrlIdToResIdTable[] = {
+diff -ru fpicker.orig/source/unx/gnome/resourceprovider.hxx fpicker/source/unx/gnome/resourceprovider.hxx
+--- fpicker/source/unx/gnome/resourceprovider.hxx	2009-01-14 11:56:02.000000000 +0000
++++ fpicker/source/unx/gnome/resourceprovider.hxx	2009-01-14 15:40:34.000000000 +0000
+@@ -48,6 +48,7 @@
+ #define FILE_PICKER_TITLE_SAVE        503
+ #define FILE_PICKER_FILE_TYPE         504
+ #define FILE_PICKER_OVERWRITE         505
++#define FILE_PICKER_ALLFORMATS        506
+ 
+ //------------------------------------------------------------------------
+ // deklarations
+diff -ru fpicker.orig/source/unx/gnome/SalGtkFilePicker.cxx fpicker/source/unx/gnome/SalGtkFilePicker.cxx
+--- fpicker/source/unx/gnome/SalGtkFilePicker.cxx	2009-01-14 11:56:02.000000000 +0000
++++ fpicker/source/unx/gnome/SalGtkFilePicker.cxx	2009-01-14 15:42:05.000000000 +0000
+@@ -52,6 +52,7 @@
+ 
+ #include <iostream>
+ #include <algorithm>
++#include <set>
+ #include "resourceprovider.hxx"
+ #ifndef _SV_RC_H
+ #include <tools/rc.hxx>
+@@ -181,6 +182,7 @@
+     mbPreviewState( sal_False ),
+     mHID_Preview( 0 ),
+ 	m_pPreview( NULL ),
++    m_pPseudoFilter( NULL ),
+ 	m_PreviewImageWidth( 256 ),
+     m_PreviewImageHeight( 256 )
+ {
+@@ -692,7 +694,7 @@
+ 		m_pFilterList = new FilterList;
+ 
+ 		// set the first filter to the current filter
+-		if( ( !m_aCurrentFilter ) || ( !m_aCurrentFilter.getLength() ) )
++		if ( !m_aCurrentFilter.getLength() )
+ 			m_aCurrentFilter = _rInitialCurrentFilter;
+ 	}
+ }
+@@ -715,7 +717,6 @@
+ 
+ 	// append the filter
+ 	m_pFilterList->insert( m_pFilterList->end(), FilterEntry( aTitle, aFilter ) );
+-	// implAddFilter( aTitle, aFilter );
+ }
+ 
+ //-----------------------------------------------------------------------------------------
+@@ -782,7 +783,10 @@
+     }
+     else if( GtkFileFilter *filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(m_pDialog)))
+     {
+-        updateCurrentFilterFromName(gtk_file_filter_get_name( filter ));
++		if (m_pPseudoFilter != filter)
++        	updateCurrentFilterFromName(gtk_file_filter_get_name( filter ));
++		else
++        	updateCurrentFilterFromName(OUStringToOString( m_aInitialFilter, RTL_TEXTENCODING_UTF8 ).getStr());
+     }
+ }
+ 
+@@ -950,9 +954,15 @@
+                     }
+                 }
+ 
+-			    const gchar* filtername = 
+-				    gtk_file_filter_get_name( gtk_file_chooser_get_filter( GTK_FILE_CHOOSER( m_pDialog ) ) );
+-                sFilterName = OUString( filtername, strlen( filtername ), RTL_TEXTENCODING_UTF8 );
++				GtkFileFilter *filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(m_pDialog));
++        		if (m_pPseudoFilter != filter)
++				{
++			    	const gchar* filtername = 
++				    	gtk_file_filter_get_name( filter );
++                	sFilterName = OUString( filtername, strlen( filtername ), RTL_TEXTENCODING_UTF8 );
++				}
++				else
++					sFilterName = m_aInitialFilter;
+             }
+ 
+ 			OSL_TRACE( "2: current filter is %s\n", 
+@@ -1917,7 +1927,7 @@
+ }
+ }
+ 
+-int SalGtkFilePicker::implAddFilter( const OUString& rFilter, const OUString& rType )
++GtkFileFilter* SalGtkFilePicker::implAddFilter( const OUString& rFilter, const OUString& rType )
+ {
+     GdkThreadLock aLock;
+ 
+@@ -1968,7 +1978,6 @@
+ 
+ 	gtk_file_chooser_add_filter( GTK_FILE_CHOOSER( m_pDialog ), filter );
+ 
+-    int nAdded = 0;
+     if (!bAllGlob)
+     {
+         GtkTreeIter iter;
+@@ -1979,30 +1988,67 @@
+             2, aFilterName.getStr(),
+             3, OUStringToOString(rType, RTL_TEXTENCODING_UTF8).getStr(),
+             -1);
+-        nAdded = 1;
+     }
+-    return nAdded;
++    return filter;
+ }
+ 
+-int SalGtkFilePicker::implAddFilterGroup( const OUString& /*_rFilter*/, const Sequence< StringPair >& _rFilters )
++void SalGtkFilePicker::implAddFilterGroup( const OUString& /*_rFilter*/, const Sequence< StringPair >& _rFilters )
+ {
+ 	// Gtk+ has no filter group concept I think so ...
+ 	// implAddFilter( _rFilter, String() );
+-    int nAdded = 0;
+ 	const StringPair* pSubFilters	= _rFilters.getConstArray();
+ 	const StringPair* pSubFiltersEnd = pSubFilters + _rFilters.getLength();
+ 	for( ; pSubFilters != pSubFiltersEnd; ++pSubFilters )
+-		nAdded += implAddFilter( pSubFilters->First, pSubFilters->Second );
+-    return nAdded;
++		implAddFilter( pSubFilters->First, pSubFilters->Second );
+ }
+ 
+ void SalGtkFilePicker::SetFilters()
+ {
+-	OSL_TRACE( "start setting filters\n");
+-
+     GdkThreadLock aLock;
+ 
+-    int nAdded = 0;
++	if (!m_aInitialFilter.getLength())
++		m_aInitialFilter = m_aCurrentFilter;
++
++	rtl::OUString sPseudoFilter;
++    if( GTK_FILE_CHOOSER_ACTION_SAVE == gtk_file_chooser_get_action( GTK_FILE_CHOOSER( m_pDialog ) ) )
++    {
++		std::set<OUString> aAllFormats;
++		if( m_pFilterList && !m_pFilterList->empty() )
++		{
++			for	(	FilterList::iterator aListIter = m_pFilterList->begin();
++					aListIter != m_pFilterList->end();
++					++aListIter
++				)
++			{
++				if( aListIter->hasSubFilters() )
++				{	// it's a filter group
++					UnoFilterList aSubFilters;
++					aListIter->getSubFilters( aSubFilters );
++					const StringPair* pSubFilters   = aSubFilters.getConstArray();
++					const StringPair* pSubFiltersEnd = pSubFilters + aSubFilters.getLength();
++					for( ; pSubFilters != pSubFiltersEnd; ++pSubFilters )
++						aAllFormats.insert(pSubFilters->Second);
++				}
++				else
++					aAllFormats.insert(aListIter->getFilter());
++			}
++		}
++		if (aAllFormats.size() > 1)
++		{
++			rtl::OUString sAllFilter;
++			std::set<OUString>::const_iterator aEnd = aAllFormats.end();
++			for (std::set<OUString>::const_iterator aIter = aAllFormats.begin(); aIter != aEnd; ++aIter)
++			{
++				if (sAllFilter.getLength())
++					sAllFilter += OUString(sal_Unicode(';'));
++				sAllFilter += *aIter;
++			}
++			CResourceProvider aResProvider;
++			sPseudoFilter = aResProvider.getResString(FILE_PICKER_ALLFORMATS);
++			m_pPseudoFilter = implAddFilter( sPseudoFilter, sAllFilter );
++		}
++    }
++
+ 	if( m_pFilterList && !m_pFilterList->empty() )
+ 	{
+ 		for	(	FilterList::iterator aListIter = m_pFilterList->begin();
+@@ -2016,30 +2062,27 @@
+ 				UnoFilterList aSubFilters;
+ 				aListIter->getSubFilters( aSubFilters );
+ 
+-				nAdded += implAddFilterGroup( aListIter->getTitle(), aSubFilters );
++				implAddFilterGroup( aListIter->getTitle(), aSubFilters );
+ 			}
+ 			else
+ 			{
+ 				// it's a single filter
+ 
+-				nAdded += implAddFilter( aListIter->getTitle(), aListIter->getFilter() );
++				implAddFilter( aListIter->getTitle(), aListIter->getFilter() );
+ 			}
+ 		}
+ 	}
+ 
+-    if (nAdded)
++    if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_pFilterStore), NULL)) //If m_pFilterStore is not empty
+         gtk_widget_show( m_pFilterExpander );
+     else
+         gtk_widget_hide( m_pFilterExpander );
+ 
+ 	// set the default filter
+-	if( m_aCurrentFilter && (m_aCurrentFilter.getLength() > 0) )
+-	{
+-		OSL_TRACE( "Setting current filter to %s\n", 
+-			OUStringToOString( m_aCurrentFilter, RTL_TEXTENCODING_UTF8 ).getStr() );
+-
++	if (sPseudoFilter.getLength())
++		SetCurFilter( sPseudoFilter );
++	else if(m_aCurrentFilter.getLength())
+ 		SetCurFilter( m_aCurrentFilter );
+-	}
+ 
+ 	OSL_TRACE( "end setting filters\n");
+ }
+diff -ru fpicker.orig/source/unx/gnome/SalGtkFilePicker.hxx fpicker/source/unx/gnome/SalGtkFilePicker.hxx
+--- fpicker/source/unx/gnome/SalGtkFilePicker.hxx	2009-01-14 11:56:02.000000000 +0000
++++ fpicker/source/unx/gnome/SalGtkFilePicker.hxx	2009-01-14 15:34:41.000000000 +0000
+@@ -317,11 +317,13 @@
+         gulong mnHID_SelectionChange;
+ 
+ 		::rtl::OUString	m_aCurrentFilter;
++		::rtl::OUString	m_aInitialFilter;
+ 
+         bool bVersionWidthUnset;
+         sal_Bool mbPreviewState;
+         gulong mHID_Preview;
+         GtkWidget* m_pPreview;
++		GtkFileFilter* m_pPseudoFilter;
+         sal_Int32 m_PreviewImageWidth;
+         sal_Int32 m_PreviewImageHeight;
+         
+@@ -332,8 +334,8 @@
+         void UpdateFilterfromUI();
+ 
+         void implChangeType( GtkTreeSelection *selection );
+-		int implAddFilter( const OUString& rFilter, const OUString& rType);
+-		int implAddFilterGroup( const OUString& rFilter, 
++		GtkFileFilter * implAddFilter( const OUString& rFilter, const OUString& rType );
++		void implAddFilterGroup( const OUString& rFilter, 
+ 					 const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::StringPair>& _rFilters );
+         void updateCurrentFilterFromName(const gchar* filtername);
+         void unselect_type();
+--- vcl.orig/unx/gtk/window/gtkframe.cxx	2010-05-29 11:29:16.000000000 +0100
++++ vcl/unx/gtk/window/gtkframe.cxx	2010-05-29 12:02:19.000000000 +0100
+@@ -79,6 +79,14 @@
+ #define GDK_META_MASK       (1 << 28)
+ #endif
+ 
++#if GTK_CHECK_VERSION(2,90,0)
++#define IS_WIDGET_REALIZED gtk_widget_get_realized
++#define IS_WIDGET_MAPPED   gtk_widget_get_mapped
++#else
++#define IS_WIDGET_REALIZED GTK_WIDGET_REALIZED
++#define IS_WIDGET_MAPPED   GTK_WIDGET_MAPPED
++#endif
++
+ using namespace com::sun::star;
+ 
+ int GtkSalFrame::m_nFloats = 0;
+@@ -428,12 +436,12 @@
+ 	getDisplay()->deregisterFrame( this );
+     
+     if( m_pRegion )
+-        gdk_region_destroy( m_pRegion );
++        gdk_region_destroy( m_pRegion );
+ 
+     if( m_hBackgroundPixmap )
+     {
+         XSetWindowBackgroundPixmap( getDisplay()->GetDisplay(),
+-                                    GDK_WINDOW_XWINDOW(m_pWindow->window),
++                                    GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                                     None );
+         XFreePixmap( getDisplay()->GetDisplay(), m_hBackgroundPixmap );
+     }
+@@ -592,7 +600,7 @@
+     SalDisplay* pDisp = GetX11SalData()->GetDisplay();
+     m_aSystemData.nSize 		= sizeof( SystemChildData );
+     m_aSystemData.pDisplay		= pDisp->GetDisplay();
+-    m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(m_pWindow->window);
++    m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow));
+     m_aSystemData.pSalFrame		= this;
+     m_aSystemData.pWidget		= m_pWindow;
+     m_aSystemData.pVisual		= pDisp->GetVisual( m_nScreen ).GetVisual();
+@@ -644,7 +652,7 @@
+     *  some paint issues
+     */
+     XSetWindowBackgroundPixmap( getDisplay()->GetDisplay(),
+-                                GDK_WINDOW_XWINDOW(m_pWindow->window),
++                                GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                                 m_hBackgroundPixmap );
+ }
+ 
+@@ -678,7 +686,7 @@
+     else if( ! bBeforeRealize )
+     {
+         Display* pDisplay = GetX11SalData()->GetDisplay()->GetDisplay();
+-        XLIB_Window aWindow = GDK_WINDOW_XWINDOW( GTK_WIDGET(pWindow)->window );
++        XLIB_Window aWindow = GDK_WINDOW_XWINDOW( widget_get_window(GTK_WIDGET(pWindow)) );
+         XWMHints* pHints = XGetWMHints( pDisplay, aWindow );
+         if( ! pHints )
+         {
+@@ -863,7 +871,7 @@
+             nUserTime= getDisplay()->GetLastUserEventTime( true );
+             // nUserTime = gdk_x11_get_server_time(GTK_WIDGET (m_pWindow)->window);
+         }
+-        lcl_set_user_time(GTK_WIDGET(m_pWindow)->window, nUserTime);
++        lcl_set_user_time(widget_get_window(GTK_WIDGET(m_pWindow)), nUserTime);
+     }
+ 
+     if( bDecoHandling )
+@@ -917,7 +925,8 @@
+     {
+         m_pWindow = gtk_plug_new( pSysData->aWindow );
+         m_bWindowIsGtkPlug  = true;
+-        GTK_WIDGET_SET_FLAGS( m_pWindow, GTK_CAN_FOCUS | GTK_SENSITIVE | GTK_CAN_DEFAULT );
++        widget_set_can_default( m_pWindow, true );
++        widget_set_can_focus( m_pWindow, true );
+         gtk_widget_set_sensitive( m_pWindow, true );
+     }
+     else
+@@ -942,7 +951,7 @@
+     if( ! m_bWindowIsGtkPlug )
+     {
+         XReparentWindow( getDisplay()->GetDisplay(),
+-                         GDK_WINDOW_XWINDOW(m_pWindow->window),
++                         GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                          (XLIB_Window)pSysData->aWindow,
+                          0, 0 );
+     }
+@@ -976,14 +985,14 @@
+     if( nStyle != m_nExtStyle && ! isChild() )
+     {
+         m_nExtStyle = nStyle;
+-        if( GTK_WIDGET_REALIZED( m_pWindow ) )
++        if( IS_WIDGET_REALIZED( m_pWindow ) )
+         {
+             XClassHint* pClass = XAllocClassHint();
+             rtl::OString aResHint = X11SalData::getFrameResName( m_nExtStyle );
+             pClass->res_name  = const_cast<char*>(aResHint.getStr());
+             pClass->res_class = const_cast<char*>(X11SalData::getFrameClassName());
+             XSetClassHint( getDisplay()->GetDisplay(),
+-                           GDK_WINDOW_XWINDOW(m_pWindow->window),
++                           GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                            pClass );
+             XFree( pClass );
+         }
+@@ -1007,7 +1016,7 @@
+                 if( ! m_aGraphics[i].pGraphics )
+                 {
+                     m_aGraphics[i].pGraphics = new GtkSalGraphics( m_pWindow );
+-                    m_aGraphics[i].pGraphics->Init( this, GDK_WINDOW_XWINDOW(m_pWindow->window), m_nScreen );
++                    m_aGraphics[i].pGraphics->Init( this, GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)), m_nScreen );
+                 }
+                 return m_aGraphics[i].pGraphics;
+             }
+@@ -1308,7 +1317,7 @@
+             setMinMaxSize();
+             
+             // #i45160# switch to desktop where a dialog with parent will appear
+-            if( m_pParent && m_pParent->m_nWorkArea != m_nWorkArea && GTK_WIDGET_MAPPED(m_pParent->m_pWindow) )
++            if( m_pParent && m_pParent->m_nWorkArea != m_nWorkArea && IS_WIDGET_MAPPED(m_pParent->m_pWindow) )
+                 getDisplay()->getWMAdaptor()->switchToWorkArea( m_pParent->m_nWorkArea );
+             
+             if( isFloatGrabWindow() &&
+@@ -1363,7 +1372,7 @@
+                 nUserTime= getDisplay()->GetLastUserEventTime( true );
+                 //nUserTime = gdk_x11_get_server_time(GTK_WIDGET (m_pWindow)->window);
+             }
+-            lcl_set_user_time( GTK_WIDGET(m_pWindow)->window, nUserTime );
++            lcl_set_user_time( widget_get_window(GTK_WIDGET(m_pWindow)), nUserTime );
+             
+             if( bHack && ! bNoActivate && (m_nStyle & SAL_FRAME_STYLE_TOOLWINDOW) )
+                 m_bSetFocusOnMap = true;
+@@ -1472,7 +1481,7 @@
+     {
+         m_aMaxSize = Size( nWidth, nHeight );
+         // Show does a setMinMaxSize
+-        if( GTK_WIDGET_MAPPED( m_pWindow ) )
++        if( IS_WIDGET_MAPPED( m_pWindow ) )
+             setMinMaxSize();
+     }
+ }
+@@ -1485,7 +1494,7 @@
+         {
+             gtk_widget_set_size_request( m_pWindow, nWidth, nHeight );
+             // Show does a setMinMaxSize
+-            if( GTK_WIDGET_MAPPED( m_pWindow ) )
++            if( IS_WIDGET_MAPPED( m_pWindow ) )
+                 setMinMaxSize();
+         }
+     }
+@@ -1737,7 +1746,7 @@
+         gtk_widget_realize( m_pWindow );
+         // update system data
+         GtkSalDisplay* pDisp = getDisplay();
+-        m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(m_pWindow->window);
++        m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow));
+         m_aSystemData.pVisual		= pDisp->GetVisual( m_nScreen ).GetVisual();
+         m_aSystemData.nScreen		= nScreen;
+         m_aSystemData.nDepth		= pDisp->GetVisual( m_nScreen ).GetDepth();
+@@ -1748,7 +1757,7 @@
+         for( unsigned int i = 0; i < sizeof(m_aGraphics)/sizeof(m_aGraphics[0]); i++ )
+         {
+             if( m_aGraphics[i].bInUse )
+-                m_aGraphics[i].pGraphics->SetDrawable( GDK_WINDOW_XWINDOW(m_pWindow->window), m_nScreen );
++                m_aGraphics[i].pGraphics->SetDrawable( GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)), m_nScreen );
+         }
+         updateScreenNumber();
+     }
+@@ -1777,7 +1786,7 @@
+             
+             Rectangle aOldScreenRect( pDisp->GetXineramaScreens()[maGeometry.nScreenNumber] );
+             Rectangle aNewScreenRect( pDisp->GetXineramaScreens()[nNewScreen] );
+-            bool bVisible = GTK_WIDGET_MAPPED(m_pWindow);
++            bool bVisible = IS_WIDGET_MAPPED(m_pWindow);
+             if( bVisible )
+                 Show( FALSE );
+             maGeometry.nX = aNewScreenRect.Left() + (maGeometry.nX - aOldScreenRect.Left());
+@@ -1809,7 +1818,7 @@
+             {
+                 m_aRestorePosSize = Rectangle( Point( maGeometry.nX, maGeometry.nY ),
+                                                Size( maGeometry.nWidth, maGeometry.nHeight ) );
+-                bool bVisible = GTK_WIDGET_MAPPED(m_pWindow);
++                bool bVisible = IS_WIDGET_MAPPED(m_pWindow);
+                 if( bVisible )
+                     Show( FALSE );
+                 m_nStyle |= SAL_FRAME_STYLE_PARTIAL_FULLSCREEN;
+@@ -1838,7 +1847,7 @@
+             }
+             else
+             {
+-                bool bVisible = GTK_WIDGET_MAPPED(m_pWindow);
++                bool bVisible = IS_WIDGET_MAPPED(m_pWindow);
+                 if( ! getDisplay()->getWMAdaptor()->isLegacyPartialFullscreen() )
+                     gtk_window_unfullscreen( GTK_WINDOW(m_pWindow) );
+                 if( bVisible )
+@@ -2052,7 +2061,7 @@
+ 		}
+ #ifdef ENABLE_DBUS
+ 		m_nGSMCookie = dbus_inhibit_gsm(g_get_application_name(), "presentation", 
+-                    GDK_WINDOW_XID(m_pWindow->window));
++                    GDK_WINDOW_XID(widget_get_window(m_pWindow)));
+ #endif
+ 	}
+ 	else
+@@ -2078,7 +2087,7 @@
+     {
+         if( isChild( false, true ) )
+             gtk_widget_grab_focus( m_pWindow );
+-        else if( GTK_WIDGET_MAPPED( m_pWindow ) )
++        else if( IS_WIDGET_MAPPED( m_pWindow ) )
+         {
+             if( ! (nFlags & SAL_FRAME_TOTOP_GRABFOCUS_ONLY) )
+                 gtk_window_present( GTK_WINDOW(m_pWindow) );
+@@ -2087,7 +2096,7 @@
+                 // gdk_window_focus( m_pWindow->window, gdk_x11_get_server_time(GTK_WIDGET (m_pWindow)->window) );
+                 /* #i99360# ugly workaround an X11 library bug */
+                 guint32 nUserTime= getDisplay()->GetLastUserEventTime( true );
+-                gdk_window_focus( m_pWindow->window, nUserTime );
++                gdk_window_focus( widget_get_window(m_pWindow), nUserTime );
+             }
+             /*  need to do an XSetInputFocus here because
+              *  gdk_window_focus will ask a EWMH compliant WM to put the focus
+@@ -2099,7 +2108,7 @@
+                 // sad but true: this can cause an XError, we need to catch that
+                 // to do this we need to synchronize with the XServer
+                 getDisplay()->GetXLib()->PushXErrorLevel( true );
+-                XSetInputFocus( getDisplay()->GetDisplay(), GDK_WINDOW_XWINDOW( m_pWindow->window ), RevertToParent, CurrentTime );
++                XSetInputFocus( getDisplay()->GetDisplay(), GDK_WINDOW_XWINDOW( widget_get_window(m_pWindow) ), RevertToParent, CurrentTime );
+                 XSync( getDisplay()->GetDisplay(), False );
+                 getDisplay()->GetXLib()->PopXErrorLevel();
+             }
+@@ -2118,7 +2127,7 @@
+     {
+         m_ePointerStyle = ePointerStyle;
+         GdkCursor *pCursor = getDisplay()->getCursor( ePointerStyle );
+-        gdk_window_set_cursor( m_pWindow->window, pCursor );
++        gdk_window_set_cursor( widget_get_window(m_pWindow), pCursor );
+         m_pCurrentCursor = pCursor;
+         
+         // #i80791# use grabPointer the same way as CaptureMouse, respective float grab
+@@ -2153,7 +2162,7 @@
+             {
+                 const int nMask = ( GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK );
+     
+-                gdk_pointer_grab( m_pWindow->window, bOwnerEvents,
++                gdk_pointer_grab( widget_get_window(m_pWindow), bOwnerEvents,
+                                   (GdkEventMask) nMask, NULL, m_pCurrentCursor,
+                                   GDK_CURRENT_TIME );
+             }
+@@ -2166,7 +2175,7 @@
+                 // this is of course a bad hack, especially as we cannot
+                 // set the right cursor this way
+                 XGrabPointer( getDisplay()->GetDisplay(),
+-                              GDK_WINDOW_XWINDOW( m_pWindow->window),
++                              GDK_WINDOW_XWINDOW( widget_get_window(m_pWindow)),
+                               bOwnerEvents,
+                               PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
+                               GrabModeAsync,
+@@ -2214,7 +2223,7 @@
+     // #i38648# ask for the next motion hint
+     gint x, y;
+     GdkModifierType mask;
+-    gdk_window_get_pointer( pFrame->m_pWindow->window, &x, &y, &mask );
++    gdk_window_get_pointer( widget_get_window(pFrame->m_pWindow) , &x, &y, &mask );
+ }
+ 
+ void GtkSalFrame::Flush()
+@@ -2300,7 +2309,7 @@
+ 		return NULL;
+ 
+ 	X11SalBitmap *pBmp = new X11SalBitmap;
+-	GdkWindow *pWin = m_pWindow->window;
++	GdkWindow *pWin = widget_get_window(m_pWindow);
+ 	if( pBmp->SnapShot( GDK_DISPLAY_XDISPLAY( getGdkDisplay() ),
+ 						GDK_WINDOW_XID( pWin ) ) )
+ 		return pBmp;
+@@ -2362,7 +2371,7 @@
+ 
+ void GtkSalFrame::createNewWindow( XLIB_Window aNewParent, bool bXEmbed, int nScreen )
+ {
+-    bool bWasVisible = GTK_WIDGET_MAPPED(m_pWindow);
++    bool bWasVisible = IS_WIDGET_MAPPED(m_pWindow);
+     if( bWasVisible )
+         Show( FALSE );
+     
+@@ -2407,7 +2416,7 @@
+         m_pIMHandler = NULL;
+     }
+     if( m_pRegion )
+-        gdk_region_destroy( m_pRegion );
++        gdk_region_destroy( m_pRegion );
+     if( m_pFixedContainer )
+         gtk_widget_destroy( GTK_WIDGET(m_pFixedContainer) );
+     if( m_pWindow )
+@@ -2435,7 +2444,7 @@
+     {
+         if( m_aGraphics[i].bInUse )
+         {
+-            m_aGraphics[i].pGraphics->SetDrawable( GDK_WINDOW_XWINDOW(m_pWindow->window), m_nScreen );
++            m_aGraphics[i].pGraphics->SetDrawable( GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)), m_nScreen );
+             m_aGraphics[i].pGraphics->SetWindow( m_pWindow );
+         }
+     }
+@@ -2465,14 +2474,14 @@
+ void GtkSalFrame::ResetClipRegion()
+ {
+     if( m_pWindow )
+-        gdk_window_shape_combine_region( m_pWindow->window, NULL, 0, 0 );
++        gdk_window_shape_combine_region( widget_get_window(m_pWindow), NULL, 0, 0 );
+ }
+ 
+ void GtkSalFrame::BeginSetClipRegion( ULONG )
+ {
+     if( m_pRegion )
+-        gdk_region_destroy( m_pRegion );
+-    m_pRegion = gdk_region_new();
++        gdk_region_destroy( m_pRegion );
++    m_pRegion = gdk_region_new();
+ }
+ 
+ void GtkSalFrame::UnionClipRegion( long nX, long nY, long nWidth, long nHeight )
+@@ -2485,14 +2494,14 @@
+         aRect.width		= nWidth;
+         aRect.height	= nHeight;
+         
+-        gdk_region_union_with_rect( m_pRegion, &aRect );
++        gdk_region_union_with_rect( m_pRegion, &aRect );
+     }
+ }
+ 
+ void GtkSalFrame::EndSetClipRegion()
+ {
+     if( m_pWindow && m_pRegion )
+-        gdk_window_shape_combine_region( m_pWindow->window, m_pRegion, 0, 0 );
++        gdk_window_shape_combine_region( widget_get_window(m_pWindow), m_pRegion, 0, 0 );
+ }
+ 
+ bool GtkSalFrame::Dispatch( const XEvent* pEvent )
+@@ -2506,7 +2515,7 @@
+         if( pEvent->xproperty.atom == nDesktopAtom &&
+             pEvent->xproperty.state == PropertyNewValue )
+         {
+-            m_nWorkArea = pAdaptor->getWindowWorkArea( GDK_WINDOW_XWINDOW( m_pWindow->window) );
++            m_nWorkArea = pAdaptor->getWindowWorkArea( GDK_WINDOW_XWINDOW( widget_get_window(m_pWindow)) );
+         }
+     }
+     else if( pEvent->type == ConfigureNotify )
+@@ -2533,7 +2542,7 @@
+             int x = 0, y = 0;
+             XLIB_Window aChild;
+             XTranslateCoordinates( getDisplay()->GetDisplay(),
+-                                   GDK_WINDOW_XWINDOW( m_pWindow->window),
++                                   GDK_WINDOW_XWINDOW( widget_get_window(m_pWindow) ),
+                                    getDisplay()->GetRootWindow( getDisplay()->GetDefaultScreenNumber() ),
+                                    0, 0,
+                                    &x, &y,
+@@ -2548,7 +2557,7 @@
+     }
+     else if( pEvent->type == ClientMessage &&
+              pEvent->xclient.message_type == getDisplay()->getWMAdaptor()->getAtom( vcl_sal::WMAdaptor::XEMBED ) &&
+-             pEvent->xclient.window == GDK_WINDOW_XWINDOW(m_pWindow->window) &&
++             pEvent->xclient.window == GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)) &&
+              m_bWindowIsGtkPlug
+              )
+     {
+@@ -2560,7 +2569,7 @@
+         {
+             GdkEventFocus aEvent;
+             aEvent.type = GDK_FOCUS_CHANGE;
+-            aEvent.window = m_pWindow->window;
++            aEvent.window = widget_get_window(m_pWindow);
+             aEvent.send_event = TRUE;
+             aEvent.in = (pEvent->xclient.data.l[1] == 1);
+             signalFocus( m_pWindow, &aEvent, this );
+@@ -2575,7 +2584,7 @@
+     if( m_hBackgroundPixmap )
+     {
+         XSetWindowBackgroundPixmap( getDisplay()->GetDisplay(),
+-                                    GDK_WINDOW_XWINDOW(m_pWindow->window),
++                                    GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                                     None );
+         XFreePixmap( getDisplay()->GetDisplay(), m_hBackgroundPixmap );
+         m_hBackgroundPixmap = None;
+@@ -2588,7 +2597,7 @@
+         {
+             m_hBackgroundPixmap =
+                 XCreatePixmap( getDisplay()->GetDisplay(),
+-                               GDK_WINDOW_XWINDOW(m_pWindow->window),
++                               GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                                aSize.Width(),
+                                aSize.Height(),
+                                getDisplay()->GetVisual(m_nScreen).GetDepth() );
+@@ -2604,7 +2613,7 @@
+                                aTwoRect,
+                                getDisplay()->GetCopyGC(m_nScreen) );
+                 XSetWindowBackgroundPixmap( getDisplay()->GetDisplay(),
+-                                            GDK_WINDOW_XWINDOW(m_pWindow->window),
++                                            GDK_WINDOW_XWINDOW(widget_get_window(m_pWindow)),
+                                             m_hBackgroundPixmap );
+             }
+         }
+@@ -2777,7 +2786,7 @@
+ 			// ask for the next hint
+ 			gint x, y;
+ 			GdkModifierType mask;
+-			gdk_window_get_pointer( GTK_WIDGET(pThis->m_pWindow)->window, &x, &y, &mask );
++			gdk_window_get_pointer( widget_get_window(GTK_WIDGET(pThis->m_pWindow)), &x, &y, &mask );
+ 		}
+ 	}
+ 
+@@ -2872,7 +2881,7 @@
+     if( bSetFocus )
+     {
+         XSetInputFocus( pThis->getDisplay()->GetDisplay(),
+-                        GDK_WINDOW_XWINDOW( GTK_WIDGET(pThis->m_pWindow)->window),
++                        GDK_WINDOW_XWINDOW( widget_get_window(GTK_WIDGET(pThis->m_pWindow))),
+                         RevertToParent, CurrentTime );
+     }
+     
+@@ -2920,7 +2929,7 @@
+      */
+     XLIB_Window aChild;
+     XTranslateCoordinates( pThis->getDisplay()->GetDisplay(),
+-                           GDK_WINDOW_XWINDOW(GTK_WIDGET(pThis->m_pWindow)->window),
++                           GDK_WINDOW_XWINDOW(widget_get_window(GTK_WIDGET(pThis->m_pWindow))),
+                            pThis->getDisplay()->GetRootWindow( pThis->getDisplay()->GetDefaultScreenNumber() ),
+                            0, 0,
+                            &x, &y,
+@@ -2954,7 +2963,7 @@
+     if( ! (pThis->m_nStyle & SAL_FRAME_STYLE_PLUG) )
+     {
+         GdkRectangle aRect;
+-        gdk_window_get_frame_extents( GTK_WIDGET(pThis->m_pWindow)->window, &aRect );
++        gdk_window_get_frame_extents( widget_get_window(GTK_WIDGET(pThis->m_pWindow)), &aRect );
+         pThis->maGeometry.nTopDecoration	= y - aRect.y;
+         pThis->maGeometry.nBottomDecoration	= aRect.y + aRect.height - y - pEvent->height;
+         pThis->maGeometry.nLeftDecoration	= x - aRect.x;
+@@ -3165,7 +3174,7 @@
+     *  some time on the Xserver as well as prevent
+     *  some paint issues
+     */
+-    GdkWindow* pWin = GTK_WIDGET(pThis->getWindow())->window;
++    GdkWindow* pWin = widget_get_window(GTK_WIDGET(pThis->getWindow()));
+     if( pWin )
+     {
+         XLIB_Window aWin = GDK_WINDOW_XWINDOW(pWin);
+@@ -3269,7 +3278,7 @@
+                           G_CALLBACK (signalIMPreeditEnd), this );
+ 
+         m_pFrame->getDisplay()->GetXLib()->PushXErrorLevel( true );
+-        gtk_im_context_set_client_window( m_pIMContext, GTK_WIDGET(m_pFrame->m_pWindow)->window );
++        gtk_im_context_set_client_window( m_pIMContext, widget_get_window(GTK_WIDGET(m_pFrame->m_pWindow)) );
+ 		gtk_im_context_focus_in( m_pIMContext );
+         m_pFrame->getDisplay()->GetXLib()->PopXErrorLevel();
+         m_bFocused = true;
+--- fpicker.orig/source/unx/gnome/SalGtkFilePicker.cxx	2010-05-29 21:22:49.000000000 +0100
++++ fpicker/source/unx/gnome/SalGtkFilePicker.cxx	2010-05-29 21:26:05.000000000 +0100
+@@ -602,7 +602,11 @@
+     g_return_if_fail( GTK_IS_DIALOG( pDialog ) );
+ 
+     GList *pChildren = 
++#if GTK_CHECK_VERSION(2,90,0)
++        gtk_container_get_children( GTK_CONTAINER( gtk_dialog_get_action_area(pDialog) ) );
++#else
+         gtk_container_get_children( GTK_CONTAINER( pDialog->action_area ) );
++#endif
+ 
+     for( GList *p = pChildren; p; p = p->next )
+         gtk_widget_destroy( GTK_WIDGET( p->data ) );
+@@ -1600,7 +1604,7 @@
+     
+ 		gtk_image_set_from_pixbuf( GTK_IMAGE( preview ), pixbuf );
+ 		if( pixbuf )
+-			gdk_pixbuf_unref( pixbuf );
++			g_object_unref( pixbuf );
+ 
+ 	}
+ 
+--- libegg.orig/source/eggtrayicon.c	2010-05-29 21:27:29.000000000 +0100
++++ libegg/source/eggtrayicon.c	2010-05-30 12:53:27.000000000 +0100
+@@ -230,6 +230,7 @@
+ {
+   EggTrayIcon *icon = user_data;
+   XEvent *xev = (XEvent *)xevent;
++  (void)event;
+ 
+   if (xev->xany.type == ClientMessage &&
+       xev->xclient.message_type == icon->manager_atom &&
+@@ -280,6 +281,36 @@
+ #endif
+ }
+ 
++static gboolean
++gtk_widget_is_has_window(GtkWidget *widget)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_get_has_window(widget);
++#else
++    return GTK_WIDGET_NO_WINDOW(widget);
++#endif
++}
++
++static gboolean
++gtk_widget_is_app_paintable(GtkWidget *widget)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_get_app_paintable(widget);
++#else
++    return GTK_WIDGET_APP_PAINTABLE(widget);
++#endif
++}
++
++static GdkWindow *
++gtk_widget_window(GtkWidget *widget)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_get_window(widget);
++#else
++    return widget->window;
++#endif
++}
++
+ #ifdef GDK_WINDOWING_X11
+ 
+ static void
+@@ -297,7 +328,7 @@
+   ev.window = window;
+   ev.message_type = icon->system_tray_opcode_atom;
+   ev.format = 32;
+-  ev.data.l[0] = gdk_x11_get_server_time (GTK_WIDGET (icon)->window);
++  ev.data.l[0] = gdk_x11_get_server_time (gtk_widget_window(GTK_WIDGET(icon)));
+   ev.data.l[1] = message;
+   ev.data.l[2] = data1;
+   ev.data.l[3] = data2;
+@@ -322,6 +353,16 @@
+ 				      0, 0);
+ }
+ 
++static gboolean
++gtk_widget_is_realized(GtkWidget *widget)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_get_realized(widget);
++#else
++    return GTK_WIDGET_REALIZED(widget);
++#endif
++}
++
+ static void
+ egg_tray_icon_update_manager_window (EggTrayIcon *icon,
+ 				     gboolean     dock_if_realized)
+@@ -354,7 +395,7 @@
+       
+       gdk_window_add_filter (gdkwin, egg_tray_icon_manager_filter, icon);
+ 
+-      if (dock_if_realized && GTK_WIDGET_REALIZED (icon))
++      if (dock_if_realized && gtk_widget_is_realized (GTK_WIDGET (icon)))
+ 	egg_tray_icon_send_dock_request (icon);
+ 
+       egg_tray_icon_get_orientation_property (icon);
+@@ -383,7 +424,8 @@
+ static gboolean
+ transparent_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+ {
+-  gdk_window_clear_area (widget->window, event->area.x, event->area.y,
++  (void)user_data;
++  gdk_window_clear_area (gtk_widget_window(widget), event->area.x, event->area.y,
+ 			 event->area.width, event->area.height);
+   return FALSE;
+ }
+@@ -392,18 +434,21 @@
+ make_transparent_again (GtkWidget *widget, GtkStyle *previous_style,
+ 			gpointer user_data)
+ {
+-  gdk_window_set_back_pixmap (widget->window, NULL, TRUE);
++  (void)previous_style;
++  (void)user_data;
++  gdk_window_set_back_pixmap (gtk_widget_window(widget), NULL, TRUE);
+ }
+ 
+ static void
+ make_transparent (GtkWidget *widget, gpointer user_data)
+ {
+-  if (GTK_WIDGET_NO_WINDOW (widget) || GTK_WIDGET_APP_PAINTABLE (widget))
++  if (gtk_widget_is_has_window (widget) || gtk_widget_is_app_paintable (widget))
+     return;
+ 
++  (void)user_data;
+   gtk_widget_set_app_paintable (widget, TRUE);
+   gtk_widget_set_double_buffered (widget, FALSE);
+-  gdk_window_set_back_pixmap (widget->window, NULL, TRUE);
++  gdk_window_set_back_pixmap (gtk_widget_window(widget), NULL, TRUE);
+   g_signal_connect (widget, "expose_event",
+ 		    G_CALLBACK (transparent_expose_event), NULL);
+   g_signal_connect_after (widget, "style_set",
+--- libegg.orig/source/eggtrayicon-impl.h	2010-05-29 21:27:29.000000000 +0100
++++ libegg/source/eggtrayicon-impl.h	2010-05-30 12:46:49.000000000 +0100
+@@ -21,7 +21,7 @@
+ #ifndef __EGG_TRAY_ICON_IMPL_H__
+ #define __EGG_TRAY_ICON_IMPL_H__
+ 
+-#include <gtk/gtkplug.h>
++#include <gtk/gtk.h>
+ #ifdef GDK_WINDOWING_X11
+ #include <gdk/gdkx.h>
+ #endif
+--- sfx2.orig/source/appl/shutdowniconunx.cxx	2010-05-29 21:22:29.000000000 +0100
++++ sfx2/source/appl/shutdowniconunx.cxx	2010-05-30 12:59:35.000000000 +0100
+@@ -302,18 +302,34 @@
+ 			 gpointer )
+ {
+ 	GtkRequisition req;
+-	GtkWidget *ebox = GTK_BIN( pTrayIcon )->child;
++	GtkWidget *ebox = gtk_bin_get_child(GTK_BIN( pTrayIcon ));
+ 
+ 	gtk_widget_size_request( GTK_WIDGET( menu ), &req );
++#if GTK_CHECK_VERSION(2,90,0)
++	gdk_window_get_origin( gtk_widget_get_window(ebox), x, y );
++
++	GtkAllocation allocation;
++	gtk_widget_get_allocation(ebox, &allocation);
++
++	(*x) += allocation.x;
++	(*y) += allocation.y;
++#else
+ 	gdk_window_get_origin( ebox->window, x, y );
+ 
+ 	(*x) += ebox->allocation.x;
+ 	(*y) += ebox->allocation.y;
++#endif
+ 
+ 	if (*y >= gdk_screen_get_height (gtk_widget_get_screen (ebox)) / 2)
+ 		(*y) -= req.height;
+ 	else
++	{
++#if GTK_CHECK_VERSION(2,90,0)
++		(*y) += allocation.height;
++#else
+ 		(*y) += ebox->allocation.height;
++#endif
++	}
+ 
+ 	*push_in = TRUE;
+ }
+@@ -372,8 +388,12 @@
+ 	pTrayIcon = egg_tray_icon_new( aLabel );
+ 
+ 	GtkWidget *pParent = gtk_event_box_new();
++#if GTK_CHECK_VERSION(2,90,0)
++	gtk_widget_set_tooltip_text (pParent, aLabel );
++#else
+ 	GtkTooltips *pTooltips = gtk_tooltips_new();
+ 	gtk_tooltips_set_tip( GTK_TOOLTIPS( pTooltips ), pParent, aLabel, NULL );
++#endif
+ 
+ 	GtkWidget *pIconImage = gtk_image_new();
+ 	gtk_container_add( GTK_CONTAINER( pParent ), pIconImage );
+--- vcl.orig/unx/gtk/app/gtkdata.cxx	2010-06-14 19:51:39.500810695 +0100
++++ vcl/unx/gtk/app/gtkdata.cxx	2010-06-15 10:07:16.669799057 +0100
+@@ -217,11 +217,12 @@
+             {
+                 gint nMonitors = gdk_screen_get_n_monitors(pScreen);
+                 m_aXineramaScreens = std::vector<Rectangle>();
++                m_aXineramaScreenIndexMap = std::vector<int>(nMonitors);
+                 for (gint i = 0; i < nMonitors; ++i)
+                 {
+                     GdkRectangle dest;
+                     gdk_screen_get_monitor_geometry(pScreen, i, &dest);
+-                    addXineramaScreenUnique( dest.x, dest.y, dest.width, dest.height );
++                    addXineramaScreenUnique( i, dest.x, dest.y, dest.width, dest.height );
+                 }
+                 m_bXinerama = m_aXineramaScreens.size() > 1;
+                 if( ! m_aFrames.empty() )
+@@ -235,6 +236,35 @@
+     }
+ }
+ 
++extern "C"
++{
++    typedef gint(* screen_get_primary_monitor)(GdkScreen *screen);
++}
++
++int GtkSalDisplay::GetDefaultMonitorNumber() const
++{
++	fprintf(stderr, "GtkSalDisplay::GetDefaultMonitorNumber\n");
++
++    GdkScreen* pScreen = gdk_display_get_screen( m_pGdkDisplay, m_nDefaultScreen );
++#if GTK_CHECK_VERSION(2,20,0)
++    return m_aXineramaScreenIndexMap[gdk_screen_get_primary_monitor(pScreen)];
++#else
++    static screen_get_primary_monitor sym_gdk_screen_get_primary_monitor =
++        (screen_get_primary_monitor)osl_getAsciiFunctionSymbol( GetSalData()->m_pPlugin, "gdk_screen_get_primary_monitor" );
++    if (sym_gdk_screen_get_primary_monitor)
++        return sym_gdk_screen_get_primary_monitor( pScreen );
++    //gdk_screen_get_primary_monitor unavailable, take the first laptop monitor as the default
++    gint nMonitors = gdk_screen_get_n_monitors(pScreen);
++    for (gint i = 0; i < nMonitors; ++i)
++    {
++        fprintf(stderr, "name is %s\n", gdk_screen_get_monitor_plug_name(pScreen, i));
++        if (g_ascii_strncasecmp (gdk_screen_get_monitor_plug_name(pScreen, i), "LVDS", 4) == 0)
++            return m_aXineramaScreenIndexMap[i];
++    }
++    return 0;
++#endif
++}
++
+ void GtkSalDisplay::initScreen( int nScreen ) const
+ {
+     if( nScreen < 0 || nScreen >= static_cast<int>(m_aScreens.size()) )
+--- vcl.orig/unx/inc/saldisp.hxx	2010-06-14 19:51:39.548798785 +0100
++++ vcl/unx/inc/saldisp.hxx	2010-06-15 10:06:53.031798755 +0100
+@@ -389,6 +389,7 @@
+ 
+     bool			m_bXinerama;
+     std::vector< Rectangle > m_aXineramaScreens;
++    std::vector< int > m_aXineramaScreenIndexMap;
+     std::list<SalFrame*> m_aFrames;
+     std::list<SalObject*> m_aSalObjects;
+     
+@@ -404,7 +405,7 @@
+     int             processRandREvent( XEvent* );
+ 
+     void			doDestruct();
+-    void            addXineramaScreenUnique( long i_nX, long i_nY, long i_nWidth, long i_nHeight );
++    void            addXineramaScreenUnique( int i, long i_nX, long i_nY, long i_nWidth, long i_nHeight );
+ public:
+ 	static	SalDisplay	   *GetSalDisplay( Display* display );
+ 	static	BOOL			BestVisual( Display     *pDisp,
+@@ -474,6 +475,7 @@
+ 	XLIB_Window		GetDrawable( int nScreen ) const { return getDataForScreen( nScreen ).m_aRefWindow; }
+ 	Display		   *GetDisplay() const { return pDisp_; }
+ 	int				GetDefaultScreenNumber() const { return m_nDefaultScreen; }
++	virtual int		GetDefaultMonitorNumber() const;
+     const Size&     GetScreenSize( int nScreen ) const { return getDataForScreen( nScreen ).m_aSize; }
+ 	srv_vendor_t	GetServerVendor() const { return meServerVendor; }
+ 	void			SetServerVendor() { meServerVendor = sal_GetServerVendor(pDisp_); }
+--- vcl.orig/unx/source/app/saldisp.cxx	2010-06-14 19:51:39.516798973 +0100
++++ vcl/unx/source/app/saldisp.cxx	2010-06-15 10:12:39.627798619 +0100
+@@ -2592,7 +2592,7 @@
+              sal::static_int_cast< unsigned int >(GetVisual(m_nDefaultScreen).GetVisualId()) );
+ }
+ 
+-void SalDisplay::addXineramaScreenUnique( long i_nX, long i_nY, long i_nWidth, long i_nHeight )
++void SalDisplay::addXineramaScreenUnique( int i, long i_nX, long i_nY, long i_nWidth, long i_nHeight )
+ {
+     // see if any frame buffers are at the same coordinates
+     // this can happen with weird configuration e.g. on
+@@ -2607,10 +2607,12 @@
+                 m_aXineramaScreens[n].GetHeight() < i_nHeight )
+             {
+                 m_aXineramaScreens[n].SetSize( Size( i_nWidth, i_nHeight ) );
++                m_aXineramaScreenIndexMap[i] = n;
+             }
+             return;
+         }
+     }
++    m_aXineramaScreenIndexMap[i] = m_aXineramaScreens.size();
+     m_aXineramaScreens.push_back( Rectangle( Point( i_nX, i_nY ), Size( i_nWidth, i_nHeight ) ) );
+ }
+ 
+@@ -2637,8 +2639,9 @@
+         {
+             m_bXinerama = true;
+             m_aXineramaScreens = std::vector<Rectangle>();
++            m_aXineramaScreenIndexMap = std::vector<int>(nFramebuffers);
+             for( int i = 0; i < nFramebuffers; i++ )
+-                addXineramaScreenUnique( pFramebuffers[i].x,
++                addXineramaScreenUnique( i, pFramebuffers[i].x,
+                                          pFramebuffers[i].y,
+                                          pFramebuffers[i].width,
+                                          pFramebuffers[i].height );
+@@ -2654,9 +2657,10 @@
+         if( nFramebuffers > 1 )
+         {
+             m_aXineramaScreens = std::vector<Rectangle>();
++            m_aXineramaScreenIndexMap = std::vector<int>(nFramebuffers);
+             for( int i = 0; i < nFramebuffers; i++ )
+             {
+-                addXineramaScreenUnique( pScreens[i].x_org,
++                addXineramaScreenUnique( i, pScreens[i].x_org,
+                                          pScreens[i].y_org,
+                                          pScreens[i].width,
+                                          pScreens[i].height );
+@@ -2677,6 +2681,11 @@
+ #endif // USE_XINERAMA
+ }
+ 
++int SalDisplay::GetDefaultMonitorNumber() const
++{
++    return 0;
++}
++
+ void SalDisplay::registerFrame( SalFrame* pFrame )
+ {
+     m_aFrames.push_front( pFrame );
+--- vcl.orig/unx/source/app/salsys.cxx	2010-06-14 19:51:39.515799413 +0100
++++ vcl/unx/source/app/salsys.cxx	2010-06-14 20:28:14.281799292 +0100
+@@ -74,7 +74,7 @@
+ unsigned int X11SalSystem::GetDefaultDisplayNumber()
+ {
+     SalDisplay* pSalDisp = GetX11SalData()->GetDisplay();
+-    return pSalDisp->GetDefaultScreenNumber();
++    return  pSalDisp->IsXinerama() ? pSalDisp->GetDefaultMonitorNumber() : pSalDisp->GetDefaultScreenNumber();
+ }
+ 
+ Rectangle X11SalSystem::GetDisplayScreenPosSizePixel( unsigned int nScreen )
+--- vcl.orig/unx/inc/plugins/gtk/gtkgdi.hxx	2010-06-21 12:34:41.000000000 +0100
++++ vcl/unx/inc/plugins/gtk/gtkgdi.hxx	2010-06-21 13:16:40.000000000 +0100
+@@ -49,7 +49,7 @@
+     virtual             ~GtkSalGraphics();
+     
+     inline GtkWidget*  GetGtkWidget() const { return m_pWindow; }
+-    inline GdkWindow*  GetGdkWindow() const { return m_pWindow->window; }
++    inline GdkWindow*  GetGdkWindow() const { return widget_get_window(m_pWindow); }
+     inline GtkSalFrame* GetGtkFrame() const { return static_cast<GtkSalFrame*>(m_pFrame); }
+     void SetWindow( GtkWidget* window ) { m_pWindow = window; } 
+     
+@@ -127,7 +127,7 @@
+                             const clipList& rClipList,
+                             ControlState nState, const ImplControlValue& aValue,
+ 							const OUString& rCaption );
+-    BOOL NWPaintGTKComboBox( GdkDrawable* gdkDrawable, ControlType nType, ControlPart nPart,
++    BOOL NWPaintGTKComboBoxEntry( GdkDrawable* gdkDrawable, ControlType nType, ControlPart nPart,
+ 							 const Rectangle& rControlRectangle,
+                              const clipList& rClipList,
+                              ControlState nState, const ImplControlValue& aValue,
+@@ -137,11 +137,13 @@
+                             const clipList& rClipList,
+                             ControlState nState, const ImplControlValue& aValue,
+ 							const OUString& rCaption );
+-    BOOL NWPaintGTKListBox( GdkDrawable* gdkDrawable, ControlType nType, ControlPart nPart,
+-							const Rectangle& rControlRectangle,
+-                            const clipList& rClipList,
+-                            ControlState nState, const ImplControlValue& aValue,
+-							const OUString& rCaption );
++    BOOL NWPaintGTKComboBox( GdkDrawable* gdkDrawable,
++                             ControlType nType, ControlPart nPart,
++                             const Rectangle& rControlRectangle,
++                             const clipList& rClipList,
++                             ControlState nState,
++                             const ImplControlValue& aValue,
++                             const OUString& rCaption );
+     
+     BOOL NWPaintGTKToolbar( GdkDrawable* gdkDrawable, ControlType nType, ControlPart nPart,
+ 							const Rectangle& rControlRectangle,
+--- vcl.orig/unx/gtk/gdi/salnativewidgets-gtk.cxx	2010-06-21 12:34:41.000000000 +0100
++++ vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx	2010-06-21 13:19:37.000000000 +0100
+@@ -68,39 +68,45 @@
+ class NWPixmapCache;
+ struct NWFWidgetData
+ {
+-    GtkWidget *	gCacheWindow;
+-    GtkWidget *	gDumbContainer;
++    GtkWidget * gCacheWindow;
++    GtkWidget * gDumbContainer;
+ 
+-    GtkWidget *	gBtnWidget;
+-    GtkWidget *	gRadioWidget;
+-    GtkWidget *	gRadioWidgetSibling;
+-    GtkWidget *	gCheckWidget;
+-    GtkWidget *	gScrollHorizWidget;
+-    GtkWidget *	gScrollVertWidget;
+-    GtkWidget *	gArrowWidget;
+-    GtkWidget *	gDropdownWidget;
+-    GtkWidget *	gEditBoxWidget;
+-    GtkWidget *	gSpinButtonWidget;
+-    GtkWidget *	gNotebookWidget;
+-    GtkWidget *	gOptionMenuWidget;
+-    GtkWidget *	gComboWidget;
+-    GtkWidget *	gScrolledWindowWidget;
+-    GtkWidget *  gToolbarWidget;
+-    GtkWidget *  gToolbarButtonWidget;
+-    GtkWidget *  gToolbarToggleWidget;
+-    GtkWidget *  gHandleBoxWidget;
+-    GtkWidget *  gMenubarWidget;
+-    GtkWidget *  gMenuItemMenubarWidget;
+-    GtkWidget *  gMenuWidget;
+-    GtkWidget *  gMenuItemMenuWidget;
+-    GtkWidget *  gMenuItemCheckMenuWidget;
+-    GtkWidget *  gMenuItemRadioMenuWidget;
+-    GtkWidget *  gImageMenuItem;
+-    GtkWidget *  gTooltipPopup;
+-    GtkWidget *  gProgressBar;
+-    GtkWidget *  gTreeView;
+-    GtkWidget *  gHScale;
+-    GtkWidget *  gVScale;
++    GtkWidget * gBtnWidget;
++    GtkWidget * gRadioWidget;
++    GtkWidget * gRadioWidgetSibling;
++    GtkWidget * gCheckWidget;
++    GtkWidget * gScrollHorizWidget;
++    GtkWidget * gScrollVertWidget;
++    GtkWidget * gArrowWidget;
++    GtkWidget * gDropdownWidget;
++    GtkWidget * gEditBoxWidget;
++    GtkWidget * gSpinButtonWidget;
++    GtkWidget * gNotebookWidget;
++    GtkWidget * gComboBoxEntryWidget;
++    GtkWidget * gComboBoxEntry_EntryWidget;
++    GtkWidget * gComboBoxEntry_ButtonWidget;
++    GtkWidget * gComboBoxEntry_ArrowWidget;
++    GtkWidget * gComboBoxWidget;
++    GtkWidget * gComboBox_ButtonWidget;
++    GtkWidget * gComboBox_SeparatorWidget;
++    GtkWidget * gComboBox_ArrowWidget;
++    GtkWidget * gScrolledWindowWidget;
++    GtkWidget * gToolbarWidget;
++    GtkWidget * gToolbarButtonWidget;
++    GtkWidget * gToolbarToggleWidget;
++    GtkWidget * gHandleBoxWidget;
++    GtkWidget * gMenubarWidget;
++    GtkWidget * gMenuItemMenubarWidget;
++    GtkWidget * gMenuWidget;
++    GtkWidget * gMenuItemMenuWidget;
++    GtkWidget * gMenuItemCheckMenuWidget;
++    GtkWidget * gMenuItemRadioMenuWidget;
++    GtkWidget * gImageMenuItem;
++    GtkWidget * gTooltipPopup;
++    GtkWidget * gProgressBar;
++    GtkWidget * gTreeView;
++    GtkWidget * gHScale;
++    GtkWidget * gVScale;
+ 
+     NWPixmapCacheList* gNWPixmapCacheList;
+     NWPixmapCache* gCacheTabItems;
+@@ -120,8 +126,14 @@
+         gEditBoxWidget( NULL ),
+         gSpinButtonWidget( NULL ),
+         gNotebookWidget( NULL ),
+-        gOptionMenuWidget( NULL ),
+-        gComboWidget( NULL ),
++        gComboBoxEntryWidget( NULL ),
++        gComboBoxEntry_EntryWidget( NULL ),
++        gComboBoxEntry_ButtonWidget( NULL ),
++        gComboBoxEntry_ArrowWidget( NULL ),
++        gComboBoxWidget( NULL ),
++        gComboBox_ButtonWidget( NULL ),
++        gComboBox_SeparatorWidget( NULL ),
++        gComboBox_ArrowWidget( NULL ),
+         gScrolledWindowWidget( NULL ),
+         gToolbarWidget( NULL ),
+         gToolbarButtonWidget( NULL ),
+@@ -148,29 +160,29 @@
+ // Keep a hash table of Widgets->default flags so that we can
+ // easily and quickly reset each to a default state before using
+ // them
+-static std::hash_map<long, guint>	gWidgetDefaultFlags;
++static std::hash_map<long, guint>   gWidgetDefaultFlags;
+ static std::vector<NWFWidgetData>   gWidgetData;
+ 
+-static const GtkBorder aDefDefBorder		= { 1, 1, 1, 1 };
++static const GtkBorder aDefDefBorder        = { 1, 1, 1, 1 };
+ 
+ // Some GTK defaults
+-#define MIN_ARROW_SIZE					11
+-#define BTN_CHILD_SPACING				1
+-#define MIN_SPIN_ARROW_WIDTH				6
+-
+-
+-static void NWEnsureGTKRadio			( int nScreen );
+-static void NWEnsureGTKButton			( int nScreen );
+-static void NWEnsureGTKCheck			( int nScreen );
+-static void NWEnsureGTKScrollbars		( int nScreen );
+-static void NWEnsureGTKArrow			( int nScreen );
+-static void NWEnsureGTKEditBox			( int nScreen );
+-static void NWEnsureGTKSpinButton		( int nScreen );
+-static void NWEnsureGTKNotebook			( int nScreen );
+-static void NWEnsureGTKOptionMenu		( int nScreen );
+-static void NWEnsureGTKCombo			( int nScreen );
+-static void NWEnsureGTKScrolledWindow	( int nScreen );
+-static void NWEnsureGTKToolbar			( int nScreen );
++#define MIN_ARROW_SIZE                  11
++#define BTN_CHILD_SPACING               1
++#define MIN_SPIN_ARROW_WIDTH                6
++
++
++static void NWEnsureGTKRadio            ( int nScreen );
++static void NWEnsureGTKButton           ( int nScreen );
++static void NWEnsureGTKCheck            ( int nScreen );
++static void NWEnsureGTKScrollbars       ( int nScreen );
++static void NWEnsureGTKArrow            ( int nScreen );
++static void NWEnsureGTKEditBox          ( int nScreen );
++static void NWEnsureGTKSpinButton       ( int nScreen );
++static void NWEnsureGTKNotebook         ( int nScreen );
++static void NWEnsureGTKComboBoxEntry    ( int nScreen );
++static void NWEnsureGTKComboBox         ( int nScreen );
++static void NWEnsureGTKScrolledWindow   ( int nScreen );
++static void NWEnsureGTKToolbar          ( int nScreen );
+ static void NWEnsureGTKMenubar          ( int nScreen );
+ static void NWEnsureGTKMenu             ( int nScreen );
+ static void NWEnsureGTKTooltip          ( int nScreen );
+@@ -210,14 +222,10 @@
+                             ControlState nState, const ImplControlValue& aValue,
+                             const OUString& rCaption );
+ //---
+-static Rectangle NWGetComboBoxButtonRect( int nScreen, ControlType nType, ControlPart nPart, Rectangle aAreaRect, ControlState nState,
++static Rectangle NWGetComboBoxEntryButtonRect( int nScreen, ControlType nType, ControlPart nPart, Rectangle aAreaRect, ControlState nState,
+                             const ImplControlValue& aValue, const OUString& rCaption );
+ 
+-//---
+-static Rectangle NWGetListBoxButtonRect( int nScreen, ControlType nType, ControlPart nPart, Rectangle aAreaRect, ControlState nState,
+-                            const ImplControlValue& aValue, const OUString& rCaption );
+-
+-static Rectangle NWGetListBoxIndicatorRect( int nScreen, ControlType nType, ControlPart nPart, Rectangle aAreaRect, ControlState nState,
++static Rectangle NWGetComboBoxButtonRect( int nScreen, ControlType nType, ControlPart nPart, Rectangle aAreaRect, ControlState nState,
+                             const ImplControlValue& aValue, const OUString& rCaption );
+ 
+ static Rectangle NWGetToolbarRect( int nScreen,
+@@ -229,7 +237,7 @@
+                                    const OUString& rCaption );
+ //---
+ 
+-static Rectangle NWGetScrollButtonRect(	int nScreen, ControlPart nPart, Rectangle aAreaRect );
++static Rectangle NWGetScrollButtonRect( int nScreen, ControlPart nPart, Rectangle aAreaRect );
+ //---
+                                 
+ /*********************************************************
+@@ -298,7 +306,6 @@
+         g_object_ref( m_pixmap );
+ }
+ 
+-
+ NWPixmapCache::NWPixmapCache( int nScreen )
+ {
+     m_idx = 0;
+@@ -308,25 +315,25 @@
+     if( gWidgetData[m_screen].gNWPixmapCacheList )
+         gWidgetData[m_screen].gNWPixmapCacheList->AddCache(this);
+ } 
++
+ NWPixmapCache::~NWPixmapCache()
+ {
+     if( gWidgetData[m_screen].gNWPixmapCacheList )
+         gWidgetData[m_screen].gNWPixmapCacheList->RemoveCache(this);
+     delete[] pData;
+ }
++
+ void NWPixmapCache::ThemeChanged()
+ {
+     // throw away cached pixmaps
+-    int i;
+-    for(i=0; i<m_size; i++)
++    for(int i=0; i<m_size; i++)
+         pData[i].SetPixmap( NULL );
+ }
+ 
+-BOOL  NWPixmapCache::Find( ControlType aType, ControlState aState, const Rectangle& r_pixmapRect, GdkPixmap** pPixmap )
++BOOL NWPixmapCache::Find( ControlType aType, ControlState aState, const Rectangle& r_pixmapRect, GdkPixmap** pPixmap )
+ {
+     aState &= ~CTRL_CACHING_ALLOWED; // mask clipping flag
+-    int i;
+-    for(i=0; i<m_size; i++)
++    for(int i=0; i<m_size; i++)
+     {
+         if( pData[i].m_nType == aType &&
+             pData[i].m_nState == aState &&    
+@@ -354,11 +361,11 @@
+     pData[m_idx].SetPixmap( pPixmap );
+ }
+ 
+-
+ void NWPixmapCacheList::AddCache( NWPixmapCache* pCache )
+ {
+     mCaches.push_back( pCache );
+ }
++
+ void NWPixmapCacheList::RemoveCache( NWPixmapCache* pCache )
+ {
+     ::std::vector< NWPixmapCache* >::iterator p;
+@@ -366,6 +373,7 @@
+     if( p != mCaches.end() )
+         mCaches.erase( p );
+ }
++
+ void NWPixmapCacheList::ThemeChanged( )
+ {
+     ::std::vector< NWPixmapCache* >::iterator p = mCaches.begin();
+@@ -382,10 +390,10 @@
+  *********************************************************/
+ inline void NW_gtk_border_set_from_border( GtkBorder& aDst, const GtkBorder * pSrc )
+ {
+-    aDst.left		= pSrc->left;
+-    aDst.top		= pSrc->top;
+-    aDst.right	= pSrc->right;
+-    aDst.bottom	= pSrc->bottom;
++    aDst.left       = pSrc->left;
++    aDst.top        = pSrc->top;
++    aDst.right  = pSrc->right;
++    aDst.bottom = pSrc->bottom;
+ }
+ 
+ 
+@@ -536,40 +544,40 @@
+ BOOL GtkSalGraphics::IsNativeControlSupported( ControlType nType, ControlPart nPart )
+ {
+     if (
+-        ((nType==CTRL_PUSHBUTTON)  && (nPart==PART_ENTIRE_CONTROL)) 	||
+-         ((nType==CTRL_RADIOBUTTON) && (nPart==PART_ENTIRE_CONTROL))		||
+-        ((nType==CTRL_CHECKBOX)    && (nPart==PART_ENTIRE_CONTROL))		||
++        ((nType==CTRL_PUSHBUTTON)  && (nPart==PART_ENTIRE_CONTROL))     ||
++        ((nType==CTRL_RADIOBUTTON) && (nPart==PART_ENTIRE_CONTROL))     ||
++        ((nType==CTRL_CHECKBOX)    && (nPart==PART_ENTIRE_CONTROL))     ||
+         ((nType==CTRL_SCROLLBAR) &&
+                 (  (nPart==PART_DRAW_BACKGROUND_HORZ)
+                 || (nPart==PART_DRAW_BACKGROUND_VERT)
+                 || (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==HAS_THREE_BUTTONS) )  				)	||
++                || (nPart==HAS_THREE_BUTTONS) )                 )   ||
+         ((nType==CTRL_EDITBOX) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==HAS_BACKGROUND_TEXTURE) ) 			)	||
++                || (nPart==HAS_BACKGROUND_TEXTURE) )            )   ||
+         ((nType==CTRL_MULTILINE_EDITBOX) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==HAS_BACKGROUND_TEXTURE) ) 			)	||
++                || (nPart==HAS_BACKGROUND_TEXTURE) )            )   ||
+         ((nType==CTRL_SPINBOX) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+                 || (nPart==PART_ALL_BUTTONS)
+-                || (nPart==HAS_BACKGROUND_TEXTURE) )			)	||
++                || (nPart==HAS_BACKGROUND_TEXTURE) )            )   ||
+         ((nType==CTRL_SPINBUTTONS) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==PART_ALL_BUTTONS)	)				)	||
++                || (nPart==PART_ALL_BUTTONS)    )               )   ||
+         ((nType==CTRL_COMBOBOX) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==HAS_BACKGROUND_TEXTURE)	)			)	||
++                || (nPart==HAS_BACKGROUND_TEXTURE)  )           )   ||
+         (((nType==CTRL_TAB_ITEM) || (nType==CTRL_TAB_PANE) ||
+           (nType==CTRL_TAB_BODY) || (nType==CTRL_FIXEDBORDER)) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+-                || (nPart==PART_TABS_DRAW_RTL) )				)	||
++                || (nPart==PART_TABS_DRAW_RTL) )                )   ||
+         ((nType==CTRL_LISTBOX) &&
+                 (  (nPart==PART_ENTIRE_CONTROL)
+                 || (nPart==PART_WINDOW)
+-                || (nPart==HAS_BACKGROUND_TEXTURE) )			)   ||
++                || (nPart==HAS_BACKGROUND_TEXTURE) )            )   ||
+         ((nType == CTRL_TOOLBAR) &&
+-                 (	(nPart==PART_ENTIRE_CONTROL)
++                (   (nPart==PART_ENTIRE_CONTROL)
+                 ||  (nPart==PART_DRAW_BACKGROUND_HORZ)
+                 ||  (nPart==PART_DRAW_BACKGROUND_VERT)
+                 ||  (nPart==PART_THUMB_HORZ)
+@@ -638,7 +646,7 @@
+         gtk_widget_style_get( gWidgetData[m_nScreen].gScrollHorizWidget, "has-forward-stepper", &has_forward,
+                                         "has-secondary-forward-stepper", &has_forward2,
+                                         "has-backward-stepper", &has_backward,
+-                                           "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
++                                        "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
+         Rectangle aForward;
+         Rectangle aBackward;
+ 
+@@ -738,7 +746,7 @@
+         return drawNativeMixedStateCheck( nType, nPart, rControlRegion, nState, aValue, rCaption );
+     }
+ 
+-    BOOL			returnVal = FALSE;
++    BOOL            returnVal = FALSE;
+     // get a GC with current clipping region set
+     SelectFont();
+     
+@@ -828,12 +836,9 @@
+     {
+         returnVal = NWPaintGTKSpinBox( nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
+     }
+-    else if ( (nType == CTRL_COMBOBOX) &&
+-        ( (nPart==PART_ENTIRE_CONTROL)
+-        ||(nPart==PART_BUTTON_DOWN)
+-        ) )
++    else if ( (nType == CTRL_COMBOBOX) && ((nPart==PART_ENTIRE_CONTROL) || (nPart==PART_BUTTON_DOWN)) )
+     {
+-        returnVal = NWPaintGTKComboBox( gdkDrawable, nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
++        returnVal = NWPaintGTKComboBoxEntry( gdkDrawable, nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
+     }
+     else if ( (nType==CTRL_TAB_ITEM) || (nType==CTRL_TAB_PANE) || (nType==CTRL_TAB_BODY) || (nType==CTRL_FIXEDBORDER) )
+     {
+@@ -844,7 +849,7 @@
+     }
+     else if ( (nType==CTRL_LISTBOX) && ((nPart==PART_ENTIRE_CONTROL) || (nPart==PART_WINDOW)) )
+     {
+-        returnVal = NWPaintGTKListBox( gdkDrawable, nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
++        returnVal = NWPaintGTKComboBox( gdkDrawable, nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
+     }
+     else if ( (nType== CTRL_TOOLBAR) )
+     {
+@@ -1001,7 +1006,7 @@
+     }
+     if ( (nType==CTRL_COMBOBOX) && ((nPart==PART_BUTTON_DOWN) || (nPart==PART_SUB_EDIT)) )
+     {
+-        rNativeBoundingRegion = NWGetComboBoxButtonRect( m_nScreen, nType, nPart, rControlRegion, nState,
++        rNativeBoundingRegion = NWGetComboBoxEntryButtonRect( m_nScreen, nType, nPart, rControlRegion, nState,
+         aValue, rCaption );
+         rNativeContentRegion = rNativeBoundingRegion;
+         
+@@ -1018,7 +1023,7 @@
+     }
+     if ( (nType==CTRL_LISTBOX) && ((nPart==PART_BUTTON_DOWN) || (nPart==PART_SUB_EDIT)) )
+     {
+-        rNativeBoundingRegion = NWGetListBoxButtonRect( m_nScreen, nType, nPart, rControlRegion, nState,
++        rNativeBoundingRegion = NWGetComboBoxButtonRect( m_nScreen, nType, nPart, rControlRegion, nState,
+         aValue, rCaption );
+         rNativeContentRegion = rNativeBoundingRegion;
+         
+@@ -1148,16 +1153,16 @@
+             ControlState nState, const ImplControlValue&,
+             const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    gboolean		interiorFocus;
+-    gint			focusWidth;
+-    gint			focusPad;
+-    BOOL			bDrawFocus = TRUE;
+-    gint			x, y, w, h;
+-    GtkBorder		aDefBorder;
+-    GtkBorder*		pBorder;
+-    GdkRectangle	clipRect;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    gboolean        interiorFocus;
++    gint            focusWidth;
++    gint            focusPad;
++    BOOL            bDrawFocus = TRUE;
++    gint            x, y, w, h;
++    GtkBorder       aDefBorder;
++    GtkBorder*      pBorder;
++    GdkRectangle    clipRect;
+     
+     NWEnsureGTKButton( m_nScreen );
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+@@ -1168,10 +1173,10 @@
+     h = rControlRectangle.GetHeight();
+ 
+     // Grab some button style attributes
+-    gtk_widget_style_get( gWidgetData[m_nScreen].gBtnWidget,	"focus-line-width",	&focusWidth,
+-                                "focus-padding", 	&focusPad,
+-                                 "interior_focus",	&interiorFocus,
+-                                "default_border",	&pBorder,
++    gtk_widget_style_get( gWidgetData[m_nScreen].gBtnWidget,    "focus-line-width", &focusWidth,
++                                "focus-padding",    &focusPad,
++                                "interior_focus",   &interiorFocus,
++                                "default_border",   &pBorder,
+                                 (char *)NULL );
+ 
+     // Make sure the border values exist, otherwise use some defaults
+@@ -1261,21 +1266,21 @@
+                                   ControlType, ControlPart, Rectangle aAreaRect, ControlState nState,
+                                   const ImplControlValue&, const OUString& )
+ {
+-    gboolean		interiorFocus;
+-    gint			focusWidth;
+-    gint			focusPad;
+-    GtkBorder		aDefBorder;
+-    GtkBorder *	pBorder;
+-    BOOL			bDrawFocus = TRUE;
+-    Rectangle		aRect;
+-    gint			x, y, w, h;
++    gboolean        interiorFocus;
++    gint            focusWidth;
++    gint            focusPad;
++    GtkBorder       aDefBorder;
++    GtkBorder * pBorder;
++    BOOL            bDrawFocus = TRUE;
++    Rectangle       aRect;
++    gint            x, y, w, h;
+ 
+     NWEnsureGTKButton( nScreen );
+     gtk_widget_style_get( gWidgetData[nScreen].gBtnWidget,
+-                                "focus-line-width",	&focusWidth,
+-                                "focus-padding", 	&focusPad,
+-                                 "interior_focus",	&interiorFocus,
+-                                "default_border",	&pBorder,
++                                "focus-line-width", &focusWidth,
++                                "focus-padding",    &focusPad,
++                                "interior_focus",   &interiorFocus,
++                                "default_border",   &pBorder,
+                                 (char *)NULL );
+ 
+     // Make sure the border values exist, otherwise use some defaults
+@@ -1318,11 +1323,11 @@
+                                       const ImplControlValue& aValue,
+                                       const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    BOOL			isChecked = (aValue.getTristateVal()==BUTTONVALUE_ON);
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    BOOL            isChecked = (aValue.getTristateVal()==BUTTONVALUE_ON);
+     gint            x, y;
+-    GdkRectangle	clipRect;
++    GdkRectangle    clipRect;
+    
+     NWEnsureGTKButton( m_nScreen );
+     NWEnsureGTKRadio( m_nScreen );
+@@ -1376,11 +1381,11 @@
+                                       const ImplControlValue& aValue,
+                                       const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    BOOL			isChecked = (aValue.getTristateVal()==BUTTONVALUE_ON) ? TRUE : FALSE;
+-    GdkRectangle	clipRect;
+-    gint			x,y;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    BOOL            isChecked = (aValue.getTristateVal()==BUTTONVALUE_ON) ? TRUE : FALSE;
++    GdkRectangle    clipRect;
++    gint            x,y;
+ 
+     NWEnsureGTKButton( m_nScreen );
+     NWEnsureGTKCheck( m_nScreen );
+@@ -1497,7 +1502,7 @@
+     gtk_widget_style_get( gWidgetData[m_nScreen].gScrollHorizWidget, "has-forward-stepper", &has_forward,
+                                       "has-secondary-forward-stepper", &has_forward2,
+                                       "has-backward-stepper", &has_backward,
+-                                         "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
++                                      "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
+     gint magic = trough_border ? 1 : 0;
+     gint nFirst = 0;
+ 
+@@ -1677,7 +1682,7 @@
+     if ( has_backward )
+     {
+         NWConvertVCLStateToGTKState( pScrollbarVal->mnButton1State, &stateType, &shadowType );
+-        if ( stateType == GTK_STATE_INSENSITIVE )	stateType = GTK_STATE_NORMAL;
++        if ( stateType == GTK_STATE_INSENSITIVE )   stateType = GTK_STATE_NORMAL;
+         gtk_paint_box( style, gdkDrawable, stateType, shadowType, 
+                        gdkRect, GTK_WIDGET(scrollbarWidget), "stepper",
+                        x+hShim+button11BoundRect.Left(), y+vShim+button11BoundRect.Top(), 
+@@ -1692,7 +1697,7 @@
+     if ( has_forward2 )
+     {
+         NWConvertVCLStateToGTKState( pScrollbarVal->mnButton2State, &stateType, &shadowType );
+-        if ( stateType == GTK_STATE_INSENSITIVE )	stateType = GTK_STATE_NORMAL;
++        if ( stateType == GTK_STATE_INSENSITIVE )   stateType = GTK_STATE_NORMAL;
+         gtk_paint_box( style, gdkDrawable, stateType, shadowType, 
+                        gdkRect, GTK_WIDGET(scrollbarWidget), "stepper",
+                        x+hShim+button12BoundRect.Left(), y+vShim+button12BoundRect.Top(), 
+@@ -1708,7 +1713,7 @@
+     if ( has_backward2 )
+     {
+         NWConvertVCLStateToGTKState( pScrollbarVal->mnButton1State, &stateType, &shadowType );
+-        if ( stateType == GTK_STATE_INSENSITIVE )	stateType = GTK_STATE_NORMAL;
++        if ( stateType == GTK_STATE_INSENSITIVE )   stateType = GTK_STATE_NORMAL;
+         gtk_paint_box( style, gdkDrawable, stateType, shadowType, gdkRect, 
+                        GTK_WIDGET(scrollbarWidget), "stepper",
+                        x+hShim+button21BoundRect.Left(), y+vShim+button21BoundRect.Top(), 
+@@ -1723,7 +1728,7 @@
+     if ( has_forward )
+     {
+         NWConvertVCLStateToGTKState( pScrollbarVal->mnButton2State, &stateType, &shadowType );
+-        if ( stateType == GTK_STATE_INSENSITIVE )	stateType = GTK_STATE_NORMAL;
++        if ( stateType == GTK_STATE_INSENSITIVE )   stateType = GTK_STATE_NORMAL;
+         gtk_paint_box( style, gdkDrawable, stateType, shadowType, gdkRect, 
+                        GTK_WIDGET(scrollbarWidget), "stepper",
+                        x+hShim+button22BoundRect.Left(), y+vShim+button22BoundRect.Top(), 
+@@ -1748,7 +1753,7 @@
+ 
+ //---
+ 
+-static Rectangle NWGetScrollButtonRect(	int nScreen, ControlPart nPart, Rectangle aAreaRect )
++static Rectangle NWGetScrollButtonRect( int nScreen, ControlPart nPart, Rectangle aAreaRect )
+ {
+     gint slider_width;
+     gint stepper_size;
+@@ -1762,7 +1767,7 @@
+                                       "slider-width", &slider_width,
+                                       "stepper-size", &stepper_size,
+                                       "trough-border", &trough_border,
+-                                         "stepper-spacing", &stepper_spacing, (char *)NULL );
++                                      "stepper-spacing", &stepper_spacing, (char *)NULL );
+ 
+     gboolean has_forward;
+     gboolean has_forward2;
+@@ -1773,7 +1778,7 @@
+                                       "has-forward-stepper", &has_forward,
+                                       "has-secondary-forward-stepper", &has_forward2,
+                                       "has-backward-stepper", &has_backward,
+-                                         "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
++                                      "has-secondary-backward-stepper", &has_backward2, (char *)NULL );
+     gint       buttonWidth;
+     gint       buttonHeight;
+     Rectangle  buttonRect;
+@@ -1839,7 +1844,7 @@
+                                         const ImplControlValue& aValue,
+                                         const OUString& rCaption )
+ {
+-    Rectangle		pixmapRect;
++    Rectangle       pixmapRect;
+     GdkRectangle    clipRect;
+     
+     // Find the overall bounding rect of the buttons's drawing area,
+@@ -1872,16 +1877,16 @@
+                                         const ImplControlValue&,
+                                         const OUString& )
+ {
+-    Rectangle		pixmapRect = aAreaRect;
+-    gboolean		interiorFocus;
+-    gint			focusWidth;
++    Rectangle       pixmapRect = aAreaRect;
++    gboolean        interiorFocus;
++    gint            focusWidth;
+ 
+     NWEnsureGTKEditBox( nScreen );
+ 
+     // Grab some entry style attributes
+     gtk_widget_style_get( gWidgetData[nScreen].gEditBoxWidget,
+-                                    "focus-line-width",	&focusWidth,
+-                                     "interior-focus",	&interiorFocus, (char *)NULL );
++                                    "focus-line-width", &focusWidth,
++                                    "interior-focus",   &interiorFocus, (char *)NULL );
+ 
+     if ( !interiorFocus )
+     {
+@@ -1898,24 +1903,24 @@
+  * All coordinates should be local to the Pixmap, NOT
+  * screen/window coordinates.
+  */
+-static void NWPaintOneEditBox(	int nScreen,
++static void NWPaintOneEditBox(  int nScreen,
+                                 GdkDrawable * gdkDrawable,
+-                                GdkRectangle *	gdkRect,
+-                                ControlType			nType,
++                                GdkRectangle *  gdkRect,
++                                ControlType         nType,
+                                 ControlPart,
+-                                Rectangle				aEditBoxRect,
+-                                ControlState			nState,
++                                Rectangle               aEditBoxRect,
++                                ControlState            nState,
+                                 const ImplControlValue&,
+                                 const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
+     GtkWidget      *widget;
+ 
+     NWEnsureGTKButton( nScreen );
+     NWEnsureGTKEditBox( nScreen );
+     NWEnsureGTKSpinButton( nScreen );
+-    NWEnsureGTKCombo( nScreen );
++    NWEnsureGTKComboBoxEntry( nScreen );
+     NWEnsureGTKScrolledWindow( nScreen );
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+ 
+@@ -1928,14 +1933,13 @@
+         case CTRL_SPINBOX:
+             widget = gWidgetData[nScreen].gSpinButtonWidget;
+             break;
+-
+         case CTRL_MULTILINE_EDITBOX:
+             widget = gWidgetData[nScreen].gScrolledWindowWidget;
+             break;
++        case CTRL_LISTBOX:
+         case CTRL_COMBOBOX:
+-            widget = GTK_COMBO(gWidgetData[nScreen].gComboWidget)->entry;
++            widget = gWidgetData[nScreen].gComboBoxEntry_EntryWidget;
+             break;
+-
+         default:
+             widget = gWidgetData[nScreen].gEditBoxWidget;
+             break;
+@@ -2067,14 +2071,14 @@
+ 
+ static Rectangle NWGetSpinButtonRect( int nScreen,
+                                       ControlType,
+-                                      ControlPart			nPart,
+-                                      Rectangle 			aAreaRect,
++                                      ControlPart           nPart,
++                                      Rectangle             aAreaRect,
+                                       ControlState,
+                                       const ImplControlValue&,
+                                       const OUString& )
+ {
+-    gint			buttonSize;
+-    Rectangle		buttonRect;
++    gint            buttonSize;
++    Rectangle       buttonRect;
+ 
+     NWEnsureGTKSpinButton( nScreen );
+ 
+@@ -2151,7 +2155,9 @@
+ 
+ //-------------------------------------
+ 
+-BOOL GtkSalGraphics::NWPaintGTKComboBox( GdkDrawable* gdkDrawable,
++#define ARROW_EXTENT        0.7
++
++BOOL GtkSalGraphics::NWPaintGTKComboBoxEntry( GdkDrawable* gdkDrawable,
+                                          ControlType nType, ControlPart nPart,
+                                          const Rectangle& rControlRectangle,
+                                          const clipList& rClipList,
+@@ -2159,17 +2165,16 @@
+                                          const ImplControlValue& aValue,
+                                          const OUString& rCaption )
+ {
+-    Rectangle		pixmapRect;
+-    Rectangle		buttonRect;
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    Rectangle		arrowRect;
+-    gint			x,y;
+-    GdkRectangle	clipRect;
++    Rectangle       pixmapRect;
++    Rectangle       buttonRect;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    Rectangle       arrowRect;
++    gint            x,y;
++    GdkRectangle    clipRect;
+ 
+     NWEnsureGTKButton( m_nScreen );
+-    NWEnsureGTKArrow( m_nScreen );
+-    NWEnsureGTKCombo( m_nScreen );
++    NWEnsureGTKComboBoxEntry( m_nScreen );
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+ 
+     // Find the overall bounding rect of the buttons's drawing area,
+@@ -2179,17 +2184,15 @@
+     y = rControlRectangle.Top();
+ 
+     NWSetWidgetState( gWidgetData[m_nScreen].gBtnWidget, nState, stateType );
+-    NWSetWidgetState( gWidgetData[m_nScreen].gComboWidget, nState, stateType );
+-    NWSetWidgetState( gWidgetData[m_nScreen].gArrowWidget, nState, stateType );
++    NWSetWidgetState( gWidgetData[m_nScreen].gComboBoxEntryWidget, nState, stateType );
+ 
+-    buttonRect = NWGetComboBoxButtonRect( m_nScreen, nType, PART_BUTTON_DOWN, pixmapRect, nState, aValue, rCaption );
++    buttonRect = NWGetComboBoxEntryButtonRect( m_nScreen, nType, PART_BUTTON_DOWN, pixmapRect, nState, aValue, rCaption );
+     if( nPart == PART_BUTTON_DOWN )
+         buttonRect.Left() += 1;
+ 
+-    Rectangle		aEditBoxRect( pixmapRect );
++    Rectangle       aEditBoxRect( pixmapRect );
+     aEditBoxRect.SetSize( Size( pixmapRect.GetWidth() - buttonRect.GetWidth(), aEditBoxRect.GetHeight() ) );
+ 
+-    #define ARROW_EXTENT		0.7
+     arrowRect.SetSize( Size( (gint)(MIN_ARROW_SIZE * ARROW_EXTENT),
+                              (gint)(MIN_ARROW_SIZE * ARROW_EXTENT) ) );
+     arrowRect.SetPos( Point( buttonRect.Left() + (gint)((buttonRect.GetWidth() - arrowRect.GetWidth()) / 2),
+@@ -2212,14 +2215,14 @@
+                             x+(buttonRect.Left() - pixmapRect.Left()), 
+                             y+(buttonRect.Top() - pixmapRect.Top()),
+                             buttonRect.GetWidth(), buttonRect.GetHeight() );
+-        gtk_paint_box( GTK_COMBO(gWidgetData[m_nScreen].gComboWidget)->button->style, gdkDrawable, stateType, shadowType,
+-                       &clipRect, GTK_COMBO(gWidgetData[m_nScreen].gComboWidget)->button, "button",
++        gtk_paint_box( gWidgetData[m_nScreen].gComboBoxEntry_ButtonWidget->style, gdkDrawable, stateType, shadowType,
++                       &clipRect, gWidgetData[m_nScreen].gComboBoxEntry_ButtonWidget, "button",
+                        x+(buttonRect.Left() - pixmapRect.Left()), 
+                        y+(buttonRect.Top() - pixmapRect.Top()),
+                        buttonRect.GetWidth(), buttonRect.GetHeight() );
+ 
+-        gtk_paint_arrow( gWidgetData[m_nScreen].gArrowWidget->style, gdkDrawable, stateType, shadowType,
+-                         &clipRect, gWidgetData[m_nScreen].gArrowWidget, "arrow", GTK_ARROW_DOWN, TRUE,
++        gtk_paint_arrow( gWidgetData[m_nScreen].gComboBoxEntry_ArrowWidget->style, gdkDrawable, stateType, shadowType,
++                         &clipRect, gWidgetData[m_nScreen].gComboBoxEntry_ArrowWidget, "arrow", GTK_ARROW_DOWN, TRUE,
+                          x+(arrowRect.Left() - pixmapRect.Left()), y+(arrowRect.Top() - pixmapRect.Top()),
+                          arrowRect.GetWidth(), arrowRect.GetHeight() );
+     }
+@@ -2227,32 +2230,147 @@
+     return( TRUE );
+ }
+ 
++BOOL GtkSalGraphics::NWPaintGTKComboBox( GdkDrawable* gdkDrawable,
++                                         ControlType nType, ControlPart nPart,
++                                         const Rectangle& rControlRectangle,
++                                         const clipList& rClipList,
++                                         ControlState nState, 
++                                         const ImplControlValue& aValue,
++                                         const OUString& rCaption )
++{
++    Rectangle       pixmapRect;
++    Rectangle       buttonRect;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    Rectangle       arrowRect;
++    gint            x,y;
++    GdkRectangle    clipRect;
++
++    NWEnsureGTKButton( m_nScreen );
++    NWEnsureGTKComboBox( m_nScreen );
++    NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
++
++    // Find the overall bounding rect of the buttons's drawing area,
++    // plus its actual draw rect excluding adornment
++    pixmapRect = rControlRectangle;
++    if ( nPart == PART_WINDOW )
++    {
++        // Make the widget a _bit_ bigger
++        pixmapRect.SetPos( Point( pixmapRect.Left() - 1,
++                                  pixmapRect.Top() - 1 ) );
++        pixmapRect.SetSize( Size( pixmapRect.GetWidth() + 2,
++                                  pixmapRect.GetHeight() + 2 ) );
++    }
++    x = pixmapRect.Left();
++    y = pixmapRect.Top();
++
++    NWSetWidgetState( gWidgetData[m_nScreen].gBtnWidget, nState, stateType );
++    NWSetWidgetState( gWidgetData[m_nScreen].gComboBoxWidget, nState, stateType );
++
++    buttonRect = NWGetComboBoxButtonRect( m_nScreen, nType, PART_BUTTON_DOWN, pixmapRect, nState, aValue, rCaption );
++    if( nPart == PART_BUTTON_DOWN )
++        buttonRect.Left() += 1;
++
++    arrowRect.SetSize( Size( (gint)(MIN_ARROW_SIZE * ARROW_EXTENT),
++                             (gint)(MIN_ARROW_SIZE * ARROW_EXTENT) ) );
++    arrowRect.SetPos( Point( buttonRect.Left() + (gint)((buttonRect.GetWidth() - arrowRect.GetWidth()) / 2),
++                             buttonRect.Top() + (gint)((buttonRect.GetHeight() - arrowRect.GetHeight()) / 2) ) );
++
++    for( clipList::const_iterator it = rClipList.begin(); it != rClipList.end(); ++it )
++    {
++        clipRect.x = it->Left();
++        clipRect.y = it->Top();
++        clipRect.width = it->GetWidth();
++        clipRect.height = it->GetHeight();
++        
++        if ( nPart != PART_WINDOW )
++        {
++            // Buttons must paint opaque since some themes have alpha-channel enabled buttons
++            gtk_paint_flat_box( gWidgetData[m_nScreen].gBtnWidget->style, gdkDrawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, 
++                                &clipRect, m_pWindow, "base", 
++                                x+(pixmapRect.Left() - pixmapRect.Left()), 
++                                y+(pixmapRect.Top() - pixmapRect.Top()),
++                                pixmapRect.GetWidth(), pixmapRect.GetHeight() );
++
++            gtk_paint_box( gWidgetData[m_nScreen].gComboBox_ButtonWidget->style, gdkDrawable, stateType, shadowType,
++                           &clipRect, gWidgetData[m_nScreen].gComboBox_ButtonWidget, "button",
++                           x+(pixmapRect.Left() - pixmapRect.Left()), 
++                           y+(pixmapRect.Top() - pixmapRect.Top()),
++                           pixmapRect.GetWidth(), pixmapRect.GetHeight() );
++
++            gtk_paint_arrow( gWidgetData[m_nScreen].gComboBox_ArrowWidget->style, gdkDrawable, stateType, shadowType,
++                             &clipRect, gWidgetData[m_nScreen].gComboBox_ArrowWidget, "arrow", GTK_ARROW_DOWN, TRUE,
++                             x+(arrowRect.Left() - pixmapRect.Left()), y+(arrowRect.Top() - pixmapRect.Top()),
++                             arrowRect.GetWidth(), arrowRect.GetHeight() );
++
++            if (gWidgetData[m_nScreen].gComboBox_SeparatorWidget)
++            {
++                gint nSeparatorWidth;
++                gboolean bWideSeparators;
++                gtk_widget_style_get(gWidgetData[m_nScreen].gComboBox_SeparatorWidget,
++                    "wide-separators", &bWideSeparators,
++                    "separator-width", &nSeparatorWidth,
++                    NULL);
++
++                if (bWideSeparators)
++                {
++                    gtk_paint_box(gWidgetData[m_nScreen].gComboBox_SeparatorWidget->style,
++                        gdkDrawable, GTK_STATE_NORMAL, GTK_SHADOW_ETCHED_OUT,
++                        &clipRect, gWidgetData[m_nScreen].gComboBox_SeparatorWidget,
++                        "vseparator", x+(arrowRect.Left() - pixmapRect.Left()-nSeparatorWidth),
++                        y+(arrowRect.Top() - pixmapRect.Top()), nSeparatorWidth, arrowRect.GetHeight());
++                }
++                else
++                {
++                    gtk_paint_vline(gWidgetData[m_nScreen].gComboBox_SeparatorWidget->style,
++                        gdkDrawable, GTK_STATE_NORMAL, &clipRect,
++                        gWidgetData[m_nScreen].gComboBox_SeparatorWidget, "vseparator",
++                        y+(arrowRect.Top() - pixmapRect.Top()), y+(arrowRect.Top() - pixmapRect.Top()) + arrowRect.GetHeight(),
++                        x+(arrowRect.Left() - pixmapRect.Left())-
++                            gWidgetData[m_nScreen].gComboBox_SeparatorWidget->style->xthickness);
++                }
++            }
++        }
++        else
++        {
++            NWEnsureGTKScrolledWindow(m_nScreen);
++
++            gtk_paint_shadow( gWidgetData[m_nScreen].gScrolledWindowWidget->style, gdkDrawable,
++                GTK_STATE_NORMAL, GTK_SHADOW_IN, &clipRect,
++                gWidgetData[m_nScreen].gScrolledWindowWidget, "scrolled_window",
++                x, y, pixmapRect.GetWidth(), pixmapRect.GetHeight() );
++        }
++    }
++    
++    return( TRUE );
++}
++
+ //----
+ 
+-static Rectangle NWGetComboBoxButtonRect( int nScreen,
++static Rectangle NWGetComboBoxEntryButtonRect( int nScreen,
+                                           ControlType,
+                                           ControlPart nPart,
+-                                          Rectangle				aAreaRect,
++                                          Rectangle             aAreaRect,
+                                           ControlState,
+                                           const ImplControlValue&,
+                                           const OUString& )
+ {
+-    Rectangle	aButtonRect;
+-    gint		nArrowWidth;
++    Rectangle   aButtonRect;
++    gint        nArrowWidth;
+     gint        nButtonWidth;
+-    gint		nFocusWidth;
+-    gint		nFocusPad;
++    gint        nFocusWidth;
++    gint        nFocusPad;
+ 
+-    NWEnsureGTKArrow( nScreen );
++    NWEnsureGTKComboBoxEntry ( nScreen );
+ 
+     // Grab some button style attributes
+-    gtk_widget_style_get( gWidgetData[nScreen].gDropdownWidget,
+-                                      "focus-line-width",	&nFocusWidth,
+-                                    "focus-padding", 	&nFocusPad, (char *)NULL );
++    gtk_widget_style_get( gWidgetData[nScreen].gComboBoxEntry_ButtonWidget,
++                                    "focus-line-width", &nFocusWidth,
++                                    "focus-padding",    &nFocusPad, (char *)NULL );
+ 
+-    nArrowWidth = MIN_ARROW_SIZE + (GTK_MISC(gWidgetData[nScreen].gArrowWidget)->xpad * 2);
++    nArrowWidth = MIN_ARROW_SIZE + (GTK_MISC(gWidgetData[nScreen].gComboBoxEntry_ArrowWidget)->xpad * 2);
+     nButtonWidth = nArrowWidth +
+-                   ((BTN_CHILD_SPACING + gWidgetData[nScreen].gDropdownWidget->style->xthickness) * 2)
++                   ((BTN_CHILD_SPACING + gWidgetData[nScreen].gComboBoxEntry_ButtonWidget->style->xthickness) * 2)
+                    + (2 * (nFocusWidth+nFocusPad));
+     if( nPart == PART_BUTTON_DOWN )
+     {
+@@ -2262,13 +2380,73 @@
+     }
+     else if( nPart == PART_SUB_EDIT )
+     {
+-        NWEnsureGTKCombo( nScreen );
+-        
+-        gint adjust_x = GTK_CONTAINER(gWidgetData[nScreen].gComboWidget)->border_width +
++        gint adjust_x = GTK_CONTAINER(gWidgetData[nScreen].gComboBoxEntryWidget)->border_width +
++                        nFocusWidth +
++                        nFocusPad;
++        gint adjust_y = adjust_x + gWidgetData[nScreen].gComboBoxEntryWidget->style->ythickness;
++        adjust_x     += gWidgetData[nScreen].gComboBoxEntryWidget->style->xthickness;
++        aButtonRect.SetSize( Size( aAreaRect.GetWidth() - nButtonWidth - 2 * adjust_x,
++                                   aAreaRect.GetHeight() - 2 * adjust_y ) );
++        Point aEditPos = aAreaRect.TopLeft();
++        aEditPos.X() += adjust_x;
++        aEditPos.Y() += adjust_y;
++        aButtonRect.SetPos( aEditPos );
++    }
++
++    return( aButtonRect );
++}
++
++static Rectangle NWGetComboBoxButtonRect( int nScreen,
++                                          ControlType,
++                                          ControlPart nPart,
++                                          Rectangle             aAreaRect,
++                                          ControlState,
++                                          const ImplControlValue&,
++                                          const OUString& )
++{
++    Rectangle   aButtonRect;
++    gint        nArrowWidth;
++    gint        nButtonWidth;
++    gint        nFocusWidth;
++    gint        nFocusPad;
++
++    NWEnsureGTKComboBox ( nScreen );
++    // Grab some button style attributes
++    gtk_widget_style_get( gWidgetData[nScreen].gComboBox_ButtonWidget,
++                                    "focus-line-width", &nFocusWidth,
++                                    "focus-padding",    &nFocusPad, (char *)NULL );
++    nArrowWidth = MIN_ARROW_SIZE + (GTK_MISC(gWidgetData[nScreen].gComboBox_ArrowWidget)->xpad * 2);
++
++    gint nSeparatorWidth = 0;
++    if (gWidgetData[nScreen].gComboBox_SeparatorWidget)
++    {
++        gboolean bWideSeparators;
++        gtk_widget_style_get(gWidgetData[nScreen].gComboBox_SeparatorWidget,
++                             "wide-separators", &bWideSeparators,
++                             "separator-width", &nSeparatorWidth,
++                             NULL);
++
++        if (!bWideSeparators)
++            nSeparatorWidth = gWidgetData[nScreen].gComboBox_SeparatorWidget->style->xthickness;
++    }
++
++    nButtonWidth = nArrowWidth + nSeparatorWidth +
++                   + gWidgetData[nScreen].gComboBox_ButtonWidget->style->xthickness
++                   + (nFocusWidth+nFocusPad);
++
++    if( nPart == PART_BUTTON_DOWN )
++    {
++        aButtonRect.SetSize( Size( nButtonWidth, aAreaRect.GetHeight() ) );
++        aButtonRect.SetPos( Point( aAreaRect.Left() + aAreaRect.GetWidth() - nButtonWidth,
++                                   aAreaRect.Top() ) );
++    }
++    else if( nPart == PART_SUB_EDIT )
++    {
++        gint adjust_x = GTK_CONTAINER(gWidgetData[nScreen].gComboBoxWidget)->border_width +
+                         nFocusWidth +
+                         nFocusPad;
+-        gint adjust_y = adjust_x + gWidgetData[nScreen].gComboWidget->style->ythickness;
+-        adjust_x     += gWidgetData[nScreen].gComboWidget->style->xthickness;
++        gint adjust_y = adjust_x + gWidgetData[nScreen].gComboBoxWidget->style->ythickness;
++        adjust_x     += gWidgetData[nScreen].gComboBoxWidget->style->xthickness;
+         aButtonRect.SetSize( Size( aAreaRect.GetWidth() - nButtonWidth - 2 * adjust_x,
+                                    aAreaRect.GetHeight() - 2 * adjust_y ) );
+         Point aEditPos = aAreaRect.TopLeft();
+@@ -2280,6 +2458,7 @@
+     return( aButtonRect );
+ }
+ 
++
+ //-------------------------------------
+ 
+ 
+@@ -2366,7 +2545,7 @@
+     }
+ 
+         
+-//	gtk_widget_set_state( gWidgetData[m_nScreen].gNotebookWidget, stateType );
++//  gtk_widget_set_state( gWidgetData[m_nScreen].gNotebookWidget, stateType );
+ 
+     pixmap = gdk_pixmap_new( NULL, pixmapRect.GetWidth(), pixmapRect.GetHeight(), 
+                              GetX11SalData()->GetDisplay()->GetVisual( m_nScreen ).GetDepth() );
+@@ -2424,100 +2603,13 @@
+     return bSuccess;
+ }
+ 
+-//-------------------------------------
+-
+-BOOL GtkSalGraphics::NWPaintGTKListBox( GdkDrawable* gdkDrawable,
+-                                        ControlType nType, ControlPart nPart,
+-                                        const Rectangle& rControlRectangle,
+-                                        const clipList& rClipList,
+-                                        ControlState nState, 
+-                                        const ImplControlValue& aValue,
+-                                        const OUString& rCaption )
++static void set_widget_orientation(GtkWidget *widget, GtkOrientation orientation)
+ {
+-    Rectangle		pixmapRect;
+-    Rectangle		widgetRect;
+-    Rectangle		aIndicatorRect;
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    gint			bInteriorFocus;
+-    gint			nFocusLineWidth;
+-    gint			nFocusPadding;
+-    gint			x,y;
+-    GdkRectangle    clipRect;
+-
+-    NWEnsureGTKButton( m_nScreen );
+-    NWEnsureGTKOptionMenu( m_nScreen );
+-    NWEnsureGTKScrolledWindow( m_nScreen );
+-    NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+-
+-    // Find the overall bounding rect of the buttons's drawing area,
+-    // plus its actual draw rect excluding adornment
+-    pixmapRect = rControlRectangle;
+-    if ( nPart == PART_WINDOW )
+-    {
+-        // Make the widget a _bit_ bigger
+-        pixmapRect.SetPos( Point( pixmapRect.Left() - 1,
+-                                  pixmapRect.Top() - 1 ) );
+-        pixmapRect.SetSize( Size( pixmapRect.GetWidth() + 2,
+-                                  pixmapRect.GetHeight() + 2 ) );
+-    }
+-
+-    widgetRect = pixmapRect;
+-    x = pixmapRect.Left();
+-    y = pixmapRect.Top();
+-
+-    // set up references to correct drawable and cliprect
+-    NWSetWidgetState( gWidgetData[m_nScreen].gBtnWidget, nState, stateType );
+-    NWSetWidgetState( gWidgetData[m_nScreen].gOptionMenuWidget, nState, stateType );
+-    NWSetWidgetState( gWidgetData[m_nScreen].gScrolledWindowWidget, nState, stateType );
+-
+-    if ( nPart != PART_WINDOW )
+-    {
+-        gtk_widget_style_get( gWidgetData[m_nScreen].gOptionMenuWidget,
+-            "interior_focus",	&bInteriorFocus,
+-            "focus_line_width",	&nFocusLineWidth,
+-            "focus_padding",	&nFocusPadding,
+-            (char *)NULL);
+-    }
+-    
+-    for( clipList::const_iterator it = rClipList.begin(); it != rClipList.end(); ++it )
+-    {
+-        clipRect.x = it->Left();
+-        clipRect.y = it->Top();
+-        clipRect.width = it->GetWidth();
+-        clipRect.height = it->GetHeight();
+-    
+-        if ( nPart != PART_WINDOW )
+-        {
+-            // Listboxes must paint opaque since some themes have alpha-channel enabled bodies
+-            gtk_paint_flat_box( gWidgetData[m_nScreen].gBtnWidget->style, gdkDrawable, GTK_STATE_NORMAL, GTK_SHADOW_NONE, 
+-                                &clipRect, m_pWindow, "base", x, y, 
+-                                pixmapRect.GetWidth(), pixmapRect.GetHeight() );
+-            gtk_paint_box( gWidgetData[m_nScreen].gOptionMenuWidget->style, gdkDrawable, stateType, shadowType, &clipRect,
+-                           gWidgetData[m_nScreen].gOptionMenuWidget, "optionmenu",
+-                           x+(widgetRect.Left() - pixmapRect.Left()), 
+-                           y+(widgetRect.Top() - pixmapRect.Top()),
+-                           widgetRect.GetWidth(), widgetRect.GetHeight() );
+-            aIndicatorRect = NWGetListBoxIndicatorRect( m_nScreen, nType, nPart, widgetRect, nState, 
+-                                                        aValue, rCaption );
+-            gtk_paint_tab( gWidgetData[m_nScreen].gOptionMenuWidget->style, gdkDrawable, stateType, shadowType, &clipRect,
+-                           gWidgetData[m_nScreen].gOptionMenuWidget, "optionmenutab",
+-                           x+(aIndicatorRect.Left() - pixmapRect.Left()), 
+-                           y+(aIndicatorRect.Top() - pixmapRect.Top()),
+-                           aIndicatorRect.GetWidth(), aIndicatorRect.GetHeight() );
+-        }
+-        else
+-        {
+-            shadowType = GTK_SHADOW_IN;
+-        
+-            gtk_paint_shadow( gWidgetData[m_nScreen].gScrolledWindowWidget->style, gdkDrawable, GTK_STATE_NORMAL, shadowType,
+-                &clipRect, gWidgetData[m_nScreen].gScrolledWindowWidget, "scrolled_window",
+-                x+(widgetRect.Left() - pixmapRect.Left()), y+(widgetRect.Top() - pixmapRect.Top()),
+-                widgetRect.GetWidth(), widgetRect.GetHeight() );
+-        }
+-    }
+-    
+-    return( TRUE );
++#if GTK_CHECK_VERSION(2,90,0)
++    gtk_orientable_set_orientation( GTK_ORIENTABLE(widget), orientation );
++#else
++    gtk_toolbar_set_orientation( GTK_TOOLBAR(widget), orientation );
++#endif
+ }
+ 
+ BOOL GtkSalGraphics::NWPaintGTKToolbar(
+@@ -2528,14 +2620,14 @@
+             ControlState nState, const ImplControlValue& aValue,
+             const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
+-    gint			x, y, w, h;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
++    gint            x, y, w, h;
+     gint            g_x=0, g_y=0, g_w=10, g_h=10;
+     bool            bPaintButton = true;
+     GtkWidget*      pButtonWidget = gWidgetData[m_nScreen].gToolbarButtonWidget;
+     const gchar*    pButtonDetail = "button";
+-    GdkRectangle	clipRect;
++    GdkRectangle    clipRect;
+     
+     NWEnsureGTKToolbar( m_nScreen );
+     if( nPart == PART_BUTTON ) // toolbar buttons cannot focus in gtk
+@@ -2557,9 +2649,9 @@
+             GTK_WIDGET_SET_FLAGS( gWidgetData[m_nScreen].gToolbarWidget, GTK_SENSITIVE );
+ 
+         if( nPart == PART_DRAW_BACKGROUND_HORZ )
+-            gtk_toolbar_set_orientation( GTK_TOOLBAR(gWidgetData[m_nScreen].gToolbarWidget), GTK_ORIENTATION_HORIZONTAL );
++            set_widget_orientation( gWidgetData[m_nScreen].gToolbarWidget, GTK_ORIENTATION_HORIZONTAL );
+         else
+-            gtk_toolbar_set_orientation( GTK_TOOLBAR(gWidgetData[m_nScreen].gToolbarWidget), GTK_ORIENTATION_VERTICAL );
++            set_widget_orientation( gWidgetData[m_nScreen].gToolbarWidget, GTK_ORIENTATION_VERTICAL );
+     }        
+     // handle grip
+     else if( nPart == PART_THUMB_HORZ || nPart == PART_THUMB_VERT )
+@@ -2675,11 +2767,11 @@
+             ControlState nState, const ImplControlValue&,
+             const OUString& )
+ {
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
+     GtkShadowType   selected_shadow_type = GTK_SHADOW_OUT;
+-    gint			x, y, w, h;
+-    GdkRectangle	clipRect;
++    gint            x, y, w, h;
++    GdkRectangle    clipRect;
+     
+     NWEnsureGTKMenubar( m_nScreen );
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+@@ -2765,11 +2857,11 @@
+     if( nPart == PART_MENU_ITEM && ! (nState & CTRL_STATE_ENABLED) )
+         return FALSE;
+     
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
+     GtkShadowType   selected_shadow_type = GTK_SHADOW_OUT;
+-    gint			x, y, w, h;
+-    GdkRectangle	clipRect;
++    gint            x, y, w, h;
++    GdkRectangle    clipRect;
+     
+     NWEnsureGTKMenu( m_nScreen );
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+@@ -2892,8 +2984,8 @@
+ {
+     NWEnsureGTKTooltip( m_nScreen );
+     
+-    gint			x, y, w, h;
+-    GdkRectangle	clipRect;
++    gint            x, y, w, h;
++    GdkRectangle    clipRect;
+     
+     x = rControlRectangle.Left();
+     y = rControlRectangle.Top();
+@@ -2935,12 +3027,12 @@
+     aRect.Right() += 2;
+     aRect.Top() -= 2;
+     aRect.Bottom() += 2;
+-    gint			w, h;
++    gint            w, h;
+     w = aRect.GetWidth();
+     h = aRect.GetHeight();
+ 
+-    GtkStateType	stateType;
+-    GtkShadowType	shadowType;
++    GtkStateType    stateType;
++    GtkShadowType   shadowType;
+     NWConvertVCLStateToGTKState( nState, &stateType, &shadowType );
+ 
+     ButtonValue aButtonValue = rValue.getTristateVal();
+@@ -2984,7 +3076,7 @@
+ {
+     NWEnsureGTKProgressBar( m_nScreen );
+     
+-    gint			w, h;
++    gint            w, h;
+     w = rControlRectangle.GetWidth();
+     h = rControlRectangle.GetHeight();
+ 
+@@ -3164,116 +3256,6 @@
+     return bRet;
+ }
+ 
+-//----
+-
+-static Rectangle NWGetListBoxButtonRect( int nScreen,
+-                                         ControlType,
+-                                         ControlPart    nPart,
+-                                         Rectangle      aAreaRect,
+-                                         ControlState,
+-                                         const ImplControlValue&,
+-                                         const OUString& )
+-{
+-    Rectangle       aPartRect;
+-    GtkRequisition *pIndicatorSize = NULL;
+-    GtkBorder      *pIndicatorSpacing = NULL;
+-    gint            width = 13;	// GTK+ default
+-    gint            right = 5;	// GTK+ default
+-    gint            nButtonAreaWidth = 0;
+-    gint            xthickness = 0;
+-
+-    NWEnsureGTKOptionMenu( nScreen );
+-
+-    gtk_widget_style_get( gWidgetData[nScreen].gOptionMenuWidget,
+-            "indicator_size",	&pIndicatorSize,
+-            "indicator_spacing",&pIndicatorSpacing, (char *)NULL);
+-    
+-    if ( pIndicatorSize )
+-        width = pIndicatorSize->width;
+-
+-    if ( pIndicatorSpacing )
+-        right = pIndicatorSpacing->right;
+-
+-    Size aPartSize( 0, aAreaRect.GetHeight() );
+-    Point aPartPos ( 0, aAreaRect.Top() );
+-
+-    xthickness = gWidgetData[nScreen].gOptionMenuWidget->style->xthickness;
+-    nButtonAreaWidth = width + right + (xthickness * 2);
+-    switch( nPart )
+-    {
+-        case PART_BUTTON_DOWN:
+-            aPartSize.Width() = nButtonAreaWidth;
+-            aPartPos.X() = aAreaRect.Left() + aAreaRect.GetWidth() - aPartSize.Width();
+-            break;
+-
+-        case PART_SUB_EDIT:
+-            aPartSize.Width() = aAreaRect.GetWidth() - nButtonAreaWidth - xthickness;
+-            aPartPos.X() = aAreaRect.Left() + xthickness;
+-            break;
+-
+-        default:
+-            aPartSize.Width() = aAreaRect.GetWidth();	
+-            aPartPos.X() = aAreaRect.Left();
+-            break;
+-    }
+-    aPartRect = Rectangle( aPartPos, aPartSize );
+-
+-    if ( pIndicatorSize )
+-        gtk_requisition_free( pIndicatorSize );
+-    if ( pIndicatorSpacing )
+-        gtk_border_free( pIndicatorSpacing );
+-
+-    return( aPartRect );
+-}
+-
+-//----
+-
+-static Rectangle NWGetListBoxIndicatorRect( int nScreen,
+-                                            ControlType,
+-                                            ControlPart,
+-                                            Rectangle				aAreaRect,
+-                                            ControlState,
+-                                            const ImplControlValue&,
+-                                            const OUString& )
+-{
+-    Rectangle       aIndicatorRect;
+-    GtkRequisition *pIndicatorSize = NULL;
+-    GtkBorder      *pIndicatorSpacing = NULL;
+-    gint            width = 13;	// GTK+ default
+-    gint            height = 13;	// GTK+ default
+-    gint            right = 5;	// GTK+ default
+-
+-    NWEnsureGTKOptionMenu( nScreen );
+-
+-    gtk_widget_style_get( gWidgetData[nScreen].gOptionMenuWidget,
+-            "indicator_size",	&pIndicatorSize,
+-            "indicator_spacing",&pIndicatorSpacing, (char *)NULL);
+-    
+-    if ( pIndicatorSize )
+-    {
+-        width = pIndicatorSize->width;
+-        height = pIndicatorSize->height;
+-    }
+-
+-    if ( pIndicatorSpacing )
+-        right = pIndicatorSpacing->right;
+-
+-    aIndicatorRect.SetSize( Size( width, height ) );
+-    aIndicatorRect.SetPos( Point( aAreaRect.Left() + aAreaRect.GetWidth() - width - right - gWidgetData[nScreen].gOptionMenuWidget->style->xthickness,
+-                                  aAreaRect.Top() + ((aAreaRect.GetHeight() - height) / 2) ) );
+-
+-    // If height is odd, move the indicator down 1 pixel
+-    if ( aIndicatorRect.GetHeight() % 2 )
+-        aIndicatorRect.Move( 0, 1 );
+-
+-    if ( pIndicatorSize )
+-        gtk_requisition_free( pIndicatorSize );
+-    if ( pIndicatorSpacing )
+-        gtk_border_free( pIndicatorSpacing );
+-
+-    return( aIndicatorRect );
+-}
+-
+ static Rectangle NWGetToolbarRect(  int nScreen,
+                                     ControlType,
+                                     ControlPart				nPart,
+@@ -3495,10 +3477,10 @@
+     aStyleSet.SetMenuHighlightTextColor( aHighlightTextColor );
+     
+     // UI font
+-    OString	aFamily		= pango_font_description_get_family( pStyle->font_desc );
+-    int nPangoHeight	= pango_font_description_get_size( pStyle->font_desc );
+-    PangoStyle	eStyle	= pango_font_description_get_style( pStyle->font_desc );
+-    PangoWeight	eWeight	= pango_font_description_get_weight( pStyle->font_desc );
++    OString aFamily     = pango_font_description_get_family( pStyle->font_desc );
++    int nPangoHeight    = pango_font_description_get_size( pStyle->font_desc );
++    PangoStyle  eStyle  = pango_font_description_get_style( pStyle->font_desc );
++    PangoWeight eWeight = pango_font_description_get_weight( pStyle->font_desc );
+     PangoStretch eStretch = pango_font_description_get_stretch( pStyle->font_desc );
+     
+     psp::FastPrintFontInfo aInfo;
+@@ -3507,9 +3489,9 @@
+     // set italic
+     switch( eStyle )
+     {
+-        case PANGO_STYLE_NORMAL:	aInfo.m_eItalic = psp::italic::Upright;break;
+-        case PANGO_STYLE_ITALIC:	aInfo.m_eItalic = psp::italic::Italic;break;
+-        case PANGO_STYLE_OBLIQUE:	aInfo.m_eItalic = psp::italic::Oblique;break;
++        case PANGO_STYLE_NORMAL:    aInfo.m_eItalic = psp::italic::Upright;break;
++        case PANGO_STYLE_ITALIC:    aInfo.m_eItalic = psp::italic::Italic;break;
++        case PANGO_STYLE_OBLIQUE:   aInfo.m_eItalic = psp::italic::Oblique;break;
+     }
+     // set weight
+     if( eWeight <= PANGO_WEIGHT_ULTRALIGHT )
+@@ -3525,15 +3507,15 @@
+     // set width
+     switch( eStretch )
+     {
+-        case PANGO_STRETCH_ULTRA_CONDENSED:	aInfo.m_eWidth = psp::width::UltraCondensed;break;
+-        case PANGO_STRETCH_EXTRA_CONDENSED:	aInfo.m_eWidth = psp::width::ExtraCondensed;break;
+-        case PANGO_STRETCH_CONDENSED:		aInfo.m_eWidth = psp::width::Condensed;break;
+-        case PANGO_STRETCH_SEMI_CONDENSED:	aInfo.m_eWidth = psp::width::SemiCondensed;break;
+-        case PANGO_STRETCH_NORMAL:			aInfo.m_eWidth = psp::width::Normal;break;
+-        case PANGO_STRETCH_SEMI_EXPANDED:	aInfo.m_eWidth = psp::width::SemiExpanded;break;
+-        case PANGO_STRETCH_EXPANDED:		aInfo.m_eWidth = psp::width::Expanded;break;
+-        case PANGO_STRETCH_EXTRA_EXPANDED:	aInfo.m_eWidth = psp::width::ExtraExpanded;break;
+-        case PANGO_STRETCH_ULTRA_EXPANDED:	aInfo.m_eWidth = psp::width::UltraExpanded;break;
++        case PANGO_STRETCH_ULTRA_CONDENSED: aInfo.m_eWidth = psp::width::UltraCondensed;break;
++        case PANGO_STRETCH_EXTRA_CONDENSED: aInfo.m_eWidth = psp::width::ExtraCondensed;break;
++        case PANGO_STRETCH_CONDENSED:       aInfo.m_eWidth = psp::width::Condensed;break;
++        case PANGO_STRETCH_SEMI_CONDENSED:  aInfo.m_eWidth = psp::width::SemiCondensed;break;
++        case PANGO_STRETCH_NORMAL:          aInfo.m_eWidth = psp::width::Normal;break;
++        case PANGO_STRETCH_SEMI_EXPANDED:   aInfo.m_eWidth = psp::width::SemiExpanded;break;
++        case PANGO_STRETCH_EXPANDED:        aInfo.m_eWidth = psp::width::Expanded;break;
++        case PANGO_STRETCH_EXTRA_EXPANDED:  aInfo.m_eWidth = psp::width::ExtraExpanded;break;
++        case PANGO_STRETCH_ULTRA_EXPANDED:  aInfo.m_eWidth = psp::width::UltraExpanded;break;
+     }
+ 
+ #if OSL_DEBUG_LEVEL > 1
+@@ -3629,7 +3611,7 @@
+     g_free( pIconThemeName );
+ 
+     //  FIXME: need some way of fetching toolbar icon size.
+-//	aStyleSet.SetToolbarIconSize( STYLE_TOOLBAR_ICONSIZE_SMALL );
++//  aStyleSet.SetToolbarIconSize( STYLE_TOOLBAR_ICONSIZE_SMALL );
+ 
+     const cairo_font_options_t* pNewOptions = NULL;
+     if( GdkScreen* pScreen = gdk_display_get_screen( gdk_display_get_default(), m_nScreen ) )
+@@ -3700,8 +3682,8 @@
+ GdkPixmap* GtkSalGraphics::NWGetPixmapFromScreen( Rectangle srcRect )
+ {
+     // Create a new pixmap to hold the composite of the window background and the control
+-    GdkPixmap * pPixmap		= gdk_pixmap_new( GDK_DRAWABLE(GetGdkWindow()), srcRect.GetWidth(), srcRect.GetHeight(), -1 ); 
+-    GdkGC *	 pPixmapGC	= gdk_gc_new( pPixmap );
++    GdkPixmap * pPixmap     = gdk_pixmap_new( GDK_DRAWABLE(GetGdkWindow()), srcRect.GetWidth(), srcRect.GetHeight(), -1 ); 
++    GdkGC *  pPixmapGC  = gdk_gc_new( pPixmap );
+ 
+     if( !pPixmap || !pPixmapGC )
+     {
+@@ -3902,7 +3884,7 @@
+         NWAddWidgetToCacheWindow( gWidgetData[nScreen].gDropdownWidget, nScreen );
+         gWidgetData[nScreen].gArrowWidget = gtk_arrow_new( GTK_ARROW_DOWN, GTK_SHADOW_OUT );
+         gtk_container_add( GTK_CONTAINER(gWidgetData[nScreen].gDropdownWidget), gWidgetData[nScreen].gArrowWidget );
+-        gtk_widget_set_rc_style( gWidgetData[nScreen].gArrowWidget );
++        gtk_widget_set_style( gWidgetData[nScreen].gArrowWidget, NULL );
+         gtk_widget_realize( gWidgetData[nScreen].gArrowWidget );
+     }
+ }
+@@ -3948,32 +3930,132 @@
+ 
+ //-------------------------------------
+ 
+-static void NWEnsureGTKOptionMenu( int nScreen )
++G_BEGIN_DECLS
++static void get_combo_box_entry_inner_widgets(GtkWidget *widget, gpointer client_data);
++static void get_combo_box_entry_arrow(GtkWidget *widget, gpointer client_data);
++static void get_combo_box_inner_widgets(GtkWidget *widget, gpointer client_data);
++G_END_DECLS
++
++static void get_combo_box_entry_inner_widgets(GtkWidget *widget, gpointer client_data)
++{
++    int nScreen = GPOINTER_TO_INT(client_data);
++    if (GTK_IS_TOGGLE_BUTTON(widget))
++        gWidgetData[nScreen].gComboBoxEntry_ButtonWidget = widget;
++    else if (GTK_IS_ENTRY(widget))
++    {
++        // #i59129# Setting non-editable means it doesn't blink, so
++        // there are no timeouts running around to nobble us
++        gtk_editable_set_editable(GTK_EDITABLE(widget), false);
++        gWidgetData[nScreen].gComboBoxEntry_EntryWidget = widget;
++    }
++    else
++        return;
++    gtk_widget_realize(widget);
++}
++
++static void get_combo_box_entry_arrow(GtkWidget *widget, gpointer client_data)
+ {
+-    if ( !gWidgetData[nScreen].gOptionMenuWidget )
++    if (GTK_IS_ARROW(widget))
+     {
+-        gWidgetData[nScreen].gOptionMenuWidget = gtk_option_menu_new();
+-        NWAddWidgetToCacheWindow( gWidgetData[nScreen].gOptionMenuWidget, nScreen );
++        int nScreen = GPOINTER_TO_INT(client_data);
++        gWidgetData[nScreen].gComboBoxEntry_ArrowWidget = widget;
++        gtk_widget_realize(widget);
+     }
+ }
+ 
+-//-------------------------------------
++static void NWEnsureGTKComboBoxEntry( int nScreen )
++{
++    if ( !gWidgetData[nScreen].gComboBoxEntryWidget )
++    {
++        gWidgetData[nScreen].gComboBoxEntryWidget = gtk_combo_box_entry_new();
++
++        NWAddWidgetToCacheWindow( gWidgetData[nScreen].gComboBoxEntryWidget, nScreen );
++
++        gtk_container_forall(GTK_CONTAINER(gWidgetData[nScreen].gComboBoxEntryWidget),
++            get_combo_box_entry_inner_widgets, GINT_TO_POINTER(nScreen) );
+ 
+-static void NWEnsureGTKCombo( int nScreen )
++        //If for some reason or other we couldn't find the expected children,
++        //alias them to some we know will definitely exist
++        if (!gWidgetData[nScreen].gComboBoxEntry_EntryWidget)
++        {
++            NWEnsureGTKEditBox( nScreen );
++            gWidgetData[nScreen].gComboBoxEntry_EntryWidget = gWidgetData[nScreen].gEditBoxWidget;
++        }
++        if (gWidgetData[nScreen].gComboBoxEntry_ButtonWidget)
++        {
++            //Dig around for the arrow
++            GtkWidget *child = GTK_BIN(gWidgetData[nScreen].gComboBoxEntry_ButtonWidget)->child;
++            if (GTK_IS_HBOX(child))
++            {
++                gtk_container_forall(GTK_CONTAINER(child), get_combo_box_entry_arrow,
++                    GINT_TO_POINTER(nScreen) );
++            }
++            else
++                get_combo_box_entry_arrow(child, GINT_TO_POINTER(nScreen));
++        }
++        else
++        {
++            NWEnsureGTKArrow( nScreen );
++            gWidgetData[nScreen].gComboBoxEntry_ButtonWidget = gWidgetData[nScreen].gDropdownWidget;
++        }
++        if (!gWidgetData[nScreen].gComboBoxEntry_ArrowWidget)
++        {
++            NWEnsureGTKArrow( nScreen );
++            gWidgetData[nScreen].gComboBoxEntry_ArrowWidget = gWidgetData[nScreen].gArrowWidget;
++        }
++    }
++}
++
++static void get_combo_box_inner_widgets(GtkWidget *widget, gpointer client_data)
++{
++    int nScreen = GPOINTER_TO_INT(client_data);
++    if (GTK_IS_TOGGLE_BUTTON(widget))
++        gWidgetData[nScreen].gComboBox_ButtonWidget = widget;
++    else if (GTK_IS_SEPARATOR(widget))
++        gWidgetData[nScreen].gComboBox_SeparatorWidget = widget;
++    else if (GTK_IS_ARROW(widget))
++        gWidgetData[nScreen].gComboBox_ArrowWidget = widget;
++    else
++        return;
++    gtk_widget_realize(widget);
++}
++
++static void NWEnsureGTKComboBox( int nScreen )
+ {
+-    if ( !gWidgetData[nScreen].gComboWidget )
++    if ( !gWidgetData[nScreen].gComboBoxWidget )
+     {
+-        gWidgetData[nScreen].gComboWidget = gtk_combo_new();
++        gWidgetData[nScreen].gComboBoxWidget = gtk_combo_box_new();
+ 
+-        // #i59129# Setting non-editable means it doesn't blink, so
+-        // there are no timeouts running around to nobble us
+-        gtk_editable_set_editable(GTK_EDITABLE(GTK_COMBO(gWidgetData[nScreen].gComboWidget)->entry), false);
++        NWAddWidgetToCacheWindow( gWidgetData[nScreen].gComboBoxWidget, nScreen );
++
++        gtk_container_forall(GTK_CONTAINER(gWidgetData[nScreen].gComboBoxWidget),
++            get_combo_box_inner_widgets, GINT_TO_POINTER(nScreen) );
+ 
+-        NWAddWidgetToCacheWindow( gWidgetData[nScreen].gComboWidget, nScreen );
+-        // Must realize the ComboBox's children, since GTK
+-        // does not do this for us in GtkCombo::gtk_widget_realize()
+-        gtk_widget_realize( GTK_COMBO(gWidgetData[nScreen].gComboWidget)->button );
+-        gtk_widget_realize( GTK_COMBO(gWidgetData[nScreen].gComboWidget)->entry );
++        //If for some reason or other we couldn't find the expected children,
++        //alias them to some we know will definitely exist
++        if (gWidgetData[nScreen].gComboBox_ButtonWidget)
++        {
++            //Dig around for the arrow
++            GtkWidget *child = GTK_BIN(gWidgetData[nScreen].gComboBox_ButtonWidget)->child;
++            if (GTK_IS_HBOX(child))
++            {
++                gtk_container_forall(GTK_CONTAINER(child), get_combo_box_inner_widgets,
++                    GINT_TO_POINTER(nScreen) );
++            }
++            else
++                get_combo_box_inner_widgets(child, GINT_TO_POINTER(nScreen));
++        }
++        else
++        {
++            NWEnsureGTKArrow( nScreen );
++            gWidgetData[nScreen].gComboBox_ButtonWidget = gWidgetData[nScreen].gDropdownWidget;
++        }
++
++        if (!gWidgetData[nScreen].gComboBox_ArrowWidget)
++        {
++            NWEnsureGTKArrow( nScreen );
++            gWidgetData[nScreen].gComboBox_ArrowWidget = gWidgetData[nScreen].gArrowWidget;
++        }
+     }
+ }
+ 
+@@ -4130,3 +4212,5 @@
+         NWAddWidgetToCacheWindow( gWidgetData[nScreen].gVScale, nScreen );
+     }
+ }
++
++/* vi:set tabstop=4 shiftwidth=4 expandtab: */
+--- vcl.orig/unx/gtk/window/gtkobject.cxx	2010-05-26 17:30:44.000000000 +0100
++++ vcl/unx/gtk/window/gtkobject.cxx	2010-07-01 10:45:41.000000000 +0100
+@@ -32,6 +32,7 @@
+ #include <plugins/gtk/gtkframe.hxx>
+ #include <plugins/gtk/gtkdata.hxx>
+ #include <plugins/gtk/gtkinst.hxx>
++#include <plugins/gtk/gtkgdi.hxx>
+ 
+ GtkSalObject::GtkSalObject( GtkSalFrame* pParent, BOOL bShow ) 
+         : m_pSocket( NULL ),
+@@ -58,7 +59,7 @@
+         SalDisplay* pDisp = GetX11SalData()->GetDisplay();
+         m_aSystemData.nSize 		= sizeof( SystemChildData );
+         m_aSystemData.pDisplay		= pDisp->GetDisplay();
+-        m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(m_pSocket->window);
++        m_aSystemData.aWindow		= GDK_WINDOW_XWINDOW(widget_get_window(m_pSocket));
+         m_aSystemData.pSalFrame		= NULL;
+         m_aSystemData.pWidget		= m_pSocket;
+         m_aSystemData.pVisual		= pDisp->GetVisual(pParent->getScreenNumber()).GetVisual();
+@@ -66,7 +67,7 @@
+         m_aSystemData.nDepth		= pDisp->GetVisual(pParent->getScreenNumber()).GetDepth();
+         m_aSystemData.aColormap		= pDisp->GetColormap(pParent->getScreenNumber()).GetXColormap();
+         m_aSystemData.pAppContext	= NULL;
+-        m_aSystemData.aShellWindow	= GDK_WINDOW_XWINDOW(GTK_WIDGET(pParent->getWindow())->window);
++        m_aSystemData.aShellWindow	= GDK_WINDOW_XWINDOW(widget_get_window(GTK_WIDGET(pParent->getWindow())));
+         m_aSystemData.pShellWidget	= GTK_WIDGET(pParent->getWindow());
+ 
+         g_signal_connect( G_OBJECT(m_pSocket), "button-press-event", G_CALLBACK(signalButton), this );
+--- fpicker.orig/source/unx/gnome/SalGtkPicker.cxx	2010-05-26 17:30:44.000000000 +0100
++++ fpicker/source/unx/gnome/SalGtkPicker.cxx	2010-07-01 12:51:05.000000000 +0100
+@@ -155,7 +157,11 @@
+     if (pParent)
+     {
+         gtk_widget_realize(mpDialog);
++#if GTK_CHECK_VERSION(2,90,0)
++        gdk_window_set_transient_for(gtk_widget_get_window(mpDialog), pParent);
++#else
+         gdk_window_set_transient_for(mpDialog->window, pParent);
++#endif
+     }
+ }
+ 
+--- extensions.orig/source/plugin/unx/npnapi.cxx	2010-07-01 13:42:35.000000000 +0100
++++ extensions/source/plugin/unx/npnapi.cxx	2010-07-01 13:44:46.000000000 +0100
+@@ -701,8 +701,11 @@
+                         pInst->window.window = (void *)gtk_socket_get_id( GTK_SOCKET(pInst->pGtkWidget ) );
+ 
+                         XSync( pAppDisplay, False );
+-
++#if GTK_CHECK_VERSION(2,90,0)
++                        XMapWindow( pAppDisplay, GDK_WINDOW_XWINDOW(gtk_widget_get_window(pInst->pGtkWindow)) );
++#else
+                         XMapWindow( pAppDisplay, GDK_WINDOW_XWINDOW(pInst->pGtkWindow->window) );
++#endif
+ 
+                         XSync( pAppDisplay, False );
+                     }
+--- vcl.orig/unx/inc/plugins/gtk/gtkdata.hxx	2010-07-07 10:20:34.000000000 +0100
++++ vcl/unx/inc/plugins/gtk/gtkdata.hxx	2010-07-07 11:15:19.000000000 +0100
+@@ -40,6 +40,39 @@
+ 
+ #include <list>
+ 
++inline GdkWindow * widget_get_window(GtkWidget *widget)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_get_window(widget);
++#else
++    return widget->window;
++#endif
++}
++
++inline void widget_set_can_focus(GtkWidget *widget, gboolean can_focus)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_set_can_focus(widget, can_focus);
++#else
++    if (can_focus)
++        GTK_WIDGET_SET_FLAGS( widget, GTK_CAN_FOCUS );
++    else
++        GTK_WIDGET_UNSET_FLAGS( widget, GTK_CAN_FOCUS );
++#endif
++}
++
++inline void widget_set_can_default(GtkWidget *widget, gboolean can_default)
++{
++#if GTK_CHECK_VERSION(2,90,0)
++    return gtk_widget_set_can_default(widget, can_default);
++#else
++    if (can_default)
++        GTK_WIDGET_SET_FLAGS( widget, GTK_CAN_DEFAULT );
++    else
++        GTK_WIDGET_UNSET_FLAGS( widget, GTK_CAN_DEFAULT );
++#endif
++}
++
+ class GtkData : public X11SalData
+ {
+ public:
+@@ -73,6 +106,8 @@
+     virtual long Dispatch( XEvent *pEvent );
+     virtual void initScreen( int nScreen ) const;
+ 
++    virtual int GetDefaultMonitorNumber() const;
++
+     static GdkFilterReturn filterGdkEvent( GdkXEvent* sys_event,
+                                            GdkEvent* event,
+                                            gpointer data );

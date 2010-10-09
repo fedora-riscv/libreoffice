@@ -1,0 +1,1136 @@
+Index: inc/cmdid.h
+===================================================================
+RCS file: /cvs/sw/sw/inc/cmdid.h,v
+retrieving revision 1.72
+diff -u -r1.72 cmdid.h
+--- openoffice.org.orig/sw/inc/cmdid.h	27 Jun 2007 13:12:47 -0000	1.72
++++ openoffice.org/sw/inc/cmdid.h	10 Jul 2007 12:54:59 -0000
+@@ -539,6 +539,8 @@
+ 
+ #define FN_SET_PAGE_STYLE			(FN_FORMAT + 93)  /* Anwenden Seitenv. */
+ 
++#define FN_FORMAT_TITLEPAGE_DLG		(FN_FORMAT + 98)  /* Title Page */
++
+ 
+ #define FN_TABLE_REP                (FN_FORMAT + 99)  /* TableRepresentation */
+ #define FN_CONVERT_TEXT_TABLE		(FN_FORMAT + 100)  /* Konvertierung Text <-> Tabelle */
+Index: inc/globals.hrc
+===================================================================
+RCS file: /cvs/sw/sw/inc/globals.hrc,v
+retrieving revision 1.16
+diff -u -r1.16 globals.hrc
+--- openoffice.org.orig/sw/inc/globals.hrc	2 May 2006 15:13:43 -0000	1.16
++++ openoffice.org/sw/inc/globals.hrc	10 Jul 2007 12:55:08 -0000
+@@ -282,7 +282,9 @@
+ #define TP_SECTION_INDENTS          (RC_GLOBALS_BEGIN +  102)
+ #define TP_OPTCOMPATIBILITY_PAGE	(RC_GLOBALS_BEGIN +  103)
+ #define TP_MAILCONFIG               (RC_GLOBALS_BEGIN +  104)
+-//maximum: RC_GLOBALS_BEGIN +  119
++#define TP_TITLEPAGE                (RC_GLOBALS_BEGIN +  105)
++//maximum: RC_GLOBALS_BEGIN +  120
++
+ 
+ #if STR_DOC_STAT > RC_GLOBALS_END
+ #error Resource-Id Ueberlauf in #file, #line
+@@ -294,4 +296,5 @@
+ #define SID_WRT_SHELL               (RC_GLOBALS_BEGIN +  117)
+ 
+ #define DLG_LINE_NUMBERING          (RC_GLOBALS_BEGIN +  118)
++#define DLG_TITLEPAGE               (RC_GLOBALS_BEGIN +  119)
+ #endif // _GLOBALS_HRC
+Index: inc/helpid.h
+===================================================================
+RCS file: /cvs/sw/sw/inc/helpid.h,v
+retrieving revision 1.30
+diff -u -r1.30 helpid.h
+--- openoffice.org.orig/sw/inc/helpid.h	2 Jan 2007 16:45:16 -0000	1.30
++++ openoffice.org/sw/inc/helpid.h	10 Jul 2007 12:55:09 -0000
+@@ -986,3 +986,4 @@
+ #define HID_MM_HEADER_12                            (HID_BASE + 2279)
+ #define HID_MM_HEADER_13                            (HID_BASE + 2280)
+ 
++#define HID_TITLEPAGE 						  		(HID_BASE + 2281)
+Index: inc/rcid.hrc
+===================================================================
+RCS file: /cvs/sw/sw/inc/rcid.hrc,v
+retrieving revision 1.12
+diff -u -r1.12 rcid.hrc
+--- openoffice.org.orig/sw/inc/rcid.hrc	22 May 2007 16:20:20 -0000	1.12
++++ openoffice.org/sw/inc/rcid.hrc	10 Jul 2007 12:55:14 -0000
+@@ -135,7 +135,7 @@
+ 
+ // globale Ressourcen
+ #define RC_GLOBALS_BEGIN        	RC_GLOBALS
+-#define RC_GLOBALS_END          	(RC_GLOBALS_BEGIN + 119)
++#define RC_GLOBALS_END          	(RC_GLOBALS_BEGIN + 120)
+ 
+ // Format-Vorlagen
+ #define RC_FMTUI_BEGIN          	RC_FMTUI
+Index: inc/swabstdlg.hxx
+===================================================================
+RCS file: /cvs/sw/sw/inc/swabstdlg.hxx,v
+retrieving revision 1.13
+diff -u -r1.13 swabstdlg.hxx
+--- openoffice.org.orig/sw/inc/swabstdlg.hxx	26 Apr 2007 08:48:16 -0000	1.13
++++ openoffice.org/sw/inc/swabstdlg.hxx	10 Jul 2007 12:55:16 -0000
+@@ -477,6 +477,7 @@
+ 												SwField* pField, BOOL bNextButton = FALSE ) = 0; //add for SwFldInputDlg
+ 	virtual AbstractInsFootNoteDlg*		CreateInsFootNoteDlg( int nResId,
+ 												Window * pParent, SwWrtShell &rSh, BOOL bEd = FALSE) = 0; //add for SwInsFootNoteDlg
++    virtual VclAbstractDialog*          CreateTitlePageDlg ( Window * pParent ) = 0;
+ 	virtual VclAbstractDialog *			CreateVclSwViewDialog( int nResId,
+ 												SwView& rView, BOOL bCol = FALSE ) = 0; //add for SwInsRowColDlg, SwLineNumberingDlg
+ 	virtual AbstractInsertGrfRulerDlg*		CreateInsertGrfRulerDlg( int nResId,
+Index: sdi/_basesh.sdi
+===================================================================
+RCS file: /cvs/sw/sw/sdi/_basesh.sdi,v
+retrieving revision 1.16
+diff -u -r1.16 _basesh.sdi
+--- openoffice.org.orig/sw/sdi/_basesh.sdi	2 May 2006 15:13:56 -0000	1.16
++++ openoffice.org/sw/sdi/_basesh.sdi	10 Jul 2007 12:55:36 -0000
+@@ -250,6 +250,12 @@
+ 		DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
+ 	]
+ 
++	FN_FORMAT_TITLEPAGE_DLG  // status(final|play)
++	[
++		ExecMethod = ExecDlg ;
++		DisableFlags="SW_DISABLE_ON_PROTECTED_CURSOR";
++	]
++
+ 	FN_FORMAT_PAGE_COLUMN_DLG  // status(final|play)
+ 	[
+ 		ExecMethod = ExecDlg ;
+Index: sdi/swriter.sdi
+===================================================================
+RCS file: /cvs/sw/sw/sdi/swriter.sdi,v
+retrieving revision 1.66
+diff -u -r1.66 swriter.sdi
+--- openoffice.org.orig/sw/sdi/swriter.sdi	27 Jun 2007 13:16:04 -0000	1.66
++++ openoffice.org/sw/sdi/swriter.sdi	10 Jul 2007 12:57:02 -0000
+@@ -6330,6 +6330,31 @@
+ ]
+ 
+ //--------------------------------------------------------------------------
++SfxVoidItem TitlePageDialog FN_FORMAT_TITLEPAGE_DLG
++()
++[
++	/* flags: */
++	AutoUpdate = FALSE,
++	Cachable = Cachable,
++	FastCall = FALSE,
++	HasCoreId = FALSE,
++	HasDialog = TRUE,
++	ReadOnlyDoc = FALSE,
++	Toggle = FALSE,
++	Container = FALSE,
++	RecordAbsolute = FALSE,
++	RecordPerItem;
++	Asynchron;
++
++	/* config: */
++	AccelConfig = TRUE,
++	MenuConfig = TRUE,
++	StatusBarConfig = FALSE,
++	ToolBoxConfig = TRUE,
++	GroupId = GID_FORMAT;
++]
++
++//--------------------------------------------------------------------------
+ SfxVoidItem PageDown FN_PAGEDOWN
+ ()
+ [
+Index: source/ui/dialog/swdlgfact.cxx
+===================================================================
+RCS file: /cvs/sw/sw/source/ui/dialog/swdlgfact.cxx,v
+retrieving revision 1.13
+diff -u -r1.13 swdlgfact.cxx
+--- openoffice.org.orig/sw/source/ui/dialog/swdlgfact.cxx	26 Apr 2007 09:06:20 -0000	1.13
++++ openoffice.org/sw/source/ui/dialog/swdlgfact.cxx	10 Jul 2007 13:05:50 -0000
+@@ -97,6 +97,7 @@
+ #include <instable.hxx> //add for SwInsTableDlg
+ #include <javaedit.hxx> //add for SwJavaEditDialog
+ #include <linenum.hxx> //add for SwLineNumberingDlg
++#include <titlepage.hxx> //add for SwTitlePageDlg
+ #include <mailmrge.hxx> //add for SwMailMergeDlg, SwMailMergeCreateFromDlg, SwMailMergeFieldConnectionsDlg
+ #include <mergetbl.hxx> //add for SwMergeTblDlg
+ #include <multmrk.hxx> //add for SwMultiTOXMarkDlg
+@@ -1357,6 +1358,14 @@
+ 	return 0;
+ }
+ 
++VclAbstractDialog * SwAbstractDialogFactory_Impl::CreateTitlePageDlg ( Window *pParent )
++{
++    Dialog* pDlg = new SwTitlePageDlg( pParent );
++    if ( pDlg )
++        return new VclAbstractDialog_Impl( pDlg );
++    return 0;
++}
++
+ VclAbstractDialog * SwAbstractDialogFactory_Impl::CreateVclSwViewDialog( int nResId, 
+ 											SwView& rView, BOOL /*bCol*/ ) //add for SwInsRowColDlg, SwLineNumberingDlg
+ {
+Index: source/ui/dialog/swdlgfact.hxx
+===================================================================
+RCS file: /cvs/sw/sw/source/ui/dialog/swdlgfact.hxx,v
+retrieving revision 1.9
+diff -u -r1.9 swdlgfact.hxx
+--- openoffice.org.orig/sw/source/ui/dialog/swdlgfact.hxx	26 Apr 2007 09:06:34 -0000	1.9
++++ openoffice.org/sw/source/ui/dialog/swdlgfact.hxx	10 Jul 2007 13:05:50 -0000
+@@ -532,6 +532,7 @@
+ 												SwField* pField, BOOL bNextButton = FALSE ); //add for SwFldInputDlg
+ 	virtual AbstractInsFootNoteDlg*		CreateInsFootNoteDlg( int nResId,
+ 												Window * pParent, SwWrtShell &rSh, BOOL bEd = FALSE); //add for SwInsFootNoteDlg
++   virtual VclAbstractDialog *         CreateTitlePageDlg ( Window * pParent );
+ 	virtual VclAbstractDialog *			CreateVclSwViewDialog( int nResId, 
+ 												SwView& rView, BOOL bCol = FALSE ); //add for SwInsRowColDlg, SwLineNumberingDlg
+ 	virtual AbstractInsertGrfRulerDlg*		CreateInsertGrfRulerDlg( int nResId,
+Index: source/ui/inc/swmn_tmpl.hrc
+===================================================================
+RCS file: /cvs/sw/sw/source/ui/inc/swmn_tmpl.hrc,v
+retrieving revision 1.13
+diff -u -r1.13 swmn_tmpl.hrc
+--- openoffice.org.orig/sw/source/ui/inc/swmn_tmpl.hrc	27 Jun 2007 13:25:09 -0000	1.13
++++ openoffice.org/sw/source/ui/inc/swmn_tmpl.hrc	10 Jul 2007 13:08:19 -0000
+@@ -67,8 +67,13 @@
+         Identifier = FN_FORMAT_PAGE_DLG ; \
+         HelpID = FN_FORMAT_PAGE_DLG ; \
+         Text [ en-US ] = "Pa~ge..." ; \
+-	};
+-
++    };\
++    MenuItem\
++    {\
++        Identifier = FN_FORMAT_TITLEPAGE_DLG ; \
++        HelpID = FN_FORMAT_TITLEPAGE_DLG ; \
++        Text [ en-US ] = "~Title Page..." ; \
++    };
+ 
+ #define MN_TEXT_ATTR\
+     MenuItem\
+Index: source/ui/misc/makefile.mk
+===================================================================
+RCS file: /cvs/sw/sw/source/ui/misc/makefile.mk,v
+retrieving revision 1.12
+diff -u -r1.12 makefile.mk
+--- openoffice.org.orig/sw/source/ui/misc/makefile.mk	9 Sep 2005 10:35:47 -0000	1.12
++++ openoffice.org/sw/source/ui/misc/makefile.mk	10 Jul 2007 13:09:42 -0000
+@@ -56,7 +56,8 @@
+ 	pgfnote.src \
+     pggrid.src \
+     redlndlg.src \
+-    srtdlg.src
++    srtdlg.src \
++    titlepage.src
+ 
+ EXCEPTIONSFILES = \
+ 		$(SLO)$/glossary.obj \
+@@ -76,6 +77,7 @@
+ 		$(SLO)$/insfnote.obj \
+ 		$(SLO)$/insrule.obj \
+ 		$(SLO)$/linenum.obj \
++		$(SLO)$/titlepage.obj \
+ 		$(SLO)$/num.obj \
+ 		$(SLO)$/numberingtypelistbox.obj \
+ 		$(SLO)$/outline.obj \
+Index: source/ui/shells/basesh.cxx
+===================================================================
+RCS file: /cvs/sw/sw/source/ui/shells/basesh.cxx,v
+retrieving revision 1.81
+diff -u -r1.81 basesh.cxx
+--- openoffice.org.orig/sw/source/ui/shells/basesh.cxx	10 May 2007 16:22:02 -0000	1.81
++++ openoffice.org/sw/source/ui/shells/basesh.cxx	10 Jul 2007 13:10:07 -0000
+@@ -2546,6 +2546,14 @@
+ 
+ 	switch ( nSlot )
+ 	{
++		case FN_FORMAT_TITLEPAGE_DLG:
++		{
++			SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
++			VclAbstractDialog* pDlg = pFact->CreateTitlePageDlg( pMDI );
++			pDlg->Execute();
++			delete pDlg;
++		}
++		break;
+ 		case FN_FORMAT_PAGE_COLUMN_DLG:
+ 		case FN_FORMAT_PAGE_DLG:
+ 		{
+Index: uiconfig/swriter/menubar/menubar.xml
+===================================================================
+RCS file: /cvs/sw/sw/uiconfig/swriter/menubar/menubar.xml,v
+retrieving revision 1.28
+diff -u -r1.28 menubar.xml
+--- openoffice.org.orig/sw/uiconfig/swriter/menubar/menubar.xml	29 May 2007 14:49:53 -0000	1.28
++++ openoffice.org/sw/uiconfig/swriter/menubar/menubar.xml	10 Jul 2007 13:13:00 -0000
+@@ -217,6 +217,7 @@
+       <menu:menuitem menu:id=".uno:ParagraphDialog"/>
+       <menu:menuitem menu:id=".uno:BulletsAndNumberingDialog"/>
+       <menu:menuitem menu:id=".uno:PageDialog"/>
++      <menu:menuitem menu:id=".uno:TitlePageDialog"/>
+       <menu:menuseparator/>
+       <menu:menu menu:id=".uno:TransliterateMenu">
+         <menu:menupopup>
+Index: util/makefile.mk
+===================================================================
+RCS file: /cvs/sw/sw/util/makefile.mk,v
+retrieving revision 1.61
+diff -u -r1.61 makefile.mk
+--- openoffice.org.orig/sw/util/makefile.mk	22 May 2007 16:41:25 -0000	1.61
++++ openoffice.org/sw/util/makefile.mk	10 Jul 2007 13:13:05 -0000
+@@ -263,6 +263,7 @@
+     $(SLO)$/instable.obj \
+     $(SLO)$/insrule.obj \
+     $(SLO)$/javaedit.obj \
++    $(SLO)$/titlepage.obj \
+     $(SLO)$/linenum.obj \
+     $(SLO)$/mailmrge.obj \
+     $(SLO)$/multmrk.obj \
+diff -ru openoffice.org/officecfg/registry/data/org/openoffice/Office/UI/WriterCommands.xcu openoffice.org/officecfg/registry/data/org/openoffice/Office/UI/WriterCommands.xcu
+--- openoffice.org.orig/officecfg/registry/data/org/openoffice/Office/UI/WriterCommands.xcu	2007-07-10 14:35:38.000000000 +0100
++++ openoffice.org/officecfg/registry/data/org/openoffice/Office/UI/WriterCommands.xcu	2007-07-09 12:03:44.000000000 +0100
+@@ -802,6 +802,11 @@
+                     <value xml:lang="en-US">~Page...</value>
+                 </prop>
+             </node>
++			<node oor:name=".uno:TitlePageDialog" oor:op="replace">
++				<prop oor:name="Label" oor:type="xs:string">
++					<value xml:lang="en-US">Title Page...</value>
++				</prop>
++			</node>
+ 			<node oor:name=".uno:FormatColumns" oor:op="replace">
+ 				<prop oor:name="Label" oor:type="xs:string">
+                     <value xml:lang="en-US">Co~lumns...</value>
+--- /dev/null	2008-10-28 16:28:18.200260089 +0000
++++ openoffice.org.orig/sw/source/ui/inc/titlepage.hxx	2008-11-13 12:48:59.000000000 +0000
+@@ -0,0 +1,129 @@
++/*************************************************************************
++ *
++ *  OpenOffice.org - a multi-platform office productivity suite
++ *
++ *  $RCSfile$
++ *
++ *  $Revision$
++ *
++ *  last change: $Author$ $Date$
++ *
++ *  The Contents of this file are made available subject to
++ *  the terms of GNU Lesser General Public License Version 2.1.
++ *
++ *
++ *    GNU Lesser General Public License Version 2.1
++ *    =============================================
++ *    Copyright 2005 by Sun Microsystems, Inc.
++ *    901 San Antonio Road, Palo Alto, CA 94303, USA
++ *
++ *    This library is free software; you can redistribute it and/or
++ *    modify it under the terms of the GNU Lesser General Public
++ *    License version 2.1, as published by the Free Software Foundation.
++ *
++ *    This library is distributed in the hope that it will be useful,
++ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *    Lesser General Public License for more details.
++ *
++ *    You should have received a copy of the GNU Lesser General Public
++ *    License along with this library; if not, write to the Free Software
++ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ *    MA  02111-1307  USA
++ *
++ ************************************************************************/
++#ifndef _SWTITLEPAGE_HXX
++#define _SWTITLEPAGE_HXX
++
++#ifndef _BASEDLGS_HXX //autogen
++#include <sfx2/basedlgs.hxx>
++#endif
++
++#ifndef _SFXTABDLG_HXX //autogen
++#include <sfx2/tabdlg.hxx>
++#endif
++
++#ifndef _SV_FIXED_HXX //autogen
++#include <vcl/fixed.hxx>
++#endif
++
++#ifndef _SV_FIELD_HXX //autogen
++#include <vcl/field.hxx>
++#endif
++#ifndef _NUMBERINGTYPELISTBOX_HXX
++#include <numberingtypelistbox.hxx>
++#endif
++
++#ifndef _LSTBOX_HXX //autogen
++#include <vcl/lstbox.hxx>
++#endif
++
++class Window;
++class SfxItemSet;
++class SwView;
++class SwWrtShell;
++class SwPageDesc;
++
++/*--------------------------------------------------------------------
++   Beschreibung: SingleTabDialog
++ --------------------------------------------------------------------*/
++
++class SwTitlePageDlg : public SfxModalDialog
++{
++private:
++	FixedLine	aMakeInsertFL;
++	RadioButton	aUseExistingPagesRB;
++	RadioButton	aInsertNewPagesRB;
++	FixedText	aPageCountFT;
++	NumericField	aPageCountNF;
++	FixedText	aPagePagesFT;
++
++	FixedText	aPageStartFT;
++	RadioButton	aDocumentStartRB;
++	RadioButton	aPageStartRB;
++	NumericField	aPageStartNF;
++
++	FixedLine	aNumberingFL;
++	CheckBox	aRestartNumberingCB;
++	FixedText	aRestartNumberingFT;
++	NumericField	aRestartNumberingNF;
++	CheckBox	aSetPageNumberCB;
++	FixedText	aSetPageNumberFT;
++	NumericField	aSetPageNumberNF;
++
++	FixedLine	aPagePropertiesFL;
++	ListBox		aPagePropertiesLB;
++	PushButton	aPagePropertiesPB;
++
++        FixedLine	aBottomFL;
++        OKButton	aOkPB;
++        CancelButton	aCancelPB;
++        HelpButton	aHelpPB;
++
++        SwWrtShell *mpSh;
++
++	const SwFmtPageDesc *mpPageFmtDesc;
++
++        SwPageDesc *mpTitleDesc;
++        const SwPageDesc *mpIndexDesc;
++        const SwPageDesc *mpNormalDesc;
++
++	void FillList();
++
++        USHORT GetInsertPosition() const;
++
++	DECL_LINK( OKHdl, Button * );
++	DECL_LINK( EditHdl, Button * );
++	DECL_LINK( RestartNumberingHdl, CheckBox* );
++	DECL_LINK( SetPageNumberHdl, CheckBox* );
++        DECL_LINK( UpHdl, NumericField * );
++        DECL_LINK( DownHdl, NumericField * );
++        DECL_LINK( StartPageHdl, RadioButton * );
++public:
++	SwTitlePageDlg( Window *pParent );
++	~SwTitlePageDlg();
++};
++
++#endif
++
++/* vi:set tabstop=4 shiftwidth=4 expandtab: */
+--- /dev/null	2008-10-28 16:28:18.200260089 +0000
++++ openoffice.org/sw/source/ui/misc/titlepage.src	2008-11-13 12:03:28.000000000 +0000
+@@ -0,0 +1,260 @@
++/*************************************************************************
++ *
++ *  OpenOffice.org - a multi-platform office productivity suite
++ *
++ *  $RCSfile$
++ *
++ *  $Revision$
++ *
++ *  last change: $Author$ $Date$
++ *
++ *  The Contents of this file are made available subject to
++ *  the terms of GNU Lesser General Public License Version 2.1.
++ *
++ *
++ *    GNU Lesser General Public License Version 2.1
++ *    =============================================
++ *    Copyright 2005 by Sun Microsystems, Inc.
++ *    901 San Antonio Road, Palo Alto, CA 94303, USA
++ *
++ *    This library is free software; you can redistribute it and/or
++ *    modify it under the terms of the GNU Lesser General Public
++ *    License version 2.1, as published by the Free Software Foundation.
++ *
++ *    This library is distributed in the hope that it will be useful,
++ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *    Lesser General Public License for more details.
++ *
++ *    You should have received a copy of the GNU Lesser General Public
++ *    License along with this library; if not, write to the Free Software
++ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ *    MA  02111-1307  USA
++ *
++ ************************************************************************/
++/* StarView ressource file */
++
++#ifndef _SFX_HRC
++#include <sfx2/sfx.hrc>
++#endif
++#ifndef _SVX_DIALOGS_HRC
++#include <svx/dialogs.hrc>
++#endif
++#include "globals.hrc"
++#include "misc.hrc"
++#include "titlepage.hrc"
++#include "helpid.h"
++/**************************************************************************/
++/*                                                                        */
++/**************************************************************************/
++ModalDialog DLG_TITLEPAGE
++{
++	HelpID = HID_TITLEPAGE ;
++	OutputSize = TRUE ;
++	SVLook = TRUE ;
++	Size = MAP_APPFONT ( 216 , 201 ) ;
++	Text [ en-US ] = "Title Pages" ;
++	Moveable = TRUE ;
++
++	FixedLine FL_MAKEINSERT
++	{
++		Pos = MAP_APPFONT ( 6 , 5 ) ;
++		Size = MAP_APPFONT ( 204 , 8 ) ;
++		Text [ en-US ] = "Make Title Pages" ;
++		Text [ x-comment ] = " ";
++	};
++	RadioButton RB_USE_EXISTING_PAGES
++	{
++		Pos = MAP_APPFONT ( 12 , 18 ) ;
++		Size = MAP_APPFONT ( 150 , 10 ) ;
++		Text [ en-US ] = "Convert existing pages to title pages" ;
++		TabStop = TRUE ;
++		Check = TRUE ;
++		Text [ x-comment ] = " ";
++	};
++	RadioButton RB_INSERT_NEW_PAGES
++	{
++		Pos = MAP_APPFONT ( 12 , 34 ) ;
++		Size = MAP_APPFONT ( 150 , 10 ) ;
++		Text [ en-US ] = "Insert new title pages" ;
++		Text [ x-comment ] = " ";
++	};
++	FixedText FT_PAGE_COUNT
++	{
++		Pos = MAP_APPFONT ( 12 , 50 ) ;
++		Size = MAP_APPFONT ( 80 , 8 ) ;
++		Text [ en-US ] = "Number of title pages" ;
++		Text [ x-comment ] = " ";
++	};
++	NumericField NF_PAGE_COUNT
++	{
++		Pos = MAP_APPFONT ( 80 , 50 ) ;
++		Size = MAP_APPFONT ( 30 , 12 ) ;
++		Border = TRUE ;
++		TabStop = TRUE ;
++		Left = TRUE ;
++		Repeat = TRUE ;
++		Spin = TRUE ;
++		Minimum = 1 ;
++		Maximum = 65535;
++		First = 1 ;
++		Last = 65535;
++		SpinSize = 1 ;
++	};
++	FixedText FT_PAGE_PAGES
++	{
++		Pos = MAP_APPFONT ( 116 , 50 ) ;
++		Size = MAP_APPFONT ( 80 , 10 ) ;
++		Text [ en-US ] = "pages" ;
++		Text [ x-comment ] = " ";
++	};
++	FixedText FT_PAGE_START
++	{
++		Pos = MAP_APPFONT ( 12 , 66 ) ;
++		Size = MAP_APPFONT ( 58 , 8 ) ;
++		Text [ en-US ] = "Place title pages at" ;
++		Text [ x-comment ] = " ";
++	};
++	RadioButton RB_DOCUMENT_START
++	{
++		Pos = MAP_APPFONT ( 70 , 66 ) ;
++		Size = MAP_APPFONT ( 80 , 10 ) ;
++		Text [ en-US ] = "Document Start" ;
++		TabStop = TRUE ;
++		Check = TRUE ;
++		Text [ x-comment ] = " ";
++	};
++	RadioButton RB_PAGE_START
++	{
++		Pos = MAP_APPFONT ( 70 , 78 ) ;
++		Size = MAP_APPFONT ( 30 , 10 ) ;
++		Text [ en-US ] = "Page" ;
++		Text [ x-comment ] = " ";
++	};
++	NumericField NF_PAGE_START
++	{
++		Pos = MAP_APPFONT ( 95 , 78 ) ;
++		Size = MAP_APPFONT ( 30 , 12 ) ;
++		Border = TRUE ;
++		TabStop = TRUE ;
++		Left = TRUE ;
++		Repeat = TRUE ;
++		Spin = TRUE ;
++		Minimum = 1 ;
++		Maximum = 65535;
++		First = 1 ;
++		Last = 65535;
++		SpinSize = 1 ;
++	};
++	FixedLine FL_NUMBERING
++	{
++		Pos = MAP_APPFONT ( 6 , 98 ) ;
++		Size = MAP_APPFONT ( 204 , 8 ) ;
++		Text [ en-US ] = "Page Numbering" ;
++		Text [ x-comment ] = " ";
++	};
++	CheckBox CB_RESTART_NUMBERING
++	{
++		Pos = MAP_APPFONT ( 12, 111  ) ;
++		Size = MAP_APPFONT ( 150 , 10 ) ;
++		TabStop = TRUE ;
++		Text [ en-US ] = "Reset Page Numbering after title pages" ;
++		Text [ x-comment ] = " ";
++	};
++	FixedText FT_RESTART_NUMBERING
++	{
++		Pos = MAP_APPFONT ( 140 , 111 ) ;
++		Size = MAP_APPFONT ( 50 , 10 ) ;
++		Text [ en-US ] = "Page Number" ;
++		Text [ x-comment ] = " ";
++	};
++	NumericField NF_RESTART_NUMBERING
++	{
++		Pos = MAP_APPFONT ( 180 , 111 ) ;
++		Size = MAP_APPFONT ( 30 , 12 ) ;
++		Border = TRUE ;
++		TabStop = TRUE ;
++		Left = TRUE ;
++		Repeat = TRUE ;
++		Spin = TRUE ;
++		Minimum = 1 ;
++		Maximum = 65535;
++		First = 1 ;
++		Last = 65535;
++		SpinSize = 1 ;
++	};
++	CheckBox CB_SET_PAGE_NUMBER
++	{
++		Pos = MAP_APPFONT ( 12 , 125 ) ;
++		Size = MAP_APPFONT ( 150 , 10 ) ;
++		TabStop = TRUE ;
++		Text [ en-US ] = "Set Page Number for first title page" ;
++		Text [ x-comment ] = " ";
++	};
++	FixedText FT_SET_PAGE_NUMBER
++	{
++		Pos = MAP_APPFONT ( 140 , 125 ) ;
++		Size = MAP_APPFONT ( 50 , 10 ) ;
++		Text [ en-US ] = "Page Number" ;
++		Text [ x-comment ] = " ";
++	};
++	NumericField NF_SET_PAGE_NUMBER
++	{
++		Pos = MAP_APPFONT ( 180 , 125 ) ;
++		Size = MAP_APPFONT ( 30 , 12 ) ;
++		Border = TRUE ;
++		TabStop = TRUE ;
++		Left = TRUE ;
++		Repeat = TRUE ;
++		Spin = TRUE ;
++		Minimum = 1 ;
++		Maximum = 65535;
++		First = 1 ;
++		Last = 65535;
++		SpinSize = 1 ;
++	};
++	FixedLine FL_PAGE_PROPERTIES
++	{
++		Pos = MAP_APPFONT ( 6 , 141 ) ;
++		Size = MAP_APPFONT ( 204 , 8 ) ;
++		Text [ en-US ] = "Edit Page Properties" ;
++		Text [ x-comment ] = " ";
++	};
++	ListBox LB_PAGE_PROPERTIES
++	{
++		Border = TRUE ;
++		Pos = MAP_APPFONT ( 12 , 154 ) ;
++		Size = MAP_APPFONT ( 150 , 80 ) ;
++		TabStop = TRUE ;
++		DropDown = TRUE ;
++		CurPos = 0 ;
++	};
++	PushButton PB_PAGE_PROPERTIES
++	{
++                Pos = MAP_APPFONT ( 170 , 154 ) ;
++		Size = MAP_APPFONT ( 30 , 12 ) ;
++		Text [ en-US ] = "Edit..." ;
++	};
++	FixedLine FL_BOTTOM
++	{
++		Pos = MAP_APPFONT ( 6 , 170 ) ;
++		Size = MAP_APPFONT ( 204 , 8 ) ;
++	};
++	OKButton PB_OK
++	{
++		Pos = MAP_APPFONT ( 54 , 181 ) ;
++		Size = MAP_APPFONT ( 50 , 14 ) ;
++		DefButton = TRUE ;
++	};
++	CancelButton PB_CANCEL
++	{
++		Pos = MAP_APPFONT ( 107 , 181 ) ;
++		Size = MAP_APPFONT ( 50 , 14 ) ;
++		DefButton = TRUE ;
++	};
++	HelpButton PB_HELP
++	{
++		Pos = MAP_APPFONT ( 160 , 181 ) ;
++		Size = MAP_APPFONT ( 50 , 14 ) ;
++	};
++};
+--- /dev/null	2008-10-28 16:28:18.200260089 +0000
++++ openoffice.org/sw/source/ui/misc/titlepage.cxx	2008-11-13 12:58:11.000000000 +0000
+@@ -0,0 +1,375 @@
++/*************************************************************************
++ *
++ *  OpenOffice.org - a multi-platform office productivity suite
++ *
++ *  $RCSfile$
++ *
++ *  $Revision$
++ *
++ *  last change: $Author$ $Date$
++ *
++ *  The Contents of this file are made available subject to
++ *  the terms of GNU Lesser General Public License Version 2.1.
++ *
++ *
++ *    GNU Lesser General Public License Version 2.1
++ *    =============================================
++ *    Copyright 2005 by Sun Microsystems, Inc.
++ *    901 San Antonio Road, Palo Alto, CA 94303, USA
++ *
++ *    This library is free software; you can redistribute it and/or
++ *    modify it under the terms of the GNU Lesser General Public
++ *    License version 2.1, as published by the Free Software Foundation.
++ *
++ *    This library is distributed in the hope that it will be useful,
++ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *    Lesser General Public License for more details.
++ *
++ *    You should have received a copy of the GNU Lesser General Public
++ *    License along with this library; if not, write to the Free Software
++ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ *    MA  02111-1307  USA
++ *
++ ************************************************************************/
++
++// MARKER(update_precomp.py): autogen include statement, do not remove
++#include "precompiled_sw.hxx"
++
++#ifdef SW_DLLIMPLEMENTATION
++#undef SW_DLLIMPLEMENTATION
++#endif
++
++#include <sfx2/viewfrm.hxx>
++#include <vcl/msgbox.hxx>
++#include <view.hxx>
++#include <swmodule.hxx>
++#include <wrtsh.hxx>
++#include <poolfmt.hxx>
++#include <docsh.hxx>
++#include <charfmt.hxx>
++#include <docstyle.hxx>
++
++#include "fldbas.hxx"
++#include "lineinfo.hxx"
++#include "globals.hrc"
++#include "titlepage.hrc"
++#include "titlepage.hxx"
++#include "uitool.hxx"
++#include "fmtpdsc.hxx"
++#include "pagedesc.hxx"
++
++#include <IDocumentStylePoolAccess.hxx>
++
++namespace
++{
++	bool lcl_GetPageDesc(SwWrtShell *pSh, USHORT &rPageNo, const SwFmtPageDesc **ppPageFmtDesc)
++	{
++		bool bRet = false;
++		SfxItemSet aSet( pSh->GetAttrPool(), RES_PAGEDESC, RES_PAGEDESC );
++		if (pSh->GetCurAttr( aSet ))
++		{
++			const SfxPoolItem* pItem(0);
++			if (SFX_ITEM_SET == aSet.GetItemState( RES_PAGEDESC, TRUE, &pItem ) && pItem)
++			{
++				rPageNo = ((const SwFmtPageDesc *)pItem)->GetNumOffset();
++				if (ppPageFmtDesc)
++					(*ppPageFmtDesc) = (const SwFmtPageDesc *)(pItem->Clone());
++				bRet = true;
++			}
++		}
++		return bRet;
++	}
++
++    bool lcl_SkipNPages(SwWrtShell *pSh, USHORT nNoPages)
++    {
++		bool bAllOk = true;
++		for (USHORT nI = 0; nI < nNoPages && bAllOk; ++nI)
++			bAllOk = pSh->SttNxtPg();
++        return bAllOk;
++    }
++
++    void lcl_ChangePage(SwWrtShell *pSh, USHORT nNewNumber,
++        const SwPageDesc *pNewDesc)
++	{
++	    const USHORT nCurIdx = pSh->GetCurPageDesc();
++	    const SwPageDesc &rCurrentDesc = pSh->GetPageDesc( nCurIdx );
++
++	    const SwFmtPageDesc *pPageFmtDesc(0);
++	    USHORT nDontCare;
++	    lcl_GetPageDesc(pSh, nDontCare, &pPageFmtDesc);
++
++	    //If we want a new number then set it, otherwise reuse the existing one
++	    USHORT nPgNo = nNewNumber ?
++            nNewNumber : ( pPageFmtDesc ? pPageFmtDesc->GetNumOffset() : 0 );
++
++	    //If we want a new descriptior then set it, otherwise reuse the existing one
++	    if (!pNewDesc)
++	    {
++		    SwFmtPageDesc aPageFmtDesc(pPageFmtDesc ? *pPageFmtDesc : &rCurrentDesc);
++		    if (nPgNo) aPageFmtDesc.SetNumOffset(nPgNo);
++		    pSh->SetAttr(aPageFmtDesc);
++	    }
++	    else
++	    {
++		    SwFmtPageDesc aPageFmtDesc(pNewDesc);
++		    if (nPgNo) aPageFmtDesc.SetNumOffset(nPgNo);
++		    pSh->SetAttr(aPageFmtDesc);
++	    }
++
++	    delete pPageFmtDesc;
++	}
++
++	void lcl_PushCursor(SwWrtShell *pSh)
++	{
++		pSh->LockView( TRUE );
++		pSh->StartAllAction();
++		pSh->SwCrsrShell::Push();
++	}
++
++	void lcl_PopCursor(SwWrtShell *pSh)
++	{
++		pSh->SwCrsrShell::Pop( FALSE );
++		pSh->EndAllAction();
++        pSh->LockView( FALSE );
++	}
++
++    USHORT lcl_GetCurrentPage(SwWrtShell *pSh)
++    {
++        String sDummy;
++        USHORT nPhyNum=1, nVirtNum=1;
++        pSh->GetPageNumber(0, true, nPhyNum, nVirtNum, sDummy);
++        return nPhyNum;
++    }
++}
++
++/*
++ * Only include the Index page in the list if the page count implies one
++ * to reduce confusing things
++ */
++void SwTitlePageDlg::FillList()
++{
++	USHORT nTitlePages = aPageCountNF.GetValue();
++	aPagePropertiesLB.Clear();
++	if (mpTitleDesc)
++		aPagePropertiesLB.InsertEntry(mpTitleDesc->GetName());
++	if (nTitlePages > 1 && mpIndexDesc)
++		aPagePropertiesLB.InsertEntry(mpIndexDesc->GetName());
++	if (mpNormalDesc)
++		aPagePropertiesLB.InsertEntry(mpNormalDesc->GetName());
++    aPagePropertiesLB.SelectEntryPos(0);
++}
++
++/*--------------------------------------------------------------------
++	Beschreibung:
++ --------------------------------------------------------------------*/
++
++USHORT SwTitlePageDlg::GetInsertPosition() const
++{
++    USHORT nPage = 1;
++    if (aPageStartNF.IsEnabled())
++        nPage = aPageStartNF.GetValue();
++    return nPage;
++}
++
++SwTitlePageDlg::SwTitlePageDlg( Window *pParent ) :
++	SfxModalDialog( pParent, SW_RES(DLG_TITLEPAGE) ),
++#pragma warning (disable : 4355)
++	aMakeInsertFL		( this, SW_RES( FL_MAKEINSERT )),
++	aUseExistingPagesRB	( this, SW_RES( RB_USE_EXISTING_PAGES )),
++	aInsertNewPagesRB	( this, SW_RES( RB_INSERT_NEW_PAGES )),
++	aPageCountFT		( this, SW_RES( FT_PAGE_COUNT )),
++	aPageCountNF		( this, SW_RES( NF_PAGE_COUNT )),
++	aPagePagesFT		( this, SW_RES( FT_PAGE_PAGES )),
++	aPageStartFT		( this, SW_RES( FT_PAGE_START )),
++	aDocumentStartRB	( this, SW_RES( RB_DOCUMENT_START )),
++	aPageStartRB		( this, SW_RES( RB_PAGE_START )),
++	aPageStartNF		( this, SW_RES( NF_PAGE_START )),
++	aNumberingFL		( this, SW_RES( FL_NUMBERING )),
++	aRestartNumberingCB	( this, SW_RES( CB_RESTART_NUMBERING )),
++	aRestartNumberingFT	( this, SW_RES( FT_RESTART_NUMBERING )),
++	aRestartNumberingNF	( this, SW_RES( NF_RESTART_NUMBERING )),
++	aSetPageNumberCB	( this, SW_RES( CB_SET_PAGE_NUMBER )),
++	aSetPageNumberFT	( this, SW_RES( FT_SET_PAGE_NUMBER )),
++	aSetPageNumberNF	( this, SW_RES( NF_SET_PAGE_NUMBER )),
++	aPagePropertiesFL	( this, SW_RES( FL_PAGE_PROPERTIES )),
++	aPagePropertiesLB	( this, SW_RES( LB_PAGE_PROPERTIES )),
++	aPagePropertiesPB	( this, SW_RES( PB_PAGE_PROPERTIES )),
++    aBottomFL			( this, SW_RES( FL_BOTTOM )),
++    aOkPB				( this, SW_RES( PB_OK )),
++    aCancelPB			( this, SW_RES( PB_CANCEL )),
++    aHelpPB				( this, SW_RES( PB_HELP )),
++	mpPageFmtDesc		(0)
++#pragma warning (default : 4355)
++{
++	FreeResource();
++
++    aOkPB.SetClickHdl(LINK(this, SwTitlePageDlg, OKHdl));
++    aRestartNumberingCB.SetClickHdl(LINK(this, SwTitlePageDlg, RestartNumberingHdl));
++	aSetPageNumberCB.SetClickHdl(LINK(this, SwTitlePageDlg, SetPageNumberHdl));
++
++	USHORT nSetPage = 1;
++	USHORT nResetPage = 1;
++	USHORT nTitlePages = 1;
++	mpSh = ::GetActiveView()->GetWrtShellPtr();
++	lcl_PushCursor(mpSh);
++
++	SwView& rView = mpSh->GetView();
++	rView.InvalidateRulerPos();
++
++	bool bMaybeResetNumbering = false;
++
++	mpTitleDesc = mpSh->GetPageDescFromPool(RES_POOLPAGE_FIRST);
++	mpIndexDesc = mpSh->GetPageDescFromPool(RES_POOLPAGE_REGISTER);
++	mpNormalDesc = mpSh->GetPageDescFromPool(RES_POOLPAGE_STANDARD);
++
++    mpSh->SttDoc();
++	if (lcl_GetPageDesc( mpSh, nSetPage, &mpPageFmtDesc ))
++	{
++   		if (mpPageFmtDesc->GetPageDesc() == mpTitleDesc)
++   		{
++			while (mpSh->SttNxtPg())
++			{
++                const USHORT nCurIdx = mpSh->GetCurPageDesc();
++                const SwPageDesc &rPageDesc = mpSh->GetPageDesc( nCurIdx );
++					
++                if (mpIndexDesc != &rPageDesc)
++				{
++                    mpNormalDesc = &rPageDesc;
++                    bMaybeResetNumbering = lcl_GetPageDesc(mpSh, nResetPage, NULL);
++                    break;
++				}
++				++nTitlePages;
++			}
++    	}
++    }
++	lcl_PopCursor(mpSh);
++
++    aUseExistingPagesRB.Check();
++    aPageCountNF.SetValue(nTitlePages);
++    aPageCountNF.SetUpHdl(LINK(this, SwTitlePageDlg, UpHdl));
++    aPageCountNF.SetDownHdl(LINK(this, SwTitlePageDlg, DownHdl));
++
++    aDocumentStartRB.Check();
++    aPageStartNF.Enable(false);
++    aPageStartNF.SetValue(lcl_GetCurrentPage(mpSh));
++    Link aStartPageHdl = LINK(this, SwTitlePageDlg, StartPageHdl);
++    aDocumentStartRB.SetClickHdl(aStartPageHdl);
++    aPageStartRB.SetClickHdl(aStartPageHdl);
++
++	if (bMaybeResetNumbering && nResetPage > 0)
++	{
++        aRestartNumberingCB.Check();
++        aRestartNumberingNF.SetValue(nResetPage);
++	}
++	aRestartNumberingNF.Enable(aRestartNumberingCB.IsChecked());
++
++    aSetPageNumberNF.SetValue(nSetPage);
++	if (nSetPage > 1)
++        aSetPageNumberCB.Check();
++	aSetPageNumberNF.Enable(aSetPageNumberCB.IsChecked());
++
++	FillList();
++    aPagePropertiesPB.SetClickHdl(LINK(this, SwTitlePageDlg, EditHdl));
++}
++
++IMPL_LINK(SwTitlePageDlg, UpHdl, NumericField *, EMPTYARG)
++{
++	if (aPageCountNF.GetValue() == 2)
++		FillList();
++    return 0;
++}
++
++IMPL_LINK(SwTitlePageDlg, DownHdl, NumericField *, EMPTYARG)
++{
++	if (aPageCountNF.GetValue() == 1)
++		FillList();
++    return 0;
++}
++
++IMPL_LINK(SwTitlePageDlg, RestartNumberingHdl, CheckBox*, EMPTYARG)
++{
++    aRestartNumberingNF.Enable(aRestartNumberingCB.IsChecked());
++    return 0;
++}
++
++IMPL_LINK(SwTitlePageDlg, SetPageNumberHdl, CheckBox*, EMPTYARG)
++{
++    aSetPageNumberNF.Enable(aSetPageNumberCB.IsChecked());
++    return 0;
++}
++
++IMPL_LINK(SwTitlePageDlg, StartPageHdl, RadioButton*, EMPTYARG)
++{
++    aPageStartNF.Enable(aPageStartRB.IsChecked());
++    return 0;
++}
++
++__EXPORT SwTitlePageDlg::~SwTitlePageDlg()
++{
++	delete mpPageFmtDesc;
++}
++
++IMPL_LINK( SwTitlePageDlg, EditHdl, Button *, /*pBtn*/ )
++{
++    SwView& rView = mpSh->GetView();
++    rView.GetDocShell()->FormatPage(aPagePropertiesLB.GetSelectEntry(), false, mpSh);
++    rView.InvalidateRulerPos();
++
++    return 0;
++}
++
++IMPL_LINK( SwTitlePageDlg, OKHdl, Button *, /*pBtn*/ )
++{
++    lcl_PushCursor(mpSh);
++
++    mpSh->StartUndo();
++
++    SwFmtPageDesc aTitleDesc(mpTitleDesc);
++
++    if (aSetPageNumberCB.IsChecked())
++        aTitleDesc.SetNumOffset(aSetPageNumberNF.GetValue());
++    else if (mpPageFmtDesc)
++        aTitleDesc.SetNumOffset(mpPageFmtDesc->GetNumOffset());
++
++    USHORT nNoPages = aPageCountNF.GetValue();
++    if (!aUseExistingPagesRB.IsChecked())
++    {
++        mpSh->GotoPage(GetInsertPosition(), false);
++        for (USHORT nI=0; nI < nNoPages; ++nI)
++        	mpSh->InsertPageBreak();
++    }
++
++    mpSh->GotoPage(GetInsertPosition(), false);
++    for (USHORT nI=1; nI < nNoPages; ++nI)
++    {
++        if (mpSh->SttNxtPg())
++            lcl_ChangePage(mpSh, 0, mpIndexDesc);
++    }
++
++    mpSh->GotoPage(GetInsertPosition(), false);
++    mpSh->SetAttr(aTitleDesc);
++
++    if (nNoPages > 1 && mpSh->GotoPage(GetInsertPosition() + nNoPages, false))
++    {
++	    SwFmtPageDesc aPageFmtDesc(mpNormalDesc);
++    	mpSh->SetAttr(aPageFmtDesc);
++    }
++
++    if (aRestartNumberingCB.IsChecked() || nNoPages > 1)
++    {
++        USHORT nPgNo = aRestartNumberingCB.IsChecked() ? aRestartNumberingNF.GetValue() : 0;
++        const SwPageDesc *pNewDesc = nNoPages > 1 ? mpNormalDesc : 0;
++        mpSh->GotoPage(GetInsertPosition() + nNoPages, false);
++        lcl_ChangePage(mpSh, nPgNo, pNewDesc);
++    }
++
++    mpSh->EndUndo();
++    lcl_PopCursor(mpSh);
++    if (!aUseExistingPagesRB.IsChecked())
++        mpSh->GotoPage(GetInsertPosition(), false);
++    EndDialog( RET_OK );
++    return 0;
++}
++
++/* vi:set tabstop=4 shiftwidth=4 expandtab: */
+--- /dev/null	2008-10-28 16:28:18.200260089 +0000
++++ openoffice.org/sw/source/ui/misc/titlepage.hrc	2008-11-13 10:21:32.000000000 +0000
+@@ -0,0 +1,58 @@
++/*************************************************************************
++ *
++ *  OpenOffice.org - a multi-platform office productivity suite
++ *
++ *  $RCSfile$
++ *
++ *  $Revision$
++ *
++ *  last change: $Author$ $Date$
++ *
++ *  The Contents of this file are made available subject to
++ *  the terms of GNU Lesser General Public License Version 2.1.
++ *
++ *
++ *    GNU Lesser General Public License Version 2.1
++ *    =============================================
++ *    Copyright 2005 by Sun Microsystems, Inc.
++ *    901 San Antonio Road, Palo Alto, CA 94303, USA
++ *
++ *    This library is free software; you can redistribute it and/or
++ *    modify it under the terms of the GNU Lesser General Public
++ *    License version 2.1, as published by the Free Software Foundation.
++ *
++ *    This library is distributed in the hope that it will be useful,
++ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ *    Lesser General Public License for more details.
++ *
++ *    You should have received a copy of the GNU Lesser General Public
++ *    License along with this library; if not, write to the Free Software
++ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ *    MA  02111-1307  USA
++ *
++ ************************************************************************/
++#define FL_MAKEINSERT         1
++#define RB_USE_EXISTING_PAGES 2
++#define RB_INSERT_NEW_PAGES   3
++#define FT_PAGE_COUNT         4
++#define NF_PAGE_COUNT         5
++#define FT_PAGE_PAGES         6
++#define FT_PAGE_START         7
++#define RB_DOCUMENT_START     8
++#define RB_PAGE_START         9
++#define NF_PAGE_START        10
++#define FL_NUMBERING         11
++#define CB_RESTART_NUMBERING 12
++#define FT_RESTART_NUMBERING 13
++#define NF_RESTART_NUMBERING 14
++#define CB_SET_PAGE_NUMBER   15
++#define FT_SET_PAGE_NUMBER   16
++#define NF_SET_PAGE_NUMBER   17
++#define FL_PAGE_PROPERTIES   18
++#define LB_PAGE_PROPERTIES   19
++#define PB_PAGE_PROPERTIES   20
++#define FL_BOTTOM            21
++#define PB_OK                22
++#define PB_CANCEL            23
++#define PB_HELP              24

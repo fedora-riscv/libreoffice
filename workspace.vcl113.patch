@@ -1,0 +1,490 @@
+diff -ru vcl.orig/inc/vcl/salgdi.hxx vcl/inc/vcl/salgdi.hxx
+--- vcl.orig/inc/vcl/salgdi.hxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/inc/vcl/salgdi.hxx	2010-06-09 11:54:03.000000000 +0100
+@@ -233,7 +233,7 @@
+     // release the fonts
+     void                   ReleaseFonts() { SetFont( NULL, 0 ); }
+     // get the current font's metrics
+-    virtual void			GetFontMetric( ImplFontMetricData* ) = 0;
++    virtual void			GetFontMetric( ImplFontMetricData*, int nFallbackLevel = 0 ) = 0;
+ 
+     // get kernign pairs of the current font
+     // return only PairCount if (pKernPairs == NULL)
+diff -ru vcl.orig/source/gdi/outdev3.cxx vcl/source/gdi/outdev3.cxx
+--- vcl.orig/source/gdi/outdev3.cxx	2010-06-08 16:16:37.000000000 +0100
++++ vcl/source/gdi/outdev3.cxx	2010-06-09 12:41:11.000000000 +0100
+@@ -6588,6 +6588,10 @@
+     rtl::OUString aMissingCodes = aMissingCodeBuf.makeStringAndClear();
+ 
+     ImplFontSelectData aFontSelData = mpFontEntry->maFontSelData;
++
++    ImplFontMetricData aOrigMetric(aFontSelData);
++    mpGraphics->GetFontMetric(&aOrigMetric);
++
+     // when device specific font substitution may have been performed for
+     // the originally selected font then make sure that a fallback to that
+     // font is performed first
+@@ -6632,7 +6636,22 @@
+         }
+ #endif
+ 
++        ImplFontMetricData aSubstituteMetric(aFontSelData);
+         pFallbackFont->mnSetFontFlags = mpGraphics->SetFont( &aFontSelData, nFallbackLevel );
++        mpGraphics->GetFontMetric(&aSubstituteMetric, nFallbackLevel);
++
++        long nOriginalHeight = aOrigMetric.mnAscent + aOrigMetric.mnDescent;
++        long nSubstituteHeight = aSubstituteMetric.mnAscent + aSubstituteMetric.mnDescent;
++        //Too tall, shrink it a bit. Need a better calculation to include extra
++        //factors and any extra wriggle room we might have available ?
++        if (nSubstituteHeight > nOriginalHeight)
++        {
++            float fScale = nOriginalHeight/(float)nSubstituteHeight;
++	    long nOrigHeight = aFontSelData.mnHeight;
++	    aFontSelData.mnHeight *= fScale;
++            pFallbackFont->mnSetFontFlags = mpGraphics->SetFont( &aFontSelData, nFallbackLevel );
++	    aFontSelData.mnHeight = nOrigHeight;
++        }
+ 
+         // create and add glyph fallback layout to multilayout
+         rLayoutArgs.ResetPos();
+diff -ru vcl.orig/unx/headless/svpgdi.hxx vcl/unx/headless/svpgdi.hxx
+--- vcl.orig/unx/headless/svpgdi.hxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/headless/svpgdi.hxx	2010-06-09 11:56:34.000000000 +0100
+@@ -86,7 +86,7 @@
+ 
+     virtual void			SetTextColor( SalColor nSalColor );
+     virtual USHORT         SetFont( ImplFontSelectData*, int nFallbackLevel );
+-    virtual void			GetFontMetric( ImplFontMetricData* );
++    virtual void			GetFontMetric( ImplFontMetricData*, int nFallbackLevel );
+     virtual ULONG			GetKernPairs( ULONG nPairs, ImplKernPairData* pKernPairs );
+     virtual ImplFontCharMap* GetImplFontCharMap() const;
+     virtual void			GetDevFontList( ImplDevFontList* );
+diff -ru vcl.orig/unx/headless/svppspgraphics.cxx vcl/unx/headless/svppspgraphics.cxx
+--- vcl.orig/unx/headless/svppspgraphics.cxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/headless/svppspgraphics.cxx	2010-06-09 12:01:06.000000000 +0100
+@@ -792,7 +792,7 @@
+     }
+ }
+ 
+-void PspGraphics::GetFontMetric( ImplFontMetricData *pMetric )
++void PspGraphics::GetFontMetric( ImplFontMetricData *pMetric, int )
+ {
+     const psp::PrintFontManager& rMgr = psp::PrintFontManager::get();
+     psp::PrintFontInfo aInfo;
+diff -ru vcl.orig/unx/headless/svppspgraphics.hxx vcl/unx/headless/svppspgraphics.hxx
+--- vcl.orig/unx/headless/svppspgraphics.hxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/headless/svppspgraphics.hxx	2010-06-09 11:57:47.000000000 +0100
+@@ -105,7 +105,7 @@
+ 
+     virtual void			SetTextColor( SalColor nSalColor );
+     virtual USHORT          SetFont( ImplFontSelectData*, int nFallbackLevel );
+-    virtual void			GetFontMetric( ImplFontMetricData* );
++    virtual void			GetFontMetric( ImplFontMetricData*, int nFallbackLevel );
+     virtual ULONG			GetKernPairs( ULONG nPairs, ImplKernPairData* pKernPairs );
+     virtual ImplFontCharMap* GetImplFontCharMap() const;
+     virtual void			GetDevFontList( ImplDevFontList* );
+diff -ru vcl.orig/unx/headless/svptext.cxx vcl/unx/headless/svptext.cxx
+--- vcl.orig/unx/headless/svptext.cxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/headless/svptext.cxx	2010-06-09 11:57:29.000000000 +0100
+@@ -240,12 +240,15 @@
+ 
+ // ---------------------------------------------------------------------------
+ 
+-void SvpSalGraphics::GetFontMetric( ImplFontMetricData* pMetric )
++void SvpSalGraphics::GetFontMetric( ImplFontMetricData* pMetric, int nFallbackLevel )
+ {
+-    if( m_pServerFont[0] != NULL )
++    if( nFallbackLevel >= MAX_FALLBACK )
++        return;
++
++    if( m_pServerFont[nFallbackLevel] != NULL )
+     {
+         long rDummyFactor;
+-        m_pServerFont[0]->FetchFontMetric( *pMetric, rDummyFactor );
++        m_pServerFont[nFallbackLevel]->FetchFontMetric( *pMetric, rDummyFactor );
+     }
+ }
+ 
+diff -ru vcl.orig/unx/inc/pspgraphics.h vcl/unx/inc/pspgraphics.h
+--- vcl.orig/unx/inc/pspgraphics.h	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/inc/pspgraphics.h	2010-06-09 11:55:52.000000000 +0100
+@@ -102,7 +102,7 @@
+ 
+     virtual void			SetTextColor( SalColor nSalColor );
+     virtual USHORT          SetFont( ImplFontSelectData*, int nFallbackLevel );
+-    virtual void			GetFontMetric( ImplFontMetricData* );
++    virtual void			GetFontMetric( ImplFontMetricData*, int nFallbackLevel );
+     virtual ULONG			GetKernPairs( ULONG nMaxPairs, ImplKernPairData* );
+     virtual ImplFontCharMap* GetImplFontCharMap() const;
+     virtual void			GetDevFontList( ImplDevFontList* );
+diff -ru vcl.orig/unx/inc/salgdi.h vcl/unx/inc/salgdi.h
+--- vcl.orig/unx/inc/salgdi.h	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/inc/salgdi.h	2010-06-09 11:55:46.000000000 +0100
+@@ -249,7 +249,7 @@
+ 
+     virtual void			SetTextColor( SalColor nSalColor );
+     virtual USHORT			SetFont( ImplFontSelectData*, int nFallbackLevel );
+-    virtual void			GetFontMetric( ImplFontMetricData* );
++    virtual void			GetFontMetric( ImplFontMetricData*, int nFallbackLevel );
+     virtual ULONG			GetKernPairs( ULONG nMaxPairs, ImplKernPairData* );
+     virtual ImplFontCharMap* GetImplFontCharMap() const;
+     virtual void			GetDevFontList( ImplDevFontList* );
+diff -ru vcl.orig/unx/source/gdi/pspgraphics.cxx vcl/unx/source/gdi/pspgraphics.cxx
+--- vcl.orig/unx/source/gdi/pspgraphics.cxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/source/gdi/pspgraphics.cxx	2010-06-09 12:02:18.000000000 +0100
+@@ -885,7 +885,7 @@
+     }
+ }
+ 
+-void PspGraphics::GetFontMetric( ImplFontMetricData *pMetric )
++void PspGraphics::GetFontMetric( ImplFontMetricData *pMetric, int )
+ {
+     const psp::PrintFontManager& rMgr = psp::PrintFontManager::get();
+     psp::PrintFontInfo aInfo;
+diff -ru vcl.orig/unx/source/gdi/salgdi3.cxx vcl/unx/source/gdi/salgdi3.cxx
+--- vcl.orig/unx/source/gdi/salgdi3.cxx	2010-06-08 16:16:51.000000000 +0100
++++ vcl/unx/source/gdi/salgdi3.cxx	2010-06-09 11:52:55.000000000 +0100
+@@ -1747,16 +1747,19 @@
+ // ----------------------------------------------------------------------------
+ 
+ void
+-X11SalGraphics::GetFontMetric( ImplFontMetricData *pMetric )
++X11SalGraphics::GetFontMetric( ImplFontMetricData *pMetric, int nFallbackLevel )
+ {
+-    if( mpServerFont[0] != NULL )
++    if( nFallbackLevel >= MAX_FALLBACK )
++        return;
++
++    if( mpServerFont[nFallbackLevel] != NULL )
+     {
+         long rDummyFactor;
+-        mpServerFont[0]->FetchFontMetric( *pMetric, rDummyFactor );
++        mpServerFont[nFallbackLevel]->FetchFontMetric( *pMetric, rDummyFactor );
+     }
+-    else if( mXFont[0] != NULL )
++    else if( mXFont[nFallbackLevel] != NULL )
+     {
+-        mXFont[0]->ToImplFontMetricData( pMetric );
++        mXFont[nFallbackLevel]->ToImplFontMetricData( pMetric );
+         if ( bFontVertical_ )
+             pMetric->mnOrientation = 0;
+     }
+diff -ru vcl.orig/source/glyphs/gcach_ftyp.cxx vcl/source/glyphs/gcach_ftyp.cxx
+--- vcl.orig/source/glyphs/gcach_ftyp.cxx	2010-06-21 09:44:48.000000000 +0100
++++ vcl/source/glyphs/gcach_ftyp.cxx	2010-06-21 10:45:25.000000000 +0100
+@@ -892,6 +909,9 @@
+        }
+     }
+ #endif
++
++    if( mnPrioEmbedded <= 0 )
++        mnLoadFlags |= FT_LOAD_NO_BITMAP;
+ }
+ 
+ // -----------------------------------------------------------------------
+diff -ru extensions.orig/source/scanner/scanner.cxx extensions/source/scanner/scanner.cxx
+--- extensions.orig/source/scanner/scanner.cxx	2010-07-12 20:17:35.000000000 +0100
++++ extensions/source/scanner/scanner.cxx	2010-07-13 10:17:25.000000000 +0100
+@@ -43,13 +43,14 @@
+ ScannerManager::ScannerManager() :
+ 	mpData( NULL )
+ {
++	AcquireData();
+ }
+ 
+ // -----------------------------------------------------------------------------
+ 
+ ScannerManager::~ScannerManager()
+ {
+-	DestroyData();
++	ReleaseData();
+ }
+ 
+ // -----------------------------------------------------------------------------
+diff -ru extensions.orig/source/scanner/scanner.hxx extensions/source/scanner/scanner.hxx
+--- extensions.orig/source/scanner/scanner.hxx	2010-07-12 20:17:35.000000000 +0100
++++ extensions/source/scanner/scanner.hxx	2010-07-13 09:27:57.000000000 +0100
+@@ -73,7 +73,8 @@
+ 	vos::OMutex								maProtector;
+ 	void*									mpData;
+ 
+-	void									DestroyData();
++	void									AcquireData();
++	void									ReleaseData();
+ 
+ public:
+ 
+@@ -105,7 +106,7 @@
+ 	void									Unlock() { maProtector.release(); }
+ 
+ 	void*									GetData() const { return mpData; }
+-	void									SetData( void* pData ) { DestroyData(); mpData = pData; }
++	void									SetData( void* pData ) { ReleaseData(); mpData = pData; }
+ };
+ 
+ // -----------------------------------------------------------------------------
+diff -ru extensions.orig/source/scanner/scanunx.cxx extensions/source/scanner/scanunx.cxx
+--- extensions.orig/source/scanner/scanunx.cxx	2010-07-12 20:17:35.000000000 +0100
++++ extensions/source/scanner/scanunx.cxx	2010-07-13 10:16:41.000000000 +0100
+@@ -31,6 +31,7 @@
+ #include <sanedlg.hxx>
+ #include <vos/thread.hxx>
+ #include <tools/list.hxx>
++#include <boost/shared_ptr.hpp>
+ 
+ #if OSL_DEBUG_LEVEL > 1
+ #include <stdio.h>
+@@ -113,12 +114,41 @@
+ 	vos::OMutex			m_aProtector;
+ 	ScanError			m_nError;
+     bool				m_bBusy;
++
++    SaneHolder() : m_nError(ScanError_ScanErrorNone), m_bBusy(false) {}
+ };
+ 
+-DECLARE_LIST( SaneHolderList, SaneHolder* )
++namespace
++{
++    typedef std::vector< boost::shared_ptr<SaneHolder> > sanevec;
++    class allSanes
++    {
++    private:
++        int mnRefCount;
++    public:
++        sanevec m_aSanes;
++        allSanes() : mnRefCount(0) {}
++        void acquire();
++        void release();
++    };
++
++    void allSanes::acquire()
++    {
++        ++mnRefCount;
++    }
++
++    void allSanes::release()
++    {
++        // was unused, now because of i99835: "Scanning interface not SANE API
++        // compliant" destroy all SaneHolder to get Sane Dtor called
++        --mnRefCount;
++        if (!mnRefCount)
++            m_aSanes.clear();
++    }
+ 
+-static SaneHolderList	allSanes;
+-static vos::OMutex		aSaneProtector;
++    struct theSaneProtector : public rtl::Static<vos::OMutex, theSaneProtector> {}; 
++    struct theSanes : public rtl::Static<allSanes, theSanes> {}; 
++}
+ 
+ // -----------------
+ // - ScannerThread -
+@@ -126,7 +156,7 @@
+ 
+ class ScannerThread : public vos::OThread
+ {
+-	SaneHolder*									m_pHolder;
++	boost::shared_ptr<SaneHolder>				m_pHolder;
+ 	REF( com::sun::star::lang::XEventListener )	m_xListener;
+ 	ScannerManager*								m_pManager; // just for the disposing call
+ 
+@@ -134,7 +164,7 @@
+ 	virtual void run();
+ 	virtual void onTerminated() { delete this; }
+ public:
+-	ScannerThread( SaneHolder* pHolder,
++	ScannerThread( boost::shared_ptr<SaneHolder> pHolder,
+ 				   const REF( com::sun::star::lang::XEventListener )& listener,
+ 				   ScannerManager* pManager );
+ 	virtual ~ScannerThread();
+@@ -143,7 +173,7 @@
+ // -----------------------------------------------------------------------------
+ 
+ ScannerThread::ScannerThread(
+-                             SaneHolder* pHolder,
++                             boost::shared_ptr<SaneHolder> pHolder,
+                              const REF( com::sun::star::lang::XEventListener )& listener,
+                              ScannerManager* pManager )
+         : m_pHolder( pHolder ), m_xListener( listener ), m_pManager( pManager )
+@@ -192,16 +222,16 @@
+ // - ScannerManager -
+ // ------------------
+ 
+-void ScannerManager::DestroyData()
++void ScannerManager::AcquireData()
+ {
+-	// was unused, now because of i99835: "Scanning interface not SANE API compliant"
+-	// delete all SaneHolder to get Sane Dtor called
+-	int i;
+-	for ( i = allSanes.Count(); i > 0; i-- )
+-	{
+-		SaneHolder *pSaneHolder = allSanes.GetObject(i-1);
+-		if ( pSaneHolder ) delete pSaneHolder;
+-	}
++    vos::OGuard aGuard( theSaneProtector::get() );
++    theSanes::get().acquire();
++}
++
++void ScannerManager::ReleaseData()
++{
++    vos::OGuard aGuard( theSaneProtector::get() );
++    theSanes::get().release();
+ }
+ 
+ // -----------------------------------------------------------------------------
+@@ -224,17 +254,14 @@
+ 
+ SEQ( ScannerContext ) ScannerManager::getAvailableScanners() throw()
+ {
+-	vos::OGuard aGuard( aSaneProtector );
++	vos::OGuard aGuard( theSaneProtector::get() );
++	sanevec &rSanes = theSanes::get().m_aSanes;
+ 
+-	if( ! allSanes.Count() )
++	if( rSanes.empty() )
+ 	{
+-		SaneHolder* pSaneHolder = new SaneHolder;
+-		pSaneHolder->m_nError = ScanError_ScanErrorNone;
+-        pSaneHolder->m_bBusy = false;
++		boost::shared_ptr<SaneHolder> pSaneHolder(new SaneHolder);
+ 		if( Sane::IsSane() )
+-			allSanes.Insert( pSaneHolder );
+-		else
+-			delete pSaneHolder;
++			rSanes.push_back( pSaneHolder );
+ 	}
+ 
+ 	if( Sane::IsSane() )
+@@ -252,20 +279,21 @@
+ 
+ BOOL ScannerManager::configureScanner( ScannerContext& scanner_context ) throw( ScannerException )
+ {
+-	vos::OGuard aGuard( aSaneProtector );
++	vos::OGuard aGuard( theSaneProtector::get() );
++	sanevec &rSanes = theSanes::get().m_aSanes;
+ 
+ #if OSL_DEBUG_LEVEL > 1
+     fprintf( stderr, "ScannerManager::configureScanner\n" );
+ #endif
+ 
+-	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= allSanes.Count() )
++	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= rSanes.size() )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner does not exist" ),
+ 			REF( XScannerManager )( this ),
+ 			ScanError_InvalidContext
+ 			);
+ 
+-    SaneHolder* pHolder = allSanes.GetObject( scanner_context.InternalData );
++    boost::shared_ptr<SaneHolder> pHolder = rSanes[scanner_context.InternalData];
+     if( pHolder->m_bBusy )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner is busy" ),
+@@ -286,19 +314,20 @@
+ void ScannerManager::startScan( const ScannerContext& scanner_context,
+ 								const REF( com::sun::star::lang::XEventListener )& listener ) throw( ScannerException )
+ {
+-	vos::OGuard aGuard( aSaneProtector );
++	vos::OGuard aGuard( theSaneProtector::get() );
++	sanevec &rSanes = theSanes::get().m_aSanes;
+ 
+ #if OSL_DEBUG_LEVEL > 1
+     fprintf( stderr, "ScannerManager::startScan\n" );
+ #endif
+ 
+-	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= allSanes.Count() )
++	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= rSanes.size() )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner does not exist" ),
+ 			REF( XScannerManager )( this ),
+ 			ScanError_InvalidContext
+ 			);
+-	SaneHolder* pHolder = allSanes.GetObject( scanner_context.InternalData );
++	boost::shared_ptr<SaneHolder> pHolder = rSanes[scanner_context.InternalData];
+     if( pHolder->m_bBusy )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner is busy" ),
+@@ -315,16 +344,17 @@
+ 
+ ScanError ScannerManager::getError( const ScannerContext& scanner_context ) throw( ScannerException )
+ {
+-	vos::OGuard aGuard( aSaneProtector );
++	vos::OGuard aGuard( theSaneProtector::get() );
++	sanevec &rSanes = theSanes::get().m_aSanes;
+ 
+-	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= allSanes.Count() )
++	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= rSanes.size() )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner does not exist" ),
+ 			REF( XScannerManager )( this ),
+ 			ScanError_InvalidContext
+ 			);
+ 
+-	SaneHolder* pHolder = allSanes.GetObject( scanner_context.InternalData );
++	boost::shared_ptr<SaneHolder> pHolder = rSanes[scanner_context.InternalData];
+ 
+ 	return pHolder->m_nError;
+ }
+@@ -333,15 +363,16 @@
+ 
+ REF( AWT::XBitmap ) ScannerManager::getBitmap( const ScannerContext& scanner_context ) throw( ScannerException )
+ {
+-	vos::OGuard aGuard( aSaneProtector );
++	vos::OGuard aGuard( theSaneProtector::get() );
++	sanevec &rSanes = theSanes::get().m_aSanes;
+ 
+-	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= allSanes.Count() )
++	if( scanner_context.InternalData < 0 || (ULONG)scanner_context.InternalData >= rSanes.size() )
+ 		throw ScannerException(
+ 			::rtl::OUString::createFromAscii( "Scanner does not exist" ),
+ 			REF( XScannerManager )( this ),
+ 			ScanError_InvalidContext
+ 			);
+-	SaneHolder* pHolder = allSanes.GetObject( scanner_context.InternalData );
++	boost::shared_ptr<SaneHolder> pHolder = rSanes[scanner_context.InternalData];
+ 
+ 	vos::OGuard aProtGuard( pHolder->m_aProtector );
+ 
+diff -ru extensions.orig/source/scanner/scanwin.cxx extensions/source/scanner/scanwin.cxx
+--- extensions.orig/source/scanner/scanwin.cxx	2010-07-12 20:17:35.000000000 +0100
++++ extensions/source/scanner/scanwin.cxx	2010-07-13 09:28:40.000000000 +0100
+@@ -887,7 +887,11 @@
+ // - ScannerManager -
+ // ------------------
+ 
+-void ScannerManager::DestroyData()
++void ScannerManager::AcquireData()
++{
++}
++
++void ScannerManager::ReleaseData()
+ {
+ 	if( mpData )
+ 	{
+@@ -979,7 +983,7 @@
+ 		}
+ 
+ 		GlobalUnlock( hDIB );
+-		DestroyData();
++		ReleaseData();
+ 	}
+ 
+ 	return aRet;
+@@ -1009,7 +1013,7 @@
+ 	if( rContext.InternalData != 0 || rContext.ScannerName != ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "TWAIN" ) ) )
+ 		throw ScannerException( ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Scanner does not exist" ) ), xThis, ScanError_InvalidContext );
+ 
+-	DestroyData();
++	ReleaseData();
+ 
+ 	return aTwain.SelectSource( *this );
+ }
+@@ -1025,7 +1029,7 @@
+ 	if( rContext.InternalData != 0 || rContext.ScannerName != ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "TWAIN" ) ) )
+ 		throw ScannerException( ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Scanner does not exist" ) ), xThis, ScanError_InvalidContext );
+ 
+-	DestroyData();
++	ReleaseData();
+ 	aTwain.PerformTransfer( *this, rxListener );
+ }
+ 

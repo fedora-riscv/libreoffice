@@ -1,0 +1,287 @@
+diff -ru sd.orig/source/ui/framework/factories/BasicViewFactory.cxx sd/source/ui/framework/factories/BasicViewFactory.cxx
+--- sd.orig/source/ui/framework/factories/BasicViewFactory.cxx	2009-05-25 09:21:53.000000000 +0100
++++ sd/source/ui/framework/factories/BasicViewFactory.cxx	2009-05-25 10:03:48.000000000 +0100
+@@ -141,8 +141,9 @@
+       mpViewShellContainer(new ViewShellContainer()),
+       mpBase(NULL),
+       mpFrameView(NULL),
++      mpWindow(new WorkWindow(NULL,WB_STDWORK)),
+       mpViewCache(new ViewCache()),
+-      mxLocalPane(new Pane(Reference<XResourceId>(), new WorkWindow(NULL,WB_STDWORK)))
++      mxLocalPane(new Pane(Reference<XResourceId>(), mpWindow.get()))
+ {
+     (void)rxContext;
+ }
+diff -ru sd.orig/source/ui/framework/factories/BasicViewFactory.hxx sd/source/ui/framework/factories/BasicViewFactory.hxx
+--- sd.orig/source/ui/framework/factories/BasicViewFactory.hxx	2009-05-25 09:21:53.000000000 +0100
++++ sd/source/ui/framework/factories/BasicViewFactory.hxx	2009-05-25 11:20:23.000000000 +0100
+@@ -123,6 +123,7 @@
+     FrameView* mpFrameView;
+ 
+     class ViewCache;
++    ::boost::shared_ptr<Window> mpWindow;
+     ::boost::shared_ptr<ViewCache> mpViewCache;
+ 
+     css::uno::Reference<css::drawing::framework::XPane> mxLocalPane;
+Index: cppcanvas/source/mtfrenderer/implrenderer.cxx
+===================================================================
+--- cppcanvas/source/mtfrenderer/implrenderer.cxx	(revision 276100)
++++ cppcanvas/source/mtfrenderer/implrenderer.cxx	(working copy)
+@@ -43,6 +43,7 @@
+ #include <com/sun/star/rendering/TexturingMode.hpp>
+ #include <com/sun/star/uno/Sequence.hxx>
+ #include <com/sun/star/geometry/RealPoint2D.hpp>
++#include <com/sun/star/rendering/PanoseProportion.hpp>
+ #include <com/sun/star/rendering/ViewState.hpp>
+ #include <com/sun/star/rendering/RenderState.hpp>
+ #include <com/sun/star/rendering/XCanvasFont.hpp>
+@@ -850,6 +851,12 @@
+                 rParms.mrParms.maFontLetterForm.isValid() ?
+                 rParms.mrParms.maFontLetterForm.getValue() :
+                 (rFont.GetItalic() == ITALIC_NONE) ? 0 : 9;
++            aFontRequest.FontDescription.FontDescription.Proportion = 
++                rParms.mrParms.maFontProportion.isValid() ?
++                rParms.mrParms.maFontProportion.getValue() :
++                (rFont.GetPitch() == PITCH_FIXED)
++                    ? rendering::PanoseProportion::MONO_SPACED
++                    : rendering::PanoseProportion::ANYTHING;
+ 
+             LanguageType aLang = rFont.GetLanguage();
+             aFontRequest.Locale = MsLangId::convertLanguageToLocale(aLang, false);
+@@ -2967,7 +2974,8 @@
+             if( rParams.maFontName.isValid() ||
+                 rParams.maFontWeight.isValid() ||
+                 rParams.maFontLetterForm.isValid() ||
+-                rParams.maFontUnderline.isValid() )
++                rParams.maFontUnderline.isValid() ||
++                rParams.maFontProportion.isValid() )
+             {
+                 ::cppcanvas::internal::OutDevState& rState = getState( aStateStack );
+                     
+Index: cppcanvas/inc/cppcanvas/renderer.hxx
+===================================================================
+--- cppcanvas/inc/cppcanvas/renderer.hxx	(revision 276100)
++++ cppcanvas/inc/cppcanvas/renderer.hxx	(working copy)
+@@ -139,6 +139,9 @@
+             /// Optionally forces the given font letter form (italics etc.) for all text actions
+             ::comphelper::OptionalValue< sal_Int8 >					maFontLetterForm;
+ 
++            /// Optionally forces the given font proportion (condensed, monospaced etc.) for all text actions
++            ::comphelper::OptionalValue< sal_Int8 >					maFontProportion;
++
+             /// Optionally forces underlining for all text actions
+             ::comphelper::OptionalValue< bool >						maFontUnderline;
+         };
+Index: canvas/source/directx/dx_textlayout_drawhelper.cxx
+===================================================================
+--- canvas/source/directx/dx_textlayout_drawhelper.cxx	(revision 276100)
++++ canvas/source/directx/dx_textlayout_drawhelper.cxx	(working copy)
+@@ -135,6 +135,9 @@
+             aFont.SetVertical( (rFontRequest.FontDescription.IsVertical==com::sun::star::util::TriState_YES) ? TRUE : FALSE );
+             aFont.SetWeight( static_cast<FontWeight>(rFontRequest.FontDescription.FontDescription.Weight) );
+             aFont.SetItalic( (rFontRequest.FontDescription.FontDescription.Letterform<=8) ? ITALIC_NONE : ITALIC_NORMAL );
++            aFont.SetPitch(
++                    rFontRequest.FontDescription.FontDescription.Proportion == rendering::PanoseProportion::MONO_SPACED
++                    ? PITCH_FIXED : PITCH_VARIABLE);
+ 
+             aFont.SetLanguage(MsLangId::convertLocaleToLanguage(rFontRequest.Locale));
+ 
+@@ -267,6 +270,9 @@
+         aFont.SetVertical( (rFontRequest.FontDescription.IsVertical==com::sun::star::util::TriState_YES) ? TRUE : FALSE );
+         aFont.SetWeight( static_cast<FontWeight>(rFontRequest.FontDescription.FontDescription.Weight) );
+         aFont.SetItalic( (rFontRequest.FontDescription.FontDescription.Letterform<=8) ? ITALIC_NONE : ITALIC_NORMAL );
++        aFont.SetPitch(
++                rFontRequest.FontDescription.FontDescription.Proportion == rendering::PanoseProportion::MONO_SPACED
++                ? PITCH_FIXED : PITCH_VARIABLE);
+ 
+         // adjust to stretched font
+         if(!::rtl::math::approxEqual(rFontMatrix.m00, rFontMatrix.m11))
+Index: canvas/source/vcl/canvasfont.cxx
+===================================================================
+--- canvas/source/vcl/canvasfont.cxx	(revision 276100)
++++ canvas/source/vcl/canvasfont.cxx	(working copy)
+@@ -38,6 +38,8 @@
+ #include <i18npool/mslangid.hxx>
+ #include <vcl/metric.hxx>
+ 
++#include <com/sun/star/rendering/PanoseProportion.hpp>
++
+ #include "canvasfont.hxx"
+ #include "textlayout.hxx"
+ 
+@@ -66,6 +68,9 @@
+         // TODO(F2): improve panose->vclenum conversion
+         maFont->SetWeight( static_cast<FontWeight>(rFontRequest.FontDescription.FontDescription.Weight) );
+         maFont->SetItalic( (rFontRequest.FontDescription.FontDescription.Letterform<=8) ? ITALIC_NONE : ITALIC_NORMAL );
++        maFont->SetPitch(
++                rFontRequest.FontDescription.FontDescription.Proportion == rendering::PanoseProportion::MONO_SPACED
++                    ? PITCH_FIXED : PITCH_VARIABLE);
+ 
+ 		maFont->SetLanguage(MsLangId::convertLocaleToLanguage(rFontRequest.Locale));
+ 
+Index: canvas/source/cairo/cairo_canvasfont.cxx
+===================================================================
+--- canvas/source/cairo/cairo_canvasfont.cxx	(revision 276100)
++++ canvas/source/cairo/cairo_canvasfont.cxx	(working copy)
+@@ -33,6 +33,8 @@
+ 
+ #include <canvas/debug.hxx>
+ 
++#include <com/sun/star/rendering/PanoseProportion.hpp>
++
+ #include <rtl/math.hxx>
+ #include <basegfx/numeric/ftools.hxx>
+ 
+@@ -86,6 +88,9 @@
+         // TODO(F2): improve panose->vclenum conversion
+         maFont->SetWeight( static_cast<FontWeight>(rFontRequest.FontDescription.FontDescription.Weight) );
+         maFont->SetItalic( (rFontRequest.FontDescription.FontDescription.Letterform<=8) ? ITALIC_NONE : ITALIC_NORMAL );
++        maFont->SetPitch(
++                rFontRequest.FontDescription.FontDescription.Proportion == rendering::PanoseProportion::MONO_SPACED
++                    ? PITCH_FIXED : PITCH_VARIABLE);
+ 
+         maFont->SetLanguage(MsLangId::convertLocaleToLanguage(rFontRequest.Locale));
+ 
+Index: drawinglayer/source/processor2d/canvasprocessor.cxx
+===================================================================
+--- drawinglayer/source/processor2d/canvasprocessor.cxx	(revision 276100)
++++ drawinglayer/source/processor2d/canvasprocessor.cxx	(working copy)
+@@ -57,6 +57,7 @@
+ #include <basegfx/tuple/b2i64tuple.hxx>
+ #include <basegfx/range/b2irange.hxx>
+ #include <com/sun/star/rendering/XIntegerReadOnlyBitmap.hpp>
++#include <com/sun/star/rendering/PanoseProportion.hpp>
+ #include <com/sun/star/rendering/CompositeOperation.hpp>
+ #include <com/sun/star/rendering/StrokeAttributes.hpp>
+ #include <com/sun/star/rendering/PathJoinType.hpp>
+@@ -1517,6 +1518,10 @@
+                     aFontRequest.FontDescription.IsVertical = rFontAttr.getVertical() ? util::TriState_YES : util::TriState_NO;
+                     // TODO(F2): improve vclenum->panose conversion
+                     aFontRequest.FontDescription.FontDescription.Weight = static_cast< sal_uInt8 >(rFontAttr.getWeight());
++                    aFontRequest.FontDescription.FontDescription.Proportion =
++                        rFontAttr.getMonospaced()
++                            ? rendering::PanoseProportion::MONO_SPACED
++                            : rendering::PanoseProportion::ANYTHING;
+                     aFontRequest.FontDescription.FontDescription.Letterform = rFontAttr.getItalic() ? 9 : 0;
+ 
+                     // init CellSize to 1.0, else a default font height will be used
+Index: drawinglayer/source/primitive2d/textlayoutdevice.cxx
+===================================================================
+--- drawinglayer/source/primitive2d/textlayoutdevice.cxx	(revision 276100)
++++ drawinglayer/source/primitive2d/textlayoutdevice.cxx	(working copy)
+@@ -406,6 +406,7 @@
+ 			aRetval.SetWeight(static_cast<FontWeight>(rFontAttribute.getWeight()));
+ 			aRetval.SetItalic(rFontAttribute.getItalic() ? ITALIC_NORMAL : ITALIC_NONE);
+ 			aRetval.SetOutline(rFontAttribute.getOutline());
++            aRetval.SetPitch(rFontAttribute.getMonospaced() ? PITCH_FIXED : PITCH_VARIABLE);
+             aRetval.SetLanguage(MsLangId::convertLocaleToLanguage(rLocale));
+ 
+ #ifdef WIN32
+@@ -445,6 +446,7 @@
+                 RTL_TEXTENCODING_SYMBOL == rFont.GetCharSet(),
+ 			    rFont.IsVertical(),
+ 			    ITALIC_NONE != rFont.GetItalic(),
++                PITCH_FIXED == rFont.GetPitch(),
+ 			    rFont.IsOutline(),
+                 bRTL,
+                 bBiDiStrong);
+--- drawinglayer/source/attribute/fontattribute.cxx	2010-07-06 16:05:42.000000000 +0100
++++ drawinglayer/source/attribute/fontattribute.cxx	2010-07-06 16:06:02.000000000 +0100
+@@ -55,6 +55,7 @@
+ 			unsigned									mbOutline : 1;      // Outline Flag
+             unsigned                                    mbRTL : 1;          // RTL Flag
+             unsigned                                    mbBiDiStrong : 1;   // BiDi Flag
++            unsigned                                    mbMonospaced : 1;
+ 
+             ImpFontAttribute(
+                 const String& rFamilyName,
+@@ -63,6 +64,7 @@
+                 bool bSymbol,
+                 bool bVertical,
+                 bool bItalic,
++                bool bMonospaced,
+                 bool bOutline,
+                 bool bRTL,
+                 bool bBiDiStrong)
+@@ -75,7 +77,8 @@
+ 			    mbItalic(bItalic),
+ 			    mbOutline(bOutline),
+                 mbRTL(bRTL),
+-                mbBiDiStrong(bBiDiStrong)
++                mbBiDiStrong(bBiDiStrong),
++                mbMonospaced(bMonospaced)
+             {
+             }
+ 
+@@ -89,6 +92,7 @@
+             bool getOutline() const { return mbOutline; }
+             bool getRTL() const { return mbRTL; }
+             bool getBiDiStrong() const { return mbBiDiStrong; }
++            bool getMonospaced() const { return mbMonospaced; }
+ 
+             bool operator==(const ImpFontAttribute& rCompare) const
+             {
+@@ -100,7 +104,8 @@
+ 				    && getItalic() == rCompare.getItalic()
+ 				    && getOutline() == rCompare.getOutline()
+ 				    && getRTL() == rCompare.getRTL()
+-				    && getBiDiStrong() == rCompare.getBiDiStrong());
++				    && getBiDiStrong() == rCompare.getBiDiStrong()
++				    && getMonospaced() == rCompare.getMonospaced());
+             }
+ 
+             static ImpFontAttribute* get_global_default()
+@@ -112,7 +117,7 @@
+                     pDefault = new ImpFontAttribute(
+                         String(), String(),
+                         0,
+-                        false, false, false, false, false, false);
++                        false, false, false, false, false, false, false);
+ 
+                     // never delete; start with RefCount 1, not 0
+     			    pDefault->mnRefCount++;
+@@ -129,11 +134,12 @@
+             bool bSymbol,
+             bool bVertical,
+             bool bItalic,
++            bool bMonospaced,
+             bool bOutline,
+             bool bRTL,
+             bool bBiDiStrong)
+ 		:	mpFontAttribute(new ImpFontAttribute(
+-                rFamilyName, rStyleName, nWeight, bSymbol, bVertical, bItalic, bOutline, bRTL, bBiDiStrong))
++                rFamilyName, rStyleName, nWeight, bSymbol, bVertical, bItalic, bMonospaced, bOutline, bRTL, bBiDiStrong))
+ 		{
+ 		}
+ 
+@@ -246,6 +252,12 @@
+             return mpFontAttribute->getBiDiStrong(); 
+         }
+ 
++        bool FontAttribute::getMonospaced() const 
++        { 
++            return mpFontAttribute->getMonospaced(); 
++        }
++
++
+     } // end of namespace attribute
+ } // end of namespace drawinglayer
+ 
+--- drawinglayer/inc/drawinglayer/attribute/fontattribute.hxx	2010-07-07 11:39:31.000000000 +0100
++++ drawinglayer/inc/drawinglayer/attribute/fontattribute.hxx	2010-07-07 11:44:38.000000000 +0100
+@@ -65,6 +65,7 @@
+                 bool bSymbol = false,
+                 bool bVertical = false,
+                 bool bItalic = false,
++                bool bMonospaced = false,
+                 bool bOutline = false,
+                 bool bRTL = false,
+                 bool bBiDiStrong = false);
+@@ -89,6 +90,7 @@
+             bool getOutline() const;
+             bool getRTL() const;
+             bool getBiDiStrong() const;
++            bool getMonospaced() const;
+ 		};
+ 	} // end of namespace attribute
+ } // end of namespace drawinglayer

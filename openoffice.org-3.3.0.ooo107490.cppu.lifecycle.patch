@@ -1,0 +1,852 @@
+--- cppu/source/threadpool/jobqueue.cxx	2008-04-11 11:33:02.000000000 +0100
++++ cppu/source/threadpool/jobqueue.cxx	2009-12-02 16:14:26.000000000 +0000
+@@ -45,6 +45,7 @@
+ 		m_cndWait( osl_createCondition() )
+ 	{
+ 		osl_resetCondition( m_cndWait );		
++		m_DisposedCallerAdmin = DisposedCallerAdmin::getInstance();
+ 	}
+ 	
+ 	JobQueue::~JobQueue()
+@@ -71,7 +72,7 @@
+ 		{
+ 			// synchronize with the dispose calls
+ 			MutexGuard guard( m_mutex );
+-			if( DisposedCallerAdmin::getInstance()->isDisposed( nDisposeId ) )
++			if( m_DisposedCallerAdmin->isDisposed( nDisposeId ) )
+ 			{
+ 				return 0;
+ 			}
+--- cppu/source/threadpool/jobqueue.hxx	2008-04-11 11:33:18.000000000 +0100
++++ cppu/source/threadpool/jobqueue.hxx	2009-12-02 16:15:49.000000000 +0000
+@@ -37,6 +37,8 @@
+ #include <osl/conditn.h>
+ #include <osl/mutex.hxx>
+ 
++#include <boost/shared_ptr.hpp>
++
+ namespace cppu_threadpool
+ {
+     extern "C" typedef void (SAL_CALL RequestFun)(void *);
+@@ -51,6 +53,9 @@
+ 
+ 	typedef	::std::list	< sal_Int64 > CallStackList;
+ 
++	class DisposedCallerAdmin;
++	typedef boost::shared_ptr<DisposedCallerAdmin> DisposedCallerAdminHolder;
++
+ 	class JobQueue
+ 	{
+ 	public:
+@@ -76,6 +81,7 @@
+ 		sal_Int32 m_nToDo;
+ 		sal_Bool m_bSuspended;
+ 		oslCondition m_cndWait;
++		DisposedCallerAdminHolder m_DisposedCallerAdmin;
+ 	};
+ }
+ 
+--- cppu/source/threadpool/thread.cxx	2008-04-11 11:34:00.000000000 +0100
++++ cppu/source/threadpool/thread.cxx	2009-12-03 16:15:02.000000000 +0000
+@@ -31,6 +31,8 @@
+ #include <osl/diagnose.h>
+ #include <uno/threadpool.h>
+ 
++#include <rtl/instance.hxx>
++
+ #include "thread.hxx"
+ #include "jobqueue.hxx"
+ #include "threadpool.hxx"
+@@ -98,20 +100,17 @@
+ 		} while( pCurrent );
+ 	}
+ 
+-	ThreadAdmin* ThreadAdmin::getInstance()
++	struct theThreadAdmin : public rtl::StaticWithInit< ThreadAdminHolder, theThreadAdmin >
+ 	{
+-		static ThreadAdmin *pThreadAdmin = 0;
+-		if( ! pThreadAdmin )
+-		{
+-			MutexGuard guard( Mutex::getGlobalMutex() );
+-			if( ! pThreadAdmin )
+-			{
+-				static ThreadAdmin admin;
+-				pThreadAdmin = &admin;
+-			}
++		ThreadAdminHolder operator () () {
++			ThreadAdminHolder aRet(new ThreadAdmin());
++			return aRet;
+ 		}
+-		return pThreadAdmin;
++	};
+ 
++	ThreadAdminHolder& ThreadAdmin::getInstance()
++	{
++		return theThreadAdmin::get();
+ 	}
+ 
+ // ----------------------------------------------------------------------------------
+@@ -119,12 +118,13 @@
+ 									const ByteSequence &aThreadId,
+ 									sal_Bool bAsynchron )
+ 		: m_thread( 0 )
++		, m_aThreadAdmin( ThreadAdmin::getInstance() )
+ 		, m_pQueue( pQueue )
+ 		, m_aThreadId( aThreadId )
+ 		, m_bAsynchron( bAsynchron )
+ 		, m_bDeleteSelf( sal_True )
+ 	{
+-		ThreadAdmin::getInstance()->add( this );
++		m_aThreadAdmin->add( this );
+ 	}
+ 
+ 
+@@ -166,7 +166,7 @@
+ 
+ 	void ORequestThread::onTerminated()
+ 	{
+-		ThreadAdmin::getInstance()->remove( this );
++		m_aThreadAdmin->remove( this );
+ 		if( m_bDeleteSelf )
+ 		{
+ 			delete this;
+@@ -175,6 +175,8 @@
+ 
+ 	void ORequestThread::run()
+ 	{
++		ThreadPoolHolder theThreadPool = cppu_threadpool::ThreadPool::getInstance();
++
+ 		while ( m_pQueue )
+ 		{
+ 			if( ! m_bAsynchron )
+@@ -197,7 +199,7 @@
+ 
+ 				if( m_pQueue->isEmpty() )
+ 				{
+-					ThreadPool::getInstance()->revokeQueue( m_aThreadId , m_bAsynchron );
++					theThreadPool->revokeQueue( m_aThreadId , m_bAsynchron );
+ 					// Note : revokeQueue might have failed because m_pQueue.isEmpty()
+ 					//        may be false (race).
+ 				}
+@@ -211,7 +213,7 @@
+ 				uno_releaseIdFromCurrentThread();
+ 			}
+ 
+-			cppu_threadpool::ThreadPool::getInstance()->waitInPool( this );
++			theThreadPool->waitInPool( this );
+ 		}
+ 	}
+ }
+--- cppu/source/threadpool/thread.hxx	2008-04-11 11:34:18.000000000 +0100
++++ cppu/source/threadpool/thread.hxx	2009-12-02 15:58:34.000000000 +0000
+@@ -37,6 +37,8 @@
+ namespace cppu_threadpool {
+ 
+ 	class JobQueue;
++	class ThreadAdmin;
++	typedef boost::shared_ptr<ThreadAdmin> ThreadAdminHolder;
+ 	
+     //-----------------------------------------
+     // private thread class for the threadpool
+@@ -61,6 +63,7 @@
+ 		
+ 	private:
+ 		oslThread m_thread;
++		ThreadAdminHolder m_aThreadAdmin;
+ 		JobQueue *m_pQueue;
+ 		::rtl::ByteSequence m_aThreadId;
+ 		sal_Bool m_bAsynchron;
+@@ -71,7 +74,7 @@
+ 	{
+ 	public:
+ 		~ThreadAdmin ();
+-		static ThreadAdmin *getInstance();
++		static ThreadAdminHolder &getInstance();
+ 		void add( ORequestThread * );
+ 		void remove( ORequestThread * );
+ 		void join();
+--- cppu/source/threadpool/threadpool.cxx	2008-04-11 11:34:54.000000000 +0100
++++ cppu/source/threadpool/threadpool.cxx	2009-12-03 16:14:56.000000000 +0000
+@@ -33,6 +33,7 @@
+ #include <osl/diagnose.h>
+ #include <osl/mutex.hxx>
+ #include <osl/thread.h>
++#include <rtl/instance.hxx>
+ 
+ #include <uno/threadpool.h>
+ 
+@@ -44,19 +45,17 @@
+ 
+ namespace cppu_threadpool
+ {
+-	DisposedCallerAdmin *DisposedCallerAdmin::getInstance()
++	struct theDisposedCallerAdmin :
++		public rtl::StaticWithInit< DisposedCallerAdminHolder, theDisposedCallerAdmin >
+ 	{
+-		static DisposedCallerAdmin *pDisposedCallerAdmin = 0;
+-		if( ! pDisposedCallerAdmin )
+-		{
+-			MutexGuard guard( Mutex::getGlobalMutex() );
+-			if( ! pDisposedCallerAdmin )
+-			{
+-				static DisposedCallerAdmin admin;
+-				pDisposedCallerAdmin = &admin;
+-			}
++		DisposedCallerAdminHolder operator () () {
++			return DisposedCallerAdminHolder(new DisposedCallerAdmin());
+ 		}
+-		return pDisposedCallerAdmin;
++	};
++
++	DisposedCallerAdminHolder DisposedCallerAdmin::getInstance()
++	{
++		return theDisposedCallerAdmin::get();
+ 	}
+ 
+ 	DisposedCallerAdmin::~DisposedCallerAdmin()
+@@ -107,6 +106,21 @@
+ 
+ 
+ 	//-------------------------------------------------------------------------------
++
++	struct theThreadPool :
++		public rtl::StaticWithInit< ThreadPoolHolder, theThreadPool >
++	{
++		ThreadPoolHolder operator () () {
++			ThreadPoolHolder aRet(new ThreadPool());
++			return aRet;
++		}
++	};
++
++	ThreadPool::ThreadPool()
++	{
++        	m_DisposedCallerAdmin = DisposedCallerAdmin::getInstance();
++	}
++
+ 	ThreadPool::~ThreadPool()
+ 	{
+ #if OSL_DEBUG_LEVEL > 1
+@@ -116,19 +130,9 @@
+ 		}
+ #endif
+ 	}
+-	ThreadPool *ThreadPool::getInstance()
++	ThreadPoolHolder ThreadPool::getInstance()
+ 	{
+-		static ThreadPool *pThreadPool = 0;
+-		if( ! pThreadPool )
+-		{
+-			MutexGuard guard( Mutex::getGlobalMutex() );
+-			if( ! pThreadPool )
+-			{
+-				static ThreadPool pool;
+-				pThreadPool = &pool;
+-			}
+-		}
+-		return pThreadPool;
++		return theThreadPool::get();
+ 	}
+ 
+ 
+@@ -136,7 +140,7 @@
+ 	{
+ 		if( nDisposeId )
+ 		{
+-			DisposedCallerAdmin::getInstance()->dispose( nDisposeId );
++			m_DisposedCallerAdmin->dispose( nDisposeId );
+ 
+ 			MutexGuard guard( m_mutex );
+ 			for( ThreadIdHashMap::iterator ii = m_mapQueue.begin() ;
+@@ -171,7 +175,7 @@
+ 
+ 	void ThreadPool::stopDisposing( sal_Int64 nDisposeId )
+ 	{
+-		DisposedCallerAdmin::getInstance()->stopDisposing( nDisposeId );
++		m_DisposedCallerAdmin->stopDisposing( nDisposeId );
+ 	}
+ 
+ 	/******************
+@@ -400,7 +404,7 @@
+ 
+ 
+ 
+-typedef ::std::hash_set< uno_ThreadPool, uno_ThreadPool_Hash, uno_ThreadPool_Equal > ThreadpoolHashSet;
++typedef ::std::hash_map< uno_ThreadPool, ThreadPoolHolder, uno_ThreadPool_Hash, uno_ThreadPool_Equal > ThreadpoolHashSet;
+ 
+ static ThreadpoolHashSet *g_pThreadpoolHashSet;
+ 
+@@ -420,7 +424,7 @@
+ 
+ 	// Just ensure that the handle is unique in the process (via heap)
+ 	uno_ThreadPool h = new struct _uno_ThreadPool;
+-	g_pThreadpoolHashSet->insert( h );
++	g_pThreadpoolHashSet->insert( ThreadpoolHashSet::value_type(h, ThreadPool::getInstance()) );
+ 	return h;
+ }
+ 
+--- cppu/source/threadpool/threadpool.hxx	2008-04-11 11:35:13.000000000 +0100
++++ cppu/source/threadpool/threadpool.hxx	2009-12-02 16:12:13.000000000 +0000
+@@ -33,6 +33,8 @@
+ 
+ #include <rtl/byteseq.hxx>
+ 
++#include <boost/shared_ptr.hpp>
++
+ #include "jobqueue.hxx"
+ 
+ 
+@@ -78,13 +80,16 @@
+ 	};
+ 	
+ 	typedef	::std::list	< struct ::cppu_threadpool::WaitingThread * > WaitingThreadList;
++
++	class DisposedCallerAdmin;
++	typedef boost::shared_ptr<DisposedCallerAdmin> DisposedCallerAdminHolder;
+ 	
+ 	class DisposedCallerAdmin
+ 	{
+ 	public:
+ 		~DisposedCallerAdmin();
+ 		
+-		static DisposedCallerAdmin *getInstance();
++		static DisposedCallerAdminHolder getInstance();
+ 
+ 		void dispose( sal_Int64 nDisposeId );
+ 		void stopDisposing( sal_Int64 nDisposeId );
+@@ -95,11 +100,15 @@
+ 		DisposedCallerList m_lst;
+ 	};
+ 
++	class ThreadPool;
++	typedef boost::shared_ptr<ThreadPool> ThreadPoolHolder;
++
+ 	class ThreadPool
+ 	{
+ 	public:
++		ThreadPool();
+ 		~ThreadPool();
+-		static ThreadPool *getInstance();
++		static ThreadPoolHolder getInstance();
+ 		
+ 		void dispose( sal_Int64 nDisposeId );
+ 		void stopDisposing( sal_Int64 nDisposeId );
+@@ -127,6 +136,8 @@
+ 		
+ 		::osl::Mutex m_mutexWaitingThreadList;
+ 		WaitingThreadList m_lstThreads;
++
++		DisposedCallerAdminHolder m_DisposedCallerAdmin;
+ 	};
+ 
+ } // end namespace cppu_threadpool
+--- cppu/source/uno/lbenv.cxx	2009-02-12 10:18:09.000000000 +0000
++++ cppu/source/uno/lbenv.cxx	2009-12-03 16:14:26.000000000 +0000
+@@ -142,6 +142,7 @@
+     ::osl::Mutex mutex;
+     OUString2EnvironmentMap aName2EnvMap;
+ 
++    EnvironmentsData() : isDisposing(false) {}
+     ~EnvironmentsData();
+ 
+     inline void getEnvironment(
+@@ -150,6 +151,8 @@
+     inline void getRegisteredEnvironments(
+         uno_Environment *** pppEnvs, sal_Int32 * pnLen,
+         uno_memAlloc memAlloc, const OUString & rEnvDcp );
++
++    bool isDisposing;
+ };
+ 
+ namespace
+@@ -598,9 +601,14 @@
+         *ppHardEnv = 0;
+     }
+ 
++    EnvironmentsData & rData = theEnvironmentsData::get();
++
++    if (rData.isDisposing)
++        return;
++
+     uno_DefaultEnvironment * that = (uno_DefaultEnvironment *)pEnv;
+     {
+-    ::osl::MutexGuard guard( theEnvironmentsData::get().mutex );
++    ::osl::MutexGuard guard( rData.mutex );
+     if (1 == ::osl_incrementInterlockedCount( &that->nRef )) // is dead
+     {
+         that->nRef = 0;
+@@ -917,6 +925,7 @@
+ EnvironmentsData::~EnvironmentsData()
+ {
+     ::osl::MutexGuard guard( mutex );
++    isDisposing = true;
+ 
+     for ( OUString2EnvironmentMap::const_iterator iPos( aName2EnvMap.begin() );
+           iPos != aName2EnvMap.end(); ++iPos )
+--- cppu/util/target.pmk	2008-04-11 12:07:15.000000000 +0100
++++ cppu/util/target.pmk	2009-12-02 15:50:08.000000000 +0000
+@@ -55,12 +55,3 @@
+ .ENDIF
+ 
+ .ENDIF
+-
+-# other stuff
+-
+-.IF "$(cppu_no_leak)" == ""
+-.IF "$(bndchk)" == ""
+-CFLAGS += -DCPPU_LEAK_STATIC_DATA
+-.ENDIF
+-.ENDIF
+-
+--- sax/source/tools/fastserializer.cxx	2010-06-22 12:54:56.000000000 +0100
++++ sax/source/tools/fastserializer.cxx	2010-06-22 13:14:30.000000000 +0100
+@@ -27,6 +27,7 @@
+ 
+ #include "fastserializer.hxx"
+ #include <rtl/ustrbuf.hxx>
++#include <rtl/byteseq.hxx>
+ 
+ #include <com/sun/star/xml/Attribute.hpp>
+ #include <com/sun/star/xml/FastAttribute.hpp>
+@@ -41,6 +42,7 @@
+ using ::com::sun::star::uno::Reference;
+ using ::com::sun::star::uno::RuntimeException;
+ using ::com::sun::star::uno::Sequence;
++using ::com::sun::star::uno::toUnoSequence;
+ using ::com::sun::star::xml::FastAttribute;
+ using ::com::sun::star::xml::Attribute;
+ using ::com::sun::star::xml::sax::SAXException;
+@@ -52,15 +54,15 @@
+ using ::com::sun::star::io::IOException;
+ using ::com::sun::star::io::BufferSizeExceededException;
+ 
+-static Sequence< sal_Int8 > aClosingBracket((sal_Int8 *)">", 1);
+-static Sequence< sal_Int8 > aSlashAndClosingBracket((sal_Int8 *)"/>", 2);
+-static Sequence< sal_Int8 > aColon((sal_Int8 *)":", 1);
+-static Sequence< sal_Int8 > aOpeningBracket((sal_Int8 *)"<", 1);
+-static Sequence< sal_Int8 > aOpeningBracketAndSlash((sal_Int8 *)"</", 2);
+-static Sequence< sal_Int8 > aQuote((sal_Int8 *)"\"", 1);
+-static Sequence< sal_Int8 > aEqualSignAndQuote((sal_Int8 *)"=\"", 2);
+-static Sequence< sal_Int8 > aSpace((sal_Int8 *)" ", 1);
+-static Sequence< sal_Int8 > aXmlHeader((sal_Int8*) "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", 56);
++static rtl::ByteSequence aClosingBracket((const sal_Int8 *)">", 1);
++static rtl::ByteSequence aSlashAndClosingBracket((const sal_Int8 *)"/>", 2);
++static rtl::ByteSequence aColon((const sal_Int8 *)":", 1);
++static rtl::ByteSequence aOpeningBracket((const sal_Int8 *)"<", 1);
++static rtl::ByteSequence aOpeningBracketAndSlash((const sal_Int8 *)"</", 2);
++static rtl::ByteSequence aQuote((const sal_Int8 *)"\"", 1);
++static rtl::ByteSequence aEqualSignAndQuote((const sal_Int8 *)"=\"", 2);
++static rtl::ByteSequence aSpace((const sal_Int8 *)" ", 1);
++static rtl::ByteSequence aXmlHeader((const sal_Int8*) "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", 56);
+ 
+ #define HAS_NAMESPACE(x) ((x & 0xffff0000) != 0)
+ #define NAMESPACE(x) (x >> 16)
+@@ -74,7 +76,7 @@
+ 	{
+ 		if (!mxOutputStream.is())
+ 			return;
+-		writeBytes(aXmlHeader);
++		writeBytes(toUnoSequence(aXmlHeader));
+ 	}
+ 
+ 	OUString FastSaxSerializer::escapeXml( const OUString& s )
+@@ -116,7 +118,7 @@
+     {
+         if( HAS_NAMESPACE( nElement ) ) {
+             writeBytes(mxFastTokenHandler->getUTF8Identifier(NAMESPACE(nElement)));
+-            writeBytes(aColon);
++            writeBytes(toUnoSequence(aColon));
+             writeBytes(mxFastTokenHandler->getUTF8Identifier(TOKEN(nElement)));
+         } else
+             writeBytes(mxFastTokenHandler->getUTF8Identifier(nElement));
+@@ -128,12 +130,12 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracket);
++		writeBytes(toUnoSequence(aOpeningBracket));
+ 
+         writeId(Element);
+ 		writeFastAttributeList(Attribs);
+ 
+-		writeBytes(aClosingBracket);
++		writeBytes(toUnoSequence(aClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::startUnknownElement( const OUString& Namespace, const OUString& Name, const Reference< XFastAttributeList >& Attribs )
+@@ -142,19 +144,19 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracket);
++		writeBytes(toUnoSequence(aOpeningBracket));
+ 
+ 		if (Namespace.getLength())
+ 		{
+ 			write(Namespace);
+-			writeBytes(aColon);
++			writeBytes(toUnoSequence(aColon));
+ 		}
+ 		
+ 		write(Name);
+ 		
+ 		writeFastAttributeList(Attribs);
+ 			
+-		writeBytes(aClosingBracket);
++		writeBytes(toUnoSequence(aClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::endFastElement( ::sal_Int32 Element )
+@@ -163,11 +165,11 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracketAndSlash);
++		writeBytes(toUnoSequence(aOpeningBracketAndSlash));
+ 
+         writeId(Element);
+ 
+-		writeBytes(aClosingBracket);
++		writeBytes(toUnoSequence(aClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::endUnknownElement( const OUString& Namespace, const OUString& Name )
+@@ -176,17 +178,17 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracketAndSlash);
++		writeBytes(toUnoSequence(aOpeningBracketAndSlash));
+ 
+ 		if (Namespace.getLength())
+ 		{
+ 			write(Namespace);
+-			writeBytes(aColon);
++			writeBytes(toUnoSequence(aColon));
+ 		}
+ 		
+ 		write(Name);
+ 		
+-		writeBytes(aClosingBracket);
++		writeBytes(toUnoSequence(aClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::singleFastElement( ::sal_Int32 Element, const Reference< XFastAttributeList >& Attribs )
+@@ -195,12 +197,12 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracket);
++		writeBytes(toUnoSequence(aOpeningBracket));
+ 
+         writeId(Element);
+ 		writeFastAttributeList(Attribs);
+ 
+-		writeBytes(aSlashAndClosingBracket);
++		writeBytes(toUnoSequence(aSlashAndClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::singleUnknownElement( const OUString& Namespace, const OUString& Name, const Reference< XFastAttributeList >& Attribs )
+@@ -209,19 +211,19 @@
+ 		if (!mxOutputStream.is())
+ 			return;
+ 
+-		writeBytes(aOpeningBracket);
++		writeBytes(toUnoSequence(aOpeningBracket));
+ 
+ 		if (Namespace.getLength())
+ 		{
+ 			write(Namespace);
+-			writeBytes(aColon);
++			writeBytes(toUnoSequence(aColon));
+ 		}
+ 		
+ 		write(Name);
+ 
+ 		writeFastAttributeList(Attribs);
+ 			
+-		writeBytes(aSlashAndClosingBracket);
++		writeBytes(toUnoSequence(aSlashAndClosingBracket));
+ 	}
+ 
+     void SAL_CALL FastSaxSerializer::characters( const OUString& aChars )
+@@ -251,12 +253,12 @@
+ 		sal_Int32 nAttrLength = aAttrSeq.getLength();
+ 		for (sal_Int32 i = 0; i < nAttrLength; i++)
+ 		{
+-			writeBytes(aSpace);
++			writeBytes(toUnoSequence(aSpace));
+ 
+ 			write(pAttr[i].Name);
+-			writeBytes(aEqualSignAndQuote);
++			writeBytes(toUnoSequence(aEqualSignAndQuote));
+ 			write(escapeXml(pAttr[i].Value));
+-			writeBytes(aQuote);
++			writeBytes(toUnoSequence(aQuote));
+ 		}
+ 		
+ 		Sequence< FastAttribute > aFastAttrSeq = Attribs->getFastAttributes();
+@@ -264,16 +266,16 @@
+ 		sal_Int32 nFastAttrLength = aFastAttrSeq.getLength();
+ 		for (sal_Int32 j = 0; j < nFastAttrLength; j++)
+ 		{
+-			writeBytes(aSpace);
++			writeBytes(toUnoSequence(aSpace));
+ 
+             sal_Int32 nToken = pFastAttr[j].Token;
+             writeId(nToken);
+ 			
+-			writeBytes(aEqualSignAndQuote);
++			writeBytes(toUnoSequence(aEqualSignAndQuote));
+ 	
+ 			write(escapeXml(Attribs->getValue(pFastAttr[j].Token)));
+ 			
+-			writeBytes(aQuote);
++			writeBytes(toUnoSequence(aQuote));
+ 		}
+ 	}
+ 
+--- package/inc/ZipPackageFolder.hxx	2010-06-22 11:49:17.000000000 +0100
++++ package/inc/ZipPackageFolder.hxx	2010-06-22 12:50:26.000000000 +0100
+@@ -53,8 +53,6 @@
+ 	::com::sun::star::container::XEnumerationAccess
+ >
+ {
+-	static com::sun::star::uno::Sequence < sal_Int8 > aImplementationId;
+-
+ protected:
+ 	ContentHash maContents;
+ 	const ::com::sun::star::uno::Reference < com::sun::star::lang::XMultiServiceFactory > m_xFactory;
+@@ -82,10 +80,7 @@
+ 		throw(::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
+ 
+ 	static void copyZipEntry( ZipEntry &rDest, const ZipEntry &rSource);
+-	static ::com::sun::star::uno::Sequence < sal_Int8 > static_getImplementationId()
+-	{
+-		return aImplementationId;
+-	}
++	static const ::com::sun::star::uno::Sequence < sal_Int8 >& static_getImplementationId();
+ 
+ 	void setPackageFormat_Impl( sal_Int32 nFormat ) { m_nFormat = nFormat; }
+ 	void setRemoveOnInsertMode_Impl( sal_Bool bRemove ) { this->mbAllowRemoveOnInsert = bRemove; }
+--- package/source/xstor/owriteablestream.cxx	2010-06-22 11:49:15.000000000 +0100
++++ package/source/xstor/owriteablestream.cxx	2010-06-22 12:13:20.000000000 +0100
+@@ -53,6 +53,7 @@
+ 
+ #include <rtl/digest.h>
+ #include <rtl/logfile.hxx>
++#include <rtl/instance.hxx>
+ 
+ // since the copying uses 32000 blocks usually, it makes sense to have a smaller size
+ #define MAX_STORCACHE_SIZE 30000
+@@ -2169,25 +2170,14 @@
+ 	return m_pData->m_pTypeCollection->getTypes() ;
+ }
+ 
++namespace { struct lcl_ImplId : public rtl::Static< ::cppu::OImplementationId, lcl_ImplId > {}; }
++
+ //-----------------------------------------------
+ uno::Sequence< sal_Int8 > SAL_CALL OWriteStream::getImplementationId()
+ 		throw( uno::RuntimeException )
+ {
+-	static ::cppu::OImplementationId* pID = NULL ;
+-
+-	if ( pID == NULL )
+-	{
+-		::osl::MutexGuard aGuard( ::osl::Mutex::getGlobalMutex() ) ;
+-
+-		if ( pID == NULL )
+-		{
+-			static ::cppu::OImplementationId aID( sal_False ) ;
+-			pID = &aID ;
+-		}
+-	}
+-
+-	return pID->getImplementationId() ;
+-
++    ::cppu::OImplementationId &rId = lcl_ImplId::get();
++    return rId.getImplementationId();
+ }
+ 
+ //-----------------------------------------------
+--- package/source/xstor/xstorage.cxx	2010-06-22 11:49:15.000000000 +0100
++++ package/source/xstor/xstorage.cxx	2010-06-22 12:11:45.000000000 +0100
+@@ -48,6 +48,7 @@
+ #include <cppuhelper/typeprovider.hxx>
+ #include <cppuhelper/exc_hlp.hxx>
+ #include <rtl/logfile.hxx>
++#include <rtl/instance.hxx>
+ 
+ #include <comphelper/processfactory.hxx>
+ #include <comphelper/componentcontext.hxx>
+@@ -2367,25 +2368,14 @@
+ 	return m_pData->m_pTypeCollection->getTypes() ;
+ }
+ 
++namespace { struct lcl_ImplId : public rtl::Static< ::cppu::OImplementationId, lcl_ImplId > {}; }
++
+ //-----------------------------------------------
+ uno::Sequence< sal_Int8 > SAL_CALL OStorage::getImplementationId()
+ 		throw( uno::RuntimeException )
+ {
+-	static ::cppu::OImplementationId* pID = NULL ;
+-
+-	if ( pID == NULL )
+-	{
+-		::osl::MutexGuard aGuard( ::osl::Mutex::getGlobalMutex() ) ;
+-
+-		if ( pID == NULL )
+-		{
+-			static ::cppu::OImplementationId aID( sal_False ) ;
+-			pID = &aID ;
+-		}
+-	}
+-
+-	return pID->getImplementationId() ;
+-
++    ::cppu::OImplementationId &rID = lcl_ImplId::get();
++    return rID.getImplementationId();
+ }
+ 
+ //____________________________________________________________________________________________________
+--- package/source/zippackage/ZipPackage.cxx	2010-06-22 11:49:16.000000000 +0100
++++ package/source/zippackage/ZipPackage.cxx	2010-06-22 12:12:00.000000000 +0100
+@@ -68,6 +68,7 @@
+ #include <rtl/uri.hxx>
+ #include <rtl/random.h>
+ #include <rtl/logfile.hxx>
++#include <rtl/instance.hxx>
+ #include <osl/time.h>
+ #include <osl/file.hxx>
+ #include "com/sun/star/io/XAsyncOutputMonitor.hpp"
+@@ -1585,21 +1586,14 @@
+ 										   static_getSupportedServiceNames());
+ }
+ 
++namespace { struct lcl_ImplId : public rtl::Static< ::cppu::OImplementationId, lcl_ImplId > {}; }
++
+ // XUnoTunnel
+ Sequence< sal_Int8 > ZipPackage::getUnoTunnelImplementationId( void ) 
+ 	throw (RuntimeException)
+ {
+-	static ::cppu::OImplementationId * pId = 0;
+-	if (! pId)
+-	{
+-		::osl::MutexGuard aGuard( ::osl::Mutex::getGlobalMutex() );
+-		if (! pId)
+-		{
+-			static ::cppu::OImplementationId aId;
+-			pId = &aId;
+-		}
+-	}
+-	return pId->getImplementationId();
++    ::cppu::OImplementationId &rId = lcl_ImplId::get();
++    return rId.getImplementationId();
+ }
+ 
+ sal_Int64 SAL_CALL ZipPackage::getSomething( const Sequence< sal_Int8 >& aIdentifier ) 
+--- package/source/zippackage/ZipPackageFolder.cxx	2010-06-22 11:49:16.000000000 +0100
++++ package/source/zippackage/ZipPackageFolder.cxx	2010-06-22 12:50:00.000000000 +0100
+@@ -43,6 +43,7 @@
+ #include <com/sun/star/io/XSeekable.hpp>
+ #include <EncryptedDataHeader.hxx>
+ #include <rtl/random.h>
++#include <rtl/instance.hxx>
+ #include <memory>
+ 
+ using namespace com::sun::star::packages::zip::ZipConstants;
+@@ -59,7 +60,7 @@
+ using namespace ::com::sun::star;
+ using vos::ORef;
+ 
+-Sequence < sal_Int8 > ZipPackageFolder::aImplementationId = Sequence < sal_Int8 > ();
++namespace { struct lcl_CachedImplId : public rtl::Static< Sequence < sal_Int8 >, lcl_CachedImplId > {}; }
+ 
+ ZipPackageFolder::ZipPackageFolder ( const Reference< XMultiServiceFactory >& xFactory,
+ 									 sal_Int32 nFormat,
+@@ -80,10 +81,9 @@
+ 	aEntry.nCompressedSize	= 0;
+ 	aEntry.nSize		= 0;
+ 	aEntry.nOffset		= -1;
+-	if ( !aImplementationId.getLength() )
+-        {
+-		aImplementationId = getImplementationId();
+-        }
++	Sequence < sal_Int8 > &rCachedImplId = lcl_CachedImplId::get();
++	if ( !rCachedImplId.getLength() )
++	    rCachedImplId = getImplementationId();
+ }
+ 
+ 
+@@ -187,6 +187,11 @@
+     rDest.nExtraLen			= rSource.nExtraLen;
+ }
+ 
++const ::com::sun::star::uno::Sequence < sal_Int8 >& ZipPackageFolder::static_getImplementationId()
++{
++    return lcl_CachedImplId::get();
++}
++
+ 	// XNameContainer
+ void SAL_CALL ZipPackageFolder::insertByName( const OUString& aName, const Any& aElement ) 
+ 		throw(IllegalArgumentException, ElementExistException, WrappedTargetException, RuntimeException)
+--- package/source/zippackage/ZipPackageStream.cxx	2010-06-22 11:49:16.000000000 +0100
++++ package/source/zippackage/ZipPackageStream.cxx	2010-06-22 12:53:32.000000000 +0100
+@@ -45,6 +45,8 @@
+ #include <comphelper/seekableinput.hxx>
+ #include <comphelper/storagehelper.hxx>
+ 
++#include <rtl/instance.hxx>
++
+ #include <PackageConstants.hxx>
+ 
+ using namespace com::sun::star::packages::zip::ZipConstants;
+@@ -55,8 +57,12 @@
+ using namespace cppu;
+ using namespace rtl;
+ 
+-Sequence < sal_Int8 > ZipPackageStream::aImplementationId = Sequence < sal_Int8 > ();
++namespace { struct lcl_CachedImplId : public rtl::Static< Sequence < sal_Int8 >, lcl_CachedImplId > {}; }
+ 
++const ::com::sun::star::uno::Sequence < sal_Int8 >& ZipPackageStream::static_getImplementationId()
++{
++    return lcl_CachedImplId::get();
++}
+ 
+ ZipPackageStream::ZipPackageStream ( ZipPackage & rNewPackage,
+ 									const Reference< XMultiServiceFactory >& xFactory,
+@@ -91,10 +97,9 @@
+ 	aEntry.nPathLen		= -1;
+ 	aEntry.nExtraLen	= -1;
+ 
+-	if ( !aImplementationId.getLength() )
+-        {
+-            aImplementationId = getImplementationId();
+-        }
++	Sequence < sal_Int8 > &rCachedImplId = lcl_CachedImplId::get();
++	if ( !rCachedImplId.getLength() )
++	    rCachedImplId = getImplementationId();
+ }
+ 
+ ZipPackageStream::~ZipPackageStream( void )
+--- package/source/zippackage/ZipPackageStream.hxx	2010-06-22 11:49:16.000000000 +0100
++++ package/source/zippackage/ZipPackageStream.hxx	2010-06-22 12:51:18.000000000 +0100
+@@ -55,7 +55,6 @@
+ 	::com::sun::star::packages::XDataSinkEncrSupport
+ >
+ {
+-	static com::sun::star::uno::Sequence < sal_Int8 > aImplementationId;
+ protected:
+ 	com::sun::star::uno::Reference < com::sun::star::io::XInputStream > xStream;
+ 	const ::com::sun::star::uno::Reference < com::sun::star::lang::XMultiServiceFactory > m_xFactory;
+@@ -146,10 +145,7 @@
+     ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream > SAL_CALL getRawData()
+ 		throw(::com::sun::star::uno::RuntimeException);
+ 	
+-	static ::com::sun::star::uno::Sequence < sal_Int8 >& static_getImplementationId()
+-	{
+-		return aImplementationId;
+-	}
++	static const ::com::sun::star::uno::Sequence < sal_Int8 >& static_getImplementationId();
+ 
+ 	// XActiveDataSink
+     virtual void SAL_CALL setInputStream( const ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >& aStream ) 

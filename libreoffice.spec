@@ -27,38 +27,36 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.2.99.1
-Release:        2%{?dist}
+Version:        3.2.99.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-3.2.99.1.tar.bz2
-Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-3.2.99.1.tar.bz2
-Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-3.2.99.1.tar.bz2
-Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-3.2.99.1.tar.bz2
-Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-3.2.99.1.tar.bz2
-Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-3.2.99.1.tar.bz2
-Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-3.2.99.1.tar.bz2
-Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-3.2.99.1.tar.bz2
-Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-3.2.99.1.tar.bz2
-Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-3.2.99.1.tar.bz2
-Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-3.2.99.1.tar.bz2
-Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-3.2.99.1.tar.bz2
-Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-3.2.99.1.tar.bz2
-Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-3.2.99.1.tar.bz2
-Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-3.2.99.1.tar.bz2
-Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-3.2.99.1.tar.bz2
-Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-3.2.99.1.tar.bz2
-Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-3.2.99.1.tar.bz2
-Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-3.2.99.1.tar.bz2
+Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-3.2.99.2.tar.bz2
+Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-3.2.99.2.tar.bz2
+Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-3.2.99.2.tar.bz2
+Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-3.2.99.2.tar.bz2
+Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-3.2.99.2.tar.bz2
+Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-3.2.99.2.tar.bz2
+Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-3.2.99.2.tar.bz2
+Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-3.2.99.2.tar.bz2
+Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-3.2.99.2.tar.bz2
+Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-3.2.99.2.tar.bz2
+Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-3.2.99.2.tar.bz2
+Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-3.2.99.2.tar.bz2
+Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-3.2.99.2.tar.bz2
+Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-3.2.99.2.tar.bz2
+Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-3.2.99.2.tar.bz2
+Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-3.2.99.2.tar.bz2
+Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-3.2.99.2.tar.bz2
+Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-3.2.99.2.tar.bz2
+Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-3.2.99.2.tar.bz2
 Source19:       http://cgit.freedesktop.org/ooo-build/ooo-build/plain/src/evolocal.odb
 Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
-Source21:       redhat-registry.tar.gz
-Source22:       redhat-langpacks.tar.gz
-Source23:       redhat-agreement.xsl
-Source24:       http://www.openoffice.org/nonav/issues/showattachment.cgi/66959/acor_lt.zip
-Source25:       libreoffice-multiliblauncher.sh
+Source21:       redhat-langpacks.tar.gz
+Source22:       http://www.openoffice.org/nonav/issues/showattachment.cgi/66959/acor_lt.zip
+Source23:       libreoffice-multiliblauncher.sh
 Source26:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
 Source27:       http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 Source28:       http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
@@ -68,7 +66,7 @@ Source31:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a99
 Source32:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
 Source33:       description.xml
 Source34:       manifest.xml
-Source35:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.1.tar.bz2
+Source35:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.2.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -90,45 +88,18 @@ Patch1:  openoffice.org-2.0.1.rhXXXXXX.extensions.defaulttoevo2.patch
 Patch2:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
 Patch3:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
 Patch4:  openoffice.org-2.2.1.ooo7065.sw.titlepagedialog.patch
-Patch5:  openoffice.org-2.3.0.ooo76649.httpencoding.patch
-Patch6:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
-Patch7:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
-Patch8:  workspace.dtardon03.patch
-Patch9:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
-Patch10: openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
-Patch11: openoffice.org-3.1.0.ooo61927.sw.ww6.unicodefontencoding.patch
-Patch12: openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
-Patch13: openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
-Patch14: workspace.impress195.patch
-Patch15: openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
-Patch16: workspace.srb1.patch
-Patch17: openoffice.org-3.2.0.ooo106502.svx.fixspelltimer.patch
-Patch18: openoffice.org-3.3.0.ooo108246.svx.hide-sql-group-when-inactive.patch
-Patch19: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
-Patch20: openoffice.org-3.2.0.ooo108846.sfx2.qstartfixes.patch
-Patch21: openoffice.org-3.2.0.ooo95369.sw.sortedobjs.patch
-Patch22: openoffice.org-3.2.0.ooo110142.svx.safercolornames.patch
-Patch23: openoffice.org-3.3.0.ooo111758.sd.xerror.patch
-Patch24: openoffice.org-3.2.0.ooo111741.extras.malformed-xml-file.patch
-Patch25: openoffice.org-3.3.0.ooo112059.sw.avoid-null-ptr-deref.patch
-Patch26: openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
-Patch27: openoffice.org-3.3.0.ooo100686.wizards.types.not.mediatypes.patch
-Patch28: workspace.vcl113.patch
-Patch29: openoffice.org-3.3.0.ooo112384.sw.export.doc.styledoesntexist.patch
-Patch30: workspace.gtk3.patch
-Patch31: workspace.cmcfixes77.patch
-Patch32: workspace.vcl114.patch
-Patch33: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
-Patch34: openoffice.org-3.3.0.ooo106591.sal.tradcopy.patch
-Patch35: workspace.vcl115.patch
-Patch36: workspace.cmcfixes78.patch
-Patch37: openoffice.org-3.3.0.ooo114012.sd.bada11ychain.patch
-Patch38: workspace.cmcfixes79.patch
-Patch39: openoffice.org-3.3.0.ooo114703.vcl.betterlocalize.font.patch
-Patch40: openoffice.org-3.3.0.rh637738.libgcrypt.addmutex.patch
-Patch41: openoffice.org-3.3.0.rh638185.editeng.cjkctlhtmlsizes.patch
-Patch42: openoffice.org-3.2.0.rh632236.writerfilter.cleanup-cell-props.patch
-Patch43: libreoffice-buildfix.patch
+Patch5:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+Patch6:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
+Patch7:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
+Patch8:   openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch9:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
+Patch10: openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
+Patch11: openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
+Patch12: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
+Patch13: openoffice.org-3.2.0.ooo108846.sfx2.qstartfixes.patch
+Patch14: openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
+Patch15: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
+Patch16: libreoffice-buildfix.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1413,45 +1384,18 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch2  -p1 -b .ooo53397.prelinkoptimize.desktop.patch
 %patch3  -p1
 %patch4  -p1 -b .ooo7065.sw.titlepagedialog.patch
-%patch5  -p0 -b .ooo76649.httpencoding.patch
-%patch6  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch7  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch8  -p0 -b .workspace.dtardon03.patch
-%patch9  -p0 -b .gccXXXXX.solenv.javaregistration.patch
-%patch10 -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch11 -p1 -b .ooo61927.sw.ww6.unicodefontencoding.patch
-%patch12 -p0 -b .ooo101274.opening-a-directory.patch
-%patch13 -p0 -b .ooo102061.sc.cellanchoring.patch
-%patch14 -p0 -b .workspace.impress195.patch
-%patch15 -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
-%patch16 -p1 -b .workspace.srb1.patch
-%patch17 -p1 -b .ooo106502.svx.fixspelltimer.patch
-%patch18 -p1 -b .ooo108246.svx.hide-sql-group-when-inactive.patch
-%patch19 -p1 -b .ooo108637.sfx2.uisavedir.patch
-%patch20 -p1 -b .ooo108846.sfx2.qstartfixes.patch
-%patch21 -p1 -b .ooo95369.sw.sortedobjs.patch
-%patch22 -p0 -b .ooo110142.svx.safercolornames.patch
-%patch23 -p0 -b .ooo111758.sd.xerror.patch
-%patch24 -p1 -b .ooo111741.extras.malformed-xml-file.patch
-%patch25 -p1 -b .ooo112059.sw.avoid-null-ptr-deref.patch
-%patch26 -p0 -b .ooo107490.cppu.lifecycle.patch
-%patch27 -p0 -b .ooo100686.wizards.types.not.mediatypes.patch
-%patch28 -p0 -b .workspace.vcl113.patch
-%patch29 -p0 -b .ooo112384.sw.export.doc.styledoesntexist.patch
-%patch30 -p0 -b .workspace.gtk3.patch
-%patch31 -p1 -b .workspace.cmcfixes77.patch
-%patch32 -p0 -b .workspace.vcl114.patch
-%patch33 -p0 -b .ooo113273.desktop.resolvelinks.patch
-%patch34 -p0 -b .ooo106591.sal.tradcopy.patch
-%patch35 -p1 -b .workspace.vcl115.patch
-%patch36 -p1 -b .workspace.cmcfixes78.patch
-%patch37 -p0 -b .ooo114012.sd.bada11ychain.patch
-%patch38 -p1 -b .workspace.cmcfixes79.patch
-%patch39 -p1 -b .ooo114703.vcl.betterlocalize.font.patch
-%patch40 -p0 -b .rh637738.libgcrypt.addmutex.patch
-%patch41 -p1 -b .rh638185.editeng.cjkctlhtmlsizes.patch
-%patch42 -p1 -b .rh632236.writerfilter.cleanup-cell-props.patch
-%patch43 -p1 -b .libreoffice-buildfix.patch
+%patch5  -p1 -b .ooo86080.unopkg.bodge.patch
+%patch6  -p1 -b .ooo88341.sc.verticalboxes.patch
+%patch7  -p0 -b .gccXXXXX.solenv.javaregistration.patch
+%patch8  -p1 -b .oooXXXXX.solenv.allowmissing.patch
+%patch9  -p0 -b .ooo101274.opening-a-directory.patch
+%patch10 -p0 -b .ooo102061.sc.cellanchoring.patch
+%patch11 -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch12 -p1 -b .ooo108637.sfx2.uisavedir.patch
+%patch13 -p1 -b .ooo108846.sfx2.qstartfixes.patch
+%patch14 -p0 -b .ooo107490.cppu.lifecycle.patch
+%patch15 -p0 -b .ooo113273.desktop.resolvelinks.patch
+%patch16 -p1 -b .libreoffice-buildfix.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -1635,15 +1579,6 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
     find examples -type f -exec chmod -x {} \;
 popd
 
-#add our custom configuration options
-#enable gtk file dialog as the default
-rm -rf $RPM_BUILD_ROOT/%{basisinstdir}/share/registry/modules/org/openoffice/Office/Common/Common-UseOOoFileDialogs.xcu
-#default autorecovery settings
-#system libtextcat fingerprint location
-#rhbz#484055 system autocorr location
-#rhbz#451512 set better math print options
-tar xzf %{SOURCE21} -C $RPM_BUILD_ROOT/%{basisinstdir}/share
-
 #add the debugging libsalalloc_malloc.so.3 library
 cp -f solver/%{OFFICEUPD}/unxlng*.pro/lib/libsalalloc_malloc.so.3 $RPM_BUILD_ROOT/%{ureinstdir}/lib
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/testtoolrc
@@ -1677,7 +1612,7 @@ popd
 pushd $RPM_BUILD_ROOT/%{basisinstdir}/share/autocorr
 
 # ooo#108049
-cp -p %{SOURCE24} acor_lt-LT.dat
+cp -p %{SOURCE22} acor_lt-LT.dat
 
 #en-ZA exists and has a good autocorrect file with two or three extras that make sense for South Africa
 en_GB_aliases="en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT"
@@ -1771,7 +1706,7 @@ sh      help    western         mai     help    western \
 ro      nohelp  western
 )
 
-tar xzf %{SOURCE22}
+tar xzf %{SOURCE21}
 
 i=0
 while [ $i -lt ${#langpackdetails[@]} ]; do
@@ -1890,12 +1825,12 @@ echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
 echo exec libreoffice -base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
-cp -f %{SOURCE25} $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE23} $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
 
-cp -f %{SOURCE25} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE23} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
@@ -3192,6 +3127,36 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Oct 11 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-1
+- next LibreOffice milestone
+- drop integrated openoffice.org-2.3.0.ooo76649.httpencoding.patch
+- drop integrated workspace.dtardon03.patch
+- drop integrated openoffice.org-3.1.0.ooo61927.sw.ww6.unicodefontencoding.patch
+- drop integrated workspace.impress195.patch
+- drop integrated workspace.srb1.patch
+- drop integrated openoffice.org-3.2.0.ooo106502.svx.fixspelltimer.patch
+- drop integrated openoffice.org-3.3.0.ooo108246.svx.hide-sql-group-when-inactive.patch
+- drop integrated openoffice.org-3.2.0.ooo95369.sw.sortedobjs.patch
+- drop integrated openoffice.org-3.2.0.ooo110142.svx.safercolornames.patch
+- drop integrated openoffice.org-3.3.0.ooo111758.sd.xerror.patch
+- drop integrated openoffice.org-3.2.0.ooo111741.extras.malformed-xml-file.patch
+- drop integrated openoffice.org-3.3.0.ooo112059.sw.avoid-null-ptr-deref.patch
+- drop integrated openoffice.org-3.3.0.ooo100686.wizards.types.not.mediatypes.patch
+- drop integrated workspace.vcl113.patch
+- drop integrated openoffice.org-3.3.0.ooo112384.sw.export.doc.styledoesntexist.patch
+- drop integrated workspace.cmcfixes77.patch
+- drop integrated workspace.vcl114.patch
+- drop integrated openoffice.org-3.3.0.ooo106591.sal.tradcopy.patch
+- drop integrated workspace.vcl115.patch
+- drop integrated workspace.cmcfixes78.patch
+- drop integrated openoffice.org-3.3.0.ooo114012.sd.bada11ychain.patch
+- drop integrated workspace.cmcfixes79.patch
+- drop integrated openoffice.org-3.3.0.ooo114703.vcl.betterlocalize.font.patch
+- drop integrated openoffice.org-3.3.0.rh638185.editeng.cjkctlhtmlsizes.patch
+- drop integrated openoffice.org-3.3.0.rh637738.libgcrypt.addmutex.patch
+- drop integrated openoffice.org-3.2.0.rh632236.writerfilter.cleanup-cell-props.patch
+- drop workspace.gtk3.patch
+
 * Wed Oct 06 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.1-2
 - Related: rhbz#639945 pull in review changes
   + redland build-fix

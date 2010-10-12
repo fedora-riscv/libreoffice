@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -468,901 +468,215 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%package langpack-af
-Summary: Afrikaans language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=af), hunspell-af, hyphen-af, autocorr-af
-Obsoletes: openoffice.org-langpack-af_ZA < 1:3.3.1
 
-%description langpack-af
-Provides additional Afrikaans translations and resources for LibreOffice.
-
-%package langpack-ar
-Summary: Arabic language pack for LibreOffice
-Group: Applications/Productivity
-Requires: font(:lang=ar), hunspell-ar
-Requires: %{name}-core = %{version}-%{release}
-Obsoletes: openoffice.org-langpack-ar < 1:3.3.1
-
-%description langpack-ar
-Provides additional Arabic translations and resources for LibreOffice.
-
-%package langpack-bg
-Summary: Bulgarian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=bg), hunspell-bg, hyphen-bg, mythes-bg, autocorr-bg
-Obsoletes: openoffice.org-langpack-bg_BG < 1:3.3.1
-
-%description langpack-bg
-Provides additional Bulgarian translations and resources for LibreOffice.
-
-%package langpack-bn
-Summary: Bengali language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=bn), hunspell-bn, hyphen-bn
-Obsoletes: openoffice.org-langpack-bn < 1:3.3.1
-
-%description langpack-bn
-Provides additional Bengali translations and resources for LibreOffice.
-
-%package langpack-ca
-Summary: Catalan language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ca), hunspell-ca, hyphen-ca, mythes-ca
-Obsoletes: openoffice.org-langpack-ca_ES < 1:3.3.1
-
-%description langpack-ca
-Provides additional Catalan translations and resources for LibreOffice.
-
-%package langpack-cs
-Summary: Czech language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=cs), hunspell-cs, hyphen-cs, mythes-cs, autocorr-cs
-Obsoletes: openoffice.org-langpack-cs_CZ < 1:3.3.1
-
-%description langpack-cs
-Provides additional Czech translations and resources for LibreOffice.
-
-%package langpack-cy
-Summary: Welsh language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=cy), hunspell-cy, hyphen-cy
-Obsoletes: openoffice.org-langpack-cy_GB < 1:3.3.1
-
-%description langpack-cy
-Provides additional Welsh translations and resources for LibreOffice.
-
-%package langpack-da
-Summary: Danish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=da), hunspell-da, hyphen-da, mythes-da, autocorr-da
-Obsoletes: openoffice.org-langpack-da_DK < 1:3.3.1
-
-%description langpack-da
-Provides additional Danish translations and resources for LibreOffice.
-
-%package langpack-de
-Summary: German language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=de), hunspell-de, hyphen-de, mythes-de, autocorr-de
-Obsoletes: openoffice.org-langpack-de < 1:3.3.1
-
-%description langpack-de
-Provides additional German translations and resources for LibreOffice.
-
-%package langpack-el
-Summary: Greek language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=el), hunspell-el, hyphen-el, mythes-el
-Obsoletes: openoffice.org-langpack-el_GR < 1:3.3.1
-
-%description langpack-el
-Provides additional Greek translations and resources for LibreOffice.
-
-%package langpack-en
-Summary: English language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: mythes-en
-Obsoletes: openoffice.org-langpack-en < 1:3.3.1
-
-%description langpack-en
-English thesaurus for LibreOffice.
-
-%package langpack-es
-Summary: Spanish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=es), hunspell-es, hyphen-es, mythes-es, autocorr-es
-Obsoletes: openoffice.org-langpack-es < 1:3.3.1
-
-%description langpack-es
-Provides additional Spanish translations and resources for LibreOffice.
-
-%package langpack-et
-Summary: Estonian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=et), hunspell-et, hyphen-et
-Obsoletes: openoffice.org-langpack-et_EE < 1:3.3.1
-
-%description langpack-et
-Provides additional Estonian translations and resources for LibreOffice.
-
-%package langpack-eu
-Summary: Basque language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=eu), hunspell-eu, hyphen-eu, autocorr-eu
-Obsoletes: openoffice.org-langpack-eu_ES < 1:3.3.1
-
-%description langpack-eu
-Provides additional Basque translations and resources for LibreOffice.
-
-%package langpack-fi
-Summary: Finnish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=fi), openoffice.org-voikko, autocorr-fi
-Obsoletes: openoffice.org-langpack-fi_FI < 1:3.3.1
-
-%description langpack-fi
-Provides additional Finnish translations and resources for LibreOffice.
-
-%package langpack-fr
-Summary: French language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=fr), hunspell-fr, hyphen-fr, mythes-fr, autocorr-fr
-Obsoletes: openoffice.org-langpack-fr < 1:3.3.1
-
-%description langpack-fr
-Provides additional French translations and resources for LibreOffice.
-
-%package langpack-ga
-Summary: Irish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ga), hunspell-ga, hyphen-ga, mythes-ga, autocorr-ga
-Obsoletes: openoffice.org-langpack-ga_IE < 1:3.3.1
-
-%description langpack-ga
-Provides additional Irish translations and resources for LibreOffice.
-
-%package langpack-gl
-Summary: Galician language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=gl), hunspell-gl, hyphen-gl
-Obsoletes: openoffice.org-langpack-gl_ES < 1:3.3.1
-
-%description langpack-gl
-Provides additional Galician translations and resources for LibreOffice.
-
-%package langpack-gu
-Summary: Gujarati language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=gu), hunspell-gu, hyphen-gu
-Obsoletes: openoffice.org-langpack-gu_IN < 1:3.3.1
-
-%description langpack-gu
-Provides additional Gujarati translations and resources for OpenOffice.or.
-
-%package langpack-pa
-Summary: Punjabi language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=pa), hunspell-pa, hyphen-pa
-Obsoletes: openoffice.org-langpack-pa < 1:3.3.1
-
-%description langpack-pa
-Provides additional Punjabi translations and resources for LibreOffice.
-
-%package langpack-he
-Summary: Hebrew language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=he), hunspell-he
-Obsoletes: openoffice.org-langpack-he_IL < 1:3.3.1
-
-%description langpack-he
-Provides additional Hebrew translations and resources for LibreOffice.
-
-%package langpack-hi
-Summary: Hindi language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=hi), hunspell-hi, hyphen-hi
-Obsoletes: openoffice.org-langpack-hi_IN < 1:3.3.1
-
-%description langpack-hi
-Provides additional Hindi translations and resources for LibreOffice.
-
-%package langpack-hu
-Summary: Hungarian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=hu), hunspell-hu, hyphen-hu, mythes-hu, autocorr-hu
-Obsoletes: openoffice.org-langpack-hu_HU < 1:3.3.1
-
-%description langpack-hu
-Provides additional Hungarian translations and resources for LibreOffice.
-
-%package langpack-hr
-Summary: Croatian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=hr), hunspell-hr, hyphen-hr
-Obsoletes: openoffice.org-langpack-hr_HR < 1:3.3.1
-
-%description langpack-hr
-Provides additional Croatian translations and resources for LibreOffice.
-
-%package langpack-it
-Summary: Italian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=it), hunspell-it, hyphen-it, mythes-it, autocorr-it
-Obsoletes: openoffice.org-langpack-it < 1:3.3.1
-
-%description langpack-it
-Provides additional Italian translations and resources for LibreOffice.
-
-%package langpack-ja
-Summary: Japanese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ja), autocorr-ja
-Obsoletes: openoffice.org-langpack-ja_JP < 1:3.3.1
-
-%description langpack-ja
-Provides additional Japanese translations and resources for LibreOffice.
-
-%package langpack-ko
-Summary: Korean language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ko), hunspell-ko, autocorr-ko
-Obsoletes: openoffice.org-langpack-ko_KR < 1:3.3.1
-
-%description langpack-ko
-Provides additional Korean translations and resources for LibreOffice.
-
-%package langpack-lt
-Summary: Lithuanian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=lt), hunspell-lt, hyphen-lt, autocorr-lt
-Obsoletes: openoffice.org-langpack-lt_LT < 1:3.3.1
-
-%description langpack-lt
-Provides additional Lithuanian translations and resources for LibreOffice.
-
-%package langpack-ms
-Summary: Malay language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ms), hunspell-ms
-Obsoletes: openoffice.org-langpack-ms_MY < 1:3.3.1
-
-%description langpack-ms
-Provides additional Malay translations and resources for LibreOffice.
-
-%package langpack-nb
-Summary: Bokmal language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=nb), hunspell-nb, hyphen-nb, mythes-nb
-Obsoletes: openoffice.org-langpack-nb_NO < 1:3.3.1
-
-%description langpack-nb
-Provides additional Bokmal translations and resources for LibreOffice.
-
-%package langpack-nl
-Summary: Dutch language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=nl), hunspell-nl, hyphen-nl, mythes-nl, autocorr-nl
-Obsoletes: openoffice.org-langpack-nl < 1:3.3.1
-
-%description langpack-nl
-Provides additional Dutch translations and resources for LibreOffice.
-
-%package langpack-nn
-Summary: Nynorsk language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=nn), hunspell-nn, hyphen-nn, mythes-nn
-Obsoletes: openoffice.org-langpack-nn_NO < 1:3.3.1
-
-%description langpack-nn
-Provides additional Nynorsk translations and resources for LibreOffice.
-
-%package langpack-nr
-Summary: Southern Ndebele language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=nr), hunspell-nr
-Obsoletes: openoffice.org-langpack-nr_ZA < 1:3.3.1
-
-%description langpack-nr
-Provides additional Southern Ndebele translations and resources for 
-LibreOffice.
-
-%package langpack-pl
-Summary: Polish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=pl), hunspell-pl, hyphen-pl, mythes-pl, autocorr-pl
-Obsoletes: openoffice.org-langpack-pl_PL < 1:3.3.1
-
-%description langpack-pl
-Provides additional Polish translations and resources for LibreOffice.
-
-%package langpack-pt-PT
-Summary: Portuguese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=pt), hunspell-pt, hyphen-pt, mythes-pt, autocorr-pt
-Obsoletes: openoffice.org-langpack-pt_PT < 1:3.3.1
-
-%description langpack-pt-PT
-Provides additional Portuguese translations and resources for LibreOffice.
-
-%package langpack-pt-BR
-Summary: Brazilian Portuguese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=pt), hunspell-pt, hyphen-pt, mythes-pt, autocorr-pt
-Obsoletes: openoffice.org-langpack-pt_BR < 1:3.3.1
-
-%description langpack-pt-BR
-Provides additional Brazilian Portuguese translations and resources for 
-LibreOffice.
-
-%package langpack-ru
-Summary: Russian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ru), hunspell-ru, hyphen-ru, mythes-ru, autocorr-ru
-Obsoletes: openoffice.org-langpack-ru < 1:3.3.1
-
-%description langpack-ru
-Provides additional Russian translations and resources for LibreOffice.
-
-%package langpack-sk
-Summary: Slovak language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=sk), hunspell-sk, hyphen-sk, mythes-sk, autocorr-sk
-Obsoletes: openoffice.org-langpack-sk_SK < 1:3.3.1
-
-%description langpack-sk
-Provides additional Slovak translations and resources for LibreOffice.
-
-%package langpack-sl
-Summary: Slovenian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=sl), hunspell-sl, hyphen-sl, mythes-sl, autocorr-sl
-Obsoletes: openoffice.org-langpack-sl_SI < 1:3.3.1
-
-%description langpack-sl
-Provides additional Slovenian translations and resources for LibreOffice.
-
-%package langpack-sr
-Summary: Serbian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=sr), hunspell-sr, hyphen-sr, autocorr-sr
-Obsoletes: openoffice.org-langpack-sr < 1:3.3.1
-
-%description langpack-sr
-Provides additional Serbian translations and resources for LibreOffice.
-
-%package langpack-ss
-Summary: Swati language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ss), hunspell-ss
-Obsoletes: openoffice.org-langpack-ss_ZA < 1:3.3.1
-
-%description langpack-ss
-Provides additional Swati translations and resources for LibreOffice.
-
-%package langpack-st
-Summary: Southern Sotho language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=st), hunspell-st
-Obsoletes: openoffice.org-langpack-st_ZA < 1:3.3.1
-
-%description langpack-st
-Provides additional Southern Sotho translations and resources for 
-LibreOffice.
-
-%package langpack-sv
-Summary: Swedish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=sv), hunspell-sv, hyphen-sv, mythes-sv, autocorr-sv
-Obsoletes: openoffice.org-langpack-sv < 1:3.3.1
-
-%description langpack-sv
-Provides additional Swedish translations and resources for LibreOffice.
-
-%package langpack-ta
-Summary: Tamil language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires:  font(:lang=ta), hunspell-ta, hyphen-ta
-Obsoletes: openoffice.org-langpack-ta_IN < 1:3.3.1
-
-%description langpack-ta
-Provides additional Tamil translations and resources for LibreOffice.
-
-%package langpack-th
-Summary: Thai language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=th), hunspell-th
-Obsoletes: openoffice.org-langpack-th_TH < 1:3.3.1
-
-%description langpack-th
-Provides additional Thai translations and resources for LibreOffice.
-
-%package langpack-nso
-Summary: Northern Sotho language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=nso), hunspell-nso
-Obsoletes: openoffice.org-langpack-nso_ZA < 1:3.3.1
-
-%description langpack-nso
-Provides additional Northern Sotho translations and resources for 
-LibreOffice.
-
-%package langpack-tn
-Summary: Tswana language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=tn), hunspell-tn
-Obsoletes: openoffice.org-langpack-tn_ZA < 1:3.3.1
-
-%description langpack-tn
-Provides additional Tswana translations and resources for LibreOffice.
-
-%package langpack-ts
-Summary: Tsonga language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ts), hunspell-ts
-Obsoletes: openoffice.org-langpack-ts_ZA < 1:3.3.1
-
-%description langpack-ts
-Provides additional Tsonga translations and resources for LibreOffice.
-
-%package langpack-tr
-Summary: Turkish language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=tr), autocorr-tr
-Obsoletes: openoffice.org-langpack-tr_TR < 1:3.3.1
-
-%description langpack-tr
-Provides additional Turkish translations and resources for LibreOffice.
-
-%package langpack-ve
-Summary: Venda language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ve), hunspell-ve
-Obsoletes: openoffice.org-langpack-ve_ZA < 1:3.3.1
-
-%description langpack-ve
-Provides additional Venda translations and resources for LibreOffice.
-
-%package langpack-xh
-Summary: Xhosa language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=xh), hunspell-xh
-Obsoletes: openoffice.org-langpack-xh_ZA < 1:3.3.1
-
-%description langpack-xh
-Provides additional Xhosa translations and resources for LibreOffice.
-
-%package langpack-zh-Hans
-Summary: Simplified Chinese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=zh-cn), autocorr-zh
-Obsoletes: openoffice.org-langpack-zh_CN < 1:3.3.1
-
-%description langpack-zh-Hans
-Provides additional Simplified Chinese translations and resources for 
-LibreOffice.
-
-%package langpack-zh-Hant
-Summary: Traditional Chinese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=zh-tw), autocorr-zh
-Obsoletes: openoffice.org-langpack-zh_TW < 1:3.3.1
-
-%description langpack-zh-Hant
-Provides additional Traditional Chinese translations and resources for 
-LibreOffice.
-
-%package langpack-zu
-Summary: Zulu language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=zu), hunspell-zu, hyphen-zu
-Obsoletes: openoffice.org-langpack-zu_ZA < 1:3.3.1
-
-%description langpack-zu
-Provides additional Zulu translations and resources for LibreOffice.
-
-%package langpack-as
-Summary: Assamese language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=as), hunspell-as, hyphen-as
-Obsoletes: openoffice.org-langpack-as_IN < 1:3.3.1
-
-%description langpack-as
-Provides additional Assamese translations and resources for LibreOffice.
-
-%package langpack-mr
-Summary: Marathi language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=mr), hunspell-mr, hyphen-mr
-Obsoletes: openoffice.org-langpack-mr_IN < 1:3.3.1
-
-%description langpack-mr
-Provides additional Marathi translations and resources for LibreOffice.
-
-%package langpack-ml
-Summary: Malayalam language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ml), hunspell-ml, hyphen-ml
-Obsoletes: openoffice.org-langpack-ml_IN < 1:3.3.1
-
-%description langpack-ml
-Provides additional Malayalam translations and resources for LibreOffice.
-
-%package langpack-or
-Summary: Oriya language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=or), hunspell-or, hyphen-or
-Obsoletes: openoffice.org-langpack-or_IN < 1:3.3.1
-
-%description langpack-or
-Provides additional Oriya translations and resources for LibreOffice.
-
-%package langpack-te
-Summary: Telugu language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=te), hunspell-te, hyphen-te
-Obsoletes: openoffice.org-langpack-te_IN < 1:3.3.1
-
-%description langpack-te
-Provides additional Telugu translations and resources for LibreOffice.
-
-%package langpack-ur
-Summary: Urdu language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ur), hunspell-ur
-Obsoletes: openoffice.org-langpack-ur < 1:3.3.1
-
-%description langpack-ur
-Provides additional Urdu translations and resources for LibreOffice.
-
-%package langpack-kn
-Summary: Kannada language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=kn), hunspell-kn, hyphen-kn
-Obsoletes: openoffice.org-langpack-kn_IN < 1:3.3.1
-
-%description langpack-kn
-Provides additional Kannada translations and resources for LibreOffice.
-
-%package langpack-dz
-Summary: Dzongkha language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=dz)
-Obsoletes: openoffice.org-langpack-dz < 1:3.3.1
-
-%description langpack-dz
-Provides additional Dzongkha translations and resources for LibreOffice.
-
-%package langpack-uk
-Summary: Ukrainian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=uk), hunspell-uk, hyphen-uk, mythes-uk
-Obsoletes: openoffice.org-langpack-uk < 1:3.3.1
-
-%description langpack-uk
-Provides additional Ukrainian translations and resources for LibreOffice.
-
-%package langpack-mai
-Summary: Maithili language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=mai)
-Obsoletes: openoffice.org-langpack-mai_IN < 1:3.3.1
-
-%description langpack-mai
-Provides additional Maithili translations and resources for LibreOffice.
-
-%package langpack-ro
-Summary: Romanian language pack for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: font(:lang=ro), hunspell-ro, hyphen-ro, mythes-ro
-Obsoletes: openoffice.org-langpack-ro < 1:3.3.1
-
-%description langpack-ro
-Provides additional Romanian translations and resources for LibreOffice.
-
-%package -n autocorr-en
-Summary: English auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-en
-Rules for auto-correcting common English typing errors.
-
-%package -n autocorr-af
-Summary: Afrikaans auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-af
-Rules for auto-correcting common Afrikaans typing errors.
-
-%package -n autocorr-bg
-Summary: Bulgarian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-bg
-Rules for auto-correcting common Bulgarian typing errors.
-
-%package -n autocorr-cs
-Summary: Czech auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-cs
-Rules for auto-correcting common Czech typing errors.
-
-%package -n autocorr-da
-Summary: Danish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-da
-Rules for auto-correcting common Danish typing error.
-
-%package -n autocorr-de
-Summary: German auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-de
-Rules for auto-correcting common German typing errors.
-
-%package -n autocorr-es
-Summary: Spanish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-es
-Rules for auto-correcting common Spanish typing errors.
-
-%package -n autocorr-eu
-Summary: Basque auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-eu
-Rules for auto-correcting common Basque typing errors.
-
-%package -n autocorr-fa
-Summary: Farsi auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-fa
-Rules for auto-correcting common Farsi typing errors.
-
-%package -n autocorr-fi
-Summary: Finnish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-fi
-Rules for auto-correcting common Finnish typing errors.
-
-%package -n autocorr-fr
-Summary: French auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-fr
-Rules for auto-correcting common French typing errors.
-
-%package -n autocorr-ga
-Summary: Irish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-ga
-Rules for auto-correcting common Irish typing errors.
-
-%package -n autocorr-hu
-Summary: Hungarian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-hu
-Rules for auto-correcting common Hungarian typing errors.
-
-%package -n autocorr-it
-Summary: Italian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-it
-Rules for auto-correcting common Italian typing errors.
-
-%package -n autocorr-ja
-Summary: Japanese auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-ja
-Rules for auto-correcting common Japanese typing errors.
-
-%package -n autocorr-ko
-Summary: Korean auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-ko
-Rules for auto-correcting common Korean typing errors.
-
-%package -n autocorr-lb
-Summary: Luxembourgish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-lb
-Rules for auto-correcting common Luxembourgish typing errors.
-
-%package -n autocorr-lt
-Summary: Lithuanian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-lt
-Rules for auto-correcting common Lithuanian typing errors.
-
-%package -n autocorr-mn
-Summary: Mongolian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-mn
-Rules for auto-correcting common Mongolian typing errors.
-
-%package -n autocorr-nl
-Summary: Dutch auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-nl
-Rules for auto-correcting common Dutch typing errors.
-
-%package -n autocorr-pl
-Summary: Polish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-pl
-Rules for auto-correcting common Polish typing errors.
-
-%package -n autocorr-pt
-Summary: Portuguese auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-pt
-Rules for auto-correcting common Portuguese typing errors.
-
-%package -n autocorr-ru
-Summary: Russian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-ru
-Rules for auto-correcting common Russian typing errors.
-
-%package -n autocorr-sk
-Summary: Slovak auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-sk
-Rules for auto-correcting common Slovak typing errors.
-
-%package -n autocorr-sl
-Summary: Slovenian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-sl
-Rules for auto-correcting common Slovenian typing errors.
-
-%package -n autocorr-sr
-Summary: Serbian auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-sr
-Rules for auto-correcting common Serbian typing errors.
-
-%package -n autocorr-sv
-Summary: Swedish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-sv
-Rules for auto-correcting common Swedish typing errors.
-
-%package -n autocorr-tr
-Summary: Turkish auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-tr
-Rules for auto-correcting common Turkish typing errors.
-
-%package -n autocorr-vi
-Summary: Vietnamese auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-vi
-Rules for auto-correcting common Vietnamese typing errors.
-
-%package -n autocorr-zh
-Summary: Chinese auto-correction rules
-Group: Applications/Text
-BuildArch: noarch
-
-%description -n autocorr-zh
-Rules for auto-correcting common Chinese typing errors.
+# Defines a language pack subpackage.
+#
+# It's necessary to define language code (-l) and language name (-n).
+# Additionally, it's possible
+# * to require autocorr, hunspell, hyphen or mythes package or font for
+#   given language,
+# * to obsolete openoffice.org-langpack package,
+# * to require other, unrelated, packages,
+# * to specify file serving as file list.
+# For these, lower case character argument takes an argument specifying
+# language, upper case character argument uses language from -l.
+#
+# All remaining arguments are considered to be files and added to the file
+# list.
+#
+# Aa: autocorr dependency
+# Ff: font language dependency
+# Hh: hunspell dependency
+# l:  language code, e.g., cs
+# Mm: mythes dependency
+# n:  language name, e.g., Czech
+# Oo: Obsoletes: of openoffice.org-langpack
+# r:  comma-separated list of additional requires
+# Ss: filelist
+# Yy: hyphen dependency
+#
+# Example:
+# libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
+# autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
+# openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
+# %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
+%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:r:Ss:Yy:) \
+%define project LibreOffice \
+%define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
+%define pkgname langpack-%{lang} \
+%define langname %{-n:%{-n*}}%{!-n:%{error:Language name not defined}} \
+\
+%package %{pkgname} \
+Summary: %{langname} language pack for %{project} \
+Group: Applications/Productivity \
+Requires: libreoffice-core = 3.2.99.1-1 \
+%{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
+%{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
+%{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
+%{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
+%{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
+%{-r:Requires: %{-r*}} \
+%define obs openoffice.org-langpack \
+%define obsv 1:3.3.1 \
+%{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
+\
+%description %{pkgname} \
+Provides additional %{langname} translations and resources for %{project}. \
+\
+%define filelist %{-s:-f %{-s*}.filelist}%{!-s:%{-S:-f %{lang}.filelist}} \
+%files %{pkgname} %{filelist} \
+%defattr(-,root,root,-) \
+%*
+
+
+# Defines an auto-correction subpackage.
+#
+# l: language code
+# n: language name
+# X  do not use default file match on %{_datadir}/autocorr/acor_%{lang}-*
+#    in file list
+#
+# All remaining arguments are considered to be files and added to the file
+# list.
+%define autocorr(l:n:X) \
+%define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
+%define pkgname autocorr-%{lang} \
+%define langname %{-n:%{-n*}}%{!-n:%{error:Language name not defined}} \
+\
+%package -n %{pkgname} \
+Summary: %{langname} auto-correction rules \
+Group: Applications/Text \
+BuildArch: noarch \
+\
+%description -n %{pkgname} \
+Rules for auto-correcting common %{langname} typing errors. \
+\
+%files -n %{pkgname} \
+%defattr(-,root,root,-) \
+%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE \
+%dir %{_datadir}/autocorr \
+%{!-X:%{_datadir}/autocorr/acor_%{lang}-*} \
+%*
+
+
+%if %{langpacks}
+
+%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -S
+%langpack -l ar -n Arabic -F -H -O -S
+%langpack -l as -n Assamese -F -H -Y -o as_IN -S
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -o bg_BG -S
+%langpack -l bn -n Bengali -F -H -Y -O -S
+%langpack -l ca -n Catalan -F -H -Y -M -o ca_ES -S
+%langpack -l cs -n Czech -F -H -Y -M -A -o cs_CZ -S
+%langpack -l cy -n Welsh -F -H -Y -o cy_GB -S
+%langpack -l da -n Danish -F -H -Y -M -A -o da_DK -S
+%langpack -l de -n German -F -H -Y -M -A -O -S
+%langpack -l dz -n Dzongkha -F -O -S
+%langpack -l el -n Greek -F -H -Y -M -o el_GR -S
+%langpack -l en -n English -M -O
+%langpack -l es -n Spanish -F -H -Y -M -A -O -S
+%langpack -l et -n Estonian -F -H -Y -o et_EE -S
+%langpack -l eu -n Basque -F -H -Y -A -o eu_ES -S
+%langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S
+%langpack -l fr -n French -F -H -Y -M -A -O -S
+%langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -S
+%langpack -l gl -n Galician -F -H -Y -o gl_ES -S
+%langpack -l gu -n Gujarati -F -H -Y -o gu_IN -S
+%langpack -l he -n Hebrew -F -H -o he_IL -S
+%langpack -l hi -n Hindi -F -H -Y -o hi_IN -S
+%langpack -l hr -n Croatian -F -H -Y -o hr_HR -S
+%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -S
+%langpack -l it -n Italian -F -H -Y -M -A -O -S
+%langpack -l ja -n Japanese -F -A -o ja_JP -S
+%langpack -l kn -n Kannada -F -H -Y -o kn_IN -S
+%langpack -l ko -n Korean -F -H -A -o ko_KR -S
+%{baseinstdir}/share/registry/korea.xcd
+
+%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -S
+%langpack -l mai -n Maithili -F -o mai_IN -S
+%langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
+%langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
+%langpack -l ms -n Malay -F -H -o ms_MY -S
+%langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -S
+%langpack -l nl -n Dutch -F -H -Y -M -A -O -S
+%langpack -l nn -n Nynorsk -F -H -Y -M -o nn_NO -S
+%define langpack_lang Southern Ndebele
+%langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA -S
+%define langpack_lang Northern Sotho
+%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -s ns
+%langpack -l or -n Oriya -F -H -Y -o or_IN -S
+%langpack -l pa -n Punjabi -F -H -Y -O -s pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
+%define langpack_lang Brazilian Portuguese
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -S
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -s pt
+%langpack -l ro -n Romanian -F -H -Y -M -O -S
+%langpack -l ru -n Russian -F -H -Y -M -A -O -S
+%langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -S
+%langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -S
+%langpack -l sr -n Serbian -F -H -Y -A -O -S
+%langpack -l ss -n Swati -F -H -o ss_ZA -S
+%define langpack_lang Southern Sotho
+%langpack -l st -n %{langpack_lang} -F -H -o st_ZA -S
+%langpack -l sv -n Swedish -F -H -Y -M -A -O -S
+%langpack -l ta -n Tamil -F -H -Y -o ta_IN -S
+%langpack -l te -n Telugu -F -H -Y -o te_IN -S
+%langpack -l th -n Thai -F -H -o th_TH -S
+%langpack -l tn -n Tswana -F -H -o tn_ZA -S
+%langpack -l tr -n Turkish -F -A -o tr_TR -S
+%langpack -l ts -n Tsonga -F -H -o ts_ZA -S
+%langpack -l uk -n Ukrainian -F -H -Y -M -O -S
+%langpack -l ur -n Urdu -F -H -O -S
+%langpack -l ve -n Venda -F -H -o ve_ZA -S
+%langpack -l xh -n Xhosa -F -H -o xh_ZA -S
+%define langpack_lang Simplified Chinese
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -s zh-CN
+%define langpack_lang Traditional Chinese
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -s zh-TW
+%langpack -l zu -n Zulu -F -H -Y -o zu_ZA -S
+%undefine langpack_lang
+
+%endif
+
+%autocorr -l en -n English
+
+%if %{langpacks}
+
+%autocorr -l af -n Afrikaans
+%autocorr -l bg -n Bulgarian
+%autocorr -l cs -n Czech
+%autocorr -l da -n Danish
+%autocorr -l de -n German
+%autocorr -l es -n Spanish
+%autocorr -l eu -n Basque -X
+%{_datadir}/autocorr/acor_eu.dat
+
+%autocorr -l fa -n Farsi
+%autocorr -l fi -n Finnish
+%autocorr -l fr -n French
+%autocorr -l ga -n Irish
+%autocorr -l hu -n Hungarian
+%autocorr -l it -n Italian
+%autocorr -l ja -n Japanese
+%autocorr -l ko -n Korean
+%autocorr -l lb -n Luxembourgish
+%autocorr -l lt -n Lithuanian
+%autocorr -l mn -n Mongolian
+%autocorr -l nl -n Dutch
+%autocorr -l pl -n Polish
+%autocorr -l pt -n Portuguese
+%autocorr -l ru -n Russian
+%autocorr -l sk -n Slovak
+%autocorr -l sl -n Slovenian
+%autocorr -l sr -n Serbian
+%{_datadir}/autocorr/acor_sh-*
+
+%autocorr -l sv -n Swedish
+%autocorr -l tr -n Turkish
+%autocorr -l vi -n Vietnamese
+%autocorr -l zh -n Chinese
+
+%endif
 
 %prep
 %setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 35
@@ -1934,204 +1248,6 @@ JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%if %{langpacks}
-%files langpack-af 	-f af.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ar  	-f ar.filelist
-%defattr(-,root,root,-)
-
-%files langpack-bg 	-f bg.filelist
-%defattr(-,root,root,-)
-
-%files langpack-bn  	-f bn.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ca 	-f ca.filelist
-%defattr(-,root,root,-)
-
-%files langpack-cs 	-f cs.filelist
-%defattr(-,root,root,-)
-
-%files langpack-cy 	-f cy.filelist
-%defattr(-,root,root,-)
-
-%files langpack-da 	-f da.filelist
-%defattr(-,root,root,-)
-
-%files langpack-de 	-f de.filelist
-%defattr(-,root,root,-)
-
-%files langpack-el 	-f el.filelist
-%defattr(-,root,root,-)
-
-%files langpack-en
-%defattr(-,root,root,-)
-
-%files langpack-es	-f es.filelist
-%defattr(-,root,root,-)
-
-%files langpack-et 	-f et.filelist
-%defattr(-,root,root,-)
-
-%files langpack-eu 	-f eu.filelist
-%defattr(-,root,root,-)
-
-%files langpack-fi 	-f fi.filelist
-%defattr(-,root,root,-)
-
-%files langpack-fr 	-f fr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ga 	-f ga.filelist
-%defattr(-,root,root,-)
-
-%files langpack-gl	-f gl.filelist
-%defattr(-,root,root,-)
-
-%files langpack-gu	-f gu.filelist
-%defattr(-,root,root,-)
-
-%files langpack-pa	-f pa-IN.filelist
-%defattr(-,root,root,-)
-
-%files langpack-he	-f he.filelist
-%defattr(-,root,root,-)
-
-%files langpack-hi	-f hi.filelist
-%defattr(-,root,root,-)
-
-%files langpack-hu	-f hu.filelist
-%defattr(-,root,root,-)
-
-%files langpack-hr	-f hr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-it	-f it.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ja 	-f ja.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ko	-f ko.filelist
-%defattr(-,root,root,-)
-%{baseinstdir}/share/registry/korea.xcd
-
-%files langpack-lt	-f lt.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ms	-f ms.filelist
-%defattr(-,root,root,-)
-
-%files langpack-nb	-f nb.filelist
-%defattr(-,root,root,-)
-
-%files langpack-nl	-f nl.filelist
-%defattr(-,root,root,-)
-
-%files langpack-nn	-f nn.filelist
-%defattr(-,root,root,-)
-
-%files langpack-pl	-f pl.filelist
-%defattr(-,root,root,-)
-
-%files langpack-pt-PT	-f pt.filelist
-%defattr(-,root,root,-)
-
-%files langpack-pt-BR	-f pt-BR.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ru	-f ru.filelist
-%defattr(-,root,root,-)
-
-%files langpack-sk	-f sk.filelist
-%defattr(-,root,root,-)
-
-%files langpack-sl	-f sl.filelist
-%defattr(-,root,root,-)
-
-%files langpack-sr	-f sr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-sv	-f sv.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ta	-f ta.filelist
-%defattr(-,root,root,-)
-
-%files langpack-th	-f th.filelist
-%defattr(-,root,root,-)
-
-%files langpack-tr	-f tr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-zh-Hans	-f zh-CN.filelist
-%defattr(-,root,root,-)
-
-%files langpack-zh-Hant	-f zh-TW.filelist
-%defattr(-,root,root,-)
-
-%files langpack-zu	-f zu.filelist
-%defattr(-,root,root,-)
-
-%files langpack-tn	-f tn.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ts	-f ts.filelist
-%defattr(-,root,root,-)
-
-%files langpack-nso	-f ns.filelist
-%defattr(-,root,root,-)
-
-%files langpack-nr	-f nr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ss	-f ss.filelist
-%defattr(-,root,root,-)
-
-%files langpack-st	-f st.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ve	-f ve.filelist
-%defattr(-,root,root,-)
-
-%files langpack-xh	-f xh.filelist
-%defattr(-,root,root,-)
-
-%files langpack-as	-f as.filelist
-%defattr(-,root,root,-)
-
-%files langpack-mr	-f mr.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ml	-f ml.filelist
-%defattr(-,root,root,-)
-
-%files langpack-or	-f or.filelist
-%defattr(-,root,root,-)
-
-%files langpack-te	-f te.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ur	-f ur.filelist
-%defattr(-,root,root,-)
-
-%files langpack-kn	-f kn.filelist
-%defattr(-,root,root,-)
-
-%files langpack-dz	-f dz.filelist
-%defattr(-,root,root,-)
-
-%files langpack-uk	-f uk.filelist
-%defattr(-,root,root,-)
-
-%files langpack-mai	-f mai.filelist
-%defattr(-,root,root,-)
-
-%files langpack-ro	-f ro.filelist
-%defattr(-,root,root,-)
-%endif
 
 %files core
 %defattr(-,root,root,-)
@@ -2941,192 +2057,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/ScriptProviderForPython.oxt
 %{basisinstdir}/share/registry/pyuno.xcd
 
-%files -n autocorr-en
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_en-*
-
-%if %{langpacks}
-
-%files -n autocorr-af
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_af-*
-
-%files -n autocorr-bg
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_bg-*
-
-%files -n autocorr-cs
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_cs-*
-
-%files -n autocorr-da
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_da-*
-
-%files -n autocorr-de
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_de-*
-
-%files -n autocorr-es
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_es-*
-
-%files -n autocorr-eu
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_eu.dat
-
-%files -n autocorr-fa
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_fa-*
-
-%files -n autocorr-fi
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_fi-*
-
-%files -n autocorr-fr
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_fr-*
-
-%files -n autocorr-ga
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_ga-*
-
-%files -n autocorr-hu
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_hu-*
-
-%files -n autocorr-it
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_it-*
-
-%files -n autocorr-ja
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_ja-*
-
-%files -n autocorr-ko
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_ko-*
-
-%files -n autocorr-lb
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_lb-*
-
-%files -n autocorr-lt
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_lt-*
-
-%files -n autocorr-nl
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_nl-*
-
-%files -n autocorr-mn
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_mn-*
-
-%files -n autocorr-pl
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_pl-*
-
-%files -n autocorr-pt
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_pt-*
-
-%files -n autocorr-ru
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_ru-*
-
-%files -n autocorr-sk
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_sk-*
-
-%files -n autocorr-sl
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_sl-*
-
-%files -n autocorr-sr
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_sr-*
-%{_datadir}/autocorr/acor_sh-*
-
-%files -n autocorr-sv
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_sv-*
-
-%files -n autocorr-tr
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_tr-*
-
-%files -n autocorr-vi
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_vi-*
-
-%files -n autocorr-zh
-%defattr(-,root,root,-)
-%doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
-%dir %{_datadir}/autocorr
-%{_datadir}/autocorr/acor_zh-*
-
-%endif
 
 %changelog
+* Tue Oct 12 2010 David Tardon <dtardon@redhat.com> 3.2.99.2-2
+- use macros to define auto-correction and language pack subpackages
+
 * Mon Oct 11 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-1
 - next LibreOffice milestone
 - drop integrated openoffice.org-2.3.0.ooo76649.httpencoding.patch

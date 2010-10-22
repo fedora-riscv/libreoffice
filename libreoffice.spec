@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -100,6 +100,7 @@ Patch13: openoffice.org-3.2.0.ooo108846.sfx2.qstartfixes.patch
 Patch14: openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
 Patch15: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch16: libreoffice-buildfix.patch
+Patch17: libreoffice-xdg632229.gnomeshell.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1396,6 +1397,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch14 -p0 -b .ooo107490.cppu.lifecycle.patch
 %patch15 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch16 -p1 -b .libreoffice-buildfix.patch
+%patch17 -p0 -b .xdg632229.gnomeshell.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -3127,6 +3129,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Oct 22 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-2
+- Resolves: xdg632229 gnomeshell app tracking
+
 * Mon Oct 11 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-1
 - next LibreOffice milestone
 - drop integrated openoffice.org-2.3.0.ooo76649.httpencoding.patch

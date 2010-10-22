@@ -1,0 +1,427 @@
+diff -ru framework/inc/helper/titlebarupdate.hxx framework/inc/helper/titlebarupdate.hxx
+--- framework/inc/helper/titlebarupdate.hxx	2010-10-14 21:54:22.000000000 +0100
++++ framework/inc/helper/titlebarupdate.hxx	2010-10-22 12:52:13.000000000 +0100
+@@ -212,6 +212,7 @@
+          */
+         void impl_updateTitle(const css::uno::Reference< css::frame::XFrame >& xFrame);
+ 
++        void impl_updateWM_CLASSS(const css::uno::Reference< css::frame::XFrame >& xFrame);
+ }; // class TitleBarUpdate
+ 
+ } // namespace framework
+diff -ru framework/source/helper/titlebarupdate.cxx framework/source/helper/titlebarupdate.cxx
+--- framework/source/helper/titlebarupdate.cxx	2010-10-14 21:54:22.000000000 +0100
++++ framework/source/helper/titlebarupdate.cxx	2010-10-22 15:00:16.000000000 +0100
+@@ -199,6 +201,88 @@
+     // nothing todo here - because we hold the frame as weak reference only
+ }
+ 
++//http://live.gnome.org/GnomeShell/ApplicationBased
++void TitleBarUpdate::impl_updateWM_CLASSS(const css::uno::Reference< css::frame::XFrame >& xFrame)
++{
++    css::uno::Reference< css::awt::XWindow > xWindow = xFrame->getContainerWindow ();
++    if ( ! xWindow.is() )
++        return;
++
++    ::rtl::OUString sWM_CLASS;
++    try
++    {
++        ::rtl::OUString aProductName;
++        ::utl::ConfigManager::GetDirectConfigProperty(::utl::ConfigManager::PRODUCTNAME) >>= aProductName;
++
++        // SYNCHRONIZED ->
++        ReadGuard aReadLock(m_aLock);
++        css::uno::Reference< css::lang::XMultiServiceFactory > xSMGR = m_xSMGR;
++        aReadLock.unlock();
++        // <- SYNCHRONIZED
++
++        css::uno::Reference< css::frame::XModuleManager > xModuleManager(
++            xSMGR->createInstance(SERVICENAME_MODULEMANAGER),
++            css::uno::UNO_QUERY_THROW);
++
++        css::uno::Reference< css::container::XNameAccess > xConfig(
++            xModuleManager,
++            css::uno::UNO_QUERY_THROW);
++
++        rtl::OUString aModuleId = xModuleManager->identify(xFrame);
++        rtl::OUString sDesktopName;
++
++        if ( aModuleId.equalsAscii( "com.sun.star.text.TextDocument" ) ||
++             aModuleId.equalsAscii( "com.sun.star.text.GlobalDocument" ) ||
++             aModuleId.equalsAscii( "com.sun.star.text.WebDocument" ) ||
++             aModuleId.equalsAscii( "com.sun.star.xforms.XMLFormDocument" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("writer");
++        else if ( aModuleId.equalsAscii( "com.sun.star.sheet.SpreadsheetDocument" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("calc");
++        else if ( aModuleId.equalsAscii( "com.sun.star.presentation.PresentationDocument" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("impress");
++        else if ( aModuleId.equalsAscii( "com.sun.star.drawing.DrawingDocument" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("draw");
++        else if ( aModuleId.equalsAscii( "com.sun.star.formula.FormulaProperties" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("math");
++        else if ( aModuleId.equalsAscii( "com.sun.star.sdb.DatabaseDocument" ) ||
++                  aModuleId.equalsAscii( "com.sun.star.sdb.OfficeDatabaseDocument" ) ||
++                  aModuleId.equalsAscii( "com.sun.star.sdb.RelationDesign" ) ||
++                  aModuleId.equalsAscii( "com.sun.star.sdb.QueryDesign" ) ||
++                  aModuleId.equalsAscii( "com.sun.star.sdb.TableDesign" ) ||
++                  aModuleId.equalsAscii( "com.sun.star.sdb.DataSourceBrowser" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("base");
++        else if ( aModuleId.equalsAscii( "com.sun.star.frame.StartModule" ) )
++            sDesktopName = ::rtl::OUString::createFromAscii("startcenter");
++        else
++            sDesktopName = ::rtl::OUString::createFromAscii("startcenter");
++        sWM_CLASS = aProductName.toAsciiLowerCase();
++        sWM_CLASS += ::rtl::OUString(sal_Unicode('-'));
++        sWM_CLASS += sDesktopName;
++    }
++    catch(const css::uno::Exception&)
++    {
++    }
++
++    // VCL SYNCHRONIZED ->
++    ::vos::OClearableGuard aSolarLock( Application::GetSolarMutex() );
++
++    Window* pWindow = (VCLUnoHelper::GetWindow( xWindow ));
++    if (
++        ( pWindow                                 ) &&
++        ( pWindow->GetType() == WINDOW_WORKWINDOW )
++       )
++    {
++        WorkWindow* pWorkWindow = (WorkWindow*)pWindow;
++#ifdef COPY_TO_TITLE_FOR_DEBUG
++        pWorkWindow->SetText( sWM_CLASS );
++#endif
++        pWorkWindow->SetWMClass( sWM_CLASS );
++    }
++
++    aSolarLock.clear();
++}
++
++
+ //*****************************************************************************************************************
+ ::sal_Bool TitleBarUpdate::implst_getModuleInfo(const css::uno::Reference< css::frame::XFrame >& xFrame,
+                                                       TModuleInfo&                               rInfo )
+@@ -260,6 +347,9 @@
+ 
+     impl_updateIcon  (xFrame);
+     impl_updateTitle (xFrame);
++#if defined(UNX) && !defined(MACOSX)
++    impl_updateWM_CLASSS (xFrame);
++#endif
+ }
+ 
+ //*****************************************************************************************************************
+diff -ru vcl/aqua/inc/salframe.h vcl/aqua/inc/salframe.h
+--- vcl/aqua/inc/salframe.h	2010-10-14 21:43:20.000000000 +0100
++++ vcl/aqua/inc/salframe.h	2010-10-22 13:26:26.000000000 +0100
+@@ -159,6 +159,7 @@
+     virtual void                SetExtendedFrameStyle( SalExtStyle );
+     virtual void                SetBackgroundBitmap( SalBitmap* );
+     virtual void                SetScreenNumber(unsigned int);
++    virtual void                SetWMClass( const rtl::OUString &rWMClass );
+ 
+     // shaped system windows
+     // set clip region to none (-> rectangular windows, normal state)
+diff -ru vcl/aqua/source/window/salframe.cxx vcl/aqua/source/window/salframe.cxx
+--- vcl/aqua/source/window/salframe.cxx	2010-10-18 17:01:44.000000000 +0100
++++ vcl/aqua/source/window/salframe.cxx	2010-10-22 13:17:50.000000000 +0100
+@@ -664,6 +664,10 @@
+     }
+ }
+ 
++void AquaSalFrame::SetWMClass( const rtl::OUString &/*rWMClass*/ )
++{
++}
++
+ // -----------------------------------------------------------------------
+ 
+ void AquaSalFrame::ShowFullScreen( BOOL bFullScreen, sal_Int32 nDisplay )
+diff -ru vcl/inc/vcl/salframe.hxx vcl/inc/vcl/salframe.hxx
+--- vcl/inc/vcl/salframe.hxx	2010-10-14 21:43:20.000000000 +0100
++++ vcl/inc/vcl/salframe.hxx	2010-10-22 13:26:05.000000000 +0100
+@@ -266,6 +266,8 @@
+     // move the frame to a new screen
+     virtual void                SetScreenNumber( unsigned int nScreen ) = 0;
+ 
++    virtual void                SetWMClass( const rtl::OUString &rWMClass ) = 0;
++
+     // shaped system windows
+     // set clip region to none (-> rectangular windows, normal state)
+     virtual void					ResetClipRegion() = 0;
+diff -ru vcl/inc/vcl/syswin.hxx vcl/inc/vcl/syswin.hxx
+--- vcl/inc/vcl/syswin.hxx	2010-10-14 21:43:20.000000000 +0100
++++ vcl/inc/vcl/syswin.hxx	2010-10-22 13:14:48.000000000 +0100
+@@ -277,6 +277,8 @@
+     @see GetScreenNumber
+     */
+     void            SetScreenNumber( unsigned int nNewScreen );
++
++    void            SetWMClass( const rtl::OUString &rWMClass );
+ };
+ 
+ #endif // _SV_SYSWIN_HXX
+diff -ru vcl/os2/inc/salframe.h vcl/os2/inc/salframe.h
+--- vcl/os2/inc/salframe.h	2010-10-14 21:43:20.000000000 +0100
++++ vcl/os2/inc/salframe.h	2010-10-22 13:26:15.000000000 +0100
+@@ -158,6 +158,7 @@
+     virtual bool				SetPluginParent( SystemParentData* pNewParent );
+     virtual void                SetBackgroundBitmap( SalBitmap* );
+     virtual void                SetScreenNumber( unsigned int );
++    virtual void                SetWMClass( const rtl::OUString &rWMClass );
+     virtual void				ResetClipRegion();
+     virtual void				BeginSetClipRegion( ULONG nRects );
+     virtual void				UnionClipRegion( long nX, long nY, long nWidth, long nHeight );
+diff -ru vcl/os2/source/window/salframe.cxx vcl/os2/source/window/salframe.cxx
+--- vcl/os2/source/window/salframe.cxx	2010-10-18 17:01:44.000000000 +0100
++++ vcl/os2/source/window/salframe.cxx	2010-10-22 13:18:17.000000000 +0100
+@@ -1366,6 +1366,10 @@
+ {
+ }
+ 
++void Os2SalFrame::SetWMClass( const rtl::OUString &/*rWMClass*/ )
++{
++}
++
+ // -----------------------------------------------------------------------
+ 
+ // native menu implementation - currently empty
+diff -ru vcl/source/window/syswin.cxx vcl/source/window/syswin.cxx
+--- vcl/source/window/syswin.cxx	2010-10-14 21:43:20.000000000 +0100
++++ vcl/source/window/syswin.cxx	2010-10-22 13:29:21.000000000 +0100
+@@ -1084,4 +1084,9 @@
+     mpWindowImpl->mpFrame->SetScreenNumber( nScreen );
+ }
+ 
++void SystemWindow::SetWMClass( const rtl::OUString &rWMClass )
++{
++    mpWindowImpl->mpFrame->SetWMClass( rWMClass );
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff -ru vcl/unx/gtk/window/gtkframe.cxx vcl/unx/gtk/window/gtkframe.cxx
+--- vcl/unx/gtk/window/gtkframe.cxx	2010-10-22 08:55:43.000000000 +0100
++++ vcl/unx/gtk/window/gtkframe.cxx	2010-10-22 14:12:08.000000000 +0100
+@@ -981,25 +981,10 @@
+     if( nStyle != m_nExtStyle && ! isChild() )
+     {
+         m_nExtStyle = nStyle;
+-        if( GTK_WIDGET_REALIZED( m_pWindow ) )
+-        {
+-            XClassHint* pClass = XAllocClassHint();
+-            rtl::OString aResHint = X11SalData::getFrameResName( m_nExtStyle );
+-            pClass->res_name  = const_cast<char*>(aResHint.getStr());
+-            pClass->res_class = const_cast<char*>(X11SalData::getFrameClassName());
+-            XSetClassHint( getDisplay()->GetDisplay(),
+-                           GDK_WINDOW_XWINDOW(m_pWindow->window),
+-                           pClass );
+-            XFree( pClass );
+-        }
+-        else
+-            gtk_window_set_wmclass( GTK_WINDOW(m_pWindow),
+-                                    X11SalData::getFrameResName( m_nExtStyle ),
+-                                    X11SalData::getFrameClassName() );
++        updateWMClass();
+     }
+ }
+ 
+-
+ SalGraphics* GtkSalFrame::GetGraphics()
+ {
+     if( m_pWindow )
+@@ -1792,6 +1777,39 @@
+     }
+ }
+ 
++void GtkSalFrame::updateWMClass()
++{
++    fprintf(stderr, "%p GtkSalFrame::SetWMClass with %s\n", this, rtl::OUStringToOString(m_sWMClass, RTL_TEXTENCODING_UTF8).getStr());
++
++    rtl::OString aResClass = rtl::OUStringToOString(m_sWMClass, RTL_TEXTENCODING_ASCII_US);
++    const char *pResClass = aResClass.getLength() ? aResClass.getStr() : X11SalData::getFrameClassName();
++
++    if( GTK_WIDGET_REALIZED( m_pWindow ) )
++    {
++        XClassHint* pClass = XAllocClassHint();
++        rtl::OString aResName = X11SalData::getFrameResName( m_nExtStyle );
++        pClass->res_name  = const_cast<char*>(aResName.getStr());
++        pClass->res_class = const_cast<char*>(pResClass);
++        XSetClassHint( getDisplay()->GetDisplay(),
++                       GDK_WINDOW_XWINDOW(m_pWindow->window),
++                       pClass );
++        XFree( pClass );
++    }
++    else
++        gtk_window_set_wmclass( GTK_WINDOW(m_pWindow),
++                                X11SalData::getFrameResName( m_nExtStyle ),
++                                pResClass );
++}
++
++void GtkSalFrame::SetWMClass( const rtl::OUString &rWMClass )
++{
++    if( rWMClass != m_sWMClass && ! isChild() )
++    {
++        m_sWMClass = rWMClass;
++        updateWMClass();
++    }
++}
++
+ void GtkSalFrame::ShowFullScreen( BOOL bFullScreen, sal_Int32 nScreen )
+ {
+     if( m_pWindow && ! isChild() )
+diff -ru vcl/unx/headless/svpframe.hxx vcl/unx/headless/svpframe.hxx
+--- vcl/unx/headless/svpframe.hxx	2010-10-14 21:43:20.000000000 +0100
++++ vcl/unx/headless/svpframe.hxx	2010-10-22 13:27:19.000000000 +0100
+@@ -125,6 +125,7 @@
+ 
+     /*TODO: functional implementation */
+     virtual void                SetScreenNumber( unsigned int nScreen ) { (void)nScreen; }
++    virtual void                SetWMClass( const rtl::OUString &rWMClass ) { (void) rWMClass; }
+ };
+ #endif // _SVP_SVPFRAME_HXX
+ 
+diff -ru vcl/unx/inc/plugins/gtk/gtkframe.hxx vcl/unx/inc/plugins/gtk/gtkframe.hxx
+--- vcl/unx/inc/plugins/gtk/gtkframe.hxx	2010-10-22 08:55:43.000000000 +0100
++++ vcl/unx/inc/plugins/gtk/gtkframe.hxx	2010-10-22 14:10:08.000000000 +0100
+@@ -192,6 +192,7 @@
+     bool                            m_bWindowIsGtkPlug;
+     bool                            m_bSetFocusOnMap;
+     String                          m_aTitle;
++    rtl::OUString                   m_sWMClass;
+     
+     IMHandler*                      m_pIMHandler;
+     
+@@ -269,6 +270,8 @@
+     void setMinMaxSize();
+     void createNewWindow( XLIB_Window aParent, bool bXEmbed, int nScreen );
+     void askForXEmbedFocus( sal_Int32 nTimecode );
++
++    void updateWMClass();
+     
+     DECL_LINK( ImplDelayedFullScreenHdl, void* );
+ public:
+@@ -387,6 +390,7 @@
+     virtual void                SetBackgroundBitmap( SalBitmap* );
+ 
+     virtual void                SetScreenNumber( unsigned int );
++    virtual void                SetWMClass( const rtl::OUString &rWMClass );
+ 
+     // shaped system windows
+     // set clip region to none (-> rectangular windows, normal state)
+diff -ru vcl/unx/inc/salframe.h vcl/unx/inc/salframe.h
+--- vcl/unx/inc/salframe.h	2010-10-14 21:43:20.000000000 +0100
++++ vcl/unx/inc/salframe.h	2010-10-22 14:22:35.000000000 +0100
+@@ -128,6 +128,8 @@
+     int			    mnIconID;
+     
+     String          m_aTitle;
++
++    rtl::OUString   m_sWMClass;
+     
+     SystemChildData maSystemChildData;
+     
+@@ -171,6 +173,8 @@
+     
+     void            setXEmbedInfo();
+     void            askForXEmbedFocus( sal_Int32 i_nTimeCode );
++
++    void            updateWMClass();
+ public:
+     X11SalFrame( SalFrame* pParent, ULONG nSalFrameStyle, SystemParentData* pSystemParent = NULL );
+     virtual ~X11SalFrame();
+@@ -261,6 +265,7 @@
+     virtual void                SetBackgroundBitmap( SalBitmap* pBitmap );
+ 
+     virtual void                SetScreenNumber( unsigned int );
++    virtual void                SetWMClass( const rtl::OUString &rWMClass );
+     
+     // shaped system windows
+     // set clip region to none (-> rectangular windows, normal state)
+diff -ru vcl/unx/source/window/salframe.cxx vcl/unx/source/window/salframe.cxx
+--- vcl/unx/source/window/salframe.cxx	2010-10-18 12:39:42.000000000 +0100
++++ vcl/unx/source/window/salframe.cxx	2010-10-22 14:23:44.000000000 +0100
+@@ -542,11 +542,9 @@
+             a[n++] = pDisplay_->getWMAdaptor()->getAtom( WMAdaptor::WM_TAKE_FOCUS );
+         XSetWMProtocols( GetXDisplay(), GetShellWindow(), a, n );
+ 
+-        XClassHint* pClass = XAllocClassHint();
+-        pClass->res_name  = const_cast<char*>(X11SalData::getFrameResName());
+-        pClass->res_class = const_cast<char*>(X11SalData::getFrameClassName());
+-        XSetClassHint( GetXDisplay(), GetShellWindow(), pClass );
+-        XFree( pClass );
++        // force wm class hint
++        mnExtStyle = ~0;
++        SetExtendedFrameStyle( 0 );
+ 
+         XSizeHints* pHints = XAllocSizeHints();
+         pHints->flags       = PWinGravity | PPosition;
+@@ -849,13 +847,7 @@
+     if( nStyle != mnExtStyle && ! IsChildWindow() )
+     {
+         mnExtStyle = nStyle;
+-    
+-        XClassHint* pClass = XAllocClassHint();
+-        rtl::OString aResHint = X11SalData::getFrameResName( mnExtStyle );
+-        pClass->res_name  = const_cast<char*>(aResHint.getStr());
+-        pClass->res_class = const_cast<char*>(X11SalData::getFrameClassName());
+-        XSetClassHint( GetXDisplay(), GetShellWindow(), pClass );
+-        XFree( pClass );
++        updateWMClass();
+     }
+ }
+ 
+@@ -2192,6 +2184,30 @@
+     }
+ }
+ 
++void X11SalFrame::SetWMClass( const rtl::OUString &rWMClass )
++{
++    if( rWMClass != m_sWMClass && ! IsChildWindow() )
++    {
++        m_sWMClass = rWMClass;
++        updateWMClass();
++    }
++}
++
++void X11SalFrame::updateWMClass()
++{
++    XClassHint* pClass = XAllocClassHint();
++    rtl::OString aResName = X11SalData::getFrameResName( mnExtStyle );
++    pClass->res_name  = const_cast<char*>(aResName.getStr());
++
++    rtl::OString aResClass = rtl::OUStringToOString(m_sWMClass, RTL_TEXTENCODING_ASCII_US);
++    const char *pResClass = aResClass.getLength() ? aResClass.getStr() : X11SalData::getFrameClassName();
++
++    pClass->res_class = const_cast<char*>(pResClass);
++    XSetClassHint( GetXDisplay(), GetShellWindow(), pClass );
++    XFree( pClass );
++}
++
++
+ // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ 
+ void X11SalFrame::ShowFullScreen( BOOL bFullScreen, sal_Int32 nScreen )
+diff -ru vcl/win/inc/salframe.h vcl/win/inc/salframe.h
+--- vcl/win/inc/salframe.h	2010-10-14 21:43:21.000000000 +0100
++++ vcl/win/inc/salframe.h	2010-10-22 13:26:23.000000000 +0100
+@@ -141,6 +141,7 @@
+     virtual bool				SetPluginParent( SystemParentData* pNewParent );
+     virtual void                SetBackgroundBitmap( SalBitmap* );
+     virtual void                SetScreenNumber( unsigned int );
++    virtual void                SetWMClass( const rtl::OUString &rWMClass );
+     virtual void				ResetClipRegion();
+     virtual void				BeginSetClipRegion( ULONG nRects );
+     virtual void				UnionClipRegion( long nX, long nY, long nWidth, long nHeight );
+diff -ru vcl/win/source/window/salframe.cxx vcl/win/source/window/salframe.cxx
+--- vcl/win/source/window/salframe.cxx	2010-10-14 21:43:21.000000000 +0100
++++ vcl/win/source/window/salframe.cxx	2010-10-22 13:18:05.000000000 +0100
+@@ -2036,6 +2036,10 @@
+     }
+ }
+ 
++void WinSalFrame::SetWMClass( const rtl::OUString &/*rWMClass*/ )
++{
++}
++
+ // -----------------------------------------------------------------------
+ 
+ void WinSalFrame::ShowFullScreen( BOOL bFullScreen, sal_Int32 nDisplay )

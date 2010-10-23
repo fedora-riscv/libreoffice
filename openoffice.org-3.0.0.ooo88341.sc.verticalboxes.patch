@@ -65,7 +65,7 @@ diff -u -r1.54.216.1 output2.cxx
                                  Rectangle aLogicClip;
 +                                if (
 +										((nAttrRotate == 9000) || (nAttrRotate == 27000)) &&
-+										(!(eOrient==SVX_ORIENTATION_STANDARD && !bAsianVertical)) &&
++										(!(aAlignParam.meOrient==SVX_ORIENTATION_STANDARD && !aAlignParam.mbAsianVertical)) &&
 +										(!(bClip || bSimClip))
 +								   )
 +								{

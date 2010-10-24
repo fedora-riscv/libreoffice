@@ -1579,14 +1579,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/share/registry/oo-ad-ldap.xcd.sample
 %{basisinstdir}/share/registry/oo-ldap.xcd.sample
 %{basisinstdir}/share/registry/Langpack-en-US.xcd
-%dir %{basisinstdir}/share/registry/modules
-%dir %{basisinstdir}/share/registry/modules/org
-%dir %{basisinstdir}/share/registry/modules/org/openoffice
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office/Paths
-%{basisinstdir}/share/registry/modules/org/openoffice/Office/Paths/SystemAutoCorrect.xcu
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office/Recovery
-%{basisinstdir}/share/registry/modules/org/openoffice/Office/Recovery/AutoSaveRecovery.xcu
 %dir %{basisinstdir}/share/registry/res
 %{basisinstdir}/share/registry/res/fcfg_langpack_en-US.xcd
 %dir %{basisinstdir}/share/samples
@@ -1894,12 +1886,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}/program/resource
 %{basisinstdir}/program/resource/bf_swen-US.res
 %{basisinstdir}/program/resource/t602filteren-US.res
-%dir %{basisinstdir}/share/registry/modules
-%dir %{basisinstdir}/share/registry/modules/org
-%dir %{basisinstdir}/share/registry/modules/org/openoffice
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office/Writer
-%{basisinstdir}/share/registry/modules/org/openoffice/Office/Writer/TableNumberRecognition.xcu
 %{basisinstdir}/share/registry/writer.xcd
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
@@ -1951,12 +1937,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}/program/resource
 %{basisinstdir}/program/resource/bf_smen-US.res
 %{basisinstdir}/program/resource/smen-US.res
-%dir %{basisinstdir}/share/registry/modules
-%dir %{basisinstdir}/share/registry/modules/org
-%dir %{basisinstdir}/share/registry/modules/org/openoffice
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office
-%dir %{basisinstdir}/share/registry/modules/org/openoffice/Office/Math
-%{basisinstdir}/share/registry/modules/org/openoffice/Office/Math/MathPrintOptions.xcu
 %{basisinstdir}/share/registry/math.xcd
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program

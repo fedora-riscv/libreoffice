@@ -585,7 +585,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l gu -n Gujarati -F -H -Y -o gu_IN -S
 %langpack -l he -n Hebrew -F -H -o he_IL -S
 %langpack -l hi -n Hindi -F -H -Y -o hi_IN -S
-%langpack -l hr -n Croatian -F -H -Y -o hr_HR -S
+%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -S
 %langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -S
 %langpack -l ja -n Japanese -F -A -o ja_JP -S
@@ -656,6 +656,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French
 %autocorr -l ga -n Irish
+%autocorr -l hr -n Croatian
 %autocorr -l hu -n Hungarian
 %autocorr -l it -n Italian
 %autocorr -l ja -n Japanese
@@ -1546,6 +1547,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/versionrc
 %{basisinstdir}/program/cairocanvas.uno.so
 %dir %{basisinstdir}/share
+%{basisinstdir}/share/fingerprint
 %dir %{basisinstdir}/share/Scripts
 %{basisinstdir}/share/Scripts/java
 %{basisinstdir}/share/autotext

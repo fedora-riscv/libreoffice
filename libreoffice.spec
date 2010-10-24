@@ -797,7 +797,7 @@ if dmake openoffice_en-US; then
     break
 else
     echo - ---dump log start---
-    cat ../unx*.pro/OpenOffice/installed/logging/en-US/log_*_en-US.log
+    cat ../unx*.pro/LibreOffice/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end---
     ok=false
 fi
@@ -805,12 +805,12 @@ if [ $ok == "false" ]; then
     exit 1
 fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-mv ../unxlng*.pro/OpenOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
+mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack
-rm -rf ../unxlng*.pro/OpenOffice_languagepack/installed/install/log
-for langpack in ../unxlng*.pro/OpenOffice_languagepack/installed/install/*; do
+rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
+for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
 cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
 rm -rf $langpack
 done
@@ -823,7 +823,7 @@ rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/share/prereg
 $RPM_BUILD_ROOT/%{baseinstdir}/program/unopkg list --bundled || :
 export WITH_LANG="en-US"
 dmake sdkoo
-mv ../unxlng*.pro/OpenOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
+mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../
 
 # revoke ScriptProviders and make into extensions

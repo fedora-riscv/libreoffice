@@ -728,7 +728,7 @@ autoconf
 %configure \
  --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
- --enable-symbols --disable-ldap --disable-epm --disable-mathmldtd \
+ --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-Xaw --disable-gnome-vfs --enable-gio --enable-symbols \
  --enable-lockdown --enable-evolution2 --enable-cairo --enable-dbus \
  --enable-opengl --enable-vba --enable-minimizer --enable-presenter-console \

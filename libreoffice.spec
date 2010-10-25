@@ -1600,6 +1600,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/share/xslt/import/common
 %{basisinstdir}/share/xslt/import/spreadsheetml
 %{basisinstdir}/share/xslt/import/wordml
+%{basisinstdir}/share/xslt/odfflatxml
 %{basisinstdir}/program/liblnth%{SOPOST}.so
 %{_bindir}/unopkg
 #icons and mime

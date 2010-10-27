@@ -290,6 +290,7 @@ Summary: LibreOffice dingbats font
 Group: User Interface/X
 Requires: fontpackages-filesystem
 Obsoletes: openoffice.org-fonts < 1:3.3.1
+Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
 BuildArch: noarch
 
 %description %{fontname}-fonts

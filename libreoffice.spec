@@ -723,8 +723,11 @@ POORHELPS=`find l10n/source -name localize.sdf -exec grep 'helpcontent2.*main.*W
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
-NDMAKES=`dc -e "$SMP_MFLAGS v p"`
-NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
+#hanging in koji for some reason :-(
+#NDMAKES=`dc -e "$SMP_MFLAGS v p"`
+#NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
+NDMAKES=$SMP_MFLAGS
+NBUILDS=2
 
 autoconf
 %configure \

@@ -726,8 +726,8 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 #hanging in koji for some reason :-(
 #NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 #NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
-NDMAKES=$SMP_MFLAGS
-NBUILDS=2
+NDMAKES=1
+NBUILDS=1
 
 autoconf
 %configure \

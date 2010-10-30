@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -511,7 +511,7 @@ used as a backend server for e.g. document conversion.
 %package %{pkgname} \
 Summary: %{langname} language pack for %{project} \
 Group: Applications/Productivity \
-Requires: libreoffice-core = 3.2.99.1-1 \
+Requires: %{name}-core = %{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
 %{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
 %{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
@@ -2045,6 +2045,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 
 %changelog
+* Sun Oct 30 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-4
+- langpack macro hard-coded version number
+
 * Fri Oct 22 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-3
 - Resolves: xdg632229 gnomeshell app tracking
 

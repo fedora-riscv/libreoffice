@@ -91,7 +91,7 @@ Patch4:  openoffice.org-2.2.1.ooo7065.sw.titlepagedialog.patch
 Patch5:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 Patch6:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
 Patch7:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
-Patch8:   openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch8:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch9:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch10: openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
 Patch11: openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
@@ -101,6 +101,7 @@ Patch14: openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
 Patch15: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch16: libreoffice-buildfix.patch
 Patch17: libreoffice-xdg632229.gnomeshell.patch
+Patch18: 0001-strcpy-cannot-be-used-with-overlapping-src-and-dest.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -714,6 +715,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch15 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch16 -p1 -b .libreoffice-buildfix.patch
 %patch17 -p0 -b .xdg632229.gnomeshell.patch
+%patch18 -p1 -b .strcpy-cannot-be-used-with-overlapping-src-and-dest
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

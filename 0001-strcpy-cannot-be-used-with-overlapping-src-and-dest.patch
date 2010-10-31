@@ -1,0 +1,25 @@
+From 0bf9733c6e8d40a5d327e754b44c7e540cdada7e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 31 Oct 2010 19:07:44 +0000
+Subject: [PATCH] strcpy cannot be used with overlapping src and dest
+
+---
+ soltools/mkdepend/parse.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/soltools/mkdepend/parse.c b/soltools/mkdepend/parse.c
+index 6d6e079..ec7e7d4 100644
+--- a/soltools/mkdepend/parse.c
++++ b/soltools/mkdepend/parse.c
+@@ -347,7 +347,7 @@ int deftype (line, filep, file_red, file, parse_it, symbols)
+         /*
+          * copy the definition back to the beginning of the line.
+          */
+-        strcpy (line, p);
++        memmove (line, p, strlen(p));
+         break;
+     case ELSE:
+     case ENDIF:
+-- 
+1.7.3.1
+

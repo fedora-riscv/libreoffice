@@ -727,8 +727,6 @@ SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
-NDMAKES=1
-NBUILDS=1
 
 autoconf
 %configure \
@@ -770,7 +768,7 @@ export ARCH_FLAGS
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
 cd instsetoo_native
-if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
+if ! VERBOSE=false build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
     build --dlv_switch -link --all
 fi
 

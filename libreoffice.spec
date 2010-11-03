@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -615,6 +615,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -S
+%langpack -l si -n Sinhalese -F -H -O -S
 %langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -S
 %langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -S
 %langpack -l sr -n Serbian -F -H -Y -A -O -S
@@ -1023,7 +1024,7 @@ st      help    western         ss      help    western \
 nr      help    western         ns      help    western \
 dz      help    ctl             uk      help    western \
 sh      help    western         mai     help    western \
-ro      nohelp  western
+ro      nohelp  western         si      help    ctl     \
 )
 
 tar xzf %{SOURCE21}
@@ -2047,6 +2048,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 
 %changelog
+* Wed Nov 03 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-5
+- Resolves: rhbz#649210 add Sinhalese langpack
+
 * Sun Oct 30 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-4
 - langpack macro hard-coded version number
 

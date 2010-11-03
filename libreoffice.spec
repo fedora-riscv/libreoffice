@@ -1024,7 +1024,7 @@ st      help    western         ss      help    western \
 nr      help    western         ns      help    western \
 dz      help    ctl             uk      help    western \
 sh      help    western         mai     help    western \
-ro      nohelp  western         si      help    ctl     \
+ro      nohelp  western         si      nohelp  ctl     \
 )
 
 tar xzf %{SOURCE21}

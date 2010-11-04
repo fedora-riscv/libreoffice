@@ -103,6 +103,7 @@ Patch16: libreoffice-buildfix.patch
 Patch17: libreoffice-xdg632229.gnomeshell.patch
 Patch18: 0001-strcpy-cannot-be-used-with-overlapping-src-and-dest.patch
 Patch19: 0001-abort-doesn-t-gain-us-anything-here.patch
+Patch20: 0001-latest-libX11-changed-header-guards.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -719,6 +720,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch17 -p0 -b .xdg632229.gnomeshell.patch
 %patch18 -p1 -b .strcpy-cannot-be-used-with-overlapping-src-and-dest
 %patch19 -p1 -b .abort-doesn-t-gain-us-anything-here.patch
+%patch20 -p1 -b .latest-libX11-changed-header-guards.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

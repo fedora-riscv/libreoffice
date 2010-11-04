@@ -1,0 +1,25 @@
+From cd10b146b67f7329f699e48e74d2961dbcceb123 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 4 Nov 2010 14:44:14 +0000
+Subject: [PATCH] latest libX11 changed header guards
+
+---
+ vcl/unx/inc/dtint.hxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/vcl/unx/inc/dtint.hxx b/vcl/unx/inc/dtint.hxx
+index 724dad6..b173830 100644
+--- a/vcl/unx/inc/dtint.hxx
++++ b/vcl/unx/inc/dtint.hxx
+@@ -37,7 +37,7 @@ class SalBitmap;
+ class SalDisplay;
+ class AllSettings;
+ 
+-#ifndef _XLIB_H_
++#if !defined(_XLIB_H_) && !defined(_X11_XLIB_H_)
+ // forwards from X
+ struct Display;
+ struct XEvent;
+-- 
+1.7.3.1
+

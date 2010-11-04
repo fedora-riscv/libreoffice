@@ -13,15 +13,12 @@ diff --git a/vcl/unx/source/plugadapt/salplug.cxx b/vcl/unx/source/plugadapt/sal
 index 54f9752..ba6bf4a 100644
 --- a/vcl/unx/source/plugadapt/salplug.cxx
 +++ b/vcl/unx/source/plugadapt/salplug.cxx
-@@ -284,7 +284,7 @@ void SalAbort( const XubString& rErrorText )
-         std::fprintf( stderr, "Application Error" );
-     else
-         std::fprintf( stderr, "%s", ByteString( rErrorText, gsl_getSystemTextEncoding() ).GetBuffer() );
--    abort();
-+    exit(-1);
+@@ -281,7 +281,7 @@
+ 		std::fprintf( stderr, "Application Error" );
+ 	else
+ 		std::fprintf( stderr, ByteString( rErrorText, gsl_getSystemTextEncoding() ).GetBuffer() );
+-	abort();
++	exit(-1);
  }
  
  const OUString& SalGetDesktopEnvironment()
--- 
-1.7.3.1
-

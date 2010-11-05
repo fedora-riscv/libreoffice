@@ -773,7 +773,7 @@ export ARCH_FLAGS
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
 cd instsetoo_native
-if ! VERBOSE=false build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
+if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
     build --dlv_switch -link --all
 fi
 

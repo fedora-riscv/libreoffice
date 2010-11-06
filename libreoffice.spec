@@ -799,7 +799,7 @@ echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 %define extname %{-n:%{-n*}}%{!-n:%{error:No extension name given}} \
 %define extdir $RPM_BUILD_ROOT/%{baseinstdir}/share/extensions \
 %define solverbindir $SOLARVER/$INPATH/bin \
-mkdir %{extdir}/%{extname} \
+install -d -m 755 %{extdir}/%{extname} \
 unzip -d %{extdir}/%{extname} %{solverbindir}/%{extname}.oxt
 
 

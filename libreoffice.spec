@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -64,9 +64,7 @@ Source29:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf
 Source30:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source31:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 Source32:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
-Source33:       description.xml
-Source34:       manifest.xml
-Source35:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.2.tar.bz2
+Source33:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.2.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -104,6 +102,7 @@ Patch17: libreoffice-xdg632229.gnomeshell.patch
 Patch18: 0001-strcpy-cannot-be-used-with-overlapping-src-and-dest.patch
 Patch19: 0001-abort-doesn-t-gain-us-anything-here.patch
 Patch20: 0001-latest-libX11-changed-header-guards.patch
+Patch21: turn-script-providers-into-extensions.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -686,7 +685,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 
 %prep
-%setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 35
+%setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 33
 for a in */*; do mv `pwd`/$a .; done
 #remove "debugging" translations
 rm -rf l10n/source/kid
@@ -721,6 +720,10 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch18 -p1 -b .strcpy-cannot-be-used-with-overlapping-src-and-dest
 %patch19 -p1 -b .abort-doesn-t-gain-us-anything-here.patch
 %patch20 -p1 -b .latest-libX11-changed-header-guards.patch
+%patch21 -p1 -b .turn-script-providers-into-extensions.patch
+touch scripting/source/pyprov/delzip
+touch scripting/util/provider/beanshell/delzip
+touch scripting/util/provider/javascript/delzip
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -791,6 +794,15 @@ cd unxlng*/misc/libreoffice
 
 echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
+
+%define install_bundled_extension(n:) \
+%define extname %{-n:%{-n*}}%{!-n:%{error:No extension name given}} \
+%define extdir $RPM_BUILD_ROOT/%{baseinstdir}/share/extensions \
+%define solverbindir $SOLARVER/$INPATH/bin \
+mkdir %{extdir}/%{extname} \
+unzip -d %{extdir}/%{extname} %{solverbindir}/%{extname}.oxt
+
+
 %install
 rm -rf $RPM_BUILD_ROOT
 source ./Linux*Env.Set.sh
@@ -838,52 +850,10 @@ dmake sdkoo
 mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../
 
-# revoke ScriptProviders and make into extensions
-pushd $RPM_BUILD_ROOT/%{basisinstdir}/program
-
-# BeanShell
-../ure-link/bin/regcomp -revoke -r services.rdb -br services.rdb -c "vnd.sun.star.expand:\$OOO_BASE_DIR/program/classes/ScriptProviderForBeanShell.jar"
-mkdir $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt \
-     $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt/META-INF
-mv classes/ScriptProviderForBeanShell.jar $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt
-cp %{SOURCE33} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt
-cp %{SOURCE34} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt/META-INF
-sed -i -e 's/@display-name@/Script provider for BeanShell/' \
-    -e 's/@version@/%{version}/' \
-    -e 's/@id@/com.sun.star.script.provider.ScriptProviderForBeanShell/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt/description.xml
-sed -i -e 's/@type@/java/' -e 's/@path@/ScriptProviderForBeanShell.jar/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt/META-INF/manifest.xml
-
-# JavaScript
-../ure-link/bin/regcomp -revoke -r services.rdb -br services.rdb -c "vnd.sun.star.expand:\$OOO_BASE_DIR/program/classes/ScriptProviderForJavaScript.jar"
-mkdir $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt \
-     $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt/META-INF
-mv classes/ScriptProviderForJavaScript.jar $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt
-cp %{SOURCE33} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt
-cp %{SOURCE34} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt/META-INF
-sed -i -e 's/@display-name@/Script provider for JavaScript/' \
-    -e 's/@version@/%{version}/' \
-    -e 's/@id@/com.sun.star.script.provider.ScriptProviderForJavaScript/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt/description.xml
-sed -i -e 's/@type@/java/' -e 's/@path@/ScriptProviderForJavaScript.jar/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt/META-INF/manifest.xml
-
-# Python
-../ure-link/bin/regcomp -revoke -r services.rdb -br services.rdb -c vnd.openoffice.pymodule:pythonscript
-mkdir $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt \
-     $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt/META-INF
-mv pythonscript.py $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt
-cp %{SOURCE33} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt
-cp %{SOURCE34} $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt/META-INF
-sed -i -e 's/@display-name@/Script provider for Python/' \
-    -e 's/@version@/%{version}/' \
-    -e 's/@id@/com.sun.star.script.provider.ScriptProviderForPython/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt/description.xml
-sed -i -e 's/@type@/python/' -e 's/@path@/pythonscript.py/' \
-    $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt/META-INF/manifest.xml
-
-popd
+# install script providers
+%install_bundled_extension -n script-provider-for-beanshell
+%install_bundled_extension -n script-provider-for-javascript
+%install_bundled_extension -n script-provider-for-python
 
 #configure sdk
 pushd $RPM_BUILD_ROOT/%{sdkinstdir}
@@ -1776,13 +1746,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %files bsh
 %defattr(-,root,root,-)
 %{basisinstdir}/share/Scripts/beanshell
-%{baseinstdir}/share/extensions/ScriptProviderForBeanShell.oxt
+%{baseinstdir}/share/extensions/script-provider-for-beanshell
 
 %files rhino
 %defattr(-,root,root,-)
-%{basisinstdir}/program/classes/js.jar
 %{basisinstdir}/share/Scripts/javascript
-%{baseinstdir}/share/extensions/ScriptProviderForJavaScript.oxt
+%{baseinstdir}/share/extensions/script-provider-for-javascript
 
 %files wiki-publisher
 %defattr(-,root,root,-)
@@ -2050,11 +2019,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/Scripts/python
 %{python_sitearch}/uno.py*
 %{python_sitearch}/unohelper.py*
-%{baseinstdir}/share/extensions/ScriptProviderForPython.oxt
+%{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
 
 %changelog
+* Sat Nov 06 2010 David Tardon <dtardon@redhat.com 3.2.99.2-6
+- turn script providers into extensions
+
 * Wed Nov 03 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-5
 - Resolves: rhbz#649210 add Sinhalese langpack
 

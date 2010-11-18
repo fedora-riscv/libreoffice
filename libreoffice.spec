@@ -27,35 +27,34 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.2.99.2
-Release:        6%{?dist}
+Version:        3.2.99.3
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-3.2.99.2.tar.bz2
-Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-3.2.99.2.tar.bz2
-Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-3.2.99.2.tar.bz2
-Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-3.2.99.2.tar.bz2
-Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-3.2.99.2.tar.bz2
-Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-3.2.99.2.tar.bz2
-Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-3.2.99.2.tar.bz2
-Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-3.2.99.2.tar.bz2
-Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-3.2.99.2.tar.bz2
-Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-3.2.99.2.tar.bz2
-Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-3.2.99.2.tar.bz2
-Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-3.2.99.2.tar.bz2
-Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-3.2.99.2.tar.bz2
-Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-3.2.99.2.tar.bz2
-Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-3.2.99.2.tar.bz2
-Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-3.2.99.2.tar.bz2
-Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-3.2.99.2.tar.bz2
-Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-3.2.99.2.tar.bz2
-Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-3.2.99.2.tar.bz2
+Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-3.2.99.3.tar.bz2
+Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-3.2.99.3.tar.bz2
+Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-3.2.99.3.tar.bz2
+Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-3.2.99.3.tar.bz2
+Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-3.2.99.3.tar.bz2
+Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-3.2.99.3.tar.bz2
+Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-3.2.99.3.tar.bz2
+Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-3.2.99.3.tar.bz2
+Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-3.2.99.3.tar.bz2
+Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-3.2.99.3.tar.bz2
+Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-3.2.99.3.tar.bz2
+Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-3.2.99.3.tar.bz2
+Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-3.2.99.3.tar.bz2
+Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-3.2.99.3.tar.bz2
+Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-3.2.99.3.tar.bz2
+Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-3.2.99.3.tar.bz2
+Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-3.2.99.3.tar.bz2
+Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-3.2.99.3.tar.bz2
+Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-3.2.99.3.tar.bz2
 Source19:       http://cgit.freedesktop.org/ooo-build/ooo-build/plain/src/evolocal.odb
 Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
-Source22:       http://www.openoffice.org/nonav/issues/showattachment.cgi/66959/acor_lt.zip
 Source23:       libreoffice-multiliblauncher.sh
 Source26:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
 Source27:       http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
@@ -64,7 +63,7 @@ Source29:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf
 Source30:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source31:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 Source32:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
-Source33:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.2.tar.bz2
+Source33:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.3.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -908,9 +907,6 @@ popd
 
 #Set some aliases to canonical autocorrect language files for locales with matching languages
 pushd $RPM_BUILD_ROOT/%{basisinstdir}/share/autocorr
-
-# ooo#108049
-cp -p %{SOURCE22} acor_lt-LT.dat
 
 #en-ZA exists and has a good autocorrect file with two or three extras that make sense for South Africa
 en_GB_aliases="en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT"
@@ -2024,6 +2020,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 
 %changelog
+* Thu Nov 18 2010 Caolán McNamara <caolanm@redhat.com 3.2.99.3-1
+- next Libreoffice milestone
+
 * Sat Nov 06 2010 David Tardon <dtardon@redhat.com 3.2.99.2-6
 - turn script providers into extensions
 

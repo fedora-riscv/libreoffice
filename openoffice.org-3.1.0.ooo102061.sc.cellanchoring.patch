@@ -1072,7 +1072,7 @@ diff -ru sc.orig/source/filter/xml/XMLTableShapeResizer.cxx sc/source/filter/xml
 -}
 -
 -void ScMyShapeResizer::ResizeShapes()
-+void ScMyOLEFixer::FixupOLEs
++void ScMyOLEFixer::FixupOLEs()
  {
      if (!aShapes.empty() && rImport.GetModel().is())
      {

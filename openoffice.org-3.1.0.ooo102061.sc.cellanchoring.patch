@@ -1751,3 +1751,14 @@ diff -ru sc.orig/source/ui/view/drawview.cxx sc/source/ui/view/drawview.cxx
  		}
  	}
  }
+--- sc.orig/source/filter/xcl97/xcl97rec.cxx	2010-11-18 21:18:32.000000000 +0000
++++ sc/source/filter/xcl97/xcl97rec.cxx	2010-11-18 21:19:31.000000000 +0000
+@@ -1014,7 +1014,7 @@
+     if( const SdrObject* pShape = EscherEx::GetSdrObject( rObj.GetShape() ) )
+     {
+         // OOXTODO: returning "twoCell"
+-        switch( ScDrawLayer::GetAnchor( pShape ) )
++        switch( ScDrawLayer::GetAnchorType( *pShape ) )
+         {
+             case SCA_CELL:  return "oneCell";
+             default:        break;

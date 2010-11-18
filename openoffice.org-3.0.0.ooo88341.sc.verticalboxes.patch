@@ -20,7 +20,7 @@ retrieving revision 1.54.216.1
 diff -u -r1.54.216.1 output2.cxx
 --- openoffice.org.orig/sc/source/ui/view/output2.cxx	18 Jan 2008 12:02:36 -0000	1.54.216.1
 +++ openoffice.org/sc/source/ui/view/output2.cxx	16 Apr 2008 12:19:34 -0000
-@@ -2378,6 +2378,22 @@
+@@ -2369,6 +2369,22 @@
  
  }
  
@@ -43,7 +43,7 @@ diff -u -r1.54.216.1 output2.cxx
  void ScOutputData::DrawEdit(BOOL bPixelToLogic)
  {
      vcl::PDFExtOutDevData* pPDFData = PTR_CAST( vcl::PDFExtOutDevData, pDev->GetExtOutDevData() );
-@@ -2892,13 +2908,8 @@
+@@ -2878,13 +2894,8 @@
                                              (ScMergeAttr*)&pPattern->GetItem(ATTR_MERGE);
                                      BOOL bMerged = pMerge->GetColMerge() > 1 || pMerge->GetRowMerge() > 1;
  
@@ -59,26 +59,27 @@ diff -u -r1.54.216.1 output2.cxx
                                          bClip = TRUE;
                                      else
                                          bSimClip = TRUE;
-@@ -2948,6 +2959,18 @@
- #endif
+@@ -2920,6 +2931,19 @@
+                                 }
  
                                  Rectangle aLogicClip;
 +                                if (
-+										((nAttrRotate == 9000) || (nAttrRotate == 27000)) &&
-+										(!(aAlignParam.meOrient==SVX_ORIENTATION_STANDARD && !aAlignParam.mbAsianVertical)) &&
-+										(!(bClip || bSimClip))
-+								   )
-+								{
-+									if (UseNormalClip(nCellY, pCondSet))
-+										bClip = TRUE;
-+									else
-+										bSimClip = TRUE;
-+								}
++                                     ((nAttrRotate == 9000) || (nAttrRotate == 27000)) &&
++                                     (!(aAlignParam.meOrient==SVX_ORIENTATION_STANDARD &&
++                                        !aAlignParam.mbAsianVertical)) &&
++                                     (!(bClip || bSimClip))
++                                   )
++                                {
++                                    if (UseNormalClip(nCellY, pCondSet))
++                                        bClip = TRUE;
++                                    else
++                                        bSimClip = TRUE;
++                                }
 +
                                  if (bClip || bSimClip)
                                  {
                                      // Clip marks are already handled in GetOutputArea
-@@ -3776,11 +3799,21 @@
+@@ -3734,11 +3758,21 @@
                                      else
                                      {
                                          //	bei gedrehtem Text ist Standard zentriert

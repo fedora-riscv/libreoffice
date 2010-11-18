@@ -81,27 +81,18 @@ BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
 
-Patch1:  openoffice.org-2.0.1.rhXXXXXX.extensions.defaulttoevo2.patch
-Patch2:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
-Patch3:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
-Patch4:  openoffice.org-2.2.1.ooo7065.sw.titlepagedialog.patch
-Patch5:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
-Patch6:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
-Patch7:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
-Patch8:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
-Patch9:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
-Patch10: openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
-Patch11: openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
-Patch12: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
-Patch13: openoffice.org-3.2.0.ooo108846.sfx2.qstartfixes.patch
-Patch14: openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
-Patch15: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
-Patch16: libreoffice-buildfix.patch
-Patch17: libreoffice-xdg632229.gnomeshell.patch
-Patch18: 0001-strcpy-cannot-be-used-with-overlapping-src-and-dest.patch
-Patch19: 0001-abort-doesn-t-gain-us-anything-here.patch
-Patch20: 0001-latest-libX11-changed-header-guards.patch
-Patch21: turn-script-providers-into-extensions.patch
+Patch1:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
+Patch2:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
+Patch3:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+Patch4:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
+Patch5:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
+Patch6:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch7:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
+Patch8:  openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
+Patch9:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
+Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
+Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
+Patch12: turn-script-providers-into-extensions.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -699,27 +690,18 @@ rm -rf l10n/source/kid
 mv -f redhat.soc extras/source/palettes/standard.soc
 cp -p %{SOURCE19} extras/source/database/evolocal.odb
 cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
-%patch1  -p1 -b .rhXXXXXX.extensions.defaulttoevo2.patch
-%patch2  -p1 -b .ooo53397.prelinkoptimize.desktop.patch
-%patch3  -p1
-%patch4  -p1 -b .ooo7065.sw.titlepagedialog.patch
-%patch5  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch6  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch7  -p0 -b .gccXXXXX.solenv.javaregistration.patch
-%patch8  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch9  -p0 -b .ooo101274.opening-a-directory.patch
-%patch10 -p0 -b .ooo102061.sc.cellanchoring.patch
-%patch11 -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
-%patch12 -p1 -b .ooo108637.sfx2.uisavedir.patch
-%patch13 -p1 -b .ooo108846.sfx2.qstartfixes.patch
-%patch14 -p0 -b .ooo107490.cppu.lifecycle.patch
-%patch15 -p0 -b .ooo113273.desktop.resolvelinks.patch
-%patch16 -p1 -b .libreoffice-buildfix.patch
-%patch17 -p0 -b .xdg632229.gnomeshell.patch
-%patch18 -p1 -b .strcpy-cannot-be-used-with-overlapping-src-and-dest
-%patch19 -p1 -b .abort-doesn-t-gain-us-anything-here.patch
-%patch20 -p1 -b .latest-libX11-changed-header-guards.patch
-%patch21 -p1 -b .turn-script-providers-into-extensions.patch
+%patch1  -p1 -b .ooo53397.prelinkoptimize.desktop.patch
+%patch2  -p1
+%patch3  -p1 -b .ooo86080.unopkg.bodge.patch
+%patch4  -p1 -b .ooo88341.sc.verticalboxes.patch
+%patch5  -p0 -b .gccXXXXX.solenv.javaregistration.patch
+%patch6  -p1 -b .oooXXXXX.solenv.allowmissing.patch
+%patch7  -p0 -b .ooo101274.opening-a-directory.patch
+%patch8  -p0 -b .ooo102061.sc.cellanchoring.patch
+%patch9  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch10 -p1 -b .ooo108637.sfx2.uisavedir.patch
+%patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
+%patch12 -p1 -b .turn-script-providers-into-extensions.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2022,6 +2004,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Nov 18 2010 Caolán McNamara <caolanm@redhat.com 3.2.99.3-1
 - next Libreoffice milestone
+- drop integrated openoffice.org-2.0.1.rhXXXXXX.extensions.defaulttoevo2.patch
+- drop integrated openoffice.org-2.2.1.ooo7065.sw.titlepagedialog.patch
+- drop integrated openoffice.org-3.2.0.ooo108846.sfx2.qstartfixes.patch
+- drop integrated openoffice.org-3.3.0.ooo107490.cppu.lifecycle.patch
+- drop integrated libreoffice-buildfix.patch
+- drop integrated libreoffice-xdg632229.gnomeshell.patch
+- drop integrated 0001-strcpy-cannot-be-used-with-overlapping-src-and-dest.patch
+- drop integrated 0001-abort-doesn-t-gain-us-anything-here.patch
+- drop integrated 0001-latest-libX11-changed-header-guards.patch
 
 * Sat Nov 06 2010 David Tardon <dtardon@redhat.com 3.2.99.2-6
 - turn script providers into extensions

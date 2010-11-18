@@ -49,12 +49,13 @@ diff --git a/scp2/source/python/file_python.scp b/scp2/source/python/file_python
 index e586876..0876b53 100644
 --- a/scp2/source/python/file_python.scp
 +++ b/scp2/source/python/file_python.scp
-@@ -104,16 +104,6 @@ End
+@@ -104,18 +104,6 @@
  #endif
  #endif
  
 -// Scripting Framework Python script proxy
 -
+-#ifndef AIX
 -File gid_File_Py_Pythonscript
 -    TXT_FILE_BODY;
 -    Dir = gid_Dir_Program;
@@ -62,6 +63,7 @@ index e586876..0876b53 100644
 -    RegistryID = gid_Starregistry_Services_Rdb;
 -    Styles = (PACKED,UNO_COMPONENT);
 -End
+-#endif
 - 
  //Scripting Framework Python example scripts
  

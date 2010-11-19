@@ -858,8 +858,6 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
     find examples -type f -exec chmod -x {} \;
 popd
 
-#add the debugging libsalalloc_malloc.so.3 library
-cp -f solver/%{OFFICEUPD}/unxlng*.pro/lib/libsalalloc_malloc.so.3 $RPM_BUILD_ROOT/%{ureinstdir}/lib
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/testtoolrc
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/hid.lst
 
@@ -1950,7 +1948,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}/program
 %{basisinstdir}/program/hid.lst
 %{basisinstdir}/program/libcommuni%{SOPOST}.so
-%{ureinstdir}/lib/libsalalloc_malloc.so.3
 %{basisinstdir}/program/libsimplecm%{SOPOST}.so
 %{basisinstdir}/program/testtoolrc
 %{basisinstdir}/program/testtool.bin
@@ -1962,7 +1959,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc solver/%{OFFICEUPD}/unxlng*/bin/ure/LICENSE
 %dir %{baseinstdir}
 %{ureinstdir}
-%exclude %{ureinstdir}/lib/libsalalloc_malloc.so.3
 
 %files sdk
 %defattr(-,root,root,-)

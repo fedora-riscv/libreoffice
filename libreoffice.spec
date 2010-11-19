@@ -788,8 +788,8 @@ unzip -d %{extdir}/%{extname} %{solverbindir}/%{extname}.oxt
 rm -rf $RPM_BUILD_ROOT
 source ./Linux*Env.Set.sh
 #figure out the icon version
-export `grep "^PRODUCTVERSIONSHORT =" sysui/desktop/productversion.mk | sed -e "s/ //g"`
-export `grep "PRODUCTVERSION[ ]*=[ ]*" sysui/desktop/productversion.mk | sed -e "s/ //g"`
+export `grep "^PRODUCTVERSIONSHORT =" solenv/inc/productversion.mk | sed -e "s/ //g"`
+export `grep "PRODUCTVERSION[ ]*=[ ]*" solenv/inc/productversion.mk | sed -e "s/ //g"`
 #install
 cd instsetoo_native/util
 #direct install

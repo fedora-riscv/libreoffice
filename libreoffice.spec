@@ -1595,7 +1595,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libucpfile1.so
 %{basisinstdir}/program/libutl%{SOPOST}.so
 %{basisinstdir}/program/libvcl%{SOPOST}.so
-%{basisinstdir}/program/libvos3gcc3.so
 %{basisinstdir}/program/libxcr%{SOPOST}.so
 %{basisinstdir}/program/libxo%{SOPOST}.so
 %{basisinstdir}/program/localebe1.uno.so

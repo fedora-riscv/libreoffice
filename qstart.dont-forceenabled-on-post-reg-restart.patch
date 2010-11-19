@@ -1,0 +1,71 @@
+diff --git a/desktop/inc/app.hxx b/desktop/inc/app.hxx
+index b657374..1f32f9b 100644
+--- a/desktop/inc/app.hxx
++++ b/desktop/inc/app.hxx
+@@ -133,7 +133,6 @@ class Desktop : public Application
+         static sal_Bool         IsFirstStartWizardNeeded();
+         static sal_Bool         CheckExtensionDependencies();
+ 
+-        static void             DoRestartActionsIfNecessary( sal_Bool bQuickStart );
+         static void             SetRestartState();
+ 
+         void                    SynchronizeExtensionRepositories();
+diff --git a/desktop/source/app/app.cxx b/desktop/source/app/app.cxx
+index 9ec6e87..67834c3 100644
+--- a/desktop/source/app/app.cxx
++++ b/desktop/source/app/app.cxx
+@@ -1919,9 +1921,8 @@ void Desktop::Main()
+ 
+             if ( !bRestartRequested )
+             {
+-                // if this run of the office is triggered by restart, some additional actions should be done
+-                DoRestartActionsIfNecessary( !pCmdLineArgs->IsInvisible() && !pCmdLineArgs->IsNoQuickstart() );
+-
++                // if this run of the office is triggered by restart, some
++                // additional actions should be done
+                 Execute();
+             }
+         }
+diff --git a/desktop/source/app/appfirststart.cxx b/desktop/source/app/appfirststart.cxx
+index 9ef0a8a..673dfa8 100644
+--- a/desktop/source/app/appfirststart.cxx
++++ b/desktop/source/app/appfirststart.cxx
+@@ -269,38 +269,6 @@ sal_Bool Desktop::IsFirstStartWizardNeeded()
+     return impl_isFirstStart() || !impl_isLicenseAccepted();
+ }
+ 
+-void Desktop::DoRestartActionsIfNecessary( sal_Bool bQuickStart )
+-{
+-    if ( bQuickStart )
+-    {
+-        try
+-        {
+-            Reference< XPropertySet > xPSet = impl_getConfigurationAccess( OUString( RTL_CONSTASCII_USTRINGPARAM( "org.openoffice.Setup/Office" ) ) );
+-
+-            OUString sPropName( RTL_CONSTASCII_USTRINGPARAM( "OfficeRestartInProgress" ) );
+-            Any aRestart = xPSet->getPropertyValue( sPropName );
+-            sal_Bool bRestart = sal_False;
+-            if ( ( aRestart >>= bRestart ) && bRestart )
+-            {
+-                xPSet->setPropertyValue( sPropName, makeAny( sal_False ) );
+-                Reference< util::XChangesBatch >( xPSet, UNO_QUERY_THROW )->commitChanges();
+-
+-                Sequence< Any > aSeq( 2 );
+-                aSeq[0] <<= sal_True;
+-                aSeq[1] <<= sal_True;
+-
+-                Reference < XInitialization > xQuickstart( ::comphelper::getProcessServiceFactory()->createInstance(
+-                    OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.office.Quickstart" ) ) ),UNO_QUERY_THROW );
+-                xQuickstart->initialize( aSeq );
+-            }
+-        }
+-        catch( uno::Exception& )
+-        {
+-            // this is no critical operation so it should not prevent office from starting
+-        }
+-    }
+-}
+-
+ void Desktop::SetRestartState()
+ {
+     try

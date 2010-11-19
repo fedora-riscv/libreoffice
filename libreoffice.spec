@@ -93,6 +93,7 @@ Patch9:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
+Patch13: qstart.dont-forceenabled-on-post-reg-restart.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -702,6 +703,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch10 -p1 -b .ooo108637.sfx2.uisavedir.patch
 %patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
+%patch13 -p1 -b .qstart.dont-forceenabled-on-post-reg-restart.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

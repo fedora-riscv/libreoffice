@@ -810,7 +810,7 @@ if [ $ok == "false" ]; then
     exit 1
 fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
+mv ../unxlng*.pro/LibreOffice/installed/install/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack

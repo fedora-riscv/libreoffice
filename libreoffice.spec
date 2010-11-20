@@ -862,31 +862,16 @@ chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/hid.lst
 #remove spurious exec bits
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/gengalrc
 
-#We don't need to carry around all the letter templates for all the languages 
-#in each langpack! In addition, all the bitmaps are the same!
+#ensure a template dir for each lang
 pushd $RPM_BUILD_ROOT/%{basisinstdir}/share/template
-mkdir -p wizard
 for I in %{langpack_langs}; do
-    if [ -d $I/wizard/bitmap ]; then
-        cp -afl $I/wizard/bitmap wizard/
-        rm -rf $I/wizard/bitmap
-        ln -sf ../../wizard/bitmap $I/wizard/bitmap
-    fi
-
-    if [ -d $I/wizard/letter/$I ]; then
-        mv -f $I/wizard/letter/$I ${I}_wizard_letter_${I}
-        rm -rf $I/wizard/letter/*
-        mv -f ${I}_wizard_letter_${I} $I/wizard/letter/$I
-    else
-        rm -rf $I/wizard/letter/*
-    fi
+    mkdir -p I
 done
 popd
 
 #Set some aliases to canonical autocorrect language files for locales with matching languages
 pushd $RPM_BUILD_ROOT/%{basisinstdir}/share/autocorr
 
-#en-ZA exists and has a good autocorrect file with two or three extras that make sense for South Africa
 en_GB_aliases="en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT"
 for lang in $en_GB_aliases; do
         ln -sf acor_en-GB.dat acor_$lang.dat
@@ -895,6 +880,8 @@ en_US_aliases="en-PH"
 for lang in $en_US_aliases; do
         ln -sf acor_en-US.dat acor_$lang.dat
 done
+#en-ZA exists and has a good autocorrect file with two or three extras that make sense for 
+#neighbouring english speaking territories
 en_ZA_aliases="en-NA en-ZW"
 for lang in $en_ZA_aliases; do
         ln -sf acor_en-ZA.dat acor_$lang.dat

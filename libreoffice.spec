@@ -75,7 +75,7 @@ BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  mdds-devel, lpsolve-devel, hsqldb, bsh, lucene, lucene-contrib
-BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp
+BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
@@ -812,15 +812,11 @@ if [ $ok == "false" ]; then
     exit 1
 fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-mv ../unxlng*.pro/LibreOffice/installed/install/* $RPM_BUILD_ROOT/%{baseinstdir}
+rsync -apl --link-dest=`readlink -f ../unxlng*.pro/LibreOffice/installed/install/` ../unxlng*.pro/LibreOffice/installed/install/ $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack
-rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
-for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
-cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
-rm -rf $langpack
-done
+rsync -apl --link-dest=`readlink -f ../unxlng*.pro/LibreOffice_languagepack/installed/install/` ../unxlng*.pro/LibreOffice_languagepack/installed/install/ $RPM_BUILD_ROOT/%{baseinstdir}
 %endif
 for file in swriter scalc simpress sdraw ; do
     cp -f ../../desktop/$OUTPATH.pro/bin/$file $RPM_BUILD_ROOT/%{baseinstdir}/program/$file.bin

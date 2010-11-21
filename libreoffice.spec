@@ -94,6 +94,7 @@ Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
 Patch13: qstart.dont-forceenabled-on-post-reg-restart.patch
+Patch14: libreoffice-installfix.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -704,6 +705,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
 %patch13 -p1 -b .qstart.dont-forceenabled-on-post-reg-restart.patch
+%patch14 -p1 -b .libreoffice-installfix.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

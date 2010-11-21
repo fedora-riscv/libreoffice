@@ -917,6 +917,7 @@ sv_SE_aliases="sv-FI"
 for lang in $sv_SE_aliases; do
         ln -s acor_sv-SE.dat acor_$lang.dat
 done
+mv acor_lt_LT.dat acor_lt-LT.dat
 %else
 rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif
@@ -1403,6 +1404,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libxsltfilter%{SOPOST}.so
 %{basisinstdir}/program/libxstor.so
 %{basisinstdir}/program/migrationoo2.uno.so
+%{basisinstdir}/program/migrationoo3.uno.so
 %{basisinstdir}/program/nsplugin
 %{basisinstdir}/program/open-url
 %{basisinstdir}/program/offapi.rdb
@@ -1473,9 +1475,11 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/sax.uno.so
 %{basisinstdir}/program/senddoc
 %{basisinstdir}/program/services.rdb
+%{basisinstdir}/program/shell/
 %{basisinstdir}/program/simplecanvas.uno.so
 %{basisinstdir}/program/slideshow.uno.so
 %{basisinstdir}/program/libsofficeapp.so
+%{basisinstdir}/program/oosplash.bin
 %{basisinstdir}/program/spadmin.bin
 %{basisinstdir}/program/stringresource%{SOPOST}.uno.so
 %{basisinstdir}/program/syssh.uno.so
@@ -1574,6 +1578,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libsfx%{SOPOST}.so
 %{basisinstdir}/program/libsot%{SOPOST}.so
 %{basisinstdir}/program/libspl%{SOPOST}.so
+%{basisinstdir}/program/libspl_unx%{SOPOST}.so
 %{basisinstdir}/program/libsvl%{SOPOST}.so
 %{basisinstdir}/program/libsvt%{SOPOST}.so
 %{basisinstdir}/program/libtk%{SOPOST}.so
@@ -1820,6 +1825,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}/program
 %{basisinstdir}/program/libbf_sw%{SOPOST}.so
 %{basisinstdir}/program/libhwp.so
+%{basisinstdir}/program/liblwpft%{SOPOST}.so
 %{basisinstdir}/program/libmsword%{SOPOST}.so
 %{basisinstdir}/program/libmsworks%{SOPOST}.so
 %{basisinstdir}/program/libswd%{SOPOST}.so

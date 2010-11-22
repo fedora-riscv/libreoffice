@@ -1475,11 +1475,9 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/sax.uno.so
 %{basisinstdir}/program/senddoc
 %{basisinstdir}/program/services.rdb
-%{basisinstdir}/program/shell/
 %{basisinstdir}/program/simplecanvas.uno.so
 %{basisinstdir}/program/slideshow.uno.so
 %{basisinstdir}/program/libsofficeapp.so
-%{basisinstdir}/program/oosplash.bin
 %{basisinstdir}/program/spadmin.bin
 %{basisinstdir}/program/stringresource%{SOPOST}.uno.so
 %{basisinstdir}/program/syssh.uno.so

@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.2.99.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -95,6 +95,7 @@ Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
 Patch13: qstart.dont-forceenabled-on-post-reg-restart.patch
 Patch14: libreoffice-installfix.patch
+Patch15: exit.quickstarter.when.deleted.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -706,6 +707,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
 %patch13 -p1 -b .qstart.dont-forceenabled-on-post-reg-restart.patch
 %patch14 -p1 -b .libreoffice-installfix.patch
+%patch15 -p1 -b .exit.quickstarter.when.deleted.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -1990,6 +1992,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 
 %changelog
+* Thu Nov 25 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.3-2
+- Resolves: rhbz#610103 exit quickstarter when libs deleted
+
 * Thu Nov 18 2010 Caolán McNamara <caolanm@redhat.com 3.2.99.3-1
 - next Libreoffice milestone
 - drop integrated openoffice.org-2.0.1.rhXXXXXX.extensions.defaulttoevo2.patch

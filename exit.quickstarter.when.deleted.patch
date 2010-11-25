@@ -38,28 +38,7 @@ index e31c32f..1b78f9b 100644
  
  static void open_url_cb( GtkWidget *, gpointer data )
  {
-@@ -280,6 +287,20 @@
-           pShutdownIcon->GetResString( STR_QUICKSTART_EXIT ),
-           G_CALLBACK( exit_quickstarter_cb ) );
- 
-+#ifdef ENABLE_GIO
-+    GFile* pFile = NULL;
-+    rtl::OUString sLibraryFileUrl;
-+    if (osl::Module::getUrlFromAddress(plugin_init_sys_tray, sLibraryFileUrl))
-+        pFile = g_file_new_for_uri(rtl::OUStringToOString(sLibraryFileUrl, RTL_TEXTENCODING_UTF8).getStr());
-+
-+    if (pFile)
-+    {
-+        if ((pMonitor = g_file_monitor_file(pFile, G_FILE_MONITOR_NONE, NULL, NULL)))
-+            g_signal_connect(pMonitor, "changed", (GCallback)notify_file_changed, NULL); 
-+        g_object_unref(pFile);
-+    }
-+#endif
-+
-     gtk_widget_show_all( pMenu );
- }
- 
-@@ -354,6 +375,22 @@
+@@ -354,6 +361,22 @@
      }
  }
  
@@ -82,6 +61,27 @@ index e31c32f..1b78f9b 100644
  void SAL_DLLPUBLIC_EXPORT plugin_init_sys_tray()
  {
      ::SolarMutexGuard aGuard;
+@@ -396,6 +419,20 @@
+     // disable shutdown
+     pShutdownIcon->SetVeto( true );
+     pShutdownIcon->addTerminateListener();
++
++#ifdef ENABLE_GIO
++    GFile* pFile = NULL;
++    rtl::OUString sLibraryFileUrl;
++    if (osl::Module::getUrlFromAddress(plugin_init_sys_tray, sLibraryFileUrl))
++        pFile = g_file_new_for_uri(rtl::OUStringToOString(sLibraryFileUrl, RTL_TEXTENCODING_UTF8).getStr());
++
++    if (pFile)
++    {
++        if ((pMonitor = g_file_monitor_file(pFile, G_FILE_MONITOR_NONE, NULL, NULL)))
++            g_signal_connect(pMonitor, "changed", (GCallback)notify_file_changed, NULL); 
++        g_object_unref(pFile);
++    }
++#endif
+ }
+ 
+ void SAL_DLLPUBLIC_EXPORT plugin_shutdown_sys_tray()
 @@ -403,6 +440,16 @@
      ::SolarMutexGuard aGuard;
      if( !pTrayIcon )

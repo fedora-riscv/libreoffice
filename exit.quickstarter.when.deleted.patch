@@ -28,7 +28,7 @@ index e31c32f..1b78f9b 100644
  // Cut/paste from vcl/inc/svids.hrc
  #define SV_ICON_SMALL_START                 25000
  
-@@ -39,6 +43,9 @@ static EggTrayIcon *pTrayIcon;
+@@ -39,6 +43,9 @@
  static GtkWidget *pExitMenuItem = NULL;
  static GtkWidget *pOpenMenuItem = NULL;
  static GtkWidget *pDisableMenuItem = NULL;
@@ -38,7 +38,28 @@ index e31c32f..1b78f9b 100644
  
  static void open_url_cb( GtkWidget *, gpointer data )
  {
-@@ -358,6 +365,22 @@ extern "C" {
+@@ -280,6 +287,20 @@
+           pShutdownIcon->GetResString( STR_QUICKSTART_EXIT ),
+           G_CALLBACK( exit_quickstarter_cb ) );
+ 
++#ifdef ENABLE_GIO
++    GFile* pFile = NULL;
++    rtl::OUString sLibraryFileUrl;
++    if (osl::Module::getUrlFromAddress(plugin_init_sys_tray, sLibraryFileUrl))
++        pFile = g_file_new_for_uri(rtl::OUStringToOString(sLibraryFileUrl, RTL_TEXTENCODING_UTF8).getStr());
++
++    if (pFile)
++    {
++        if ((pMonitor = g_file_monitor_file(pFile, G_FILE_MONITOR_NONE, NULL, NULL)))
++            g_signal_connect(pMonitor, "changed", (GCallback)notify_file_changed, NULL); 
++        g_object_unref(pFile);
++    }
++#endif
++
+     gtk_widget_show_all( pMenu );
+ }
+ 
+@@ -354,6 +375,22 @@
      }
  }
  
@@ -61,31 +82,10 @@ index e31c32f..1b78f9b 100644
  void SAL_DLLPUBLIC_EXPORT plugin_init_sys_tray()
  {
      ::SolarMutexGuard aGuard;
-@@ -403,6 +426,20 @@ void SAL_DLLPUBLIC_EXPORT plugin_init_sys_tray()
- 
-     g_signal_connect(GTK_WIDGET(pTrayIcon), "destroy",
-             G_CALLBACK(exit_quickstarter_cb), NULL);
-+
-+#ifdef ENABLE_GIO
-+    GFile* pFile = NULL;
-+    rtl::OUString sLibraryFileUrl;
-+    if (osl::Module::getUrlFromAddress(plugin_init_sys_tray, sLibraryFileUrl))
-+        pFile = g_file_new_for_uri(rtl::OUStringToOString(sLibraryFileUrl, RTL_TEXTENCODING_UTF8).getStr());
-+
-+    if (pFile)
-+    {
-+        if ((pMonitor = g_file_monitor_file(pFile, G_FILE_MONITOR_NONE, NULL, NULL)))
-+            g_signal_connect(pMonitor, "changed", (GCallback)notify_file_changed, NULL); 
-+        g_object_unref(pFile);
-+    }
-+#endif
- }
- 
- void SAL_DLLPUBLIC_EXPORT plugin_shutdown_sys_tray()
-@@ -411,6 +448,17 @@ void SAL_DLLPUBLIC_EXPORT plugin_shutdown_sys_tray()
+@@ -403,6 +440,16 @@
+     ::SolarMutexGuard aGuard;
      if( !pTrayIcon )
          return;
- 
 +#ifdef ENABLE_GIO
 +    if (pMonitor)
 +    {
@@ -96,16 +96,6 @@ index e31c32f..1b78f9b 100644
 +        pMonitor = NULL;
 +    }
 +#endif
-+
-     /* we have to set pTrayIcon to NULL now, because gtk_widget_destroy
-      * causes calling exit_quickstarter_cb (which then calls this func.)
-      * again -> crash.
-@@ -419,7 +467,7 @@ void SAL_DLLPUBLIC_EXPORT plugin_shutdown_sys_tray()
-      */
-     GtkWidget* const pIcon = GTK_WIDGET( pTrayIcon );
+     gtk_widget_destroy( GTK_WIDGET( pTrayIcon ) );
      pTrayIcon = NULL;
--	gtk_widget_destroy( pIcon );
-+    gtk_widget_destroy( pIcon );
- 
      pExitMenuItem = NULL;
-     pOpenMenuItem = NULL;

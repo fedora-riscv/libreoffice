@@ -723,9 +723,6 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
-NDMAKES=1
-NBUILDS=1
-
 autoconf
 %configure \
  --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
@@ -765,6 +762,29 @@ export ARCH_FLAGS
 
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
+
+#HANGING JAVA HACK
+cat << \EOF > solenv/bin/java
+#!/bin/sh
+status=1
+count=1
+while [ $status -ne 0 -a $count -lt 10 ]
+do
+        timeout -k 5m 5m $REALJAVA $*
+        status=$?
+        if [ $status -ne 0 ]; then
+                echo $REALJAVA hung, trying again, attempt $count
+        fi
+        count=$[count+1]
+done
+exit $status
+EOF
+chmod +x solenv/bin/java
+export REALJAVA=`which java`
+export PATH=solenv/bin:$PATH
+which java
+#HANGING JAVA HACK
+
 cd instsetoo_native
 if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
     build --dlv_switch -link --all

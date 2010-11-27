@@ -97,6 +97,7 @@ Patch13: qstart.dont-forceenabled-on-post-reg-restart.patch
 Patch14: libreoffice-installfix.patch
 Patch15: exit.quickstarter.when.deleted.patch
 Patch16: 0001-destroydesktop.in.timeout.patch
+Patch17: openoffice.org-3.3.0.rhbz657541.join-paragraphs.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -710,6 +711,7 @@ cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch14 -p1 -b .libreoffice-installfix.patch
 %patch15 -p1 -b .exit.quickstarter.when.deleted.patch
 %patch16 -p1 -b .0001-destroydesktop.in.timeout.patch
+%patch17 -p1 -b .rhbz657541.join-paragraphs.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2017,9 +2019,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 
 %changelog
-* Fri Nov 26 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.3-2
+* Sat Nov 27 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.3-2
 - Resolves: rhbz#610103 exit quickstarter when libs deleted
 - Resolves: rhbz#652695 release desktop in timeout
+- Resolves: rhbz#657541 don't crash during processing of auto. styles
+  when joining paragraphs (dtardon)
 
 * Thu Nov 18 2010 Caolán McNamara <caolanm@redhat.com 3.2.99.3-1
 - next Libreoffice milestone

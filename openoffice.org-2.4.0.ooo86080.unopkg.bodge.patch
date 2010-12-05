@@ -1,8 +1,8 @@
 --- openoffice.org.orig/desktop/scripts/unopkg.sh	2008-01-14 15:55:26.000000000 +0000
 +++ openoffice.org/desktop/scripts/unopkg.sh	2008-02-14 10:52:10.000000000 +0000
-@@ -43,6 +43,33 @@
- sd_prog=`pwd`
- cd "$sd_cwd"
+@@ -57,6 +57,33 @@
+     ;;
+ esac
  
 +isshared=0
 +for arg in $@
@@ -34,7 +34,7 @@
  #collect all bootstrap variables specified on the command line
  #so that they can be passed as arguments to javaldx later on
  for arg in $@
-@@ -71,6 +98,8 @@
+@@ -94,6 +121,8 @@
  # SAL_NO_XINITTHREADS=true; export SAL_NO_XINITTHREADS
  
  # execute binary

@@ -27,43 +27,42 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.2.99.3
-Release:        2%{?dist}
+Version:        3.3.0.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-3.2.99.3.tar.bz2
-Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-3.2.99.3.tar.bz2
-Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-3.2.99.3.tar.bz2
-Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-3.2.99.3.tar.bz2
-Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-3.2.99.3.tar.bz2
-Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-3.2.99.3.tar.bz2
-Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-3.2.99.3.tar.bz2
-Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-3.2.99.3.tar.bz2
-Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-3.2.99.3.tar.bz2
-Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-3.2.99.3.tar.bz2
-Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-3.2.99.3.tar.bz2
-Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-3.2.99.3.tar.bz2
-Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-3.2.99.3.tar.bz2
-Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-3.2.99.3.tar.bz2
-Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-3.2.99.3.tar.bz2
-Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-3.2.99.3.tar.bz2
-Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-3.2.99.3.tar.bz2
-Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-3.2.99.3.tar.bz2
-Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-3.2.99.3.tar.bz2
-Source19:       http://cgit.freedesktop.org/ooo-build/ooo-build/plain/src/evolocal.odb
+Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-%{version}.tar.bz2
+Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-%{version}.tar.bz2
+Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-%{version}.tar.bz2
+Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-%{version}.tar.bz2
+Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-%{version}.tar.bz2
+Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-%{version}.tar.bz2
+Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-%{version}.tar.bz2
+Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-%{version}.tar.bz2
+Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-%{version}.tar.bz2
+Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-%{version}.tar.bz2
+Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-%{version}.tar.bz2
+Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-%{version}.tar.bz2
+Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-%{version}.tar.bz2
+Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-%{version}.tar.bz2
+Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-%{version}.tar.bz2
+Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-%{version}.tar.bz2
+Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-%{version}.tar.bz2
+Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-%{version}.tar.bz2
+Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-%{version}.tar.bz2
+Source19:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-%{version}.tar.bz2
 Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
-Source23:       libreoffice-multiliblauncher.sh
-Source26:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
-Source27:       http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source28:       http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
-Source29:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source30:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-Source31:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
-Source32:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
-Source33:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-3.2.99.3.tar.bz2
+Source22:       libreoffice-multiliblauncher.sh
+Source23:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
+Source24:       http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source25:       http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source26:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
+Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -680,7 +679,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 
 %prep
-%setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 33
+%setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 19
 for a in */*; do mv `pwd`/$a .; done
 #remove "debugging" translations
 rm -rf l10n/source/kid
@@ -693,8 +692,6 @@ rm -rf l10n/source/kid
  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-cp -p %{SOURCE19} extras/source/database/evolocal.odb
-cp -p %{SOURCE20} external/unowinreg/unowinreg.dll
 %patch1  -p1 -b .ooo53397.prelinkoptimize.desktop.patch
 %patch2  -p1
 %patch3  -p1 -b .ooo86080.unopkg.bodge.patch
@@ -750,13 +747,13 @@ autoconf
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+cp %{SOURCE23} ext_sources
+cp %{SOURCE24} ext_sources
+cp %{SOURCE25} ext_sources
 cp %{SOURCE26} ext_sources
 cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
-cp %{SOURCE30} ext_sources
-cp %{SOURCE31} ext_sources
-cp %{SOURCE32} ext_sources
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -1116,12 +1113,12 @@ echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
 echo exec libreoffice -base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
-cp -f %{SOURCE23} $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE22} $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
 
-cp -f %{SOURCE23} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE22} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
@@ -2017,8 +2014,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
-
 %changelog
+* Sun Dec 05 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-1
+- release candidate 1
+
 * Sat Nov 27 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.3-2
 - Resolves: rhbz#610103 exit quickstarter when libs deleted
 - Resolves: rhbz#652695 release desktop in timeout

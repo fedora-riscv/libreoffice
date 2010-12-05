@@ -92,11 +92,7 @@ Patch9:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
-Patch13: qstart.dont-forceenabled-on-post-reg-restart.patch
-Patch14: libreoffice-installfix.patch
-Patch15: exit.quickstarter.when.deleted.patch
-Patch16: 0001-destroydesktop.in.timeout.patch
-Patch17: openoffice.org-3.3.0.rhbz657541.join-paragraphs.patch
+Patch13: libreoffice-installfix.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -704,11 +700,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .ooo108637.sfx2.uisavedir.patch
 %patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
-%patch13 -p1 -b .qstart.dont-forceenabled-on-post-reg-restart.patch
-%patch14 -p1 -b .libreoffice-installfix.patch
-%patch15 -p1 -b .exit.quickstarter.when.deleted.patch
-%patch16 -p1 -b .0001-destroydesktop.in.timeout.patch
-%patch17 -p1 -b .rhbz657541.join-paragraphs.patch
+%patch13 -p1 -b .libreoffice-installfix.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2017,6 +2009,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Sun Dec 05 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-1
 - release candidate 1
+- drop integrated qstart.dont-forceenabled-on-post-reg-restart.patch
+- drop integrated exit.quickstarter.when.deleted.patch
+- drop integrated 0001-destroydesktop.in.timeout.patch
+- drop integrated openoffice.org-3.3.0.rhbz657541.join-paragraphs.patch
 
 * Sat Nov 27 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.3-2
 - Resolves: rhbz#610103 exit quickstarter when libs deleted

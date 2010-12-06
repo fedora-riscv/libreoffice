@@ -935,7 +935,6 @@ sv_SE_aliases="sv-FI"
 for lang in $sv_SE_aliases; do
         ln -s acor_sv-SE.dat acor_$lang.dat
 done
-mv acor_lt_LT.dat acor_lt-LT.dat
 %else
 rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif

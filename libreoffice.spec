@@ -831,12 +831,27 @@ fi
 if [ $ok == "false" ]; then
     exit 1
 fi
-mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-rsync -apl --link-dest=`readlink -f ../unxlng*.pro/LibreOffice/installed/install/en-US` ../unxlng*.pro/LibreOffice/installed/install/en-US/ $RPM_BUILD_ROOT/%{baseinstdir}
+if dmake openoffice_en-US; then
+    ok=true
+    break
+else
+    echo - ---dump log start---
+    cat ../unx*.pro/OpenOffice/installed/logging/en-US/log_*_en-US.log
+    echo - ---dump log end---
+    ok=false
+fi
+if [ $ok == "false" ]; then
+    exit 1
+fi
+mv ../unxlng*.pro/OpenOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{instdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack
-rsync -apl --link-dest=`readlink -f ../unxlng*.pro/LibreOffice_languagepack/installed/install/` ../unxlng*.pro/LibreOffice_languagepack/installed/install/ $RPM_BUILD_ROOT/%{baseinstdir}
+rm -rf ../unxlng*.pro/OpenOffice_languagepack/installed/install/log
+for langpack in ../unxlng*.pro/OpenOffice_languagepack/installed/install/*; do
+  cp -rp $langpack/* $RPM_BUILD_ROOT/%{instdir}
+  rm -rf $langpack
+done
 %endif
 for file in swriter scalc simpress sdraw ; do
     cp -f ../../desktop/$OUTPATH.pro/bin/$file $RPM_BUILD_ROOT/%{baseinstdir}/program/$file.bin
@@ -1621,10 +1636,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/setuprc
 %{baseinstdir}/program/versionrc
 %doc %{baseinstdir}/LICENSE
-%doc %{baseinstdir}/LICENSE.html
 %doc %{baseinstdir}/LICENSE.odt
 %doc %{baseinstdir}/README
-%doc %{baseinstdir}/README.html
 %doc %{baseinstdir}/THIRDPARTYLICENSEREADME.html
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/about.*
@@ -1645,9 +1658,7 @@ rm -rf $RPM_BUILD_ROOT
 %docdir %{baseinstdir}/share/readme
 %dir %{baseinstdir}/share/readme
 %{baseinstdir}/share/readme/LICENSE_en-US
-%{baseinstdir}/share/readme/LICENSE_en-US.html
 %{baseinstdir}/share/readme/README_en-US
-%{baseinstdir}/share/readme/README_en-US.html
 %dir %{baseinstdir}/share/registry
 %{baseinstdir}/share/registry/brand.xcd
 %{baseinstdir}/share/xdg/

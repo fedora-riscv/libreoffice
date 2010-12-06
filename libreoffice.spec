@@ -846,7 +846,7 @@ rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/share/prereg
 $RPM_BUILD_ROOT/%{baseinstdir}/program/unopkg list --bundled || :
 export WITH_LANG="en-US"
 dmake sdkoo
-mv ../unxlng*.pro/LibreOffice_SDK/installed/install/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
+mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../
 
 # install script providers

@@ -831,13 +831,14 @@ fi
 if [ $ok == "false" ]; then
     exit 1
 fi
-mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{instdir}
+mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
+mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack
 rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
 for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
-  cp -rp $langpack/* $RPM_BUILD_ROOT/%{instdir}
+  cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
   rm -rf $langpack
 done
 %endif
@@ -1623,6 +1624,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
 %{baseinstdir}/program/versionrc
+%doc %{baseinstdir}/CREDITS.odt
 %doc %{baseinstdir}/LICENSE
 %doc %{baseinstdir}/LICENSE.odt
 %doc %{baseinstdir}/README

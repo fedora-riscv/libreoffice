@@ -831,18 +831,6 @@ fi
 if [ $ok == "false" ]; then
     exit 1
 fi
-if dmake openoffice_en-US; then
-    ok=true
-    break
-else
-    echo - ---dump log start---
-    cat ../unx*.pro/OpenOffice/installed/logging/en-US/log_*_en-US.log
-    echo - ---dump log end---
-    ok=false
-fi
-if [ $ok == "false" ]; then
-    exit 1
-fi
 mv ../unxlng*.pro/OpenOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{instdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}

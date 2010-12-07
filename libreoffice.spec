@@ -831,12 +831,12 @@ fi
 if [ $ok == "false" ]; then
     exit 1
 fi
-mv ../unxlng*.pro/OpenOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{instdir}
+mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{instdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 %if %{langpacks}
 dmake ooolanguagepack
-rm -rf ../unxlng*.pro/OpenOffice_languagepack/installed/install/log
-for langpack in ../unxlng*.pro/OpenOffice_languagepack/installed/install/*; do
+rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
+for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
   cp -rp $langpack/* $RPM_BUILD_ROOT/%{instdir}
   rm -rf $langpack
 done

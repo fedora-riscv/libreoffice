@@ -2,7 +2,7 @@ diff --git a/sw/source/filter/ww8/ww8graf.cxx b/sw/source/filter/ww8/ww8graf.cxx
 index 5720af2..7807371 100644
 --- a/sw/source/filter/ww8/ww8graf.cxx
 +++ b/sw/source/filter/ww8/ww8graf.cxx
-@@ -1052,7 +1052,7 @@ SwFrmFmt* SwWW8ImplReader::InsertTxbxText(SdrTextObj* pTextObj,
+@@ -1052,7 +1052,7 @@
                                              Read_PicLoc(nAktId, pParams, 1);
                                          break;
                                  }
@@ -10,7 +10,7 @@ index 5720af2..7807371 100644
 +                                aSprmIter.advance();
                              }
  
-                             if( !nLoop )
+                             //if( bRead_Obj || bRead_PicLoc ) break;
 diff --git a/sw/source/filter/ww8/ww8par2.cxx b/sw/source/filter/ww8/ww8par2.cxx
 index 5b66561..65172b1 100644
 --- a/sw/source/filter/ww8/ww8par2.cxx

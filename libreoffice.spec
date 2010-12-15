@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -93,6 +93,7 @@ Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
 Patch13: libreoffice-installfix.patch
+Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -701,6 +702,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
 %patch13 -p1 -b .libreoffice-installfix.patch
+%patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2007,6 +2009,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/registry/pyuno.xcd
 
 %changelog
+* Wed Dec 15 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-2
+- Fix up some doc imports
+
 * Sun Dec 05 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-1
 - release candidate 1
 - drop integrated qstart.dont-forceenabled-on-post-reg-restart.patch

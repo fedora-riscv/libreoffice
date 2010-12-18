@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.0.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2011,8 +2011,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/registry/pyuno.xcd
 
 %changelog
-* Sat Dec 18 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-3
+* Sat Dec 18 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-4
 - Resoves: rhbz#663857 font color missing in transitions
+
+* Wed Dec 15 2010 Rex Dieter <rdieter@fedoraproject.org> - 3.3.0.1-3
+- rebuild (poppler)
 
 * Wed Dec 15 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-2
 - Fix up some doc imports

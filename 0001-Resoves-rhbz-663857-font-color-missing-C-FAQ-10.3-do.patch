@@ -1,0 +1,26 @@
+From 963c6b655032b4e5d0f26555f3c26a129a9efb03 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 18 Dec 2010 18:26:18 +0000
+Subject: [PATCH] Resoves: rhbz#663857 font color missing; C++ FAQ 10.3 doomage
+
+---
+ slideshow/source/engine/color.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/slideshow/source/engine/color.cxx b/slideshow/source/engine/color.cxx
+index 0f8a8f7..341a54a 100644
+--- a/slideshow/source/engine/color.cxx
++++ b/slideshow/source/engine/color.cxx
+@@ -229,8 +229,8 @@ namespace slideshow
+         }
+ 
+         RGBColor::RGBColor(const RGBColor& rLHS)
++            : maRGBTriple( rLHS.maRGBTriple )
+         {
+-            RGBColor(rLHS.getRed(), rLHS.getGreen(), rLHS.getBlue());		
+         }
+ 
+         RGBColor& RGBColor::operator=( const RGBColor& rLHS ){
+-- 
+1.7.3.3
+

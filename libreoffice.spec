@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.0.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -94,6 +94,7 @@ Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch12: turn-script-providers-into-extensions.patch
 Patch13: libreoffice-installfix.patch
 Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
+Patch15: 0001-Resoves-rhbz-663857-font-color-missing-C-FAQ-10.3-do.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -703,6 +704,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p1 -b .turn-script-providers-into-extensions.patch
 %patch13 -p1 -b .libreoffice-installfix.patch
 %patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
+%patch15 -p1 -b .font-color-missing-C-FAQ-10.3-do.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2009,6 +2011,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/registry/pyuno.xcd
 
 %changelog
+* Sat Dec 18 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-3
+- Resoves: rhbz#663857 font color missing in transitions
+
 * Wed Dec 15 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.1-2
 - Fix up some doc imports
 

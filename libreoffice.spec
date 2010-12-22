@@ -95,7 +95,7 @@ Patch12: turn-script-providers-into-extensions.patch
 Patch13: libreoffice-installfix.patch
 Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 Patch15: 0001-Resoves-rhbz-663857-font-color-missing-C-FAQ-10.3-do.patch
-Patch16: fdo32572-sc-dont-double-paste.patch
+Patch16: 0001-Avoid-double-paste-when-pasting-text-into-cell-comme.patch
 Patch17: 0001-Resolves-rhbz-660342-Undo-Redo-crash-with-postits.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -707,7 +707,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .libreoffice-installfix.patch
 %patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
 %patch15 -p1 -b .font-color-missing-C-FAQ-10.3-do.patch
-%patch16 -p1 -b .fdo32572-sc-dont-double-paste.patch
+%patch16 -p1 -b .Avoid-double-paste-when-pasting-text-into-cell-comme.patch
 %patch17 -p1 -b .rhbz-660342-Undo-Redo-crash-with-postits.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip

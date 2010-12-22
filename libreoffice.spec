@@ -96,6 +96,7 @@ Patch13: libreoffice-installfix.patch
 Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 Patch15: 0001-Resoves-rhbz-663857-font-color-missing-C-FAQ-10.3-do.patch
 Patch16: fdo32572-sc-dont-double-paste.patch
+Patch17: 0001-Resolves-rhbz-660342-Undo-Redo-crash-with-postits.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -707,6 +708,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
 %patch15 -p1 -b .font-color-missing-C-FAQ-10.3-do.patch
 %patch16 -p1 -b .fdo32572-sc-dont-double-paste.patch
+%patch17 -p1 -b .rhbz-660342-Undo-Redo-crash-with-postits.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2010,6 +2012,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Dec 22 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.2-2
 - Resolves: rhbz#663724 fdo32572-sc-dont-double-paste.patch
+- Resolves: rhbz#660342 Undo/Redo crash with postits
 
 * Tue Dec 21 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.2-1
 - latest version

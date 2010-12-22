@@ -1,0 +1,27 @@
+diff --git a/sc/source/ui/view/gridwin.cxx b/sc/source/ui/view/gridwin.cxx
+index 0d32bae..7ecdbfa 100644
+--- a/sc/source/ui/view/gridwin.cxx
++++ b/sc/source/ui/view/gridwin.cxx
+@@ -1689,6 +1689,22 @@ void ScGridWindow::HandleMouseButtonDown( const MouseEvent& rMEvt )
+     SCTAB nTab = pViewData->GetTabNo();
+     ScDocument* pDoc = pViewData->GetDocument();
+ 
++    {
++        //If the mouse down was inside a visible note window, ignore it and leave
++        //it up to the ScPostIt to handle it
++        ScAddress aCellPos(pViewData->GetCurX(), pViewData->GetCurY(), pViewData->GetTabNo());
++        ScPostIt* pNote = pDoc->GetNote(aCellPos);
++        SdrObject* pObj = pNote ? pNote->GetCaption() : 0;
++        if (pObj && ScDrawLayer::IsNoteCaption(pObj))
++        {
++            Point aLogicPos = PixelToLogic(aPos);
++            if (pObj->GetLogicRect().IsInside(aLogicPos))
++            {
++                bEEMouse = TRUE;
++                return;
++            }
++        }
++    }
+ 
+             //
+             //      AutoFilter buttons

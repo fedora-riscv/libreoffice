@@ -1631,7 +1631,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{baseinstdir}/CREDITS.odt
 %doc %{baseinstdir}/LICENSE
 %doc %{baseinstdir}/LICENSE.odt
-%doc %{baseinstdir}/README
 %doc %{baseinstdir}/THIRDPARTYLICENSEREADME.html
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/about.*
@@ -1649,10 +1648,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_brand.zip
-%docdir %{baseinstdir}/share/readme
-%dir %{baseinstdir}/share/readme
-%{baseinstdir}/share/readme/LICENSE_en-US
-%{baseinstdir}/share/readme/README_en-US
 %dir %{baseinstdir}/share/registry
 %{baseinstdir}/share/registry/brand.xcd
 %{baseinstdir}/share/xdg/

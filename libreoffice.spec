@@ -862,27 +862,27 @@ mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/
 cd ../../
 
 # unpack report-builder extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder.oxt
-unzip solver/%{OFFICEUPD}/unxlng*/bin/report-builder.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder.oxt
+install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder
+unzip solver/%{OFFICEUPD}/unxlng*/bin/report-builder.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder
 
 # unpack wiki-publisher extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher.oxt
-unzip solver/%{OFFICEUPD}/unxlng*/bin/swext/wiki-publisher.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher.oxt
+install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher
+unzip solver/%{OFFICEUPD}/unxlng*/bin/swext/wiki-publisher.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher
 
 # unpack presentation-minimizer extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer.oxt
-unzip solver/%{OFFICEUPD}/unxlng*/bin/minimizer/presentation-minimizer.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer.oxt
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer.oxt/help/component.txt
+install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer
+unzip solver/%{OFFICEUPD}/unxlng*/bin/minimizer/presentation-minimizer.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer
+chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer/help/component.txt
 
 # unpack presenter screen extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen.oxt
-unzip solver/%{OFFICEUPD}/unxlng*/bin/presenter/presenter-screen.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen.oxt
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen.oxt/help/component.txt
+install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen
+unzip solver/%{OFFICEUPD}/unxlng*/bin/presenter/presenter-screen.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen
+chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen/help/component.txt
 
 # unpack pdfimport extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport.oxt
-unzip solver/%{OFFICEUPD}/unxlng*/bin/pdfimport/pdfimport.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport.oxt
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport.oxt/help/component.txt
+install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport
+unzip solver/%{OFFICEUPD}/unxlng*/bin/pdfimport/pdfimport.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport
+chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport/help/component.txt
 
 # install script providers
 %install_bundled_extension -n script-provider-for-beanshell

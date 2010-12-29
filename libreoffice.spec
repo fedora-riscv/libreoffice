@@ -1585,6 +1585,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/share/samples/en-US
 %dir %{basisinstdir}/share/template
 %{basisinstdir}/share/template/en-US
+%{basisinstdir}/share/template/layout
 %{basisinstdir}/share/template/wizard
 %dir %{basisinstdir}/share/wordbook
 %{basisinstdir}/share/wordbook/en-US

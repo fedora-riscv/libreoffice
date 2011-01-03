@@ -2034,7 +2034,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/registry/pyuno.xcd
 
 %changelog
-* Mon Jan 03 2010 David Tardon <dtardon@redhat.com> 3.3.0.2-3
+* Mon Jan 03 2011 David Tardon <dtardon@redhat.com> 3.3.0.2-3
 - rebuild with new poppler
 
 * Wed Dec 22 2010 Caolán McNamara <caolanm@redhat.com> 3.3.0.2-2

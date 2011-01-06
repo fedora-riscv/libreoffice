@@ -1,0 +1,109 @@
+From b79c4f7daf165e4190b12a19382f4e5615b43163 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 6 Jan 2011 17:05:14 +0000
+Subject: [PATCH] Resolves: rhbz#666088 clean up search cache singleton in correct order
+
+---
+ unotools/inc/unotools/textsearch.hxx |    9 --------
+ unotools/source/i18n/textsearch.cxx  |   37 +++++++++++++++++++++------------
+ 2 files changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/unotools/inc/unotools/textsearch.hxx b/unotools/inc/unotools/textsearch.hxx
+index 0aaa123..16ae82f 100644
+--- a/unotools/inc/unotools/textsearch.hxx
++++ b/unotools/inc/unotools/textsearch.hxx
+@@ -128,15 +128,6 @@ public:
+ 
+ class UNOTOOLS_DLLPUBLIC TextSearch
+ {
+-    struct CachedTextSearch
+-    {
+-        ::osl::Mutex mutex;
+-        ::com::sun::star::util::SearchOptions Options;
+-        ::com::sun::star::uno::Reference< ::com::sun::star::util::XTextSearch > xTextSearch;
+-    };
+-
+-    static CachedTextSearch maCache;
+-
+     static ::com::sun::star::uno::Reference< ::com::sun::star::util::XTextSearch >
+         getXTextSearch( const ::com::sun::star::util::SearchOptions& rPara );
+ 
+diff --git a/unotools/source/i18n/textsearch.cxx b/unotools/source/i18n/textsearch.cxx
+index 8f8f780..8085045 100644
+--- a/unotools/source/i18n/textsearch.cxx
++++ b/unotools/source/i18n/textsearch.cxx
+@@ -36,6 +36,7 @@
+ #include <unotools/charclass.hxx>
+ #include <comphelper/processfactory.hxx>
+ #include <unotools/textsearch.hxx>
++#include <rtl/instance.hxx>
+ 
+ using namespace ::com::sun::star::util;
+ using namespace ::com::sun::star::uno;
+@@ -86,13 +87,6 @@ SearchParam::SearchParam( const SearchParam& rParam )
+     nTransliterationFlags = rParam.nTransliterationFlags;
+ }
+ 
+-//  Klasse zum Suchen eines Strings in einem Text. Es wird genau nach
+-//  dem String gesucht.
+-//  ( Die Unterscheidung der Gross/Klein-Schreibung kann mit einen Flag
+-//  unterdrueckt werden )
+-
+-TextSearch::CachedTextSearch TextSearch::maCache;
+-
+ static bool lcl_Equals( const SearchOptions& rSO1, const SearchOptions& rSO2 )
+ {
+     return rSO1.algorithmType == rSO2.algorithmType &&
+@@ -108,27 +102,42 @@ static bool lcl_Equals( const SearchOptions& rSO1, const SearchOptions& rSO2 )
+         rSO1.transliterateFlags == rSO2.transliterateFlags;
+ }
+ 
++namespace
++{
++    struct CachedTextSearch
++    {
++        ::osl::Mutex mutex;
++        ::com::sun::star::util::SearchOptions Options;
++        ::com::sun::star::uno::Reference< ::com::sun::star::util::XTextSearch > xTextSearch;
++    };
++
++    struct theCachedTextSearch
++        : public rtl::Static< CachedTextSearch, theCachedTextSearch > {};
++}
++
+ Reference<XTextSearch> TextSearch::getXTextSearch( const SearchOptions& rPara )
+ {
+-    osl::MutexGuard aGuard(maCache.mutex);
++    CachedTextSearch &rCache = theCachedTextSearch::get();
++
++    osl::MutexGuard aGuard(rCache.mutex);
+ 
+-    if ( lcl_Equals(maCache.Options, rPara) )
+-        return maCache.xTextSearch;
++    if ( lcl_Equals(rCache.Options, rPara) )
++        return rCache.xTextSearch;
+ 
+     try
+     {
+         Reference< XMultiServiceFactory > xMSF = ::comphelper::getProcessServiceFactory();
+-        maCache.xTextSearch.set( xMSF->createInstance(
++        rCache.xTextSearch.set( xMSF->createInstance(
+             ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM(
+                         "com.sun.star.util.TextSearch" ) ) ), UNO_QUERY_THROW );
+-        maCache.xTextSearch->setOptions( rPara );
+-        maCache.Options = rPara;
++        rCache.xTextSearch->setOptions( rPara );
++        rCache.Options = rPara;
+     }
+     catch ( Exception& )
+     {
+         DBG_ERRORFILE( "TextSearch ctor: Exception caught!" );
+     }
+-    return maCache.xTextSearch;
++    return rCache.xTextSearch;
+ }
+ 
+ TextSearch::TextSearch(const SearchParam & rParam, LanguageType eLang )
+-- 
+1.7.3.3
+

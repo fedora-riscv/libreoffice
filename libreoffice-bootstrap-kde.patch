@@ -1,0 +1,26 @@
+diff -ur libreoffice-bootstrap-orig/configure.in libreoffice-bootstrap-3.3.0.2/configure.in
+--- libreoffice-bootstrap-orig/configure.in	2010-12-17 23:08:36.000000000 +0100
++++ libreoffice-bootstrap-3.3.0.2/configure.in	2011-01-05 20:33:22.893995652 +0100
+@@ -6890,11 +6890,11 @@
+    qt_libdirs="$QT4LIB /usr/lib $x_libraries"
+ 
+    kde_incdirs="/usr/include $x_includes"
+-   kde_libdirs="/usr/lib $x_libraries"
++   kde_libdirs="/usr/lib /usr/lib/kde4 /usr/lib/kde4/devel $x_libraries"
+ 
+    if test "$build_cpu" = "x86_64" ; then
+       qt_libdirs="$qt_libdirs /usr/lib64/qt4 /usr/lib64/qt /usr/lib64"
+-      kde_libdirs="$kde_libdirs /usr/lib64 /usr/lib64/kde4"
++      kde_libdirs="$kde_libdirs /usr/lib64 /usr/lib64/kde4 /usr/lib64/kde4/devel"
+    fi
+ 
+    if test -n "$QTDIR" ; then
+@@ -6923,7 +6923,7 @@
+       fi
+    fi
+    if test -n "$KDE4DIR" ; then
+-      kde_incdirs="$KDE4DIR/include $kde_incdirs"
++      kde_incdirs="$KDE4DIR/include $KDE4DIR/include/kde4 $kde_incdirs"
+       if test "$build_cpu" != "x86_64" ; then
+          kde_libdirs="$KDE4DIR/lib $kde_libdirs"
+       else

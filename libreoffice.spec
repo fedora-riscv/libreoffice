@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.0.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -80,6 +80,9 @@ BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
 
+# for the KDE subpackage
+BuildRequires:  kdelibs4-devel
+
 Patch1:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
 Patch2:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
 Patch3:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
@@ -97,6 +100,7 @@ Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 Patch15: 0001-Resoves-rhbz-663857-font-color-missing-C-FAQ-10.3-do.patch
 Patch16: 0001-Avoid-double-paste-when-pasting-text-into-cell-comme.patch
 Patch17: 0001-Resolves-rhbz-660342-Undo-Redo-crash-with-postits.patch
+Patch18: libreoffice-bootstrap-kde.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -466,6 +470,14 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
+%package kde
+Summary: LibreOffice KDE integration plug-in
+Group:   Applications/Productivity
+Requires: %{name}-core = %{version}-%{release}
+
+%description kde
+A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+
 
 # Defines a language pack subpackage.
 #
@@ -709,6 +721,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .font-color-missing-C-FAQ-10.3-do.patch
 %patch16 -p1 -b .Avoid-double-paste-when-pasting-text-into-cell-comme.patch
 %patch17 -p1 -b .rhbz-660342-Undo-Redo-crash-with-postits.patch
+%patch18 -p1 -b .libreoffice-bootstrap-kde.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -727,6 +740,11 @@ NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 NDMAKES=1
 NBUILDS=1
 
+# KDE bits
+export QT4DIR=%{_qt4_prefix}
+export KDE4DIR=%{_kde4_prefix}
+export PATH=$QT4DIR/bin:$PATH
+
 autoconf
 %configure \
  --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
@@ -743,7 +761,7 @@ autoconf
  --with-external-dict-dir=/usr/share/myspell --without-myspell-dicts \
  --without-fonts --without-agg --without-ppds --without-afms %{stlflags} \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
- --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5
+ --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 --enable-kde4
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
@@ -1307,7 +1325,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/gnome-open-url.bin
 %{basisinstdir}/program/hatchwindowfactory.uno.so
 %{basisinstdir}/program/i18nsearch.uno.so
-%{basisinstdir}/program/kde-open-url
 %{basisinstdir}/program/legacy_binfilters.rdb
 %{basisinstdir}/program/libacc%{SOPOST}.so
 %{basisinstdir}/program/libadabas%{SOPOST}.so
@@ -2033,7 +2050,19 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
+%files kde
+%defattr(-,root,root,-)
+%dir %{basisinstdir}
+%dir %{basisinstdir}/program
+%{basisinstdir}/program/kde4be1.uno.so
+%{basisinstdir}/program/fps_kde4.uno.so
+%{basisinstdir}/program/libvclplug_kde4%{SOPOST}.so
+%{basisinstdir}/program/kde-open-url
+
 %changelog
+* Wed Jan 05 2011 Lukas Tinkl <ltinkl@redhat.com> 3.3.0.2-4
+- create a KDE integration subpackage
+
 * Mon Jan 03 2011 David Tardon <dtardon@redhat.com> 3.3.0.2-3
 - rebuild with new poppler
 

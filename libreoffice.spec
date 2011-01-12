@@ -27,8 +27,8 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.3.0.2
-Release:        5%{?dist}
+Version:        3.3.0.3
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2062,6 +2062,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Jan 12 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.3-1
+- latest version
+
 * Thu Jan 06 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.2-5
 - Resolves: rhbz#666088 don't crash on clean up of search cache
 

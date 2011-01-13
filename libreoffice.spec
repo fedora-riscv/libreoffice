@@ -63,6 +63,7 @@ Source26:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf
 Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
+Source30:       http://hg.services.openoffice.org/binaries/cf8a6967f7de535ae257fa411c98eb88-mdds_0.3.0.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -755,7 +756,8 @@ autoconf
  --with-external-dict-dir=/usr/share/myspell --without-myspell-dicts \
  --without-fonts --without-agg --without-ppds --without-afms %{stlflags} \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
- --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 --enable-kde4
+ --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
+ --enable-kde4 --without-system-mdds
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
@@ -766,6 +768,7 @@ cp %{SOURCE26} ext_sources
 cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
+cp %{SOURCE30} ext_sources
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do

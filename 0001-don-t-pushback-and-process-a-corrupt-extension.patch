@@ -1,0 +1,26 @@
+From 0a8149b7e317b9f6d666f4fbcb649f9301da3581 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 18 Jan 2011 12:11:52 +0000
+Subject: [PATCH] don't pushback and process a corrupt extension
+
+---
+ .../deployment/registry/package/dp_package.cxx     |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/desktop/source/deployment/registry/package/dp_package.cxx b/desktop/source/deployment/registry/package/dp_package.cxx
+index f31cf3f..9cbbf83 100644
+--- a/desktop/source/deployment/registry/package/dp_package.cxx
++++ b/desktop/source/deployment/registry/package/dp_package.cxx
+@@ -1618,7 +1618,8 @@ BackendImpl::PackageImpl::getPackagesFromDb(
+         Reference<deployment::XPackage> xExtension =
+             bindBundleItem(i->first, i->second, true, m_identifier, xCmdEnv);
+         OSL_ASSERT(xExtension.is());
+-        retVector.push_back(xExtension);
++        if (xExtension.is())
++            retVector.push_back(xExtension);
+     }
+     
+     return retVector;
+-- 
+1.7.3.4
+

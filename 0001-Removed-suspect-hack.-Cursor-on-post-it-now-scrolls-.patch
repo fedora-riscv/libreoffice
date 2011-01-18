@@ -1,0 +1,37 @@
+From 092e1494c1d7d68873f50a0da7699b0fdd15c439 Mon Sep 17 00:00:00 2001
+From: Andy Hearn <cuvierster@gmail.com>
+Date: Sat, 8 Jan 2011 23:26:13 +0000
+Subject: [PATCH] Removed suspect hack. Cursor on post-it now scrolls out of view.
+
+Previously, when the user scrolls when the cursor is within a
+post-it note, the main view judders, refusing to let the cursor
+ go out of view.  The removed lines appears to have been a hack
+to retain focus of a post-it note containing the cursor.
+---
+ sw/source/ui/docvw/PostItMgr.cxx |   10 ----------
+ 1 files changed, 0 insertions(+), 10 deletions(-)
+
+diff --git a/sw/source/ui/docvw/PostItMgr.cxx b/sw/source/ui/docvw/PostItMgr.cxx
+index cb3e783..7dcdad7 100644
+--- a/sw/source/ui/docvw/PostItMgr.cxx
++++ b/sw/source/ui/docvw/PostItMgr.cxx
+@@ -716,16 +716,6 @@ void SwPostItMgr::LayoutPostIts()
+                                 OSL_ENSURE(mPages[n]->bScrollbar,"SwPostItMgr::LayoutByPage(): note overlaps, but bScrollbar is not true");
+                             }
+                         }
+-
+-                        // do some magic so we really see the focused note
+-                        for(SwSidebarWin_iterator i = aVisiblePostItList.begin(); i!= aVisiblePostItList.end() ; i++)
+-                        {
+-                                            if ((*i)->HasChildPathFocus())
+-                            {
+-                                MakeVisible((*i),n+1);
+-                                break;
+-                            }
+-                        }
+                     }
+                     else
+                     {
+-- 
+1.7.3.4
+

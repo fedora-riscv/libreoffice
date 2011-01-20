@@ -27,8 +27,8 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.3.0.3
-Release:        2%{?dist}
+Version:        3.3.0.4
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -99,10 +99,9 @@ Patch12: turn-script-providers-into-extensions.patch
 Patch13: libreoffice-installfix.patch
 Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 Patch15: libreoffice-bootstrap-kde.patch
-Patch16: 0001-fix-presenter-screens-description.xml-build.patch
-Patch17: 0001-don-t-pushback-and-process-a-corrupt-extension.patch
-Patch18: 0001-free-ctxt-after-taking-lastError-details.patch
-Patch19: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
+Patch16: 0001-don-t-pushback-and-process-a-corrupt-extension.patch
+Patch17: 0001-free-ctxt-after-taking-lastError-details.patch
+Patch18: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -721,10 +720,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .libreoffice-installfix.patch
 %patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
 %patch15 -p1 -b .libreoffice-bootstrap-kde.patch
-%patch16 -p1 -b .fix-presenter-screens-description.xml-build.patch
-%patch17 -p1 -b .don-t-pushback-and-process-a-corrupt-extension.patch
-%patch18 -p1 -b .free-ctxt-after-taking-lastError-details.patch
-%patch19 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
+%patch16 -p1 -b .don-t-pushback-and-process-a-corrupt-extension.patch
+%patch17 -p1 -b .free-ctxt-after-taking-lastError-details.patch
+%patch18 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2065,6 +2063,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Jan 20 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.4-1
+- next release candidate
+- drop integrated 0001-fix-presenter-screens-description.xml-build.patch
+
 * Tue Jan 18 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.3-2
 - backport fix to get presenter screen working
 - make handling busted extensions more robust

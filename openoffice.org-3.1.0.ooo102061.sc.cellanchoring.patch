@@ -451,8 +451,8 @@ diff -ru sc.orig/source/core/data/drwlayer.cxx sc/source/core/data/drwlayer.cxx
 -    MoveAreaTwips( nTab, aRect, Point( 0,nDifTwips ), aTopLeft );
  }
  
- BOOL ScDrawLayer::HasObjectsInRows( SCTAB nTab, SCROW nStartRow, SCROW nEndRow, bool bIncludeNotes )
-@@ -1823,35 +1744,105 @@
+ BOOL ScDrawLayer::HasObjectsInRows( SCTAB nTab, SCROW nStartRow, SCROW nEndRow )
+@@ -1821,35 +1742,105 @@
      }
  }
  
@@ -577,7 +577,7 @@ diff -ru sc.orig/source/core/data/drwlayer.cxx sc/source/core/data/drwlayer.cxx
      if( pObj && bCreate )
      {
          ScDrawObjData* pData = new ScDrawObjData;
-@@ -1888,15 +1879,7 @@
+@@ -1886,15 +1877,7 @@
  
  ScIMapInfo* ScDrawLayer::GetIMapInfo( SdrObject* pObj )				// static
  {
@@ -594,7 +594,7 @@ diff -ru sc.orig/source/core/data/drwlayer.cxx sc/source/core/data/drwlayer.cxx
  }
  
  // static:
-@@ -1949,7 +1932,7 @@
+@@ -1947,7 +1930,7 @@
          else if ( pObj->ISA( SdrOle2Obj ) ) // OLE-Objekt
          {
              // TODO/LEAN: working with visual area needs running state
@@ -603,7 +603,7 @@ diff -ru sc.orig/source/core/data/drwlayer.cxx sc/source/core/data/drwlayer.cxx
              bObjSupported = TRUE;
          }
  
-@@ -1967,14 +1950,9 @@
+@@ -1965,14 +1948,9 @@
  
  ScMacroInfo* ScDrawLayer::GetMacroInfo( SdrObject* pObj, BOOL bCreate )             // static
  {

@@ -1,0 +1,13 @@
+diff --git a/i18npool/source/breakiterator/data/line.txt b/i18npool/source/breakiterator/data/line.txt
+index cbabee6..bc27bb8 100644
+--- a/i18npool/source/breakiterator/data/line.txt
++++ b/i18npool/source/breakiterator/data/line.txt
+@@ -61,7 +61,7 @@ $BB = [:LineBreak =  Break_Before:];
+ $BK = [:LineBreak =  Mandatory_Break:];
+ $B2 = [:LineBreak =  Break_Both:];
+ $CB = [:LineBreak =  Contingent_Break:];
+-$CL = [:LineBreak =  Close_Punctuation:] ;
++$CL = [[:LineBreak =  Close_Punctuation:] [:LineBreak = Close_Parenthesis:]];
+ $CM = [:LineBreak =  Combining_Mark:];
+ $CR = [:LineBreak =  Carriage_Return:];
+ $EX = [:LineBreak =  Exclamation:];

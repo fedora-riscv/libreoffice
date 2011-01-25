@@ -104,6 +104,7 @@ Patch16: 0001-don-t-pushback-and-process-a-corrupt-extension.patch
 Patch17: 0001-free-ctxt-after-taking-lastError-details.patch
 Patch18: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
 Patch19: libreoffice-fdo31271.icu.patch
+Patch20: libreoffice-gcc4.6.0.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -726,6 +727,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .free-ctxt-after-taking-lastError-details.patch
 %patch18 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
 %patch19 -p1 -b .libreoffice-fdo31271.icu.patch
+%patch20 -p1 -b .libreoffice-gcc4.6.0.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

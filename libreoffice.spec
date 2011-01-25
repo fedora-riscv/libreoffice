@@ -64,6 +64,9 @@ Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de
 Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
 Source30:       http://hg.services.openoffice.org/binaries/cf8a6967f7de535ae257fa411c98eb88-mdds_0.3.0.tar.bz2
+#Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
+#backwards compatability.
+Source31:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -74,14 +77,12 @@ BuildRequires:  db4-devel, sane-backends-devel, libicu-devel, perl-Archive-Zip
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
-BuildRequires:  mdds-devel, lpsolve-devel, hsqldb, bsh, lucene, lucene-contrib
+BuildRequires:  mdds-devel, lpsolve-devel, bsh, lucene, lucene-contrib
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
-
-# for the KDE subpackage
 BuildRequires:  kdelibs4-devel
 
 Patch1:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
@@ -161,7 +162,7 @@ to be written in python.
 %package base
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
-Requires: hsqldb, postgresql-jdbc
+Requires: postgresql-jdbc
 Requires: %{name}-ure = %{version}-%{release}
 Requires: %{name}-core = %{version}-%{release}
 Requires: %{name}-calc = %{version}-%{release}
@@ -765,7 +766,7 @@ autoconf
  --without-fonts --without-agg --without-ppds --without-afms %{stlflags} \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --enable-kde4 --without-system-mdds
+ --enable-kde4 --without-system-mdds --without-system-hsqldb
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
@@ -777,6 +778,7 @@ cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
+cp %{SOURCE31} ext_sources
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -1744,6 +1746,7 @@ fi
 %{basisinstdir}/help/en/sdatabase.*
 %dir %{basisinstdir}/program
 %dir %{basisinstdir}/program/classes
+%{basisinstdir}/program/classes/hsqldb.jar
 %{basisinstdir}/program/classes/sdbc_hsqldb.jar
 %{basisinstdir}/program/libabp%{SOPOST}.so
 %{basisinstdir}/program/libadabasui%{SOPOST}.so

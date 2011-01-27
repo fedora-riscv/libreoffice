@@ -1,0 +1,152 @@
+From 8636f3f41f8f6950a0e3c05f50eb4423c4035b2f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 27 Jan 2011 16:41:00 +0000
+Subject: [PATCH 1/2] Related: rhbz#672872 cancel gtk file-dialog on desktop::terminate
+
+---
+ fpicker/source/unx/gnome/SalGtkFilePicker.cxx   |    7 +++++--
+ fpicker/source/unx/gnome/SalGtkFolderPicker.cxx |    5 ++++-
+ fpicker/source/unx/gnome/SalGtkPicker.cxx       |   19 ++++++++++++++++---
+ fpicker/source/unx/gnome/SalGtkPicker.hxx       |   20 +++++++++++++++++---
+ 4 files changed, 42 insertions(+), 9 deletions(-)
+
+diff --git a/fpicker/source/unx/gnome/SalGtkFilePicker.cxx b/fpicker/source/unx/gnome/SalGtkFilePicker.cxx
+index d08125e..068ead5 100644
+--- a/fpicker/source/unx/gnome/SalGtkFilePicker.cxx
++++ b/fpicker/source/unx/gnome/SalGtkFilePicker.cxx
+@@ -978,7 +978,10 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException )
+     uno::Reference< awt::XExtendedToolkit > xToolkit(
+         m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.awt.Toolkit")) ), uno::UNO_QUERY);
+ 
+-    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit);
++    uno::Reference< frame::XDesktop > xDesktop(
++        m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.frame.Desktop")) ), uno::UNO_QUERY);
++
++    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit, xDesktop);
+     uno::Reference < awt::XTopWindowListener > xLifeCycle(pRunDialog);
+     while( GTK_RESPONSE_NO == btn )
+     {
+@@ -1011,7 +1014,7 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException )
+                                 OUStringToOString(aResProvider.getResString(FILE_PICKER_TITLE_SAVE ),
+                                 RTL_TEXTENCODING_UTF8 ).getStr() );
+                                  
+-                            RunDialog* pAnotherDialog = new RunDialog(dlg, xToolkit);
++                            RunDialog* pAnotherDialog = new RunDialog(dlg, xToolkit, xDesktop);
+                             uno::Reference < awt::XTopWindowListener > xAnotherLifeCycle(pAnotherDialog);
+                             btn = pAnotherDialog->run();
+ 
+diff --git a/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx b/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx
+index c42021c..08bbf04 100644
+--- a/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx
++++ b/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx
+@@ -177,7 +177,10 @@ sal_Int16 SAL_CALL SalGtkFolderPicker::execute() throw( uno::RuntimeException )
+     uno::Reference< awt::XExtendedToolkit > xToolkit(
+         m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.awt.Toolkit")) ), uno::UNO_QUERY);
+ 
+-    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit);
++    uno::Reference< frame::XDesktop > xDesktop(
++        m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.frame.Desktop")) ), uno::UNO_QUERY);
++
++    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit, xDesktop);
+     uno::Reference < awt::XTopWindowListener > xLifeCycle(pRunDialog);
+     gint nStatus = pRunDialog->run();
+     switch( nStatus )
+diff --git a/fpicker/source/unx/gnome/SalGtkPicker.cxx b/fpicker/source/unx/gnome/SalGtkPicker.cxx
+index 6dbaa03..9bdad50 100644
+--- a/fpicker/source/unx/gnome/SalGtkPicker.cxx
++++ b/fpicker/source/unx/gnome/SalGtkPicker.cxx
+@@ -130,9 +130,10 @@ extern "C"
+     extern GdkDisplay* gdk_x11_lookup_xdisplay (void*xdisplay);
+ }
+ 
+-RunDialog::RunDialog( GtkWidget *pDialog, uno::Reference< awt::XExtendedToolkit >& rToolkit ) :
+-    cppu::WeakComponentImplHelper1< awt::XTopWindowListener >( maLock ),
+-    mpDialog(pDialog), mpCreatedParent(NULL), mxToolkit(rToolkit)
++RunDialog::RunDialog( GtkWidget *pDialog, uno::Reference< awt::XExtendedToolkit >& rToolkit,
++    uno::Reference< frame::XDesktop >& rDesktop ) :
++    cppu::WeakComponentImplHelper2< awt::XTopWindowListener, frame::XTerminateListener >( maLock ),
++    mpDialog(pDialog), mpCreatedParent(NULL), mxToolkit(rToolkit), mxDesktop(rDesktop)
+ {
+     awt::SystemDependentXWindow aWindowHandle;
+ 
+@@ -186,6 +187,18 @@ void SAL_CALL RunDialog::windowOpened( const ::com::sun::star::lang::EventObject
+     g_timeout_add_full(G_PRIORITY_HIGH_IDLE, 0, (GSourceFunc)canceldialog, this, NULL);
+ }
+ 
++void SAL_CALL RunDialog::queryTermination( const ::com::sun::star::lang::EventObject& )
++        throw(::com::sun::star::frame::TerminationVetoException, ::com::sun::star::uno::RuntimeException)
++{
++}
++
++void SAL_CALL RunDialog::notifyTermination( const ::com::sun::star::lang::EventObject& )
++        throw(::com::sun::star::uno::RuntimeException)
++{
++    GdkThreadLock aLock;
++    g_timeout_add_full(G_PRIORITY_HIGH_IDLE, 0, (GSourceFunc)canceldialog, this, NULL);
++}
++
+ void RunDialog::cancel()
+ {
+     GdkThreadLock aLock;
+diff --git a/fpicker/source/unx/gnome/SalGtkPicker.hxx b/fpicker/source/unx/gnome/SalGtkPicker.hxx
+index 889790d..52fe5a0 100644
+--- a/fpicker/source/unx/gnome/SalGtkPicker.hxx
++++ b/fpicker/source/unx/gnome/SalGtkPicker.hxx
+@@ -34,7 +34,7 @@
+ //_____________________________________________________________________________
+ 
+ #include <osl/mutex.hxx>
+-#include <cppuhelper/compbase1.hxx>
++#include <cppuhelper/compbase2.hxx>
+ #include <com/sun/star/ui/dialogs/XFilePicker.hpp>
+ #include <com/sun/star/ui/dialogs/XFilePicker2.hpp>
+ #include <com/sun/star/ui/dialogs/XFolderPicker.hpp>
+@@ -43,6 +43,8 @@
+ 
+ #include <com/sun/star/awt/XTopWindowListener.hpp>
+ #include <com/sun/star/awt/XExtendedToolkit.hpp>
++#include <com/sun/star/frame/XDesktop.hpp>
++#include <com/sun/star/frame/XTerminateListener.hpp>
+ 
+ #include <gtk/gtk.h>
+ #include <gdk/gdkkeysyms.h>
+@@ -85,13 +87,16 @@ public:
+ //to happen while we're opened waiting for user input, e.g. 
+ //https://bugzilla.redhat.com/show_bug.cgi?id=441108
+ class RunDialog :
+-    public cppu::WeakComponentImplHelper1< ::com::sun::star::awt::XTopWindowListener >
++    public cppu::WeakComponentImplHelper2<
++        ::com::sun::star::awt::XTopWindowListener,
++        ::com::sun::star::frame::XTerminateListener >
+ {
+ private:
+     osl::Mutex maLock;
+     GtkWidget *mpDialog;
+     GdkWindow *mpCreatedParent;
+     ::com::sun::star::uno::Reference< ::com::sun::star::awt::XExtendedToolkit>  mxToolkit;
++    ::com::sun::star::uno::Reference< ::com::sun::star::frame::XDesktop >  mxDesktop;
+ public:
+ 
+     // XTopWindowListener
+@@ -112,8 +117,17 @@ public:
+         throw (::com::sun::star::uno::RuntimeException) {}
+     virtual void SAL_CALL windowDeactivated( const ::com::sun::star::lang::EventObject& )
+         throw (::com::sun::star::uno::RuntimeException) {}
++
++    // XTerminateListener
++    virtual void SAL_CALL queryTermination( const ::com::sun::star::lang::EventObject& aEvent )
++        throw(::com::sun::star::frame::TerminationVetoException, ::com::sun::star::uno::RuntimeException);
++    virtual void SAL_CALL notifyTermination( const ::com::sun::star::lang::EventObject& aEvent )
++        throw(::com::sun::star::uno::RuntimeException);
+ public:
+-    RunDialog(GtkWidget *pDialog, ::com::sun::star::uno::Reference< ::com::sun::star::awt::XExtendedToolkit > &rToolkit);
++    RunDialog(GtkWidget *pDialog,
++        ::com::sun::star::uno::Reference< ::com::sun::star::awt::XExtendedToolkit > &rToolkit,
++        ::com::sun::star::uno::Reference< ::com::sun::star::frame::XDesktop > &rDesktop
++        );
+     gint run();
+     void cancel();
+     ~RunDialog();
+-- 
+1.7.3.5
+

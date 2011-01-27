@@ -107,6 +107,7 @@ Patch19: libreoffice-fdo31271.icu.patch
 Patch20: libreoffice-gcc4.6.0.patch
 Patch21: libreoffice-fdo32561.comphelper.patch
 Patch22: 0001-Related-rhbz-610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
+Patch23: 0001-fexceptions-fexceptions.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -732,6 +733,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .libreoffice-gcc4.6.0.patch
 %patch21 -p1 -b .fdo32561.comphelper.patch
 %patch22 -p1 -b .rhbz-610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
+%patch23 -p1 -b .fexceptions-fexceptions.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

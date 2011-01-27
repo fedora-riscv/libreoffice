@@ -1,0 +1,43 @@
+From 488a4dd14cba6231d33ed0f86e45bf68c9109a11 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 27 Jan 2011 13:15:58 +0000
+Subject: [PATCH] --fexceptions -> -fexceptions
+
+---
+ stlport/STLport-4.5.patch |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/stlport/STLport-4.5.patch b/stlport/STLport-4.5.patch
+index 27ff2ef..8476053 100644
+--- a/stlport/STLport-4.5.patch
++++ b/stlport/STLport-4.5.patch
+@@ -137,7 +137,7 @@
+ +#
+ +#
+ +LINK=ar cr
+-+DYN_LINK=${CXX} -Wl,-rpath,'$$ORIGIN' ${PTHREAD_LIBS} --fexceptions -shared -o
+++DYN_LINK=${CXX} -Wl,-rpath,'$$ORIGIN' ${PTHREAD_LIBS} -fexceptions -shared -o
+ +
+ +OBJEXT=o
+ +DYNEXT=so
+@@ -210,7 +210,7 @@
+ +#
+ +#
+ +LINK=ar crv
+-+DYN_LINK=$(CXX) --fexceptions -shared -o
+++DYN_LINK=$(CXX) -fexceptions -shared -o
+ +
+ +OBJEXT=o
+ +DYNEXT=dll
+@@ -449,7 +449,7 @@
+ +#
+ +#
+ +LINK=ar cr
+-+DYN_LINK=$(CXX) -Wl,-rpath,'$$ORIGIN' --fexceptions -shared -o
+++DYN_LINK=$(CXX) -Wl,-rpath,'$$ORIGIN' -fexceptions -shared -o
+ +
+ +OBJEXT=o
+ +DYNEXT=so
+-- 
+1.7.3.5
+

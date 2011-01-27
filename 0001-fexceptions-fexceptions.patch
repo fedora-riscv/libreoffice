@@ -39,5 +39,5 @@ index d0ee030..5ff8668 100644
  #       endif
 -#       include _STLP_NATIVE_HEADER(exception_defines.h)
  #       include _STLP_NATIVE_HEADER(limits)
- #       if !defined(__GXX_EXPERIMENTAL_CXX0X__)
- #           include _STLP_NATIVE_HEADER(memory)
+ #       include _STLP_NATIVE_HEADER(memory)
+ #       include _STLP_NATIVE_HEADER(exception)

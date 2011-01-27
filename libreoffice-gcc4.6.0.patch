@@ -11,18 +11,6 @@ index f88069b..4e578a9 100644
      const basegfx::B2DVector& getPrevVector() const 
      { 
          return maPrevVector; 
-diff --git a/basegfx/source/range/b2drangeclipper.cxx b/basegfx/source/range/b2drangeclipper.cxx
-index 978f31e..674003f 100644
---- a/basegfx/source/range/b2drangeclipper.cxx
-+++ b/basegfx/source/range/b2drangeclipper.cxx
-@@ -600,7 +600,6 @@ namespace basegfx
-             std::vector<B2DRange>::const_reverse_iterator aCurrRectR=rRanges.rbegin();
-             std::vector<B2VectorOrientation>::const_reverse_iterator aCurrOrientationR=rOrientations.rbegin();
-             const std::vector<B2DRange>::const_reverse_iterator aEndR=rRanges.rend();
--            const std::vector<B2VectorOrientation>::const_reverse_iterator aEndOrientationR=rOrientations.rend();
-             while( aCurrRectR != aEndR )
-             {
-
 diff --git a/basegfx/source/polygon/b2dsvgpolypolygon.cxx b/basegfx/source/polygon/b2dsvgpolypolygon.cxx
 index 7f5ed07..51b8740 100644
 --- a/basegfx/source/polygon/b2dsvgpolypolygon.cxx

@@ -14,9 +14,9 @@ diff --git a/fpicker/source/unx/gnome/SalGtkFilePicker.cxx b/fpicker/source/unx/
 index d08125e..068ead5 100644
 --- a/fpicker/source/unx/gnome/SalGtkFilePicker.cxx
 +++ b/fpicker/source/unx/gnome/SalGtkFilePicker.cxx
-@@ -978,7 +978,10 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException )
+@@ -1030,7 +1030,10 @@
      uno::Reference< awt::XExtendedToolkit > xToolkit(
-         m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.awt.Toolkit")) ), uno::UNO_QUERY);
+         m_xServiceMgr->createInstance( ::rtl::OUString::createFromAscii("com.sun.star.awt.Toolkit") ), uno::UNO_QUERY);
  
 -    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit);
 +    uno::Reference< frame::XDesktop > xDesktop(
@@ -26,7 +26,7 @@ index d08125e..068ead5 100644
      uno::Reference < awt::XTopWindowListener > xLifeCycle(pRunDialog);
      while( GTK_RESPONSE_NO == btn )
      {
-@@ -1011,7 +1014,7 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException )
+@@ -1063,7 +1066,7 @@
                                  OUStringToOString(aResProvider.getResString(FILE_PICKER_TITLE_SAVE ),
                                  RTL_TEXTENCODING_UTF8 ).getStr() );
                                   
@@ -39,9 +39,9 @@ diff --git a/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx b/fpicker/source/un
 index c42021c..08bbf04 100644
 --- a/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx
 +++ b/fpicker/source/unx/gnome/SalGtkFolderPicker.cxx
-@@ -177,7 +177,10 @@ sal_Int16 SAL_CALL SalGtkFolderPicker::execute() throw( uno::RuntimeException )
+@@ -184,7 +184,10 @@
      uno::Reference< awt::XExtendedToolkit > xToolkit(
-         m_xServiceMgr->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.awt.Toolkit")) ), uno::UNO_QUERY);
+         m_xServiceMgr->createInstance( ::rtl::OUString::createFromAscii("com.sun.star.awt.Toolkit") ), uno::UNO_QUERY);
  
 -    RunDialog* pRunDialog = new RunDialog(m_pDialog, xToolkit);
 +    uno::Reference< frame::XDesktop > xDesktop(

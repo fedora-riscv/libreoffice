@@ -33,11 +33,16 @@ diff --git a/stlport/systemstlguards/preextstl.h b/stlport/systemstlguards/preex
 index d0ee030..5ff8668 100644
 --- a/stlport/systemstlguards/preextstl.h
 +++ b/stlport/systemstlguards/preextstl.h
-@@ -48,7 +48,6 @@
+@@ -48,7 +48,11 @@
  #       if defined(_GNUC__)
  #           pragma GCC visibility push(default)
  #       endif
 -#       include _STLP_NATIVE_HEADER(exception_defines.h)
++#       if (__GNUC__ >= 5 || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)))
++#           include _STLP_NATIVE_HEADER(bits/exception_defines.h)
++#       else
++#           include _STLP_NATIVE_HEADER(exception_defines.h)
++#       endif
  #       include _STLP_NATIVE_HEADER(limits)
  #       include _STLP_NATIVE_HEADER(memory)
  #       include _STLP_NATIVE_HEADER(exception)

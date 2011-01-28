@@ -1,0 +1,104 @@
+From ec7ff475f480619787131d0a193d7786c30dac10 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 28 Jan 2011 21:16:36 +0000
+Subject: [PATCH] Resolves: fdo#33509, #i62414# out-by-one breaks CTL spell-checking popup
+
+ABCD
+0123
+    ^
+
+Currently calls GetCharRect for position "0" and position "4". It should be
+"3". We were placing the cursor *after* the final character. We really need to
+place it *before* the final character and get the bounding box of the last char
+to union it with the first char's bounding box. It works out ok for western
+text, but you get a far different value for CTL text.
+---
+ sw/source/core/crsr/crsrsh.cxx  |    4 ++--
+ sw/source/core/edit/edlingu.cxx |   14 +++++---------
+ 2 files changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/sw/source/core/crsr/crsrsh.cxx b/sw/source/core/crsr/crsrsh.cxx
+index ed8d37b..a6db747 100644
+--- a/sw/source/core/crsr/crsrsh.cxx
++++ b/sw/source/core/crsr/crsrsh.cxx
+@@ -3419,7 +3419,7 @@ void SwCrsrShell::GetSmartTagTerm( const Point& rPt, SwRect& rSelectRect,
+             //no determine the rectangle in the current line
+             xub_StrLen nWordStart = (nBegin + nLeft) < nLineStart ? nLineStart : nBegin + nLeft;
+             //take one less than the line end - otherwise the next line would be calculated
+-            xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd - 1: (nBegin + nLen - nLeft - nRight);
++            xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd : (nBegin + nLen - nLeft - nRight);
+             Push();
+             pCrsr->DeleteMark();
+             SwIndex& rContent = GetCrsr()->GetPoint()->nContent;
+@@ -3431,7 +3431,7 @@ void SwCrsrShell::GetSmartTagTerm( const Point& rPt, SwRect& rSelectRect,
+             SwCntntFrm *pCntntFrame = pCntntNode->GetFrm( &rPt, pCrsr->GetPoint(), FALSE);
+ 
+             pCntntFrame->GetCharRect( aStartRect, *pCrsr->GetPoint(), &aState );
+-            rContent = nWordEnd;
++            rContent = nWordEnd - 1;
+             SwRect aEndRect;
+             pCntntFrame->GetCharRect( aEndRect, *pCrsr->GetPoint(),&aState );
+             rSelectRect = aStartRect.Union( aEndRect );
+diff --git a/sw/source/core/edit/edlingu.cxx b/sw/source/core/edit/edlingu.cxx
+index 7e186f9..a3d1572 100644
+--- a/sw/source/core/edit/edlingu.cxx
++++ b/sw/source/core/edit/edlingu.cxx
+@@ -550,7 +550,6 @@ uno::Any SwHyphIter::Continue( sal_uInt16* pPageCnt, sal_uInt16* pPageSt )
+ 
+     const sal_Bool bAuto = IsAuto();
+      uno::Reference< XHyphenatedWord >  xHyphWord;
+-    sal_uInt16 nRet;
+     sal_Bool bGoOn = sal_False;
+     do {
+         SwPaM *pCrsr;
+@@ -565,10 +564,7 @@ uno::Any SwHyphIter::Continue( sal_uInt16* pPageCnt, sal_uInt16* pPageSt )
+                 pCrsr->SetMark();
+             }
+ 
+-            // geraten BUG:
+-            if ( *pCrsr->End() > *GetEnd() )
+-                nRet = 0;
+-            else
++            if ( *pCrsr->End() <= *GetEnd() )
+             {
+                 *pCrsr->GetMark() = *GetEnd();
+ 
+@@ -1076,7 +1072,7 @@ uno::Reference< XSpellAlternatives >
+                 //no determine the rectangle in the current line
+                 xub_StrLen nWordStart = (nBegin + nLeft) < nLineStart ? nLineStart : nBegin + nLeft;
+                 //take one less than the line end - otherwise the next line would be calculated
+-                xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd - 1: (nBegin + nLen - nLeft - nRight);
++                xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd: (nBegin + nLen - nLeft - nRight);
+                 Push();
+                 pCrsr->DeleteMark();
+                 SwIndex& rContent = GetCrsr()->GetPoint()->nContent;
+@@ -1088,7 +1084,7 @@ uno::Reference< XSpellAlternatives >
+                 SwCntntFrm *pCntntFrame = pCntntNode->GetFrm(pPt, pCrsr->GetPoint(), FALSE);
+ 
+                 pCntntFrame->GetCharRect( aStartRect, *pCrsr->GetPoint(), &aState );
+-                rContent = nWordEnd;
++                rContent = nWordEnd - 1;
+                 SwRect aEndRect;
+                 pCntntFrame->GetCharRect( aEndRect, *pCrsr->GetPoint(),&aState );
+                 rSelectRect = aStartRect.Union( aEndRect );
+@@ -1210,7 +1206,7 @@ bool SwEditShell::GetGrammarCorrection(
+                 //no determine the rectangle in the current line
+                 xub_StrLen nWordStart = (nBegin + nLeft) < nLineStart ? nLineStart : nBegin + nLeft;
+                 //take one less than the line end - otherwise the next line would be calculated
+-                xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd - 1: (nBegin + nLen - nLeft - nRight);
++                xub_StrLen nWordEnd = (nBegin + nLen - nLeft - nRight) > nLineEnd ? nLineEnd: (nBegin + nLen - nLeft - nRight);
+                 Push();
+                 pCrsr->DeleteMark();
+                 SwIndex& rContent = GetCrsr()->GetPoint()->nContent;
+@@ -1222,7 +1218,7 @@ bool SwEditShell::GetGrammarCorrection(
+                 SwCntntFrm *pCntntFrame = pCntntNode->GetFrm(pPt, pCrsr->GetPoint(), FALSE);
+ 
+                 pCntntFrame->GetCharRect( aStartRect, *pCrsr->GetPoint(), &aState );
+-                rContent = nWordEnd;
++                rContent = nWordEnd - 1;
+                 SwRect aEndRect;
+                 pCntntFrame->GetCharRect( aEndRect, *pCrsr->GetPoint(),&aState );
+                 rSelectRect = aStartRect.Union( aEndRect );
+-- 
+1.7.3.5
+

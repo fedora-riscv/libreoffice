@@ -737,7 +737,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .rhbz610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
 %patch23 -p1 -b .fexceptions-fexceptions.patch
 %patch24 -p1 -b .rhbz672872-cancel-gtk-file-dialog-on-deskto.patch
-%patch26 -p0 -b .vbahelper.visibility.patch
+%patch25 -p0 -b .vbahelper.visibility.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

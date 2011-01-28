@@ -1,0 +1,11 @@
+--- vbahelper/inc/vbahelper/vbacollectionimpl.hxx.orig	2011-01-28 20:27:51.507604173 +0000
++++ vbahelper/inc/vbahelper/vbacollectionimpl.hxx	2011-01-28 20:28:26.230045727 +0000
+@@ -238,7 +238,7 @@
+ 
+ // including a HelperInterface implementation
+ template< typename Ifc1 >
+-class ScVbaCollectionBase : public InheritedHelperInterfaceImpl< Ifc1 >
++class VBAHELPER_DLLPUBLIC ScVbaCollectionBase : public InheritedHelperInterfaceImpl< Ifc1 >
+ {
+ typedef InheritedHelperInterfaceImpl< Ifc1 > BaseColBase;
+ protected:

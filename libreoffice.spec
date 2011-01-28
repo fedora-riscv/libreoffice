@@ -109,6 +109,7 @@ Patch21: libreoffice-fdo32561.comphelper.patch
 Patch22: 0001-Related-rhbz-610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
 Patch23: 0001-fexceptions-fexceptions.patch
 Patch24: 0001-Related-rhbz-672872-cancel-gtk-file-dialog-on-deskto.patch
+Patch25: vbahelper.visibility.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -736,6 +737,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .rhbz610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
 %patch23 -p1 -b .fexceptions-fexceptions.patch
 %patch24 -p1 -b .rhbz672872-cancel-gtk-file-dialog-on-deskto.patch
+%patch26 -p0 -b .vbahelper.visibility.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

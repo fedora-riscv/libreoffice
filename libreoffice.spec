@@ -804,6 +804,9 @@ done
 export ARCH_FLAGS
 
 . ./*[Ee]nv.[Ss]et.sh
+%ifarch %{ix86}
+unset HAVE_GCC_VISIBILITY_FEATURE
+%endif
 ./bootstrap
 
 #HANGING JAVA HACK

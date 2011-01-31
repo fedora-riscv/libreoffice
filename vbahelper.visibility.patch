@@ -1,4 +1,4 @@
---- vbahelper/inc/vbahelper/vbacollectionimpl.hxx.orig	2011-01-28 20:27:51.507604173 +0000
+--- vbahelper/inc/vbahelper/vbacollectionimpl.hxx	2011-01-28 20:27:51.507604173 +0000
 +++ vbahelper/inc/vbahelper/vbacollectionimpl.hxx	2011-01-28 20:28:26.230045727 +0000
 @@ -238,7 +238,7 @@
  
@@ -9,3 +9,14 @@
  {
  typedef InheritedHelperInterfaceImpl< Ifc1 > BaseColBase;
  protected:
+--- solenv/inc/unxgcc.mk	2011-01-31 08:57:25.476403469 +0000
++++ solenv/inc/unxgcc.mk	2011-01-31 08:57:51.556952522 +0000
+@@ -81,7 +81,7 @@
+ .ENDIF
+ 
+ # flags for the C++ Compiler
+-CFLAGSCC= -pipe $(ARCH_FLAGS)
++CFLAGSCC= -pipe $(ARCH_FLAGS) -frepo
+ # Flags for enabling exception handling
+ CFLAGSEXCEPTIONS=-fexceptions -fno-enforce-eh-specs
+ # Flags for disabling exception handling

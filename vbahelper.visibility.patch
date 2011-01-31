@@ -15,7 +15,7 @@
  
  # -fpermissive should be removed as soon as possible
 -CFLAGSCXX= -pipe $(ARCH_FLAGS)
-+CFLAGSCXX= -pipe $(ARCH_FLAGS) -frepo
++CFLAGSCXX= -pipe $(ARCH_FLAGS) -fno-implicit-templates
  .IF "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"
  CFLAGSCXX += -fvisibility-inlines-hidden
  .ENDIF # "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"

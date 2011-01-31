@@ -11,12 +11,11 @@
  protected:
 --- solenv/inc/unxgcc.mk	2011-01-31 08:57:25.476403469 +0000
 +++ solenv/inc/unxgcc.mk	2011-01-31 08:57:51.556952522 +0000
-@@ -81,7 +81,7 @@
- .ENDIF
+ CFLAGS_NO_EXCEPTIONS=-fno-exceptions
  
- # flags for the C++ Compiler
--CFLAGSCC= -pipe $(ARCH_FLAGS)
-+CFLAGSCC= -pipe $(ARCH_FLAGS) -frepo
- # Flags for enabling exception handling
- CFLAGSEXCEPTIONS=-fexceptions -fno-enforce-eh-specs
- # Flags for disabling exception handling
+ # -fpermissive should be removed as soon as possible
+-CFLAGSCXX= -pipe $(ARCH_FLAGS)
++CFLAGSCXX= -pipe $(ARCH_FLAGS) -frepo
+ .IF "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"
+ CFLAGSCXX += -fvisibility-inlines-hidden
+ .ENDIF # "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"

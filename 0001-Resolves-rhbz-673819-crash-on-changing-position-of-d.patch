@@ -15,7 +15,7 @@ diff --git a/cui/source/tabpages/swpossizetabpage.cxx b/cui/source/tabpages/swpo
 index ee3add0..9955420 100644
 --- a/cui/source/tabpages/swpossizetabpage.cxx
 +++ b/cui/source/tabpages/swpossizetabpage.cxx
-@@ -1876,7 +1876,10 @@ void SvxSwPosSizeTabPage::SetView( const SdrView* pSdrView )
+@@ -1930,7 +1930,10 @@
      }
  
      // this should happen via SID_ATTR_TRANSFORM_AUTOSIZE
@@ -27,16 +27,13 @@ index ee3add0..9955420 100644
      {
          const SdrObject* pObj = rMarkList.GetMark( 0 )->GetMarkedSdrObj();
          SdrObjKind eKind = (SdrObjKind) pObj->GetObjIdentifier();
-@@ -1887,8 +1890,7 @@ void SvxSwPosSizeTabPage::SetView( const SdrView* pSdrView )
+@@ -1941,8 +1944,7 @@
              DBG_ERROR("AutoWidth/AutoHeight should be enabled");
          }
      }
 -    else
 -        m_bIsMultiSelection = true;
 +#endif
- }
  
- /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
--- 
-1.7.3.5
-
+     // use page offset and recalculate
+     Point aPt( m_pSdrView->GetSdrPageView()->GetPageOrigin() );

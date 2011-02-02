@@ -1,0 +1,26 @@
+From 48f4f5f4283cb9a58223c6cc6f4d0ebadce53722 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 2 Feb 2011 16:05:01 +0000
+Subject: [PATCH] Resolves: rhbz#670020 crash in slidesorting
+
+---
+ sd/source/ui/view/drviews1.cxx |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/sd/source/ui/view/drviews1.cxx b/sd/source/ui/view/drviews1.cxx
+index d1acb96..e0b220e 100644
+--- a/sd/source/ui/view/drviews1.cxx
++++ b/sd/source/ui/view/drviews1.cxx
+@@ -712,6 +712,9 @@ SdPage* DrawViewShell::getCurrentPage() const
+ 
+ void DrawViewShell::ResetActualPage()
+ {
++    if (!GetDoc())
++        return;
++
+     USHORT nCurrentPage = maTabControl.GetCurPageId() - 1;
+     USHORT nPageCount	= (meEditMode == EM_PAGE)?GetDoc()->GetSdPageCount(mePageKind):GetDoc()->GetMasterSdPageCount(mePageKind);
+     if (nPageCount > 0)
+-- 
+1.7.4
+

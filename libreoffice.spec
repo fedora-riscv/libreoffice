@@ -115,6 +115,7 @@ Patch27: 0001-Resolves-rhbz-673819-crash-on-changing-position-of-d.patch
 Patch28: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
 Patch29: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
 Patch30: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
+Patch31: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -748,6 +749,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .rhbz670020-crash-in-slidesorting.patch
 %patch29 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
 %patch30 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
+%patch31 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2101,6 +2103,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#673819 crash on changing position of header/footer object
 - Resolves: rhbz#670020 crash in slidesorting
 - Resolves: rhbz#676539 handle missing pWindows from xWindows
+- Resolves: rhbz#649310 don't crash deregistering diff. platform ext.
+  (dtardon)
 
 * Mon Jan 24 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.4-2
 - Resolves: rhbz#671540 fix lonely )

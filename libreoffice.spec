@@ -114,6 +114,7 @@ Patch26: 0001-Resolves-fdo-33509-i62414-out-by-one-breaks-CTL-spel.patch
 Patch27: 0001-Resolves-rhbz-673819-crash-on-changing-position-of-d.patch 
 Patch28: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
 Patch29: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
+Patch30: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -746,6 +747,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz673819-crash-on-changing-position-of-d.patch 
 %patch28 -p1 -b .rhbz670020-crash-in-slidesorting.patch
 %patch29 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
+%patch30 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip

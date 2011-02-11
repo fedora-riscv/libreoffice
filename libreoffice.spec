@@ -100,23 +100,18 @@ Patch12: turn-script-providers-into-extensions.patch
 Patch13: libreoffice-installfix.patch
 Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
 Patch15: libreoffice-bootstrap-kde.patch
-Patch16: 0001-don-t-pushback-and-process-a-corrupt-extension.patch
-Patch17: 0001-free-ctxt-after-taking-lastError-details.patch
-Patch18: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
-Patch19: libreoffice-fdo31271.icu.patch
-Patch20: libreoffice-gcc4.6.0.patch
-Patch21: libreoffice-fdo32561.comphelper.patch
-Patch22: 0001-Related-rhbz-610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
-Patch23: 0001-fexceptions-fexceptions.patch
-Patch24: 0001-Related-rhbz-672872-cancel-gtk-file-dialog-on-deskto.patch
-Patch25: vbahelper.visibility.patch
-Patch26: 0001-Resolves-fdo-33509-i62414-out-by-one-breaks-CTL-spel.patch
-Patch27: 0001-Resolves-rhbz-673819-crash-on-changing-position-of-d.patch 
-Patch28: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
-Patch29: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
-Patch30: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
-Patch31: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
-Patch32: 0001-rhbz-666440-don-t-pushback-and-process-a-corrupt-extension.patch
+Patch16: 0001-free-ctxt-after-taking-lastError-details.patch
+Patch17: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
+Patch18: libreoffice-fdo31271.icu.patch
+Patch19: libreoffice-gcc4.6.0.patch
+Patch20: 0001-fexceptions-fexceptions.patch
+Patch21: 0001-Related-rhbz-672872-cancel-gtk-file-dialog-on-deskto.patch
+Patch22: vbahelper.visibility.patch
+Patch23: 0001-Resolves-fdo-33509-i62414-out-by-one-breaks-CTL-spel.patch
+Patch24: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
+Patch25: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
+Patch26: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
+Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -735,23 +730,18 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .libreoffice-installfix.patch
 %patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
 %patch15 -p1 -b .libreoffice-bootstrap-kde.patch
-%patch16 -p1 -b .don-t-pushback-and-process-a-corrupt-extension.patch
-%patch17 -p1 -b .free-ctxt-after-taking-lastError-details.patch
-%patch18 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
-%patch19 -p1 -b .fdo31271.icu.patch
-%patch20 -p1 -b .libreoffice-gcc4.6.0.patch
-%patch21 -p1 -b .fdo32561.comphelper.patch
-%patch22 -p1 -b .rhbz610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
-%patch23 -p1 -b .fexceptions-fexceptions.patch
-%patch24 -p1 -b .rhbz672872-cancel-gtk-file-dialog-on-deskto.patch
-%patch25 -p0 -b .vbahelper.visibility.patch
-%patch26 -p1 -b .fdo33509-i62414-out-by-one-breaks-CTL-spel.patch
-%patch27 -p1 -b .rhbz673819-crash-on-changing-position-of-d.patch 
-%patch28 -p1 -b .rhbz670020-crash-in-slidesorting.patch
-%patch29 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
-%patch30 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
-%patch31 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
-%patch32 -p1 -b .rhbz666440-don-t-pushback-and-process-a-corrupt-extension.patch
+%patch16 -p1 -b .free-ctxt-after-taking-lastError-details.patch
+%patch17 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
+%patch18 -p1 -b .fdo31271.icu.patch
+%patch19 -p1 -b .libreoffice-gcc4.6.0.patch
+%patch20 -p1 -b .fexceptions-fexceptions.patch
+%patch21 -p1 -b .rhbz672872-cancel-gtk-file-dialog-on-deskto.patch
+%patch22 -p0 -b .vbahelper.visibility.patch
+%patch23 -p1 -b .fdo33509-i62414-out-by-one-breaks-CTL-spel.patch
+%patch24 -p1 -b .rhbz670020-crash-in-slidesorting.patch
+%patch25 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
+%patch26 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
+%patch27 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2099,6 +2089,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Feb 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.1-1
 - 3.3.1 rc1
+- drop integrated 0001-don-t-pushback-and-process-a-corrupt-extension.patch
+- drop integrated libreoffice-fdo32561.comphelper.patch
+- drop integrated 0001-Related-rhbz-610103-more-woes-on-rpm-upgrade-vs-rpm-.patch
+- drop integrated 0001-Resolves-rhbz-673819-crash-on-changing-position-of-d.patch
+- drop integrated 0001-rhbz-666440-don-t-pushback-and-process-a-corrupt-extension.patch
 
 * Thu Feb 10 2011 Caolán McNamara <caolanm@redhat.com> 3.3.0.4-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild

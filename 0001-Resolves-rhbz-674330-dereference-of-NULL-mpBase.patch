@@ -1,0 +1,27 @@
+From 1a9c37ac56b97aaf7535bff7bd2fb84b13ef8e50 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 16 Feb 2011 16:45:48 +0000
+Subject: [PATCH] Resolves: rhbz#674330 dereference of NULL mpBase
+
+---
+ sd/source/ui/unoidl/DrawController.cxx |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/sd/source/ui/unoidl/DrawController.cxx b/sd/source/ui/unoidl/DrawController.cxx
+index 6f3c1e1..f64b649 100644
+--- a/sd/source/ui/unoidl/DrawController.cxx
++++ b/sd/source/ui/unoidl/DrawController.cxx
+@@ -166,7 +166,9 @@ void SAL_CALL DrawController::dispose (void)
+         {
+             mbDisposing = true;
+ 
+-            boost::shared_ptr<ViewShell> pViewShell = mpBase->GetMainViewShell();
++            boost::shared_ptr<ViewShell> pViewShell;
++            if (mpBase)
++                pViewShell = mpBase->GetMainViewShell();
+             if ( pViewShell )
+             {
+                 pViewShell->DeactivateCurrentFunction();
+-- 
+1.7.4
+

@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -112,6 +112,7 @@ Patch24: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
 Patch25: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
 Patch26: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
 Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
+Patch28: 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -742,6 +743,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
 %patch26 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
 %patch27 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
+%patch28 -p1 -b .rhbz674330-dereference-of-NULL-mpBase.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2087,6 +2089,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Feb 16 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.1-2
+- Resolves: rhbz#674330 dereference of NULL mpBase
+
 * Fri Feb 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.1-1
 - 3.3.1 rc1
 - drop integrated 0001-don-t-pushback-and-process-a-corrupt-extension.patch

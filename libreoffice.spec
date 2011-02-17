@@ -27,8 +27,8 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
-Version:        3.3.1.1
-Release:        2%{?dist}
+Version:        3.3.1.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2089,6 +2089,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Feb 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-1
+- RC2
+
 * Wed Feb 16 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.1-2
 - Resolves: rhbz#674330 dereference of NULL mpBase
 

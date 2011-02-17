@@ -1,0 +1,44 @@
+From e4decda5e2cf3f6cd2a7a41b23fb68ccf91e3f23 Mon Sep 17 00:00:00 2001
+From: Kohei Yoshida <kyoshida@novell.com>
+Date: Sat, 12 Feb 2011 01:32:12 -0500
+Subject: [PATCH] Get correct current position when shift-page up and down. (fdo#34026)
+
+When expanding a selection, we need to use the block end position
+as the "current" position instead of the current cursor position, as
+the cursor no longer moves during block selection.
+---
+ sc/source/ui/view/tabview2.cxx |   18 +++++++++++++++++-
+ 1 files changed, 17 insertions(+), 1 deletions(-)
+
+diff --git a/sc/source/ui/view/tabview2.cxx b/sc/source/ui/view/tabview2.cxx
+index 3bc9a82..73207ff 100644
+--- a/sc/source/ui/view/tabview2.cxx
++++ b/sc/source/ui/view/tabview2.cxx
+@@ -371,7 +371,23 @@ void ScTabView::GetPageMoveEndPosition(SCsCOL nMovX, SCsROW nMovY, SCsCOL& rPage
+ {
+     SCCOL nCurX;
+     SCROW nCurY;
+-    aViewData.GetMoveCursor( nCurX,nCurY );
++    if (aViewData.IsRefMode())
++    {
++        nCurX = aViewData.GetRefEndX();
++        nCurY = aViewData.GetRefEndY();
++    }
++    else if (IsBlockMode())
++    {
++        // block end position.
++        nCurX = nBlockEndX;
++        nCurY = nBlockEndY;
++    }
++    else
++    {
++        // cursor position
++        nCurX = aViewData.GetCurX();
++        nCurY = aViewData.GetCurY();
++    }
+ 
+     ScSplitPos eWhich = aViewData.GetActivePart();
+     ScHSplitPos eWhichX = WhichH( eWhich );
+-- 
+1.7.4
+

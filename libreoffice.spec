@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -113,6 +113,7 @@ Patch25: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
 Patch26: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
 Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
 Patch28: 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
+Patch29: 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -744,6 +745,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
 %patch27 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
 %patch28 -p1 -b .rhbz674330-dereference-of-NULL-mpBase.patch
+%patch29 -p1 -b .rhbz678284-Get-correct-current-position-when-shift-page-up-and-.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2089,6 +2091,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Feb 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-2
+- Resolves: rhbz#678284 Calc crashes during cell select with keys
+  (dtardon)
+
 * Thu Feb 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-1
 - RC2
 

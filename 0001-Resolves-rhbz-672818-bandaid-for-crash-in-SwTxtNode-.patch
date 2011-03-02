@@ -1,0 +1,29 @@
+From f0ec7af75b7c3566a0e8e71735b5cc237eb505d5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 2 Mar 2011 13:00:18 +0000
+Subject: [PATCH] Resolves: rhbz#672818 bandaid for crash in SwTxtNode::GetTxtAttrForCharAt
+
+---
+ sw/source/core/unocore/unorefmk.cxx |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sw/source/core/unocore/unorefmk.cxx b/sw/source/core/unocore/unorefmk.cxx
+index 436a2bb..e461f71 100644
+--- a/sw/source/core/unocore/unorefmk.cxx
++++ b/sw/source/core/unocore/unorefmk.cxx
+@@ -261,8 +261,10 @@ void SwXReferenceMark::Impl::InsertRefMark(SwPaM& rPam,
+     }
+     else
+     {
+-        pTxtAttr = rPam.GetNode()->GetTxtNode()->GetTxtAttrForCharAt(
+-                rPam.GetPoint()->nContent.GetIndex() - 1, RES_TXTATR_REFMARK);
++        SwTxtNode *pTxtNd = rPam.GetNode()->GetTxtNode();
++        OSL_ASSERT(pTxtNd);
++        pTxtAttr = pTxtNd ? rPam.GetNode()->GetTxtNode()->GetTxtAttrForCharAt(
++                rPam.GetPoint()->nContent.GetIndex() - 1, RES_TXTATR_REFMARK) : NULL;
+     }
+ 
+     if (!pTxtAttr)
+-- 
+1.7.4.1
+

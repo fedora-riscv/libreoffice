@@ -115,6 +115,7 @@ Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
 Patch28: 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
 Patch29: 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.patch
 Patch30: 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
+Patch31: 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -748,6 +749,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .rhbz674330-dereference-of-NULL-mpBase.patch
 %patch29 -p1 -b .rhbz678284-Get-correct-current-position-when-shift-page-up-and-.patch
 %patch30 -p1 -b .rhbz681159-bandaid-for-crash.patch
+%patch31 -p1 -b .fdo33701-ensure-node-outlives-path.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2093,8 +2095,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Tue Mar 01 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
+* Wed Mar 01 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
 - Resolves: rhbz#681159 crash in writer
+- Resolves: fdo#33701 ensure node outlives path
 
 * Thu Feb 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-2
 - Resolves: rhbz#678284 Calc crashes during cell select with keys

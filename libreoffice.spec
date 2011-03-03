@@ -117,6 +117,7 @@ Patch29: 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.p
 Patch30: 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
 Patch31: 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch
 Patch32: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
+Patch33: 0001-valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -752,6 +753,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .rhbz681159-bandaid-for-crash.patch
 %patch31 -p1 -b .fdo33701-ensure-node-outlives-path.patch
 %patch32 -p1 -b .rhbz672818-bandaid-for-crash-in-SwTxtNode-.patch
+%patch33 -p1 -b .valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2097,10 +2099,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Mar 01 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
+* Thu Mar 02 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
 - Resolves: rhbz#681159 crash in writer
 - Resolves: rhbz#672818 crash in writer
 - Resolves: fdo#33701 ensure node outlives path
+- Resolves: rhbz#681738 crash on writing config post-main
 
 * Thu Feb 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-2
 - Resolves: rhbz#678284 Calc crashes during cell select with keys

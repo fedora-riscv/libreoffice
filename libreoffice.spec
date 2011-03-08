@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -118,6 +118,7 @@ Patch30: 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
 Patch31: 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch
 Patch32: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
 Patch33: 0001-valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
+Patch34: 0001-install-high-resolution-icons.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -754,6 +755,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .fdo33701-ensure-node-outlives-path.patch
 %patch32 -p1 -b .rhbz672818-bandaid-for-crash-in-SwTxtNode-.patch
 %patch33 -p1 -b .valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
+%patch34 -p1 -b .install-high-resolution-icons.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2099,6 +2101,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Mar 08 2011 David Tardon <dtardon@redhat.com> 3.3.1.2-4
+- install 128x128 px icons
+
 * Thu Mar 02 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
 - Resolves: rhbz#681159 crash in writer
 - Resolves: rhbz#672818 crash in writer

@@ -1,0 +1,34 @@
+From 14fcbd54c96d9f46365f76f8df6b51d2e8074d74 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 8 Mar 2011 13:16:32 +0100
+Subject: [PATCH] install high-resolution icons
+
+---
+ sysui/desktop/share/create_tree.sh |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sysui/desktop/share/create_tree.sh b/sysui/desktop/share/create_tree.sh
+index 160b2db..fded41e 100644
+--- a/sysui/desktop/share/create_tree.sh
++++ b/sysui/desktop/share/create_tree.sh
+@@ -3,7 +3,7 @@ umask 022
+ if [ "${KDEMAINDIR}" ]
+ then
+   echo Copying icons .. 
+-  for i in `cd ${ICON_SOURCE_DIR}; find ${ICON_THEMES:-hicolor/??x?? locolor} -name "*.png"`
++  for i in `cd ${ICON_SOURCE_DIR}; find ${ICON_THEMES:-hicolor/???x??? hicolor/??x?? locolor} -name "*.png"`
+   do
+     targetdir=${DESTDIR}/${KDEMAINDIR}/share/icons/`dirname $i`
+     mkdir -p $targetdir
+@@ -22,7 +22,7 @@ fi
+ if [ "${GNOMEDIR}" ]
+ then
+   echo Copying GNOME icons ..
+-  for i in `cd ${ICON_SOURCE_DIR}/hicolor; find ??x?? -name "*.png"`
++  for i in `cd ${ICON_SOURCE_DIR}/hicolor; find ??x?? ???x??? -name "*.png"`
+   do
+     targetdir=${DESTDIR}/${GNOMEDIR}/share/icons/gnome/`dirname $i`
+     mkdir -p $targetdir
+-- 
+1.7.4
+

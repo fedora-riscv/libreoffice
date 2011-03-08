@@ -1,0 +1,39 @@
+From 7ec1571c31faff1f649dce4312271c47fc867fe3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 8 Mar 2011 16:10:43 +0000
+Subject: [PATCH] Resolves: rhbz#682716 pa-IN isn't handled by fontconfig well
+
+i.e. pa-IN gets fontconfig to consider all "pa" and "pa-pk" fonts, see
+fdo#35118 for what I'd like fontconfig to do instead and prioritize generic
+"pa" over "pa-pk" in thsis case.
+
+Looking at the current list of fontconfig languages, this is the only one
+likely afflicted at the moment, so help fontconfig out here.
+---
+ vcl/unx/source/fontmanager/fontconfig.cxx |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+diff --git a/vcl/unx/source/fontmanager/fontconfig.cxx b/vcl/unx/source/fontmanager/fontconfig.cxx
+index d7a888d..7a40084 100644
+--- a/vcl/unx/source/fontmanager/fontconfig.cxx
++++ b/vcl/unx/source/fontmanager/fontconfig.cxx
+@@ -993,9 +993,15 @@ rtl::OUString PrintFontManager::Substitute(const rtl::OUString& rFontName,
+     const FcChar8* pTargetNameUtf8 = (FcChar8*)aTargetName.getStr();
+     rWrapper.FcPatternAddString( pPattern, FC_FAMILY, pTargetNameUtf8 );
+ 
+-    const FcChar8* pLangAttribUtf8 = (FcChar8*)rLangAttrib.getStr();
+     if( rLangAttrib.getLength() )
++    {
++        const FcChar8* pLangAttribUtf8;
++        if (rLangAttrib.equalsIgnoreAsciiCase(OString(RTL_CONSTASCII_STRINGPARAM("pa-in"))))
++            pLangAttribUtf8 = (FcChar8*)"pa";
++        else
++            pLangAttribUtf8 = (FcChar8*)rLangAttrib.getStr();
+         rWrapper.FcPatternAddString( pPattern, FC_LANG, pLangAttribUtf8 );
++    }
+ 
+     // Add required Unicode characters, if any
+     if ( rMissingCodes.getLength() )
+-- 
+1.7.4.1
+

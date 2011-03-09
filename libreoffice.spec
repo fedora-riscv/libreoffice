@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -120,6 +120,7 @@ Patch32: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
 Patch33: 0001-valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
 Patch34: 0001-install-high-resolution-icons.patch
 Patch35: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
+Patch36: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -758,6 +759,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
 %patch34 -p1 -b .install-high-resolution-icons.patch
 %patch35 -p1 -b .rhbz682716-pa-IN-isn-t-handled-by-fontconf.patch
+%patch36 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2103,6 +2105,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Mar 09 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-6
+- Resolves: rhbz#682621 better resizing of overtall glyphsubs
+
 * Tue Mar 08 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-5
 - Resolves: rhbz#682716 pa-IN isn't handled well by fontconfig
 

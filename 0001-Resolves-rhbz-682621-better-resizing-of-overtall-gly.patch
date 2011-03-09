@@ -35,7 +35,7 @@ diff --git a/vcl/source/gdi/outdev3.cxx b/vcl/source/gdi/outdev3.cxx
 index 84a7b5d..7a439f2 100644
 --- a/vcl/source/gdi/outdev3.cxx
 +++ b/vcl/source/gdi/outdev3.cxx
-@@ -6015,6 +6015,58 @@ SalLayout* OutputDevice::ImplLayout( const String& rOrigStr,
+@@ -6023,6 +6023,58 @@
      return pSalLayout;
  }
  
@@ -94,9 +94,9 @@ index 84a7b5d..7a439f2 100644
  // -----------------------------------------------------------------------
  
  SalLayout* OutputDevice::ImplGlyphFallbackLayout( SalLayout* pSalLayout, ImplLayoutArgs& rLayoutArgs ) const
-@@ -6072,22 +6124,7 @@ SalLayout* OutputDevice::ImplGlyphFallbackLayout( SalLayout* pSalLayout, ImplLay
-             }
+@@ -6102,22 +6154,7 @@
          }
+ #endif
  
 -        ImplFontMetricData aSubstituteMetric(aFontSelData);
          pFallbackFont->mnSetFontFlags = mpGraphics->SetFont( &aFontSelData, nFallbackLevel );
@@ -117,7 +117,7 @@ index 84a7b5d..7a439f2 100644
  
          // create and add glyph fallback layout to multilayout
          rLayoutArgs.ResetPos();
-@@ -6096,6 +6133,9 @@ SalLayout* OutputDevice::ImplGlyphFallbackLayout( SalLayout* pSalLayout, ImplLay
+@@ -6126,6 +6163,9 @@
          {
              if( pFallback->LayoutText( rLayoutArgs ) )
              {
@@ -127,6 +127,3 @@ index 84a7b5d..7a439f2 100644
                  if( !pMultiSalLayout )
                      pMultiSalLayout = new MultiSalLayout( *pSalLayout );
                  pMultiSalLayout->AddFallback( *pFallback,
--- 
-1.7.4.1
-

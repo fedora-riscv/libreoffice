@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2105,6 +2105,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Sun Mar 13 2011 Marek Kasik <mkasik@redhat.com> 3.3.1.2-7
+- Rebuild (poppler-0.16.3)
+
 * Wed Mar 09 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-6
 - Resolves: rhbz#682621 better resizing of overtall glyphsubs
 

@@ -1,0 +1,69 @@
+From fca3e47954fe36687989328ac90cbc6747e4bc4e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 14 Mar 2011 10:20:12 +0000
+Subject: [PATCH] Related: rhbz#684477 make sure this is thread safe
+
+---
+ basegfx/source/polygon/b2dpolygontools.cxx |   36 +++++++++++++++++----------
+ 1 files changed, 23 insertions(+), 13 deletions(-)
+
+diff --git a/basegfx/source/polygon/b2dpolygontools.cxx b/basegfx/source/polygon/b2dpolygontools.cxx
+index 1967e6e..3271314 100644
+--- a/basegfx/source/polygon/b2dpolygontools.cxx
++++ b/basegfx/source/polygon/b2dpolygontools.cxx
+@@ -32,6 +32,7 @@
+ #include <basegfx/polygon/b2dpolygontools.hxx>
+ #include <osl/diagnose.h>
+ #include <rtl/math.hxx>
++#include <rtl/instance.hxx>
+ #include <basegfx/polygon/b2dpolygon.hxx>
+ #include <basegfx/polygon/b2dpolypolygon.hxx>
+ #include <basegfx/range/b2drange.hxx>
+@@ -1836,22 +1837,31 @@ namespace basegfx
+             return aRetval;
+         }
+ 
+-        B2DPolygon createUnitPolygon()
++        namespace
+         {
+-            static B2DPolygon aRetval;
+-
+-            if(!aRetval.count())
++            struct theUnitPolygon :
++                public rtl::StaticWithInit<B2DPolygon, theUnitPolygon>
+             {
+-                aRetval.append( B2DPoint( 0.0, 0.0 ) );
+-                aRetval.append( B2DPoint( 1.0, 0.0 ) );
+-                aRetval.append( B2DPoint( 1.0, 1.0 ) );
+-                aRetval.append( B2DPoint( 0.0, 1.0 ) );
++                B2DPolygon operator () ()
++                {
++                    B2DPolygon aRetval;
+ 
+-                // close
+-                aRetval.setClosed( true );
+-            }
+-            
+-            return aRetval;
++                    aRetval.append( B2DPoint( 0.0, 0.0 ) );
++                    aRetval.append( B2DPoint( 1.0, 0.0 ) );
++                    aRetval.append( B2DPoint( 1.0, 1.0 ) );
++                    aRetval.append( B2DPoint( 0.0, 1.0 ) );
++
++                    // close
++                    aRetval.setClosed( true );
++
++                    return aRetval;
++                }
++            };
++        }
++
++        B2DPolygon createUnitPolygon()
++        {
++            return theUnitPolygon::get();
+         }
+ 
+         B2DPolygon createPolygonFromCircle( const B2DPoint& rCenter, double fRadius )
+-- 
+1.7.4.1
+

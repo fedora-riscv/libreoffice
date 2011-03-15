@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        8%{?dist}
+Release:        9%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -123,6 +123,7 @@ Patch35: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
 Patch36: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
 Patch37: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
 Patch38: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
+Patch39: libreoffice-fdo33947.sd.print.crash.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -764,6 +765,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch36 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
 %patch37 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
 %patch38 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
+%patch39 -p1 -b .fdo33947.sd.print.crash.patch
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2109,6 +2111,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Mar 15 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-9
+- Resolves: fdo#33947 sd print crash
+
 * Mon Mar 14 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-8
 - Related: rhbz#684477 make sure this is thread safe
 - Resolves: rhbz#684620 crash with NULL pTableBox

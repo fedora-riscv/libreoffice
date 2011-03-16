@@ -1,0 +1,50 @@
+From 28e6caab0a9c04b306f723fb3390332f5ef94a61 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Mar 2011 13:54:58 +0000
+Subject: [PATCH] add cairo_ft_font_face_create_for_pattern wrapper
+
+---
+ vcl/unx/source/gdi/salgdi3.cxx |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/vcl/unx/source/gdi/salgdi3.cxx b/vcl/unx/source/gdi/salgdi3.cxx
+index 3056f92..9834028 100644
+--- a/vcl/unx/source/gdi/salgdi3.cxx
++++ b/vcl/unx/source/gdi/salgdi3.cxx
+@@ -89,6 +89,7 @@ struct cairo_surface_t;
+ struct cairo_t;
+ struct cairo_font_face_t;
+ typedef void* FT_Face;
++typedef void* FcPattern;
+ struct cairo_matrix_t {
+     double xx; double yx;
+     double xy; double yy;
+@@ -742,6 +743,7 @@ private:
+     void (*mp_clip)(cairo_t*);
+     void (*mp_rectangle)(cairo_t*, double, double, double, double);
+     cairo_font_face_t * (*mp_ft_font_face_create_for_ft_face)(FT_Face, int);
++    cairo_font_face_t * (*mp_ft_font_face_create_for_pattern)(FcPattern*);
+     void (*mp_set_font_face)(cairo_t *, cairo_font_face_t *);
+     void (*mp_font_face_destroy)(cairo_font_face_t *);
+     void (*mp_matrix_init_identity)(cairo_matrix_t *);
+@@ -771,6 +773,8 @@ public:
+         { (*mp_rectangle)(cr, x, y, width, height); }
+     cairo_font_face_t* ft_font_face_create_for_ft_face(FT_Face face, int load_flags)
+         { return (*mp_ft_font_face_create_for_ft_face)(face, load_flags); }
++    cairo_font_face_t* ft_font_face_create_for_pattern(FcPattern *pattern)
++        { return (*mp_ft_font_face_create_for_pattern)(pattern); }
+     void set_font_face(cairo_t *cr, cairo_font_face_t *font_face)
+         { (*mp_set_font_face)(cr, font_face); }
+     void font_face_destroy(cairo_font_face_t *font_face)
+@@ -844,6 +848,8 @@ CairoWrapper::CairoWrapper()
+         osl_getAsciiFunctionSymbol( mpCairoLib, "cairo_rectangle" );
+     mp_ft_font_face_create_for_ft_face = (cairo_font_face_t * (*)(FT_Face, int))
+         osl_getAsciiFunctionSymbol( mpCairoLib, "cairo_ft_font_face_create_for_ft_face" );
++    mp_ft_font_face_create_for_pattern = (cairo_font_face_t * (*)(FcPattern*))
++        osl_getAsciiFunctionSymbol( mpCairoLib, "cairo_ft_font_face_create_for_pattern" );
+     mp_set_font_face = (void (*)(cairo_t *, cairo_font_face_t *))
+         osl_getAsciiFunctionSymbol( mpCairoLib, "cairo_set_font_face" );
+     mp_font_face_destroy = (void (*)(cairo_font_face_t *))
+-- 
+1.7.4.1
+

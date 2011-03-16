@@ -69,7 +69,7 @@ diff --git a/vcl/unx/source/fontmanager/fontconfig.cxx b/vcl/unx/source/fontmana
 index 92632c7..7b792d3 100644
 --- a/vcl/unx/source/fontmanager/fontconfig.cxx
 +++ b/vcl/unx/source/fontmanager/fontconfig.cxx
-@@ -56,6 +56,9 @@ using namespace psp;
+@@ -56,6 +56,9 @@
          #define FC_HINT_MEDIUM 2
          #define FC_HINT_FULL   3
      #endif
@@ -79,7 +79,7 @@ index 92632c7..7b792d3 100644
  #else
      typedef void FcConfig;
      typedef void FcObjectSet;
-@@ -141,6 +144,7 @@ class FontCfgWrapper
+@@ -136,6 +139,7 @@
      FcBool                    (*m_pFcPatternAddCharSet)(FcPattern*,const char*,const FcCharSet*);
      FcBool			(*m_pFcPatternAddString)(FcPattern*,const char*,const FcChar8*);
      FT_UInt         (*m_pFcFreeTypeCharIndex)(FT_Face,FcChar32);
@@ -87,24 +87,21 @@ index 92632c7..7b792d3 100644
  
      oslGenericFunction loadSymbol( const char* );
      void addFontSet( FcSetName );
-@@ -257,10 +261,14 @@ public:
-     { return m_pFcPatternAddBool( pPattern, pObject, nValue ); }
-     FcBool FcPatternAddCharSet(FcPattern* pPattern,const char* pObject,const FcCharSet*pCharSet)
-     { return m_pFcPatternAddCharSet(pPattern,pObject,pCharSet); }
--
+@@ -250,6 +254,13 @@
      FT_UInt FcFreeTypeCharIndex( FT_Face face, FcChar32 ucs4 )
      { return m_pFcFreeTypeCharIndex ? m_pFcFreeTypeCharIndex( face, ucs4 ) : 0; }
--
+ 
 +    FcBool FcPatternAddFTFace( FcPattern* pPattern, const char* pObject, const FT_Face nValue )
 +    {
 +        return m_pFcPatternAddFTFace
 +            ? m_pFcPatternAddFTFace( pPattern, pObject, nValue )
 +            : false;
 +    }
- public:
-     FcResult LocalizedElementFromPattern(FcPattern* pPattern, FcChar8 **family,
-                                          const char *elementtype, const char *elementlangtype);
-@@ -372,6 +380,8 @@ FontCfgWrapper::FontCfgWrapper()
++
+ public: // TODO: cleanup
+     FcResult FamilyFromPattern(FcPattern* pPattern, FcChar8 **family);
+     std::hash_map< rtl::OString, rtl::OString, rtl::OStringHash > m_aFontNameToLocalized;
+@@ -355,6 +366,8 @@
          loadSymbol( "FcPatternAddString" );
      m_pFcFreeTypeCharIndex = (FT_UInt(*)(FT_Face,FcChar32))
          loadSymbol( "FcFreeTypeCharIndex" );
@@ -113,7 +110,7 @@ index 92632c7..7b792d3 100644
  
      m_nFcVersion = FcGetVersion();
  #if (OSL_DEBUG_LEVEL > 1)
-@@ -1093,6 +1103,26 @@ rtl::OUString PrintFontManager::Substitute(const rtl::OUString& rFontName,
+@@ -1200,6 +1213,26 @@
      return aName;
  }
  
@@ -140,7 +137,7 @@ index 92632c7..7b792d3 100644
  ImplFontOptions* PrintFontManager::getFontOptions(
      const FastPrintFontInfo& rInfo, int nSize, void (*subcallback)(void*)) const
  {
-@@ -1103,7 +1133,7 @@ ImplFontOptions* PrintFontManager::getFontOptions(
+@@ -1210,7 +1243,7 @@
      if( ! rWrapper.isValid() )
          return NULL;
  
@@ -149,7 +146,7 @@ index 92632c7..7b792d3 100644
      FcConfig* pConfig = rWrapper.FcConfigGetCurrent();
      FcPattern* pPattern = rWrapper.FcPatternCreate();
  
-@@ -1140,9 +1170,10 @@ ImplFontOptions* PrintFontManager::getFontOptions(
+@@ -1247,9 +1280,10 @@
              FC_HINTING, 0, &hinting);
          /*FcResult eHintStyle =*/ rWrapper.FcPatternGetInteger(pResult,
              FC_HINT_STYLE, 0, &hintstyle);

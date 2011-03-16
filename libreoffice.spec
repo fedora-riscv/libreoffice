@@ -28,7 +28,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Version:        3.3.1.2
-Release:        9%{?dist}
+Release:        10%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -124,6 +124,10 @@ Patch36: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
 Patch37: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
 Patch38: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
 Patch39: libreoffice-fdo33947.sd.print.crash.patch
+Patch40: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+Patch41: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
+Patch42: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
+Patch43: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -766,6 +770,11 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch37 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
 %patch38 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
 %patch39 -p1 -b .fdo33947.sd.print.crash.patch
+%patch40 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+%patch41 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
+%patch42 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
+%patch43 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
+
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
@@ -2111,6 +2120,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Mar 16 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-10
+- Resolves: rhbz#680460 honour lcdfilter and subpixeling
+
 * Tue Mar 15 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-9
 - Resolves: fdo#33947 sd print crash
 

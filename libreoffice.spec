@@ -27,8 +27,9 @@
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
+Epoch:          1
 Version:        3.3.1.2
-Release:        10%{?dist}
+Release:        11%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2120,6 +2121,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Mar 21 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-11
+- Resolves: rhbz#689268 autocorrs from OOo F14 not upgraded
+
 * Wed Mar 16 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-10
 - Resolves: rhbz#680460 honour lcdfilter and subpixeling
 

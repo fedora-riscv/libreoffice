@@ -777,6 +777,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch41 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
 %patch42 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
 %patch43 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
+%patch44 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
 %patch45 -p1 -b .beware-of-invalidated-iterator.patch
 
 touch scripting/source/pyprov/delzip

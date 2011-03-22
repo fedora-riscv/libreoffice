@@ -28,8 +28,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.1.2
-Release:        12%{?dist}
+Version:        3.3.2.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -116,21 +116,19 @@ Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
 Patch28: 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
 Patch29: 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.patch
 Patch30: 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
-Patch31: 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch
-Patch32: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
-Patch33: 0001-valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
-Patch34: 0001-install-high-resolution-icons.patch
-Patch35: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
-Patch36: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
-Patch37: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
-Patch38: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
-Patch39: libreoffice-fdo33947.sd.print.crash.patch
-Patch40: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-Patch41: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
-Patch42: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
-Patch43: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
-Patch44: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-Patch45: 0001-beware-of-invalidated-iterator.patch
+Patch31: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
+Patch32: 0001-install-high-resolution-icons.patch
+Patch33: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
+Patch34: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
+Patch35: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
+Patch36: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
+Patch37: libreoffice-fdo33947.sd.print.crash.patch
+Patch38: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+Patch39: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
+Patch40: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
+Patch41: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
+Patch42: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+Patch43: 0001-beware-of-invalidated-iterator.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -764,21 +762,19 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .rhbz674330-dereference-of-NULL-mpBase.patch
 %patch29 -p1 -b .rhbz678284-Get-correct-current-position-when-shift-page-up-and-.patch
 %patch30 -p1 -b .rhbz681159-bandaid-for-crash.patch
-%patch31 -p1 -b .fdo33701-ensure-node-outlives-path.patch
-%patch32 -p1 -b .rhbz672818-bandaid-for-crash-in-SwTxtNode-.patch
-%patch33 -p1 -b .valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
-%patch34 -p1 -b .install-high-resolution-icons.patch
-%patch35 -p1 -b .rhbz682716-pa-IN-isn-t-handled-by-fontconf.patch
-%patch36 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
-%patch37 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
-%patch38 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
-%patch39 -p1 -b .fdo33947.sd.print.crash.patch
-%patch40 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-%patch41 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
-%patch42 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
-%patch43 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
-%patch44 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-%patch45 -p1 -b .beware-of-invalidated-iterator.patch
+%patch31 -p1 -b .rhbz672818-bandaid-for-crash-in-SwTxtNode-.patch
+%patch32 -p1 -b .install-high-resolution-icons.patch
+%patch33 -p1 -b .rhbz682716-pa-IN-isn-t-handled-by-fontconf.patch
+%patch34 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
+%patch35 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
+%patch36 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
+%patch37 -p1 -b .fdo33947.sd.print.crash.patch
+%patch38 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+%patch39 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
+%patch40 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
+%patch41 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
+%patch42 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+%patch43 -p1 -b .beware-of-invalidated-iterator.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2125,6 +2121,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Mar 22 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-1
+- latest version
+- drop integrated 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch
+- drop integrated 0001-valgrind-don-t-leave-an-evil-thread-running-after-ma.patch
+
 * Tue Mar 22 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-12
 - Fix fontoptions cache
 - avoid crash in calc on changing size of rows (dtardon)

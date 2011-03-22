@@ -1,0 +1,31 @@
+From 6fbf4caf7385d988559701d14ceed7925b76997d Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 22 Mar 2011 14:11:12 +0100
+Subject: [PATCH] beware of invalidated iterator
+
+---
+ sc/source/core/data/segmenttree.cxx |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/sc/source/core/data/segmenttree.cxx b/sc/source/core/data/segmenttree.cxx
+index d7d1153..08c3e3c 100644
+--- a/sc/source/core/data/segmenttree.cxx
++++ b/sc/source/core/data/segmenttree.cxx
+@@ -204,12 +204,14 @@ template<typename _ValueType, typename _ExtValueType>
+ void ScFlatSegmentsImpl<_ValueType, _ExtValueType>::removeSegment(SCCOLROW nPos1, SCCOLROW nPos2)
+ {
+     maSegments.shift_left(nPos1, nPos2);
++    maItr = maSegments.begin();
+ }
+ 
+ template<typename _ValueType, typename _ExtValueType>
+ void ScFlatSegmentsImpl<_ValueType, _ExtValueType>::insertSegment(SCCOLROW nPos, SCCOLROW nSize, bool bSkipStartBoundary)
+ {
+     maSegments.shift_right(nPos, nSize, bSkipStartBoundary);
++    maItr = maSegments.begin();
+ }
+ 
+ template<typename _ValueType, typename _ExtValueType>
+-- 
+1.7.4.1
+

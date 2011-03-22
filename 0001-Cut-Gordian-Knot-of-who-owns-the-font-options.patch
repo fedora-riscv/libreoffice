@@ -15,15 +15,15 @@ diff --git a/vcl/inc/vcl/glyphcache.hxx b/vcl/inc/vcl/glyphcache.hxx
 index 351eb13..6a375a4 100644
 --- a/vcl/inc/vcl/glyphcache.hxx
 +++ b/vcl/inc/vcl/glyphcache.hxx
-@@ -45,6 +45,7 @@ class ImplFontOptions;
+@@ -45,6 +45,7 @@
  #include <tools/gen.hxx>
- #include <boost/unordered_map.hpp>
- #include <boost/unordered_set.hpp>
+ #include <hash_map>
+ #include <hash_set>
 +#include <boost/shared_ptr.hpp>
  
  namespace basegfx { class B2DPolyPolygon; }
  
-@@ -186,8 +187,9 @@ public:
+@@ -182,8 +183,9 @@
      virtual bool                TestFont() const            { return true; }
      virtual void*               GetFtFace() const { return 0; }
      virtual int                 GetLoadFlags() const { return 0; }
@@ -35,7 +35,7 @@ index 351eb13..6a375a4 100644
      virtual bool                NeedsArtificialBold() const { return false; }
      virtual bool                NeedsArtificialItalic() const { return false; }
  
-@@ -266,7 +268,7 @@ class VCL_PLUGIN_PUBLIC ImplServerFontEntry : public ImplFontEntry
+@@ -261,7 +263,7 @@
  {
  private:
      ServerFont*    mpServerFont;
@@ -122,7 +122,7 @@ diff --git a/vcl/unx/source/gdi/salgdi3.cxx b/vcl/unx/source/gdi/salgdi3.cxx
 index 20fd3cd..4365356 100644
 --- a/vcl/unx/source/gdi/salgdi3.cxx
 +++ b/vcl/unx/source/gdi/salgdi3.cxx
-@@ -236,8 +236,8 @@ void ImplServerFontEntry::HandleFontOptions( void )
+@@ -665,8 +665,8 @@
      {
          // get and cache the font options
          mbGotFontOptions = true;
@@ -133,19 +133,13 @@ index 20fd3cd..4365356 100644
      }
      // apply the font options
      mpServerFont->SetFontOptions( mpFontOptions );
-@@ -536,12 +536,12 @@ void X11SalGraphics::DrawCairoAAFontString( const ServerFontLayout& rLayout )
-     void* pFace = rFont.GetFtFace();
-     CairoFontsCache::CacheId aId;
-     aId.mpFace = pFace;
--    aId.mpOptions = rFont.GetFontOptions();
-+    aId.mpOptions = rFont.GetFontOptions().get();
-     aId.mbEmbolden = rFont.NeedsArtificialBold();
-     font_face = (cairo_font_face_t*)m_aCairoFontsCache.FindCachedFont(aId);
+@@ -1043,7 +1043,7 @@
+     font_face = (cairo_font_face_t*)m_aCairoFontsCache.FindCachedFont(pId);
      if (!font_face)
      {
 -        const ImplFontOptions *pOptions = rFont.GetFontOptions();
 +        const ImplFontOptions *pOptions = rFont.GetFontOptions().get();
-         void *pPattern = pOptions ? pOptions->GetPattern(pFace, aId.mbEmbolden) : NULL;
+         void *pPattern = pOptions ? pOptions->GetPattern(pId) : NULL;
          if (pPattern)
              font_face = rCairo.ft_font_face_create_for_pattern(pPattern);
 -- 

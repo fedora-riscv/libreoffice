@@ -130,6 +130,7 @@ Patch41: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
 Patch42: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
 Patch43: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
 Patch44: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+Patch45: 0001-beware-of-invalidated-iterator.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -776,6 +777,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch41 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
 %patch42 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
 %patch43 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
+%patch45 -p1 -b .beware-of-invalidated-iterator.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2124,6 +2126,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Mar 22 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-12
 - Fix fontoptions cache
+- avoid crash in calc on changing size of rows (dtardon)
 
 * Mon Mar 21 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-11
 - Resolves: rhbz#689268 autocorrs from OOo F14 not upgraded

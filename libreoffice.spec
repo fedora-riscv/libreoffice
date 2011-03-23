@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -151,8 +151,8 @@ formats, including Microsoft Office File Formats.
 %package core
 Summary: Core modules for LibreOffice
 Group: Applications/Productivity
-Requires: %{name}-%{fontname}-fonts = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
+Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
@@ -170,8 +170,8 @@ The shared core libraries and support files for LibreOffice.
 %package pyuno
 Summary: Python support for LibreOffice
 Group: Development/Libraries
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: python
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
@@ -188,9 +188,9 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: postgresql-jdbc
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-calc = %{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
 
@@ -202,7 +202,7 @@ databases through a GUI.
 Summary: Create database reports from LibreOffice
 Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
-Requires: %{name}-base = %{version}-%{release}
+Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -218,7 +218,7 @@ fields to accomplish complex database reports.
 Summary: BeanShell support for LibreOffice
 Group: Development/Libraries
 Requires: bsh
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -231,7 +231,7 @@ Support BeanShell scripts in LibreOffice.
 %package rhino
 Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -246,7 +246,7 @@ Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
 Requires: jakarta-commons-codec, jakarta-commons-httpclient
 Requires: jakarta-commons-lang, jakarta-commons-logging
-Requires: %{name}-writer = %{version}-%{release}
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -261,7 +261,7 @@ your new and existing documents transparently with writer to a wiki page.
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
 Group: Applications/Productivity
-Requires: %{name}-impress = %{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
 
@@ -272,7 +272,7 @@ Requires good quality 3D support for your graphics card for best experience.
 %package presentation-minimizer
 Summary: Shrink LibreOffice presentations
 Group: Applications/Productivity
-Requires: %{name}-impress = %{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -287,7 +287,7 @@ be removed.
 %package presenter-screen
 Summary: Presenter Screen for LibreOffice Presentations
 Group: Applications/Productivity
-Requires: %{name}-impress = %{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -302,7 +302,7 @@ slide notes.
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
-Requires: %{name}-draw = %{version}-%{release}
+Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
@@ -328,8 +328,8 @@ mathematical symbols.
 %package writer
 Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 
@@ -339,8 +339,8 @@ The LibreOffice Word Processor application.
 %package emailmerge
 Summary: Email mail-merge component for LibreOffice 
 Group: Applications/Productivity
-Requires: %{name}-writer = %{version}-%{release}
-Requires: %{name}-pyuno = %{version}-%{release}
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-emailmerge < 1:3.3.1
 
 %description emailmerge
@@ -349,8 +349,8 @@ Enables the LibreOffice writer module to mail-merge to email.
 %package calc
 Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 
@@ -360,10 +360,10 @@ The LibreOffice Spreadsheet application.
 %package draw
 Summary: LibreOffice Drawing Application
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-pdfimport = %{version}-%{release}
-Requires: %{name}-graphicfilter = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
+Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
 Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
 
@@ -373,9 +373,9 @@ The LibreOffice Drawing Application.
 %package impress
 Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-presenter-screen = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
 
@@ -385,8 +385,8 @@ The LibreOffice Presentation Application.
 %package math
 Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-ure = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 
@@ -396,8 +396,8 @@ The LibreOffice Equation Editor Application.
 %package graphicfilter
 Summary: LibreOffice Extra Graphic filters
 Group: Applications/Productivity
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 
 %description graphicfilter
@@ -407,7 +407,7 @@ flash filters.
 %package xsltfilter
 Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 
 %description xsltfilter
@@ -417,7 +417,7 @@ xhtml export transforms. Install this to enable docbook export.
 %package javafilter
 Summary: Optional javafilter module for LibreOffice
 Group: Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-javafilter < 1:3.3.1
 
 %description javafilter
@@ -433,16 +433,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %package testtools
 Summary: Testtools for LibreOffice
 Group: Development/Libraries
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-core = %{version}-%{release}
-Requires: %{name}-writer = %{version}-%{release}
-Requires: %{name}-calc = %{version}-%{release}
-Requires: %{name}-draw = %{version}-%{release}
-Requires: %{name}-impress = %{version}-%{release}
-Requires: %{name}-base = %{version}-%{release}
-Requires: %{name}-math = %{version}-%{release}
-Requires: %{name}-bsh = %{version}-%{release}
-Requires: %{name}-rhino = %{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires: %{name}-draw = %{epoch}:%{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
+Requires: %{name}-base = %{epoch}:%{version}-%{release}
+Requires: %{name}-math = %{epoch}:%{version}-%{release}
+Requires: %{name}-bsh = %{epoch}:%{version}-%{release}
+Requires: %{name}-rhino = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-testtools < 1:3.3.1
 
 %description testtools
@@ -465,8 +465,8 @@ an appropriate bridge or adapter exists
 %package sdk
 Summary: Software Development Kit for LibreOffice
 Group: Development/Libraries
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
 
@@ -479,7 +479,7 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 %package sdk-doc
 Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
-Requires: %{name}-sdk = %{version}-%{release}
+Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 
 %description sdk-doc
@@ -489,8 +489,8 @@ and examples of creating extensions (UNO components) for LibreOffice.
 %package headless
 Summary: LibreOffice Headless plug-in
 Group: Development/Libraries
-Requires: %{name}-ure = %{version}-%{release}
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-headless < 1:3.3.1
 
 %description headless
@@ -501,7 +501,7 @@ used as a backend server for e.g. document conversion.
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
-Requires: %{name}-core = %{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
@@ -547,7 +547,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 %package %{pkgname} \
 Summary: %{langname} language pack for %{project} \
 Group: Applications/Productivity \
-Requires: %{name}-core = %{version}-%{release} \
+Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
 %{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
 %{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
@@ -2121,6 +2121,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Mar 23 2011 David Tardon <dtardon@redhat.com> 3.3.2.2-2
+- Related: rhbz#689268 versioned deps need to contain epoch
+
 * Tue Mar 22 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-1
 - latest version
 - drop integrated 0001-Resolves-fdo-33701-ensure-node-outlives-path.patch

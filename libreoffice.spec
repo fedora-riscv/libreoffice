@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.2.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -129,6 +129,9 @@ Patch40: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
 Patch41: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
 Patch42: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
 Patch43: 0001-beware-of-invalidated-iterator.patch
+Patch44: rhbz680766.fix-mdds-crash.patch
+Patch45: mdds.add-missing-link.patch
+Patch46: mdds.do-not-insert-new-node.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -775,10 +778,14 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch41 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
 %patch42 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
 %patch43 -p1 -b .beware-of-invalidated-iterator.patch
+%patch44 -p1 -b .rhbz680766.fix-mdds-crash.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
+
+cp %{PATCH45} mdds
+cp %{PATCH46} mdds
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2121,6 +2128,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Mar 24 2011 David Tardon <dtardon@redhat.com> 3.3.2.2-3
+- Resolves: rhbz#680766 crash in mdds
+
 * Wed Mar 23 2011 David Tardon <dtardon@redhat.com> 3.3.2.2-2
 - Related: rhbz#689268 versioned deps need to contain epoch
 

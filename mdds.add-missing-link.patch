@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent d5fb760990e45ae0db4f4b7609d8affb85101a39
+add missing link
+
+diff -r d5fb760990e4 -r c08b02a02f23 include/mdds/flat_segment_tree_def.inl
+--- a/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:52:10 2011 +0100
++++ b/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:53:14 2011 +0100
+@@ -438,6 +438,7 @@
+             m_left_leaf->value_leaf.value = m_init_val;
+             new_node->left = m_left_leaf;
+             new_node->right = m_left_leaf->right;
++            m_left_leaf->right->left = new_node;
+             m_left_leaf->right = new_node;
+         }
+ 

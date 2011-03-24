@@ -1,0 +1,43 @@
+# HG changeset patch
+# Parent ff6ad274f8ecb1715d366ddb53ecafd422252660
+do not insert new node if the whole range was shifted
+
+diff -r ff6ad274f8ec include/mdds/flat_segment_tree_def.inl
+--- a/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:54:16 2011 +0100
++++ b/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:55:26 2011 +0100
+@@ -430,16 +430,25 @@
+ 
+         if (m_left_leaf->value_leaf.value != m_init_val)
+         {
+-            // The leftmost leaf node has a non-initial value.  We need to
+-            // insert a new node to carry that value after the shift.
+-            node_ptr new_node(new node(true));
+-            new_node->value_leaf.key = pos + size;
+-            new_node->value_leaf.value = m_left_leaf->value_leaf.value;
+-            m_left_leaf->value_leaf.value = m_init_val;
+-            new_node->left = m_left_leaf;
+-            new_node->right = m_left_leaf->right;
+-            m_left_leaf->right->left = new_node;
+-            m_left_leaf->right = new_node;
++            if (size < m_right_leaf->value_leaf.key - m_left_leaf->value_leaf.key)
++            {
++                // The leftmost leaf node has a non-initial value.  We need to
++                // insert a new node to carry that value after the shift.
++                node_ptr new_node(new node(true));
++                new_node->value_leaf.key = pos + size;
++                new_node->value_leaf.value = m_left_leaf->value_leaf.value;
++                m_left_leaf->value_leaf.value = m_init_val;
++                new_node->left = m_left_leaf;
++                new_node->right = m_left_leaf->right;
++                m_left_leaf->right->left = new_node;
++                m_left_leaf->right = new_node;
++            }
++            else
++            {
++                // We shifted out the whole range, so there would be no new
++                // node inserted. Just set default value.
++                m_left_leaf->value_leaf.value = m_init_val;
++            }
+         }
+ 
+         m_valid_tree = false;

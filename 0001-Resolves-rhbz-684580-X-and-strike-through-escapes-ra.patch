@@ -25,21 +25,22 @@ index 02febe3..d43c163 100644
      // PDF-export does its own strikeout drawing... why again?
      if( mpPDFWriter && mpPDFWriter->isBuiltinFont(mpFontEntry->maFontSelData.mpFontData) )
          return;
-@@ -3984,25 +3989,7 @@
-         aChars[i] = cStrikeoutChar;
+@@ -3985,24 +3990,17 @@
      const String aStrikeoutTest( aChars, nTestStrLen );
  
--    // calculate approximation of strikeout atom size
+     // calculate approximation of strikeout atom size
 -    long nStrikeoutWidth = nWidth;
--    SalLayout* pLayout = ImplLayout( aStrikeoutTest, 0, nTestStrLen );
--    if( pLayout )
--    {
++    long nStrikeoutWidth = 0;
+     SalLayout* pLayout = ImplLayout( aStrikeoutTest, 0, nTestStrLen );
+     if( pLayout )
+     {
 -        nStrikeoutWidth = (pLayout->GetTextWidth() +nTestStrLen/2) / (nTestStrLen * pLayout->GetUnitsPerPixel());        
--        pLayout->Release();
--    }
--    if( nStrikeoutWidth <= 0 ) // sanity check
--        return;
--
++        nStrikeoutWidth = pLayout->GetTextWidth() / (nTestStrLen * pLayout->GetUnitsPerPixel());
+         pLayout->Release();
+     }
+     if( nStrikeoutWidth <= 0 ) // sanity check
+         return;
+ 
 -    // calculate acceptable strikeout length
 -    // allow the strikeout to be one pixel larger than the text it strikes out
 -    long nMaxWidth = nStrikeoutWidth / 2;
@@ -52,7 +53,7 @@ index 02febe3..d43c163 100644
      // if the text width is smaller than the strikeout text, then do not
      // strike out at all. This case requires user interaction, e.g. adding
      // a space to the text
-@@ -4034,8 +4021,28 @@
+@@ -4034,8 +4032,28 @@
      ImplInitTextColor();
  
      pLayout->DrawBase() = Point( nX+mnTextOffX, nY+mnTextOffY );

@@ -1,0 +1,573 @@
+From 146b561a6643022bc9c5b52fedaa8d7ff1a2dac5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 30 Mar 2011 16:49:04 +0100
+Subject: [PATCH] add flat-xml types to .desktop files etc.
+
+---
+ sysui/desktop/debian/postinst                      |   10 +++++++++-
+ sysui/desktop/freedesktop/freedesktop-menus.spec   |    8 ++++++++
+ sysui/desktop/mandriva/mandriva-menus.spec         |   10 +++++++++-
+ sysui/desktop/menus/calc.desktop                   |    2 +-
+ sysui/desktop/menus/draw.desktop                   |    2 +-
+ sysui/desktop/menus/impress.desktop                |    2 +-
+ sysui/desktop/menus/writer.desktop                 |    2 +-
+ .../mimetypes/oasis-drawing-flat-xml.desktop       |    9 +++++++++
+ .../mimetypes/oasis-presentation-flat-xml.desktop  |    9 +++++++++
+ .../mimetypes/oasis-spreadsheet-flat-xml.desktop   |    9 +++++++++
+ .../mimetypes/oasis-spreadsheet-flat-xml.keys      |   10 ++++++++++
+ .../desktop/mimetypes/oasis-text-flat-xml.desktop  |    9 +++++++++
+ sysui/desktop/mimetypes/oasis-text-flat-xml.keys   |   10 ++++++++++
+ sysui/desktop/mimetypes/openoffice.applications    |    2 +-
+ sysui/desktop/mimetypes/openoffice.mime            |   12 ++++++++++++
+ sysui/desktop/redhat/redhat-menus.spec             |   10 +++++++++-
+ sysui/desktop/solaris/mailcap                      |    4 ++++
+ sysui/desktop/solaris/mime.types                   |    4 ++++
+ sysui/desktop/suse/suse-menus.spec                 |    8 ++++++++
+ 19 files changed, 124 insertions(+), 8 deletions(-)
+ create mode 100755 sysui/desktop/mimetypes/oasis-drawing-flat-xml.desktop
+ create mode 100755 sysui/desktop/mimetypes/oasis-presentation-flat-xml.desktop
+ create mode 100755 sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.desktop
+ create mode 100755 sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.keys
+ create mode 100755 sysui/desktop/mimetypes/oasis-text-flat-xml.desktop
+ create mode 100755 sysui/desktop/mimetypes/oasis-text-flat-xml.keys
+
+diff --git a/sysui/desktop/debian/postinst b/sysui/desktop/debian/postinst
+index 67161df..5312512 100755
+--- a/sysui/desktop/debian/postinst
++++ b/sysui/desktop/debian/postinst
+@@ -38,15 +38,19 @@ sed '
+ 
+ # now append our stuff to the temporary file
+ cat >> /etc/mime.types.tmp$$ << END
+-application/vnd.oasis.opendocument.text	odt
++application/vnd.oasis.opendocument.text odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+@@ -98,6 +102,7 @@ then
+   cat >> /etc/mailcap.tmp$$ << END
+ # LibreOffice
+ application/vnd.oasis.opendocument.text; %PREFIX -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-template; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-web; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-master; %PREFIX -view %s
+@@ -113,6 +118,7 @@ application/vnd.stardivision.math; %PREFIX -view %s
+ application/x-starmath; %PREFIX -view %s
+ application/msword; %PREFIX -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %PREFIX -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %PREFIX -view %s
+ application/vnd.sun.xml.calc; %PREFIX -view %s
+ application/vnd.sun.xml.calc.template; %PREFIX -view %s
+@@ -125,6 +131,7 @@ application/msexcel; %PREFIX -view %s
+ application/vnd.ms-excel; %PREFIX -view %s
+ application/x-msexcel; %PREFIX -view %s
+ application/vnd.oasis.opendocument.presentation; %PREFIX -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.presentation-template; %PREFIX -view %s
+ application/vnd.sun.xml.impress; %PREFIX -view %s
+ application/vnd.sun.xml.impress.template; %PREFIX -view %s
+@@ -135,6 +142,7 @@ application/mspowerpoint; %PREFIX -view %s
+ application/vnd.ms-powerpoint; %PREFIX -view %s
+ application/x-mspowerpoint; %PREFIX -view %s
+ application/vnd.oasis.opendocument.graphics; %PREFIX -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.graphics-template; %PREFIX -view %s
+ application/vnd.sun.xml.draw; %PREFIX -view %s
+ application/vnd.sun.xml.draw.template; %PREFIX -view %s
+diff --git a/sysui/desktop/freedesktop/freedesktop-menus.spec b/sysui/desktop/freedesktop/freedesktop-menus.spec
+index 30c2dd6..8cec369 100755
+--- a/sysui/desktop/freedesktop/freedesktop-menus.spec
++++ b/sysui/desktop/freedesktop/freedesktop-menus.spec
+@@ -134,14 +134,18 @@ sed '
+ # now append our stuff to the temporary file
+ cat >> /etc/mime.types.tmp$$ << END
+ application/vnd.oasis.opendocument.text	odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+@@ -205,6 +209,7 @@ then
+   cat >> /etc/mailcap.tmp$$ << END
+ # LibreOffice
+ application/vnd.oasis.opendocument.text; %unixfilename -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-template; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-web; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-master; %unixfilename -view %s
+@@ -220,6 +225,7 @@ application/vnd.stardivision.math; %unixfilename -view %s
+ application/x-starmath; %unixfilename -view %s
+ application/msword; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %unixfilename -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %unixfilename -view %s
+ application/vnd.sun.xml.calc; %unixfilename -view %s
+ application/vnd.sun.xml.calc.template; %unixfilename -view %s
+@@ -232,6 +238,7 @@ application/msexcel; %unixfilename -view %s
+ application/vnd.ms-excel; %unixfilename -view %s
+ application/x-msexcel; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation; %unixfilename -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation-template; %unixfilename -view %s
+ application/vnd.sun.xml.impress; %unixfilename -view %s
+ application/vnd.sun.xml.impress.template; %unixfilename -view %s
+@@ -242,6 +249,7 @@ application/mspowerpoint; %unixfilename -view %s
+ application/vnd.ms-powerpoint; %unixfilename -view %s
+ application/x-mspowerpoint; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics; %unixfilename -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics-template; %unixfilename -view %s
+ application/vnd.sun.xml.draw; %unixfilename -view %s
+ application/vnd.sun.xml.draw.template; %unixfilename -view %s
+diff --git a/sysui/desktop/mandriva/mandriva-menus.spec b/sysui/desktop/mandriva/mandriva-menus.spec
+index f068788..a2c52de 100755
+--- a/sysui/desktop/mandriva/mandriva-menus.spec
++++ b/sysui/desktop/mandriva/mandriva-menus.spec
+@@ -53,15 +53,19 @@ sed '
+ 
+ # now append our stuff to the temporary file
+ cat >> /etc/mime.types.tmp$$ << END
+-application/vnd.oasis.opendocument.text	odt
++application/vnd.oasis.opendocument.text odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+@@ -125,6 +129,7 @@ then
+   cat >> /etc/mailcap.tmp$$ << END
+ # OpenOffice.org
+ application/vnd.oasis.opendocument.text; %unixfilename -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-template; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-web; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-master; %unixfilename -view %s
+@@ -140,6 +145,7 @@ application/vnd.stardivision.math; %unixfilename -view %s
+ application/x-starmath; %unixfilename -view %s
+ application/msword; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %unixfilename -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %unixfilename -view %s
+ application/vnd.sun.xml.calc; %unixfilename -view %s
+ application/vnd.sun.xml.calc.template; %unixfilename -view %s
+@@ -152,6 +158,7 @@ application/msexcel; %unixfilename -view %s
+ application/vnd.ms-excel; %unixfilename -view %s
+ application/x-msexcel; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation; %unixfilename -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation-template; %unixfilename -view %s
+ application/vnd.sun.xml.impress; %unixfilename -view %s
+ application/vnd.sun.xml.impress.template; %unixfilename -view %s
+@@ -162,6 +169,7 @@ application/mspowerpoint; %unixfilename -view %s
+ application/vnd.ms-powerpoint; %unixfilename -view %s
+ application/x-mspowerpoint; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics; %unixfilename -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics-template; %unixfilename -view %s
+ application/vnd.sun.xml.draw; %unixfilename -view %s
+ application/vnd.sun.xml.draw.template; %unixfilename -view %s
+diff --git a/sysui/desktop/menus/calc.desktop b/sysui/desktop/menus/calc.desktop
+index 3ae2bcb..80cc09d 100755
+--- a/sysui/desktop/menus/calc.desktop
++++ b/sysui/desktop/menus/calc.desktop
+@@ -5,7 +5,7 @@ Icon=calc
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Spreadsheets;
+ Exec=${UNIXBASISROOTNAME} --calc %U
+-MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/vnd.stardivision.calc;application/vnd.stardivision.chart;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;
++MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-flat-xml;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/vnd.stardivision.calc;application/vnd.stardivision.chart;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;
+ Name=%PRODUCTNAME Calc
+ Name[pt_BR]=%PRODUCTNAME_BR Calc
+ GenericName=Spreadsheet
+diff --git a/sysui/desktop/menus/draw.desktop b/sysui/desktop/menus/draw.desktop
+index f609d35..57f7ade 100755
+--- a/sysui/desktop/menus/draw.desktop
++++ b/sysui/desktop/menus/draw.desktop
+@@ -5,7 +5,7 @@ Icon=draw
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Drawing;
+ Exec=${UNIXBASISROOTNAME} --draw %U
+-MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;application/vnd.stardivision.draw;
++MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-flat-xml;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;application/vnd.stardivision.draw;
+ Name=%PRODUCTNAME Draw
+ Name[pt_BR]=%PRODUCTNAME_BR Draw
+ GenericName=Drawing Program
+diff --git a/sysui/desktop/menus/impress.desktop b/sysui/desktop/menus/impress.desktop
+index 814ee1d..025524e 100755
+--- a/sysui/desktop/menus/impress.desktop
++++ b/sysui/desktop/menus/impress.desktop
+@@ -5,7 +5,7 @@ Icon=impress
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Presentations;
+ Exec=${UNIXBASISROOTNAME} --impress %U
+-MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/vnd.stardivision.impress;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
++MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-flat-xml;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/vnd.stardivision.impress;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
+ Name=%PRODUCTNAME Impress
+ Name[pt_BR]=%PRODUCTNAME_BR Impress
+ GenericName=Presentation
+diff --git a/sysui/desktop/menus/writer.desktop b/sysui/desktop/menus/writer.desktop
+index 59b4f57..2222019 100755
+--- a/sysui/desktop/menus/writer.desktop
++++ b/sysui/desktop/menus/writer.desktop
+@@ -5,7 +5,7 @@ Icon=writer
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Wordprocessors;
+ Exec=${UNIXBASISROOTNAME} --writer %U
+-MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/vnd.stardivision.writer;application/msword;application/vnd.ms-word;application/x-doc;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
++MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-flat-xml;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/vnd.stardivision.writer;application/msword;application/vnd.ms-word;application/x-doc;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
+ Name=%PRODUCTNAME Writer
+ Name[pt_BR]=%PRODUCTNAME_BR Writer
+ GenericName=Word Processor
+diff --git a/sysui/desktop/mimetypes/oasis-drawing-flat-xml.desktop b/sysui/desktop/mimetypes/oasis-drawing-flat-xml.desktop
+new file mode 100755
+index 0000000..fd061eb
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-drawing-flat-xml.desktop
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Version=1.0
++Encoding=UTF-8
++Hidden=false
++Icon=oasis-drawing
++Type=MimeType
++Patterns=*.fodg
++MimeType=application/vnd.oasis.opendocument.graphics-flat-xml
++Comment=OpenDocument Drawing (Flat XML)
+diff --git a/sysui/desktop/mimetypes/oasis-presentation-flat-xml.desktop b/sysui/desktop/mimetypes/oasis-presentation-flat-xml.desktop
+new file mode 100755
+index 0000000..62887d8
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-presentation-flat-xml.desktop
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Version=1.0
++Encoding=UTF-8
++Hidden=false
++Icon=oasis-presentation
++Type=MimeType
++Patterns=*.fodp
++MimeType=application/vnd.oasis.opendocument.presentation-flat-xml
++Comment=OpenDocument Presentation
+diff --git a/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.desktop b/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.desktop
+new file mode 100755
+index 0000000..84a7352
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.desktop
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Version=1.0
++Encoding=UTF-8
++Hidden=false
++Icon=oasis-spreadsheet
++Type=MimeType
++Patterns=*.fods
++MimeType=application/vnd.oasis.opendocument.spreadsheet-flat-xml
++Comment=OpenDocument Spreadsheet (Flat XML)
+diff --git a/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.keys b/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.keys
+new file mode 100755
+index 0000000..2675c32
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-spreadsheet-flat-xml.keys
+@@ -0,0 +1,10 @@
++application/vnd.oasis.opendocument.spreadsheet-flat-xml
++	description=OpenDocument Spreadsheet (Flat XML)
++	default_action_type=application
++	short_list_application_ids_for_novice_user_level=
++	short_list_application_ids_for_intermediate_user_level=
++	short_list_application_ids_for_advanced_user_level=
++	category=Documents/Spreadsheet
++	use_category_default=yes
++	icon_filename=oasis-spreadsheet
++
+diff --git a/sysui/desktop/mimetypes/oasis-text-flat-xml.desktop b/sysui/desktop/mimetypes/oasis-text-flat-xml.desktop
+new file mode 100755
+index 0000000..f75891c
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-text-flat-xml.desktop
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Version=1.0
++Encoding=UTF-8
++Hidden=false
++Icon=oasis-text
++Type=MimeType
++Patterns=*.fodt
++MimeType=application/vnd.oasis.opendocument.text-flat-xml
++Comment=OpenDocument Text (Flat XML)
+diff --git a/sysui/desktop/mimetypes/oasis-text-flat-xml.keys b/sysui/desktop/mimetypes/oasis-text-flat-xml.keys
+new file mode 100755
+index 0000000..aaedf12
+--- /dev/null
++++ b/sysui/desktop/mimetypes/oasis-text-flat-xml.keys
+@@ -0,0 +1,10 @@
++application/vnd.oasis.opendocument.text-flat-xml
++	description=OpenDocument Text (Flat XML)
++	default_action_type=application
++	short_list_application_ids_for_novice_user_level=
++	short_list_application_ids_for_intermediate_user_level=
++	short_list_application_ids_for_advanced_user_level=
++	category=Documents/Word Processor
++	use_category_default=yes
++	icon_filename=oasis-text
++
+diff --git a/sysui/desktop/mimetypes/openoffice.applications b/sysui/desktop/mimetypes/openoffice.applications
+index d262102..1e3a5ad 100755
+--- a/sysui/desktop/mimetypes/openoffice.applications
++++ b/sysui/desktop/mimetypes/openoffice.applications
+@@ -5,5 +5,5 @@ OFFICENAME
+ 	expects_uris=true
+ 	requires_terminal=false
+ 	supported_uri_schemes=file,http,https,smb
+-	mime_types=application/vnd.oasis.opendocument.text,application/vnd.oasis.opendocument.text-template,application/vnd.oasis.opendocument.text-web,application/vnd.oasis.opendocument.text-master,application/vnd.oasis.opendocument.graphics,application/vnd.oasis.opendocument.graphics-template,application/vnd.oasis.opendocument.presentation,application/vnd.oasis.opendocument.presentation-template,application/vnd.oasis.opendocument.spreadsheet,application/vnd.oasis.opendocument.spreadsheet-template,application/vnd.oasis.opendocument.formula,application/vnd.oasis.opendocument.database,application/vnd.ms-excel,application/rtf,application/msword,application/vnd.ms-powerpoint,application/vnd.stardivision.calc,application/vnd.stardivision.chart,application/vnd.stardivision.draw,application/vnd.stardivision.impress,application/vnd.stardivision.mail,application/vnd.stardivision.math,application/vnd.stardivision.writer,application/vnd.sun.xml.calc,application/vnd.sun.xml.calc.template,application/vnd.sun.xml.draw,application/vnd.sun.xml.draw.template,application/vnd.sun.xml.impress,application/vnd.sun.xml.impress.template,application/vnd.sun.xml.math,application/vnd.sun.xml.writer,application/vnd.sun.xml.writer.global,application/vnd.sun.xml.writer.template,application/vnd.sun.xml.base,image/x-emf,image/x-pcx,image/x-photo-cd,image/x-pict;application/vnd.wordperfect;application/vnd.openofficeorg.extension;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;
++	mime_types=application/vnd.oasis.opendocument.text,application/vnd.oasis.opendocument.text-flat-xml,application/vnd.oasis.opendocument.text-template,application/vnd.oasis.opendocument.text-web,application/vnd.oasis.opendocument.text-master,application/vnd.oasis.opendocument.graphics,application/vnd.oasis.opendocument.graphics-flat-xml,application/vnd.oasis.opendocument.graphics-template,application/vnd.oasis.opendocument.presentation,application/vnd.oasis.opendocument.presentation-flat-xml,application/vnd.oasis.opendocument.presentation-template,application/vnd.oasis.opendocument.spreadsheet,application/vnd.oasis.opendocument.spreadsheet-flat-xml,application/vnd.oasis.opendocument.spreadsheet-template,application/vnd.oasis.opendocument.formula,application/vnd.oasis.opendocument.database,application/vnd.ms-excel,application/rtf,application/msword,application/vnd.ms-powerpoint,application/vnd.stardivision.calc,application/vnd.stardivision.chart,application/vnd.stardivision.draw,application/vnd.stardivision.impress,application/vnd.stardivision.mail,application/vnd.stardivision.math,application/vnd.stardivision.writer,application/vnd.sun.xml.calc,application/vnd.sun.xml.calc.template,application/vnd.sun.xml.draw,application/vnd.sun.xml.draw.template,application/vnd.sun.xml.impress,application/vnd.sun.xml.impress.template,application/vnd.sun.xml.math,application/vnd.sun.xml.writer,application/vnd.sun.xml.writer.global,application/vnd.sun.xml.writer.template,application/vnd.sun.xml.base,image/x-emf,image/x-pcx,image/x-photo-cd,image/x-pict;application/vnd.wordperfect;application/vnd.openofficeorg.extension;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;
+ 
+diff --git a/sysui/desktop/mimetypes/openoffice.mime b/sysui/desktop/mimetypes/openoffice.mime
+index 67c5648..fc895cf 100755
+--- a/sysui/desktop/mimetypes/openoffice.mime
++++ b/sysui/desktop/mimetypes/openoffice.mime
+@@ -1,6 +1,9 @@
+ application/vnd.oasis.opendocument.text:
+ 	ext: odt
+ 
++application/vnd.oasis.opendocument.text-flat-xml:
++	ext: fodt
++
+ application/vnd.oasis.opendocument.text-template:
+ 	ext: ott
+ 
+@@ -13,18 +16,27 @@ application/vnd.oasis.opendocument.text-master:
+ application/vnd.oasis.opendocument.graphics:
+ 	ext: odg
+ 
++application/vnd.oasis.opendocument.graphics-flat-xml:
++	ext: fodg
++
+ application/vnd.oasis.opendocument.graphics-template:
+ 	ext: otg
+ 
+ application/vnd.oasis.opendocument.presentation:
+ 	ext: odp
+ 
++application/vnd.oasis.opendocument.presentation-flat-xml:
++	ext: fodp
++
+ application/vnd.oasis.opendocument.presentation-template:
+ 	ext: otp
+ 
+ application/vnd.oasis.opendocument.spreadsheet:
+ 	ext: ods
+ 
++application/vnd.oasis.opendocument.spreadsheet-flat-xml:
++	ext: fods
++
+ application/vnd.oasis.opendocument.spreadsheet-template:
+ 	ext: ots
+ 
+diff --git a/sysui/desktop/redhat/redhat-menus.spec b/sysui/desktop/redhat/redhat-menus.spec
+index 663fe23..865703b 100755
+--- a/sysui/desktop/redhat/redhat-menus.spec
++++ b/sysui/desktop/redhat/redhat-menus.spec
+@@ -92,15 +92,19 @@ sed '
+ 
+ # now append our stuff to the temporary file
+ cat >> /etc/mime.types.tmp$$ << END
+-application/vnd.oasis.opendocument.text	odt
++application/vnd.oasis.opendocument.text odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+@@ -164,6 +168,7 @@ then
+   cat >> /etc/mailcap.tmp$$ << END
+ # LibreOffice
+ application/vnd.oasis.opendocument.text; %unixfilename -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-template; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-web; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-master; %unixfilename -view %s
+@@ -179,6 +184,7 @@ application/vnd.stardivision.math; %unixfilename -view %s
+ application/x-starmath; %unixfilename -view %s
+ application/msword; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %unixfilename -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %unixfilename -view %s
+ application/vnd.sun.xml.calc; %unixfilename -view %s
+ application/vnd.sun.xml.calc.template; %unixfilename -view %s
+@@ -191,6 +197,7 @@ application/msexcel; %unixfilename -view %s
+ application/vnd.ms-excel; %unixfilename -view %s
+ application/x-msexcel; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation; %unixfilename -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation-template; %unixfilename -view %s
+ application/vnd.sun.xml.impress; %unixfilename -view %s
+ application/vnd.sun.xml.impress.template; %unixfilename -view %s
+@@ -201,6 +208,7 @@ application/mspowerpoint; %unixfilename -view %s
+ application/vnd.ms-powerpoint; %unixfilename -view %s
+ application/x-mspowerpoint; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics; %unixfilename -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics-template; %unixfilename -view %s
+ application/vnd.sun.xml.draw; %unixfilename -view %s
+ application/vnd.sun.xml.draw.template; %unixfilename -view %s
+diff --git a/sysui/desktop/solaris/mailcap b/sysui/desktop/solaris/mailcap
+index 5c8a1d5..19407fd 100755
+--- a/sysui/desktop/solaris/mailcap
++++ b/sysui/desktop/solaris/mailcap
+@@ -20,6 +20,7 @@ sed '
+ cat << END
+ # OpenOffice.org
+ application/vnd.oasis.opendocument.text; %PREFIX -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-template; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-web; %PREFIX -view %s
+ application/vnd.oasis.opendocument.text-master; %PREFIX -view %s
+@@ -35,6 +36,7 @@ application/vnd.stardivision.math; %PREFIX -view %s
+ application/x-starmath; %PREFIX -view %s
+ application/msword; %PREFIX -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %PREFIX -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %PREFIX -view %s
+ application/vnd.sun.xml.calc; %PREFIX -view %s
+ application/vnd.sun.xml.calc.template; %PREFIX -view %s
+@@ -47,6 +49,7 @@ application/msexcel; %PREFIX -view %s
+ application/vnd.ms-excel; %PREFIX -view %s
+ application/x-msexcel; %PREFIX -view %s
+ application/vnd.oasis.opendocument.presentation; %PREFIX -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.presentation-template; %PREFIX -view %s
+ application/vnd.sun.xml.impress; %PREFIX -view %s
+ application/vnd.sun.xml.impress.template; %PREFIX -view %s
+@@ -57,6 +60,7 @@ application/mspowerpoint; %PREFIX -view %s
+ application/vnd.ms-powerpoint; %PREFIX -view %s
+ application/x-mspowerpoint; %PREFIX -view %s
+ application/vnd.oasis.opendocument.graphics; %PREFIX -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %PREFIX -view %s
+ application/vnd.oasis.opendocument.graphics-template; %PREFIX -view %s
+ application/vnd.sun.xml.draw; %PREFIX -view %s
+ application/vnd.sun.xml.draw.template; %PREFIX -view %s
+diff --git a/sysui/desktop/solaris/mime.types b/sysui/desktop/solaris/mime.types
+index 1b0a203..939d0e5 100755
+--- a/sysui/desktop/solaris/mime.types
++++ b/sysui/desktop/solaris/mime.types
+@@ -10,14 +10,18 @@ sed '
+ # now append our stuff to the temporary file
+ cat << END
+ application/vnd.oasis.opendocument.text odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+diff --git a/sysui/desktop/suse/suse-menus.spec b/sysui/desktop/suse/suse-menus.spec
+index fe70969..74eb0a5 100755
+--- a/sysui/desktop/suse/suse-menus.spec
++++ b/sysui/desktop/suse/suse-menus.spec
+@@ -104,14 +104,18 @@ sed '
+ # now append our stuff to the temporary file
+ cat >> /etc/mime.types.tmp$$ << END
+ application/vnd.oasis.opendocument.text odt
++application/vnd.oasis.opendocument.text-flat-xml fodt
+ application/vnd.oasis.opendocument.text-template ott
+ application/vnd.oasis.opendocument.text-web oth
+ application/vnd.oasis.opendocument.text-master odm
+ application/vnd.oasis.opendocument.graphics odg
++application/vnd.oasis.opendocument.graphics-flat-xml fodg
+ application/vnd.oasis.opendocument.graphics-template otg
+ application/vnd.oasis.opendocument.presentation odp
++application/vnd.oasis.opendocument.presentation-flat-xml fodp
+ application/vnd.oasis.opendocument.presentation-template otp
+ application/vnd.oasis.opendocument.spreadsheet ods
++application/vnd.oasis.opendocument.spreadsheet-flat-xml fods
+ application/vnd.oasis.opendocument.spreadsheet-template ots
+ application/vnd.oasis.opendocument.chart odc
+ application/vnd.oasis.opendocument.formula odf
+@@ -175,6 +179,7 @@ then
+   cat >> /etc/mailcap.tmp$$ << END
+ # OpenOffice.org
+ application/vnd.oasis.opendocument.text; %unixfilename -view %s
++application/vnd.oasis.opendocument.text-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-template; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-web; %unixfilename -view %s
+ application/vnd.oasis.opendocument.text-master; %unixfilename -view %s
+@@ -190,6 +195,7 @@ application/vnd.stardivision.math; %unixfilename -view %s
+ application/x-starmath; %unixfilename -view %s
+ application/msword; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet; %unixfilename -view %s
++application/vnd.oasis.opendocument.spreadsheet-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.spreadsheet-template; %unixfilename -view %s
+ application/vnd.sun.xml.calc; %unixfilename -view %s
+ application/vnd.sun.xml.calc.template; %unixfilename -view %s
+@@ -202,6 +208,7 @@ application/msexcel; %unixfilename -view %s
+ application/vnd.ms-excel; %unixfilename -view %s
+ application/x-msexcel; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation; %unixfilename -view %s
++application/vnd.oasis.opendocument.presentation-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.presentation-template; %unixfilename -view %s
+ application/vnd.sun.xml.impress; %unixfilename -view %s
+ application/vnd.sun.xml.impress.template; %unixfilename -view %s
+@@ -212,6 +219,7 @@ application/mspowerpoint; %unixfilename -view %s
+ application/vnd.ms-powerpoint; %unixfilename -view %s
+ application/x-mspowerpoint; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics; %unixfilename -view %s
++application/vnd.oasis.opendocument.graphics-flat-xml; %unixfilename -view %s
+ application/vnd.oasis.opendocument.graphics-template; %unixfilename -view %s
+ application/vnd.sun.xml.draw; %unixfilename -view %s
+ application/vnd.sun.xml.draw.template; %unixfilename -view %s
+-- 
+1.7.4.1
+

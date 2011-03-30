@@ -1,0 +1,67 @@
+From b83b2754dc18b0742c36db2f013047e6cb409400 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 30 Mar 2011 16:53:28 +0100
+Subject: [PATCH] set mime types on flat xml filters
+
+---
+ .../config/fragments/types/calc_ODS_FlatXML.xcu    |    2 +-
+ .../config/fragments/types/draw_ODG_FlatXML.xcu    |    2 +-
+ .../config/fragments/types/impress_ODP_FlatXML.xcu |    2 +-
+ .../config/fragments/types/writer_ODT_FlatXML.xcu  |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/filter/source/config/fragments/types/calc_ODS_FlatXML.xcu b/filter/source/config/fragments/types/calc_ODS_FlatXML.xcu
+index 51e43cb..bb9cd6d 100644
+--- a/filter/source/config/fragments/types/calc_ODS_FlatXML.xcu
++++ b/filter/source/config/fragments/types/calc_ODS_FlatXML.xcu
+@@ -2,7 +2,7 @@
+         <prop oor:name="DetectService"><value>com.sun.star.comp.filters.XMLFilterDetect</value></prop>
+         <prop oor:name="URLPattern"/>
+         <prop oor:name="Extensions"><value>fods ods xml</value></prop>
+-        <prop oor:name="MediaType"/>
++        <prop oor:name="MediaType"><value>application/vnd.oasis.opendocument.spreadsheet-flat-xml</value></prop>
+         <prop oor:name="Preferred"><value>false</value></prop>
+         <prop oor:name="PreferredFilter"><value>OpenDocument Spreadsheet Flat XML</value></prop>
+         <prop oor:name="UIName">
+diff --git a/filter/source/config/fragments/types/draw_ODG_FlatXML.xcu b/filter/source/config/fragments/types/draw_ODG_FlatXML.xcu
+index 2fa92bf..41d8a69 100644
+--- a/filter/source/config/fragments/types/draw_ODG_FlatXML.xcu
++++ b/filter/source/config/fragments/types/draw_ODG_FlatXML.xcu
+@@ -2,7 +2,7 @@
+         <prop oor:name="DetectService"><value>com.sun.star.comp.filters.XMLFilterDetect</value></prop>
+         <prop oor:name="URLPattern"/>
+         <prop oor:name="Extensions"><value>fodg odg xml</value></prop>
+-        <prop oor:name="MediaType"/>
++        <prop oor:name="MediaType"><value>application/vnd.oasis.opendocument.graphics-flat-xml</value></prop>
+         <prop oor:name="Preferred"><value>false</value></prop>
+         <prop oor:name="PreferredFilter"><value>OpenDocument Drawing Flat XML</value></prop>
+         <prop oor:name="UIName">
+diff --git a/filter/source/config/fragments/types/impress_ODP_FlatXML.xcu b/filter/source/config/fragments/types/impress_ODP_FlatXML.xcu
+index 1b43a63..915f91a 100644
+--- a/filter/source/config/fragments/types/impress_ODP_FlatXML.xcu
++++ b/filter/source/config/fragments/types/impress_ODP_FlatXML.xcu
+@@ -2,7 +2,7 @@
+         <prop oor:name="DetectService"><value>com.sun.star.comp.filters.XMLFilterDetect</value></prop>
+         <prop oor:name="URLPattern"/>
+         <prop oor:name="Extensions"><value>fodp odp xml</value></prop>
+-        <prop oor:name="MediaType"/>
++        <prop oor:name="MediaType"><value>application/vnd.oasis.opendocument.presentation-flat-xml</value></prop>
+         <prop oor:name="Preferred"><value>false</value></prop>
+         <prop oor:name="PreferredFilter"><value>OpenDocument Presentation Flat XML</value></prop>
+         <prop oor:name="UIName">
+diff --git a/filter/source/config/fragments/types/writer_ODT_FlatXML.xcu b/filter/source/config/fragments/types/writer_ODT_FlatXML.xcu
+index 7c6f324..9c0c0ed 100644
+--- a/filter/source/config/fragments/types/writer_ODT_FlatXML.xcu
++++ b/filter/source/config/fragments/types/writer_ODT_FlatXML.xcu
+@@ -2,7 +2,7 @@
+         <prop oor:name="DetectService"><value>com.sun.star.comp.filters.XMLFilterDetect</value></prop>
+         <prop oor:name="URLPattern"/>
+         <prop oor:name="Extensions"><value>fodt odt xml</value></prop>
+-        <prop oor:name="MediaType"/>
++        <prop oor:name="MediaType"><value>application/vnd.oasis.opendocument.text-flat-xml</value></prop>
+         <prop oor:name="Preferred"><value>false</value></prop>
+         <prop oor:name="PreferredFilter"><value>OpenDocument Text Flat XML</value></prop>
+         <prop oor:name="UIName">
+-- 
+1.7.4.1
+

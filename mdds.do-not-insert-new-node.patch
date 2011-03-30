@@ -3,8 +3,8 @@
 do not insert new node if the whole range was shifted
 
 diff -r ff6ad274f8ec include/mdds/flat_segment_tree_def.inl
---- a/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:54:16 2011 +0100
-+++ b/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:55:26 2011 +0100
+--- misc/mdds_0.3.0/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:54:16 2011 +0100
++++ misc/build/mdds_0.3.0/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:55:26 2011 +0100
 @@ -430,16 +430,25 @@
  
          if (m_left_leaf->value_leaf.value != m_init_val)

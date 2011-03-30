@@ -4,7 +4,7 @@ add missing link
 
 diff -r d5fb760990e4 -r c08b02a02f23 include/mdds/flat_segment_tree_def.inl
 --- misc/mdds_0.3.0/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:52:10 2011 +0100
-+++ misc/mdds_0.3.0/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:53:14 2011 +0100
++++ misc/build/mdds_0.3.0/inc/mdds/flat_segment_tree.hpp	Thu Mar 24 14:53:14 2011 +0100
 @@ -438,6 +438,7 @@
              m_left_leaf->value_leaf.value = m_init_val;
              new_node->left = m_left_leaf;

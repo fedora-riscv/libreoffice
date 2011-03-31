@@ -204,10 +204,10 @@ diff --git a/sysui/desktop/menus/calc.desktop b/sysui/desktop/menus/calc.desktop
 index 3ae2bcb..80cc09d 100755
 --- a/sysui/desktop/menus/calc.desktop
 +++ b/sysui/desktop/menus/calc.desktop
-@@ -5,7 +5,7 @@ Icon=calc
+@@ -5,7 +5,7 @@
  Type=Application
  Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Spreadsheets;
- Exec=${UNIXBASISROOTNAME} --calc %U
+ Exec=${UNIXBASISROOTNAME} -calc %U
 -MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/vnd.stardivision.calc;application/vnd.stardivision.chart;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;
 +MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-flat-xml;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/vnd.stardivision.calc;application/vnd.stardivision.chart;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;
  Name=%PRODUCTNAME Calc
@@ -217,10 +217,10 @@ diff --git a/sysui/desktop/menus/draw.desktop b/sysui/desktop/menus/draw.desktop
 index f609d35..57f7ade 100755
 --- a/sysui/desktop/menus/draw.desktop
 +++ b/sysui/desktop/menus/draw.desktop
-@@ -5,7 +5,7 @@ Icon=draw
+@@ -5,7 +5,7 @@
  Type=Application
  Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Drawing;
- Exec=${UNIXBASISROOTNAME} --draw %U
+ Exec=${UNIXBASISROOTNAME} -draw %U
 -MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;application/vnd.stardivision.draw;
 +MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-flat-xml;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;application/vnd.stardivision.draw;
  Name=%PRODUCTNAME Draw
@@ -230,10 +230,10 @@ diff --git a/sysui/desktop/menus/impress.desktop b/sysui/desktop/menus/impress.d
 index 814ee1d..025524e 100755
 --- a/sysui/desktop/menus/impress.desktop
 +++ b/sysui/desktop/menus/impress.desktop
-@@ -5,7 +5,7 @@ Icon=impress
+@@ -5,7 +5,7 @@
  Type=Application
  Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Presentations;
- Exec=${UNIXBASISROOTNAME} --impress %U
+ Exec=${UNIXBASISROOTNAME} -impress %U
 -MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/vnd.stardivision.impress;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
 +MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-flat-xml;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/vnd.stardivision.impress;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
  Name=%PRODUCTNAME Impress
@@ -243,10 +243,10 @@ diff --git a/sysui/desktop/menus/writer.desktop b/sysui/desktop/menus/writer.des
 index 59b4f57..2222019 100755
 --- a/sysui/desktop/menus/writer.desktop
 +++ b/sysui/desktop/menus/writer.desktop
-@@ -5,7 +5,7 @@ Icon=writer
+@@ -5,7 +5,7 @@
  Type=Application
  Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Wordprocessors;
- Exec=${UNIXBASISROOTNAME} --writer %U
+ Exec=${UNIXBASISROOTNAME} -writer %U
 -MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/vnd.stardivision.writer;application/msword;application/vnd.ms-word;application/x-doc;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
 +MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-flat-xml;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/vnd.stardivision.writer;application/msword;application/vnd.ms-word;application/x-doc;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
  Name=%PRODUCTNAME Writer

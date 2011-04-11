@@ -4,20 +4,6 @@
 %define _default_patch_flags -s -l
 # undef to get english only and no-langpacks for a faster smoketest build
 %define langpacks 1
-# whether to use stlport or gcc's stl, we're basically locked to stlport for
-# i386 to support third party uno components and add-ons designed to work with
-# vanilla OOo.
-%ifarch %{ix86}
-%define stlport_abi_lockin 1
-%else
-%define stlport_abi_lockin 0
-%endif
-
-%if %{stlport_abi_lockin}
-%define stlflags --with-stlport
-%else
-%define stlflags --without-stlport
-%endif
 
 %if %{langpacks}
 %define langpack_langs af ar bg bn ca cs cy da de dz el en-US es et eu fi fr ga gl gu pa-IN he hi hu hr it ja ko lt ms nb nl nn nr pl pt pt-BR ru sh sk sl sr ss st sv ta th tr ve xh zh-CN zh-TW zu ns tn ts as mr ml or te ur kn uk mai ro si
@@ -28,8 +14,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.2.2
-Release:        6%{?dist}
+Version:        3.3.99.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -53,7 +39,7 @@ Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffi
 Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-%{version}.tar.bz2
 Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-%{version}.tar.bz2
 Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-%{version}.tar.bz2
-Source19:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-%{version}.tar.bz2
+Source19:       http://download.documentfoundation.org/libreoffice/src/libreoffice-translations-%{version}.tar.bz2
 Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
 Source22:       libreoffice-multiliblauncher.sh
@@ -141,10 +127,10 @@ Patch50: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
 %define ureinstdir %{baseinstdir}/ure
-%define basisinstdir %{baseinstdir}/basis3.3
-%define sdkinstdir %{baseinstdir}/basis3.3/sdk
+%define basisinstdir %{baseinstdir}/basis3.4
+%define sdkinstdir %{baseinstdir}/basis3.4/sdk
 %define fontname opensymbol
-%define OFFICEUPD 330
+%define OFFICEUPD 340
 %define SOPOST l*
 
 %description
@@ -828,7 +814,7 @@ autoconf
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
  --with-system-libtextcat --with-system-libtextcat-data --without-system-saxon \
  --with-external-dict-dir=/usr/share/myspell --without-myspell-dicts \
- --without-fonts --without-agg --without-ppds --without-afms %{stlflags} \
+ --without-fonts --without-agg --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --enable-kde4 --without-system-mdds --without-system-hsqldb
@@ -855,9 +841,6 @@ done
 export ARCH_FLAGS
 
 . ./*[Ee]nv.[Ss]et.sh
-%ifarch %{ix86}
-unset HAVE_GCC_VISIBILITY_FEATURE
-%endif
 ./bootstrap
 
 #HANGING JAVA HACK
@@ -2136,6 +2119,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
+- 3.4 beta1
+
 * Tue Apr 05 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-6
 - Resolves: rhbz#655686 get order of shutdown correct
 

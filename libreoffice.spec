@@ -83,6 +83,7 @@ Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch9:  libreoffice-installfix.patch
 Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 Patch11: kde4configure.patch
+Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -695,6 +696,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch9  -p1 -b .libreoffice-installfix.patch
 %patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 %patch11 -p0 -b .kde4configure.patch
+%patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

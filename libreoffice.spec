@@ -40,7 +40,7 @@ Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffi
 Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-%{version}.tar.bz2
 Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-%{version}.tar.bz2
 Source19:       http://download.documentfoundation.org/libreoffice/src/libreoffice-translations-%{version}.tar.bz2
-Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
+Source20:       http://download.go-oo.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
 Source22:       libreoffice-multiliblauncher.sh
 Source23:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
@@ -53,6 +53,7 @@ Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -69,7 +70,7 @@ BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
-BuildRequires:  kdelibs4-devel
+BuildRequires:  translate-toolkit, kdelibs4-devel
 
 Patch1:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
 Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
@@ -730,10 +731,11 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --enable-kde4 --without-system-hsqldb --disable-graphite
+ --without-system-translate-toolkit --enable-kde4 --without-system-hsqldb \
+ --disable-graphite
 
 mkdir -p ext_sources
-cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+cp %{SOURCE20} ext_sources
 cp %{SOURCE23} ext_sources
 cp %{SOURCE24} ext_sources
 cp %{SOURCE25} ext_sources
@@ -742,6 +744,7 @@ cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
+cp %{SOURCE31} ext_sources
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do

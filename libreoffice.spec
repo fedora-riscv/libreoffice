@@ -80,9 +80,7 @@ Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch9:  libreoffice-installfix.patch
-Patch10: libreoffice-fdo31271.icu.patch
-Patch11: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
-Patch12: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
+Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -695,9 +693,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch7  -p1 -b .ooo108637.sfx2.uisavedir.patch
 %patch8  -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch9  -p1 -b .libreoffice-installfix.patch
-%patch10 -p1 -b .fdo31271.icu.patch
-%patch11 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
-%patch12 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
+%patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2072,6 +2068,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - drop integrated rhbz680766.fix-mdds-crash.patch
 - drop integrated 0001-Resolves-rhbz-684580-X-and-strike-through-escapes-ra.patch
 - drop integrated 0001-set-mime-types-on-flat-xml-filters.patch
+- drop integrated 0001-add-flat-xml-types-to-.desktop-files-etc.patch
+- drop integrated libreoffice-fdo31271.icu.patch
 
 * Tue Apr 05 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-6
 - Resolves: rhbz#655686 get order of shutdown correct

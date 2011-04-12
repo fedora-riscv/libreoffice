@@ -1,7 +1,7 @@
 diff -ru vcl.orig/unx/source/fontmanager/fontconfig.cxx vcl/unx/source/fontmanager/fontconfig.cxx
 --- vcl.orig/unx/source/fontmanager/fontconfig.cxx	2009-10-08 13:25:00.000000000 +0100
 +++ vcl/unx/source/fontmanager/fontconfig.cxx	2009-10-08 13:51:51.000000000 +0100
-@@ -80,6 +80,9 @@
+@@ -92,6 +92,9 @@
  
  #include "sal/alloca.h"
  
@@ -11,7 +11,7 @@ diff -ru vcl.orig/unx/source/fontmanager/fontconfig.cxx vcl/unx/source/fontmanag
  #include <utility>
  #include <algorithm>
  
-@@ -907,6 +910,138 @@
+@@ -1108,6 +1111,138 @@
      }
  }
  
@@ -150,16 +150,23 @@ diff -ru vcl.orig/unx/source/fontmanager/fontconfig.cxx vcl/unx/source/fontmanag
  rtl::OUString PrintFontManager::Substitute(const rtl::OUString& rFontName,
      rtl::OUString& rMissingCodes, const rtl::OString &rLangAttrib,
      italic::type &rItalic, weight::type &rWeight,
-@@ -928,8 +1063,6 @@
+@@ -1128,14 +1263,13 @@
+     const FcChar8* pTargetNameUtf8 = (FcChar8*)aTargetName.getStr();
      rWrapper.FcPatternAddString( pPattern, FC_FAMILY, pTargetNameUtf8 );
  
-     const FcChar8* pLangAttribUtf8 = (FcChar8*)rLangAttrib.getStr();
--    if( rLangAttrib.getLength() )
++    const FcChar8* pLangAttribUtf8 = NULL;
+     if( rLangAttrib.getLength() )
+     {
+-        const FcChar8* pLangAttribUtf8;
+         if (rLangAttrib.equalsIgnoreAsciiCase(OString(RTL_CONSTASCII_STRINGPARAM("pa-in"))))
+             pLangAttribUtf8 = (FcChar8*)"pa";
+         else
+             pLangAttribUtf8 = (FcChar8*)rLangAttrib.getStr();
 -        rWrapper.FcPatternAddString( pPattern, FC_LANG, pLangAttribUtf8 );
+     }
  
      // Add required Unicode characters, if any
-     if ( rMissingCodes.getLength() )
-@@ -940,11 +1073,16 @@
+@@ -1147,11 +1281,16 @@
             // also handle unicode surrogates
             const sal_uInt32 nCode = rMissingCodes.iterateCodePoints( &nStrIndex );
             rWrapper.FcCharSetAddChar( unicodes, nCode );

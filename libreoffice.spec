@@ -50,10 +50,9 @@ Source26:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf
 Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
-Source30:       http://hg.services.openoffice.org/binaries/cf8a6967f7de535ae257fa411c98eb88-mdds_0.3.0.tar.bz2
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source31:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -72,56 +71,18 @@ BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
 BuildRequires:  kdelibs4-devel
 
-Patch1:  openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
-Patch2:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
-Patch3:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
-Patch4:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
-Patch5:  openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
-Patch6:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
-Patch7:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
-Patch8:  openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
-Patch9:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
-Patch10: openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
-Patch11: openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
-Patch12: turn-script-providers-into-extensions.patch
-Patch13: libreoffice-installfix.patch
-Patch14: 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
-Patch15: libreoffice-bootstrap-kde.patch
-Patch16: 0001-free-ctxt-after-taking-lastError-details.patch
-Patch17: 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
-Patch18: libreoffice-fdo31271.icu.patch
-Patch19: libreoffice-gcc4.6.0.patch
-Patch20: 0001-fexceptions-fexceptions.patch
-Patch21: 0001-Related-rhbz-672872-cancel-gtk-file-dialog-on-deskto.patch
-Patch22: vbahelper.visibility.patch
-Patch23: 0001-Resolves-fdo-33509-i62414-out-by-one-breaks-CTL-spel.patch
-Patch24: 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
-Patch25: 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
-Patch26: 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
-Patch27: 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
-Patch28: 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
-Patch29: 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.patch
-Patch30: 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
-Patch31: 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
-Patch32: 0001-install-high-resolution-icons.patch
-Patch33: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
-Patch34: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
-Patch35: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
-Patch36: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
-Patch37: libreoffice-fdo33947.sd.print.crash.patch
-Patch38: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-Patch39: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
-Patch40: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
-Patch41: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
-Patch42: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-Patch43: 0001-beware-of-invalidated-iterator.patch
-Patch44: rhbz680766.fix-mdds-crash.patch
-Patch45: mdds.add-missing-link.patch
-Patch46: mdds.do-not-insert-new-node.patch
-Patch47: 0001-Resolves-rhbz-684580-X-and-strike-through-escapes-ra.patch
-Patch48: 0001-set-mime-types-on-flat-xml-filters.patch
-Patch49: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
-Patch50: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
+Patch1:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
+Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+Patch3:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
+Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
+Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
+Patch7:  openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
+Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
+Patch9:  libreoffice-installfix.patch
+Patch10: libreoffice-fdo31271.icu.patch
+Patch11: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
+Patch12: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -725,61 +686,18 @@ rm -rf l10n/source/kid
  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-%patch1  -p1 -b .ooo53397.prelinkoptimize.desktop.patch
-%patch2  -p1
-%patch3  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch4  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch5  -p0 -b .gccXXXXX.solenv.javaregistration.patch
-%patch6  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch7  -p0 -b .ooo101274.opening-a-directory.patch
-%patch8  -p0 -b .ooo102061.sc.cellanchoring.patch
-%patch9  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
-%patch10 -p1 -b .ooo108637.sfx2.uisavedir.patch
-%patch11 -p0 -b .ooo113273.desktop.resolvelinks.patch
-%patch12 -p1 -b .turn-script-providers-into-extensions.patch
-%patch13 -p1 -b .libreoffice-installfix.patch
-%patch14 -p1 -b .don-t-bail-out-on-mislength-records.patch
-%patch15 -p1 -b .libreoffice-bootstrap-kde.patch
-%patch16 -p1 -b .free-ctxt-after-taking-lastError-details.patch
-%patch17 -p1 -b .Cursor-on-post-it-now-scrolls-.patch
-%patch18 -p1 -b .fdo31271.icu.patch
-%patch19 -p1 -b .libreoffice-gcc4.6.0.patch
-%patch20 -p1 -b .fexceptions-fexceptions.patch
-%patch21 -p1 -b .rhbz672872-cancel-gtk-file-dialog-on-deskto.patch
-%patch22 -p0 -b .vbahelper.visibility.patch
-%patch23 -p1 -b .fdo33509-i62414-out-by-one-breaks-CTL-spel.patch
-%patch24 -p1 -b .rhbz670020-crash-in-slidesorting.patch
-%patch25 -p1 -b .rhbz676539-handle-missing-pWindows-from-xW.patch
-%patch26 -p1 -b .fdo33750-i94623-use-optimal-border-width-w.patch
-%patch27 -p1 -b .rhbz649310-don-t-crash-deregistering-diff.-platform.patch
-%patch28 -p1 -b .rhbz674330-dereference-of-NULL-mpBase.patch
-%patch29 -p1 -b .rhbz678284-Get-correct-current-position-when-shift-page-up-and-.patch
-%patch30 -p1 -b .rhbz681159-bandaid-for-crash.patch
-%patch31 -p1 -b .rhbz672818-bandaid-for-crash-in-SwTxtNode-.patch
-%patch32 -p1 -b .install-high-resolution-icons.patch
-%patch33 -p1 -b .rhbz682716-pa-IN-isn-t-handled-by-fontconf.patch
-%patch34 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
-%patch35 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
-%patch36 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
-%patch37 -p1 -b .fdo33947.sd.print.crash.patch
-%patch38 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-%patch39 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
-%patch40 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
-%patch41 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
-%patch42 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-%patch43 -p1 -b .beware-of-invalidated-iterator.patch
-%patch44 -p1 -b .rhbz680766.fix-mdds-crash.patch
-%patch47 -p1 -b .rhbz684580-X-and-strike-through-escapes-ra.patch
-%patch48 -p1 -b .set-mime-types-on-flat-xml-filters.patch
-%patch49 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
-%patch50 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
-
-touch scripting/source/pyprov/delzip
-touch scripting/util/provider/beanshell/delzip
-touch scripting/util/provider/javascript/delzip
-
-cp %{PATCH45} mdds
-cp %{PATCH46} mdds
+%patch1  -p1
+%patch2  -p1 -b .ooo86080.unopkg.bodge.patch
+%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
+%patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
+%patch5  -p0 -b .ooo101274.opening-a-directory.patch
+%patch6  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch7  -p1 -b .ooo108637.sfx2.uisavedir.patch
+%patch8  -p0 -b .ooo113273.desktop.resolvelinks.patch
+%patch9  -p1 -b .libreoffice-installfix.patch
+%patch10 -p1 -b .fdo31271.icu.patch
+%patch11 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
+%patch12 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -791,9 +709,6 @@ SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
-
-NDMAKES=1
-NBUILDS=1
 
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
@@ -817,7 +732,7 @@ autoconf
  --without-fonts --without-agg --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --enable-kde4 --without-system-mdds --without-system-hsqldb
+ --enable-kde4 --without-system-hsqldb
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
@@ -829,7 +744,6 @@ cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
-cp %{SOURCE31} ext_sources
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -2119,8 +2033,45 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Mon Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
+* Tue Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
 - 3.4 beta1
+- drop openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
+  in favour of ooosplash
+- drop openoffice.org-2.2.0.gccXXXXX.solenv.javaregistration.patch
+  because components are passively registered now
+- drop integrated openoffice.org-3.1.0.ooo102061.sc.cellanchoring.patch
+- drop integrated turn-script-providers-into-extensions.patch
+- drop integrated 0001-tidy-this-up-and-don-t-bail-out-on-mislength-records.patch
+- drop integrated 0001-free-ctxt-after-taking-lastError-details.patch
+- drop integrated 0001-Removed-suspect-hack.-Cursor-on-post-it-now-scrolls-.patch
+- drop integrated libreoffice-gcc4.6.0.patch
+- drop integrated 0001-fexceptions-fexceptions.patch
+- drop integrated 0001-Related-rhbz-672872-cancel-gtk-file-dialog-on-deskto.patch
+- drop vbahelper.visibility.patch
+- drop integrated 0001-Resolves-fdo-33509-i62414-out-by-one-breaks-CTL-spel.patch
+- drop integrated 0001-Resolves-rhbz-670020-crash-in-slidesorting.patch
+- drop integrated 0001-Resolves-rhbz-676539-handle-missing-pWindows-from-xW.patch
+- drop integrated 0001-Resolves-fdo-33750-i94623-use-optimal-border-width-w.patch
+- drop integrated 0001-rhbz-649310-don-t-crash-deregistering-diff.-platform.patch
+- drop integrated 0001-Resolves-rhbz-674330-dereference-of-NULL-mpBase.patch
+- drop integrated 0001-rhbz-678284-Get-correct-current-position-when-shift-page-up-and-.patch
+- drop integrated 0001-Resolves-rhbz-681159-bandaid-for-crash.patch
+- drop integrated 0001-Resolves-rhbz-672818-bandaid-for-crash-in-SwTxtNode-.patch
+- drop integrated 0001-install-high-resolution-icons.patch
+- drop integrated 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
+- drop integrated 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
+- drop integrated 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
+- drop integrated 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
+- drop integrated libreoffice-fdo33947.sd.print.crash.patch
+- drop integrated 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+- drop integrated 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
+- drop integrated 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
+- drop integrated 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
+- drop integrated 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+- drop integrated 0001-beware-of-invalidated-iterator.patch
+- drop integrated rhbz680766.fix-mdds-crash.patch
+- drop integrated 0001-Resolves-rhbz-684580-X-and-strike-through-escapes-ra.patch
+- drop integrated 0001-set-mime-types-on-flat-xml-filters.patch
 
 * Tue Apr 05 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-6
 - Resolves: rhbz#655686 get order of shutdown correct

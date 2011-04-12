@@ -6,7 +6,7 @@
 %define langpacks 1
 
 %if %{langpacks}
-%define langpack_langs af ar bg bn ca cs cy da de dz el en-US es et eu fi fr ga gl gu pa-IN he hi hu hr it ja ko lt ms nb nl nn nr pl pt pt-BR ru sh sk sl sr ss st sv ta th tr ve xh zh-CN zh-TW zu ns tn ts as mr ml or te ur kn uk mai ro si
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hu hr it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US
 %endif
@@ -81,6 +81,7 @@ Patch7:  openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch9:  libreoffice-installfix.patch
 Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
+Patch11: kde4configure.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -115,6 +116,8 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
+Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
+Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -586,7 +589,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
-%langpack -l ms -n Malay -F -H -o ms_MY -S
 %langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -S
 %langpack -l nl -n Dutch -F -H -Y -M -A -O -S
 %langpack -l nn -n Nynorsk -F -H -Y -M -o nn_NO -S
@@ -617,7 +619,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l tr -n Turkish -F -A -o tr_TR -S
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -O -S
-%langpack -l ur -n Urdu -F -H -O -S
 %langpack -l ve -n Venda -F -H -o ve_ZA -S
 %langpack -l xh -n Xhosa -F -H -o xh_ZA -S
 %define langpack_lang Simplified Chinese
@@ -673,8 +674,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %prep
 %setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 19
 for a in */*; do mv `pwd`/$a .; done
-#remove "debugging" translations
-rm -rf l10n/source/kid
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -694,6 +693,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch8  -p0 -b .ooo113273.desktop.resolvelinks.patch
 %patch9  -p1 -b .libreoffice-installfix.patch
 %patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
+%patch11 -p0 -b .kde4configure.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -715,20 +715,22 @@ autoconf
 %configure \
  --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
- --disable-ldap --disable-epm --disable-mathmldtd \
- --disable-Xaw --disable-gnome-vfs --enable-gio --enable-symbols \
- --enable-lockdown --enable-evolution2 --enable-cairo --enable-dbus \
- --enable-opengl --enable-vba --enable-minimizer --enable-presenter-console \
- --enable-pdfimport --enable-wiki-publisher --enable-report-builder \
+ --disable-ldap --disable-epm --disable-mathmldtd --disable-Xaw \
+ --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
+ --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
+ --enable-ext-presenter-minimizer --enable-ext-presenter-console \
+ --enable-ext-pdfimport --enable-ext-wiki-publisher \
+ --enable-ext-report-builder --enable-ext-scripting-beanshell \
+ --enable-ext-scripting-javascript --enable-ext-scripting-python \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
- --with-system-libtextcat --with-system-libtextcat-data --without-system-saxon \
- --with-external-dict-dir=/usr/share/myspell --without-myspell-dicts \
- --without-fonts --without-agg --without-ppds --without-afms \
+ --with-system-libtextcat --with-external-libtextcat-data \
+ --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
+ --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --enable-kde4 --without-system-hsqldb
+ --enable-kde4 --without-system-hsqldb --disable-graphite
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources/185d60944ea767075d27247c3162b3bc-unowinreg.dll
@@ -984,7 +986,7 @@ pa-IN   help    ctl             he      nohelp  ctl     \
 hi      help    ctl             hu      help    western \
 hr      nohelp  western         it      help    western \
 ja      help    cjk             ko      help    cjk     \
-lt      help    western         ms      nohelp  western \
+lt      help    western         si      nohelp  ctl     \
 nb      help    western         nl      help    western \
 nn      help    western         pl      help    western \
 pt      help    western         pt-BR   help    western \
@@ -1003,7 +1005,7 @@ st      help    western         ss      help    western \
 nr      help    western         ns      help    western \
 dz      help    ctl             uk      help    western \
 sh      help    western         mai     help    western \
-ro      nohelp  western         si      nohelp  ctl     \
+ro      nohelp  western \
 )
 
 tar xzf %{SOURCE21}

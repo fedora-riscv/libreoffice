@@ -92,7 +92,7 @@ Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
 %define basisinstdir %{baseinstdir}/basis3.4
 %define sdkinstdir %{baseinstdir}/basis3.4/sdk
 %define fontname opensymbol
-%define OFFICEUPD 340
+%define OFFICEUPD 300
 %define SOPOST l*
 
 %description

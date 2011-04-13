@@ -843,9 +843,6 @@ for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
   rm -rf $langpack
 done
 %endif
-for file in swriter scalc simpress sdraw ; do
-    cp -f ../../desktop/$OUTPATH.pro/bin/$file $RPM_BUILD_ROOT/%{baseinstdir}/program/$file.bin
-done
 rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/share/prereg
 #give a consistent javasettingsunopkginstall.xml
 $RPM_BUILD_ROOT/%{baseinstdir}/program/unopkg list --bundled || :
@@ -1822,7 +1819,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/scalc
-%{baseinstdir}/program/scalc.bin
 %{_datadir}/applications/libreoffice-calc.desktop
 %{_bindir}/oocalc
 
@@ -1840,7 +1836,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/sdraw
-%{baseinstdir}/program/sdraw.bin
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
 
@@ -1879,7 +1874,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/swriter
-%{baseinstdir}/program/swriter.bin
 %{_datadir}/applications/libreoffice-writer.desktop
 %{_bindir}/oowriter
 
@@ -1905,7 +1899,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/simpress
-%{baseinstdir}/program/simpress.bin
 %{_datadir}/applications/libreoffice-impress.desktop
 %{_bindir}/ooimpress
 

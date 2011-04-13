@@ -40,18 +40,18 @@ diff -u -r1.54.216.1 output2.cxx
      }
  
      Rectangle aLogicClip;
-+                                if (
-+                                     ((nAttrRotate == 9000) || (nAttrRotate == 27000)) &&
-+                                     (!(aAlignParam.meOrient==SVX_ORIENTATION_STANDARD &&
-+                                        !aAlignParam.mbAsianVertical)) &&
-+                                     (!(bClip || bSimClip))
-+                                   )
-+                                {
-+                                    if (UseNormalClip(nCellY, pCondSet))
-+                                        bClip = TRUE;
-+                                    else
-+                                        bSimClip = TRUE;
-+                                }
++    if (
++         ((nAttrRotate == 9000) || (nAttrRotate == 27000)) &&
++         (!(rParam.meOrient==SVX_ORIENTATION_STANDARD &&
++            !rParam.mbAsianVertical)) &&
++         (!(bClip || bSimClip))
++       )
++    {
++        if (UseNormalClip(rParam.mnCellY, rParam.mpCondSet))
++            bClip = true;
++        else
++            bSimClip = true;
++    }
 +
      if (bClip || bSimClip)
      {
@@ -100,8 +100,8 @@ diff -u -r1.54.216.1 output2.cxx
 +       if ( eType != OUTTYPE_PRINTER ||
 +               ( pDoc->GetRowFlags( nCellY, nTab ) & CR_MANUALSIZE ) ||
 +               ( pCondSet && SFX_ITEM_SET ==
-+                       pCondSet->GetItemState(ATTR_FONT_HEIGHT, TRUE) ) )
-+               bNormalClip = TRUE;
++                       pCondSet->GetItemState(ATTR_FONT_HEIGHT, sal_True) ) )
++               bNormalClip = true;
 +    return bNormalClip;
 +}
 +

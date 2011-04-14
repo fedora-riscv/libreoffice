@@ -902,7 +902,6 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
 popd
 
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/testtoolrc
-chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/hid.lst
 
 #remove spurious exec bits
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/gengalrc
@@ -1969,7 +1968,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %defattr(-,root,root,-)
 %dir %{basisinstdir}
 %dir %{basisinstdir}/program
-%{basisinstdir}/program/hid.lst
 %{basisinstdir}/program/libcommuni%{SOPOST}.so
 %{basisinstdir}/program/libsimplecm%{SOPOST}.so
 %{basisinstdir}/program/testtoolrc

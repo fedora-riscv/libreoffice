@@ -903,9 +903,6 @@ popd
 
 chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/testtoolrc
 
-#remove spurious exec bits
-chmod -x $RPM_BUILD_ROOT/%{basisinstdir}/program/gengalrc
-
 #ensure a template dir for each lang
 pushd $RPM_BUILD_ROOT/%{basisinstdir}/share/template
 for I in %{langpack_langs}; do

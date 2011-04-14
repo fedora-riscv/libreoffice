@@ -721,10 +721,11 @@ autoconf
  --disable-ldap --disable-epm --disable-mathmldtd --disable-Xaw \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
- --enable-ext-presenter-minimizer --enable-ext-presenter-console \
- --enable-ext-pdfimport --enable-ext-wiki-publisher \
- --enable-ext-report-builder --enable-ext-scripting-beanshell \
- --enable-ext-scripting-javascript --enable-ext-scripting-python \
+ --enable-binfilter --enable-ext-presenter-minimizer \
+ --enable-ext-presenter-console --enable-ext-pdfimport \
+ --enable-ext-wiki-publisher --enable-ext-report-builder \
+ --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
+ --enable-ext-scripting-python --enable-kde4 \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
@@ -733,7 +734,7 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --without-system-translate-toolkit --enable-kde4 --without-system-hsqldb \
+ --without-system-translate-toolkit --without-system-hsqldb \
  --disable-graphite
 
 mkdir -p ext_sources

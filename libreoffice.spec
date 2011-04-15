@@ -1789,7 +1789,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/resource/foruien-US.res
 %{basisinstdir}/program/resource/scen-US.res
 %{basisinstdir}/program/resource/solveren-US.res
-%{basisinstdir}/program/libvbaobj%{SOPOST}.uno.so
+%{basisinstdir}/program/vbaobj.uno.so
 %{basisinstdir}/share/registry/calc.xcd
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program

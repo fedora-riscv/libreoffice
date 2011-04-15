@@ -4,14 +4,14 @@
      ;;
  esac
  
-+isshared=0
++isnotuser=0
 +for arg in $@
 +do
-+if [ "$arg" = "--shared" ]; then 
-+    isshared=1
++if [ "$arg" = "--shared" -o "$arg" = "--bundled" ]; then 
++    isnotuser=1
 +fi
 +done
-+if [ $isshared -eq 1 ]; then
++if [ $isnotuser -eq 1 ]; then
 +    echo $@ | grep -q env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY
 +    if [ $? -ne 0 ]; then
 +        set -- $@ '-env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY=1'

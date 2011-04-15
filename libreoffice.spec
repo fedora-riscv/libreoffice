@@ -725,11 +725,10 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --enable-ext-scripting-python --enable-kde4 \
+ --enable-ext-scripting-python --enable-kde4 --with-system-libtextcat \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
- --with-system-libtextcat --with-external-libtextcat-data \
  --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
@@ -748,6 +747,7 @@ cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
 cp %{SOURCE31} ext_sources
+touch src.downloaded
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -1225,13 +1225,7 @@ cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdi
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
 
 %check
-source ./Linux*Env.Set.sh
-cd test
-build && deliver -link
-cd ../smoketestoo_native
-#JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
-#SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
-JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
+make check
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1289,12 +1283,10 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/fps_gnome.uno.so
 %{basisinstdir}/program/fps_office.uno.so
 %{basisinstdir}/program/fundamentalbasisrc
-%{basisinstdir}/program/gengal*
 %{basisinstdir}/program/gnome-open-url
 %{basisinstdir}/program/gnome-open-url.bin
 %{basisinstdir}/program/hatchwindowfactory.uno.so
 %{basisinstdir}/program/i18nsearch.uno.so
-%{basisinstdir}/program/legacy_binfilters.rdb
 %{basisinstdir}/program/libacc%{SOPOST}.so
 %{basisinstdir}/program/libadabas%{SOPOST}.so
 %{basisinstdir}/program/libavmedia*.so
@@ -1321,7 +1313,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libctl%{SOPOST}.so
 %{basisinstdir}/program/libcui%{SOPOST}.so
 %{basisinstdir}/program/libdba%{SOPOST}.so
-%{basisinstdir}/program/libdbacfg%{SOPOST}.so
 %{basisinstdir}/program/libdbase%{SOPOST}.so
 %{basisinstdir}/program/libdbaxml%{SOPOST}.so
 %{basisinstdir}/program/libdbmm%{SOPOST}.so
@@ -1334,7 +1325,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libdict_zh.so
 %{basisinstdir}/program/libdrawinglayer%{SOPOST}.so
 %{basisinstdir}/program/libediteng%{SOPOST}.so
-%{basisinstdir}/program/libeggtray%{SOPOST}.so
 %{basisinstdir}/program/libembobj.so
 %{basisinstdir}/program/libemboleobj.so
 %{basisinstdir}/program/libevoab*.so
@@ -1383,7 +1373,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libmcnttype.so
 %{basisinstdir}/program/libmozbootstrap.so
 %{basisinstdir}/program/libmsfilter%{SOPOST}.so
-%{basisinstdir}/program/libmsforms%{SOPOST}.uno.so
 %{basisinstdir}/program/libmtfrenderer.uno.so
 %{basisinstdir}/program/libmysql%{SOPOST}.so
 %{basisinstdir}/program/libodbc%{SOPOST}.so
@@ -1443,6 +1432,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libxstor.so
 %{basisinstdir}/program/migrationoo2.uno.so
 %{basisinstdir}/program/migrationoo3.uno.so
+%{basisinstdir}/program/msforms.uno.so
 %{basisinstdir}/program/nsplugin
 %{basisinstdir}/program/open-url
 %{basisinstdir}/program/offapi.rdb
@@ -1472,13 +1462,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/resource/deploymentguien-US.res
 %{basisinstdir}/program/resource/dkten-US.res
 %{basisinstdir}/program/resource/editengen-US.res
-%{basisinstdir}/program/resource/egien-US.res
-%{basisinstdir}/program/resource/emeen-US.res
-%{basisinstdir}/program/resource/epben-US.res
-%{basisinstdir}/program/resource/epgen-US.res
-%{basisinstdir}/program/resource/eppen-US.res
 %{basisinstdir}/program/resource/epsen-US.res
-%{basisinstdir}/program/resource/epten-US.res
 %{basisinstdir}/program/resource/euren-US.res
 %{basisinstdir}/program/resource/fps_officeen-US.res
 %{basisinstdir}/program/resource/frmen-US.res
@@ -1496,7 +1480,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/resource/sfxen-US.res
 %{basisinstdir}/program/resource/spaen-US.res
 %{basisinstdir}/program/resource/sdbten-US.res
-%{basisinstdir}/program/resource/svsen-US.res
 %{basisinstdir}/program/resource/svten-US.res
 %{basisinstdir}/program/resource/svxen-US.res
 %{basisinstdir}/program/resource/swen-US.res
@@ -1531,14 +1514,12 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/versionrc
 %{basisinstdir}/program/cairocanvas.uno.so
 %dir %{basisinstdir}/share
-%{basisinstdir}/share/fingerprint
 %dir %{basisinstdir}/share/Scripts
 %{basisinstdir}/share/Scripts/java
 %{basisinstdir}/share/autotext
 %{basisinstdir}/share/basic
 %dir %{basisinstdir}/share/config
 %{basisinstdir}/share/config/images.zip
-%{basisinstdir}/share/config/images_classic.zip
 %{basisinstdir}/share/config/images_crystal.zip
 %{basisinstdir}/share/config/images_hicontrast.zip
 %{basisinstdir}/share/config/images_oxygen.zip
@@ -1585,7 +1566,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/share/xslt/import/common
 %{basisinstdir}/share/xslt/import/spreadsheetml
 %{basisinstdir}/share/xslt/import/wordml
-%{basisinstdir}/share/xslt/odfflatxml
 %{basisinstdir}/program/liblnth%{SOPOST}.so
 %{_bindir}/unopkg
 #icons and mime
@@ -1600,7 +1580,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/gconfbe1.uno.so
 %{basisinstdir}/program/i18npool.uno.so
 %{basisinstdir}/program/libbasegfx%{SOPOST}.so
-%{basisinstdir}/program/libcomphelp4gcc3.so
+%{basisinstdir}/program/libcomphelpgcc3.so
 %{basisinstdir}/program/libfileacc.so
 %{basisinstdir}/program/libfwe%{SOPOST}.so
 %{basisinstdir}/program/libfwi%{SOPOST}.so
@@ -1649,8 +1629,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/about.*
 %{baseinstdir}/program/intro.*
-%dir %{baseinstdir}/program/resource
-%{baseinstdir}/program/resource/oooen-US.res
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
 %{baseinstdir}/program/sofficerc
@@ -1863,7 +1841,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/libt602filter%{SOPOST}.so
 %{basisinstdir}/program/libwpft%{SOPOST}.so
 %{basisinstdir}/program/libwriterfilter%{SOPOST}.so
-%{basisinstdir}/program/libvbaswobj%{SOPOST}.uno.so
+%{basisinstdir}/program/vbaswobj.uno.so
 %dir %{basisinstdir}/program/resource
 %{basisinstdir}/program/resource/bf_swen-US.res
 %{basisinstdir}/program/resource/t602filteren-US.res

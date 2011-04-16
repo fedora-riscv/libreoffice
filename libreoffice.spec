@@ -603,6 +603,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -S
+%{baseinstdir}/program/about-pt_BR.png
+%{baseinstdir}/program/intro-pt_BR.png
+
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -S
@@ -700,8 +703,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
+#don't build localized helps which aren't translated
+POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
 #don't build localized helps which are poorly translated
-POORHELPS=`find l10n/source -name localize.sdf -exec grep 'helpcontent2.*main.*Working With %PRODUCTNAME' {} \; | cut -f 10 | grep -v en-US | xargs`
+POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
 #convert _smp_mflags to dmake equivalent
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
@@ -1287,6 +1292,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/gnome-open-url.bin
 %{basisinstdir}/program/hatchwindowfactory.uno.so
 %{basisinstdir}/program/i18nsearch.uno.so
+%{basisinstdir}/program/legacy_binfilters.rdb
 %{basisinstdir}/program/libacc%{SOPOST}.so
 %{basisinstdir}/program/libadabas%{SOPOST}.so
 %{basisinstdir}/program/libavmedia*.so
@@ -1406,6 +1412,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libtextconv_dict.so
 %{basisinstdir}/program/libtextconversiondlgs%{SOPOST}.so
 %{basisinstdir}/program/libtvhlp1.so
+%{basisinstdir}/program/libodfflatxml%{SOPOST}.so
 %{basisinstdir}/program/libucbhelper4gcc3.so
 %{basisinstdir}/program/libucpchelp1.so
 %{basisinstdir}/program/libucpdav1.so
@@ -1480,6 +1487,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/resource/sfxen-US.res
 %{basisinstdir}/program/resource/spaen-US.res
 %{basisinstdir}/program/resource/sdbten-US.res
+%{basisinstdir}/program/resource/svlen-US.res
 %{basisinstdir}/program/resource/svten-US.res
 %{basisinstdir}/program/resource/svxen-US.res
 %{basisinstdir}/program/resource/swen-US.res

@@ -84,6 +84,7 @@ Patch9:  libreoffice-installfix.patch
 Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 Patch11: kde4configure.patch
 Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
+Patch13: 7de0b88ce2dd932915894385b54be1897d5ee053.zip
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -700,6 +701,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 %patch11 -p0 -b .kde4configure.patch
 %patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
+unzip %{PATCH13}
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -977,7 +979,7 @@ chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
 #langpack id, has help or not, autocorrection glob, script classification
 langpackdetails=\
 (\
-af      help    western         ar      help    ctl     \
+af      nohelp  western         ar      help    ctl     \
 bg      help    western         bn      help    western \
 ca      help    western         cs      help    western \
 cy      nohelp  western         da      help    western \

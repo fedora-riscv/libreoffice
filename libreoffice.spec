@@ -701,7 +701,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 %patch11 -p0 -b .kde4configure.patch
 %patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
-unzip %{PATCH13}
+unzip -o %{PATCH13}
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

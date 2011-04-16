@@ -597,7 +597,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Southern Ndebele
 %langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA -S
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -s ns
+%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -S
 %langpack -l or -n Oriya -F -H -Y -o or_IN -S
 %langpack -l pa -n Punjabi -F -H -Y -O -s pa-IN
 %langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
@@ -1001,7 +1001,7 @@ or      nohelp  ctl             te      nohelp  western \
 ur      nohelp  western         kn      nohelp  western \
 xh      help    western         ve      help    western \
 st      help    western         ss      help    western \
-nr      help    western         ns      help    western \
+nr      help    western         nso     help    western \
 dz      help    ctl             uk      help    western \
 sh      help    western         mai     help    western \
 ro      nohelp  western \

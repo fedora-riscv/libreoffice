@@ -6,7 +6,7 @@
 %define langpacks 1
 
 %if %{langpacks}
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hu hr it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US
 %endif
@@ -983,39 +983,38 @@ chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
 #langpack id, has help or not, autocorrection glob, script classification
 langpackdetails=\
 (\
-af      nohelp  western         ar      help    ctl     \
-bg      help    western         bn      help    western \
-ca      help    western         cs      help    western \
-cy      nohelp  western         da      help    western \
-de      help    western         el      help    western \
+af      nohelp  western         ar      nohelp  ctl     \
+as      nohelp  western         bg      help    western \
+bn      help    western         ca      help    western \
+cs      help    western         cy      nohelp  western \
+da      help    western         de      help    western \
+dz      help    ctl             el      help    western \
 es      help    western         et      help    western \
 eu      help    western         fi      help    western \
 fr      help    western         ga      nohelp  western \
 gl      help    western         gu      nohelp  ctl     \
-pa-IN   help    ctl             he      nohelp  ctl     \
-hi      help    ctl             hu      help    western \
-hr      nohelp  western         it      help    western \
-ja      help    cjk             ko      help    cjk     \
-lt      help    western         si      nohelp  ctl     \
+he      nohelp  ctl             hi      help    ctl     \
+hr      nohelp  western         hu      help    western \
+it      help    western         ja      help    cjk     \
+ko      help    cjk             kn      nohelp  western \
+lt      help    western         mai     nohelp  western \
+ml      nohelp  western         mr      nohelp  western \
 nb      help    western         nl      help    western \
-nn      help    western         pl      help    western \
+nn      help    western         nr      nohelp  western \
+nso     help    western         or      nohelp  ctl     \
+pa-IN   nohelp  ctl             pl      help    western \
 pt      help    western         pt-BR   help    western \
-ru      help    western         sk      help    western \
-sl      help    western         sr      help    western \
-sv      help    western         ta      help    ctl     \
-th      help    ctlseqcheck     tr      help    western \
-zh-CN   help    cjk             zh-TW   help    cjk     \
-zu      help    western         tn      help    western \
-ts      help    western         as      nohelp  western \
-mr      nohelp  western         ml      nohelp  western \
-or      nohelp  ctl             te      nohelp  western \
-ur      nohelp  western         kn      nohelp  western \
-xh      help    western         ve      help    western \
-st      help    western         ss      help    western \
-nr      help    western         nso     help    western \
-dz      help    ctl             uk      help    western \
-sh      help    western         mai     help    western \
-ro      nohelp  western \
+ro      nohelp  western         ru      help    western \
+sh      nohelp  western         si      nohelp  ctl     \
+sk      help    western         sl      help    western \
+sr      nohelp  western         ss      nohelp  western \
+st      nohelp  western         sv      help    western \
+ta      nohelp  ctl             te      nohelp  western \
+th      nohelp  ctlseqcheck     tn      nohelp  western \
+tr      help    western         ts      nohelp  western \
+uk      help    western         ve      nohelp  western \
+xh      nohelp  western         zh-CN   help    cjk     \
+zh-TW   help    cjk             zu      nohelp  western \
 )
 
 tar xzf %{SOURCE21}

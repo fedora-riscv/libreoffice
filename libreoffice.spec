@@ -1236,7 +1236,16 @@ cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdi
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
 
 %check
-make check
+source ./Linux*Env.Set.sh
+cd test
+build && deliver -link
+cd ../smoketestdoc
+build && deliver -link
+cd ../smoketestoo_native
+unset WITH_LANG
+#JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
+#SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
+JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
 
 %clean
 rm -rf $RPM_BUILD_ROOT

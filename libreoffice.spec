@@ -15,7 +15,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.99.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -85,6 +85,7 @@ Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 Patch11: kde4configure.patch
 Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
 Patch13: 7de0b88ce2dd932915894385b54be1897d5ee053.zip
+Patch14: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -702,6 +703,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p0 -b .kde4configure.patch
 %patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
 unzip -o %{PATCH13}
+%patch14 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2025,6 +2027,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Sun Apr 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-2-UNBUILT
+- Resolves: rhbz#695509 crash in RefreshDocumentLB
+
 * Tue Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
 - 3.4 beta1
 - drop openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch

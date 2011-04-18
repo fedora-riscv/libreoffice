@@ -1003,7 +1003,7 @@ he      nohelp  ctl             hi      help    ctl     \
 hr      nohelp  western         hu      help    western \
 it      help    western         ja      help    cjk     \
 ko      help    cjk             kn      nohelp  western \
-lt      help    western         mai     nohelp  western \
+lt      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
 nb      help    western         nl      help    western \
 nn      help    western         nr      nohelp  western \

@@ -707,7 +707,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 unzip -o %{PATCH13}
 %patch14 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
 %patch15 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
-%patch16 -p1 -b .vbahelper.visibility.patch
+%patch16 -p0 -b .vbahelper.visibility.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

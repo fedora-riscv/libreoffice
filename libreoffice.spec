@@ -86,6 +86,7 @@ Patch11: kde4configure.patch
 Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
 Patch13: 7de0b88ce2dd932915894385b54be1897d5ee053.zip
 Patch14: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
+Patch15: 0001-bubble-down-configure-test-findings-on-visibility.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -704,6 +705,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
 unzip -o %{PATCH13}
 %patch14 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
+%patch15 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2027,8 +2029,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Sun Apr 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-2-UNBUILT
+* Mon Apr 18 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-2
 - Resolves: rhbz#695509 crash in RefreshDocumentLB
+- bubble down configure test findings on visibility
 
 * Tue Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
 - 3.4 beta1

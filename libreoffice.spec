@@ -746,6 +746,7 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
+ --with-external-libtextcat-data \
  --without-system-translate-toolkit --without-system-hsqldb \
  --disable-graphite
 
@@ -1649,6 +1650,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/bootstraprc
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
+%{baseinstdir}/program/services.rdb
 %{baseinstdir}/program/versionrc
 %doc %{baseinstdir}/CREDITS.odt
 %doc %{baseinstdir}/LICENSE

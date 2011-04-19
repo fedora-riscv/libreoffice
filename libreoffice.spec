@@ -1012,7 +1012,7 @@ nso     help    western         or      nohelp  ctl     \
 pa-IN   nohelp  ctl             pl      help    western \
 pt      help    western         pt-BR   help    western \
 ro      nohelp  western         ru      help    western \
-sh      nohelp  western         si      nohelp  ctl     \
+sh      nohelp  western         si      help    ctl     \
 sk      help    western         sl      help    western \
 sr      nohelp  western         ss      nohelp  western \
 st      nohelp  western         sv      help    western \

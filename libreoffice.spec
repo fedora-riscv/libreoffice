@@ -775,10 +775,6 @@ export ARCH_FLAGS
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
 
-%ifarch %{ix86}
-unset HAVE_GCC_VISIBILITY_FEATURE
-%endif
-
 #HANGING JAVA HACK
 cat << \EOF > solenv/bin/java
 #!/bin/sh

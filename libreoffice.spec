@@ -1112,31 +1112,31 @@ echo exec libreoffice \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooffice
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
-echo exec libreoffice -view \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
+echo exec libreoffice --view \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oowriter
-echo exec libreoffice -writer \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oowriter
+echo exec libreoffice --writer \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oowriter
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oowriter
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oocalc
-echo exec libreoffice -calc \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oocalc
+echo exec libreoffice --calc \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oocalc
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oocalc
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/ooimpress
-echo exec libreoffice -impress \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooimpress
+echo exec libreoffice --impress \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooimpress
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooimpress
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oodraw
-echo exec libreoffice -draw \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oodraw
+echo exec libreoffice --draw \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oodraw
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oodraw
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oomath
-echo exec libreoffice -math \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oomath
+echo exec libreoffice --math \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oomath
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oomath
 
 echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
-echo exec libreoffice -base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
+echo exec libreoffice --base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
 cp -f %{SOURCE22} $RPM_BUILD_ROOT/%{_bindir}/unopkg

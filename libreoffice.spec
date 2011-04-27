@@ -1204,10 +1204,6 @@ pushd sysui/output/usr/share/
 rm -rf icons/gnome applications application-registry
 # rhbz#156067 don't version the icons
 find . -name "*.desktop" -exec sed -i -e s/$PRODUCTVERSIONSHORT//g {} \;
-find . -name "*libreoffice$PRODUCTVERSIONSHORT*" -print \
-    | while read path; do
-        mv $path `echo $path | sed s/libreoffice$PRODUCTVERSIONSHORT/libreoffice/`
-    done
 find . -type l -print \
     | while read path; do
         target=`readlink $path`

@@ -1205,8 +1205,6 @@ rm -rf icons/gnome applications application-registry
 # rhbz#156067 don't version the icons
 find . -name "*.desktop" -exec sed -i -e s/$PRODUCTVERSIONSHORT//g {} \;
 
-sed -i -e s/libreoffice$PRODUCTVERSIONSHORT/libreoffice/g \
-  ./mime-info/libreoffice.keys
 #relocate the rest of them
 cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 cp -r mime-info $RPM_BUILD_ROOT/%{_datadir}

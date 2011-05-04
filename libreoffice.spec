@@ -137,6 +137,7 @@ Patch48: 0001-set-mime-types-on-flat-xml-filters.patch
 Patch49: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
 Patch50: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 Patch51: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
+Patch52: 0001-Resolves-rhbz-658304-late-init-color-config.-to-avoi.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -789,6 +790,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch49 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
 %patch50 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 %patch51 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
+%patch52 -p1 -b .rhbz658304-late-init-color-config.-to-avoi.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2138,8 +2140,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Sun Apr 17 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-7-UNBUILT
+* Wed May 04 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-7
 - Resolves: rhbz#695509 crash in RefreshDocumentLB
+- Resolves: rhbz#658304 recovery of CSV file causes crash (dtardon)
 
 * Tue Apr 05 2011 Caolán McNamara <caolanm@redhat.com> 3.3.2.2-6
 - Resolves: rhbz#655686 get order of shutdown correct

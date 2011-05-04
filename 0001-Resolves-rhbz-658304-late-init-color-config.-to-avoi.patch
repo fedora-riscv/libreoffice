@@ -1,0 +1,219 @@
+From b89e8ff568d0a0b518b49839789c3a73a9c73d60 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 1 Dec 2010 13:36:21 +0100
+Subject: [PATCH] Resolves: rhbz#658304 late-init color config. to avoid crash
+ on recovery
+
+---
+ sc/source/ui/dbgui/csvgrid.cxx      |   35 +++++++++++++++++++--------
+ sc/source/ui/dbgui/csvtablebox.cxx  |   44 +++++++++++++++++-----------------
+ sc/source/ui/dbgui/scuiasciiopt.cxx |    1 +
+ sc/source/ui/inc/csvgrid.hxx        |    5 +++-
+ sc/source/ui/inc/csvtablebox.hxx    |    5 ++-
+ 5 files changed, 55 insertions(+), 35 deletions(-)
+
+diff --git a/sc/source/ui/dbgui/csvgrid.cxx b/sc/source/ui/dbgui/csvgrid.cxx
+index 0a9d61f..1450a35 100644
+--- a/sc/source/ui/dbgui/csvgrid.cxx
++++ b/sc/source/ui/dbgui/csvgrid.cxx
+@@ -34,6 +34,8 @@
+ #include "csvgrid.hxx"
+ 
+ #include <algorithm>
++#include <memory>
++
+ #include <svtools/colorcfg.hxx>
+ #include <svl/smplhint.hxx>
+ #include <tools/poly.hxx>
+@@ -78,7 +80,7 @@ struct Func_Select
+ 
+ ScCsvGrid::ScCsvGrid( ScCsvControl& rParent ) :
+     ScCsvControl( rParent ),
+-    mrColorConfig( SC_MOD()->GetColorConfig() ),
++    mpColorConfig( 0 ),
+     mpEditEngine( new ScEditEngineDefaulter( EditEngine::CreatePool(), TRUE ) ),
+     maHeaderFont( GetFont() ),
+     maColStates( 1 ),
+@@ -93,17 +95,25 @@ ScCsvGrid::ScCsvGrid( ScCsvControl& rParent ) :
+     maPopup.SetMenuFlags( maPopup.GetMenuFlags() | MENU_FLAG_NOAUTOMNEMONICS );
+ 
+     EnableRTL( false ); // #107812# RTL
+-    InitColors();
+     InitFonts();
+     ImplClearSplits();
+-    mrColorConfig.AddListener(this);
+ }
+ 
+ ScCsvGrid::~ScCsvGrid()
+ {
+-    mrColorConfig.RemoveListener(this);
++    OSL_ENSURE(mpColorConfig, "the object hasn't been initialized properly");
++    if (mpColorConfig)
++        mpColorConfig->RemoveListener(this);
+ }
+ 
++void
++ScCsvGrid::Init()
++{
++    OSL_PRECOND(!mpColorConfig, "the object has already been initialized");
++    mpColorConfig = &SC_MOD()->GetColorConfig();
++    InitColors();
++    mpColorConfig->AddListener(this);
++}
+ 
+ // common grid handling -------------------------------------------------------
+ 
+@@ -202,11 +212,14 @@ sal_Int32 ScCsvGrid::GetNoScrollCol( sal_Int32 nPos ) const
+ 
+ void ScCsvGrid::InitColors()
+ {
+-    maBackColor.SetColor( static_cast< sal_uInt32 >( mrColorConfig.GetColorValue( ::svtools::DOCCOLOR ).nColor ) );
+-    maGridColor.SetColor( static_cast< sal_uInt32 >( mrColorConfig.GetColorValue( ::svtools::CALCGRID ).nColor ) );
+-    maGridPBColor.SetColor( static_cast< sal_uInt32 >( mrColorConfig.GetColorValue( ::svtools::CALCPAGEBREAK ).nColor ) );
+-    maAppBackColor.SetColor( static_cast< sal_uInt32 >( mrColorConfig.GetColorValue( ::svtools::APPBACKGROUND ).nColor ) );
+-    maTextColor.SetColor( static_cast< sal_uInt32 >( mrColorConfig.GetColorValue( ::svtools::FONTCOLOR ).nColor ) );
++    OSL_PRECOND(mpColorConfig, "the object hasn't been initialized properly");
++    if ( !mpColorConfig )
++        return;
++    maBackColor.SetColor( static_cast< sal_uInt32 >( mpColorConfig->GetColorValue( ::svtools::DOCCOLOR ).nColor ) );
++    maGridColor.SetColor( static_cast< sal_uInt32 >( mpColorConfig->GetColorValue( ::svtools::CALCGRID ).nColor ) );
++    maGridPBColor.SetColor( static_cast< sal_uInt32 >( mpColorConfig->GetColorValue( ::svtools::CALCPAGEBREAK ).nColor ) );
++    maAppBackColor.SetColor( static_cast< sal_uInt32 >( mpColorConfig->GetColorValue( ::svtools::APPBACKGROUND ).nColor ) );
++    maTextColor.SetColor( static_cast< sal_uInt32 >( mpColorConfig->GetColorValue( ::svtools::FONTCOLOR ).nColor ) );
+ 
+     const StyleSettings& rSett = GetSettings().GetStyleSettings();
+     maHeaderBackColor = rSett.GetFaceColor();
+@@ -1350,7 +1363,9 @@ void ScCsvGrid::ImplDrawTrackingRect( sal_uInt32 nColIndex )
+ 
+ ScAccessibleCsvControl* ScCsvGrid::ImplCreateAccessible()
+ {
+-    return new ScAccessibleCsvGrid( *this );
++    std::auto_ptr<ScAccessibleCsvControl> pControl(new ScAccessibleCsvGrid( *this ));
++    pControl->Init();
++    return pControl.release();
+ }
+ 
+ 
+diff --git a/sc/source/ui/dbgui/csvtablebox.cxx b/sc/source/ui/dbgui/csvtablebox.cxx
+index 7a4e5ec..760b96d 100644
+--- a/sc/source/ui/dbgui/csvtablebox.cxx
++++ b/sc/source/ui/dbgui/csvtablebox.cxx
+@@ -48,7 +48,27 @@ ScCsvTableBox::ScCsvTableBox( Window* pParent, const ResId& rResId ) :
+     maVScroll( this, WB_VERT | WB_DRAG ),
+     maScrollBox( this )
+ {
+-    Init();
++    mbFixedMode = false;
++    mnFixedWidth = 1;
++
++    maHScroll.EnableRTL( false ); // #107812# RTL
++    maHScroll.SetLineSize( 1 );
++    maVScroll.SetLineSize( 1 );
++
++    Link aLink = LINK( this, ScCsvTableBox, CsvCmdHdl );
++    SetCmdHdl( aLink );
++    maRuler.SetCmdHdl( aLink );
++    maGrid.SetCmdHdl( aLink );
++
++    aLink = LINK( this, ScCsvTableBox, ScrollHdl );
++    maHScroll.SetScrollHdl( aLink );
++    maVScroll.SetScrollHdl( aLink );
++
++    aLink = LINK( this, ScCsvTableBox, ScrollEndHdl );
++    maHScroll.SetEndScrollHdl( aLink );
++    maVScroll.SetEndScrollHdl( aLink );
++
++    InitControls();
+ }
+ 
+ 
+@@ -95,27 +115,7 @@ void ScCsvTableBox::SetFixedWidthMode()
+ 
+ void ScCsvTableBox::Init()
+ {
+-    mbFixedMode = false;
+-    mnFixedWidth = 1;
+-
+-    maHScroll.EnableRTL( false ); // #107812# RTL
+-    maHScroll.SetLineSize( 1 );
+-    maVScroll.SetLineSize( 1 );
+-
+-    Link aLink = LINK( this, ScCsvTableBox, CsvCmdHdl );
+-    SetCmdHdl( aLink );
+-    maRuler.SetCmdHdl( aLink );
+-    maGrid.SetCmdHdl( aLink );
+-
+-    aLink = LINK( this, ScCsvTableBox, ScrollHdl );
+-    maHScroll.SetScrollHdl( aLink );
+-    maVScroll.SetScrollHdl( aLink );
+-
+-    aLink = LINK( this, ScCsvTableBox, ScrollEndHdl );
+-    maHScroll.SetEndScrollHdl( aLink );
+-    maVScroll.SetEndScrollHdl( aLink );
+-
+-    InitControls();
++    maGrid.Init();
+ }
+ 
+ void ScCsvTableBox::InitControls()
+diff --git a/sc/source/ui/dbgui/scuiasciiopt.cxx b/sc/source/ui/dbgui/scuiasciiopt.cxx
+index 1fbf9a6..09e1dfb 100644
+--- a/sc/source/ui/dbgui/scuiasciiopt.cxx
++++ b/sc/source/ui/dbgui/scuiasciiopt.cxx
+@@ -403,6 +403,7 @@ ScImportAsciiDlg::ScImportAsciiDlg( Window* pParent,String aDatName,
+     aLbType.Disable();
+ 
+     // *** table box preview ***
++    maTableBox.Init();
+     maTableBox.SetUpdateTextHdl( LINK( this, ScImportAsciiDlg, UpdateTextHdl ) );
+     maTableBox.InitTypes( aLbType );
+     maTableBox.SetColTypeHdl( LINK( this, ScImportAsciiDlg, ColTypeHdl ) );
+diff --git a/sc/source/ui/inc/csvgrid.hxx b/sc/source/ui/inc/csvgrid.hxx
+index 7b6e8d7..626d71e 100644
+--- a/sc/source/ui/inc/csvgrid.hxx
++++ b/sc/source/ui/inc/csvgrid.hxx
+@@ -105,7 +105,7 @@ private:
+     VirtualDevice               maGridDev;          /// Data grid with selection and cursor.
+     PopupMenu                   maPopup;            /// Popup menu for column types.
+ 
+-    ::svtools::ColorConfig&     mrColorConfig;      /// Application color configuration.
++    ::svtools::ColorConfig*     mpColorConfig;      /// Application color configuration.
+     Color                       maBackColor;        /// Cell background color.
+     Color                       maGridColor;        /// Table grid color.
+     Color                       maGridPBColor;      /// Grid color for "first imported line" delimiter.
+@@ -137,6 +137,9 @@ public:
+     explicit                    ScCsvGrid( ScCsvControl& rParent );
+     virtual                     ~ScCsvGrid();
+ 
++    /** Finishes initialization. Must be called after constructing a new object. */
++    void Init();
++
+     // common grid handling ---------------------------------------------------
+ public:
+     /** Updates layout data dependent from the control's state. */
+diff --git a/sc/source/ui/inc/csvtablebox.hxx b/sc/source/ui/inc/csvtablebox.hxx
+index b944bef..2dd8fa8 100644
+--- a/sc/source/ui/inc/csvtablebox.hxx
++++ b/sc/source/ui/inc/csvtablebox.hxx
+@@ -77,6 +77,9 @@ private:
+ public:
+     explicit                    ScCsvTableBox( Window* pParent, const ResId& rResId );
+ 
++    /** Finishes initialization. Must be called after constructing a new object. */
++    void Init();
++
+     // common table box handling ----------------------------------------------
+ public:
+     /** Sets the control to separators mode. */
+@@ -85,8 +88,6 @@ public:
+     void                        SetFixedWidthMode();
+ 
+ private:
+-    /** Initialisation on construction. */
+-    SC_DLLPRIVATE void                        Init();
+     /** Initializes the children controls (pos/size, scroll bars, ...). */
+     SC_DLLPRIVATE void                        InitControls();
+     /** Initializes size and position data of horizontal scrollbar. */
+-- 
+1.7.4.4
+

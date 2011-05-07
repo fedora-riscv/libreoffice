@@ -49,11 +49,10 @@ Source25:       http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf222
 Source26:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
-Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
+Source29:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source30:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -756,7 +755,6 @@ cp %{SOURCE27} ext_sources
 cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
-cp %{SOURCE31} ext_sources
 touch src.downloaded
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
@@ -2015,6 +2013,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - 3.4 beta4
 - drop integrated 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
 - drop integrated 7de0b88ce2dd932915894385b54be1897d5ee053.zip
+- STLPort is not needed anymore
 
 * Mon Apr 18 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-2
 - Resolves: rhbz#695509 crash in RefreshDocumentLB

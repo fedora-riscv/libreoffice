@@ -14,8 +14,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.99.1
-Release:        2%{?dist}
+Version:        3.3.99.4
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -83,11 +83,9 @@ Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 Patch9:  libreoffice-installfix.patch
 Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
 Patch11: kde4configure.patch
-Patch12: 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
-Patch13: 7de0b88ce2dd932915894385b54be1897d5ee053.zip
-Patch14: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
-Patch15: 0001-bubble-down-configure-test-findings-on-visibility.patch
-Patch16: vbahelper.visibility.patch
+Patch12: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
+Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
+Patch14: vbahelper.visibility.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -703,11 +701,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch9  -p1 -b .libreoffice-installfix.patch
 %patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
 %patch11 -p0 -b .kde4configure.patch
-%patch12 -p1 -b .Removed-duplicate-code-block-mis-merge-prolly.patch
-unzip -o %{PATCH13}
-%patch14 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
-%patch15 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
-%patch16 -p0 -b .vbahelper.visibility.patch
+%patch12 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
+%patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
+%patch14 -p0 -b .vbahelper.visibility.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2015,6 +2011,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Sat May 07 2011 David Tardon <dtardon@redhat.com> 3.3.99.4-1
+- 3.4 beta4
+- drop integrated 0001-Removed-duplicate-code-block-mis-merge-prolly.patch
+- drop integrated 7de0b88ce2dd932915894385b54be1897d5ee053.zip
+
 * Mon Apr 18 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-2
 - Resolves: rhbz#695509 crash in RefreshDocumentLB
 - bubble down configure test findings on visibility

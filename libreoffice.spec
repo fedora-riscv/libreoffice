@@ -15,7 +15,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.99.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1661,30 +1661,25 @@ rm -rf $RPM_BUILD_ROOT
 %post core
 update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-if [ -x /usr/bin/gtk-update-icon-cache ]; then
-  for theme in hicolor locolor; do
-    if test -d "%{_datadir}/icons/$theme"; then
-      if test -f "%{_datadir}/icons/$theme/index.theme"; then
-        touch --no-create %{_datadir}/icons/$theme
-        gtk-update-icon-cache -q %{_datadir}/icons/$theme
-      fi
-    fi
-  done
-fi
+for theme in hicolor locolor; do
+    touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
+done
 
 %postun core
 update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-if [ -x /usr/bin/gtk-update-icon-cache ]; then
-  for theme in hicolor locolor; do
-    if test -d "%{_datadir}/icons/$theme"; then
-      if test -f "%{_datadir}/icons/$theme/index.theme"; then
-        touch --no-create %{_datadir}/icons/$theme
-        gtk-update-icon-cache -q %{_datadir}/icons/$theme
-      fi
-    fi
-  done
+if [ $1 -eq 0 ] ; then
+    for theme in hicolor locolor; do
+        touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
+        gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
+    done
 fi
+
+%posttrans core
+for theme in hicolor locolor; do
+    gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
+done
+
 
 %files base
 %defattr(-,root,root,-)
@@ -2009,6 +2004,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Sat May 07 2011 Christopher Aillon <caillon@redhat.com> - 3.3.99.4-2
+- Update icon cache scriptlet
+
 * Sat May 07 2011 David Tardon <dtardon@redhat.com> 3.3.99.4-1
 - 3.4 beta4
 - drop integrated 0001-Removed-duplicate-code-block-mis-merge-prolly.patch

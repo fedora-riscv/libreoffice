@@ -605,9 +605,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -S
-%{baseinstdir}/program/about-pt_BR.png
-%{baseinstdir}/program/intro-pt_BR.png
-
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -S

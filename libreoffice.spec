@@ -1631,7 +1631,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{baseinstdir}/LICENSE
 %doc %{baseinstdir}/LICENSE.odt
 %doc %{baseinstdir}/THIRDPARTYLICENSEREADME.html
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/about.*
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice
@@ -1642,7 +1641,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libnpsoplugin.so
 %{baseinstdir}/program/oosplash.bin
 %{baseinstdir}/program/shell/
-%dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_brand.zip
 %dir %{baseinstdir}/share/registry

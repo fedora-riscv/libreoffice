@@ -702,6 +702,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
 %patch14 -p0 -b .vbahelper.visibility.patch
 
+# these are horribly incomplete--empty translations and copied english
+# strings with spattering of translated strings
+rm -rf translations/source/{gu,he,hr}/helpcontent2
+
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 #don't build localized helps which aren't translated

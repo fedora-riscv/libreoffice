@@ -15,7 +15,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.99.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -86,6 +86,7 @@ Patch11: kde4configure.patch
 Patch12: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
 Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
+Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -701,6 +702,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
 %patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
 %patch14 -p0 -b .vbahelper.visibility.patch
+%patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2005,6 +2007,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue May 10 2011 David Tardon <dtardon@redhat.com> - 3.3.99.4-3
+- Resolves: rhbz#702635 set correct page number when exporting selected
+  pages
+
 * Sat May 07 2011 Christopher Aillon <caillon@redhat.com> - 3.3.99.4-2
 - Update icon cache scriptlet
 

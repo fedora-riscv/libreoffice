@@ -14,8 +14,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.99.4
-Release:        3%{?dist}
+Version:        3.3.99.5
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2007,7 +2007,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Tue May 10 2011 David Tardon <dtardon@redhat.com> - 3.3.99.4-3
+* Mon May 16 2011 David Tardon <dtardon@redhat.com> - 3.3.99.5-1
+- 3.4 beta5
 - Resolves: rhbz#702635 set correct page number when exporting selected
   pages
 

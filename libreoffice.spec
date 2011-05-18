@@ -1209,7 +1209,7 @@ cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 cp -r mime-info $RPM_BUILD_ROOT/%{_datadir}
 #add our mime-types, e.g. for .oxt extensions
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime/packages
-cp -p mime/packages/libreoffice.xml $RPM_BUILD_ROOT/%{_datadir}/mime/packages
+cp -p mime/packages/libreoffice$PRODUCTVERSION.xml $RPM_BUILD_ROOT/%{_datadir}/mime/packages/libreoffice.xml
 popd
 
 rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/readmes

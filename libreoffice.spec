@@ -813,12 +813,13 @@ cd unxlng*/misc/libreoffice
 echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 
-%define install_bundled_extension(n:) \
-%define extname %{-n:%{-n*}}%{!-n:%{error:No extension name given}} \
-%define extdir $RPM_BUILD_ROOT/%{baseinstdir}/share/extensions \
-%define solverbindir $SOLARVER/$INPATH/bin \
-install -d -m 755 %{extdir}/%{extname} \
-unzip -d %{extdir}/%{extname} %{solverbindir}/%{extname}.oxt
+%define install_bundled_extension(f:n:) \
+%define extname_ %{-n:%{-n*}}%{!-n:%{error:No extension name given}} \
+%define filename_ %{-f:%{-f*}}%{!-f:%{extname_}.oxt} \
+%define extdir_ $RPM_BUILD_ROOT/%{baseinstdir}/share/extensions \
+install -d -m 755 %{extdir_}/%{extname_} \
+unzip -d %{extdir_}/%{extname_} $SOLARVER/$INPATH/bin/%{filename_} \
+find %{extdir_}/%{extname_} -type f -name '*.txt' -exec chmod -x '{}' \\;
 
 
 %install
@@ -865,33 +866,15 @@ dmake sdkoo
 mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/*/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../
 
-# unpack report-builder extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder
-unzip solver/%{OFFICEUPD}/unxlng*/bin/report-builder.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/report-builder
-
-# unpack wiki-publisher extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher
-unzip solver/%{OFFICEUPD}/unxlng*/bin/swext/wiki-publisher.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/wiki-publisher
-
-# unpack presentation-minimizer extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer
-unzip solver/%{OFFICEUPD}/unxlng*/bin/minimizer/presentation-minimizer.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presentation-minimizer/help/component.txt
-
-# unpack presenter screen extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen
-unzip solver/%{OFFICEUPD}/unxlng*/bin/presenter/presenter-screen.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/presenter-screen/help/component.txt
-
-# unpack pdfimport extension
-install -d -m 755 $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport
-unzip solver/%{OFFICEUPD}/unxlng*/bin/pdfimport/pdfimport.oxt -d $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport
-chmod -x $RPM_BUILD_ROOT%{baseinstdir}/share/extensions/pdfimport/help/component.txt
-
-# install script providers
+# unpack extensions
+%install_bundled_extension -n pdfimport -f pdfimport/pdfimport.oxt
+%install_bundled_extension -n presentation-minimizer -f minimizer/presentation-minimizer.oxt
+%install_bundled_extension -n presenter-screen -f presenter/presenter-screen.oxt
+%install_bundled_extension -n report-builder
 %install_bundled_extension -n script-provider-for-beanshell
 %install_bundled_extension -n script-provider-for-javascript
 %install_bundled_extension -n script-provider-for-python
+%install_bundled_extension -n wiki-publisher -f swext/wiki-publisher.oxt
 
 #configure sdk
 pushd $RPM_BUILD_ROOT/%{sdkinstdir}

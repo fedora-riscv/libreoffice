@@ -1567,7 +1567,6 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/liblnth%{SOPOST}.so
 %{_bindir}/unopkg
 #icons and mime
-%{_datadir}/icons/*/*/*/gnome*
 %{_datadir}/icons/*/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{basisinstdir}/program/libxmlsecurity.so

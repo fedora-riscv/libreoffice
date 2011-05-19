@@ -1188,11 +1188,10 @@ rm -rf icons/gnome applications application-registry
 find . -name "*.desktop" -exec sed -i -e s/$PRODUCTVERSIONSHORT//g {} \;
 
 #relocate the rest of them
+# remove versioned icons
 ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
-for f in `find icons -type f`; do
-    [ ! -d `dirname $f` ] && mkdir -p `dirname $f`
-    cp -p $f `echo $f | sed s/libreoffice$ICONVERSION/libreoffice/`
-done
+find icons -type f -name '*office$ICONVERSION*' -print0 | xargs -0 rm -f
+cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
 cp -p mime-info/libreoffice$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime

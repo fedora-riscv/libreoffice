@@ -87,6 +87,7 @@ Patch12: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
 Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
+Patch16: 0001-fix-build-with-system-bsh.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -703,6 +704,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
 %patch14 -p0 -b .vbahelper.visibility.patch
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
+%patch16 -p1 -b .fix-build-with-system-bsh.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

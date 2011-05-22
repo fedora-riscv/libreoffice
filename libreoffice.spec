@@ -96,7 +96,7 @@ Patch16: 0001-fix-build-with-system-bsh.patch
 %define basisinstdir %{baseinstdir}/basis3.4
 %define sdkinstdir %{baseinstdir}/basis3.4/sdk
 %define fontname opensymbol
-%define OFFICEUPD 300
+%define OFFICEUPD 340
 %define SOPOST l*
 
 %description

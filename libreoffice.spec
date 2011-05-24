@@ -15,7 +15,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -88,6 +88,7 @@ Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch16: 0001-fix-build-with-system-bsh.patch
+Patch17: 0001-handle-NULL-display-gracefully.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -705,6 +706,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p0 -b .vbahelper.visibility.patch
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
 %patch16 -p1 -b .fix-build-with-system-bsh.patch
+%patch17 -p1 -b .handle-NULL-display-gracefully.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1996,6 +1998,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue May 24 2011 David Tardon <dtardon@redhat.com> - 3.4.0.1-2
+- Resolves: rhbz#706110 oosplash.bin segfault on every login
+
 * Fri May 20 2011 David Tardon <dtardon@redhat.com> - 3.4.0.1-1
 - 3.4 RC1
 - Resolves: rhbz#702635 set correct page number when exporting selected

@@ -1,0 +1,26 @@
+From 88e5e837c3fec0f98da96a262141e170d86d9567 Mon Sep 17 00:00:00 2001
+From: Radek Doulik <rodo@novell.com>
+Date: Thu, 14 Apr 2011 15:19:53 +0200
+Subject: [PATCH] fix crash in fdo#36203, the referenced shape didn't contain
+ texbody
+
+---
+ oox/source/drawingml/shape.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/oox/source/drawingml/shape.cxx b/oox/source/drawingml/shape.cxx
+index 39bcd7b..1864125 100644
+--- a/oox/source/drawingml/shape.cxx
++++ b/oox/source/drawingml/shape.cxx
+@@ -198,7 +198,7 @@ void Shape::addShape(
+ 
+ void Shape::applyShapeReference( const Shape& rReferencedShape )
+ {
+-    mpTextBody = TextBodyPtr( new TextBody( *rReferencedShape.mpTextBody.get() ) );
++    mpTextBody = TextBodyPtr( rReferencedShape.mpTextBody.get() ? new TextBody( *rReferencedShape.mpTextBody.get() ) : new TextBody() );
+     maShapeProperties = rReferencedShape.maShapeProperties;
+     mpLinePropertiesPtr = LinePropertiesPtr( new LineProperties( *rReferencedShape.mpLinePropertiesPtr.get() ) );
+     mpFillPropertiesPtr = FillPropertiesPtr( new FillProperties( *rReferencedShape.mpFillPropertiesPtr.get() ) );
+-- 
+1.7.5.1
+

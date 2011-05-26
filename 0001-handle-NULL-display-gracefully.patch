@@ -28,9 +28,9 @@ index a8a87b0..dc88343 100755
 -    XCloseDisplay( display );
 +    if (display)
 +        XCloseDisplay( display );
- #ifdef USE_LIBPNG
-     png_destroy_read_struct( &png_ptr, &info_ptr, NULL );
- #else
+ 
+     // leak it is faster
+     bitmap_rows = NULL;
 -- 
 1.7.5.1
 

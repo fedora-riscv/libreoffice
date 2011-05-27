@@ -1145,11 +1145,14 @@ popd
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/xdg/
 chmod u+w *.desktop
 rm -rf printeradmin.desktop
+ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
 for file in *.desktop; do
     # rhbz#156677 remove the version from Name=
-    sed -i -e "s/$PRODUCTVERSION //g" $file
     # rhbz#156067 don't version the icons
-    sed -i -e "s/$PRODUCTVERSIONSHORT//g" $file
+    sed -i -e "s/$PRODUCTVERSION//g" \
+        -e "s/$ICONVERSION//g" \
+        -e "s/$PRODUCTVERSIONSHORT//g" \
+        $file
     # add X-GIO-NoFuse so we get url:// instead of file://~.gvfs/
     echo X-GIO-NoFuse=true >> $file
 done
@@ -1188,12 +1191,9 @@ popd
 pushd sysui/output/usr/share/
 #get rid of the gnome icons and other unneeded files
 rm -rf icons/gnome applications application-registry
-# rhbz#156067 don't version the icons
-find . -name "*.desktop" -exec sed -i -e s/$PRODUCTVERSIONSHORT//g {} \;
 
 #relocate the rest of them
 # remove versioned icons
-ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
 find icons -type f -name '*office$ICONVERSION*' -print0 | xargs -0 rm -f
 cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info

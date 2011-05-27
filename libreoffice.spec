@@ -1179,7 +1179,7 @@ rm -rf icons/gnome applications application-registry
 
 #relocate the rest of them
 # remove versioned icons
-find icons -type f -name '*office$ICONVERSION*' -print0 | xargs -0 rm -f
+find icons -type f -name "*office$ICONVERSION*" -print0 | xargs -0 rm -f
 cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys

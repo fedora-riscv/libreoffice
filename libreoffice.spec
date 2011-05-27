@@ -1156,18 +1156,10 @@ for file in *.desktop; do
     # add X-GIO-NoFuse so we get url:// instead of file://~.gvfs/
     echo X-GIO-NoFuse=true >> $file
 done
-echo "StartupNotify=true" >> base.desktop
-echo "StartupNotify=true" >> calc.desktop
-echo "StartupNotify=true" >> impress.desktop
-echo "StartupNotify=true" >> writer.desktop
-echo "StartupNotify=true" >> math.desktop
-echo "StartupNotify=true" >> draw.desktop
-echo "TryExec=oobase" >> base.desktop
-echo "TryExec=oocalc" >> calc.desktop
-echo "TryExec=ooimpress" >> impress.desktop
-echo "TryExec=oowriter" >> writer.desktop
-echo "TryExec=oomath" >> math.desktop
-echo "TryExec=oodraw" >> draw.desktop
+for app in base calc draw impress math writer; do
+    echo "StartupNotify=true" >> $app.desktop
+    echo "TryExec=oo$app" >> $app.desktop
+done
 # rhbz#156677# / rhbz#186515#
 echo "NoDisplay=true" >> math.desktop
 echo "NoDisplay=true" >> startcenter.desktop
@@ -1175,16 +1167,9 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-cp -p base.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-base.desktop
-cp -p calc.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-calc.desktop
-cp -p impress.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-impress.desktop
-cp -p writer.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-writer.desktop
-cp -p math.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-math.desktop
-cp -p draw.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-draw.desktop
-cp -p javafilter.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-javafilter.desktop
-cp -p startcenter.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-startcenter.desktop
-for desktop in *.desktop; do
-    desktop-file-validate $desktop
+for app in base calc draw impress javafilter math startcenter writer; do
+    desktop-file-validate $app.desktop
+    cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
 

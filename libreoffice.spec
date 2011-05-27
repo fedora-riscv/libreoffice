@@ -23,7 +23,7 @@ License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Ne
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        /libreoffice-artwork-%{version}.tar.bz2
+Source0:        %{source_url}/libreoffice-artwork-%{version}.tar.bz2
 Source1:        %{source_url}/libreoffice-base-%{version}.tar.bz2
 Source2:        %{source_url}/libreoffice-bootstrap-%{version}.tar.bz2
 Source3:        %{source_url}/libreoffice-calc-%{version}.tar.bz2

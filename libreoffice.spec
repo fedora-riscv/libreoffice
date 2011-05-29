@@ -1180,8 +1180,9 @@ pushd sysui/output/usr/share/
 rm -rf icons/gnome applications application-registry
 
 #relocate the rest of them
-# remove versioned icons
-find icons -type f -name "*office$ICONVERSION*" -print0 | xargs -0 rm -f
+for icon in `find icons -type f`; do
+    mv $icon `echo $icon | sed -e s@office$ICONVERSION@office@`
+done
 cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys

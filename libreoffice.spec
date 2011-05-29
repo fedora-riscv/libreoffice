@@ -10,6 +10,7 @@
 
 %if %{langpacks}
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define with_lang --with-lang=%{langpack_langs}
 %else
 %define langpack_langs en-US
 %endif
@@ -748,7 +749,7 @@ autoconf
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
  --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
- --with-lang="%{langpack_langs}" --with-poor-help-localizations="$POORHELPS" \
+ %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --with-external-libtextcat-data \
  --without-system-translate-toolkit --without-system-hsqldb \

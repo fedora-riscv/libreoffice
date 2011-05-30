@@ -13,7 +13,7 @@ diff --git a/sw/source/core/crsr/swcrsr.cxx b/sw/source/core/crsr/swcrsr.cxx
 index 4f646d2..c27d8f7 100644
 --- a/sw/source/core/crsr/swcrsr.cxx
 +++ b/sw/source/core/crsr/swcrsr.cxx
-@@ -1665,8 +1665,7 @@ sal_Bool SwCursor::LeftRight( sal_Bool bLeft, sal_uInt16 nCnt, sal_uInt16 nMode,
+@@ -1671,8 +1671,7 @@
              {
                  // Set cursor to start/end of covered cell:
                  SwTableBox* pTableBox = pOldTabBoxSttNode->GetTblBox();
@@ -21,18 +21,18 @@ index 4f646d2..c27d8f7 100644
 -                if ( nRowSpan > 1 )
 +                if ( pTableBox && pTableBox->getRowSpan() > 1 )
                  {
-                     pTableBox = & pTableBox->FindEndOfRowSpan( pOldTabSttNode->GetTable(), (sal_uInt16)(pTableBox->getRowSpan() + mnRowSpanOffset ) );
+                     pTableBox = & pTableBox->FindEndOfRowSpan( pOldTabSttNode->GetTable(), (USHORT)(pTableBox->getRowSpan() + mnRowSpanOffset ) );
                      SwNodeIndex& rPtIdx = GetPoint()->nNode;
-@@ -1953,7 +1952,7 @@ sal_Bool SwCursor::GoPrevNextCell( sal_Bool bNext, sal_uInt16 nCnt )
+@@ -1959,7 +1958,7 @@
          // proceeding:
          if ( mnRowSpanOffset )
          {
 -            if ( pTableBox->getRowSpan() > 1 )
 +            if ( pTableBox && pTableBox->getRowSpan() > 1 )
              {
-                 pTableBox = & pTableBox->FindEndOfRowSpan( pTblNd->GetTable(), (sal_uInt16)(pTableBox->getRowSpan() + mnRowSpanOffset) );
+                 pTableBox = & pTableBox->FindEndOfRowSpan( pTblNd->GetTable(), (USHORT)(pTableBox->getRowSpan() + mnRowSpanOffset) );
                  SwNodeIndex aNewIdx( *pTableBox->GetSttNd() );
-@@ -1976,7 +1975,7 @@ sal_Bool SwCursor::GoPrevNextCell( sal_Bool bNext, sal_uInt16 nCnt )
+@@ -1982,7 +1981,7 @@
  
          pTableBoxStartNode = rPtIdx.GetNode().FindTableBoxStartNode();
          pTableBox = pTableBoxStartNode->GetTblBox();
@@ -41,6 +41,3 @@ index 4f646d2..c27d8f7 100644
          {
              mnRowSpanOffset = pTableBox->getRowSpan();
              // move cursor to non-covered cell:
--- 
-1.7.5.1
-

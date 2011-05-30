@@ -19,7 +19,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.0.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -92,6 +92,7 @@ Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch16: 0001-handle-NULL-display-gracefully.patch
+Patch17: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -709,6 +710,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p0 -b .vbahelper.visibility.patch
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
 %patch16 -p1 -b .handle-NULL-display-gracefully.patch
+%patch17 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1986,6 +1988,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon May 30 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-2
+- Resolves: rhbz#707317 avoid crash in getRowSpan
+
 * Fri May 27 2011 David Tardon <dtardon@redhat.com> - 3.4.0.2-1
 - 3.4.0 RC2
 - drop integrated 0001-fix-build-with-system-bsh.patch

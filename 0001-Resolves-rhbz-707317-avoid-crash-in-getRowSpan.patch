@@ -1,0 +1,46 @@
+From 5bc702e5487ba931b2707770a5e25a883bd89b76 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 27 May 2011 15:33:40 +0100
+Subject: [PATCH] Resolves: rhbz#707317 avoid crash in getRowSpan (cherry
+ picked from commit
+ 23c4f82e9084f8b15f149b074a8ad4ff6a7a4204)
+
+---
+ sw/source/core/crsr/swcrsr.cxx |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/sw/source/core/crsr/swcrsr.cxx b/sw/source/core/crsr/swcrsr.cxx
+index 4f646d2..c27d8f7 100644
+--- a/sw/source/core/crsr/swcrsr.cxx
++++ b/sw/source/core/crsr/swcrsr.cxx
+@@ -1665,8 +1665,7 @@ sal_Bool SwCursor::LeftRight( sal_Bool bLeft, sal_uInt16 nCnt, sal_uInt16 nMode,
+             {
+                 // Set cursor to start/end of covered cell:
+                 SwTableBox* pTableBox = pOldTabBoxSttNode->GetTblBox();
+-                const long nRowSpan = pTableBox->getRowSpan();
+-                if ( nRowSpan > 1 )
++                if ( pTableBox && pTableBox->getRowSpan() > 1 )
+                 {
+                     pTableBox = & pTableBox->FindEndOfRowSpan( pOldTabSttNode->GetTable(), (sal_uInt16)(pTableBox->getRowSpan() + mnRowSpanOffset ) );
+                     SwNodeIndex& rPtIdx = GetPoint()->nNode;
+@@ -1953,7 +1952,7 @@ sal_Bool SwCursor::GoPrevNextCell( sal_Bool bNext, sal_uInt16 nCnt )
+         // proceeding:
+         if ( mnRowSpanOffset )
+         {
+-            if ( pTableBox->getRowSpan() > 1 )
++            if ( pTableBox && pTableBox->getRowSpan() > 1 )
+             {
+                 pTableBox = & pTableBox->FindEndOfRowSpan( pTblNd->GetTable(), (sal_uInt16)(pTableBox->getRowSpan() + mnRowSpanOffset) );
+                 SwNodeIndex aNewIdx( *pTableBox->GetSttNd() );
+@@ -1976,7 +1975,7 @@ sal_Bool SwCursor::GoPrevNextCell( sal_Bool bNext, sal_uInt16 nCnt )
+ 
+         pTableBoxStartNode = rPtIdx.GetNode().FindTableBoxStartNode();
+         pTableBox = pTableBoxStartNode->GetTblBox();
+-        if ( pTableBox->getRowSpan() < 1 )
++        if ( pTableBox && pTableBox->getRowSpan() < 1 )
+         {
+             mnRowSpanOffset = pTableBox->getRowSpan();
+             // move cursor to non-covered cell:
+-- 
+1.7.5.1
+

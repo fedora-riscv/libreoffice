@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.2.2
-Release:        9%{?dist}
+Release:        10%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -142,6 +142,7 @@ Patch53: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch54: 0001-handle-NULL-display-gracefully.patch
 Patch55: 0001-fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
 Patch56: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
+Patch57: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -799,6 +800,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch54 -p1 -b .handle-NULL-display-gracefully.patch
 %patch55 -p1 -b .fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
 %patch56 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
+%patch57 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2143,6 +2145,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Jun 02 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10-UNBUILT
+- Resolves: rhbz#710004 band aid for crash
+
 * Mon May 30 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-9
 - Resolves: rhbz#702635 set correct page number when exporting selected
   pages

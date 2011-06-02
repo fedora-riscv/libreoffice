@@ -1989,7 +1989,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Thu May 30 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-3
+* Thu Jun 02 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-3
 - Resolves: rhbz#710004 band aid for crash
 
 * Mon May 30 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-2

@@ -1157,7 +1157,7 @@ ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
 for file in *.desktop; do
     # rhbz#156677 remove the version from Name=
     # rhbz#156067 don't version the icons
-    sed -i -e "s/$PRODUCTVERSION//g" \
+    sed -i -e "s/$PRODUCTVERSION *//g" \
         -e "s/$ICONVERSION//g" \
         -e "s/$PRODUCTVERSIONSHORT//g" \
         $file

@@ -736,6 +736,17 @@ export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
 
+#use the RPM_OPT_FLAGS but remove the OOo overridden ones
+for i in $RPM_OPT_FLAGS; do
+        case "$i" in
+                -O?|-pipe|-Wall|-g|-fexceptions) continue;;
+        esac
+        ARCH_FLAGS="$ARCH_FLAGS $i"
+done
+export ARCH_FLAGS
+export CFLAGS=$ARCH_FLAGS
+export CXXFLAGS=$ARCH_FLAGS
+
 autoconf
 %configure \
  --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
@@ -771,15 +782,6 @@ cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
 cp %{SOURCE31} ext_sources
 touch src.downloaded
-
-#use the RPM_OPT_FLAGS but remove the OOo overridden ones
-for i in $RPM_OPT_FLAGS; do
-        case "$i" in
-                -O?|-pipe|-Wall|-g|-fexceptions) continue;;
-        esac
-        ARCH_FLAGS="$ARCH_FLAGS $i"
-done
-export ARCH_FLAGS
 
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap

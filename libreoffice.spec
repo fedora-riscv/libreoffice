@@ -95,6 +95,7 @@ Patch16: 0001-handle-NULL-display-gracefully.patch
 Patch17: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
 Patch18: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 Patch19: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
+Patch20: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -715,6 +716,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
 %patch18 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
 %patch19 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
+%patch20 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1996,6 +1998,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Jun 07 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-4
 - Resolves: rhbz#710556 't crash on missing graphics .pptx export
+- Resolves: rhbz#652604 better survive exceptions in autorecovery
 
 * Thu Jun 02 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-3
 - Resolves: rhbz#710004 band aid for crash

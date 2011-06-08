@@ -1,0 +1,35 @@
+From 73a9de430716486d4bd7d535df257fb50889a12b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?C=C3=A9dric=20Bosdonnat?= <cedric.bosdonnat.ooo@free.fr>
+Date: Wed, 8 Jun 2011 10:06:23 +0200
+Subject: [PATCH] fdo#37584: Make a real copy of the text where to count words
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Const-casting a reference doesn't create a copy of it and then the
+spaces replacement made by the WordCount was also made on the actual
+text node. Use String::Copy() to actually copy the text and safely
+operate on it.
+(cherry picked from commit 135cf4fdbec71e8d93edc0339e8617d50766f151)
+
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sw/source/core/txtnode/txtedt.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sw/source/core/txtnode/txtedt.cxx b/sw/source/core/txtnode/txtedt.cxx
+index d4c02b6..08d0c6b 100644
+--- a/sw/source/core/txtnode/txtedt.cxx
++++ b/sw/source/core/txtnode/txtedt.cxx
+@@ -1814,7 +1814,7 @@ void SwTxtNode::CountWords( SwDocStat& rStat,
+     }
+ 
+     // make a copy of the text
+-    String& rTextCopy = const_cast<String&>(m_Text);
++    String rTextCopy = m_Text.Copy( );
+ 
+     // mask out the redlined and hidden text with ' '
+     const xub_Unicode cChar(' ');
+-- 
+1.7.5.2
+

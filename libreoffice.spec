@@ -97,6 +97,7 @@ Patch18: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 Patch19: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
 Patch20: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch21: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
+Patch22: 0001-fdo-37584-Make-a-real-copy-of-the-text-where-to-coun.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -719,6 +720,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
 %patch20 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 %patch21 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
+%patch22 -p1 -b .fdo37584-Make-a-real-copy-of-the-text-where-to-coun.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2000,6 +2002,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Jun 08 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-5
 - Resolves: rhbz#699909 crash in export of .doc in lcl_getField
+- Resolves: fdo#37584 Make a real copy of the text
 
 * Tue Jun 07 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-4
 - Resolves: rhbz#710556 't crash on missing graphics .pptx export

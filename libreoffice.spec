@@ -19,7 +19,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.0.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -96,6 +96,7 @@ Patch17: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
 Patch18: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 Patch19: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
 Patch20: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
+Patch21: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -717,6 +718,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
 %patch19 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
 %patch20 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
+%patch21 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1996,6 +1998,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Jun 08 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-5
+- Resolves: rhbz#699909 crash in export of .doc in lcl_getField
+
 * Tue Jun 07 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-4
 - Resolves: rhbz#710556 't crash on missing graphics .pptx export
 - Resolves: rhbz#652604 better survive exceptions in autorecovery

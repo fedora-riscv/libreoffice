@@ -144,6 +144,7 @@ Patch55: 0001-fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
 Patch56: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
 Patch57: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 Patch58: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
+Patch59: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -803,6 +804,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch56 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
 %patch57 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
 %patch58 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
+%patch59 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2147,9 +2149,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Tue Jun 07 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10-UNBUILT
+* Wed Jun 08 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10-UNBUILT
 - Resolves: rhbz#710004 band aid for crash
 - Resolves: rhbz#710556 don't crash on missing graphics on pptx export
+- Resolves: rhbz#652604 better survive exceptions in autorecovery
 
 * Mon May 30 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-9
 - Resolves: rhbz#702635 set correct page number when exporting selected

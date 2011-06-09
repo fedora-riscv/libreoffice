@@ -146,6 +146,7 @@ Patch57: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
 Patch58: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
 Patch59: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch60: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
+Patch61: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -807,6 +808,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch58 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
 %patch59 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 %patch60 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
+%patch61 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2151,11 +2153,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Jun 08 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10-UNBUILT
+* Thu Jun 09 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10
 - Resolves: rhbz#710004 band aid for crash
 - Resolves: rhbz#710556 don't crash on missing graphics on pptx export
 - Resolves: rhbz#652604 better survive exceptions in autorecovery
 - Resolves: rhbz#699909 crash in export of .doc in lcl_getField
+- Resolves: rhbz#709503/fdo#37668 bitwise operations on signed values
 
 * Mon May 30 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-9
 - Resolves: rhbz#702635 set correct page number when exporting selected

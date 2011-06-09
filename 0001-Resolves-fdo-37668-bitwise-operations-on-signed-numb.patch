@@ -1,0 +1,377 @@
+From 0adcbfa45f1c387d35acdc34c4a945dc88fecead Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 9 Jun 2011 08:54:17 +0100
+Subject: [PATCH] Resolves: fdo#37668 bitwise operations on signed numbers
+
+---
+ vcl/aqua/source/gdi/salgdi.cxx      |    9 +++++----
+ vcl/inc/aqua/salgdi.h               |    4 ++--
+ vcl/inc/salgdi.hxx                  |    5 +++--
+ vcl/inc/unx/pspgraphics.h           |    4 ++--
+ vcl/inc/unx/salgdi.h                |    4 ++--
+ vcl/inc/win/salgdi.h                |    4 ++--
+ vcl/source/gdi/outdev3.cxx          |    2 +-
+ vcl/unx/generic/gdi/pspgraphics.cxx |    8 ++++----
+ vcl/unx/generic/gdi/salgdi3.cxx     |   10 +++++-----
+ vcl/unx/headless/svpgdi.hxx         |    4 ++--
+ vcl/unx/headless/svppspgraphics.cxx |    8 ++++----
+ vcl/unx/headless/svppspgraphics.hxx |    4 ++--
+ vcl/unx/headless/svptext.cxx        |   10 +++++-----
+ vcl/win/source/gdi/salgdi3.cxx      |    4 ++--
+ 14 files changed, 41 insertions(+), 39 deletions(-)
+
+diff --git a/vcl/aqua/source/gdi/salgdi.cxx b/vcl/aqua/source/gdi/salgdi.cxx
+index 9d6e620..ed5623b 100644
+--- a/vcl/aqua/source/gdi/salgdi.cxx
++++ b/vcl/aqua/source/gdi/salgdi.cxx
+@@ -1811,15 +1811,16 @@ static OSStatus GgoMoveToProc( const Float32Point* pPoint, void* pData )
+     return eStatus;
+ }
+ 
+-sal_Bool AquaSalGraphics::GetGlyphOutline( long nGlyphId, basegfx::B2DPolyPolygon& rPolyPoly )
++sal_Bool AquaSalGraphics::GetGlyphOutline( sal_GlyphId nGlyphId, basegfx::B2DPolyPolygon& rPolyPoly )
+ {
+     GgoData aGgoData;
+     aGgoData.mpPolyPoly = &rPolyPoly;
+     rPolyPoly.clear();
+ 
+     ATSUStyle rATSUStyle = maATSUStyle;	// TODO: handle glyph fallback when CWS pdffix02 is integrated
++    GlyphID aGlyphId = nGlyphId & GF_IDXMASK;
+     OSStatus eGgoStatus = noErr;
+-    OSStatus eStatus = ATSUGlyphGetCubicPaths( rATSUStyle, nGlyphId,
++    OSStatus eStatus = ATSUGlyphGetCubicPaths( rATSUStyle, aGlyphId,
+         GgoMoveToProc, GgoLineToProc, GgoCurveToProc, GgoClosePathProc,
+         &aGgoData, &eGgoStatus );
+     if( (eStatus != noErr) ) // TODO: why is (eGgoStatus!=noErr) when curves are involved?
+@@ -1853,10 +1854,10 @@ long AquaSalGraphics::GetGraphicsWidth() const
+ 
+ // -----------------------------------------------------------------------
+ 
+-sal_Bool AquaSalGraphics::GetGlyphBoundRect( long nGlyphId, Rectangle& rRect )
++sal_Bool AquaSalGraphics::GetGlyphBoundRect( sal_GlyphId nGlyphId, Rectangle& rRect )
+ {
+     ATSUStyle rATSUStyle = maATSUStyle;	// TODO: handle glyph fallback
+-    GlyphID aGlyphId = nGlyphId;
++    GlyphID aGlyphId = nGlyphId & GF_IDXMASK;
+     ATSGlyphScreenMetrics aGlyphMetrics;
+     OSStatus eStatus = ATSUGlyphGetScreenMetrics( rATSUStyle,
+         1, &aGlyphId, 0, FALSE, !mbNonAntialiasedText, &aGlyphMetrics );
+diff --git a/vcl/inc/aqua/salgdi.h b/vcl/inc/aqua/salgdi.h
+index bbdd244..9eac956 100644
+--- a/vcl/inc/aqua/salgdi.h
++++ b/vcl/inc/aqua/salgdi.h
+@@ -338,8 +338,8 @@ public:
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc );
+ 
+-    virtual sal_Bool                    GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool                    GetGlyphOutline( long nIndex, basegfx::B2DPolyPolygon& );
++    virtual sal_Bool                    GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool                    GetGlyphOutline( sal_GlyphId nIndex, basegfx::B2DPolyPolygon& );
+ 
+     virtual SalLayout*              GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void					 DrawServerFontLayout( const ServerFontLayout& );
+diff --git a/vcl/inc/salgdi.hxx b/vcl/inc/salgdi.hxx
+index 32f2126..05de4cf 100644
+--- a/vcl/inc/salgdi.hxx
++++ b/vcl/inc/salgdi.hxx
+@@ -37,6 +37,7 @@
+ #include "osl/thread.hxx"
+ #include "vcl/outdev.hxx"
+ #include "vcl/salnativewidgets.hxx"
++#include "sallayout.hxx"
+ 
+ #include <map>
+ 
+@@ -298,8 +299,8 @@ public:
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc ) = 0;
+ 
+-    virtual sal_Bool                    GetGlyphBoundRect( long nIndex, Rectangle& ) = 0;
+-    virtual sal_Bool                    GetGlyphOutline( long nIndex, basegfx::B2DPolyPolygon& ) = 0;
++    virtual sal_Bool                    GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& ) = 0;
++    virtual sal_Bool                    GetGlyphOutline( sal_GlyphId nIndex, basegfx::B2DPolyPolygon& ) = 0;
+ 
+     virtual SalLayout*              GetTextLayout( ImplLayoutArgs&, int nFallbackLevel ) = 0;
+     virtual void					 DrawServerFontLayout( const ServerFontLayout& ) = 0;
+diff --git a/vcl/inc/unx/pspgraphics.h b/vcl/inc/unx/pspgraphics.h
+index 29f9251..f5787b1 100644
+--- a/vcl/inc/unx/pspgraphics.h
++++ b/vcl/inc/unx/pspgraphics.h
+@@ -123,8 +123,8 @@ public:
+                                             bool bVertical,
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc );
+-    virtual sal_Bool			GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool			GetGlyphOutline( long nIndex, ::basegfx::B2DPolyPolygon& );
++    virtual sal_Bool			GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool			GetGlyphOutline( sal_GlyphId nIndex, ::basegfx::B2DPolyPolygon& );
+     virtual SalLayout*		GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void			DrawServerFontLayout( const ServerFontLayout& );
+     virtual bool            supportsOperation( OutDevSupportType ) const;
+diff --git a/vcl/inc/unx/salgdi.h b/vcl/inc/unx/salgdi.h
+index a7c2fa1..d03d1df 100644
+--- a/vcl/inc/unx/salgdi.h
++++ b/vcl/inc/unx/salgdi.h
+@@ -287,8 +287,8 @@ public:
+                                             bool bVertical,
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc );
+-    virtual sal_Bool			GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool			GetGlyphOutline( long nIndex, ::basegfx::B2DPolyPolygon& );
++    virtual sal_Bool			GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool			GetGlyphOutline( sal_GlyphId nIndex, ::basegfx::B2DPolyPolygon& );
+     virtual SalLayout*		GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void			DrawServerFontLayout( const ServerFontLayout& );
+     virtual bool            supportsOperation( OutDevSupportType ) const;
+diff --git a/vcl/inc/win/salgdi.h b/vcl/inc/win/salgdi.h
+index 9a00450..7f58301 100644
+--- a/vcl/inc/win/salgdi.h
++++ b/vcl/inc/win/salgdi.h
+@@ -369,8 +369,8 @@ public:
+                                             Ucs2UIntMap& rUnicodeEnc );
+     virtual int             GetMinKashidaWidth();
+ 
+-    virtual sal_Bool                    GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool                    GetGlyphOutline( long nIndex, ::basegfx::B2DPolyPolygon& );
++    virtual sal_Bool                    GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool                    GetGlyphOutline( sal_GlyphId nIndex, ::basegfx::B2DPolyPolygon& );
+ 
+     virtual SalLayout*              GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void					 DrawServerFontLayout( const ServerFontLayout& );
+diff --git a/vcl/source/gdi/outdev3.cxx b/vcl/source/gdi/outdev3.cxx
+index 647cc22..f30251d 100755
+--- a/vcl/source/gdi/outdev3.cxx
++++ b/vcl/source/gdi/outdev3.cxx
+@@ -6112,7 +6112,7 @@ void OutputDevice::forceFallbackFontToFit(SalLayout &rFallback, ImplFontEntry &r
+         if( !rFallback.GetNextGlyphs( 1, &nLGlyph, aPos, nStart ) )
+             break;
+ 
+-        int nFontTag = nFallbackLevel << GF_FONTSHIFT;
++        sal_GlyphId nFontTag = nFallbackLevel << GF_FONTSHIFT;
+         nLGlyph |= nFontTag;
+ 
+         // get bounding rectangle of individual glyph
+diff --git a/vcl/unx/generic/gdi/pspgraphics.cxx b/vcl/unx/generic/gdi/pspgraphics.cxx
+index ba2319c..8e66c93 100644
+--- a/vcl/unx/generic/gdi/pspgraphics.cxx
++++ b/vcl/unx/generic/gdi/pspgraphics.cxx
+@@ -941,7 +941,7 @@ sal_uLong PspGraphics::GetKernPairs( sal_uLong nPairs, ImplKernPairData *pKernPa
+     return nHavePairs;
+ }
+ 
+-sal_Bool PspGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
++sal_Bool PspGraphics::GetGlyphBoundRect( sal_GlyphId nGlyphIndex, Rectangle& rRect )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+     if( nLevel >= MAX_FALLBACK )
+@@ -951,13 +951,13 @@ sal_Bool PspGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     const GlyphMetric& rGM = pSF->GetGlyphMetric( nGlyphIndex );
+     rRect = Rectangle( rGM.GetOffset(), rGM.GetSize() );
+     return sal_True;
+ }
+ 
+-sal_Bool PspGraphics::GetGlyphOutline( long nGlyphIndex,
++sal_Bool PspGraphics::GetGlyphOutline( sal_GlyphId nGlyphIndex,
+     ::basegfx::B2DPolyPolygon& rB2DPolyPoly )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+@@ -968,7 +968,7 @@ sal_Bool PspGraphics::GetGlyphOutline( long nGlyphIndex,
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     if( pSF->GetGlyphOutline( nGlyphIndex, rB2DPolyPoly ) )
+         return sal_True;
+ 
+diff --git a/vcl/unx/generic/gdi/salgdi3.cxx b/vcl/unx/generic/gdi/salgdi3.cxx
+index 2615438..a90fd1c 100644
+--- a/vcl/unx/generic/gdi/salgdi3.cxx
++++ b/vcl/unx/generic/gdi/salgdi3.cxx
+@@ -1149,17 +1149,17 @@ X11SalGraphics::GetKernPairs( sal_uLong nPairs, ImplKernPairData *pKernPairs )
+ 
+ // ---------------------------------------------------------------------------
+ 
+-sal_Bool X11SalGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
++sal_Bool X11SalGraphics::GetGlyphBoundRect( sal_GlyphId nGlyphIndex, Rectangle& rRect )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+-    if( nLevel < 0 || nLevel >= MAX_FALLBACK )
++    if( nLevel >= MAX_FALLBACK )
+         return sal_False;
+ 
+     ServerFont* pSF = mpServerFont[ nLevel ];
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     const GlyphMetric& rGM = pSF->GetGlyphMetric( nGlyphIndex );
+     rRect = Rectangle( rGM.GetOffset(), rGM.GetSize() );
+     return sal_True;
+@@ -1167,7 +1167,7 @@ sal_Bool X11SalGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
+ 
+ // ---------------------------------------------------------------------------
+ 
+-sal_Bool X11SalGraphics::GetGlyphOutline( long nGlyphIndex,
++sal_Bool X11SalGraphics::GetGlyphOutline( sal_GlyphId nGlyphIndex,
+     ::basegfx::B2DPolyPolygon& rPolyPoly )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+@@ -1178,7 +1178,7 @@ sal_Bool X11SalGraphics::GetGlyphOutline( long nGlyphIndex,
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     if( pSF->GetGlyphOutline( nGlyphIndex, rPolyPoly ) )
+         return sal_True;
+ 
+diff --git a/vcl/unx/headless/svpgdi.hxx b/vcl/unx/headless/svpgdi.hxx
+index 37eac08..640eb43 100644
+--- a/vcl/unx/headless/svpgdi.hxx
++++ b/vcl/unx/headless/svpgdi.hxx
+@@ -111,8 +111,8 @@ public:
+                                             bool bVertical,
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc );
+-    virtual sal_Bool			GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool			GetGlyphOutline( long nIndex, ::basegfx::B2DPolyPolygon& );
++    virtual sal_Bool			GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool			GetGlyphOutline( sal_GlyphId nIndex, ::basegfx::B2DPolyPolygon& );
+     virtual SalLayout*		GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void			DrawServerFontLayout( const ServerFontLayout& );
+     virtual bool            supportsOperation( OutDevSupportType ) const;
+diff --git a/vcl/unx/headless/svppspgraphics.cxx b/vcl/unx/headless/svppspgraphics.cxx
+index c9c1a7d..f44c445 100644
+--- a/vcl/unx/headless/svppspgraphics.cxx
++++ b/vcl/unx/headless/svppspgraphics.cxx
+@@ -848,7 +848,7 @@ sal_uLong PspGraphics::GetKernPairs( sal_uLong nPairs, ImplKernPairData *pKernPa
+     return nHavePairs;
+ }
+ 
+-sal_Bool PspGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
++sal_Bool PspGraphics::GetGlyphBoundRect( sal_GlyphId nGlyphIndex, Rectangle& rRect )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+     if( nLevel >= MAX_FALLBACK )
+@@ -858,13 +858,13 @@ sal_Bool PspGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     const GlyphMetric& rGM = pSF->GetGlyphMetric( nGlyphIndex );
+     rRect = Rectangle( rGM.GetOffset(), rGM.GetSize() );
+     return sal_True;
+ }
+ 
+-sal_Bool PspGraphics::GetGlyphOutline( long nGlyphIndex,
++sal_Bool PspGraphics::GetGlyphOutline( sal_GlyphId nGlyphIndex,
+     ::basegfx::B2DPolyPolygon& rB2DPolyPoly )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+@@ -875,7 +875,7 @@ sal_Bool PspGraphics::GetGlyphOutline( long nGlyphIndex,
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     if( pSF->GetGlyphOutline( nGlyphIndex, rB2DPolyPoly ) )
+         return sal_True;
+ 
+diff --git a/vcl/unx/headless/svppspgraphics.hxx b/vcl/unx/headless/svppspgraphics.hxx
+index 6245496..2c03386 100644
+--- a/vcl/unx/headless/svppspgraphics.hxx
++++ b/vcl/unx/headless/svppspgraphics.hxx
+@@ -125,8 +125,8 @@ public:
+                                             bool bVertical,
+                                             Int32Vector& rWidths,
+                                             Ucs2UIntMap& rUnicodeEnc );
+-    virtual sal_Bool			GetGlyphBoundRect( long nIndex, Rectangle& );
+-    virtual sal_Bool			GetGlyphOutline( long nIndex, ::basegfx::B2DPolyPolygon& );
++    virtual sal_Bool			GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& );
++    virtual sal_Bool			GetGlyphOutline( sal_GlyphId nIndex, ::basegfx::B2DPolyPolygon& );
+     virtual SalLayout*		GetTextLayout( ImplLayoutArgs&, int nFallbackLevel );
+     virtual void			DrawServerFontLayout( const ServerFontLayout& );
+     virtual bool            supportsOperation( OutDevSupportType ) const;
+diff --git a/vcl/unx/headless/svptext.cxx b/vcl/unx/headless/svptext.cxx
+index 24e0f1b..a077685 100644
+--- a/vcl/unx/headless/svptext.cxx
++++ b/vcl/unx/headless/svptext.cxx
+@@ -460,7 +460,7 @@ void SvpSalGraphics::GetGlyphWidths( const ImplFontData* pFont,
+ 
+ // ---------------------------------------------------------------------------
+ 
+-sal_Bool SvpSalGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
++sal_Bool SvpSalGraphics::GetGlyphBoundRect( sal_GlyphId nGlyphIndex, Rectangle& rRect )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+     if( nLevel >= MAX_FALLBACK )
+@@ -470,7 +470,7 @@ sal_Bool SvpSalGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     const GlyphMetric& rGM = pSF->GetGlyphMetric( nGlyphIndex );
+     rRect = Rectangle( rGM.GetOffset(), rGM.GetSize() );
+     return sal_True;
+@@ -478,7 +478,7 @@ sal_Bool SvpSalGraphics::GetGlyphBoundRect( long nGlyphIndex, Rectangle& rRect )
+ 
+ // ---------------------------------------------------------------------------
+ 
+-sal_Bool SvpSalGraphics::GetGlyphOutline( long nGlyphIndex, B2DPolyPolygon& rPolyPoly )
++sal_Bool SvpSalGraphics::GetGlyphOutline( sal_GlyphId nGlyphIndex, B2DPolyPolygon& rPolyPoly )
+ {
+     int nLevel = nGlyphIndex >> GF_FONTSHIFT;
+     if( nLevel >= MAX_FALLBACK )
+@@ -488,7 +488,7 @@ sal_Bool SvpSalGraphics::GetGlyphOutline( long nGlyphIndex, B2DPolyPolygon& rPol
+     if( !pSF )
+         return sal_False;
+ 
+-    nGlyphIndex &= ~GF_FONTMASK;
++    nGlyphIndex &= GF_IDXMASK;
+     if( pSF->GetGlyphOutline( nGlyphIndex, rPolyPoly ) )
+         return sal_True;
+ 
+@@ -524,7 +524,7 @@ void SvpSalGraphics::DrawServerFontLayout( const ServerFontLayout& rSalLayout )
+             continue;
+ 
+         // get the glyph's alpha mask and adjust the drawing position
+-        nGlyphIndex &= ~GF_FONTMASK;
++        nGlyphIndex &= GF_IDXMASK;
+         B2IPoint aDstPoint( aPos.X(), aPos.Y() );
+         BitmapDeviceSharedPtr aAlphaMask
+             = rGlyphPeer.GetGlyphBmp( *pSF, nGlyphIndex, m_eTextFmt, aDstPoint );
+diff --git a/vcl/win/source/gdi/salgdi3.cxx b/vcl/win/source/gdi/salgdi3.cxx
+index 4f7b6ad..b14b9a5 100644
+--- a/vcl/win/source/gdi/salgdi3.cxx
++++ b/vcl/win/source/gdi/salgdi3.cxx
+@@ -2505,7 +2505,7 @@ void WinSalGraphics::GetDevFontSubstList( OutputDevice* )
+ 
+ // -----------------------------------------------------------------------
+ 
+-sal_Bool WinSalGraphics::GetGlyphBoundRect( long nIndex, Rectangle& rRect )
++sal_Bool WinSalGraphics::GetGlyphBoundRect( sal_GlyphId nIndex, Rectangle& rRect )
+ {
+     HDC hDC = mhDC;
+ 
+@@ -2537,7 +2537,7 @@ sal_Bool WinSalGraphics::GetGlyphBoundRect( long nIndex, Rectangle& rRect )
+ 
+ // -----------------------------------------------------------------------
+ 
+-sal_Bool WinSalGraphics::GetGlyphOutline( long nIndex,
++sal_Bool WinSalGraphics::GetGlyphOutline( sal_GlyphId nIndex,
+     ::basegfx::B2DPolyPolygon& rB2DPolyPoly )
+ {
+     rB2DPolyPoly.clear();
+-- 
+1.7.5.2
+

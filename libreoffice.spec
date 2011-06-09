@@ -98,6 +98,7 @@ Patch19: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
 Patch20: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch21: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
 Patch22: 0001-fdo-37584-Make-a-real-copy-of-the-text-where-to-coun.patch
+Patch23: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -721,6 +722,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 %patch21 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
 %patch22 -p1 -b .fdo37584-Make-a-real-copy-of-the-text-where-to-coun.patch
+%patch23 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2000,9 +2002,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Jun 08 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-5
+* Thu Jun 09 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-5
 - Resolves: rhbz#699909 crash in export of .doc in lcl_getField
 - Resolves: fdo#37584 Make a real copy of the text
+- Resolves: rhbz#709503/fdo#37668 bitwise operations on signed values
 
 * Tue Jun 07 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-4
 - Resolves: rhbz#710556 't crash on missing graphics .pptx export

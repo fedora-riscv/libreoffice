@@ -1,96 +1,85 @@
-From 65e841076a947bcf115526e609de78e6952332e7 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
-Date: Wed, 8 Jun 2011 11:05:37 +0100
-Subject: [PATCH] Resolves: rhbz#699909 crash in export of .doc in
- lcl_getFieldId
-
----
- sw/source/filter/ww8/wrtw8nds.cxx |   26 +++++++++++++++-----------
- 1 files changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/sw/source/filter/ww8/wrtw8nds.cxx b/sw/source/filter/ww8/wrtw8nds.cxx
-index 114f4a6..183fe59 100644
---- a/sw/source/filter/ww8/wrtw8nds.cxx
-+++ b/sw/source/filter/ww8/wrtw8nds.cxx
-@@ -119,9 +119,7 @@
+reverted:
+--- b/sw/source/filter/ww8/wrtw8nds.cxx
++++ a/sw/source/filter/ww8/wrtw8nds.cxx
+@@ -119,7 +119,9 @@
  static String lcl_getFieldCode( const IFieldmark* pFieldmark ) {
      OSL_ENSURE(pFieldmark!=NULL, "where is my fieldmark???");
  
--    if ( !pFieldmark) {
--        return String();
--    } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
-+    if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
++    if ( !pFieldmark) {
++        return String();
++    } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
+-    if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
          return String::CreateFromAscii(" FORMTEXT ");
      } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ) {
          return String::CreateFromAscii(" FORMDROPDOWN ");
-@@ -140,9 +138,7 @@
+@@ -138,7 +140,9 @@
  
  ww::eField lcl_getFieldId( const IFieldmark* pFieldmark ) {
      OSL_ENSURE(pFieldmark!=NULL, "where is my fieldmark???");
--    if ( !pFieldmark ) {
--        return ww::eUNKNOWN;
--    } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
-+    if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
++    if ( !pFieldmark ) {
++        return ww::eUNKNOWN;
++    } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
+-    if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) ) {
          return ww::eFORMTEXT;
      } else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ) {
          return ww::eFORMDROPDOWN;
-@@ -1830,11 +1826,11 @@
+@@ -1826,11 +1830,11 @@
                  ::sw::mark::IFieldmark const * const pFieldmark = pMarkAccess->getFieldmarkFor( aPosition );
                  OSL_ENSURE( pFieldmark, "Looks like this doc is broken...; where is the Fieldmark for the FIELDSTART??" );
  
--                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
-+                if ( pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
++                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
+-                if ( pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
                      AppendBookmark( pFieldmark->GetName(), false );
                  ww::eField eFieldId = lcl_getFieldId( pFieldmark );
                  String sCode = lcl_getFieldCode( pFieldmark );
--                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
-+                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
++                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
+-                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
                  {
                      IFieldmark::parameter_map_t::const_iterator it = pFieldmark->GetParameters()->find(
                              rtl::OUString::createFromAscii( ODF_ID_PARAM ) );
-@@ -1855,13 +1851,13 @@
+@@ -1851,13 +1855,13 @@
                      }
                  }
                  OutputField( NULL, eFieldId, sCode, WRITEFIELD_START | WRITEFIELD_CMD_START );
--                if ( pFieldmark && pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) )
-+                if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) )
++                if ( pFieldmark && pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) )
+-                if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMTEXT ) )
                      WriteFormData( *pFieldmark );
--                else if ( pFieldmark && pFieldmark->GetFieldname( ).equalsAscii( ODF_HYPERLINK ) )
-+                else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_HYPERLINK ) )
++                else if ( pFieldmark && pFieldmark->GetFieldname( ).equalsAscii( ODF_HYPERLINK ) )
+-                else if ( pFieldmark->GetFieldname( ).equalsAscii( ODF_HYPERLINK ) )
                      WriteHyperlinkData( *pFieldmark );
                  OutputField( NULL, lcl_getFieldId( pFieldmark ), String(), WRITEFIELD_CMD_END );
  
--                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
-+                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
++                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
+-                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
                  {
                      // Check for the presence of a linked OLE object
                      IFieldmark::parameter_map_t::const_iterator it = pFieldmark->GetParameters()->find(
-@@ -1883,7 +1879,7 @@
+@@ -1879,7 +1883,7 @@
                  OSL_ENSURE( pFieldmark, "Looks like this doc is broken...; where is the Fieldmark for the FIELDEND??" );
  
                  ww::eField eFieldId = lcl_getFieldId( pFieldmark );
--                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
-+                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
++                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
+-                if ( pFieldmark->GetFieldname().equalsAscii( ODF_UNHANDLED ) )
                  {
                      IFieldmark::parameter_map_t::const_iterator it = pFieldmark->GetParameters()->find(
                              rtl::OUString::createFromAscii( ODF_ID_PARAM ) );
-@@ -1896,7 +1892,7 @@
+@@ -1892,7 +1896,7 @@
                  }
  
                  OutputField( NULL, eFieldId, String(), WRITEFIELD_CLOSE );
--                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
-+                if ( pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
++                if ( pFieldmark && pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
+-                if ( pFieldmark->GetFieldname().equalsAscii( ODF_FORMTEXT ) )
                      AppendBookmark( pFieldmark->GetName(), false );
              }
              else if ( ch == CH_TXT_ATR_FORMELEMENT )
-@@ -1905,8 +1901,8 @@
+@@ -1901,8 +1905,8 @@
                  ::sw::mark::IFieldmark const * const pFieldmark = pMarkAccess->getFieldmarkFor( aPosition );
                  OSL_ENSURE( pFieldmark, "Looks like this doc is broken...; where is the Fieldmark for the FIELDSTART??" );
  
--                bool isDropdownOrCheckbox = pFieldmark && (pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ||
--                    pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX ));
-+                bool isDropdownOrCheckbox = pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ||
-+                    pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX );
++                bool isDropdownOrCheckbox = pFieldmark && (pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ||
++                    pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX ));
+-                bool isDropdownOrCheckbox = pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMDROPDOWN ) ||
+-                    pFieldmark->GetFieldname( ).equalsAscii( ODF_FORMCHECKBOX );
  
                  if ( isDropdownOrCheckbox )
                      AppendBookmark( pFieldmark->GetName(), 0 );

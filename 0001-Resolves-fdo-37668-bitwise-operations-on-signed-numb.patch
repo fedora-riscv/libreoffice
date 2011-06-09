@@ -138,7 +138,7 @@ index 2615438..a90fd1c 100644
          return FALSE;
  
 -    nGlyphIndex &= ~GF_FONTMASK;
-+    nGlyphIndex &= GF_IDXMASK
++    nGlyphIndex &= GF_IDXMASK;
      if( pSF->GetGlyphOutline( nGlyphIndex, rPolyPoly ) )
          return TRUE;
  

@@ -28,8 +28,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.2.2
-Release:        10%{?dist}
+Version:        3.3.3.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2153,6 +2153,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Jun 14 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-1
+- bugfixing 3.3.3.1 point release
+
 * Thu Jun 09 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10
 - Resolves: rhbz#710004 band aid for crash
 - Resolves: rhbz#710556 don't crash on missing graphics on pptx export

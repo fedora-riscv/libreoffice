@@ -122,31 +122,30 @@ Patch33: 0001-Resolves-rhbz-682716-pa-IN-isn-t-handled-by-fontconf.patch
 Patch34: 0001-Resolves-rhbz-682621-better-resizing-of-overtall-gly.patch
 Patch35: 0001-Related-rhbz-684477-make-sure-this-is-thread-safe.patch
 Patch36: 0001-Resolves-rhbz-684620-crash-with-NULL-pTableBox.patch
-Patch37: libreoffice-fdo33947.sd.print.crash.patch
-Patch38: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-Patch39: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
-Patch40: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
-Patch41: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
-Patch42: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-Patch43: 0001-beware-of-invalidated-iterator.patch
-Patch44: rhbz680766.fix-mdds-crash.patch
-Patch45: mdds.add-missing-link.patch
-Patch46: mdds.do-not-insert-new-node.patch
-Patch47: 0001-Resolves-rhbz-684580-X-and-strike-through-escapes-ra.patch
-Patch48: 0001-set-mime-types-on-flat-xml-filters.patch
-Patch49: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
-Patch50: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
-Patch51: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
-Patch52: 0001-Resolves-rhbz-658304-late-init-color-config.-to-avoi.patch
-Patch53: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
-Patch54: 0001-handle-NULL-display-gracefully.patch
-Patch55: 0001-fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
-Patch56: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
-Patch57: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
-Patch58: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
-Patch59: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
-Patch60: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
-Patch61: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
+Patch37: 0001-add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+Patch38: 0001-Related-rhbz-680460-reorganize-this-to-make-it-inher.patch
+Patch39: 0001-Related-rhbz-680460-don-t-bother-with-an-interim-Fon.patch
+Patch40: 0001-Resolves-rhbz-680460-honour-lcdfilter-subpixeling-et.patch
+Patch41: 0001-Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+Patch42: 0001-beware-of-invalidated-iterator.patch
+Patch43: rhbz680766.fix-mdds-crash.patch
+Patch44: mdds.add-missing-link.patch
+Patch45: mdds.do-not-insert-new-node.patch
+Patch46: 0001-Resolves-rhbz-684580-X-and-strike-through-escapes-ra.patch
+Patch47: 0001-set-mime-types-on-flat-xml-filters.patch
+Patch48: 0001-add-flat-xml-types-to-.desktop-files-etc.patch
+Patch49: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
+Patch50: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
+Patch51: 0001-Resolves-rhbz-658304-late-init-color-config.-to-avoi.patch
+Patch52: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
+Patch53: 0001-handle-NULL-display-gracefully.patch
+Patch54: 0001-fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
+Patch55: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
+Patch56: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
+Patch57: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
+Patch58: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
+Patch59: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
+Patch60: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -786,29 +785,28 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz682621-better-resizing-of-overtall-gly.patch
 %patch35 -p1 -b .rhbz684477-make-sure-this-is-thread-safe.patch
 %patch36 -p1 -b .rhbz684620-crash-with-NULL-pTableBox.patch
-%patch37 -p1 -b .fdo33947.sd.print.crash.patch
-%patch38 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
-%patch39 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
-%patch40 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
-%patch41 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
-%patch42 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
-%patch43 -p1 -b .beware-of-invalidated-iterator.patch
-%patch44 -p1 -b .rhbz680766.fix-mdds-crash.patch
-%patch47 -p1 -b .rhbz684580-X-and-strike-through-escapes-ra.patch
-%patch48 -p1 -b .set-mime-types-on-flat-xml-filters.patch
-%patch49 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
-%patch50 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
-%patch51 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
-%patch52 -p1 -b .rhbz658304-late-init-color-config.-to-avoi.patch
-%patch53 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
-%patch54 -p1 -b .handle-NULL-display-gracefully.patch
-%patch55 -p1 -b .fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
-%patch56 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
-%patch57 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
-%patch58 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
-%patch59 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
-%patch60 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
-%patch61 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
+%patch37 -p1 -b .add-cairo_ft_font_face_create_for_pattern-wrapper.patch
+%patch38 -p1 -b .rhbz680460-reorganize-this-to-make-it-inher.patch
+%patch39 -p1 -b .rhbz680460-don-t-bother-with-an-interim-Fon.patch
+%patch40 -p1 -b .rhbz680460-honour-lcdfilter-subpixeling-et.patch
+%patch41 -p1 -b .Cut-Gordian-Knot-of-who-owns-the-font-options.patch
+%patch42 -p1 -b .beware-of-invalidated-iterator.patch
+%patch43 -p1 -b .rhbz680766.fix-mdds-crash.patch
+%patch46 -p1 -b .rhbz684580-X-and-strike-through-escapes-ra.patch
+%patch47 -p1 -b .set-mime-types-on-flat-xml-filters.patch
+%patch48 -p1 -b .add-flat-xml-types-to-.desktop-files-etc.patch
+%patch49 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
+%patch50 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
+%patch51 -p1 -b .rhbz658304-late-init-color-config.-to-avoi.patch
+%patch52 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
+%patch53 -p1 -b .handle-NULL-display-gracefully.patch
+%patch54 -p1 -b .fix-crash-in-fdo-36203-the-referenced-shape-didn-t-c.patch
+%patch55 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
+%patch56 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
+%patch57 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
+%patch58 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
+%patch59 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
+%patch60 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2155,6 +2153,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Jun 14 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-1
 - bugfixing 3.3.3.1 point release
+- drop integrated libreoffice-fdo33947.sd.print.crash.patch
 
 * Thu Jun 09 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.2.2-10
 - Resolves: rhbz#710004 band aid for crash

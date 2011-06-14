@@ -812,8 +812,8 @@ touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
 touch scripting/util/provider/javascript/delzip
 
+cp %{PATCH44} mdds
 cp %{PATCH45} mdds
-cp %{PATCH46} mdds
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

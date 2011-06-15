@@ -18,8 +18,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.0.2
-Release:        5%{?dist}
+Version:        3.4.1.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -92,13 +92,7 @@ Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch16: 0001-handle-NULL-display-gracefully.patch
-Patch17: 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
-Patch18: 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
-Patch19: 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
-Patch20: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
-Patch21: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
-Patch22: 0001-fdo-37584-Make-a-real-copy-of-the-text-where-to-coun.patch
-Patch23: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
+Patch17: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -716,13 +710,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p0 -b .vbahelper.visibility.patch
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
 %patch16 -p1 -b .handle-NULL-display-gracefully.patch
-%patch17 -p1 -b .rhbz707317-avoid-crash-in-getRowSpan.patch
-%patch18 -p1 -b .rhbz710004-band-aid-for-immediate-crash-in.patch
-%patch19 -p1 -b .rhbz710556-don-t-crash-on-missing-graphics.patch
-%patch20 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
-%patch21 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
-%patch22 -p1 -b .fdo37584-Make-a-real-copy-of-the-text-where-to-coun.patch
-%patch23 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
+%patch17 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2002,6 +1990,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Jun 15 2011 David Tardon <dtardon@redhat.com> - 3.4.1.1-1
+- 3.4.1 RC1
+- drop integrated 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch
+- drop integrated 0001-Resolves-rhbz-710004-band-aid-for-immediate-crash-in.patch
+- drop integrated 0001-Resolves-rhbz-710556-don-t-crash-on-missing-graphics.patch
+- drop integrated 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
+- drop integrated 0001-fdo-37584-Make-a-real-copy-of-the-text-where-to-coun.patch
+- drop integrated 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
+
 * Thu Jun 09 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.0.2-5
 - Resolves: rhbz#699909 crash in export of .doc in lcl_getField
 - Resolves: fdo#37584 Make a real copy of the text

@@ -55,10 +55,10 @@ diff --git a/filter/source/pdf/impdialog.hrc b/filter/source/pdf/impdialog.hrc
 index 75708d1..61f2d14 100644
 --- a/filter/source/pdf/impdialog.hrc
 +++ b/filter/source/pdf/impdialog.hrc
-@@ -187,3 +187,8 @@
- 
+@@ -188,3 +188,8 @@
  #define CB_CNV_OOO_DOCTOPDF     155
  #define CB_EXP_BMRK_TO_DEST     156
+ //<---
 +
 +#define FL_GENERAL_VERTICAL  157
 +#define FL_INITVIEW_VERTICAL 158
@@ -117,7 +117,7 @@ index 531d728..1779b5f 100644
  //string for TabDialog standard buttons
  String STR_PDF_EXPORT
  {
-@@ -153,16 +153,24 @@ TabPage  RID_PDF_TAB_GENER
+@@ -153,16 +153,24 @@
              "1200 DPI" ;
          };
      };
@@ -144,7 +144,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "P~DF/A-1a";
-@@ -170,7 +178,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -170,7 +178,7 @@
      CheckBox CB_TAGGEDPDF
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_TAGGEDPDF";
@@ -153,7 +153,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "~Tagged PDF";
-@@ -178,14 +186,14 @@ TabPage  RID_PDF_TAB_GENER
+@@ -178,14 +186,14 @@
      CheckBox CB_EXPORTFORMFIELDS
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EXPORTFORMFIELDS";
@@ -170,7 +170,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 93, 8 ) ;
          Text[ en-US ] = "Submit ~format";
      };
-@@ -193,7 +201,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -193,7 +201,7 @@
      {
          HelpID = "filter:ListBox:RID_PDF_TAB_GENER:LB_FORMSFORMAT";
          Border = TRUE ;
@@ -179,7 +179,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 38, 48 ) ;
          DeltaLang = < Default ; Default ; Default ; Default ; > ;
          TabStop = TRUE ;
-@@ -209,7 +217,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -209,7 +217,7 @@
      CheckBox CB_ALLOWDUPLICATEFIELDNAMES
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_ALLOWDUPLICATEFIELDNAMES";
@@ -188,7 +188,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT( 128, 10 );
          TabStop = TRUE;
          Text [ en-US ] = "Allow duplicate field ~names";
-@@ -217,7 +225,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -217,7 +225,7 @@
      CheckBox CB_EXPORTBOOKMARKS
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EXPORTBOOKMARKS";
@@ -197,7 +197,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Export ~bookmarks";
-@@ -225,7 +233,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -225,7 +233,7 @@
      CheckBox CB_EXPORTNOTES
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EXPORTNOTES";
@@ -206,7 +206,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "~Export comments";
-@@ -233,7 +241,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -233,7 +241,7 @@
      CheckBox CB_EXPORTNOTESPAGES
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EXPORTNOTESPAGES";
@@ -215,7 +215,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Export ~notes pages";
-@@ -241,7 +249,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -241,7 +249,7 @@
      CheckBox CB_EXPORTEMPTYPAGES
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EXPORTEMPTYPAGES";
@@ -224,7 +224,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 16 ) ;
          TabStop = TRUE ;
          WordBreak = TRUE ;
-@@ -250,7 +258,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -250,7 +258,7 @@
      CheckBox CB_EMBEDSTANDARDFONTS
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_EMBEDSTANDARDFONTS";
@@ -233,7 +233,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "E~mbed standard fonts";
-@@ -258,7 +266,7 @@ TabPage  RID_PDF_TAB_GENER
+@@ -258,7 +266,7 @@
      CheckBox CB_ADDSTREAM
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_GENER:CB_ADDSTREAM";
@@ -242,7 +242,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Create ~hybrid file";
-@@ -385,45 +393,52 @@ TabPage  RID_PDF_TAB_OPNFTR
+@@ -385,45 +393,52 @@
          Minimum = 50;
          Maximum = 1600;
      };
@@ -303,7 +303,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 148 , 10 ) ;
          Text[ en-US ] = "First page is ~left" ;
      };
-@@ -478,17 +493,23 @@ TabPage  RID_PDF_TAB_VPREFER
+@@ -478,17 +493,23 @@
          Text[ en-US ] = "~Display document title";
      };
  
@@ -330,7 +330,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Hide ~menubar";
-@@ -496,7 +517,7 @@ TabPage  RID_PDF_TAB_VPREFER
+@@ -496,7 +517,7 @@
      CheckBox CB_UOP_HIDEVTOOLBAR
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_VPREFER:CB_UOP_HIDEVTOOLBAR";
@@ -339,7 +339,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Hide ~toolbar";
-@@ -504,7 +525,7 @@ TabPage  RID_PDF_TAB_VPREFER
+@@ -504,7 +525,7 @@
      CheckBox CB_UOP_HIDEVWINCTRL
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_VPREFER:CB_UOP_HIDEVWINCTRL";
@@ -348,7 +348,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Hide ~window controls";
-@@ -513,14 +534,14 @@ TabPage  RID_PDF_TAB_VPREFER
+@@ -513,14 +534,14 @@
  ////////////////////////////////
      FixedLine FL_TRANSITIONS
      {
@@ -365,7 +365,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "~Use transition effects";
-@@ -528,28 +549,28 @@ TabPage  RID_PDF_TAB_VPREFER
+@@ -528,28 +549,28 @@
  ////////////////////////////////
      FixedLine FL_BOOKMARKS
      {
@@ -398,8 +398,8 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 32 , 12 ) ;
          Border = TRUE;
          Spin = TRUE;
-@@ -649,31 +670,37 @@ TabPage  RID_PDF_TAB_SECURITY
-         Text [en-US] = "PDF document will not be restricted due to PDF/A export.";
+@@ -649,31 +670,37 @@
+         Text [en-US] = "PDF doument will not be restricted due to PDF/A export.";
      };
  
 -//////////////////////////////
@@ -441,7 +441,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 150 , 10 ) ;
          Text[ en-US ] = "~High resolution";
      };
-@@ -681,35 +708,35 @@ TabPage  RID_PDF_TAB_SECURITY
+@@ -681,35 +708,35 @@
  /////////////////////////////
      FixedLine FL_CHANGES_ALLOWED
      {
@@ -482,7 +482,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 152 , 16 ) ;
          WordBreak = TRUE ;
          Text[ en-US ] = "~Commenting, filling in form fields";
-@@ -717,7 +744,7 @@ TabPage  RID_PDF_TAB_SECURITY
+@@ -717,7 +744,7 @@
      RadioButton RB_CHANGES_ANY_NOCOPY
      {
          HelpID = "filter:RadioButton:RID_PDF_TAB_SECURITY:RB_CHANGES_ANY_NOCOPY";
@@ -491,7 +491,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 152 , 10 ) ;
          Text[ en-US ] = "~Any except extracting pages";
      };
-@@ -725,7 +752,7 @@ TabPage  RID_PDF_TAB_SECURITY
+@@ -725,7 +752,7 @@
      CheckBox CB_ENDAB_COPY
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_SECURITY:CB_ENDAB_COPY";
@@ -500,7 +500,7 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Ena~ble copying of content" ;
-@@ -734,7 +761,7 @@ TabPage  RID_PDF_TAB_SECURITY
+@@ -734,7 +761,7 @@
      CheckBox CB_ENAB_ACCESS
      {
          HelpID = "filter:CheckBox:RID_PDF_TAB_SECURITY:CB_ENAB_ACCESS";
@@ -509,6 +509,3 @@ index 531d728..1779b5f 100644
          Size = MAP_APPFONT ( 158 , 10 ) ;
          TabStop = TRUE ;
          Text[ en-US ] = "Enable text access for acce~ssibility tools" ;
--- 
-1.7.5.4
-

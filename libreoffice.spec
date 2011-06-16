@@ -19,7 +19,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -93,6 +93,7 @@ Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch16: 0001-handle-NULL-display-gracefully.patch
 Patch17: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
+Patch18: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -711,6 +712,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
 %patch16 -p1 -b .handle-NULL-display-gracefully.patch
 %patch17 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
+%patch18 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1991,6 +1993,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Jun 16 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-2
+- Resolves: rhbz#713154 pdf export dialog too tall to fit
+
 * Wed Jun 15 2011 David Tardon <dtardon@redhat.com> - 3.4.1.1-1
 - 3.4.1 RC1
 - drop integrated 0001-Resolves-rhbz-707317-avoid-crash-in-getRowSpan.patch

@@ -19,7 +19,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -94,6 +94,7 @@ Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
 Patch16: 0001-handle-NULL-display-gracefully.patch
 Patch17: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch18: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
+Patch19: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -713,6 +714,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch16 -p1 -b .handle-NULL-display-gracefully.patch
 %patch17 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
 %patch18 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
+%patch19 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1993,6 +1995,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Jun 17 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-3
+- Related: rhbz#702833 addEventListener without removeEventListener
+
 * Thu Jun 16 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-2
 - Resolves: rhbz#713154 pdf export dialog too tall to fit
 

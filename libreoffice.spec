@@ -147,6 +147,7 @@ Patch58: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch59: 0001-Resolves-rhbz-699909-crash-in-export-of-.doc-in-lcl_.patch
 Patch60: 0001-Resolves-fdo-37668-bitwise-operations-on-signed-numb.patch
 Patch61: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
+Patch62: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -809,6 +810,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch59 -p1 -b .rhbz699909-crash-in-export-of-.doc-in-lcl_.patch
 %patch60 -p1 -b .fdo37668-bitwise-operations-on-signed-numb.patch
 %patch61 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
+%patch62 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2153,8 +2155,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Thu Jun 16 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2-UNBUILT
+* Fri Jun 17 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2-UNBUILT
 - Resolves: rhbz#713154 pdf export dialog too tall to fit
+- Related: rhbz#702833 addEventListener without removeEventListener
 
 * Tue Jun 14 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-1
 - bugfixing 3.3.3.1 point release

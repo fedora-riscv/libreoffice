@@ -76,6 +76,14 @@ BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
 BuildRequires:  kdelibs4-devel, font(:lang=en)
 
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
+Requires: %{name}-draw = %{epoch}:%{version}-%{release}
+Requires: %{name}-math = %{epoch}:%{version}-%{release}
+Requires: %{name}-base = %{epoch}:%{version}-%{release}
+Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
+
 Patch1:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
 Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 Patch3:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
@@ -1227,6 +1235,9 @@ JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%files
+%defattr(-,root,root,-)
+
 %files core
 %defattr(-,root,root,-)
 %dir %{basisinstdir}
@@ -1997,8 +2008,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Fri Jun 17 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-4-UNBUILT
+* Mon Jun 20 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-4
 - Related: rhbz#711087 band aid for crash in sc undo
+- Resolves: rhbz#714338 add a metapackage to install standard bits
 
 * Fri Jun 17 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-3
 - Related: rhbz#702833 addEventListener without removeEventListener

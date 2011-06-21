@@ -593,6 +593,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -O -S
 %langpack -l et -n Estonian -F -H -Y -o et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -S
+%langpack -l fa -n Farsi -A -H -Y -S
 %langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S
 %langpack -l fr -n French -F -H -Y -M -A -O -S
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -S
@@ -1026,6 +1027,7 @@ tr      help    western         ts      nohelp  western \
 uk      help    western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
+fa      nohelp  ctl \
 )
 
 tar xzf %{SOURCE21}
@@ -2010,6 +2012,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Jun 21 2011 David Tardon <dtardon@redhat.com> - 3.4.1.1-5
+- Resolves: rhbz#714781 add Persian langpack
+
 * Mon Jun 20 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.1-4
 - Related: rhbz#711087 band aid for crash in sc undo
 - Resolves: rhbz#714338 add a metapackage to install standard bits

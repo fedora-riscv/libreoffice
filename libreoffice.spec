@@ -1,3 +1,10 @@
+# rhbz#715152 state vendor
+%if 0%{?rhel}
+%define vendoroption --with-vendor="Red Hat, Inc."
+%endif
+%if 0%{?fedora}
+%define vendoroption --with-vendor="The Fedora Project"
+%endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # don't worry about whitespace for now
@@ -766,7 +773,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 autoconf
 %configure \
- --with-vendor="Red Hat, Inc." --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
+ %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
  --disable-ldap --disable-epm --disable-mathmldtd --disable-Xaw \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \

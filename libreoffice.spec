@@ -112,8 +112,7 @@ Patch17: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
 Patch18: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
 Patch19: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 Patch20: 0001-Related-rhbz-711087-band-aid.patch
-Patch21: 0001-correctly-build-GTK-systray-icon.patch
-Patch22: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
+Patch21: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -736,8 +735,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
 %patch19 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
 %patch20 -p1 -b .rhbz711087-band-aid.patch
-%patch21 -p1 -b .correctly-build-GTK-systray-icon.patch
-%patch22 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
+%patch21 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2024,6 +2022,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Jun 23 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.2-1
 - 3.4.1 rc2
+- drop integrated 0001-correctly-build-GTK-systray-icon.patch
 
 * Tue Jun 21 2011 David Tardon <dtardon@redhat.com> - 3.4.1.1-5
 - Resolves: rhbz#714781 add Persian langpack

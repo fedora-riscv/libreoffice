@@ -13,7 +13,8 @@
 %define langpacks 1
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://download.documentfoundation.org/libreoffice/src
+#%define source_url http://download.documentfoundation.org/libreoffice/src
+%define source_url http://dev-builds.libreoffice.org/pre-releases/src
 
 %if %{langpacks}
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
@@ -25,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.1.1
-Release:        5%{?dist}
+Version:        3.4.1.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2021,6 +2022,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Jun 23 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.1.2-1
+- 3.4.1 rc2
+
 * Tue Jun 21 2011 David Tardon <dtardon@redhat.com> - 3.4.1.1-5
 - Resolves: rhbz#714781 add Persian langpack
 - Resolves: rhbz#667082 do not crash importing section containing just

@@ -113,6 +113,7 @@ Patch18: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
 Patch19: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 Patch20: 0001-Related-rhbz-711087-band-aid.patch
 Patch21: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
+Patch22: 0001-bad-merge-fix-to-enable-extensions-to-build-again.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -736,6 +737,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
 %patch20 -p1 -b .rhbz711087-band-aid.patch
 %patch21 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
+%patch22 -p1 -b .bad-merge-fix-to-enable-extensions-to-build-again.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

@@ -150,6 +150,7 @@ Patch61: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
 Patch62: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 Patch63: 0001-Related-rhbz-711087-band-aid.patch
 Patch64: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
+Patch65: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -815,6 +816,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch62 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
 %patch63 -p1 -b .rhbz711087-band-aid.patch
 %patch64 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
+%patch65 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2159,12 +2161,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Tue Jun 21 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2-UNBUILT
+* Tue Jul 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2
 - Resolves: rhbz#713154 pdf export dialog too tall to fit
 - Related: rhbz#702833 addEventListener without removeEventListener
 - Related: rhbz#711087 band aid for crash in undo
 - Resolves: rhbz#667082 do not crash importing section containing just
   an empty paragraph (dtardon)
+- Related: rhbz#718976 crash in SwTxtSizeInfo::GetMultiCreator
 
 * Tue Jun 14 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-1
 - bugfixing 3.3.3.1 point release

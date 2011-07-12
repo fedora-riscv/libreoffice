@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -151,6 +151,7 @@ Patch62: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 Patch63: 0001-Related-rhbz-711087-band-aid.patch
 Patch64: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 Patch65: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
+Patch66: 0001-fix-regression-in-SvGlobalName-operator.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -817,6 +818,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch63 -p1 -b .rhbz711087-band-aid.patch
 %patch64 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch65 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
+%patch66 -p1 -b .fix-regression-in-SvGlobalName-operator.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2161,6 +2163,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Jul 12 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-3-UNBUILT
+- fix regression in SvGlobalName operator
+
 * Tue Jul 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2
 - Resolves: rhbz#713154 pdf export dialog too tall to fit
 - Related: rhbz#702833 addEventListener without removeEventListener

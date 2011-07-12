@@ -1,0 +1,39 @@
+From a935029385159ee137418730363257599f67e5d6 Mon Sep 17 00:00:00 2001
+From: Radek Doulik <rodo@novell.com>
+Date: Mon, 11 Jul 2011 20:36:47 +0200
+Subject: [PATCH] fix regression in SvGlobalName::operator <
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ - it was comparing wrong parts and ommiting part of ID's, resulting
+   in wrong results and thus ::std::map didn't work well with default
+   less compare function of it's keys
+ - fixes fdo#32709
+(cherry picked from commit 345dc7961bc142f167a1b8e5f43f4439e8234f06)
+
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ tools/source/ref/globname.cxx |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/source/ref/globname.cxx b/tools/source/ref/globname.cxx
+index 7a7f5c5..c78aeb5 100644
+--- a/tools/source/ref/globname.cxx
++++ b/tools/source/ref/globname.cxx
+@@ -208,10 +208,10 @@ BOOL SvGlobalName::operator < ( const SvGlobalName & rObj ) const
+     else if( Data2_a == Data2_b )
+     {
+         sal_uInt32 Data1_a;
+-        memcpy(&Data1_a, pImp->szData+4, sizeof(sal_uInt32));
++        memcpy(&Data1_a, pImp->szData, sizeof(sal_uInt32));
+ 
+         sal_uInt32 Data1_b;
+-        memcpy(&Data1_b, rObj.pImp->szData+4, sizeof(sal_uInt32));
++        memcpy(&Data1_b, rObj.pImp->szData, sizeof(sal_uInt32));
+ 
+         return Data1_a  < Data1_b;
+     }
+-- 
+1.7.6
+

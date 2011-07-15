@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2022,6 +2022,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Jul 15 2011 Marek Kasik <mkasik@redhat.com> - 3.4.2.1-2
+- Rebuild (poppler-0.17.0)
+
 * Wed Jul 13 2011 David Tardon <dtardon@redhat.com> - 3.4.2.1-1
 - 3.4.2 rc1
 - drop 0001-bad-merge-fix-to-enable-extensions-to-build-again.patch

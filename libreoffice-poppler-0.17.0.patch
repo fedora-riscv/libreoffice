@@ -7,7 +7,7 @@ index f7741b4..df15a94 100644
  }
  
 +#if POPPLER_CHECK_VERSION(0, 17, 0)
-+void PDFOutDev::processLink(AnnotLink *link, Catalog *catalog);
++void PDFOutDev::processLink(AnnotLink *link, Catalog *catalog)
 +#else
  void PDFOutDev::processLink(Link* link, Catalog*)
 +#endif

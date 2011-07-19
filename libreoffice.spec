@@ -115,6 +115,7 @@ Patch20: 0001-Related-rhbz-711087-band-aid.patch
 Patch21: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 Patch22: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 Patch23: libreoffice-poppler-0.17.0.patch
+Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -740,6 +741,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch22 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 %patch23 -p1 -b .poppler-0.17.0.patch
+%patch24 -p1 -b .rhbz-715549-use-fontconfig-s-detected-forma.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2024,6 +2026,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Jul 19 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.1-3
+- Resolves: rhbz#715549 use fontconfig's detected format
+
 * Mon Jul 18 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.1-2
 - Rebuild (poppler-0.17.0), add libreoffice-poppler-0.17.0.patch
   seeing as the API changed for some reason or other

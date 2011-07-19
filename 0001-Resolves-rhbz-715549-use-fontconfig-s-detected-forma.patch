@@ -23,21 +23,21 @@ index 410ecf1..816adbe 100644
      rtl::OUString convertTrueTypeName( void* pNameRecord ) const; // actually a NameRecord* formt font subsetting code
      void analyzeTrueTypeFamilyName( void* pTTFont, std::list< rtl::OUString >& rnames ) const; // actually a TrueTypeFont* from font subsetting code
      bool analyzeTrueTypeFile( PrintFont* pFont ) const;
-diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+diff --git a/vcl/unx/source/fontmanager/fontconfig.cxx b/vcl/unx/source/fontmanager/fontconfig.cxx
 index e4b2f00..5e97bec 100644
---- a/vcl/unx/generic/fontmanager/fontconfig.cxx
-+++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
-@@ -68,6 +68,9 @@ using namespace psp;
- #ifndef FC_EMBOLDEN
-     #define FC_EMBOLDEN "embolden"
- #endif
-+#ifndef FC_FONTFORMAT
-+    #define FC_FONTFORMAT "fontformat"
-+#endif
- 
- #include <cstdio>
- #include <cstdarg>
-@@ -467,6 +470,7 @@ int PrintFontManager::countFontconfigFonts( boost::unordered_map<rtl::OString, i
+--- a/vcl/unx/source/fontmanager/fontconfig.cxx
++++ b/vcl/unx/source/fontmanager/fontconfig.cxx
+@@ -59,6 +59,9 @@
+     #ifndef FC_FT_FACE
+         #define FC_FT_FACE "ftface"
+     #endif
++    #ifndef FC_FONTFORMAT
++        #define FC_FONTFORMAT "fontformat"
++    #endif
+ #else
+     typedef void FcConfig;
+     typedef void FcObjectSet;
+@@ -697,6 +700,7 @@
              FcChar8* file = NULL;
              FcChar8* family = NULL;
              FcChar8* style = NULL;
@@ -45,15 +45,15 @@ index e4b2f00..5e97bec 100644
              int slant = 0;
              int weight = 0;
              int spacing = 0;
-@@ -481,6 +485,7 @@ int PrintFontManager::countFontconfigFonts( boost::unordered_map<rtl::OString, i
-             FcResult eSpacRes	      = FcPatternGetInteger(pFSet->fonts[i], FC_SPACING, 0, &spacing);
-             FcResult eOutRes	      = FcPatternGetBool(pFSet->fonts[i], FC_OUTLINE, 0, &outline);
-             FcResult eIndexRes        = FcPatternGetInteger(pFSet->fonts[i], FC_INDEX, 0, &nCollectionEntry);
-+            FcResult eFormatRes	      = FcPatternGetString(pFSet->fonts[i], FC_FONTFORMAT, 0, &format);
- 
+@@ -711,6 +715,7 @@
+             FcResult eSpacRes	      = rWrapper.FcPatternGetInteger( pFSet->fonts[i], FC_SPACING, 0, &spacing );
+             FcResult eOutRes	      = rWrapper.FcPatternGetBool( pFSet->fonts[i], FC_OUTLINE, 0, &outline );
+             FcResult eIndexRes        = rWrapper.FcPatternGetInteger( pFSet->fonts[i], FC_INDEX, 0, &nCollectionEntry );
++            FcResult eFormatRes       = rWrapper.FcPatternGetString(pFSet->fonts[i], FC_FONTFORMAT, 0, &format);
+             
              if( eFileRes != FcResultMatch || eFamilyRes != FcResultMatch || eOutRes != FcResultMatch )
                  continue;
-@@ -488,13 +493,14 @@ int PrintFontManager::countFontconfigFonts( boost::unordered_map<rtl::OString, i
+@@ -718,13 +723,14 @@
  #if (OSL_DEBUG_LEVEL > 2)
              fprintf( stderr, "found font \"%s\" in file %s\n"
                       "   weight = %d, slant = %d, style = \"%s\"\n"
@@ -69,7 +69,7 @@ index e4b2f00..5e97bec 100644
                       );
  #endif
  
-@@ -529,7 +535,9 @@ int PrintFontManager::countFontconfigFonts( boost::unordered_map<rtl::OString, i
+@@ -751,7 +757,9 @@
                  // not known, analyze font file to get attributes
                  // not described by fontconfig (e.g. alias names, PSName)
                  std::list< OString > aDummy;
@@ -80,10 +80,10 @@ index e4b2f00..5e97bec 100644
  #if OSL_DEBUG_LEVEL > 1
                  if( aFonts.empty() )
                      fprintf( stderr, "Warning: file \"%s\" is unusable to psprint\n", aOrgPath.getStr() );
-diff --git a/vcl/unx/generic/fontmanager/fontmanager.cxx b/vcl/unx/generic/fontmanager/fontmanager.cxx
+diff --git a/vcl/unx/source/fontmanager/fontmanager.cxx b/vcl/unx/source/fontmanager/fontmanager.cxx
 index 2dceb35..27a2629 100644
---- a/vcl/unx/generic/fontmanager/fontmanager.cxx
-+++ b/vcl/unx/generic/fontmanager/fontmanager.cxx
+--- a/vcl/unx/source/fontmanager/fontmanager.cxx
++++ b/vcl/unx/source/fontmanager/fontmanager.cxx
 @@ -1281,9 +1281,12 @@ int PrintFontManager::addFontFile( const ::rtl::OString& rFileName, int /*nFaceN
      return nFontId;
  }

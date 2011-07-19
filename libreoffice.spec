@@ -152,6 +152,7 @@ Patch63: 0001-Related-rhbz-711087-band-aid.patch
 Patch64: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 Patch65: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 Patch66: 0001-fix-regression-in-SvGlobalName-operator.patch
+Patch67: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -819,6 +820,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch64 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch65 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 %patch66 -p1 -b .fix-regression-in-SvGlobalName-operator.patch
+%patch67 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2163,8 +2165,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Tue Jul 12 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-3-UNBUILT
+* Tue Jul 19 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-3
 - fix regression in SvGlobalName operator
+- Resolves: rhbz#715549 use fontconfig's detected format
 
 * Tue Jul 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-2
 - Resolves: rhbz#713154 pdf export dialog too tall to fit

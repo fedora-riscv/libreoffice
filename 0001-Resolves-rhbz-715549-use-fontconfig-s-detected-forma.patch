@@ -34,9 +34,9 @@ index e4b2f00..5e97bec 100644
 +    #ifndef FC_FONTFORMAT
 +        #define FC_FONTFORMAT "fontformat"
 +    #endif
- #else
-     typedef void FcConfig;
-     typedef void FcObjectSet;
+     #ifndef FC_EMBOLDEN
+         #define FC_EMBOLDEN "embolden"
+     #endif
 @@ -697,6 +700,7 @@
              FcChar8* file = NULL;
              FcChar8* family = NULL;

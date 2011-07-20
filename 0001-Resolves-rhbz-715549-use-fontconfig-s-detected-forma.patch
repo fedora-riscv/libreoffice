@@ -27,17 +27,17 @@ diff --git a/vcl/unx/source/fontmanager/fontconfig.cxx b/vcl/unx/source/fontmana
 index e4b2f00..5e97bec 100644
 --- a/vcl/unx/source/fontmanager/fontconfig.cxx
 +++ b/vcl/unx/source/fontmanager/fontconfig.cxx
-@@ -59,6 +59,9 @@
-     #ifndef FC_FT_FACE
-         #define FC_FT_FACE "ftface"
+@@ -68,6 +68,9 @@
+     #ifndef FC_EMBOLDEN
+         #define FC_EMBOLDEN "embolden"
      #endif
 +    #ifndef FC_FONTFORMAT
 +        #define FC_FONTFORMAT "fontformat"
 +    #endif
-     #ifndef FC_EMBOLDEN
-         #define FC_EMBOLDEN "embolden"
-     #endif
-@@ -697,6 +700,7 @@
+ #else
+     typedef void FcConfig;
+     typedef void FcObjectSet;
+@@ -842,6 +845,7 @@
              FcChar8* file = NULL;
              FcChar8* family = NULL;
              FcChar8* style = NULL;
@@ -45,7 +45,7 @@ index e4b2f00..5e97bec 100644
              int slant = 0;
              int weight = 0;
              int spacing = 0;
-@@ -711,6 +715,7 @@
+@@ -856,6 +860,7 @@
              FcResult eSpacRes	      = rWrapper.FcPatternGetInteger( pFSet->fonts[i], FC_SPACING, 0, &spacing );
              FcResult eOutRes	      = rWrapper.FcPatternGetBool( pFSet->fonts[i], FC_OUTLINE, 0, &outline );
              FcResult eIndexRes        = rWrapper.FcPatternGetInteger( pFSet->fonts[i], FC_INDEX, 0, &nCollectionEntry );
@@ -53,7 +53,7 @@ index e4b2f00..5e97bec 100644
              
              if( eFileRes != FcResultMatch || eFamilyRes != FcResultMatch || eOutRes != FcResultMatch )
                  continue;
-@@ -718,13 +723,14 @@
+@@ -863,13 +868,14 @@
  #if (OSL_DEBUG_LEVEL > 2)
              fprintf( stderr, "found font \"%s\" in file %s\n"
                       "   weight = %d, slant = %d, style = \"%s\"\n"
@@ -69,7 +69,7 @@ index e4b2f00..5e97bec 100644
                       );
  #endif
  
-@@ -751,7 +757,9 @@
+@@ -904,7 +910,9 @@
                  // not known, analyze font file to get attributes
                  // not described by fontconfig (e.g. alias names, PSName)
                  std::list< OString > aDummy;

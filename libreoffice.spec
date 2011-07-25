@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -117,6 +117,7 @@ Patch22: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 Patch23: libreoffice-poppler-0.17.0.patch
 Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
+Patch26: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -742,8 +743,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch22 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 %patch23 -p1 -b .poppler-0.17.0.patch
-%patch24 -p1 -b .rhbz-715549-use-fontconfig-s-detected-forma.patch
+%patch24 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
+%patch26 -p1 -b .rhbz725144-wrong-csh-syntax.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2028,6 +2030,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Jul 25 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.2-2
+- Resolves: rhbz#725144 wrong csh syntax
+
 * Wed Jul 20 2011 David Tardon <dtardon@redhat.com> - 3.4.2.2-1
 - 3.4.2 rc2
 - fix breakage in KDE4 plugin

@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.2.2
-Release:        2%{?dist}
+Version:        3.4.2.3
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2030,6 +2030,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Jul 29 2011 David Tardon <dtardon@redhat.com> - 3.4.2.3-1
+- 3.4.2 rc3
+
 * Mon Jul 25 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.2-2
 - Resolves: rhbz#725144 wrong csh syntax
 

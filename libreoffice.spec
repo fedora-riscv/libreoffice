@@ -155,6 +155,7 @@ Patch66: 0001-fix-regression-in-SvGlobalName-operator.patch
 Patch67: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch68: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
 Patch69: 0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
+Patch70: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -825,6 +826,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch67 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
 %patch68 -p1 -b .rhbz725144-wrong-csh-syntax.patch
 %patch69 -p1 -b .0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
+%patch70 -p1 -b .rhbz#693265-fix-crash-from-unhandled-except.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2169,9 +2171,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Mon Jul 25 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-4-UNBUILT
+* Tue Aug 02 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-4
 - Resolves: rhbz#725144 wrong csh syntax
 - Resolves: rhbz#725133 backport tab/spaces fix
+- Resolves: rhbz#693265 fix crash from unhandled exception
 
 * Tue Jul 19 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-3
 - fix regression in SvGlobalName operator

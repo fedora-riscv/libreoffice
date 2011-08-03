@@ -11,17 +11,17 @@ diff --git a/odk/setsdkenv_unix.csh.in b/odk/setsdkenv_unix.csh.in
 index cb2b0f5..f48be7b 100644
 --- a/odk/setsdkenv_unix.csh.in
 +++ b/odk/setsdkenv_unix.csh.in
-@@ -13,8 +13,7 @@ setenv OO_SDK_HOME '@OO_SDK_HOME@'
+@@ -13,8 +13,7 @@
  
  # Office installation directory.
- # Example: set OFFICE_HOME=/opt/libreoffice
+ # Example: set OFFICE_HOME=/opt/openoffice.org3
 -set OFFICE_HOME='@OFFICE_HOME@'
 -OFFICE_BASE_HOME='@OFFICE_BASE_HOME@'
 +setenv OFFICE_HOME '@OFFICE_HOME@'
  
  # URE installation directory.
- # Example: setenv OO_SDK_URE_HOME /opt/libreoffice/ure
-@@ -227,7 +226,7 @@ if ( $?OO_SDK_JAVA_HOME == 0) then
+ # Example: setenv OO_SDK_URE_HOME /opt/openoffice.org/ure
+@@ -237,7 +236,7 @@
  endif
  
  
@@ -30,6 +30,3 @@ index cb2b0f5..f48be7b 100644
  #    For URE, prepare symbolic links for libraries:
  #    Only necessary on MacOSX, on other Unix systems the links are already prepared
  #    in the SDK installation.
--- 
-1.7.6
-

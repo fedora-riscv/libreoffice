@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.2.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -67,7 +67,7 @@ Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel >= 1.6.0, boost-devel, zlib-devel
+BuildRequires:  binutils, java-1.6.0-devel, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -119,6 +119,7 @@ Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 Patch26: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
 Patch27: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch28: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -748,6 +749,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 %patch26 -p1 -b .rhbz725144-wrong-csh-syntax.patch
 %patch27 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
+%patch28 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2032,6 +2034,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Aug 12 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.3-3
+- Related: rhbz#730225 avoid segv in ld
+
 * Tue Aug 02 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.3-2
 - Resolves: rhbz#693265 fix crash from unhandled exception
 

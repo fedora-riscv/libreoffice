@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.2.3
-Release:        3%{?dist}
+Version:        3.4.3.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -117,9 +117,8 @@ Patch22: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 Patch23: libreoffice-poppler-0.17.0.patch
 Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-Patch26: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
-Patch27: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
-Patch28: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -747,9 +746,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .poppler-0.17.0.patch
 %patch24 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-%patch26 -p1 -b .rhbz725144-wrong-csh-syntax.patch
-%patch27 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
-%patch28 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
+%patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
+%patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2034,6 +2032,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Aug 16 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-1
+- 3.4.3 rc1
+- drop integrated 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
+
 * Fri Aug 12 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.2.3-3
 - Related: rhbz#730225 avoid segv in ld
 

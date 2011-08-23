@@ -119,6 +119,7 @@ Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+Patch28: gdb-pretty-printers.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -498,6 +499,41 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
+%if 0%{?_enable_debug_packages}
+
+%define debug_package %{nil}
+%global __debug_package 1
+
+%package debuginfo
+Summary: Debug information for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+Requires: libreoffice-core = %{epoch}:%{version}-%{release}
+Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+
+%description debuginfo
+This package provides debug information for package %{name}.
+Debug information is useful when developing applications that use this
+package or when debugging this package.
+
+%files debuginfo -f debugfiles.list
+%defattr(-,root,root)
+
+%package gdb-debug-support
+Summary: Additional support for debugging with gdb
+Group: Development/Debug
+Requires: gdb
+AutoReqProv: 0
+
+%description gdb-debug-support
+This package provides gdb pretty printers for package %{name}.
+
+%files gdb-debug-support
+%defattr(-,root,root)
+%{_datadir}/gdb/auto-load%{baseinstdir}
+%{_datadir}/libreoffice/gdb
+
+%endif
 
 # Defines a language pack subpackage.
 #
@@ -748,10 +784,12 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 %patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
 %patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
+%patch28 -p1 -b .gdb-pretty-printers.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
+chmod +x solenv/bin/install-gdb-printers
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -1222,9 +1260,9 @@ pushd sysui/output/usr/share/
 rm -rf icons/gnome applications application-registry
 
 #relocate the rest of them
-for icon in `find icons -type f`; do
-    mv $icon `echo $icon | sed -e s@office$ICONVERSION@office@`
-done
+# for icon in `find icons -type f`; do
+    # mv $icon `echo $icon | sed -e s@office$ICONVERSION@office@`
+# done
 cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
@@ -1243,6 +1281,9 @@ cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdi
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 # rhbz#465664 to get lucene working for functional help
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
+
+export DESTDIR=$RPM_BUILD_ROOT
+install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
 
 %check
 source ./Linux*Env.Set.sh
@@ -2032,6 +2073,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Aug 22 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-2
+- add gdb pretty printers
+
 * Tue Aug 16 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-1
 - 3.4.3 rc1
 - drop integrated 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch

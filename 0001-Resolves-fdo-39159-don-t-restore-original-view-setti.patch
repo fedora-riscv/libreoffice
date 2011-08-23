@@ -15,70 +15,72 @@ diff --git a/sw/inc/printdata.hxx b/sw/inc/printdata.hxx
 index 6bd83c1..02ff7a3 100644
 --- a/sw/inc/printdata.hxx
 +++ b/sw/inc/printdata.hxx
-@@ -269,7 +269,7 @@ public:
+@@ -268,7 +268,7 @@ public:
  
      bool IsViewOptionAdjust() const  { return m_pViewOptionAdjust != 0; }
-     bool NeedNewViewOptionAdjust( const ViewShell& ) const;
--    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions );
-+    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
-     void ViewOptionAdjust( SwPrintData const* const pPrtOptions );
+     bool NeedNewViewOptionAdjust( const SwWrtShell& ) const;
+-    void ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions );
++    void ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+     void ViewOptionAdjust( const SwPrtOptions *pPrtOptions );
      void ViewOptionAdjustStop();
  
 diff --git a/sw/inc/unotxdoc.hxx b/sw/inc/unotxdoc.hxx
 index 7aad16d..bc21cf3 100644
 --- a/sw/inc/unotxdoc.hxx
 +++ b/sw/inc/unotxdoc.hxx
-@@ -588,9 +588,10 @@ class SwViewOptionAdjust_Impl
+@@ -599,11 +599,12 @@
  {
-     ViewShell &    m_rShell;
+     SwWrtShell &    m_rShell;
      SwViewOption    m_aOldViewOptions;
 +    bool m_bIsTmpSelection;
+ //    SwViewOption    m_aRenderViewOptions;   // view options to use when rendering for PDF export or printing
+ //    bool            m_bRestoreViewOptions;
  
  public:
--    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions );
-+    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+-    SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions );
++    SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
      ~SwViewOptionAdjust_Impl();
-     void AdjustViewOptions( SwPrintData const* const pPrtOptions );
-     bool checkShell( const ViewShell& rCompare ) const
+     
+     void AdjustViewOptions( const SwPrtOptions *pPrtOptions );
 diff --git a/sw/source/core/view/printdata.cxx b/sw/source/core/view/printdata.cxx
 index 893907f..497a5cb 100644
 --- a/sw/source/core/view/printdata.cxx
 +++ b/sw/source/core/view/printdata.cxx
-@@ -113,13 +113,13 @@ bool SwRenderData::NeedNewViewOptionAdjust( const ViewShell& rCompare ) const
+@@ -117,13 +117,13 @@
  }
  
  
--void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions )
-+void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection )
+-void SwRenderData::ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions )
++void SwRenderData::ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection )
  {
      if (m_pViewOptionAdjust)
      {
-         OSL_FAIL("error: there should be no ViewOptionAdjust active when calling this function" );
+         DBG_ASSERT( 0, "error: there should be no ViewOptionAdjust active when calling this function" );
      }
 -    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions );
 +    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions, bIsTmpSelection );
  }
- 
+     
  
 diff --git a/sw/source/ui/uno/unotxdoc.cxx b/sw/source/ui/uno/unotxdoc.cxx
 index 603773b..418dbf0 100644
 --- a/sw/source/ui/uno/unotxdoc.cxx
 +++ b/sw/source/ui/uno/unotxdoc.cxx
-@@ -2551,7 +2551,7 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
-                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pViewShell ) )
+@@ -2555,7 +2555,7 @@
+                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pWrtShell ) )
                      m_pRenderData->ViewOptionAdjustStop();
                  if (m_pRenderData && !m_pRenderData->IsViewOptionAdjust())
--                    m_pRenderData->ViewOptionAdjustStart( *pViewShell, *pViewShell->GetViewOptions() );
-+                    m_pRenderData->ViewOptionAdjustStart( *pViewShell, *pViewShell->GetViewOptions(), rSelection.hasValue() );
+-                    m_pRenderData->ViewOptionAdjustStart( *pWrtShell, *pWrtShell->GetViewOptions() );
++                    m_pRenderData->ViewOptionAdjustStart( *pWrtShell, *pWrtShell->GetViewOptions(), rSelection.hasValue() );
              }
  
-             m_pRenderData->SetSwPrtOptions( new SwPrintData );
-@@ -3833,15 +3833,21 @@ void SwXDocumentPropertyHelper::onChange()
+             m_pRenderData->SetSwPrtOptions( new SwPrtOptions( C2U( bIsPDFExport ? "PDF export" : "Printing" ) ) );
+@@ -3823,15 +3823,21 @@
         m_pDoc->SetModified();
  }
  
--SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions ) :
-+SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
+-SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions ) :
++SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
      m_rShell( rSh ),
 -    m_aOldViewOptions( rViewOptions )
 +    m_aOldViewOptions( rViewOptions ),
@@ -97,7 +99,4 @@ index 603773b..418dbf0 100644
 +        m_rShell.ApplyViewOptions( m_aOldViewOptions );
  }
  
- void
--- 
-1.7.6
-
+ void SwViewOptionAdjust_Impl::AdjustViewOptions(

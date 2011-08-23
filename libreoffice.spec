@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.3.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -156,6 +156,7 @@ Patch67: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch68: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
 Patch69: 0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
 Patch70: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch71: 0001-Resolves-fdo-39159-don-t-restore-original-view-setti.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -827,6 +828,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch68 -p1 -b .rhbz725144-wrong-csh-syntax.patch
 %patch69 -p1 -b .0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
 %patch70 -p1 -b .rhbz#693265-fix-crash-from-unhandled-except.patch
+%patch71 -p1 -b .fdo39159-don-t-restore-original-view-setti.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2171,6 +2173,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Aug 23 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-5
+- Resolves: rhbz#657783 dead ViewShell, possibly on selection
+
 * Tue Aug 02 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-4
 - Resolves: rhbz#725144 wrong csh syntax
 - Resolves: rhbz#725133 backport tab/spaces fix

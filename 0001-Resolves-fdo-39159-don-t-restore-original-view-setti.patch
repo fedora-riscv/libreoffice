@@ -1,0 +1,103 @@
+From cd690d2e72be410058376c416a40ff5d918fb0f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 10 Aug 2011 11:49:07 +0100
+Subject: [PATCH] Resolves: fdo#39159 don't restore original view settings on
+ temp documents
+
+---
+ sw/inc/printdata.hxx              |    2 +-
+ sw/inc/unotxdoc.hxx               |    3 ++-
+ sw/source/core/view/printdata.cxx |    4 ++--
+ sw/source/ui/uno/unotxdoc.cxx     |   14 ++++++++++----
+ 4 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/sw/inc/printdata.hxx b/sw/inc/printdata.hxx
+index 6bd83c1..02ff7a3 100644
+--- a/sw/inc/printdata.hxx
++++ b/sw/inc/printdata.hxx
+@@ -269,7 +269,7 @@ public:
+ 
+     bool IsViewOptionAdjust() const  { return m_pViewOptionAdjust != 0; }
+     bool NeedNewViewOptionAdjust( const ViewShell& ) const;
+-    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions );
++    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+     void ViewOptionAdjust( SwPrintData const* const pPrtOptions );
+     void ViewOptionAdjustStop();
+ 
+diff --git a/sw/inc/unotxdoc.hxx b/sw/inc/unotxdoc.hxx
+index 7aad16d..bc21cf3 100644
+--- a/sw/inc/unotxdoc.hxx
++++ b/sw/inc/unotxdoc.hxx
+@@ -588,9 +588,10 @@ class SwViewOptionAdjust_Impl
+ {
+     ViewShell &    m_rShell;
+     SwViewOption    m_aOldViewOptions;
++    bool m_bIsTmpSelection;
+ 
+ public:
+-    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions );
++    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+     ~SwViewOptionAdjust_Impl();
+     void AdjustViewOptions( SwPrintData const* const pPrtOptions );
+     bool checkShell( const ViewShell& rCompare ) const
+diff --git a/sw/source/core/view/printdata.cxx b/sw/source/core/view/printdata.cxx
+index 893907f..497a5cb 100644
+--- a/sw/source/core/view/printdata.cxx
++++ b/sw/source/core/view/printdata.cxx
+@@ -113,13 +113,13 @@ bool SwRenderData::NeedNewViewOptionAdjust( const ViewShell& rCompare ) const
+ }
+ 
+ 
+-void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions )
++void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection )
+ {
+     if (m_pViewOptionAdjust)
+     {
+         OSL_FAIL("error: there should be no ViewOptionAdjust active when calling this function" );
+     }
+-    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions );
++    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions, bIsTmpSelection );
+ }
+ 
+ 
+diff --git a/sw/source/ui/uno/unotxdoc.cxx b/sw/source/ui/uno/unotxdoc.cxx
+index 603773b..418dbf0 100644
+--- a/sw/source/ui/uno/unotxdoc.cxx
++++ b/sw/source/ui/uno/unotxdoc.cxx
+@@ -2551,7 +2551,7 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
+                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pViewShell ) )
+                     m_pRenderData->ViewOptionAdjustStop();
+                 if (m_pRenderData && !m_pRenderData->IsViewOptionAdjust())
+-                    m_pRenderData->ViewOptionAdjustStart( *pViewShell, *pViewShell->GetViewOptions() );
++                    m_pRenderData->ViewOptionAdjustStart( *pViewShell, *pViewShell->GetViewOptions(), rSelection.hasValue() );
+             }
+ 
+             m_pRenderData->SetSwPrtOptions( new SwPrintData );
+@@ -3833,15 +3833,21 @@ void SwXDocumentPropertyHelper::onChange()
+        m_pDoc->SetModified();
+ }
+ 
+-SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions ) :
++SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
+     m_rShell( rSh ),
+-    m_aOldViewOptions( rViewOptions )
++    m_aOldViewOptions( rViewOptions ),
++    m_bIsTmpSelection( bIsTmpSelection )
+ {
+ }
+ 
+ SwViewOptionAdjust_Impl::~SwViewOptionAdjust_Impl()
+ {
+-    m_rShell.ApplyViewOptions( m_aOldViewOptions );
++    //fdo#39159 don't restore original view options on a temporary document
++    //selection, it triggers throwing away the current view. Presumably we can
++    //forget about it in the temporary document case as unimportant to restore
++    //the original view settings
++    if (!m_bIsTmpSelection)
++        m_rShell.ApplyViewOptions( m_aOldViewOptions );
+ }
+ 
+ void
+-- 
+1.7.6
+

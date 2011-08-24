@@ -1968,11 +1968,11 @@ index 0000000..719c280
 +    cp -r "${GDBDIR}/libreoffice" "${DESTDIR}${pythondir}"
 +fi
 +
-+make_autoload cppu basis-link/ure-link/lib libuno_cppu.so.3
-+make_autoload sal basis-link/ure-link/lib libuno_sal.so.3
-+make_autoload svl basis-link/program libsvllo.so
-+make_autoload sw basis-link/program libswlo.so
-+make_autoload tl basis-link/program libtllo.so
++make_autoload cppu ure/lib libuno_cppu.so.3
++make_autoload sal ure/lib libuno_sal.so.3
++make_autoload svl basis3.4/program libsvllo.so
++make_autoload sw basis3.4/program libswlo.so
++make_autoload tl basis3.4/program libtllo.so
 +
 +# vim:set shiftwidth=4 softtabstop=4 expandtab:
 diff --git a/solenv/gdb/autoload.template b/solenv/gdb/autoload.template

@@ -131,12 +131,6 @@ Patch28: gdb-pretty-printers.patch
 %define OFFICEUPD 340
 %define SOPOST l*
 
-%ifarch i386
-%global libsuffix li
-%else
-%global libsuffix lx
-%endif
-
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
 It includes the key desktop applications, such as a word processor,
@@ -1290,8 +1284,16 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar 
 
 export DESTDIR=$RPM_BUILD_ROOT
 install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
+# fix arch-dependent library suffix
+cd solenv/gdb
+cat <<EOF > dllpostfix.mk
+.INCLUDE : settings.mk
+print-DLLPOSTFIX :
+    @echo \$(DLLPOSTFIX)
+EOF
+libsuffix=`dmake -f dllpostfix.mk print-DLLPOSTFIX`
 for f in `find %{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
-    mv "$f" "${f%lo-gdb.py}%{libsuffix}-gdb.py"
+    mv "$f" "${f%lo-gdb.py}${libsuffix}-gdb.py"
 done
 
 %check

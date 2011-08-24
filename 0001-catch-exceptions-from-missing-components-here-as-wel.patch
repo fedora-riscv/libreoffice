@@ -1,0 +1,46 @@
+From 292fe1da59cb8a30dc7a7004aa067750a358923e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 14 Jan 2011 09:55:47 +0000
+Subject: [PATCH] catch exceptions from missing components here as well more
+ cleanly
+
+---
+ filter/source/config/cache/typedetection.cxx |   22 +++++++++++++++-------
+ 1 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/filter/source/config/cache/typedetection.cxx b/filter/source/config/cache/typedetection.cxx
+index 0c47552..87ea95c 100644
+--- a/filter/source/config/cache/typedetection.cxx
++++ b/filter/source/config/cache/typedetection.cxx
+@@ -1007,13 +1007,21 @@ void TypeDetection::impl_seekStreamToZero(comphelper::MediaDescriptor& rDescript
+     aLock.clear();
+     // <- SAFE
+ 
+-    // Attention! If e.g. an office module was not installed sometimes we find a
+-    // registered detect service, which is referred inside the configuration ... but not realy
+-    // installed. On the other side we use third party components here, which can make trouble anyway.
+-    // So we should handle errors during creation of such services more gracefully .-)
+-    xDetector = css::uno::Reference< css::document::XExtendedFilterDetection >(
+-            xSMGR->createInstance(sDetectService),
+-            css::uno::UNO_QUERY);
++    try
++    {
++        // Attention! If e.g. an office module was not installed sometimes we
++        // find a registered detect service, which is referred inside the
++        // configuration ... but not realy installed. On the other side we use
++        // third party components here, which can make trouble anyway.  So we
++        // should handle errors during creation of such services more
++        // gracefully .-)
++        xDetector = css::uno::Reference< css::document::XExtendedFilterDetection >(
++                xSMGR->createInstance(sDetectService),
++                css::uno::UNO_QUERY_THROW);
++    }
++    catch (...)
++    {
++    }
+ 
+     if ( ! xDetector.is())
+         return ::rtl::OUString();
+-- 
+1.7.6
+

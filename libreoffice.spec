@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.3.1
-Release:        2%{?dist}
+Version:        3.4.3.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2085,6 +2085,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Aug 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-1
+- 3.4.3 rc2
+
 * Mon Aug 22 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-2
 - add gdb pretty printers
 

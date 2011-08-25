@@ -1276,7 +1276,7 @@ rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/readmes
 rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/licenses
 
 mkdir -p $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver
-cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver/SGENPRT.PS
+cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 # rhbz#465664 to get lucene working for functional help

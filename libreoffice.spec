@@ -1287,6 +1287,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir
 # fix arch-dependent library suffix
 cd solenv/gdb
 cat <<EOF > dllpostfix.mk
+PRJ=..
 .INCLUDE : settings.mk
 print-DLLPOSTFIX :
     @echo \$(DLLPOSTFIX)

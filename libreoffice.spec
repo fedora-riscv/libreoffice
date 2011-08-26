@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -81,7 +81,7 @@ BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
-BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
+BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
 BuildRequires:  kdelibs4-devel, font(:lang=en)
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
@@ -840,8 +840,7 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --with-external-libtextcat-data \
- --without-system-translate-toolkit --without-system-hsqldb \
- --disable-graphite
+ --without-system-translate-toolkit --without-system-hsqldb
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources
@@ -2085,6 +2084,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Aug 26 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-2
+- Resolves: rhbz#733564 graphite2 now packaged into fedora
+
 * Thu Aug 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-1
 - 3.4.3 rc2
 

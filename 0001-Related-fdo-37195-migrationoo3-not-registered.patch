@@ -11,14 +11,11 @@ diff --git a/postprocess/packcomponents/makefile.mk b/postprocess/packcomponents
 index b5f50a0..c23da77 100644
 --- a/postprocess/packcomponents/makefile.mk
 +++ b/postprocess/packcomponents/makefile.mk
-@@ -144,6 +144,7 @@ my_components = \
-     localebe1 \
-     log \
+@@ -126,6 +126,7 @@
+     lwpfilter \
+     mcnttype \
      migrationoo2 \
 +    migrationoo3 \
+     mtfrenderer \
      msfilter \
-     mysql \
-     odbc \
--- 
-1.7.6
-
+     msworksfilter \

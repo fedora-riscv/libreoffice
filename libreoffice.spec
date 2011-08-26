@@ -120,6 +120,7 @@ Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
 Patch28: gdb-pretty-printers.patch
+Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -785,6 +786,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
 %patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
 %patch28 -p1 -b .gdb-pretty-printers.patch
+%patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2086,6 +2088,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Aug 26 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-2
 - Resolves: rhbz#733564 graphite2 now packaged into fedora
+- Related: fdo#37195 migrationoo3 not registered
 
 * Thu Aug 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-1
 - 3.4.3 rc2

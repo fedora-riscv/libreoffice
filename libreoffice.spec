@@ -786,7 +786,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 %patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
 %patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
-%patch28 -p1 -b .gdb-pretty-printers.patch
+%patch28 -p1
 %patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
 
 # these are horribly incomplete--empty translations and copied english

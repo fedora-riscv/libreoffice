@@ -1062,14 +1062,15 @@ cs      help    western         cy      nohelp  western \
 da      help    western         de      help    western \
 dz      help    ctl             el      help    western \
 es      help    western         et      help    western \
-eu      help    western         fi      help    western \
-fr      help    western         ga      nohelp  western \
-gl      help    western         gu      nohelp  ctl     \
-he      nohelp  ctl             hi      help    ctl     \
-hr      nohelp  western         hu      help    western \
-it      help    western         ja      help    cjk     \
-ko      help    cjk             kn      nohelp  western \
-lt      nohelp  western         mai     nohelp  western \
+eu      help    western         fa      nohelp  ctl     \
+fi      help    western         fr      help    western \
+ga      nohelp  western         gl      help    western \
+gu      nohelp  ctl             he      nohelp  ctl     \
+hi      help    ctl             hr      nohelp  western \
+hu      help    western         it      help    western \
+ja      help    cjk             ko      help    cjk     \
+kn      nohelp  western         lt      nohelp  western \
+lv      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
 nb      help    western         nl      help    western \
 nn      help    western         nr      nohelp  western \
@@ -1087,7 +1088,6 @@ tr      help    western         ts      nohelp  western \
 uk      help    western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
-fa      nohelp  ctl             lv      nohelp  western \
 )
 
 tar xzf %{SOURCE21}

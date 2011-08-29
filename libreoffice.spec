@@ -17,7 +17,7 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 
 %if %{langpacks}
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -661,6 +661,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -S
+%langpack -l lv -n Latvian -F -H -Y -M -S
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
@@ -1086,7 +1087,7 @@ tr      help    western         ts      nohelp  western \
 uk      help    western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
-fa      nohelp  ctl \
+fa      nohelp  ctl             lv      help    western \
 )
 
 tar xzf %{SOURCE21}
@@ -2086,6 +2087,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Aug 29 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-3
+- add Latvian langpack
+
 * Fri Aug 26 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-2
 - Resolves: rhbz#733564 graphite2 now packaged into fedora
 - Related: fdo#37195 migrationoo3 not registered

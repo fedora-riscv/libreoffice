@@ -1087,7 +1087,7 @@ tr      help    western         ts      nohelp  western \
 uk      help    western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
-fa      nohelp  ctl             lv      help    western \
+fa      nohelp  ctl             lv      nohelp  western \
 )
 
 tar xzf %{SOURCE21}

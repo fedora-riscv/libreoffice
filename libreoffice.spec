@@ -17,7 +17,7 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 
 %if %{langpacks}
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.3.1
-Release:        1%{?dist}
+Version:        3.4.3.2
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -81,7 +81,7 @@ BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
-BuildRequires:  silgraphite-devel, libwpg-devel, libwps-devel, vigra-devel
+BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
 BuildRequires:  kdelibs4-devel, font(:lang=en)
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
@@ -119,6 +119,8 @@ Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
 Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+Patch28: gdb-pretty-printers.patch
+Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -498,6 +500,41 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
+%if 0%{?_enable_debug_packages}
+
+%define debug_package %{nil}
+%global __debug_package 1
+
+%package debuginfo
+Summary: Debug information for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+Requires: libreoffice-core = %{epoch}:%{version}-%{release}
+Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+
+%description debuginfo
+This package provides debug information for package %{name}.
+Debug information is useful when developing applications that use this
+package or when debugging this package.
+
+%files debuginfo -f debugfiles.list
+%defattr(-,root,root)
+
+%package gdb-debug-support
+Summary: Additional support for debugging with gdb
+Group: Development/Debug
+Requires: gdb
+AutoReqProv: 0
+
+%description gdb-debug-support
+This package provides gdb pretty printers for package %{name}.
+
+%files gdb-debug-support
+%defattr(-,root,root)
+%{_datadir}/gdb/auto-load%{baseinstdir}
+%{_datadir}/libreoffice/gdb
+
+%endif
 
 # Defines a language pack subpackage.
 #
@@ -624,6 +661,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -S
+%langpack -l lv -n Latvian -F -H -Y -M -S
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
@@ -748,10 +786,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
 %patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
 %patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
+%patch28 -p1
+%patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
+chmod +x solenv/bin/install-gdb-printers
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -802,8 +843,7 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --with-external-libtextcat-data \
- --without-system-translate-toolkit --without-system-hsqldb \
- --disable-graphite
+ --without-system-translate-toolkit --without-system-hsqldb
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources
@@ -1033,7 +1073,7 @@ lt      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
 nb      help    western         nl      help    western \
 nn      help    western         nr      nohelp  western \
-nso     help    western         or      nohelp  ctl     \
+nso     nohelp  western         or      nohelp  ctl     \
 pa-IN   nohelp  ctl             pl      help    western \
 pt      help    western         pt-BR   help    western \
 ro      nohelp  western         ru      help    western \
@@ -1047,7 +1087,7 @@ tr      help    western         ts      nohelp  western \
 uk      help    western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
-fa      nohelp  ctl \
+fa      nohelp  ctl             lv      nohelp  western \
 )
 
 tar xzf %{SOURCE21}
@@ -1223,9 +1263,9 @@ rm -rf icons/gnome applications application-registry
 
 #relocate the rest of them
 for icon in `find icons -type f`; do
-    mv $icon `echo $icon | sed -e s@office$ICONVERSION@office@`
+    mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
+    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@office$ICONVERSION@office@`
 done
-cp -r icons $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
 cp -p mime-info/libreoffice$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
@@ -1238,11 +1278,26 @@ rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/readmes
 rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/licenses
 
 mkdir -p $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver
-cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver/SGENPRT.PS
+cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 # rhbz#465664 to get lucene working for functional help
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
+
+export DESTDIR=$RPM_BUILD_ROOT
+install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
+# fix arch-dependent library suffix
+cd solenv/gdb
+cat <<EOF > dllpostfix.mk
+PRJ=..
+.INCLUDE : settings.mk
+print-DLLPOSTFIX :
+    @echo \$(DLLPOSTFIX)
+EOF
+libsuffix=`dmake -f dllpostfix.mk print-DLLPOSTFIX`
+for f in `find %{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
+    mv "$f" "${f%lo-gdb.py}${libsuffix}-gdb.py"
+done
 
 %check
 source ./Linux*Env.Set.sh
@@ -2032,6 +2087,19 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Aug 29 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-3
+- add Latvian langpack
+
+* Fri Aug 26 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-2
+- Resolves: rhbz#733564 graphite2 now packaged into fedora
+- Related: fdo#37195 migrationoo3 not registered
+
+* Thu Aug 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-1
+- 3.4.3 rc2
+
+* Mon Aug 22 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-2
+- add gdb pretty printers
+
 * Tue Aug 16 2011 David Tardon <dtardon@redhat.com> - 3.4.3.1-1
 - 3.4.3 rc1
 - drop integrated 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch

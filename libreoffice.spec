@@ -1290,7 +1290,7 @@ pushd $RPM_BUILD_ROOT/%{_bindir}
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat
-ln -s %{baseinstdir}/program/libreoffice openoffice.org
+ln -s libreoffice openoffice.org
 popd
 
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/xdg/
@@ -2175,8 +2175,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Aug 24 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-6-UNBUILT
+* Tue Aug 30 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-6-UNBUILT
 - Resolves: fdo#40303 missing filter detect services cause trouble
+- Resolves: rhbz#734432 openoffice.org symlink broken (dtardon)
 
 * Tue Aug 23 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-5
 - Resolves: rhbz#657783 dead ViewShell, possibly on selection

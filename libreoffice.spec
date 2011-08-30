@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1223,7 +1223,7 @@ pushd $RPM_BUILD_ROOT/%{_bindir}
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat
-ln -s %{baseinstdir}/program/libreoffice openoffice.org
+ln -s libreoffice openoffice.org
 popd
 
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/xdg/
@@ -2087,6 +2087,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Aug 30 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-4
+- Resolves: rhbz#734432 openoffice.org symlink broken
+
 * Mon Aug 29 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-3
 - add Latvian langpack
 

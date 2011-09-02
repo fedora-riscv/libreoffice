@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -121,6 +121,7 @@ Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
 Patch28: gdb-pretty-printers.patch
 Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
+Patch30: 0001-Resolves-rhbz-735182-libreoffice-doesn-t-build-with-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -788,6 +789,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
 %patch28 -p1
 %patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
+%patch30 -p1 -b .rhbz735182-libreoffice-doesn-t-build-with-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2087,6 +2089,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Sep 02 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-5
+- Resolves: rhbz#735182 be able to rebuild against poppler 0.17.3
+
 * Tue Aug 30 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-4
 - Resolves: rhbz#734432 openoffice.org symlink broken
 

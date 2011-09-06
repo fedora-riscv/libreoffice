@@ -543,6 +543,8 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 # * to require autocorr, hunspell, hyphen or mythes package or font for
 #   given language,
 # * to obsolete openoffice.org-langpack package,
+# * to provide libreoffice-langpack-loc package, where loc is glibc
+#   locale--this is necessary for yum to pick it automatically,
 # * to require other, unrelated, packages,
 # * to specify file serving as file list.
 # For these, lower case character argument takes an argument specifying
@@ -558,6 +560,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 # Mm: mythes dependency
 # n:  language name, e.g., Czech
 # Oo: Obsoletes: of openoffice.org-langpack
+# p:  Provides: of libreoffice-langpack
 # r:  comma-separated list of additional requires
 # Ss: filelist
 # Yy: hyphen dependency
@@ -567,7 +570,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 # autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
 # openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
 # %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:r:Ss:Yy:) \
+%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -586,6 +589,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %define obs openoffice.org-langpack \
 %define obsv 1:3.3.1 \
 %{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
+%{-p:Provides: %{name}-langpack-%{-p*}} \
 \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for %{project}. \
@@ -675,8 +679,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -O -s pa-IN
 %langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -S
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -s pt
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -S
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -S
 %langpack -l si -n Sinhalese -F -H -O -S
@@ -698,9 +702,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H -o ve_ZA -S
 %langpack -l xh -n Xhosa -F -H -o xh_ZA -S
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -s zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -s zh-TW
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -s zh-TW
 %langpack -l zu -n Zulu -F -H -Y -o zu_ZA -S
 %undefine langpack_lang
 
@@ -2178,6 +2182,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Aug 30 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-6-UNBUILT
 - Resolves: fdo#40303 missing filter detect services cause trouble
 - Resolves: rhbz#734432 openoffice.org symlink broken (dtardon)
+- Resolves: rhbz#734976 libreoffice-langpack-*-* not pulled in by
+  yum install libreoffice
 
 * Tue Aug 23 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-5
 - Resolves: rhbz#657783 dead ViewShell, possibly on selection

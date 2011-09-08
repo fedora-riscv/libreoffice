@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2093,6 +2093,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Sep 08 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-7
+- rebuild for new icu
+
 * Tue Sep 06 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-6
 - Resolves: rhbz#734976 libreoffice-langpack-*-* not pulled in by
   yum install libreoffice

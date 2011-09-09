@@ -82,7 +82,7 @@ BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
-BuildRequires:  kdelibs4-devel, font(:lang=en)
+BuildRequires:  kdelibs4-devel, bc, font(:lang=en)
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}

@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1251,7 +1251,6 @@ for app in base calc draw impress math writer; do
     echo "TryExec=oo$app" >> $app.desktop
 done
 # rhbz#156677# / rhbz#186515#
-echo "NoDisplay=true" >> math.desktop
 echo "NoDisplay=true" >> startcenter.desktop
 # rhbz#491159 temporarily remove NoDisplay=true from qstart.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
@@ -2093,6 +2092,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Sep 13 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-8
+- Resolves: rhbz#274631 remove NoDisplay from -math.desktop
+
 * Thu Sep 08 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-7
 - rebuild for new icu
 

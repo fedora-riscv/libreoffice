@@ -11,7 +11,7 @@ diff --git a/sc/source/ui/app/inputhdl.cxx b/sc/source/ui/app/inputhdl.cxx
 index 1524397..c30a8fd 100644
 --- a/sc/source/ui/app/inputhdl.cxx
 +++ b/sc/source/ui/app/inputhdl.cxx
-@@ -2469,13 +2469,16 @@ void ScInputHandler::EnterHandler( sal_uInt8 nBlockMode )
+@@ -2476,13 +2476,16 @@
              ScDocument* pDoc = pActiveViewSh->GetViewData()->GetDocument();
              // #i67990# don't use pLastPattern in EnterHandler
              const ScPatternAttr* pPattern = pDoc->GetPattern( aCursorPos.Col(), aCursorPos.Row(), aCursorPos.Tab() );
@@ -22,18 +22,15 @@ index 1524397..c30a8fd 100644
 -            if ( pFormatter->IsNumberFormat( aString, nFormat, nVal ) )
 +            if (pPattern)
              {
--                bSpellErrors = false;       // ignore the spelling errors
+-                bSpellErrors = FALSE;		// ignore the spelling errors
 +                SvNumberFormatter* pFormatter = pDoc->GetFormatTable();
 +                // without conditional format, as in ScColumn::SetString
 +                sal_uInt32 nFormat = pPattern->GetNumberFormat( pFormatter );
 +                double nVal;
 +                if ( pFormatter->IsNumberFormat( aString, nFormat, nVal ) )
 +                {
-+                    bSpellErrors = false;       // ignore the spelling errors
++                    bSpellErrors = FALSE;		// ignore the spelling errors
 +                }
              }
          }
      }
--- 
-1.7.6
-

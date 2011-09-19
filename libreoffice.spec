@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        9%{?dist}
+Release:        10%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2094,6 +2094,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Sep 19 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-10
+- Rebuild (poppler-0.17.3)
+
 * Thu Sep 15 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-9
 - Resolves: rhbz#738255 avoid crash on sc inputhdl
 

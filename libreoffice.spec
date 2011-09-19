@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.3.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -159,6 +159,7 @@ Patch70: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
 Patch71: 0001-Resolves-fdo-39159-don-t-restore-original-view-setti.patch
 Patch72: 0001-catch-exceptions-from-missing-components-here-as-wel.patch
 Patch73: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+Patch74: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -837,6 +838,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch71 -p1 -b .fdo39159-don-t-restore-original-view-setti.patch
 %patch72 -p1 -b .catch-exceptions-from-missing-components-here-as-wel.patch
 %patch73 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
+%patch74 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2181,6 +2183,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Sep 19 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7.UNBUILT
+- Resolves: rhbz#739407 recovery from autosave for non odf format
+
 * Thu Sep 15 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-6
 - Resolves: fdo#40303 missing filter detect services cause trouble
 - Resolves: rhbz#734432 openoffice.org symlink broken (dtardon)

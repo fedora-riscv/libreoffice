@@ -1,0 +1,29 @@
+From 6c397dfce4f7afddb55329b738388ab4eb16b7f8 Mon Sep 17 00:00:00 2001
+From: Tor Lillqvist <tlillqvist@novell.com>
+Date: Tue, 19 Jul 2011 17:31:57 +0300
+Subject: [PATCH] On recovery from an autosave file use DefaultFilter, seems
+ to fix fdo#34805
+
+---
+ framework/source/services/autorecovery.cxx |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/framework/source/services/autorecovery.cxx b/framework/source/services/autorecovery.cxx
+index ec60d13..d280aac 100644
+--- a/framework/source/services/autorecovery.cxx
++++ b/framework/source/services/autorecovery.cxx
+@@ -2661,7 +2661,10 @@ void AutoRecovery::implts_openOneDoc(const ::rtl::OUString&               sURL
+ 
+         // put the filter name into the descriptor - we're not going to involve any type detection, so
+         // the document might be lost without the FilterName property
+-        lDescriptor[ ::comphelper::MediaDescriptor::PROP_FILTERNAME() ] <<= rInfo.RealFilter;
++        if ( (rInfo.DocumentState & AutoRecovery::E_TRY_LOAD_ORIGINAL) == AutoRecovery::E_TRY_LOAD_ORIGINAL)
++            lDescriptor[ ::comphelper::MediaDescriptor::PROP_FILTERNAME() ] <<= rInfo.RealFilter;
++        else
++            lDescriptor[ ::comphelper::MediaDescriptor::PROP_FILTERNAME() ] <<= rInfo.DefaultFilter;
+ 
+         if ( sURL == rInfo.FactoryURL )
+         {
+-- 
+1.7.6
+

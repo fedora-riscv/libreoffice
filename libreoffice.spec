@@ -124,6 +124,7 @@ Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 Patch30: 0001-Resolves-rhbz-735182-libreoffice-doesn-t-build-with-.patch
 Patch31: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch32: fdo40856.bn.discard.patch
+Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -798,6 +799,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .rhbz735182-libreoffice-doesn-t-build-with-.patch
 %patch31 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
 %patch32 -p1 -b .fdo40856.bn.discard.patch
+%patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2098,6 +2100,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Sep 20 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-11
 - Resolves: rhbz#738133 fix bn discard string
+- Resolves: fdo#35513 avoid crash while processing incorrect print range
 
 * Mon Sep 19 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-10
 - Rebuild (poppler-0.17.3)

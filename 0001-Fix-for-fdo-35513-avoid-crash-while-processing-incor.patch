@@ -1,0 +1,27 @@
+From b7d874f49b102eabe2974c4dee1272d2cf6053a3 Mon Sep 17 00:00:00 2001
+From: Ivan Timofeev <timofeev.i.s@gmail.com>
+Date: Tue, 20 Sep 2011 10:55:50 +0100
+Subject: [PATCH] Fix for fdo#35513: avoid crash while processing incorrect
+ range of pages
+
+---
+ sw/source/core/doc/doc.cxx |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/sw/source/core/doc/doc.cxx b/sw/source/core/doc/doc.cxx
+index 34d7a96..d83ab53 100644
+--- a/sw/source/core/doc/doc.cxx
++++ b/sw/source/core/doc/doc.cxx
+@@ -1638,6 +1638,9 @@ void SwDoc::CalculatePagePairsForProspectPrinting(
+     StringRangeEnumerator::getRangesFromString(
+             aPageRange, aPagesToPrint, 1, nDocPageCount, 0 );
+ 
++    if (!aPagesToPrint.size())
++        return;
++
+     // now fill the vector for calculating the page pairs with the start frames
+     // from the above obtained vector
+     std::vector< const SwPageFrm * > aVec;
+-- 
+1.7.6
+

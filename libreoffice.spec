@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        8%{?dist}
+Release:        9%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -123,6 +123,8 @@ Patch28: gdb-pretty-printers.patch
 Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 Patch30: 0001-Resolves-rhbz-735182-libreoffice-doesn-t-build-with-.patch
 Patch31: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+Patch32: fdo40856.bn.discard.patch
+Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -796,6 +798,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
 %patch30 -p1 -b .rhbz735182-libreoffice-doesn-t-build-with-.patch
 %patch31 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
+%patch32 -p1 -b .fdo40856.bn.discard.patch
+%patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2095,6 +2099,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Sep 20 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-9-UNBUILT
+- Resolves: rhbz#738133 fix bn discard string
+- Resolves: fdo#35513 avoid crash while processing incorrect print range
+
 * Thu Sep 15 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-8
 - Resolves: rhbz#738255 avoid crash on sc inputhdl
 

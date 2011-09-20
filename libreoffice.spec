@@ -160,6 +160,7 @@ Patch71: 0001-Resolves-fdo-39159-don-t-restore-original-view-setti.patch
 Patch72: 0001-catch-exceptions-from-missing-components-here-as-wel.patch
 Patch73: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch74: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
+Patch75: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -839,6 +840,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch72 -p1 -b .catch-exceptions-from-missing-components-here-as-wel.patch
 %patch73 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
 %patch74 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
+%patch75 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2183,8 +2185,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Mon Sep 19 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7.UNBUILT
+* Tue Sep 20 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7.UNBUILT
 - Resolves: rhbz#739407 recovery from autosave for non odf format
+- Resolves: fdo#35513 avoid crash while processing incorrect print range
 
 * Thu Sep 15 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-6
 - Resolves: fdo#40303 missing filter detect services cause trouble

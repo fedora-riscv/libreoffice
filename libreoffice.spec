@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        11%{?dist}
+Release:        12%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2098,6 +2098,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Sep 30 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-12
+- Rebuild (poppler-0.18.0)
+
 * Tue Sep 20 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-11
 - Resolves: rhbz#738133 fix bn discard string
 - Resolves: fdo#35513 avoid crash while processing incorrect print range

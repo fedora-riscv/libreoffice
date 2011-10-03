@@ -1137,9 +1137,6 @@ cat sh.filelist >> sr.filelist
 #remove it in case we didn't build with gcj
 rm -f $RPM_BUILD_ROOT/%{basisinstdir}/program/classes/sandbox.jar
 
-#remove pagein stuff
-rm -f $RPM_BUILD_ROOT/%{basisinstdir}/program/pagein*
-
 #remove dummy .dat files
 rm -f $RPM_BUILD_ROOT/%{basisinstdir}/program/root?.dat
 
@@ -1537,6 +1534,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/open-url
 %{basisinstdir}/program/offapi.rdb
 %{basisinstdir}/program/passwordcontainer.uno.so
+%{basisinstdir}/program/pagein-common
 %{basisinstdir}/program/plugin
 %{basisinstdir}/program/pluginapp.bin
 %{basisinstdir}/program/productregistration.uno.so
@@ -1886,6 +1884,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/resource/solveren-US.res
 %{basisinstdir}/program/vbaobj.uno.so
 %{basisinstdir}/share/registry/calc.xcd
+%{basisinstdir}/program/pagein-scalc
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/scalc
@@ -1903,6 +1902,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}
 %{basisinstdir}/help/en/sdraw.*
 %{basisinstdir}/share/registry/draw.xcd
+%{basisinstdir}/program/pagein-sdraw
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/sdraw
@@ -1941,6 +1941,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/resource/bf_swen-US.res
 %{basisinstdir}/program/resource/t602filteren-US.res
 %{basisinstdir}/share/registry/writer.xcd
+%{basisinstdir}/program/pagein-swriter
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/swriter
@@ -1966,6 +1967,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{basisinstdir}/share/config/soffice.cfg/simpress/transitions.xml
 %{basisinstdir}/share/registry/impress.xcd
+%{basisinstdir}/program/pagein-simpress
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/simpress

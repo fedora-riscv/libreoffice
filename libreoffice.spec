@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        10%{?dist}
+Release:        11%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2101,6 +2101,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Mon Oct  3 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-11
+- Rebuild (poppler-0.18.0 stable)
+- Enable pagein (by Caolán McNamara)
+
 * Wed Sep 21 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-10
 - Rebuild (poppler-0.17.3)
 

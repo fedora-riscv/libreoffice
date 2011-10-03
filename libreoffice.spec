@@ -125,6 +125,7 @@ Patch30: 0001-Resolves-rhbz-735182-libreoffice-doesn-t-build-with-.patch
 Patch31: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch32: fdo40856.bn.discard.patch
 Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
+Patch34: 0001-fedora-gcc-4.6.1.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -800,6 +801,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
 %patch32 -p1 -b .fdo40856.bn.discard.patch
 %patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
+%patch34 -p1 -b .fedora-gcc-4.6.1.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2104,6 +2106,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Mon Oct  3 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-11
 - Rebuild (poppler-0.18.0 stable)
 - Enable pagein (by Caolán McNamara)
+- add 0001-fedora-gcc-4.6.1.patch to build with fedora gcc 4.6.1
 
 * Wed Sep 21 2011 Marek Kasik <mkasik@redhat.com> - 3.4.3.2-10
 - Rebuild (poppler-0.17.3)

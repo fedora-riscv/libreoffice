@@ -1534,6 +1534,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/open-url
 %{basisinstdir}/program/offapi.rdb
 %{basisinstdir}/program/passwordcontainer.uno.so
+%{basisinstdir}/program/pagein
 %{basisinstdir}/program/pagein-common
 %{basisinstdir}/program/plugin
 %{basisinstdir}/program/pluginapp.bin

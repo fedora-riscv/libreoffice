@@ -1884,7 +1884,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/resource/solveren-US.res
 %{basisinstdir}/program/vbaobj.uno.so
 %{basisinstdir}/share/registry/calc.xcd
-%{basisinstdir}/program/pagein-scalc
+%{basisinstdir}/program/pagein-calc
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/scalc
@@ -1902,7 +1902,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}
 %{basisinstdir}/help/en/sdraw.*
 %{basisinstdir}/share/registry/draw.xcd
-%{basisinstdir}/program/pagein-sdraw
+%{basisinstdir}/program/pagein-draw
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/sdraw
@@ -1941,7 +1941,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/resource/bf_swen-US.res
 %{basisinstdir}/program/resource/t602filteren-US.res
 %{basisinstdir}/share/registry/writer.xcd
-%{basisinstdir}/program/pagein-swriter
+%{basisinstdir}/program/pagein-writer
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/swriter
@@ -1967,7 +1967,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{basisinstdir}/share/config/soffice.cfg/simpress/transitions.xml
 %{basisinstdir}/share/registry/impress.xcd
-%{basisinstdir}/program/pagein-simpress
+%{basisinstdir}/program/pagein-impress
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/simpress

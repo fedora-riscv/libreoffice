@@ -1,0 +1,258 @@
+diff --git a/sw/source/filter/ww8/ww8scan.cxx b/sw/source/filter/ww8/ww8scan.cxx
+index baa2ee1..b7c43d5 100644
+--- a/sw/source/filter/ww8/ww8scan.cxx
++++ b/sw/source/filter/ww8/ww8scan.cxx
+@@ -1918,7 +1918,7 @@ String WW8ReadPString(SvStream& rStrm, rtl_TextEncoding eEnc,
+ 
+ String WW8Read_xstz(SvStream& rStrm, sal_uInt16 nChars, bool bAtEndSeekRel1)
+ {
+-    sal_uInt16 b;
++    sal_uInt16 b(0);
+ 
+     if( nChars )
+         b = nChars;
+diff --git a/sw/source/filter/ww8/ww8par3.cxx b/sw/source/filter/ww8/ww8par3.cxx
+index d6e6b84..c34c62e 100644
+--- a/sw/source/filter/ww8/ww8par3.cxx
++++ b/sw/source/filter/ww8/ww8par3.cxx
+@@ -524,8 +524,8 @@ bool WW8ListManager::ReadLVL(SwNumFmt& rNumFmt, SfxItemSet*& rpItemSet,
+     std::deque<bool> &rNotReallyThere, sal_uInt16 nLevel,
+     ww::bytes &rParaSprms)
+ {
+-    sal_uInt8       aBits1;
+-    sal_uInt16      nStartNo    = 0;    // Start-Nr. fuer den Writer
++    sal_uInt8       aBits1(0);
++    sal_uInt16      nStartNo(0);        // Start-Nr. fuer den Writer
+     SvxExtNumType   eType;              // Writer-Num-Typ
+     SvxAdjust       eAdj;               // Ausrichtung (Links/rechts/zent.)
+     sal_Unicode     cBullet(0x2190);    // default safe bullet
+@@ -559,7 +559,7 @@ bool WW8ListManager::ReadLVL(SwNumFmt& rNumFmt, SfxItemSet*& rpItemSet,
+     if( !bLVLOkB )
+         return false;
+ 
+-    sal_uInt8 ixchFollow;
++    sal_uInt8 ixchFollow(0);
+     rSt >> ixchFollow;
+     if (ixchFollow == 0)
+         rReader.maTracer.Log(sw::log::eTabInNumbering);
+diff --git a/sw/source/filter/ww8/ww8par2.cxx b/sw/source/filter/ww8/ww8par2.cxx
+index 9c14be0..67e7dfb 100644
+--- a/sw/source/filter/ww8/ww8par2.cxx
++++ b/sw/source/filter/ww8/ww8par2.cxx
+@@ -3687,21 +3687,7 @@ const sal_uInt8* WW8RStyle::HasParaSprm( sal_uInt16 nId ) const
+     if( !pParaSprms || !nSprmsLen )
+         return 0;
+ 
+-    const sal_uInt8* pSprms = pParaSprms;
+-    sal_uInt16 i, x;
+-
+-    for( i=0; i < nSprmsLen; )
+-    {
+-        sal_uInt16 nAktId = maSprmParser.GetSprmId(pSprms);
+-        // Sprm found ?
+-        if( nAktId == nId )
+-            return pSprms + maSprmParser.DistanceToData(nId);
+-
+-        x = maSprmParser.GetSprmSize(nAktId, pSprms);
+-        i = i + x;
+-        pSprms += x;
+-    }
+-    return 0;                               // Sprm not found
++    return maSprmParser.findSprmData(nId, pParaSprms, nSprmsLen);
+ }
+ 
+ void WW8RStyle::ImportSprms(sal_uInt8 *pSprms, short nLen, bool bPap)
+diff --git a/sw/source/filter/ww8/ww8par3.cxx b/sw/source/filter/ww8/ww8par3.cxx
+index 6b54aaa..e05b1aa 100644
+--- a/sw/source/filter/ww8/ww8par3.cxx
++++ b/sw/source/filter/ww8/ww8par3.cxx
+@@ -470,20 +470,7 @@ SV_IMPL_PTRARR( WW8LFOInfos, WW8LFOInfo_Ptr );
+ sal_uInt8* WW8ListManager::GrpprlHasSprm(sal_uInt16 nId, sal_uInt8& rSprms,
+     sal_uInt8 nLen)
+ {
+-    sal_uInt8* pSprms = &rSprms;
+-    sal_uInt16 nRemLen=nLen;
+-    while (nRemLen > (maSprmParser.getVersion()?1:0))
+-    {
+-        sal_uInt16 nAktId = maSprmParser.GetSprmId(pSprms);
+-        if( nAktId == nId ) // Sprm found
+-            return pSprms + maSprmParser.DistanceToData(nId);
+-
+-        // gib Zeiger auf Daten
+-        sal_uInt16 nSize = maSprmParser.GetSprmSize(nAktId, pSprms);
+-        pSprms += nSize;
+-        nRemLen -= nSize;
+-    }
+-    return 0;                           // Sprm not found
++    return maSprmParser.findSprmData(nId, &rSprms, nLen);
+ }
+ 
+ class ListWithId : public std::unary_function<const WW8LSTInfo *, bool>
+diff --git a/sw/source/filter/ww8/ww8scan.cxx b/sw/source/filter/ww8/ww8scan.cxx
+index b7c43d5..70d4cc0 100644
+--- a/sw/source/filter/ww8/ww8scan.cxx
++++ b/sw/source/filter/ww8/ww8scan.cxx
+@@ -7278,6 +7278,27 @@ sal_uInt16 wwSprmParser::DistanceToData(sal_uInt16 nId) const
+     return 1 + mnDelta + SprmDataOfs(nId);
+ }
+ 
++sal_uInt8* wwSprmParser::findSprmData(sal_uInt16 nId, sal_uInt8* pSprms,
++    sal_uInt16 nLen) const
++{
++    while (nLen > (getVersion()?1:0))
++    {
++        sal_uInt16 nAktId = GetSprmId(pSprms);
++        if (nAktId == nId) // Sprm found
++            return pSprms + DistanceToData(nId);
++
++        // gib Zeiger auf Daten
++        sal_uInt16 nSize = GetSprmSize(nAktId, pSprms);
++        OSL_ENSURE(nSize <= nLen, "sprm longer than remaining bytes");
++        //Clip to available size if wrong
++        nSize = std::min(nSize, nLen);
++        pSprms += nSize;
++        nLen -= nSize;
++    }
++    // Sprm not found
++    return 0;
++}
++
+ SEPr::SEPr() :
+     bkc(2), fTitlePage(0), fAutoPgn(0), nfcPgn(0), fUnlocked(0), cnsPgn(0),
+     fPgnRestart(0), fEndNote(1), lnc(0), grpfIhdt(0), nLnnMod(0), dxaLnn(0),
+diff --git a/sw/source/filter/ww8/ww8scan.hxx b/sw/source/filter/ww8/ww8scan.hxx
+index 0bb532a..7d809d8 100644
+--- a/sw/source/filter/ww8/ww8scan.hxx
++++ b/sw/source/filter/ww8/ww8scan.hxx
+@@ -145,6 +145,11 @@ public:
+     /// The minimum acceptable sprm len possible for this type of parser
+     int MinSprmLen() const { return (IsSevenMinus(meVersion)) ? 2 : 3; }
+ 
++    /// Returns the offset to data of the first sprm of id nId, 0
++    //  if not found. nLen must be the <= length of pSprms
++    sal_uInt8* findSprmData(sal_uInt16 nId, sal_uInt8* pSprms, sal_uInt16 nLen)
++        const;
++
+     inline int getVersion() const { return meVersion; } //cmc, I'm dubious about the usage of this, how can it be 0
+ };
+ 
+diff --git a/sw/source/filter/ww8/ww8par2.cxx b/sw/source/filter/ww8/ww8par2.cxx
+index a4829e1..92cf106 100644
+--- a/sw/source/filter/ww8/ww8par2.cxx
++++ b/sw/source/filter/ww8/ww8par2.cxx
+@@ -3701,11 +3701,11 @@ void WW8RStyle::ImportSprms(sal_uInt8 *pSprms, short nLen, bool bPap)
+         nSprmsLen = nLen;
+     }
+ 
+-    while ( nLen > 0 )
++    WW8SprmIter aSprmIter(pSprms, nLen, maSprmParser);
++    while (const sal_uInt8* pSprm = aSprmIter.GetSprms())
+     {
+-        sal_uInt16 nL1 = pIo->ImportSprm(pSprms);
+-        nLen = nLen - nL1;
+-        pSprms += nL1;
++        pIo->ImportSprm(pSprm);
++        aSprmIter.advance();
+     }
+ 
+     pParaSprms = 0;
+diff --git a/sw/source/filter/ww8/ww8scan.cxx b/sw/source/filter/ww8/ww8scan.cxx
+index 70d4cc0..3a18004 100644
+--- a/sw/source/filter/ww8/ww8scan.cxx
++++ b/sw/source/filter/ww8/ww8scan.cxx
+@@ -1372,9 +1372,14 @@ WW8_CP WW8ScannerBase::WW8Fc2Cp( WW8_FC nFcPos ) const
+     if( nFcPos == WW8_FC_MAX )
+         return nFallBackCpEnd;
+ 
++    bool bIsUnicode;
++    if (pWw8Fib->nVersion >= 8)
++        bIsUnicode = false;
++    else
++        bIsUnicode = pWw8Fib->fExtChar ? true : false;
++
+     if( pPieceIter )    // Complex File ?
+     {
+-        bool bIsUnicode = false;
+         sal_uLong nOldPos = pPieceIter->GetIdx();
+ 
+         for (pPieceIter->SetIdx(0);
+@@ -1388,15 +1393,14 @@ WW8_CP WW8ScannerBase::WW8Fc2Cp( WW8_FC nFcPos ) const
+                 break;
+             }
+             sal_Int32 nFcStart  = SVBT32ToUInt32( ((WW8_PCD*)pData)->fc );
+-            if( 8 <= pWw8Fib->nVersion )
++            if (pWw8Fib->nVersion >= 8)
+             {
+                 nFcStart = WW8PLCFx_PCD::TransformPieceAddress( nFcStart,
+                                                                 bIsUnicode );
+             }
+             else
+             {
+-                if (pWw8Fib->fExtChar)
+-                    bIsUnicode=true;
++                bIsUnicode = pWw8Fib->fExtChar ? true : false;
+             }
+             sal_Int32 nLen = (nCpEnd - nCpStart) * (bIsUnicode ? 2 : 1);
+ 
+@@ -1431,11 +1435,13 @@ WW8_CP WW8ScannerBase::WW8Fc2Cp( WW8_FC nFcPos ) const
+         */
+         return nFallBackCpEnd;
+     }
++
+     // No complex file
+-    if (!pWw8Fib->fExtChar)
++    if (!bIsUnicode)
+         nFallBackCpEnd = (nFcPos - pWw8Fib->fcMin);
+     else
+         nFallBackCpEnd = (nFcPos - pWw8Fib->fcMin + 1) / 2;
++
+     return nFallBackCpEnd;
+ }
+ 
+@@ -1451,8 +1457,14 @@ WW8_FC WW8ScannerBase::WW8Cp2Fc(WW8_CP nCpPos, bool* pIsUnicode,
+     if( !pIsUnicode )
+         pIsUnicode = &bIsUnicode;
+ 
++    if (pWw8Fib->nVersion >= 8)
++        *pIsUnicode = false;
++    else
++        *pIsUnicode = pWw8Fib->fExtChar ? true : false;
++
+     if( pPieceIter )
+-    {   // Complex File
++    {
++        // Complex File
+         if( pNextPieceCp )
+             *pNextPieceCp = WW8_CP_MAX;
+ 
+@@ -1480,16 +1492,10 @@ WW8_FC WW8ScannerBase::WW8Cp2Fc(WW8_CP nCpPos, bool* pIsUnicode,
+             *pNextPieceCp = nCpEnd;
+ 
+         WW8_FC nRet = SVBT32ToUInt32( ((WW8_PCD*)pData)->fc );
+-        if (8 > pWw8Fib->nVersion)
+-        {
+-            if (pWw8Fib->fExtChar)
+-                *pIsUnicode=true;
+-            else
+-                *pIsUnicode = false;
+-        }
+-        else
++        if (pWw8Fib->nVersion >= 8)
+             nRet = WW8PLCFx_PCD::TransformPieceAddress( nRet, *pIsUnicode );
+-
++        else
++            *pIsUnicode = pWw8Fib->fExtChar ? true : false;
+ 
+         nRet += (nCpPos - nCpStart) * (*pIsUnicode ? 2 : 1);
+ 
+@@ -1497,10 +1503,6 @@ WW8_FC WW8ScannerBase::WW8Cp2Fc(WW8_CP nCpPos, bool* pIsUnicode,
+     }
+ 
+     // No complex file
+-    if (pWw8Fib->fExtChar)
+-        *pIsUnicode = true;
+-    else
+-        *pIsUnicode = false;
+     return pWw8Fib->fcMin + nCpPos * (*pIsUnicode ? 2 : 1);
+ }
+ 

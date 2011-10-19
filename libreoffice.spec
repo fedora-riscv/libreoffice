@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        13%{?dist}
+Release:        14%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -127,6 +127,7 @@ Patch31: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch32: fdo40856.bn.discard.patch
 Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 Patch34: libreoffice34-gcc461.patch
+Patch35: 0001-make-sure-we-stay-in-array-bounds.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -803,6 +804,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch32 -p1 -b .fdo40856.bn.discard.patch
 %patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
 %patch34 -p1 -b .libreoffice34-gcc461.patch
+%patch35 -p1 -b .make-sure-we-stay-in-array-bounds.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2104,6 +2106,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Oct 19 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-14
+- Related: rhbz#743750 addXineramaScreenUnique issue
+ 
 * Fri Oct 07 2011 Stephan Bergmann <sbergman@redhat.com> - 3.4.3.2-13
 - Patches to build with GCC 6.4.1
 

@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        12%{?dist}
+Release:        13%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -127,6 +127,7 @@ Patch32: fdo40856.bn.discard.patch
 Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 Patch34: 0001-fedora-gcc-4.6.1.patch
 Patch35: 0001-make-sure-we-stay-in-array-bounds.patch
+Patch36: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -804,6 +805,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
 %patch34 -p1 -b .fedora-gcc-4.6.1.patch
 %patch35 -p1 -b .make-sure-we-stay-in-array-bounds.patch
+%patch36 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2106,6 +2108,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Oct 21 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-13
+- Resolves: rhbz#747356 let Qt call XInitThreads
+
 * Wed Oct 19 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-12
 - Related: rhbz#743750 addXineramaScreenUnique issue
 

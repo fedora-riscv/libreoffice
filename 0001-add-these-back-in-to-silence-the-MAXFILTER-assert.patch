@@ -1,0 +1,100 @@
+From ac7475b06466404ac23d5352d9226de857d83987 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 13 Apr 2011 13:48:19 +0100
+Subject: [PATCH] add these back in to silence the MAXFILTER assert
+
+---
+ binfilter/bf_sw/source/filter/basflt/sw_fltini.cxx |   13 ++++++++++
+ .../bf_sw/source/filter/basflt/sw_shellio.cxx      |   24 +-------------------
+ binfilter/inc/bf_sw/iodetect.hxx                   |    5 +--
+ 3 files changed, 16 insertions(+), 26 deletions(-)
+
+diff --git a/binfilter/bf_sw/source/filter/basflt/sw_fltini.cxx b/binfilter/bf_sw/source/filter/basflt/sw_fltini.cxx
+index 27bfad6..6d90fac 100644
+--- a/binfilter/bf_sw/source/filter/basflt/sw_fltini.cxx
++++ b/binfilter/bf_sw/source/filter/basflt/sw_fltini.cxx
+@@ -89,10 +89,23 @@ inline void _SetFltPtr( USHORT& rPos, SwRead pReader, const sal_Char* pNm )
+ 
+ void _InitFilter()
+ {
++    SwRead pRd;
++
+     USHORT nCnt = 0;
+     _SetFltPtr( nCnt, (ReadSw3 = new Sw3Reader), FILTER_SW5 );
+     _SetFltPtr( nCnt, ReadSw3, FILTER_SW4 );
+     _SetFltPtr( nCnt, ReadSw3, FILTER_SW3 );
++    _SetFltPtr( nCnt, (ReadSwg = new SwgReader), FILTER_SWG );
++    _SetFltPtr( nCnt, ReadSwg, FILTER_SWGV );
++    _SetFltPtr( nCnt, new Sw6Reader, sSwDos );
++    _SetFltPtr( nCnt, (ReadAscii = new AsciiReader), FILTER_BAS );
++    _SetFltPtr( nCnt, new W4WReader, FILTER_W4W );
++    _SetFltPtr( nCnt, ( pRd = new ExcelReader ), sCExcel );
++    _SetFltPtr( nCnt, pRd, sExcel );
++    _SetFltPtr( nCnt, new LotusReader, sLotusD );
++    _SetFltPtr( nCnt, ReadSwg, sSwg1 );
++
++    _SetFltPtr( nCnt, ReadAscii, FILTER_TEXT );
+ 
+     OSL_ENSURE( MAXFILTER == nCnt, "Anzahl Filter ungleich der Definierten" );
+ }
+diff --git a/binfilter/bf_sw/source/filter/basflt/sw_shellio.cxx b/binfilter/bf_sw/source/filter/basflt/sw_shellio.cxx
+index 2c5557f..3399f21 100644
+--- a/binfilter/bf_sw/source/filter/basflt/sw_shellio.cxx
++++ b/binfilter/bf_sw/source/filter/basflt/sw_shellio.cxx
+@@ -351,29 +351,7 @@ using namespace ::com::sun::star;
+ /*?*/               // we cannot create a SwDocShell. We could create a
+ /*?*/               // SwWebDocShell however, because this exists always
+ /*?*/               // for the help.
+-                    OSL_ASSERT("ReadXML removed");
+-
+-//               SvtModuleOptions aModuleOptions;
+-//              if( aModuleOptions.IsWriter() )
+-//              {
+-//                  SwDocShell *pDocSh =
+-//                      new SwDocShell ( SFX_CREATE_MODE_INTERNAL );
+-//                  SvEmbeddedObjectRef xDocSh = pDocSh;
+-//                  if( pDocSh->DoInitNew( 0 ) )
+-//                  {
+-//                      pTemplate = pDocSh->GetDoc();
+-//                      pTemplate->SetOle2Link( Link() );
+-//                      pTemplate->SetBrowseMode( bTmplBrowseMode );
+-//                      pTemplate->RemoveAllFmtLanguageDependencies();
+-//
+-//                      ReadXML->SetOrganizerMode( TRUE );
+-//                      SwReader aRdr( *xStor, aEmptyStr, pTemplate );
+-//                      aRdr.Read( *ReadXML );
+-//                      ReadXML->SetOrganizerMode( FALSE );
+-//
+-//                      pTemplate->AddLink();
+-//                  }
+-//                }
++                                OSL_ASSERT("ReadXML removed");
+ /*?*/           }
+ /*?*/           else
+ /*?*/           {
+diff --git a/binfilter/inc/bf_sw/iodetect.hxx b/binfilter/inc/bf_sw/iodetect.hxx
+index e91b371..94199a9 100644
+--- a/binfilter/inc/bf_sw/iodetect.hxx
++++ b/binfilter/inc/bf_sw/iodetect.hxx
+@@ -105,7 +105,7 @@ struct SwIoDetect
+ #endif
+ 
+ 
+-const USHORT MAXFILTER = 14;
++const USHORT MAXFILTER = 13;
+ 
+ #define FORAMTNAME_SW4      "StarWriter 4.0"
+ #define FORAMTNAME_SW3      "StarWriter 3.0"
+@@ -161,8 +161,7 @@ SwIoDetect aReaderWriter[ MAXFILTER ] = {                      \
+     {/* 9*/ SwIoEntry(sExcel,         4,            FALSE)},   \
+     {/*10*/ SwIoEntry(sLotusD,        5,            TRUE)},    \
+     {/*11*/ SwIoEntry(sSwg1,          4,            FALSE)},   \
+-    {/*12*/ SwIoEntry(FILTER_XML,     4,            TRUE)},    \
+-    {/*13*/ SwIoEntry(FILTER_TEXT,    4,            TRUE)}     \
++    {/*12*/ SwIoEntry(FILTER_TEXT,    4,            TRUE)}     \
+ };
+ 
+ // Filter erkennung
+-- 
+1.7.6.4
+

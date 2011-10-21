@@ -29,7 +29,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.3.3.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -162,6 +162,7 @@ Patch73: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch74: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 Patch75: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 Patch76: 2011-2713.patch
+Patch77: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -843,6 +844,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch74 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 %patch75 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
 %patch76 -p1 -b .2011-2713.patch
+%patch77 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2187,6 +2189,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Oct 21 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-8-UNBUILT
+- Resolves: rhbz#747356 let Qt call XInitThreads
+
 * Wed Oct 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7
 - Resolves: CVE-2011-2713, binary .doc parsing fixes
 - Resolves: rhbz#739407 recovery from autosave for non odf format

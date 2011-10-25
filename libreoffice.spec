@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        15%{?dist}
+Release:        16%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -130,6 +130,7 @@ Patch34: libreoffice34-gcc461.patch
 Patch35: 0001-make-sure-we-stay-in-array-bounds.patch
 Patch36: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 Patch37: 0001-add-these-back-in-to-silence-the-MAXFILTER-assert.patch
+Patch38: 0001-avoid-using-com.sun.org-apis.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -809,6 +810,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .make-sure-we-stay-in-array-bounds.patch
 %patch36 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 %patch37 -p1 -b .add-these-back-in-to-silence-the-MAXFILTER-assert.patch
+%patch38 -p1 -b .avoid-using-com.sun.org-apis.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2110,6 +2112,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Oct 25 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-16
+- allow building with gcj
+
 * Fri Oct 21 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-15
 - Resolves: rhbz#747356 let Qt call XInitThreads
 - fix .sdw import

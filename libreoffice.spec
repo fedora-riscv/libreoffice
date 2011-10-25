@@ -157,6 +157,8 @@ Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberatio
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
 Requires: lucene
+# rhbz#748585
+Requires: java-1.6.0-openjdk
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -2110,6 +2112,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Oct 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-14
+- Resolves: rhbz#748585 libreoffice installs Java 7
+
 * Fri Oct 21 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-13
 - Resolves: rhbz#747356 let Qt call XInitThreads
 - fix .sdw import

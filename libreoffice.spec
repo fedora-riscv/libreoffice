@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.3.2
-Release:        14%{?dist}
+Release:        15%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -157,8 +157,6 @@ Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberatio
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
 Requires: lucene
-# rhbz#748585
-Requires: java-1.6.0-openjdk
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -2112,6 +2110,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Oct 26 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-15-UNBUILT
+- Related: rhbz#748585 throw the additional requires away, because it
+  does not help
+
 * Tue Oct 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-14
 - Resolves: rhbz#748585 libreoffice installs Java 7
 

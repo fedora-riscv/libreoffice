@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.3.2
-Release:        16%{?dist}
+Version:        3.4.4.1
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -108,29 +108,20 @@ Patch12: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
 Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
 Patch14: vbahelper.visibility.patch
 Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
-Patch16: 0001-handle-NULL-display-gracefully.patch
-Patch17: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
-Patch18: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
-Patch19: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
-Patch20: 0001-Related-rhbz-711087-band-aid.patch
-Patch21: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
-Patch22: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-Patch23: libreoffice-poppler-0.17.0.patch
-Patch24: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
-Patch25: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-Patch26: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
-Patch27: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
-Patch28: gdb-pretty-printers.patch
-Patch29: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
-Patch30: 0001-Resolves-rhbz-735182-libreoffice-doesn-t-build-with-.patch
-Patch31: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
-Patch32: fdo40856.bn.discard.patch
-Patch33: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
-Patch34: libreoffice34-gcc461.patch
-Patch35: 0001-make-sure-we-stay-in-array-bounds.patch
-Patch36: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
-Patch37: 0001-add-these-back-in-to-silence-the-MAXFILTER-assert.patch
-Patch38: 0001-avoid-using-com.sun.org-apis.patch
+Patch16: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
+Patch17: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
+Patch18: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
+Patch19: 0001-Related-rhbz-711087-band-aid.patch
+Patch20: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
+Patch21: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
+Patch22: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
+Patch23: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
+Patch24: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch25: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+Patch26: gdb-pretty-printers.patch
+Patch27: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
+Patch28: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+Patch29: 0001-avoid-using-com.sun.org-apis.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -788,29 +779,20 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
 %patch14 -p0 -b .vbahelper.visibility.patch
 %patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
-%patch16 -p1 -b .handle-NULL-display-gracefully.patch
-%patch17 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
-%patch18 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
-%patch19 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
-%patch20 -p1 -b .rhbz711087-band-aid.patch
-%patch21 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
-%patch22 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-%patch23 -p1 -b .poppler-0.17.0.patch
-%patch24 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
-%patch25 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-%patch26 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
-%patch27 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
-%patch28 -p1
-%patch29 -p1 -b .fdo37195-migrationoo3-not-registered.patch
-%patch30 -p1 -b .rhbz735182-libreoffice-doesn-t-build-with-.patch
-%patch31 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
-%patch32 -p1 -b .fdo40856.bn.discard.patch
-%patch33 -p1 -b .fdo35513-avoid-crash-while-processing-incor.patch
-%patch34 -p1 -b .libreoffice34-gcc461.patch
-%patch35 -p1 -b .make-sure-we-stay-in-array-bounds.patch
-%patch36 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
-%patch37 -p1 -b .add-these-back-in-to-silence-the-MAXFILTER-assert.patch
-%patch38 -p1 -b .avoid-using-com.sun.org-apis.patch
+%patch16 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
+%patch17 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
+%patch18 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
+%patch19 -p1 -b .rhbz711087-band-aid.patch
+%patch20 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
+%patch21 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
+%patch22 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
+%patch23 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
+%patch24 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
+%patch25 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
+%patch26 -p1
+%patch27 -p1 -b .fdo37195-migrationoo3-not-registered.patch
+%patch28 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
+%patch29 -p1 -b .avoid-using-com.sun.org-apis.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2112,6 +2094,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Oct 26 2011 David Tardon <dtardon@redhat.com> - 3.4.4.1-1
+- 3.4.4 rc1
+
 * Tue Oct 25 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-16
 - allow building with gcj
 

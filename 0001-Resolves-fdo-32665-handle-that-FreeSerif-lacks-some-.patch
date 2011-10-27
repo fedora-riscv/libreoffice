@@ -118,7 +118,15 @@ diff --git a/vcl/inc/vcl/fontmanager.hxx b/vcl/inc/vcl/fontmanager.hxx
 index 0af5e14..4a110ad 100644
 --- a/vcl/inc/vcl/fontmanager.hxx
 +++ b/vcl/inc/vcl/fontmanager.hxx
-@@ -737,7 +737,7 @@
+@@ -36,6 +36,7 @@
+ 
+ #include "vcl/dllapi.h"
+ #include "vcl/helper.hxx"
++#include "vcl/vclenum.hxx"
+ 
+ #include "com/sun/star/lang/Locale.hpp"
+ 
+@@ -737,7 +738,7 @@
  
      rtl::OUString Substitute( const rtl::OUString& rFontName, rtl::OUString& rMissingCodes,
          const rtl::OString& rLangAttrib, italic::type& rItalic, weight::type& rWeight,

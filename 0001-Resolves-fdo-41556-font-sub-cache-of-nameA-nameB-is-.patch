@@ -1,0 +1,76 @@
+From 3f9a28f1f704967446b411b3b7e176deeb78ca83 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 19 Oct 2011 16:03:29 +0100
+Subject: [PATCH] Resolves: fdo#41556 font sub cache of nameA => nameB is too
+ simplistic
+
+---
+ vcl/source/gdi/outdev3.cxx      |    2 +-
+ vcl/unx/generic/gdi/salgdi3.cxx |   21 +++++----------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
+
+diff --git a/vcl/source/gdi/outdev3.cxx b/vcl/source/gdi/outdev3.cxx
+index 4d21f5d..b0f59cd 100755
+--- a/vcl/source/gdi/outdev3.cxx
++++ b/vcl/source/gdi/outdev3.cxx
+@@ -3304,7 +3304,6 @@ ImplFontMetricData::ImplFontMetricData( const ImplFontSelectData& rFontSelData )
+ {
+     // initialize the members provided by the font request
+     mnWidth        = rFontSelData.mnWidth;
+-    mnSlant        = rFontSelData.GetSlant();
+     mnOrientation  = sal::static_int_cast<short>(rFontSelData.mnOrientation);
+ 
+     // intialize the used font name
+@@ -3329,6 +3328,7 @@ ImplFontMetricData::ImplFontMetricData( const ImplFontSelectData& rFontSelData )
+     mnDescent      = 0;
+     mnIntLeading   = 0;
+     mnExtLeading   = 0;
++    mnSlant        = 0;
+     mnMinKashida   = 0;
+ 
+     // reset metrics that are usually derived from the measurements
+diff --git a/vcl/unx/generic/gdi/salgdi3.cxx b/vcl/unx/generic/gdi/salgdi3.cxx
+index 7c94d40..0ced020 100644
+--- a/vcl/unx/generic/gdi/salgdi3.cxx
++++ b/vcl/unx/generic/gdi/salgdi3.cxx
+@@ -847,11 +847,6 @@ class FcPreMatchSubstititution
+ {
+ public:
+     bool FindFontSubstitute( ImplFontSelectData& ) const;
+-
+-private:
+-    typedef ::boost::unordered_map< ::rtl::OUString, ::rtl::OUString, ::rtl::OUStringHash >
+-        CachedFontMapType;
+-    mutable CachedFontMapType maCachedFontMap;
+ };
+ 
+ class FcGlyphFallbackSubstititution
+@@ -945,20 +940,14 @@ bool FcPreMatchSubstititution::FindFontSubstitute( ImplFontSelectData &rFontSelD
+     ||  0 == rFontSelData.maSearchName.CompareIgnoreCaseToAscii( "opensymbol", 10) )
+         return false;
+ 
+-    CachedFontMapType::const_iterator itr = maCachedFontMap.find(rFontSelData.maTargetName);
+-    if (itr != maCachedFontMap.end())
+-    {
+-        // Cached substitution pair
+-        rFontSelData.maSearchName = itr->second;
+-        return true;
+-    }
+-
++    //Note: see fdo#41556 if you feel compelled to cache the results here,
++    //remember that fontconfig can return e.g. an italic font for a non-italic
++    //input and/or different fonts depending on fontsize, bold, etc settings so
++    //don't cache just on the name, cache on all the input and be don't just
++    //return the original selection data with the fontname updated
+     rtl::OUString aDummy;
+     const ImplFontSelectData aOut = GetFcSubstitute( rFontSelData, aDummy );
+ 
+-    maCachedFontMap.insert(
+-        CachedFontMapType::value_type(rFontSelData.maTargetName, aOut.maSearchName));
+-
+     if( !aOut.maSearchName.Len() )
+         return false;
+ 
+-- 
+1.7.6.4
+

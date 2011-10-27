@@ -129,6 +129,7 @@ Patch34: 0001-fedora-gcc-4.6.1.patch
 Patch35: 0001-make-sure-we-stay-in-array-bounds.patch
 Patch36: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 Patch37: 0001-add-these-back-in-to-silence-the-MAXFILTER-assert.patch
+Patch38: 0001-add-Oracle-Java-1.7.0-recognition.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -808,6 +809,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .make-sure-we-stay-in-array-bounds.patch
 %patch36 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 %patch37 -p1 -b .add-these-back-in-to-silence-the-MAXFILTER-assert.patch
+%patch38 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2110,9 +2112,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Oct 26 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-15-UNBUILT
+* Thu Oct 27 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-15
 - Related: rhbz#748585 throw the additional requires away, because it
   does not help
+- add possible fix for detection of java 7
 
 * Tue Oct 25 2011 David Tardon <dtardon@redhat.com> - 3.4.3.2-14
 - Resolves: rhbz#748585 libreoffice installs Java 7

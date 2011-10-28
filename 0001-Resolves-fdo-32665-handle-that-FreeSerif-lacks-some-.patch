@@ -35,7 +35,42 @@ index be91349..a4f5f7f 100644
      #ifndef FC_FONTFORMAT
          #define FC_FONTFORMAT "fontformat"
      #endif
-@@ -1260,7 +1263,7 @@
+@@ -145,6 +148,7 @@
+     FcResult		(*m_pFcPatternGetString)(const FcPattern*,const char*,int,FcChar8**);
+     FcResult		(*m_pFcPatternGetInteger)(const FcPattern*,const char*,int,int*);
+     FcResult		(*m_pFcPatternGetDouble)(const FcPattern*,const char*,int,double*);
++    FcResult		(*m_pFcPatternGetMatrix)(const FcPattern*,const char*,int,FcMatrix**);
+     FcResult		(*m_pFcPatternGetBool)(const FcPattern*,const char*,int,FcBool*);
+     void			(*m_pFcDefaultSubstitute)(FcPattern *);
+     FcPattern*		(*m_pFcFontSetMatch)(FcConfig*,FcFontSet**, int, FcPattern*,FcResult*);    
+@@ -255,6 +259,9 @@
+     FcResult FcPatternGetDouble( const FcPattern* pPattern, const char* object, int n, double* s )
+     { return m_pFcPatternGetDouble( pPattern, object, n, s ); }
+ 
++    FcResult FcPatternGetMatrix( const FcPattern* pPattern, const char* object, int n, FcMatrix** s )
++    { return m_pFcPatternGetMatrix( pPattern, object, n, s ); }
++
+     FcResult FcPatternGetBool( const FcPattern* pPattern, const char* object, int n, FcBool* s )
+     { return m_pFcPatternGetBool( pPattern, object, n, s ); }
+     FcBool FcConfigAppFontAddFile( FcConfig* pConfig, const FcChar8* pFileName )
+@@ -381,6 +388,8 @@
+         loadSymbol( "FcPatternGetInteger" );
+     m_pFcPatternGetDouble = (FcResult(*)(const FcPattern*,const char*,int,double*))
+         loadSymbol( "FcPatternGetDouble" );
++    m_pFcPatternGetMatrix = (FcResult(*)(const FcPattern*,const char*,int,FcMatrix**))
++        loadSymbol( "FcPatternGetMatrix" );
+     m_pFcPatternGetBool = (FcResult(*)(const FcPattern*,const char*,int,FcBool*))
+         loadSymbol( "FcPatternGetBool" );
+     m_pFcConfigAppFontAddFile = (FcBool(*)(FcConfig*, const FcChar8*))
+@@ -453,6 +462,7 @@
+             m_pFcPatternGetString			&&
+             m_pFcPatternGetInteger			&&
+             m_pFcPatternGetDouble			&&
++            m_pFcPatternGetMatrix			&&
+             m_pFcPatternGetBool				&&
+             m_pFcConfigAppFontAddFile				&&
+             m_pFcConfigAppFontAddDir				&&
+@@ -1260,7 +1270,7 @@
  rtl::OUString PrintFontManager::Substitute(const rtl::OUString& rFontName,
      rtl::OUString& rMissingCodes, const rtl::OString &rLangAttrib,
      italic::type &rItalic, weight::type &rWeight,
@@ -44,7 +79,7 @@ index be91349..a4f5f7f 100644
  {
      rtl::OUString aName;
      FontCfgWrapper& rWrapper = FontCfgWrapper::get();
-@@ -1353,6 +1356,17 @@
+@@ -1353,6 +1363,17 @@
                      rPitch = convertSpacing(val);
                  if ( FcResultMatch == rWrapper.FcPatternGetInteger( pSet->fonts[0], FC_WIDTH, 0, &val))
                      rWidth = convertWidth(val);

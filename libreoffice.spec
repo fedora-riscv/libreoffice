@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.4.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2098,6 +2098,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Oct 28 2011 Rex Dieter <rdieter@fedoraproject.org> - 1:3.4.4.1-4
+- rebuild(poppler)
+
 * Thu Oct 27 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.1-3
 - Resolves: rhbz#665800 missing glyph symbol shown when toggling bold/italic
   for Sinhala text

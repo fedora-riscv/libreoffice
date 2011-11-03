@@ -26,8 +26,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.4.1
-Release:        4%{?dist}
+Version:        3.4.4.2
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -115,15 +115,14 @@ Patch19: 0001-Related-rhbz-711087-band-aid.patch
 Patch20: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 Patch21: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 Patch22: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
-Patch23: 0001-this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-Patch24: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
-Patch25: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
-Patch26: gdb-pretty-printers.patch
-Patch27: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
-Patch28: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
-Patch29: 0001-avoid-using-com.sun.org-apis.patch
-Patch30: 0001-add-Oracle-Java-1.7.0-recognition.patch
-Patch31: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
+Patch23: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch24: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+Patch25: gdb-pretty-printers.patch
+Patch26: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
+Patch27: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+Patch28: 0001-avoid-using-com.sun.org-apis.patch
+Patch29: 0001-add-Oracle-Java-1.7.0-recognition.patch
+Patch30: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -788,15 +787,14 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch21 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
 %patch22 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
-%patch23 -p1 -b .this-is-definitely-not-present-in-qt-4.8.0-beta1.patch
-%patch24 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
-%patch25 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
-%patch26 -p1
-%patch27 -p1 -b .fdo37195-migrationoo3-not-registered.patch
-%patch28 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
-%patch29 -p1 -b .avoid-using-com.sun.org-apis.patch
-%patch30 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
-%patch31 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
+%patch23 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
+%patch24 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
+%patch25 -p1
+%patch26 -p1 -b .fdo37195-migrationoo3-not-registered.patch
+%patch27 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
+%patch28 -p1 -b .avoid-using-com.sun.org-apis.patch
+%patch29 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
+%patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2098,6 +2096,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Nov 03 2011 David Tardon <dtardon@redhat.com> - 3.4.4.2-1
+- 3.4.4 rc2
+
 * Fri Oct 28 2011 Rex Dieter <rdieter@fedoraproject.org> - 1:3.4.4.1-4
 - rebuild(poppler)
 

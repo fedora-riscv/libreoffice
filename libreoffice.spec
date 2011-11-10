@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.4.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -123,6 +123,7 @@ Patch27: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch28: 0001-avoid-using-com.sun.org-apis.patch
 Patch29: 0001-add-Oracle-Java-1.7.0-recognition.patch
 Patch30: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
+Patch31: Backport-reading-AES-encrypted-ODF-1.2-documents.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -795,6 +796,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .avoid-using-com.sun.org-apis.patch
 %patch29 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
 %patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
+%patch31 -p1 -b .Backport-reading-AES-encrypted-ODF-1.2-documents.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2096,6 +2098,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Thu Nov 10 2011 Stephan Bergmann <sbergman@redhat.com> - 3.4.4.2-2
+- Patch to backport reading AES-encrypted ODF 1.2 documents
+
 * Thu Nov 03 2011 David Tardon <dtardon@redhat.com> - 3.4.4.2-1
 - 3.4.4 rc2
 

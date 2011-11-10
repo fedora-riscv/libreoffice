@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.4.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -52,7 +52,7 @@ Source16:       %{source_url}/libreoffice-testing-%{version}.tar.bz2
 Source17:       %{source_url}/libreoffice-ure-%{version}.tar.bz2
 Source18:       %{source_url}/libreoffice-writer-%{version}.tar.bz2
 Source19:       %{source_url}/libreoffice-translations-%{version}.tar.bz2
-Source20:       http://download.go-oo.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source20:       http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
 Source22:       libreoffice-multiliblauncher.sh
 Source23:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
@@ -65,25 +65,33 @@ Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
+Source31:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
+%if 0%{?rhel}
+Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
+Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+%endif
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-1.6.0-devel, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel, boost-devel, zlib-devel, db4-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
 BuildRequires:  gecko-devel, libwpd-devel, hunspell-devel, unixODBC-devel
-BuildRequires:  db4-devel, sane-backends-devel, libicu-devel
+BuildRequires:  sane-backends-devel, libicu-devel, libXinerama-devel
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
-BuildRequires:  mdds-devel, lpsolve-devel, bsh, lucene, lucene-contrib
+BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl-Archive-Zip
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
-BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
-BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
-BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
-BuildRequires:  kdelibs4-devel, font(:lang=en)
-BuildRequires:  perl-Archive-Zip, perl-Digest-MD5
+BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
+BuildRequires:  pentaho-reporting-flow-engine, vigra-devel
+BuildRequires:  font(:lang=en)
+%if 0%{?fedora}
+BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
+BuildRequires:  libwps-devel, kdelibs4-devel, junit4, perl-Digest-MD5
+%else
+BuildRequires:  hsqldb
+%endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
@@ -124,6 +132,12 @@ Patch28: 0001-avoid-using-com.sun.org-apis.patch
 Patch29: 0001-add-Oracle-Java-1.7.0-recognition.patch
 Patch30: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
 Patch31: Backport-reading-AES-encrypted-ODF-1.2-documents.patch
+%if 0%{?rhel}
+Patch32: libreoffice-libwpd08-1.patch
+Patch33: libreoffice-libwpd08-2.patch
+Patch34: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
+Patch35: libreoffice-gcj.patch
+%endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -495,6 +509,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
+%if 0%{?fedora}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -502,6 +517,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+%endif
 
 %if 0%{?_enable_debug_packages}
 
@@ -797,6 +813,12 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
 %patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
 %patch31 -p1 -b .Backport-reading-AES-encrypted-ODF-1.2-documents.patch
+%if 0%{?rhel}
+%patch32 -p1 -b .libreoffice-libwpd08-1.patch
+%patch33 -p1 -R -b .libreoffice-libwpd08-2.patch
+%patch34 -p1 -R -b .wpsimport
+%patch35 -p1 -b .libreoffice-gcj.patch
+%endif
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -832,6 +854,12 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
+%if 0%{?rhel}
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%else
+%define distrooptions --without-system-hsqldb --enable-kde4
+%endif
+
 autoconf
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
@@ -843,7 +871,7 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --enable-ext-scripting-python --enable-kde4 --with-system-libtextcat \
+ --enable-ext-scripting-python --with-system-libtextcat \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
@@ -851,8 +879,8 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --with-external-libtextcat-data \
- --without-system-translate-toolkit --without-system-hsqldb
+ --with-external-libtextcat-data --without-system-translate-toolkit \
+ %{distrooptions}
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources
@@ -865,32 +893,14 @@ cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
 cp %{SOURCE31} ext_sources
+%if 0%{?rhel}
+cp %{SOURCE32} ext_sources
+cp %{SOURCE33} ext_sources
+%endif
 touch src.downloaded
 
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
-
-#HANGING JAVA HACK
-cat << \EOF > solenv/bin/java
-#!/bin/sh
-status=1
-count=1
-while [ $status -ne 0 -a $count -lt 10 ]
-do
-        timeout -k 5m 5m $REALJAVA $*
-        status=$?
-        if [ $status -ne 0 ]; then
-                echo $REALJAVA hung, trying again, attempt $count
-        fi
-        count=$[count+1]
-done
-exit $status
-EOF
-chmod +x solenv/bin/java
-export REALJAVA=`which java`
-export PATH=solenv/bin:$PATH
-which java
-#HANGING JAVA HACK
 
 cd instsetoo_native
 if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
@@ -1314,7 +1324,12 @@ cd ../smoketestoo_native
 unset WITH_LANG
 #JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
 #SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
+%if 0%{?rhel}
+unset SOLAR_JAVA
+JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
+%else
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1379,6 +1394,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/gnome-open-url.bin
 %{basisinstdir}/program/hatchwindowfactory.uno.so
 %{basisinstdir}/program/i18nsearch.uno.so
+%{basisinstdir}/program/kde-open-url
 %{basisinstdir}/program/legacy_binfilters.rdb
 %{basisinstdir}/program/libacc%{SOPOST}.so
 %{basisinstdir}/program/libadabas%{SOPOST}.so
@@ -1514,7 +1530,9 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libvbahelper%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gen%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gtk%{SOPOST}.so
+%if 0%{?fedora}
 %{basisinstdir}/program/libwpgimport%{SOPOST}.so
+%endif
 %{basisinstdir}/program/libxmlfa%{SOPOST}.so
 %{basisinstdir}/program/libxmlfd%{SOPOST}.so
 %{basisinstdir}/program/libxmx%{SOPOST}.so
@@ -1777,7 +1795,9 @@ done
 %{basisinstdir}/help/en/sdatabase.*
 %dir %{basisinstdir}/program
 %dir %{basisinstdir}/program/classes
+%if 0%{?fedora}
 %{basisinstdir}/program/classes/hsqldb.jar
+%endif
 %{basisinstdir}/program/classes/sdbc_hsqldb.jar
 %{basisinstdir}/program/libabp%{SOPOST}.so
 %{basisinstdir}/program/libadabasui%{SOPOST}.so
@@ -1928,7 +1948,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/libhwp.so
 %{basisinstdir}/program/liblwpft%{SOPOST}.so
 %{basisinstdir}/program/libmsword%{SOPOST}.so
+%if 0%{?fedora}
 %{basisinstdir}/program/libmsworks%{SOPOST}.so
+%endif
 %{basisinstdir}/program/libswd%{SOPOST}.so
 %{basisinstdir}/program/libswui%{SOPOST}.so
 %{basisinstdir}/program/libt602filter%{SOPOST}.so
@@ -2088,6 +2110,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
+%if 0%{?fedora}
 %files kde
 %defattr(-,root,root,-)
 %dir %{basisinstdir}
@@ -2095,9 +2118,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde4be1.uno.so
 %{basisinstdir}/program/fps_kde4.uno.so
 %{basisinstdir}/program/libvclplug_kde4%{SOPOST}.so
-%{basisinstdir}/program/kde-open-url
+%endif
 
 %changelog
+* Thu Nov 10 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-3
+
 * Thu Nov 10 2011 Stephan Bergmann <sbergman@redhat.com> - 3.4.4.2-2
 - Patch to backport reading AES-encrypted ODF 1.2 documents
 

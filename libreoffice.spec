@@ -71,7 +71,7 @@ Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac
 Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel, boost-devel, zlib-devel, db4-devel
+BuildRequires:  binutils, java-devel <= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -84,7 +84,7 @@ BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl-Archive-Zip
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
-BuildRequires:  pentaho-reporting-flow-engine, vigra-devel
+BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, db4-devel
 BuildRequires:  font(:lang=en)
 %if 0%{?fedora}
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel

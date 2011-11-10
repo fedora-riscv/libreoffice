@@ -139,6 +139,7 @@ Patch34: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch35: libreoffice-gcj.patch
 Patch36: libreoffice-rhel6poppler.patch
 %endif
+Patch37: 0001-Related-i58612-don-t-crash-anyway.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -821,6 +822,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .gcj.patch
 %patch36 -p0 -b .rhel6poppler.patch
 %endif
+%patch37 -p1 -b .i58612-don-t-crash-anyway.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2124,6 +2126,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Thu Nov 10 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-3
+- Related: fdo#42534 0001-Related-i58612-don-t-crash-anyway.patch
 
 * Thu Nov 10 2011 Stephan Bergmann <sbergman@redhat.com> - 3.4.4.2-2
 - Patch to backport reading AES-encrypted ODF 1.2 documents

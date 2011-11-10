@@ -137,6 +137,7 @@ Patch32: libreoffice-libwpd08-1.patch
 Patch33: libreoffice-libwpd08-2.patch
 Patch34: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch35: libreoffice-gcj.patch
+Patch36: libreoffice-rhel6poppler.patch
 %endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -814,10 +815,11 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
 %patch31 -p1 -b .Backport-reading-AES-encrypted-ODF-1.2-documents.patch
 %if 0%{?rhel}
-%patch32 -p1 -b .libreoffice-libwpd08-1.patch
+%patch32 -p1 -b .libwpd08-1.patch
 %patch33 -p1 -R -b .libreoffice-libwpd08-2.patch
 %patch34 -p1 -R -b .wpsimport
-%patch35 -p1 -b .libreoffice-gcj.patch
+%patch35 -p1 -b .gcj.patch
+%patch36 -p0 -b .rhel6poppler.patch
 %endif
 
 # these are horribly incomplete--empty translations and copied english

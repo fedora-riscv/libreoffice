@@ -1,3 +1,4 @@
+%define libo_version 3.3.3
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # don't worry about whitespace for now
@@ -19,6 +20,8 @@
 %define stlflags --without-stlport
 %endif
 
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+
 %if %{langpacks}
 %define langpack_langs af ar bg bn ca cs cy da de dz el en-US es et eu fi fr ga gl gu pa-IN he hi hu hr it ja ko lt ms nb nl nn nr pl pt pt-BR ru sh sk sl sr ss st sv ta th tr ve xh zh-CN zh-TW zu ns tn ts as mr ml or te ur kn uk mai ro si
 %else
@@ -28,32 +31,32 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.3.3.1
+Version:        %{libo_version}.1
 Release:        8%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        http://download.documentfoundation.org/libreoffice/src/libreoffice-artwork-%{version}.tar.bz2
-Source1:        http://download.documentfoundation.org/libreoffice/src/libreoffice-base-%{version}.tar.bz2
-Source2:        http://download.documentfoundation.org/libreoffice/src/libreoffice-bootstrap-%{version}.tar.bz2
-Source3:        http://download.documentfoundation.org/libreoffice/src/libreoffice-calc-%{version}.tar.bz2
-Source4:        http://download.documentfoundation.org/libreoffice/src/libreoffice-components-%{version}.tar.bz2
-Source5:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extensions-%{version}.tar.bz2
-Source6:        http://download.documentfoundation.org/libreoffice/src/libreoffice-extras-%{version}.tar.bz2
-Source7:        http://download.documentfoundation.org/libreoffice/src/libreoffice-filters-%{version}.tar.bz2
-Source8:        http://download.documentfoundation.org/libreoffice/src/libreoffice-help-%{version}.tar.bz2
-Source9:        http://download.documentfoundation.org/libreoffice/src/libreoffice-impress-%{version}.tar.bz2
-Source10:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-core-%{version}.tar.bz2
-Source11:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-%{version}.tar.bz2
-Source12:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-extern-sys-%{version}.tar.bz2
-Source13:       http://download.documentfoundation.org/libreoffice/src/libreoffice-libs-gui-%{version}.tar.bz2
-Source14:       http://download.documentfoundation.org/libreoffice/src/libreoffice-postprocess-%{version}.tar.bz2
-Source15:       http://download.documentfoundation.org/libreoffice/src/libreoffice-sdk-%{version}.tar.bz2
-Source16:       http://download.documentfoundation.org/libreoffice/src/libreoffice-testing-%{version}.tar.bz2
-Source17:       http://download.documentfoundation.org/libreoffice/src/libreoffice-ure-%{version}.tar.bz2
-Source18:       http://download.documentfoundation.org/libreoffice/src/libreoffice-writer-%{version}.tar.bz2
-Source19:       http://download.documentfoundation.org/libreoffice/src/libreoffice-l10n-%{version}.tar.bz2
+Source0:        %{source_url}/libreoffice-artwork-%{version}.tar.bz2
+Source1:        %{source_url}/libreoffice-base-%{version}.tar.bz2
+Source2:        %{source_url}/libreoffice-bootstrap-%{version}.tar.bz2
+Source3:        %{source_url}/libreoffice-calc-%{version}.tar.bz2
+Source4:        %{source_url}/libreoffice-components-%{version}.tar.bz2
+Source5:        %{source_url}/libreoffice-extensions-%{version}.tar.bz2
+Source6:        %{source_url}/libreoffice-extras-%{version}.tar.bz2
+Source7:        %{source_url}/libreoffice-filters-%{version}.tar.bz2
+Source8:        %{source_url}/libreoffice-help-%{version}.tar.bz2
+Source9:        %{source_url}/libreoffice-impress-%{version}.tar.bz2
+Source10:       %{source_url}/libreoffice-libs-core-%{version}.tar.bz2
+Source11:       %{source_url}/libreoffice-libs-extern-%{version}.tar.bz2
+Source12:       %{source_url}/libreoffice-libs-extern-sys-%{version}.tar.bz2
+Source13:       %{source_url}/libreoffice-libs-gui-%{version}.tar.bz2
+Source14:       %{source_url}/libreoffice-postprocess-%{version}.tar.bz2
+Source15:       %{source_url}/libreoffice-sdk-%{version}.tar.bz2
+Source16:       %{source_url}/libreoffice-testing-%{version}.tar.bz2
+Source17:       %{source_url}/libreoffice-ure-%{version}.tar.bz2
+Source18:       %{source_url}/libreoffice-writer-%{version}.tar.bz2
+Source19:       %{source_url}/libreoffice-l10n-%{version}.tar.bz2
 Source20:       http://tools.openoffice.org/unowinreg_prebuild/680/unowinreg.dll
 Source21:       redhat-langpacks.tar.gz
 Source22:       libreoffice-multiliblauncher.sh

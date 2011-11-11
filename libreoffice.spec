@@ -1314,7 +1314,7 @@ print-DLLPOSTFIX :
     @echo \$(DLLPOSTFIX)
 EOF
 libsuffix=`dmake -f dllpostfix.mk print-DLLPOSTFIX`
-for f in `find %{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
+for f in `find $RPM_BUILD_ROOT/%{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
     mv "$f" "${f%lo-gdb.py}${libsuffix}-gdb.py"
 done
 

@@ -1,3 +1,4 @@
+%define libo_version 3.4.4
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -13,8 +14,8 @@
 %define langpacks 1
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-#%define source_url http://download.documentfoundation.org/libreoffice/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+#%%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
 %if %{langpacks}
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
@@ -26,7 +27,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.4.2
+Version:        %{libo_version}.2
 Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity

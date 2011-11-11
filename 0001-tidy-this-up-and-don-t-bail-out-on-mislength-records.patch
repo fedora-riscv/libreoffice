@@ -207,3 +207,15 @@ index 81b73e5..daee39b 100644
  }
  
  TBCHeader::TBCHeader() : bSignature( 0x3 )
+diff -up libreoffice-3.3.4.1/sw/source/filter/ww8/ww8par2.cxx.dt libreoffice-3.3.4.1/sw/source/filter/ww8/ww8par2.cxx
+--- libreoffice-3.3.4.1/sw/source/filter/ww8/ww8par2.cxx.dt	2011-11-12 11:04:09.612352663 +0100
++++ libreoffice-3.3.4.1/sw/source/filter/ww8/ww8par2.cxx	2011-11-12 11:04:15.324220608 +0100
+@@ -3793,7 +3793,7 @@ void WW8RStyle::ImportSprms(BYTE *pSprms
+     while (const sal_uInt8* pSprm = aSprmIter.GetSprms())
+     {
+         pIo->ImportSprm(pSprm);
+-        aSprmIter++;
++        aSprmIter.advance();
+     }
+ 
+     pParaSprms = 0;

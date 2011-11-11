@@ -1,4 +1,4 @@
-%define libo_version 3.3.3
+%define libo_version 3.3.4
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # don't worry about whitespace for now
@@ -32,7 +32,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        8%{?dist}
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -154,18 +154,16 @@ Patch62: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
 Patch63: 0001-Related-rhbz-711087-band-aid.patch
 Patch64: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
 Patch65: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-Patch66: 0001-fix-regression-in-SvGlobalName-operator.patch
-Patch67: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
-Patch68: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
-Patch69: 0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
-Patch70: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
-Patch71: 0001-Resolves-fdo-39159-don-t-restore-original-view-setti.patch
-Patch72: 0001-catch-exceptions-from-missing-components-here-as-wel.patch
-Patch73: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
-Patch74: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
-Patch75: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
-Patch76: 2011-2713.patch
-Patch77: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
+Patch66: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
+Patch67: 0001-Resolves-rhbz-725144-wrong-csh-syntax.patch
+Patch68: 0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
+Patch69: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+Patch70: 0001-Resolves-fdo-39159-don-t-restore-original-view-setti.patch
+Patch71: 0001-catch-exceptions-from-missing-components-here-as-wel.patch
+Patch72: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+Patch73: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
+Patch74: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
+Patch75: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -836,18 +834,16 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch63 -p1 -b .rhbz711087-band-aid.patch
 %patch64 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
 %patch65 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-%patch66 -p1 -b .fix-regression-in-SvGlobalName-operator.patch
-%patch67 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
-%patch68 -p1 -b .rhbz725144-wrong-csh-syntax.patch
-%patch69 -p1 -b .0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
-%patch70 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
-%patch71 -p1 -b .fdo39159-don-t-restore-original-view-setti.patch
-%patch72 -p1 -b .catch-exceptions-from-missing-components-here-as-wel.patch
-%patch73 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
-%patch74 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
-%patch75 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
-%patch76 -p1 -b .2011-2713.patch
-%patch77 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
+%patch66 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
+%patch67 -p1 -b .rhbz725144-wrong-csh-syntax.patch
+%patch68 -p1 -b .0001-This-makefile-is-for-a-standard-Make-so-use-TABs.patch
+%patch69 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
+%patch70 -p1 -b .fdo39159-don-t-restore-original-view-setti.patch
+%patch71 -p1 -b .catch-exceptions-from-missing-components-here-as-wel.patch
+%patch72 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
+%patch73 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
+%patch74 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
+%patch75 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2192,8 +2188,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Fri Oct 21 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-8-UNBUILT
+* Fri Nov 11 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1-UNBUILT
 - Resolves: rhbz#747356 let Qt call XInitThreads
+- new upstream version 3.3.4
 
 * Wed Oct 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7
 - Resolves: CVE-2011-2713, binary .doc parsing fixes

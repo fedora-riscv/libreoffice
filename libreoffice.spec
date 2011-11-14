@@ -71,7 +71,7 @@ Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac
 Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-1.6.0-devel, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel <= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -141,6 +141,8 @@ Patch36: libreoffice-rhel6poppler.patch
 %endif
 Patch37: 0001-Related-i58612-don-t-crash-anyway.patch
 Patch38: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
+Patch39: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
+Patch40: solenv.fix.mk.inheritance.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -825,6 +827,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch37 -p1 -b .i58612-don-t-crash-anyway.patch
 %patch38 -p1 -b .fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
+%patch39 -p1 -b .rhbz753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
+%patch40 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

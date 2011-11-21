@@ -164,6 +164,7 @@ Patch72: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch73: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 Patch74: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 Patch75: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
+Patch76: gdb-pretty-printers.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -541,6 +542,41 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
+%if 0%{?_enable_debug_packages}
+
+%define debug_package %{nil}
+%global __debug_package 1
+
+%package debuginfo
+Summary: Debug information for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+Requires: libreoffice-core = %{epoch}:%{version}-%{release}
+Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+
+%description debuginfo
+This package provides debug information for package %{name}.
+Debug information is useful when developing applications that use this
+package or when debugging this package.
+
+%files debuginfo -f debugfiles.list
+%defattr(-,root,root)
+
+%package gdb-debug-support
+Summary: Additional support for debugging with gdb
+Group: Development/Debug
+Requires: gdb
+AutoReqProv: 0
+
+%description gdb-debug-support
+This package provides gdb pretty printers for package %{name}.
+
+%files gdb-debug-support
+%defattr(-,root,root)
+%{_datadir}/gdb/auto-load%{baseinstdir}
+%{_datadir}/libreoffice/gdb
+
+%endif
 
 # Defines a language pack subpackage.
 #
@@ -844,6 +880,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch73 -p1 -b .On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 %patch74 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
 %patch75 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
+%patch76 -p1 -b .gdb-pretty-printers.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -851,6 +888,8 @@ touch scripting/util/provider/javascript/delzip
 
 cp %{PATCH44} mdds
 cp %{PATCH45} mdds
+
+chmod +x solenv/bin/install-gdb-printers
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -1386,6 +1425,21 @@ cp -r psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdi
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 # rhbz#465664 to get lucene working for functional help
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
+
+export DESTDIR=$RPM_BUILD_ROOT
+install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
+# fix arch-dependent library suffix
+cd solenv/gdb
+cat <<EOF > dllpostfix.mk
+PRJ=..
+.INCLUDE : settings.mk
+print-DLLPOSTFIX :
+    @echo \$(DLLPOSTFIX)
+EOF
+libsuffix=`dmake -f dllpostfix.mk print-DLLPOSTFIX`
+for f in `find $RPM_BUILD_ROOT/%{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
+    mv "$f" "${f%lo-gdb.py}${libsuffix}-gdb.py"
+done
 
 %check
 source ./Linux*Env.Set.sh
@@ -2191,6 +2245,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Nov 11 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1-UNBUILT
 - Resolves: rhbz#747356 let Qt call XInitThreads
 - new upstream version 3.3.4
+- add gdb pretty printers
 
 * Wed Oct 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7
 - Resolves: CVE-2011-2713, binary .doc parsing fixes

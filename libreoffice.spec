@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.4.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -144,6 +144,7 @@ Patch38: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
 Patch39: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 Patch40: solenv.fix.mk.inheritance.patch
 Patch41: libreoffice-ppc64.patch
+Patch42: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -831,6 +832,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch39 -p1 -b .rhbz753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 %patch40 -p1 -b .solenv.fix.mk.inheritance.patch
 %patch41 -p1 -b .libreoffice-ppc64.patch
+%patch42 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2133,6 +2135,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 22 2011 Lukas Tinkl <ltinkl@redhat.com> - 3.4.4.2-4
+- Resolves: rhbz#751290 - [kde] LibreOffice has black on dark-grey tooltip-texts
+
 * Fri Nov 11 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-3
 - Related: fdo#42534 0001-Related-i58612-don-t-crash-anyway.patch
 - Resolves: fdo#42749 KDE oxygen theme and scrollbars

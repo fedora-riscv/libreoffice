@@ -165,6 +165,7 @@ Patch73: 0001-On-recovery-from-an-autosave-file-use-DefaultFilter-.patch
 Patch74: 0001-Fix-for-fdo-35513-avoid-crash-while-processing-incor.patch
 Patch75: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 Patch76: gdb-pretty-printers.patch
+Patch77: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -881,6 +882,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch74 -p1 -b .fdo-35513-avoid-crash-while-processing-incor.patch
 %patch75 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 %patch76 -p1 -b .gdb-pretty-printers.patch
+%patch77 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2242,10 +2244,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Fri Nov 11 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1-UNBUILT
+* Tue Nov 29 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1-UNBUILT
 - Resolves: rhbz#747356 let Qt call XInitThreads
 - new upstream version 3.3.4
 - add gdb pretty printers
+- Resolves: rhbz#757653 fix headless crash with cairo canvas
 
 * Wed Oct 05 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.3.1-7
 - Resolves: CVE-2011-2713, binary .doc parsing fixes

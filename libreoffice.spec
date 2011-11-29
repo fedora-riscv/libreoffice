@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -123,6 +123,7 @@ Patch27: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
 Patch28: 0001-add-Oracle-Java-1.7.0-recognition.patch
 Patch29: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
 Patch30: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
+Patch31: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -794,7 +795,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
 %patch28 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
 %patch29 -p1 -b .fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
-%patch30 -p1 -b .Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
+%patch30 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
+%patch31 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2097,13 +2099,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Nov 23 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.1-3
+* Tue Nov 29 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-4.UNBUILT
+- Resolves: rhbz#757653 fix headless crash with cairo canvas
+
+* Wed Nov 23 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-3
 - Resolves: rhbz#751290 kde black on dark-grey tooltip-texts
 
-* Fri Nov 11 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.1-2
+* Fri Nov 11 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-2
 - Resolves: fdo#42749 KDE oxygen theme and scrollbars
 
-* Fri Nov 11 2011 David Tardon <dtardon@redhat.com> - 3.4.4.1-1
+* Fri Nov 11 2011 David Tardon <dtardon@redhat.com> - 3.4.4.2-1
 - new upstream version 3.4.4
 
 * Thu Nov 10 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.3.2-16

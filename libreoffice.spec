@@ -84,7 +84,7 @@ BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
 BuildRequires:  font(:lang=en)
-%if 0%{!?rhel}
+%if %{undefined rhel}
 BuildRequires:  kdelibs4-devel
 %endif
 
@@ -498,7 +498,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%if 0%{!?rhel}
+%if %{undefined rhel}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -821,7 +821,7 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
-%if 0%{!?rhel}
+%if %{undefined rhel}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
@@ -839,7 +839,7 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if 0%{!?rhel}
+%if %{undefined rhel}
 %define distrooptions --enable-kde4
 %endif
 
@@ -2101,7 +2101,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
-%if 0%{!?rhel}
+%if %{undefined rhel}
 %files kde
 %defattr(-,root,root,-)
 %dir %{basisinstdir}

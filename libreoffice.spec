@@ -66,7 +66,7 @@ Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #backwards compatability.
 Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source31:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 7
 Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
@@ -86,11 +86,14 @@ BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, db4-devel
 BuildRequires:  font(:lang=en)
-%if 0%{?fedora}
-BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, kdelibs4-devel, junit4, perl-Digest-MD5
-%else
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb
+%else
+BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
+BuildRequires:  libwps-devel, junit4, perl-Digest-MD5
+%endif
+%if 0%{!?rhel}
+BuildRequires:  kdelibs4-devel
 %endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
@@ -132,7 +135,7 @@ Patch28: 0001-avoid-using-com.sun.org-apis.patch
 Patch29: 0001-add-Oracle-Java-1.7.0-recognition.patch
 Patch30: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
 Patch31: Backport-reading-AES-encrypted-ODF-1.2-documents.patch
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 7
 Patch32: libreoffice-libwpd08-1.patch
 Patch33: libreoffice-libwpd08-2.patch
 Patch34: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
@@ -517,7 +520,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%if 0%{?fedora}
+%if 0%{!?rhel}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -821,7 +824,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
 %patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
 %patch31 -p1 -b .Backport-reading-AES-encrypted-ODF-1.2-documents.patch
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 7
 %patch32 -p1 -b .libwpd08-1.patch
 %patch33 -p1 -R -b .libreoffice-libwpd08-2.patch
 %patch34 -p1 -R -b .wpsimport
@@ -854,10 +857,12 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
+%if 0%{!?rhel}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
+%endif
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -871,7 +876,11 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
+%if 0%{?rhel} < 7
 %define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%else
+%define distrooptions --without-system-hsqldb
+%endif
 %else
 %define distrooptions --without-system-hsqldb --enable-kde4
 %endif
@@ -909,7 +918,7 @@ cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
 cp %{SOURCE31} ext_sources
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 7
 cp %{SOURCE32} ext_sources
 cp %{SOURCE33} ext_sources
 %endif
@@ -1340,7 +1349,7 @@ cd ../smoketestoo_native
 unset WITH_LANG
 #JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
 #SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 7
 unset SOLAR_JAVA
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
 %else
@@ -1546,7 +1555,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libvbahelper%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gen%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gtk%{SOPOST}.so
-%if 0%{?fedora}
+%if 0%{!?rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/libwpgimport%{SOPOST}.so
 %endif
 %{basisinstdir}/program/libxmlfa%{SOPOST}.so
@@ -1811,7 +1820,7 @@ done
 %{basisinstdir}/help/en/sdatabase.*
 %dir %{basisinstdir}/program
 %dir %{basisinstdir}/program/classes
-%if 0%{?fedora}
+%if 0%{!?rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/classes/hsqldb.jar
 %endif
 %{basisinstdir}/program/classes/sdbc_hsqldb.jar
@@ -1964,7 +1973,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/libhwp.so
 %{basisinstdir}/program/liblwpft%{SOPOST}.so
 %{basisinstdir}/program/libmsword%{SOPOST}.so
-%if 0%{?fedora}
+%if 0%{!?rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/libmsworks%{SOPOST}.so
 %endif
 %{basisinstdir}/program/libswd%{SOPOST}.so
@@ -2126,7 +2135,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
-%if 0%{?fedora}
+%if 0%{!?rhel}
 %files kde
 %defattr(-,root,root,-)
 %dir %{basisinstdir}

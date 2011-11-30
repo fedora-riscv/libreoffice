@@ -1,0 +1,12 @@
+diff -up libreoffice-3.3.4.1/smoketestoo_native/data/makefile.mk.dt libreoffice-3.3.4.1/smoketestoo_native/data/makefile.mk
+--- libreoffice-3.3.4.1/smoketestoo_native/data/makefile.mk.dt	2011-11-30 08:42:24.046285026 +0100
++++ libreoffice-3.3.4.1/smoketestoo_native/data/makefile.mk	2011-11-30 08:42:39.481916046 +0100
+@@ -31,6 +31,8 @@ TARGET = data
+ 
+ .INCLUDE: settings.mk
+ 
++$(BIN)/smoketestdoc.sxw: $(OUT)/inc/myworld.mk
++
+ $(BIN)/smoketestdoc.sxw: $(MISC)/zip/smoketestdoc.sxw
+     $(COPY) $< $@
+ 

@@ -1,6 +1,6 @@
 diff -ru vcl.orig/unx/source/fontmanager/fontconfig.cxx vcl/unx/source/fontmanager/fontconfig.cxx
 --- vcl.orig/unx/source/fontmanager/fontconfig.cxx	2009-10-08 13:25:00.000000000 +0100
-+++ vcl/unx/source/fontmanager/fontconfig.cxx	2009-10-08 13:51:51.000000000 +0100
++++ vcl/generic/fontmanager/fontconfig.cxx	2009-10-08 13:51:51.000000000 +0100
 @@ -92,6 +92,9 @@
  
  #include "sal/alloca.h"
@@ -183,14 +183,3 @@ diff -ru vcl.orig/unx/source/fontmanager/fontconfig.cxx vcl/unx/source/fontmanag
      addtopattern(rWrapper, pPattern, rItalic, rWeight, rWidth, rPitch);
  
      // query fontconfig for a substitute
-diff -ru vcl.orig/util/makefile.mk vcl/util/makefile.mk
---- vcl.orig/util/makefile.mk	2009-10-08 13:25:00.000000000 +0100
-+++ vcl/util/makefile.mk	2009-10-08 13:25:09.000000000 +0100
-@@ -298,6 +298,7 @@
- # libs for generic plugin
- SHL2STDLIBS=\
- 			$(VCLLIB)\
-+            $(I18NUTILLIB)     \
-             $(I18NPAPERLIB)     \
-             $(I18NISOLANGLIB)     \
-             $(TOOLSLIB)         \

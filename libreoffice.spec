@@ -26,50 +26,41 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.4.2
-Release:        5%{?dist}
+Version:        3.5.0.0
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Source0:        %{source_url}/libreoffice-artwork-%{version}.tar.bz2
-Source1:        %{source_url}/libreoffice-base-%{version}.tar.bz2
-Source2:        %{source_url}/libreoffice-bootstrap-%{version}.tar.bz2
-Source3:        %{source_url}/libreoffice-calc-%{version}.tar.bz2
-Source4:        %{source_url}/libreoffice-components-%{version}.tar.bz2
-Source5:        %{source_url}/libreoffice-extensions-%{version}.tar.bz2
-Source6:        %{source_url}/libreoffice-extras-%{version}.tar.bz2
-Source7:        %{source_url}/libreoffice-filters-%{version}.tar.bz2
-Source8:        %{source_url}/libreoffice-help-%{version}.tar.bz2
-Source9:        %{source_url}/libreoffice-impress-%{version}.tar.bz2
-Source10:       %{source_url}/libreoffice-libs-core-%{version}.tar.bz2
-Source11:       %{source_url}/libreoffice-libs-extern-%{version}.tar.bz2
-Source12:       %{source_url}/libreoffice-libs-extern-sys-%{version}.tar.bz2
-Source13:       %{source_url}/libreoffice-libs-gui-%{version}.tar.bz2
-Source14:       %{source_url}/libreoffice-postprocess-%{version}.tar.bz2
-Source15:       %{source_url}/libreoffice-sdk-%{version}.tar.bz2
-Source16:       %{source_url}/libreoffice-testing-%{version}.tar.bz2
-Source17:       %{source_url}/libreoffice-ure-%{version}.tar.bz2
-Source18:       %{source_url}/libreoffice-writer-%{version}.tar.bz2
-Source19:       %{source_url}/libreoffice-translations-%{version}.tar.bz2
-Source20:       http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source21:       redhat-langpacks.tar.gz
-Source22:       libreoffice-multiliblauncher.sh
-Source23:       http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
-Source24:       http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source25:       http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
-Source26:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source27:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-Source28:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
-Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
+
+Source0:        %{source_url}/libreoffice-core-%{version}.tar.bz2
+Source1:        %{source_url}/libreoffice-binfilter-%{version}.tar.bz2
+Source2:        %{source_url}/libreoffice-help-%{version}.tar.bz2
+Source3:        %{source_url}/libreoffice-translations-%{version}.tar.bz2
+Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source5:        redhat-langpacks.tar.gz
+Source6:        libreoffice-multiliblauncher.sh
+Source7:        http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
+Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source11:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source12:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
+Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz 
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source31:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
+Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 %if 0%{?rhel}
-Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
-Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
+Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
+Source18:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
+# TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?
+Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
+
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel <= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
@@ -107,50 +98,21 @@ Patch3:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
 Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
-Patch7:  openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
-Patch8:  openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
-Patch9:  libreoffice-installfix.patch
-Patch10: 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
-Patch11: kde4configure.patch
-Patch12: 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
-Patch13: 0001-bubble-down-configure-test-findings-on-visibility.patch
-Patch14: vbahelper.visibility.patch
-Patch15: 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
-Patch16: 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
-Patch17: 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
-Patch18: 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
-Patch19: 0001-Related-rhbz-711087-band-aid.patch
-Patch20: 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
-Patch21: 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-Patch22: 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
-Patch23: 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
-Patch24: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
-Patch25: gdb-pretty-printers.patch
-Patch26: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
-Patch27: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
-Patch28: 0001-avoid-using-com.sun.org-apis.patch
-Patch29: 0001-add-Oracle-Java-1.7.0-recognition.patch
-Patch30: 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
-Patch31: Backport-reading-AES-encrypted-ODF-1.2-documents.patch
+Patch7:  libreoffice-installfix.patch
 %if 0%{?rhel}
-Patch32: libreoffice-libwpd08-1.patch
-Patch33: libreoffice-libwpd08-2.patch
-Patch34: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
-Patch35: libreoffice-gcj.patch
-Patch36: libreoffice-rhel6poppler.patch
+Patch8: libreoffice-libwpd08-1.patch
+Patch9: libreoffice-libwpd08-2.patch
+Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
+Patch11: libreoffice-gcj.patch
+Patch12: libreoffice-rhel6poppler.patch
 %endif
-Patch37: 0001-Related-i58612-don-t-crash-anyway.patch
-Patch38: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
-Patch39: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
-Patch40: solenv.fix.mk.inheritance.patch
-Patch41: libreoffice-ppc64.patch
-Patch42: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
-Patch43: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+Patch13: solenv.fix.mk.inheritance.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
 %define ureinstdir %{baseinstdir}/ure
+# TODO: bin basisinstdir
 %define basisinstdir %{baseinstdir}/basis3.4
 %define sdkinstdir %{baseinstdir}/basis3.4/sdk
 %define fontname opensymbol
@@ -779,7 +741,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 
 %prep
-%setup -q -c -a 1 -a 2 -a 3 -a 4 -a 5 -a 6 -a 7 -a 8 -a 9 -a 10 -a 11 -a 12 -a 13 -a 14 -a 15 -a 16 -a 17 -a 18 -a 19
+%setup -q -c -a 1 -a 2 -a 3
 for a in */*; do mv `pwd`/$a .; done
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -791,55 +753,26 @@ for a in */*; do mv `pwd`/$a .; done
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
 %patch1  -p1
+# TODO: fix patches
 %patch2  -p1 -b .ooo86080.unopkg.bodge.patch
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch5  -p0 -b .ooo101274.opening-a-directory.patch
-%patch6  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
-%patch7  -p1 -b .ooo108637.sfx2.uisavedir.patch
-%patch8  -p0 -b .ooo113273.desktop.resolvelinks.patch
-%patch9  -p1 -b .libreoffice-installfix.patch
-%patch10 -p1 -b .rhbz655686-get-order-of-shutdown-c.patch
-%patch11 -p0 -b .kde4configure.patch
-%patch12 -p1 -b .rhbz695509-crash-in-RefreshDocumentLB.patch
-%patch13 -p1 -b .bubble-down-configure-test-findings-on-visibility.patch
-%patch14 -p0 -b .vbahelper.visibility.patch
-%patch15 -p1 -b .rhbz702635-set-correct-page-number-when-exporting-s.patch
-%patch16 -p1 -b .rhbz652604-better-survive-exceptions-thrown.patch
-%patch17 -p1 -b .rhbz713154-pdf-export-dialog-too-tall-to-f.patch
-%patch18 -p1 -b .rhbz702833-addEventListener-without-removeE.patch
-%patch19 -p1 -b .rhbz711087-band-aid.patch
-%patch20 -p1 -b .rhbz667082-do-not-crash-importing-section-containin.patch
-%patch21 -p1 -b .rhbz718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
-%patch22 -p1 -b .rhbz715549-use-fontconfig-s-detected-forma.patch
-%patch23 -p1 -b .rhbz693265-fix-crash-from-unhandled-except.patch
-%patch24 -p1 -b .rhbz730225-avoid-segv-in-ld-this-was-set-to.patch
-%patch25 -p1
-%patch26 -p1 -b .fdo37195-migrationoo3-not-registered.patch
-%patch27 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
-%patch28 -p1 -b .avoid-using-com.sun.org-apis.patch
-%patch29 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
-%patch30 -p1 -b .fdo32665-handle-that-FreeSerif-lacks-some-.patch
-%patch31 -p1 -b .Backport-reading-AES-encrypted-ODF-1.2-documents.patch
+#%patch5  -p0 -b .ooo101274.opening-a-directory.patch
+#%patch6  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch7  -p1 -b .libreoffice-installfix.patch
 %if 0%{?rhel}
-%patch32 -p1 -b .libwpd08-1.patch
-%patch33 -p1 -R -b .libreoffice-libwpd08-2.patch
-%patch34 -p1 -R -b .wpsimport
-%patch35 -p1 -b .gcj.patch
-%patch36 -p0 -b .rhel6poppler.patch
+%patch8 -p1 -b .libwpd08-1.patch
+%patch9 -p1 -R -b .libreoffice-libwpd08-2.patch
+%patch10 -p1 -R -b .wpsimport
+%patch11 -p1 -b .gcj.patch
+%patch12 -p0 -b .rhel6poppler.patch
 %endif
-%patch37 -p1 -b .i58612-don-t-crash-anyway.patch
-%patch38 -p1 -b .fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
-%patch39 -p1 -b .rhbz753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
-%patch40 -p1 -b .solenv.fix.mk.inheritance.patch
-%patch41 -p1 -b .libreoffice-ppc64.patch
-%patch42 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
-%patch43 -p1 -b .fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+#%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
+# TODO: check this
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
-chmod +x solenv/bin/install-gdb-printers
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -877,6 +810,8 @@ export CXXFLAGS=$ARCH_FLAGS
 %endif
 
 autoconf
+# TODO: review the options
+# TODO: --with-poor-help-localizations is gone, IIRC
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
@@ -887,7 +822,7 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --enable-ext-scripting-python --with-system-libtextcat \
+ --enable-ext-scripting-python --without-system-libexttextcat \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
@@ -896,23 +831,29 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --with-external-libtextcat-data --without-system-translate-toolkit \
+ --without-system-libcmis --without-system-libvisio \
+ --without-system-mysql-cppconn \
  %{distrooptions}
 
 mkdir -p ext_sources
-cp %{SOURCE20} ext_sources
-cp %{SOURCE23} ext_sources
-cp %{SOURCE24} ext_sources
-cp %{SOURCE25} ext_sources
-cp %{SOURCE26} ext_sources
-cp %{SOURCE27} ext_sources
-cp %{SOURCE28} ext_sources
-cp %{SOURCE29} ext_sources
-cp %{SOURCE30} ext_sources
-cp %{SOURCE31} ext_sources
+cp %{SOURCE4} ext_sources
+cp %{SOURCE7} ext_sources
+cp %{SOURCE8} ext_sources
+cp %{SOURCE9} ext_sources
+cp %{SOURCE10} ext_sources
+cp %{SOURCE11} ext_sources
+cp %{SOURCE12} ext_sources
+cp %{SOURCE13} ext_sources
+cp %{SOURCE14} ext_sources
+cp %{SOURCE15} ext_sources
 %if 0%{?rhel}
-cp %{SOURCE32} ext_sources
-cp %{SOURCE33} ext_sources
+cp %{SOURCE16} ext_sources
+cp %{SOURCE17} ext_sources
 %endif
+cp %{SOURCE18} ext_sources
+cp %{SOURCE19} ext_sources
+cp %{SOURCE20} ext_sources
+cp %{SOURCE21} ext_sources
 touch src.downloaded
 
 . ./*[Ee]nv.[Ss]et.sh
@@ -993,6 +934,7 @@ cd ../../
 %install_bundled_extension -n presentation-minimizer -f minimizer/presentation-minimizer.oxt
 %install_bundled_extension -n presenter-screen -f presenter/presenter-screen.oxt
 %install_bundled_extension -n report-builder
+# TODO: these three are not extensions anymore
 %install_bundled_extension -n script-provider-for-beanshell
 %install_bundled_extension -n script-provider-for-javascript
 %install_bundled_extension -n script-provider-for-python
@@ -1125,7 +1067,7 @@ xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
 )
 
-tar xzf %{SOURCE21}
+tar xzf %{SOURCE5}
 
 i=0
 while [ $i -lt ${#langpackdetails[@]} ]; do
@@ -1241,12 +1183,12 @@ echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
 echo exec libreoffice --base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
-cp -f %{SOURCE22} $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
 
-cp -f %{SOURCE22} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
@@ -1316,7 +1258,9 @@ cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{basisinstdi
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{basisinstdir}/program/fundamentalbasisrc
 
 export DESTDIR=$RPM_BUILD_ROOT
+# TODO: the command's syntax has changed
 install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
+# TODO: remove this
 # fix arch-dependent library suffix
 cd solenv/gdb
 cat <<EOF > dllpostfix.mk
@@ -1334,6 +1278,7 @@ done
 source ./Linux*Env.Set.sh
 cd test
 build && deliver -link
+# TODO: smoketestdoc is gone
 cd ../smoketestdoc
 build && deliver -link
 cd ../smoketestoo_native
@@ -2137,6 +2082,39 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 30 2011 David Tardon <dtardon@redhat.com> - 3.5.0.0-1
+- first attempt at 3.5
+- drop integrated 0001-Related-fdo-37195-migrationoo3-not-registered.patch
+- drop integrated 0001-Related-i58612-don-t-crash-anyway.patch
+- drop integrated 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch
+- drop integrated 0001-Related-rhbz-702833-addEventListener-without-removeE.patch
+- drop integrated 0001-Related-rhbz-711087-band-aid.patch
+- drop integrated 0001-Related-rhbz-718976-crash-in-SwTxtSizeInfo-GetMultiC.patch
+- drop integrated 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
+- drop integrated 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
+- drop integrated 0001-Resolves-fdo-32665-handle-that-FreeSerif-lacks-some-.patch
+- drop integrated 0001-Resolves-rhbz-693265-fix-crash-from-unhandled-except.patch
+- drop integrated 0001-Resolves-rhbz-695509-crash-in-RefreshDocumentLB.patch
+- drop integrated 0001-Resolves-rhbz-713154-pdf-export-dialog-too-tall-to-f.patch
+- drop integrated 0001-Resolves-rhbz-715549-use-fontconfig-s-detected-forma.patch
+- drop integrated 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
+- drop integrated 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
+- drop integrated 0001-add-Oracle-Java-1.7.0-recognition.patch
+- drop integrated 0001-avoid-using-com.sun.org-apis.patch
+- drop integrated 0001-bubble-down-configure-test-findings-on-visibility.patch
+- drop integrated 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
+- drop integrated 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+- drop integrated 0001-helgrind-Related-rhbz-655686-get-order-of-shutdown-c.patch
+- drop integrated 0001-rhbz-667082-do-not-crash-importing-section-containin.patch
+- drop integrated 0001-rhbz-702635-set-correct-page-number-when-exporting-s.patch
+- drop integrated Backport-reading-AES-encrypted-ODF-1.2-documents.patch
+- drop integrated gdb-pretty-printers.patch
+- drop integrated kde4configure.patch
+- drop integrated libreoffice-ppc64.patch
+- drop integrated openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
+- drop integrated openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
+- drop integrated vbahelper.visibility.patch
+
 * Tue Nov 29 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-5
 - Resolves: rhbz#757653 fix headless crash with cairo canvas
 

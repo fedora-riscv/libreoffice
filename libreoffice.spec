@@ -1392,6 +1392,7 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/gnome-open-url.bin
 %{basisinstdir}/program/hatchwindowfactory.uno.so
 %{basisinstdir}/program/i18nsearch.uno.so
+%{basisinstdir}/program/kde-open-url
 %{basisinstdir}/program/legacy_binfilters.rdb
 %{basisinstdir}/program/libacc%{SOPOST}.so
 %{basisinstdir}/program/libadabas%{SOPOST}.so
@@ -2109,7 +2110,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde4be1.uno.so
 %{basisinstdir}/program/fps_kde4.uno.so
 %{basisinstdir}/program/libvclplug_kde4%{SOPOST}.so
-%{basisinstdir}/program/kde-open-url
 %endif
 
 %changelog

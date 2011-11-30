@@ -83,7 +83,10 @@ BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
 BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
-BuildRequires:  kdelibs4-devel, font(:lang=en)
+BuildRequires:  font(:lang=en)
+%if 0%{!?rhel}
+BuildRequires:  kdelibs4-devel
+%endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
@@ -495,6 +498,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
+%if 0%{!?rhel}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -502,6 +506,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+%endif
 
 %if 0%{?_enable_debug_packages}
 
@@ -816,10 +821,12 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
+%if 0%{!?rhel}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
+%endif
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -832,6 +839,10 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
+%if 0%{!?rhel}
+%define distrooptions --enable-kde4
+%endif
+
 autoconf
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
@@ -843,7 +854,7 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --enable-ext-scripting-python --enable-kde4 --with-system-libtextcat \
+ --enable-ext-scripting-python --with-system-libtextcat \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
@@ -852,7 +863,8 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --with-external-libtextcat-data \
- --without-system-translate-toolkit --without-system-hsqldb
+ --without-system-translate-toolkit --without-system-hsqldb \
+ %{distrooptions}
 
 mkdir -p ext_sources
 cp %{SOURCE20} ext_sources
@@ -2089,6 +2101,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{basisinstdir}/share/registry/pyuno.xcd
 
+%if 0%{!?rhel}
 %files kde
 %defattr(-,root,root,-)
 %dir %{basisinstdir}
@@ -2097,10 +2110,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/fps_kde4.uno.so
 %{basisinstdir}/program/libvclplug_kde4%{SOPOST}.so
 %{basisinstdir}/program/kde-open-url
+%endif
 
 %changelog
-* Tue Nov 29 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-4.UNBUILT
+* Wed Nov 30 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-4
 - Resolves: rhbz#757653 fix headless crash with cairo canvas
+- Resolves: rhbz#758338 KDE build problems
 
 * Wed Nov 23 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-3
 - Resolves: rhbz#751290 kde black on dark-grey tooltip-texts

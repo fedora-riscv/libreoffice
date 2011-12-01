@@ -1270,21 +1270,8 @@ cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{baseinstdir
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/lucene.jar file:///usr/share/java/lucene-contrib/lucene-analyzers.jar file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{baseinstdir}/program/fundamentalrc
 
 export DESTDIR=$RPM_BUILD_ROOT
-# TODO: the command's syntax has changed
-install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -p %{_datadir}/libreoffice/gdb
-# TODO: remove this
-# fix arch-dependent library suffix
-cd solenv/gdb
-cat <<EOF > dllpostfix.mk
-PRJ=..
-.INCLUDE : settings.mk
-print-DLLPOSTFIX :
-    @echo \$(DLLPOSTFIX)
-EOF
-libsuffix=`dmake -f dllpostfix.mk print-DLLPOSTFIX`
-for f in `find $RPM_BUILD_ROOT/%{_datadir}/gdb/auto-load%{baseinstdir} -type f -name '*lo-gdb.py'`; do
-    mv "$f" "${f%lo-gdb.py}${libsuffix}-gdb.py"
-done
+install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
+
 
 %check
 source ./Env.Host.sh

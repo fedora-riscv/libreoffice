@@ -106,7 +106,8 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
-Patch13: solenv.fix.mk.inheritance.patch
+# TODO: this in S390 only, so it can wait .-)
+#Patch13: solenv.fix.mk.inheritance.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -750,12 +751,11 @@ for a in */*; do mv `pwd`/$a .; done
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
 %patch1  -p1
-# TODO: fix patches
 %patch2  -p1 -b .ooo86080.unopkg.bodge.patch
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-#%patch5  -p0 -b .ooo101274.opening-a-directory.patch
-#%patch6  -p0 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch5  -p1 -b .ooo101274.opening-a-directory.patch
+%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %if 0%{?rhel}
 %patch8 -p1 -b .libwpd08-1.patch

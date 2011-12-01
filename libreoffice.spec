@@ -766,11 +766,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
-# TODO: check this
-# these are horribly incomplete--empty translations and copied english
-# strings with spattering of translated strings
-rm -rf translations/source/{gu,he,hr}/helpcontent2
-
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 #don't build localized helps which aren't translated

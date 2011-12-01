@@ -807,14 +807,14 @@ autoconf
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
- --disable-ldap --disable-epm --disable-mathmldtd --disable-Xaw \
+ --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
  --enable-binfilter --enable-ext-presenter-minimizer \
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --enable-ext-scripting-python --without-system-libexttextcat \
+ --without-system-libexttextcat \
  --with-system-jfreereport --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --with-system-mythes --with-system-dicts --with-system-apache-commons \
@@ -822,7 +822,6 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --with-external-libtextcat-data --without-system-translate-toolkit \
  --without-system-libcmis --without-system-libvisio \
  --without-system-mysql-cppconn \
  %{distrooptions}

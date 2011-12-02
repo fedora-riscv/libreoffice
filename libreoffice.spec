@@ -75,13 +75,14 @@ BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl-Archive-Zip
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
-BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, db4-devel
+BuildRequires:  pentaho-reporting-flow-engine, vigra-devel
 BuildRequires:  font(:lang=en)
 %if 0%{?fedora}
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
 BuildRequires:  libwps-devel, kdelibs4-devel, junit4, perl-Digest-MD5
+BuildRequires:  libdb-devel
 %else
-BuildRequires:  hsqldb
+BuildRequires:  hsqldb, db4-devel
 %endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}

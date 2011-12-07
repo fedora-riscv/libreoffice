@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -127,6 +127,7 @@ Patch28: 0001-add-Oracle-Java-1.7.0-recognition.patch
 Patch29: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
 Patch30: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
 Patch31: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+Patch32: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -802,6 +803,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
 %patch30 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
 %patch31 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+%patch32 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2113,6 +2115,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 07 2011 Caolán McNamara <caolanm@redhat.com>  3.4.4.2-5.UNBUILT
+- Resolves: rhbz#759647 dispose clears mpPresTimer
+
 * Wed Nov 30 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-4
 - Resolves: rhbz#757653 fix headless crash with cairo canvas
 - Resolves: rhbz#758338 KDE build problems

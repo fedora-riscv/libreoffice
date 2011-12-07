@@ -32,7 +32,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -167,6 +167,7 @@ Patch75: 0001-let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 Patch76: gdb-pretty-printers.patch
 Patch77: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 Patch78: smoketestoo_native-build.patch
+Patch79: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -884,7 +885,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch75 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 %patch76 -p1 -b .gdb-pretty-printers.patch
 %patch77 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
-%patch78 -p1 -b .smoketestoo_native-build.patch
+%patch79 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2246,6 +2247,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Wed Dec 07 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-2.UNBUILT
+- Resolves: rhbz#759647 dispose clears mpPresTimer
+
 * Wed Nov 30 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1
 - Resolves: rhbz#747356 let Qt call XInitThreads
 - new upstream version 3.3.4

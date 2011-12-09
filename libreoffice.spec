@@ -824,7 +824,7 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-libcmis --without-system-libvisio \
- --without-system-mysql-cppconn \
+ --without-system-mysql-cppconn --without-system-sampleicc \
  %{distrooptions}
 
 mkdir -p ext_sources

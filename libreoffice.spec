@@ -2048,7 +2048,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Nov 30 2011 David Tardon <dtardon@redhat.com> - 3.5.0.0-1
+* Fri Dec 09 2011 David Tardon <dtardon@redhat.com> - 3.5.0.0-1
 - first attempt at 3.5
 - drop integrated 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 - drop integrated 0001-Related-i58612-don-t-crash-anyway.patch

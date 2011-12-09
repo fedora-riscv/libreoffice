@@ -56,7 +56,7 @@ Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f3453
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
-Source18:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
+Source18:       http://dev-www.libreoffice.org/src/8f107ffb3fc9d9b920b7bbd0bc79c7e8-libvisio-0.0.10.tar.bz2
 Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 # TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?

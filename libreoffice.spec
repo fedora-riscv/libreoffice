@@ -1326,7 +1326,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/dlgprov.uno.so
 %{baseinstdir}/program/fastsax.uno.so
 %{baseinstdir}/program/fpicker.uno.so
-%{baseinstdir}/program/fps_gnome.uno.so
 %{baseinstdir}/program/fps_office.uno.so
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin

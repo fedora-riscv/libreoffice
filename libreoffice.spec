@@ -2028,11 +2028,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %if 0%{?fedora}
 %files kde
 %defattr(-,root,root,-)
-%dir %{basisinstdir}
-%dir %{basisinstdir}/program
-%{basisinstdir}/program/kde4be1.uno.so
-%{basisinstdir}/program/fps_kde4.uno.so
-%{basisinstdir}/program/libvclplug_kde4%{SOPOST}.so
+%dir %{baseinstdir}
+%dir %{baseinstdir}/program
+%{baseinstdir}/program/kde4be1.uno.so
+%{baseinstdir}/program/fps_kde4.uno.so
+%{baseinstdir}/program/libvclplug_kde4%{SOPOST}.so
 %endif
 
 %changelog

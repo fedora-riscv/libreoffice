@@ -819,7 +819,7 @@ autoconf
  --without-system-libexttextcat --without-system-servlet-api \
  --with-system-jars --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
- --with-system-mythes --with-system-dicts \
+ --without-system-mozilla-headers --with-system-mythes --with-system-dicts \
  --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \

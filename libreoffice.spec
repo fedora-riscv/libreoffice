@@ -1584,6 +1584,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
+%{baseinstdir}/share/fingerprint
 %{baseinstdir}/share/gallery
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf

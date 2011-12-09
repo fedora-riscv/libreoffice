@@ -1482,7 +1482,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/msforms.uno.so
 %{baseinstdir}/program/nsplugin
 %{baseinstdir}/program/open-url
-%{baseinstdir}/program/offapi.rdb
+%{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/passwordcontainer.uno.so
 %{baseinstdir}/program/pagein-common
 %{baseinstdir}/program/plugin
@@ -1540,7 +1540,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/resource/xmlsecen-US.res
 %{baseinstdir}/program/resource/xsltdlgen-US.res
 %{baseinstdir}/program/senddoc
-%{baseinstdir}/program/services.rdb
+%{baseinstdir}/program/services/services.rdb
 %{baseinstdir}/program/simplecanvas.uno.so
 %{baseinstdir}/program/slideshow.uno.so
 %{baseinstdir}/program/libsofficeapp.so
@@ -1656,7 +1656,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libxo%{SOPOST}.so
 %{baseinstdir}/program/localebe1.uno.so
 %{baseinstdir}/program/ucpgio1.uno.so
-%{baseinstdir}/program/oovbaapi.rdb
+%{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions
 %{baseinstdir}/share/extensions/package.txt

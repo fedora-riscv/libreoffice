@@ -893,15 +893,6 @@ cd unxlng*/misc/libreoffice
 echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 
-%define install_bundled_extension(f:n:) \
-%define extname_ %{-n:%{-n*}}%{!-n:%{error:No extension name given}} \
-%define filename_ %{-f:%{-f*}}%{!-f:%{extname_}.oxt} \
-%define extdir_ $RPM_BUILD_ROOT/%{baseinstdir}/share/extensions \
-install -d -m 755 %{extdir_}/%{extname_} \
-unzip -d %{extdir_}/%{extname_} $SOLARVER/$INPATH/bin/%{filename_} \
-find %{extdir_}/%{extname_} -type f -name '*.txt' -exec chmod -x '{}' \\;
-
-
 %install
 rm -rf $RPM_BUILD_ROOT
 source ./Env.Host.sh
@@ -945,17 +936,6 @@ export WITH_LANG="en-US"
 dmake sdkoo
 mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../
-
-# unpack extensions
-%install_bundled_extension -n pdfimport -f pdfimport/pdfimport.oxt
-%install_bundled_extension -n presentation-minimizer -f minimizer/presentation-minimizer.oxt
-%install_bundled_extension -n presenter-screen -f presenter/presenter-screen.oxt
-%install_bundled_extension -n report-builder
-# TODO: these three are not extensions anymore
-%install_bundled_extension -n script-provider-for-beanshell
-%install_bundled_extension -n script-provider-for-javascript
-%install_bundled_extension -n script-provider-for-python
-%install_bundled_extension -n wiki-publisher
 
 #configure sdk
 pushd $RPM_BUILD_ROOT/%{sdkinstdir}

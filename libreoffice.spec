@@ -1754,13 +1754,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files bsh
 %defattr(-,root,root,-)
+%{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
+%{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
 %{baseinstdir}/share/Scripts/beanshell
-%{baseinstdir}/share/extensions/script-provider-for-beanshell
 
 %files rhino
 %defattr(-,root,root,-)
+%{baseinstdir}/program/classes/js.jar
+%{baseinstdir}/program/classes/ScriptProviderForJavaScript.jar
+%{baseinstdir}/program/services/scriptproviderforjavascript.rdb
 %{baseinstdir}/share/Scripts/javascript
-%{baseinstdir}/share/extensions/script-provider-for-javascript
 
 %files wiki-publisher
 %defattr(-,root,root,-)

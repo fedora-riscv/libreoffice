@@ -110,6 +110,7 @@ Patch12: libreoffice-rhel6poppler.patch
 %endif
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
+Patch14: skip-stuck-test.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -767,6 +768,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
+%patch14 -p1 -b .skip-stuck-test.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

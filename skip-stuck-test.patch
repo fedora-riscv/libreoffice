@@ -1,0 +1,11 @@
+diff -up libreoffice-3.5.0.0/sd/Module_sd.mk.dt libreoffice-3.5.0.0/sd/Module_sd.mk
+--- libreoffice-3.5.0.0/sd/Module_sd.mk.dt	2011-12-09 07:07:39.324405990 +0100
++++ libreoffice-3.5.0.0/sd/Module_sd.mk	2011-12-09 07:08:16.400488687 +0100
+@@ -43,7 +43,6 @@ $(eval $(call gb_Module_add_targets,sd,\
+ ifneq ($(OS),DRAGONFLY)
+ $(eval $(call gb_Module_add_check_targets,sd,\
+     CppunitTest_sd_uimpress \
+-    CppunitTest_sd_filters_test \
+ ))
+ endif
+ 

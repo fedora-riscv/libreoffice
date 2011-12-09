@@ -1798,7 +1798,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %_font_pkg -n %{fontname} opens___.ttf
 %doc solver/unxlng*/bin/ure/LICENSE
-%dir %{_fontdir}
 
 %files calc
 %defattr(-,root,root,-)

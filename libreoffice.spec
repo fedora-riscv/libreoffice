@@ -21,6 +21,7 @@
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
+%define with_lang ''
 %endif
 
 Summary:        Free Software Productivity Suite

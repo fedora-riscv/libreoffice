@@ -27,7 +27,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.4.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -150,6 +150,7 @@ Patch41: libreoffice-ppc64.patch
 Patch42: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
 Patch43: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 Patch44: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
+Patch45: 0001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -840,6 +841,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch42 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
 %patch43 -p1 -b .fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 %patch44 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
+%patch45 -p1 -b .fdo43308-Set-the-logic-straight-for-center-across-s.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2148,6 +2150,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 09 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7
+- Resolves: rhbz#761558 center-across-selection fix
+
 * Wed Dec 07 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6
 - Resolves: rhbz#759647 dispose clears mpPresTimer
 

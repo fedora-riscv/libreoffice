@@ -521,6 +521,8 @@ This package provides gdb pretty printers for package %{name}.
 
 %files gdb-debug-support
 %defattr(-,root,root)
+# TODO does it make sense to install this?
+%{baseinstdir}/program/gdbtrace
 %{_datadir}/gdb/auto-load%{baseinstdir}
 %{_datadir}/libreoffice/gdb
 
@@ -1324,6 +1326,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so
 %{baseinstdir}/program/dlgprov.uno.so
+%{baseinstdir}/program/expwrap.uno.so
 %{baseinstdir}/program/fastsax.uno.so
 %{baseinstdir}/program/fpicker.uno.so
 %{baseinstdir}/program/fps_office.uno.so
@@ -1464,6 +1467,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libvbahelper%{SOPOST}.so
 %{baseinstdir}/program/libvclplug_gen%{SOPOST}.so
 %{baseinstdir}/program/libvclplug_gtk%{SOPOST}.so
+# TODO is this the right package?
+%{baseinstdir}/program/libvisioimport%{SOPOST}.so
 %if 0%{?fedora}
 %{baseinstdir}/program/libwpgimport%{SOPOST}.so
 %endif
@@ -1546,6 +1551,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/spadmin.bin
 %{baseinstdir}/program/stringresource.uno.so
 %{baseinstdir}/program/syssh.uno.so
+%{baseinstdir}/program/ucpcmis1.uno.so
 %{baseinstdir}/program/ucpexpand1.uno.so
 %{baseinstdir}/program/ucpext.uno.so
 %{baseinstdir}/program/ucptdoc1.uno.so
@@ -1865,12 +1871,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en/swriter.*
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libbf_sw%{SOPOST}.so
+%{baseinstdir}/program/libdoctok%{SOPOST}.so
 %{baseinstdir}/program/libhwp%{SOPOST}.so
 %{baseinstdir}/program/liblwpft%{SOPOST}.so
 %{baseinstdir}/program/libmsword%{SOPOST}.so
 %if 0%{?fedora}
 %{baseinstdir}/program/libmsworks%{SOPOST}.so
 %endif
+%{baseinstdir}/program/libooxml%{SOPOST}.so
+%{baseinstdir}/program/libresourcemodel%{SOPOST}.so
+%{baseinstdir}/program/librtftok%{SOPOST}.so
 %{baseinstdir}/program/libswd%{SOPOST}.so
 %{baseinstdir}/program/libswui%{SOPOST}.so
 %{baseinstdir}/program/libt602filter%{SOPOST}.so
@@ -2012,6 +2022,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libpyuno.so
+%{baseinstdir}/program/msgbox.py*
 %{baseinstdir}/program/officehelper.py*
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/pythonloader.uno.so
@@ -2029,6 +2040,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
+%{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/kde4be1.uno.so
 %{baseinstdir}/program/fps_kde4.uno.so
 %{baseinstdir}/program/libvclplug_kde4%{SOPOST}.so

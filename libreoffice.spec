@@ -815,10 +815,10 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --without-system-libexttextcat \
- --with-system-jfreereport --with-vba-package-format="builtin" \
+ --without-system-libexttextcat --without-system-servlet-api \
+ --with-system-jars --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
- --with-system-mythes --with-system-dicts --with-system-apache-commons \
+ --with-system-mythes --with-system-dicts \
  --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \

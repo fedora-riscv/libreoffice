@@ -52,7 +52,7 @@ Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #backwards compatability.
 Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
-%if 0%{?rhel}
+%if %{defined rhel} && 0%{?rhel} < 7
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
@@ -63,7 +63,7 @@ Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdc
 Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel <= 1.6.0, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel < 1.7.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -72,18 +72,20 @@ BuildRequires:  sane-backends-devel, libicu-devel, libXinerama-devel
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
-BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl-Archive-Zip
+BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl(Archive::Zip)
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
 BuildRequires:  font(:lang=en)
-%if 0%{?fedora}
-BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, kdelibs4-devel, junit4, perl-Digest-MD5
-BuildRequires:  libdb-devel
-%else
+%if %{defined rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb, db4-devel
+%else
+BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
+BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), libdb-devel
+%endif
+%if %{undefined rhel}
+BuildRequires:  kdelibs4-devel
 %endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
@@ -101,7 +103,7 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-%if 0%{?rhel}
+%if %{defined rhel} && 0%{?rhel} < 7
 Patch8: libreoffice-libwpd08-1.patch
 Patch9: libreoffice-libwpd08-2.patch
 Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
@@ -480,7 +482,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%if 0%{?fedora}
+%if %{undefined rhel}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -762,7 +764,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%if 0%{?rhel}
+%if %{defined rhel} && 0%{?rhel} < 7
 %patch8 -p1 -b .libwpd08-1.patch
 %patch9 -p1 -R -b .libreoffice-libwpd08-2.patch
 %patch10 -p1 -R -b .wpsimport
@@ -785,10 +787,12 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
+%if %{undefined rhel}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
+%endif
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -801,8 +805,12 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if 0%{?rhel}
+%if %{defined rhel}
+%if 0%{?rhel} < 7
 %define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%else
+%define distrooptions --without-system-hsqldb
+%endif
 %else
 %define distrooptions --without-system-hsqldb --enable-kde4
 %endif
@@ -843,7 +851,7 @@ cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
 cp %{SOURCE14} ext_sources
 cp %{SOURCE15} ext_sources
-%if 0%{?rhel}
+%if %{defined rhel} && 0%{?rhel} < 7
 cp %{SOURCE16} ext_sources
 cp %{SOURCE17} ext_sources
 %endif
@@ -1265,7 +1273,7 @@ cd smoketestoo_native
 unset WITH_LANG
 #JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
 #SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
-%if 0%{?rhel}
+%if %{defined rhel} && 0%{?rhel} < 7
 unset SOLAR_JAVA
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
 %else
@@ -1469,7 +1477,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libvclplug_gtk%{SOPOST}.so
 # TODO is this the right package?
 %{baseinstdir}/program/libvisioimport%{SOPOST}.so
-%if 0%{?fedora}
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libwpgimport%{SOPOST}.so
 %endif
 %{baseinstdir}/program/libxmlfa%{SOPOST}.so
@@ -1725,7 +1733,7 @@ done
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
-%if 0%{?fedora}
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
@@ -1876,7 +1884,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwp%{SOPOST}.so
 %{baseinstdir}/program/liblwpft%{SOPOST}.so
 %{baseinstdir}/program/libmsword%{SOPOST}.so
-%if 0%{?fedora}
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libmsworks%{SOPOST}.so
 %endif
 %{baseinstdir}/program/libooxml%{SOPOST}.so
@@ -2036,7 +2044,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 
-%if 0%{?fedora}
+%if %{undefined rhel}
 %files kde
 %defattr(-,root,root,-)
 %dir %{baseinstdir}

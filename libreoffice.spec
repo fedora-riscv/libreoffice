@@ -63,7 +63,7 @@ Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdc
 Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel < 1.7.0, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make

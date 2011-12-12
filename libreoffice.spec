@@ -1453,7 +1453,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libspa%{SOPOST}.so
 %{baseinstdir}/program/libspell%{SOPOST}.so
 %{baseinstdir}/program/libsrtrs1.so
-%{baseinstdir}/program/libsts%{SOPOST}.so
 %{baseinstdir}/program/libsvx%{SOPOST}.so
 %{baseinstdir}/program/libsvxcore%{SOPOST}.so
 %{baseinstdir}/program/libsw%{SOPOST}.so
@@ -1996,6 +1995,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libcommuni%{SOPOST}.so
 %{baseinstdir}/program/libsimplecm%{SOPOST}.so
+%{baseinstdir}/program/libsts%{SOPOST}.so
 %{baseinstdir}/program/testtoolrc
 %{baseinstdir}/program/testtool
 %dir %{baseinstdir}/program/resource

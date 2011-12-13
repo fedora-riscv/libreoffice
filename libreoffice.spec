@@ -1458,8 +1458,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libvbahelper%{SOPOST}.so
 %{baseinstdir}/program/libvclplug_gen%{SOPOST}.so
 %{baseinstdir}/program/libvclplug_gtk%{SOPOST}.so
-# TODO is this the right package?
-%{baseinstdir}/program/libvisioimport%{SOPOST}.so
 %if %{undefined rhel} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libwpgimport%{SOPOST}.so
 %endif
@@ -1947,6 +1945,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libcdrimport%{SOPOST}.so
 %{baseinstdir}/program/libflash%{SOPOST}.so
 %{baseinstdir}/program/libsvgfilter%{SOPOST}.so
+%{baseinstdir}/program/libvisioimport%{SOPOST}.so
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter

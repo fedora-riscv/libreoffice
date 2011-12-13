@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -129,6 +129,7 @@ Patch30: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
 Patch31: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 Patch32: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 Patch33: 0001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
+Patch34: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -806,6 +807,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
 %patch32 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
 %patch33 -p1 -b .fdo43308-Set-the-logic-straight-for-center-across-s.patch
+%patch34 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2117,6 +2119,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 13 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6-UNBUILT
+- Resolves: rhbz#761009 IFSD_Equal is asymmetrical
+
 * Fri Dec 09 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-5
 - Resolves: rhbz#759647 dispose clears mpPresTimer
 - Resolves: rhbz#761558 center-across-selection fix

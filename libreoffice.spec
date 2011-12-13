@@ -61,6 +61,7 @@ Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a
 Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 # TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?
 Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
+Source22:       http://dev-www.libreoffice.org/src/cc8eb870d6a324d36575420efd856319-libcdr-0.0.0.tar.bz2
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
@@ -841,6 +842,7 @@ cp %{SOURCE18} ext_sources
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
 cp %{SOURCE21} ext_sources
+cp %{SOURCE22} ext_sources
 touch src.downloaded
 
 . ./Env.Host.sh
@@ -1942,6 +1944,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
+%{baseinstdir}/program/libcdrimport%{SOPOST}.so
 %{baseinstdir}/program/libflash%{SOPOST}.so
 %{baseinstdir}/program/libsvgfilter%{SOPOST}.so
 %{baseinstdir}/share/registry/graphicfilter.xcd

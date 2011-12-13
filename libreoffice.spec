@@ -27,7 +27,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.5.0.0
+Version:        3.4.99.1
 Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
@@ -56,7 +56,7 @@ Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f3453
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 %endif
-Source18:       http://dev-www.libreoffice.org/src/8f107ffb3fc9d9b920b7bbd0bc79c7e8-libvisio-0.0.10.tar.bz2
+Source18:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
 Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 # TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?
@@ -112,7 +112,6 @@ Patch12: libreoffice-rhel6poppler.patch
 %endif
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
-Patch14: skip-stuck-test.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -772,7 +771,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
-%patch14 -p1 -b .skip-stuck-test.patch
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2056,8 +2054,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Dec 09 2011 David Tardon <dtardon@redhat.com> - 3.5.0.0-1
-- first attempt at 3.5
+* Tue Dec 13 2011 David Tardon <dtardon@redhat.com> - 3.4.99.1-1
+- 3.5.0 beta1
 - drop integrated 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 - drop integrated 0001-Related-i58612-don-t-crash-anyway.patch
 - drop integrated 0001-Related-rhbz-652604-better-survive-exceptions-thrown.patch

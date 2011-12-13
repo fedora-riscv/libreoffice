@@ -146,6 +146,8 @@ Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
 Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
 Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
+Obsoletes: openoffice.org-testtools < 1:3.3.1
+Obsoletes: libreoffice-testtools < 1:3.4.99.1
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -412,24 +414,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun javafilter
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%package testtools
-Summary: Testtools for LibreOffice
-Group: Development/Libraries
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-writer = %{epoch}:%{version}-%{release}
-Requires: %{name}-calc = %{epoch}:%{version}-%{release}
-Requires: %{name}-draw = %{epoch}:%{version}-%{release}
-Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-Requires: %{name}-base = %{epoch}:%{version}-%{release}
-Requires: %{name}-math = %{epoch}:%{version}-%{release}
-Requires: %{name}-bsh = %{epoch}:%{version}-%{release}
-Requires: %{name}-rhino = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-testtools < 1:3.3.1
-
-%description testtools
-QA tools for LibreOffice, enables automated testing.
 
 %package ure
 Summary: UNO Runtime Environment
@@ -1987,18 +1971,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/pocketexcel.xcd
 %{baseinstdir}/share/registry/pocketword.xcd
 
-%files testtools
-%defattr(-,root,root,-)
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
-%{baseinstdir}/program/libcommuni%{SOPOST}.so
-%{baseinstdir}/program/libsimplecm%{SOPOST}.so
-%{baseinstdir}/program/libsts%{SOPOST}.so
-%{baseinstdir}/program/testtoolrc
-%{baseinstdir}/program/testtool
-%dir %{baseinstdir}/program/resource
-%{baseinstdir}/program/resource/stten-US.res
-
 %files ure
 %defattr(-,root,root,-)
 %doc solver/unxlng*/bin/ure/LICENSE
@@ -2086,6 +2058,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - drop integrated openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 - drop integrated openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 - drop integrated vbahelper.visibility.patch
+- drop libreoffice-testtools subpackage, because testool has been
+  removed by upstream
 
 * Tue Nov 29 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-5
 - Resolves: rhbz#757653 fix headless crash with cairo canvas

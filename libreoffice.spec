@@ -954,8 +954,6 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
     find examples -type f -exec chmod -x {} \;
 popd
 
-chmod -x $RPM_BUILD_ROOT/%{baseinstdir}/program/testtoolrc
-
 #ensure a template dir for each lang
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/template
 for I in %{langpack_langs}; do
@@ -2062,7 +2060,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - drop integrated openoffice.org-3.3.0.ooo108637.sfx2.uisavedir.patch
 - drop integrated openoffice.org-3.3.0.ooo113273.desktop.resolvelinks.patch
 - drop integrated vbahelper.visibility.patch
-- drop libreoffice-testtools subpackage, because testool has been
+- drop libreoffice-testtools subpackage, because testtool has been
   removed by upstream
 
 * Tue Nov 29 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-5

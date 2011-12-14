@@ -9,8 +9,8 @@ Subject: [PATCH] Resolves: rhbz#761009 IFSD_Equal is asymmetrical
 
 diff --git a/vcl/generic/glyphs/glyphcache.cxx b/vcl/generic/glyphs/glyphcache.cxx
 index 89696d1..c524c08 100644
---- a/vcl/generic/glyphs/glyphcache.cxx
-+++ b/vcl/generic/glyphs/glyphcache.cxx
+--- a/vcl/source/glyphs/glyphcache.cxx
++++ b/vcl/source/glyphs/glyphcache.cxx
 @@ -148,9 +148,11 @@ bool GlyphCache::IFSD_Equal::operator()( const FontSelectPattern& rA, const Font
      // NOTE: ignoring meFamily deliberately
  

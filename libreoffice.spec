@@ -111,6 +111,7 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
+Patch13: 0001-force-gbuild-stage-for-CustomTargets.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -754,6 +755,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -R -b .wpsimport
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
+%patch13 -p1 -b .force-gbuild-stage-for-CustomTargets.patch
 %endif
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 

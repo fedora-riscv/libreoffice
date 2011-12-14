@@ -1,0 +1,28 @@
+From ee29bb2a47311d86f794d10bbcfad27644baebb5 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 14 Dec 2011 07:11:47 +0100
+Subject: [PATCH] force gbuild stage for CustomTargets
+
+gb_SourceEnvAndRecurse_STAGE is unset in CustomTarget's make process
+when the parent make has been started in sourced environment. This leads
+to all sorts of "interesting" failures because the gbuild classes and
+platform stuff are not loaded...
+---
+ solenv/gbuild/CustomTarget.mk |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/solenv/gbuild/CustomTarget.mk b/solenv/gbuild/CustomTarget.mk
+index 41b23b8..1e075af 100644
+--- a/solenv/gbuild/CustomTarget.mk
++++ b/solenv/gbuild/CustomTarget.mk
+@@ -31,6 +31,7 @@ define gb_CustomTarget__command
+ +$(call gb_Helper_abbreviate_dirs,\
+ 	mkdir -p $(call gb_CustomTarget_get_workdir,$(2)) && \
+ 	O='$(OUTDIR)' R='$(REPODIR)' S='$(SRCDIR)' W='$(WORKDIR)' gb_AWK='$(gb_AWK)' \
++	gb_SourceEnvAndRecurse_STAGE=gbuild \
+ 	gb_XSLTPROC='$(gb_XSLTPROC)' GBUILDDIR='$(GBUILDDIR)' SRCDIR='$(SRCDIR)' \
+ 	$(MAKE) -C $(call gb_CustomTarget_get_workdir,$(2)) -f $< && \
+ 	touch $(1))
+-- 
+1.7.7.3
+

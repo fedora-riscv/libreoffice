@@ -755,8 +755,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -R -b .wpsimport
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
-%patch13 -p1 -b .force-gbuild-stage-for-CustomTargets.patch
 %endif
+%patch13 -p1 -b .force-gbuild-stage-for-CustomTargets.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 %build

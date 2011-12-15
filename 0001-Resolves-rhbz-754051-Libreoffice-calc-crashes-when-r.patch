@@ -1,0 +1,44 @@
+From fbdddb784108b9f4e5e3d76c50b9aac81c73a019 Mon Sep 17 00:00:00 2001
+Message-Id: <fbdddb784108b9f4e5e3d76c50b9aac81c73a019.1323911838.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 12 Dec 2011 19:01:42 +0100
+Subject: [PATCH] fixed rhbz#754051 Libreoffice calc crashes when re-opening a
+ xlxs file
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+ScMatrixImpl lacked initialization of pErrorInterpreter=NULL.
+
+Signed-off-by: Kohei Yoshida <kohei.yoshida@suse.com>
+---
+ sc/source/core/tool/scmatrix.cxx |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fixed-rhbz-754051-Libreoffice-calc-crashes-when-re-o.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fixed-rhbz-754051-Libreoffice-calc-crashes-when-re-o.patch"
+
+diff --git a/sc/source/core/tool/scmatrix.cxx b/sc/source/core/tool/scmatrix.cxx
+index 912eef1..e53ca6b 100644
+--- a/sc/source/core/tool/scmatrix.cxx
++++ b/sc/source/core/tool/scmatrix.cxx
+@@ -244,6 +244,7 @@ private:
+ ScMatrixImpl::ScMatrixImpl(SCSIZE nC, SCSIZE nR, ScMatrix::DensityType eType) :
+     maMat(nR, nC, toMddsDensityType(eType)),
+     meType(eType),
++    pErrorInterpreter(NULL),
+     mbCloneIfConst(true)
+ {
+ }
+
+--------------erAck-patch-parts--
+
+

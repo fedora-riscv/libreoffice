@@ -2123,7 +2123,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Dec 13 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6-UNBUILT
+* Thu Dec 15 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6
 - Resolves: rhbz#761009 IFSD_Equal is asymmetrical
 - Resolves: rhbz#754051 Libreoffice calc crashes when re-opening a xlxs file
 - Resolves: rhbz#767708 write to mmap'ed file w/o disk space: SIGBUS

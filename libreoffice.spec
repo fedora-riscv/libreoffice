@@ -131,6 +131,7 @@ Patch32: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 Patch33: 0001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
 Patch34: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
 Patch35: 0001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
+Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -810,6 +811,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .fdo43308-Set-the-logic-straight-for-center-across-s.patch
 %patch34 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
 %patch35 -p1 -b .rhbz754051-Libreoffice-calc-crashes-when-r.patch
+%patch36 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2124,6 +2126,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Dec 13 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6-UNBUILT
 - Resolves: rhbz#761009 IFSD_Equal is asymmetrical
 - Resolves: rhbz#754051 Libreoffice calc crashes when re-opening a xlxs file
+- Resolves: rhbz#767708 write to mmap'ed file w/o disk space: SIGBUS
 
 * Fri Dec 09 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-5
 - Resolves: rhbz#759647 dispose clears mpPresTimer

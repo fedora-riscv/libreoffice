@@ -2014,6 +2014,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/pythonloader.uno.so
 %{baseinstdir}/program/pythonloader.unorc
 %{baseinstdir}/program/pyuno.so
+%{baseinstdir}/program/wizards
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/python
 %{python_sitearch}/uno.py*

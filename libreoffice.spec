@@ -1396,7 +1396,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libitg%{SOPOST}.so
 %{baseinstdir}/program/libiti%{SOPOST}.so
 %{baseinstdir}/program/libofficebean%{SOPOST}.so
-%{baseinstdir}/program/liboooimprovecore%{SOPOST}.so
 %{baseinstdir}/program/libfile%{SOPOST}.so
 %{baseinstdir}/program/libfilterconfig%{SOPOST}.so
 %{baseinstdir}/program/libflat%{SOPOST}.so

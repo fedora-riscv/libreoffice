@@ -677,6 +677,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ta -n Tamil -F -H -Y -o ta_IN -S
 %langpack -l te -n Telugu -F -H -Y -o te_IN -S
 %langpack -l th -n Thai -F -H -o th_TH -S
+%{baseinstdir}/share/registry/ctlseqcheck_th.xcd
+
 %langpack -l tn -n Tswana -F -H -o tn_ZA -S
 %langpack -l tr -n Turkish -F -A -o tr_TR -S
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -S

@@ -114,6 +114,7 @@ Patch12: libreoffice-rhel6poppler.patch
 Patch13: 0001-force-gbuild-stage-for-CustomTargets.patch
 Patch14: 0001-these-translations-do-already-exist-in-translations-.patch
 Patch15: 0001-fix-syntactic-error.patch
+Patch16: 0001-Fix-typo-and-clean-up.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -761,6 +762,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .force-gbuild-stage-for-CustomTargets.patch
 %patch14 -p1 -b .these-translations-do-already-exist-in-translations-.patch
 %patch15 -p1 -b .fix-syntactic-error.patch
+%patch16 -p1 -b .Fix-typo-and-clean-up.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 %build

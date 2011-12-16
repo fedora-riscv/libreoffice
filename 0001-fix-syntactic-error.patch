@@ -1,0 +1,85 @@
+From c57fcf8d8873638b8ea9eb33c527e03939aaf80a Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 16 Dec 2011 06:44:18 +0100
+Subject: [PATCH 1/2] fix syntactic error
+
+---
+ .../sun/star/wizards/common/PropertySetHelper.py   |   18 ++++++------------
+ 1 files changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/wizards/com/sun/star/wizards/common/PropertySetHelper.py b/wizards/com/sun/star/wizards/common/PropertySetHelper.py
+index fbb31d8..8ce949e 100644
+--- a/wizards/com/sun/star/wizards/common/PropertySetHelper.py
++++ b/wizards/com/sun/star/wizards/common/PropertySetHelper.py
+@@ -4,16 +4,8 @@ class PropertySetHelper(object):
+ 
+     @classmethod
+     def __init__(self, _aObj):
+-        if not _aObj:
+-           return
+-
+         self.m_xPropertySet = _aObj
+-
+-    def getHashMap(self):
+-        if self.m_aHashMap == None:
+-            self.m_aHashMap = HashMap < String, Object >.Object()
+-
+-        return self.m_aHashMap
++        self.m_aHashMap = {}
+ 
+     '''
+     set a property, don't throw any exceptions,
+@@ -55,7 +47,7 @@ class PropertySetHelper(object):
+                 DebugHelper.exception(e)
+ 
+         else:
+-            getHashMap().put(_sName, _aValue)
++            self.m_aHashMap[_sName] = _aValue
+ 
+     '''
+     get a property and convert it to a int value
+@@ -128,9 +120,11 @@ class PropertySetHelper(object):
+             except com.sun.star.lang.WrappedTargetException, e:
+                 DebugHelper.writeInfo(e.getMessage())
+ 
++        # TODO: I wonder why the same thing is not done in the rest of the
++        # getPropertyValueAs* functions...
+         if aObject == None:
+-            if getHashMap().containsKey(_sName):
+-                aObject = getHashMap().get(_sName)
++            if _sName in self.m_aHashMap:
++                aObject = self.m_aHashMap[_sName]
+ 
+         if aObject != None:
+             try:
+-- 
+1.7.7.3
+
+From 0e7ac37f00ded5db953aed60ec67fafcfe28f21c Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 16 Dec 2011 06:53:23 +0100
+Subject: [PATCH 2/2] fix syntactic error
+
+---
+ .../sun/star/wizards/common/PropertySetHelper.py   |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
+
+diff --git a/wizards/com/sun/star/wizards/common/PropertySetHelper.py b/wizards/com/sun/star/wizards/common/PropertySetHelper.py
+index 8ce949e..970e453 100644
+--- a/wizards/com/sun/star/wizards/common/PropertySetHelper.py
++++ b/wizards/com/sun/star/wizards/common/PropertySetHelper.py
+@@ -225,10 +225,7 @@ class PropertySetHelper(object):
+     def showProperties(self):
+         sName = ""
+         if self.m_xPropertySet != None:
+-            XServiceInfo xServiceInfo = (XServiceInfo)
+-            UnoRuntime.queryInterface(XServiceInfo.class, self.m_xPropertySet)
+-            if xServiceInfo != None:
+-                sName = xServiceInfo.getImplementationName()
++            sName = self.m_xPropertySet.getImplementationName()
+ 
+             xInfo = self.m_xPropertySet.getPropertySetInfo()
+             aAllProperties = xInfo.getProperties()
+-- 
+1.7.7.3
+

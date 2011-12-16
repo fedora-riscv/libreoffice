@@ -1859,6 +1859,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/mailmerge.py*
+%{baseinstdir}/program/msgbox.py*
+%{baseinstdir}/program/officehelper.py*
 
 %files writer
 %defattr(-,root,root,-)
@@ -2008,8 +2010,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libpyuno.so
-%{baseinstdir}/program/msgbox.py*
-%{baseinstdir}/program/officehelper.py*
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/pythonloader.uno.so
 %{baseinstdir}/program/pythonloader.unorc

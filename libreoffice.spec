@@ -1446,7 +1446,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libsdlo.so
 %{baseinstdir}/program/libsdfiltlo.so
 %{baseinstdir}/program/libsdbc2.so
-%{baseinstdir}/program/libsdbtloso
+%{baseinstdir}/program/libsdbtlo.so
 %{baseinstdir}/program/libsddlo.so
 %{baseinstdir}/program/libsduilo.so
 %{baseinstdir}/program/libspalo.so

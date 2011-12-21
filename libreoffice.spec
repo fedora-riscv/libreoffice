@@ -55,12 +55,11 @@ Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f3453
 %if %{defined rhel} && 0%{?rhel} < 7
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 %endif
-Source18:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
-Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
-Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
-# TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?
-Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
+Source19:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
+Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
@@ -83,6 +82,7 @@ BuildRequires:  hsqldb, db4-devel
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
 BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), libdb-devel
+BuildRequires:  mysql-connector-c++-devel
 %endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel
@@ -798,7 +798,8 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if %{defined rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%define distrooptions --disable-graphite --without-system-mythes \
+    --without-system-mdds --without-junit --without-system-mysql-cppconn
 %else
 %define distrooptions --without-system-hsqldb
 %endif
@@ -828,7 +829,7 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-libcmis --without-system-libvisio \
- --without-system-mysql-cppconn --without-system-sampleicc \
+ --without-system-sampleicc \
  %{distrooptions}
 
 mkdir -p ext_sources
@@ -845,8 +846,8 @@ cp %{SOURCE15} ext_sources
 %if %{defined rhel} && 0%{?rhel} < 7
 cp %{SOURCE16} ext_sources
 cp %{SOURCE17} ext_sources
-%endif
 cp %{SOURCE18} ext_sources
+%endif
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
 cp %{SOURCE21} ext_sources
@@ -2040,6 +2041,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - drop integrated 0001-force-gbuild-stage-for-CustomTargets.patch
 - drop integrated 0001-these-translations-do-already-exist-in-translations-.patch
 - drop integrated 0001-Fix-typo-and-clean-up.patch
+- use system mysql-connector-c++
 
 * Sun Dec 18 2011 David Tardon <dtardon@redhat.com> - 3.4.99.1-1
 - 3.5.0 beta1

@@ -27,7 +27,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.99.1
+Version:        3.4.99.2
 Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
@@ -61,7 +61,6 @@ Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a
 Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 # TODO: IIRC mysql-connector-cpp is in Fedora. Is it usable?
 Source21:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
-Source22:       http://dev-www.libreoffice.org/src/cc8eb870d6a324d36575420efd856319-libcdr-0.0.0.tar.bz2
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
@@ -111,12 +110,7 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
-Patch13: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
-Patch14: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
-Patch15: 0001-force-gbuild-stage-for-CustomTargets.patch
-Patch16: 0001-these-translations-do-already-exist-in-translations-.patch
-Patch17: 0001-fix-syntactic-error.patch
-Patch18: 0001-Fix-typo-and-clean-up.patch
+Patch13: 0001-fix-syntactic-error.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -738,6 +732,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %prep
 %setup -q -c -a 1 -a 2 -a 3
+rm -rf git-hooks */git-hooks
 for a in */*; do mv `pwd`/$a .; done
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -762,12 +757,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
-%patch13 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
-%patch14 -p1 -b .rhbz767708-avoid-SIGBUS-writing-to-overcom.patch
-%patch15 -p1 -b .force-gbuild-stage-for-CustomTargets.patch
-%patch16 -p1 -b .these-translations-do-already-exist-in-translations-.patch
-%patch17 -p1 -b .fix-syntactic-error.patch
-%patch18 -p1 -b .Fix-typo-and-clean-up.patch
+%patch13 -p1 -b .fix-syntactic-error.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -860,7 +850,6 @@ cp %{SOURCE18} ext_sources
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
 cp %{SOURCE21} ext_sources
-cp %{SOURCE22} ext_sources
 touch src.downloaded
 
 . ./Env.Host.sh
@@ -1408,6 +1397,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libitglo.so
 %{baseinstdir}/program/libitilo.so
 %{baseinstdir}/program/libofficebeanlo.so
+%{baseinstdir}/program/liboooimprovecorelo.so
 %{baseinstdir}/program/libfilelo.so
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
@@ -1959,7 +1949,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
-%{baseinstdir}/program/libcdrimportlo.so
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
 %{baseinstdir}/program/libvisioimportlo.so
@@ -2044,6 +2033,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 21 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1
+- 3.5.0 beta2
+- drop integrated 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
+- drop integrated 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
+- drop integrated 0001-force-gbuild-stage-for-CustomTargets.patch
+- drop integrated 0001-these-translations-do-already-exist-in-translations-.patch
+- drop integrated 0001-Fix-typo-and-clean-up.patch
+
 * Sun Dec 18 2011 David Tardon <dtardon@redhat.com> - 3.4.99.1-1
 - 3.5.0 beta1
 - drop integrated 0001-Related-fdo-37195-migrationoo3-not-registered.patch

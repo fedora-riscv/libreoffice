@@ -1,5 +1,5 @@
-cbd39b7a741c1b6bfa9ca153496c3d13  libreoffice-core-3.4.99.1.tar.bz2
-1fbefad872975a71837da4b3ebbcf31c  libreoffice-binfilter-3.4.99.1.tar.bz2
+ad6dd1d1eb6f76472ba0031f02ce8b9f  libreoffice-core-3.4.99.2.tar.bz2
+a06ce4cab2216eef4c92d5550f318203  libreoffice-binfilter-3.4.99.2.tar.bz2
 798b2ffdc8bcfe7bca2cf92b62caf685  798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 35c94d2df8893241173de1d16b6034c0  35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 ada24d37d8d638b3d8a9985e80bc2978  ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
@@ -8,11 +8,10 @@ ada24d37d8d638b3d8a9985e80bc2978  ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.
 b4cae0700aa1c2aef7eb7f345365e6f1  b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 a8b25a0bf696fd126a08319d88998492  a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
 e1c178b18f130b40494561f02bc1a948  e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
-379ddf3008e76f338e0973adc375340d  libreoffice-help-3.4.99.1.tar.bz2
+a4c0300d0b272b43d0a488676d5022f2  libreoffice-help-3.4.99.2.tar.bz2
 7c2549f6b0a8bb604e6c4c729ffdcfe6  7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 0981bda6548a8c8233ffce2b6e4b2a23  0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
-cc8eb870d6a324d36575420efd856319  cc8eb870d6a324d36575420efd856319-libcdr-0.0.0.tar.bz2
-f08b4a6ec456e8c4f1e06acf51d1def4  libreoffice-translations-3.4.99.1.tar.bz2
+13f3cdee1c8a5a471e8240821a94b4b9  libreoffice-translations-3.4.99.2.tar.bz2
 185d60944ea767075d27247c3162b3bc  185d60944ea767075d27247c3162b3bc-unowinreg.dll
 c1b5b8d1dd929a1261a6f8872d92b799  redhat-langpacks.tar.gz
 74939c9ea525374776f09bf972ede99f  libreoffice-multiliblauncher.sh

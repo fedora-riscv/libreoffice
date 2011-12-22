@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -132,6 +132,7 @@ Patch33: 0001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
 Patch34: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
 Patch35: 0001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
 Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
+Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -812,6 +813,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
 %patch35 -p1 -b .rhbz754051-Libreoffice-calc-crashes-when-r.patch
 %patch36 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
+%patch37 -p1 -b .sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2123,6 +2125,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Dec 22 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7-UNBUILT
+- Resolves: fdo#40482 Writer view options destroyed by printing
+
 * Thu Dec 15 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6
 - Resolves: rhbz#761009 IFSD_Equal is asymmetrical
 - Resolves: rhbz#754051 Libreoffice calc crashes when re-opening a xlxs file

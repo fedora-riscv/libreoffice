@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.99.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -114,6 +114,7 @@ Patch13: 0001-fix-syntactic-error.patch
 Patch14: 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
 Patch15: 0001-gcc-trunk-avoid-confusion.patch
 Patch16: 0001-workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
+Patch17: 0001-smath-does-not-handle-accents-in-MathML.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -764,6 +765,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
 %patch15 -p1 -b .gcc-trunk-avoid-confusion.patch
 %patch16 -p1 -b .workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
+%patch17 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -2040,6 +2042,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.99.2-3
+- Resolves: rhbz#533318 smath does not handle accents in MathML
+
 * Fri Jan 06 2012 David Tardon <dtardon@redhat.com> - 3.4.99.2-2
 - rebuild with gcc 4.7
 

@@ -112,6 +112,7 @@ Patch12: libreoffice-rhel6poppler.patch
 %endif
 Patch13: 0001-fix-syntactic-error.patch
 Patch14: 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
+Patch15: 0001-gcc-trunk-avoid-confusion.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -760,6 +761,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch13 -p1 -b .fix-syntactic-error.patch
 %patch14 -p1 -b .gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
+%patch15 -p1 -b .gcc-trunk-avoid-confusion.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this

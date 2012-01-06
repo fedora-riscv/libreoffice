@@ -133,6 +133,7 @@ Patch34: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
 Patch35: 0001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
 Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
+Patch38: 0001-smath-does-not-handle-accents-in-MathML.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -813,7 +814,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
 %patch35 -p1 -b .rhbz754051-Libreoffice-calc-crashes-when-r.patch
 %patch36 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
-%patch37 -p1 -b .sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
+%patch37 -p1 -b .fdo39159-fdo40482-temp-selection-print-doc.patch
+%patch38 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2125,8 +2127,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Dec 22 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7-UNBUILT
+* Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7
 - Resolves: fdo#40482 Writer view options destroyed by printing
+- Resolves: rhbz#533318 smath does not handle accents in MathML
 
 * Thu Dec 15 2011 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-6
 - Resolves: rhbz#761009 IFSD_Equal is asymmetrical

@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.99.2
-Release:        1%{?dist}
+Release:        1%{?dist}.1
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2034,6 +2034,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 06 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1.1
+- rebuild with gcc 4.7
+
 * Wed Dec 21 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1
 - 3.5.0 beta2
 - drop integrated 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch

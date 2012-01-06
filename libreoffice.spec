@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        3.4.99.2
-Release:        1%{?dist}.1
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -111,6 +111,7 @@ Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
 Patch13: 0001-fix-syntactic-error.patch
+Patch14: 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -758,6 +759,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
 %patch13 -p1 -b .fix-syntactic-error.patch
+%patch14 -p1 -b .gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -2034,7 +2036,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 06 2012 David Tardon <dtardon@redhat.com> - 3.4.99.2-1.1
+* Fri Jan 06 2012 David Tardon <dtardon@redhat.com> - 3.4.99.2-2
 - rebuild with gcc 4.7
 
 * Wed Dec 21 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1

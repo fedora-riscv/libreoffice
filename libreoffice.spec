@@ -2034,7 +2034,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 06 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1.1
+* Fri Jan 06 2012 David Tardon <dtardon@redhat.com> - 3.4.99.2-1.1
 - rebuild with gcc 4.7
 
 * Wed Dec 21 2011 David Tardon <dtardon@redhat.com> - 3.4.99.2-1

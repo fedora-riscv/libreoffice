@@ -115,6 +115,7 @@ Patch14: 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
 Patch15: 0001-gcc-trunk-avoid-confusion.patch
 Patch16: 0001-workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
 Patch17: 0001-smath-does-not-handle-accents-in-MathML.patch
+Patch18: 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -766,6 +767,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .gcc-trunk-avoid-confusion.patch
 %patch16 -p1 -b .workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
 %patch17 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
+%patch18 -p1 -b .workaround-internal-compiler-error-with-gcc-4.7.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this

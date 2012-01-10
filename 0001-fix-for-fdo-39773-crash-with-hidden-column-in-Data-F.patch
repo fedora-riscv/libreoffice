@@ -1,0 +1,26 @@
+From d7c57d14bdc8968f52aa98b4bd82a0534587e118 Mon Sep 17 00:00:00 2001
+From: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Date: Wed, 3 Aug 2011 03:27:17 +0200
+Subject: [PATCH] fix for fdo#39773: crash with hidden column in Data->Form
+
+---
+ sc/source/ui/miscdlgs/datafdlg.cxx |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/sc/source/ui/miscdlgs/datafdlg.cxx b/sc/source/ui/miscdlgs/datafdlg.cxx
+index 2d3db4f..a93c4f5 100644
+--- a/sc/source/ui/miscdlgs/datafdlg.cxx
++++ b/sc/source/ui/miscdlgs/datafdlg.cxx
+@@ -201,7 +201,8 @@ ScDataFormDlg::ScDataFormDlg( Window* pParent, ScTabViewShell*  pTabViewShellOri
+                 pFixedTexts[nIndex] = NULL;
+                 pEdits[nIndex] = NULL;
+             }
+-        pEdits[nIndex]->SetModifyHdl( HDL(Impl_DataModifyHdl) );
++            if (pEdits[nIndex])
++                pEdits[nIndex]->SetModifyHdl( HDL(Impl_DataModifyHdl) );
+         }
+ 
+         Size nDialogSize = this->GetSizePixel();
+-- 
+1.7.6.5
+

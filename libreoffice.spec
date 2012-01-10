@@ -170,6 +170,7 @@ Patch78: smoketestoo_native-build.patch
 Patch79: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 Patch80: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch81: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
+Patch82: 0001-fix-for-fdo-39773-crash-with-hidden-column-in-Data-F.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -890,6 +891,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch79 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
 %patch80 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 %patch81 -p1 -b .sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
+%patch82 -p1 -b .fdo39773-crash-with-hidden-column-in-Data-F.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2251,10 +2253,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
-* Wed Dec 07 2011 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-2.UNBUILT
+* Tue Jan 10 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-2
 - Resolves: rhbz#759647 dispose clears mpPresTimer
 - Resolves: rhbz#767708 write to mmap'ed file w/o disk space: SIGBUS
 - Resolves: fdo#40482 Writer view options destroyed by printing
+- Resolves: rhbz#772768 crash choosing "Data:Form..." with hidden columns
 
 * Wed Nov 30 2011 David Tardon <dtardon@redhat.com> 1:3.3.4.1-1
 - Resolves: rhbz#747356 let Qt call XInitThreads

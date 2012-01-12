@@ -17,6 +17,9 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 
 %if %{langpacks}
+%if %{defined rhel} && 0%{?rhel} < 7
+%define langpack_langs en-US af ar bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %define with_lang --with-lang="%{langpack_langs}"
 %else
@@ -620,7 +623,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -S
 %langpack -l ar -n Arabic -F -H -O -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l as -n Assamese -F -H -Y -o as_IN -S
+%endif
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -o bg_BG -S
 %langpack -l bn -n Bengali -F -H -Y -O -S
 %langpack -l ca -n Catalan -F -H -Y -M -o ca_ES -S
@@ -634,7 +639,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -O -S
 %langpack -l et -n Estonian -F -H -Y -o et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
+%endif
 %langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S
 %langpack -l fr -n French -F -H -Y -M -A -O -S
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -S
@@ -646,12 +653,16 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -S
 %langpack -l ja -n Japanese -F -A -o ja_JP -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -S
+%endif
 %langpack -l ko -n Korean -F -H -A -o ko_KR -S
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
+%endif
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
@@ -670,7 +681,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -O -S
+%endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -S
 %langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -S
 %langpack -l sr -n Serbian -F -H -Y -A -O -S
@@ -711,7 +724,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l eu -n Basque -X
 %{_datadir}/autocorr/acor_eu.dat
 
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %autocorr -l fa -n Farsi
+%endif
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French
 %autocorr -l ga -n Irish

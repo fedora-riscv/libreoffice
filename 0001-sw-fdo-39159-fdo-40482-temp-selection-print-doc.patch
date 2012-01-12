@@ -75,7 +75,7 @@ diff --git a/sw/inc/unotxdoc.hxx b/sw/inc/unotxdoc.hxx
 index ab8ae52..ca8ee42 100644
 --- a/sw/inc/unotxdoc.hxx
 +++ b/sw/inc/unotxdoc.hxx
-@@ -600,12 +600,11 @@
+@@ -600,12 +600,11 @@ class SwViewOptionAdjust_Impl
  {
      SwWrtShell &    m_rShell;
      SwViewOption    m_aOldViewOptions;
@@ -85,7 +85,7 @@ index ab8ae52..ca8ee42 100644
  
  public:
 -    SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
-+    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions );
++    SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions );
      ~SwViewOptionAdjust_Impl();
      
      void AdjustViewOptions( const SwPrtOptions *pPrtOptions );
@@ -214,7 +214,7 @@ index 8fad3d7..490dec8 100644
 -    m_aOldViewOptions( rViewOptions ),
 -    m_bIsTmpSelection( bIsTmpSelection )
 +SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl(
-+           ViewShell& rSh, const SwViewOption &rViewOptions)
++           SwWrtShell& rSh, const SwViewOption &rViewOptions)
 +   : m_rShell( rSh )
 +   , m_aOldViewOptions( rViewOptions )
  {

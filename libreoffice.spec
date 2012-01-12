@@ -28,7 +28,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -134,6 +134,7 @@ Patch35: 0001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
 Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 Patch38: 0001-smath-does-not-handle-accents-in-MathML.patch
+Patch39: 0001-fix-writing-of-strings-from-the-first-module.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -816,6 +817,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch36 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 %patch37 -p1 -b .fdo39159-fdo40482-temp-selection-print-doc.patch
 %patch38 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
+%patch39 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2127,6 +2129,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 12 2012 David Tardon <dtardon@redhat.com> - 3.4.4.2-8-UNBUILT
+- Resolves: rhbz#771108 English menu in writer despite installation of
+  libreoffice-langpack-de
+
 * Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7
 - Resolves: fdo#40482 Writer view options destroyed by printing
 - Resolves: rhbz#533318 smath does not handle accents in MathML

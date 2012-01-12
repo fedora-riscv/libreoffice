@@ -174,16 +174,14 @@ diff --git a/sw/source/ui/uno/unotxdoc.cxx b/sw/source/ui/uno/unotxdoc.cxx
 index 8fad3d7..490dec8 100644
 --- a/sw/source/ui/uno/unotxdoc.cxx
 +++ b/sw/source/ui/uno/unotxdoc.cxx
-@@ -2439,7 +2439,19 @@
+@@ -2439,7 +2439,17 @@ SwDoc * SwXTextDocument::GetRenderDoc(
              const TypeId aSwViewTypeId = TYPE(SwView);
              if (rpView  &&  rpView->IsA(aSwViewTypeId))
              {
 -                SfxObjectShellRef xDocSh(((SwView*)rpView)->GetOrCreateTmpSelectionDoc());
++                OSL_ENSURE(m_pRenderData, "GetRenderDoc: no renderdata");
 +                if (!m_pRenderData)
-+                {
-+                    OSL_FAIL("GetRenderDoc: no renderdata");
 +                    return 0;
-+                }
 +                SwView *const pSwView(static_cast<SwView *>(rpView));
 +                SfxObjectShellLock xDocSh(m_pRenderData->GetTempDocShell());
 +                if (!xDocSh.Is())
@@ -195,19 +193,19 @@ index 8fad3d7..490dec8 100644
                  if (xDocSh.Is())
                  {
                      pDoc = ((SwDocShell*)&xDocSh)->GetDoc();
-@@ -2555,7 +2567,10 @@
+@@ -2555,7 +2565,10 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
                  if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pWrtShell ) )
                      m_pRenderData->ViewOptionAdjustStop();
                  if (m_pRenderData && !m_pRenderData->IsViewOptionAdjust())
 -                    m_pRenderData->ViewOptionAdjustStart( *pWrtShell, *pWrtShell->GetViewOptions(), rSelection.hasValue() );
 +                {
 +                    m_pRenderData->ViewOptionAdjustStart(
-+                        *pViewShell, *pViewShell->GetViewOptions() );
++                        *pWrtShell, *pWrtShell->GetViewOptions() );
 +                }
              }
  
              m_pRenderData->SetSwPrtOptions( new SwPrtOptions( C2U( bIsPDFExport ? "PDF export" : "Printing" ) ) );
-@@ -3823,21 +3838,16 @@
+@@ -3823,21 +3836,16 @@ void SwXDocumentPropertyHelper::onChange()
         m_pDoc->SetModified();
  }
  

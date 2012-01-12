@@ -118,6 +118,8 @@ Patch17: 0001-smath-does-not-handle-accents-in-MathML.patch
 Patch18: 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
 Patch19: 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
 Patch20: 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
+Patch21: 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
+Patch22: 0001-fix-writing-of-strings-from-the-first-module.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -772,6 +774,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .workaround-internal-compiler-error-with-gcc-4.7.patch
 %patch19 -p1 -b .fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
 %patch20 -p1 -b .fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
+%patch21 -p1 -b .Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
+%patch22 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -2050,6 +2054,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.99.2-3
 - Resolves: rhbz#533318 smath does not handle accents in MathML
+- Resolves: rhbz#771108 English menu in writer despite installation of
+  libreoffice-langpack-de
 
 * Fri Jan 06 2012 David Tardon <dtardon@redhat.com> - 3.4.99.2-2
 - rebuild with gcc 4.7

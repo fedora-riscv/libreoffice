@@ -33,11 +33,7 @@ diff --git a/sw/inc/printdata.hxx b/sw/inc/printdata.hxx
 index 99c5cb4..e90508f 100644
 --- a/sw/inc/printdata.hxx
 +++ b/sw/inc/printdata.hxx
-@@ -28,10 +28,10 @@
- #ifndef SW_PRINTDATA_HXX
- #define SW_PRINTDATA_HXX
- 
--
+@@ -32,6 +32,7 @@
  #include <sal/types.h>
  #include <rtl/ustring.hxx>
  #include <vcl/print.hxx>
@@ -45,7 +41,7 @@ index 99c5cb4..e90508f 100644
  
  #include <set>
  #include <map>
-@@ -246,6 +246,10 @@ class SwRenderData
+@@ -246,6 +247,10 @@
  
      rtl::OUString               m_aPageRange;
  
@@ -56,7 +52,12 @@ index 99c5cb4..e90508f 100644
      // the view options to be applied for printing 
      SwViewOptionAdjust_Impl *   m_pViewOptionAdjust;
  
-@@ -267,9 +271,12 @@ public:
+@@ -262,14 +267,16 @@
+     SwRenderData();
+     ~SwRenderData();
+ 
+-
+     bool HasPostItData() const  { return m_pPostItShell != 0 && m_pPostItDoc != 0 && m_pPostItShell != 0; }
      void CreatePostItData( SwDoc *pDoc, const SwViewOption *pViewOpt, OutputDevice *pOutDev );
      void DeletePostItData();
  
@@ -64,36 +65,41 @@ index 99c5cb4..e90508f 100644
 +    void SetTempDocShell(SfxObjectShellLock const&);
 +
      bool IsViewOptionAdjust() const  { return m_pViewOptionAdjust != 0; }
-     bool NeedNewViewOptionAdjust( const ViewShell& ) const;
--    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+     bool NeedNewViewOptionAdjust( const SwWrtShell& ) const;
+-    void ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
 +    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions);
-     void ViewOptionAdjust( SwPrintData const* const pPrtOptions );
+     void ViewOptionAdjust( const SwPrtOptions *pPrtOptions );
      void ViewOptionAdjustStop();
  
 diff --git a/sw/inc/unotxdoc.hxx b/sw/inc/unotxdoc.hxx
 index ab8ae52..ca8ee42 100644
 --- a/sw/inc/unotxdoc.hxx
 +++ b/sw/inc/unotxdoc.hxx
-@@ -588,10 +588,9 @@ class SwViewOptionAdjust_Impl
+@@ -600,12 +600,11 @@
  {
-     ViewShell &    m_rShell;
+     SwWrtShell &    m_rShell;
      SwViewOption    m_aOldViewOptions;
 -    bool m_bIsTmpSelection;
+ //    SwViewOption    m_aRenderViewOptions;   // view options to use when rendering for PDF export or printing
+ //    bool            m_bRestoreViewOptions;
  
  public:
--    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
+-    SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
 +    SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions );
      ~SwViewOptionAdjust_Impl();
-     void AdjustViewOptions( SwPrintData const* const pPrtOptions );  
-     bool checkShell( const ViewShell& rCompare ) const
+     
+     void AdjustViewOptions( const SwPrtOptions *pPrtOptions );
 diff --git a/sw/source/core/view/printdata.cxx b/sw/source/core/view/printdata.cxx
 index a60bd67..c904738 100644
 --- a/sw/source/core/view/printdata.cxx
 +++ b/sw/source/core/view/printdata.cxx
-@@ -108,19 +108,28 @@ void SwRenderData::DeletePostItData()
+@@ -110,7 +110,16 @@
+         m_pPostItShell  = 0;
+         m_pPostItFields = 0;
      }
- }    
- 
+-}    
++}
++
 +SfxObjectShellLock const& SwRenderData::GetTempDocShell() const
 +{
 +    return m_xTempDocShell;
@@ -102,35 +108,35 @@ index a60bd67..c904738 100644
 +{
 +    m_xTempDocShell = xShell;
 +}
-+
- bool SwRenderData::NeedNewViewOptionAdjust( const ViewShell& rCompare ) const
+ 
+ bool SwRenderData::NeedNewViewOptionAdjust( const SwWrtShell& rCompare ) const
  {
-     return m_pViewOptionAdjust ? ! m_pViewOptionAdjust->checkShell( rCompare ) : true;
+@@ -118,13 +127,13 @@
  }
  
  
--void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions,  bool bIsTmpSelection )
+-void SwRenderData::ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection )
 +void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions )
  {
      if (m_pViewOptionAdjust)
      {
          DBG_ASSERT( 0, "error: there should be no ViewOptionAdjust active when calling this function" );
      }
--    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions,  bIsTmpSelection );
+-    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions, bIsTmpSelection );
 +    m_pViewOptionAdjust = new SwViewOptionAdjust_Impl( rSh, rViewOptions );
  }
- 
+     
  
 diff --git a/sw/source/ui/inc/view.hxx b/sw/source/ui/inc/view.hxx
 index 57ca1c9..cf39873 100644
 --- a/sw/source/ui/inc/view.hxx
 +++ b/sw/source/ui/inc/view.hxx
-@@ -647,8 +647,7 @@ public:
+@@ -643,8 +643,7 @@
  
      void NotifyDBChanged();
  
--    SfxObjectShellLock & GetTmpSelectionDoc();
--    SfxObjectShellLock & GetOrCreateTmpSelectionDoc();
+-    SfxObjectShellRef & GetTmpSelectionDoc();
+-    SfxObjectShellRef & GetOrCreateTmpSelectionDoc();
 +    SfxObjectShellLock CreateTmpSelectionDoc();
  
      void        AddTransferable(SwTransferable& rTransferable);
@@ -139,26 +145,24 @@ diff --git a/sw/source/ui/uiview/view.cxx b/sw/source/ui/uiview/view.cxx
 index c0eb7f4..f6912af 100644
 --- a/sw/source/ui/uiview/view.cxx
 +++ b/sw/source/ui/uiview/view.cxx
-@@ -1800,22 +1800,12 @@ void SwView::NotifyDBChanged()
- }
- 
+@@ -1878,21 +1878,10 @@
  /*--------------------------------------------------------------------
--    Beschreibung:   Drucken
-+    Printing
+     Beschreibung:   Drucken
   --------------------------------------------------------------------*/
--SfxObjectShellLock & SwView::GetTmpSelectionDoc()
+-SfxObjectShellRef & SwView::GetTmpSelectionDoc()
 +SfxObjectShellLock SwView::CreateTmpSelectionDoc()
  {
 -    return GetViewImpl()->GetTmpSelectionDoc();
 -}
 -
--SfxObjectShellLock & SwView::GetOrCreateTmpSelectionDoc()
+-SfxObjectShellRef & SwView::GetOrCreateTmpSelectionDoc()
 -{
--    SfxObjectShellLock &rxTmpDoc = GetViewImpl()->GetTmpSelectionDoc();
+-    SfxObjectShellRef &rxTmpDoc = GetViewImpl()->GetTmpSelectionDoc();
 -    if (!rxTmpDoc.Is())
 -    {
 -        SwXTextView *pImpl = GetViewImpl()->GetUNOObject_Impl();
--        rxTmpDoc = pImpl->BuildTmpSelectionDoc();
+-        rxTmpDoc = pImpl->BuildTmpSelectionDoc(
+-                    GetViewImpl()->GetEmbeddedObjRef() );
 -    }
 -    return rxTmpDoc;
 +    SwXTextView *const pImpl = GetViewImpl()->GetUNOObject_Impl();
@@ -170,11 +174,11 @@ diff --git a/sw/source/ui/uno/unotxdoc.cxx b/sw/source/ui/uno/unotxdoc.cxx
 index 8fad3d7..490dec8 100644
 --- a/sw/source/ui/uno/unotxdoc.cxx
 +++ b/sw/source/ui/uno/unotxdoc.cxx
-@@ -2420,7 +2420,18 @@ SwDoc * SwXTextDocument::GetRenderDoc(
+@@ -2439,7 +2439,19 @@
              const TypeId aSwViewTypeId = TYPE(SwView);
              if (rpView  &&  rpView->IsA(aSwViewTypeId))
              {
--                SfxObjectShellLock xDocSh(((SwView*)rpView)->GetOrCreateTmpSelectionDoc());
+-                SfxObjectShellRef xDocSh(((SwView*)rpView)->GetOrCreateTmpSelectionDoc());
 +                if (!m_pRenderData)
 +                {
 +                    OSL_FAIL("GetRenderDoc: no renderdata");
@@ -187,33 +191,34 @@ index 8fad3d7..490dec8 100644
 +                    xDocSh = pSwView->CreateTmpSelectionDoc();
 +                    m_pRenderData->SetTempDocShell(xDocSh);
 +                }
++
                  if (xDocSh.Is())
                  {
                      pDoc = ((SwDocShell*)&xDocSh)->GetDoc();
-@@ -2547,7 +2558,10 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
-                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pViewShell ) )
+@@ -2555,7 +2567,10 @@
+                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pWrtShell ) )
                      m_pRenderData->ViewOptionAdjustStop();
                  if (m_pRenderData && !m_pRenderData->IsViewOptionAdjust())
--                    m_pRenderData->ViewOptionAdjustStart( *pViewShell, *pViewShell->GetViewOptions(), rSelection.hasValue() );
+-                    m_pRenderData->ViewOptionAdjustStart( *pWrtShell, *pWrtShell->GetViewOptions(), rSelection.hasValue() );
 +                {
 +                    m_pRenderData->ViewOptionAdjustStart(
 +                        *pViewShell, *pViewShell->GetViewOptions() );
 +                }
              }
  
-             m_pRenderData->SetSwPrtOptions( new SwPrintData );
-@@ -3834,21 +3848,16 @@ void SwXDocumentPropertyHelper::onChange()
+             m_pRenderData->SetSwPrtOptions( new SwPrtOptions( C2U( bIsPDFExport ? "PDF export" : "Printing" ) ) );
+@@ -3823,21 +3838,16 @@
         m_pDoc->SetModified();
  }
  
--SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( ViewShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
+-SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
 -    m_rShell( rSh ),
 -    m_aOldViewOptions( rViewOptions ),
 -    m_bIsTmpSelection( bIsTmpSelection )
 +SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl(
-+            ViewShell& rSh, const SwViewOption &rViewOptions)
-+    : m_rShell( rSh )
-+    , m_aOldViewOptions( rViewOptions )
++           ViewShell& rSh, const SwViewOption &rViewOptions)
++   : m_rShell( rSh )
++   , m_aOldViewOptions( rViewOptions )
  {
  }
  
@@ -228,7 +233,7 @@ index 8fad3d7..490dec8 100644
 +    m_rShell.ApplyViewOptions( m_aOldViewOptions );
  }
  
- void
+ void SwViewOptionAdjust_Impl::AdjustViewOptions(
 diff --git a/sw/source/ui/uno/unotxvw.cxx b/sw/source/ui/uno/unotxvw.cxx
 index 1c1fca6..3d6c36a 100644
 --- a/sw/source/ui/uno/unotxvw.cxx

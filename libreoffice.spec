@@ -135,6 +135,7 @@ Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 Patch38: 0001-smath-does-not-handle-accents-in-MathML.patch
 Patch39: 0001-fix-writing-of-strings-from-the-first-module.patch
+Patch40: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -818,6 +819,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch37 -p1 -b .fdo39159-fdo40482-temp-selection-print-doc.patch
 %patch38 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
 %patch39 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
+%patch40 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2129,9 +2131,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jan 12 2012 David Tardon <dtardon@redhat.com> - 3.4.4.2-8-UNBUILT
+* Fri Jan 13 2012 David Tardon <dtardon@redhat.com> - 3.4.4.2-8-UNBUILT
 - Resolves: rhbz#771108 English menu in writer despite installation of
   libreoffice-langpack-de
+- Resolves: rhbz#661738 Very slow java database operations:
+  Attach/DetachCurrentThread
 
 * Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.4.2-7
 - Resolves: fdo#40482 Writer view options destroyed by printing

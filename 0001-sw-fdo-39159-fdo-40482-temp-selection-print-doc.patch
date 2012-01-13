@@ -67,7 +67,7 @@ index 99c5cb4..e90508f 100644
      bool IsViewOptionAdjust() const  { return m_pViewOptionAdjust != 0; }
      bool NeedNewViewOptionAdjust( const SwWrtShell& ) const;
 -    void ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection );
-+    void ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions);
++    void ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions);
      void ViewOptionAdjust( const SwPrtOptions *pPrtOptions );
      void ViewOptionAdjustStop();
  
@@ -116,7 +116,7 @@ index a60bd67..c904738 100644
  
  
 -void SwRenderData::ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection )
-+void SwRenderData::ViewOptionAdjustStart( ViewShell &rSh, const SwViewOption &rViewOptions )
++void SwRenderData::ViewOptionAdjustStart( SwWrtShell &rSh, const SwViewOption &rViewOptions )
  {
      if (m_pViewOptionAdjust)
      {
@@ -174,64 +174,30 @@ diff --git a/sw/source/ui/uno/unotxdoc.cxx b/sw/source/ui/uno/unotxdoc.cxx
 index 8fad3d7..490dec8 100644
 --- a/sw/source/ui/uno/unotxdoc.cxx
 +++ b/sw/source/ui/uno/unotxdoc.cxx
-@@ -2439,7 +2439,17 @@ SwDoc * SwXTextDocument::GetRenderDoc(
-             const TypeId aSwViewTypeId = TYPE(SwView);
-             if (rpView  &&  rpView->IsA(aSwViewTypeId))
-             {
--                SfxObjectShellRef xDocSh(((SwView*)rpView)->GetOrCreateTmpSelectionDoc());
-+                OSL_ENSURE(m_pRenderData, "GetRenderDoc: no renderdata");
-+                if (!m_pRenderData)
-+                    return 0;
-+                SwView *const pSwView(static_cast<SwView *>(rpView));
-+                SfxObjectShellLock xDocSh(m_pRenderData->GetTempDocShell());
-+                if (!xDocSh.Is())
-+                {
-+                    xDocSh = pSwView->CreateTmpSelectionDoc();
-+                    m_pRenderData->SetTempDocShell(xDocSh);
-+                }
-+
-                 if (xDocSh.Is())
-                 {
-                     pDoc = ((SwDocShell*)&xDocSh)->GetDoc();
-@@ -2555,7 +2565,10 @@ sal_Int32 SAL_CALL SwXTextDocument::getRendererCount(
-                 if (m_pRenderData && m_pRenderData->NeedNewViewOptionAdjust( *pWrtShell ) )
-                     m_pRenderData->ViewOptionAdjustStop();
-                 if (m_pRenderData && !m_pRenderData->IsViewOptionAdjust())
--                    m_pRenderData->ViewOptionAdjustStart( *pWrtShell, *pWrtShell->GetViewOptions(), rSelection.hasValue() );
-+                {
-+                    m_pRenderData->ViewOptionAdjustStart(
-+                        *pWrtShell, *pWrtShell->GetViewOptions() );
-+                }
-             }
- 
-             m_pRenderData->SetSwPrtOptions( new SwPrtOptions( C2U( bIsPDFExport ? "PDF export" : "Printing" ) ) );
-@@ -3823,21 +3836,16 @@ void SwXDocumentPropertyHelper::onChange()
-        m_pDoc->SetModified();
+@@ -851,7 +851,7 @@
+     pDoc->SetRubyList( *rSh.GetCrsr(), aList, 0 );
  }
  
--SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl( SwWrtShell& rSh, const SwViewOption &rViewOptions, bool bIsTmpSelection ) :
--    m_rShell( rSh ),
--    m_aOldViewOptions( rViewOptions ),
--    m_bIsTmpSelection( bIsTmpSelection )
-+SwViewOptionAdjust_Impl::SwViewOptionAdjust_Impl(
-+           SwWrtShell& rSh, const SwViewOption &rViewOptions)
-+   : m_rShell( rSh )
-+   , m_aOldViewOptions( rViewOptions )
+-SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc( SfxObjectShellRef& /*rRef*/ )
++SfxObjectShellRef SwXTextView::BuildTmpSelectionDoc()
  {
- }
- 
- SwViewOptionAdjust_Impl::~SwViewOptionAdjust_Impl()
+     SwWrtShell& rOldSh = m_pView->GetWrtShell();
+     SfxPrinter *pPrt = rOldSh.getIDocumentDeviceAccess()->getPrinter( false );
+@@ -887,14 +887,6 @@
  {
--    //fdo#39159 don't restore original view options on a temporary document
--    //selection, it triggers throwing away the current view. Presumably we can
--    //forget about it in the temporary document case as unimportant to restore
--    //the original view settings
--    if (!m_bIsTmpSelection)
--        m_rShell.ApplyViewOptions( m_aOldViewOptions );
-+    m_rShell.ApplyViewOptions( m_aOldViewOptions );
- }
+     OSL_ENSURE( m_pView, "view is missing" );
  
- void SwViewOptionAdjust_Impl::AdjustViewOptions(
+-    // destroy temporary document with selected text that is used
+-    // in PDF export of (multi-)selections.
+-    if (m_pView && m_pView->GetTmpSelectionDoc().Is())
+-    {
+-        m_pView->GetTmpSelectionDoc()->DoClose();
+-        m_pView->GetTmpSelectionDoc() = 0;
+-    }
+-
+     uno::Reference< uno::XInterface >  xInt = (cppu::OWeakObject*)(SfxBaseController*)this;
+ 
+      lang::EventObject aEvent(xInt);
 diff --git a/sw/source/ui/uno/unotxvw.cxx b/sw/source/ui/uno/unotxvw.cxx
 index 1c1fca6..3d6c36a 100644
 --- a/sw/source/ui/uno/unotxvw.cxx
@@ -251,6 +217,14 @@ index 1c1fca6..3d6c36a 100644
      uno::Reference< uno::XInterface >  xInt = (cppu::OWeakObject*)(SfxBaseController*)this;
  
       lang::EventObject aEvent(xInt);
--- 
-1.7.7.3
-
+--- a/sw/source/ui/inc/unotxvw.hxx	2012-01-13 09:07:34.213536169 +0000
++++ b/sw/source/ui/inc/unotxvw.hxx	2012-01-13 09:07:40.815605630 +0000
+@@ -154,7 +154,7 @@
+     void                    Invalidate();
+ 
+     // temporary document used for PDF export of selections/multi-selections
+-    SfxObjectShellRef       BuildTmpSelectionDoc( SfxObjectShellRef& );
++    SfxObjectShellLock      BuildTmpSelectionDoc();
+ };
+ 
+ typedef cppu::WeakImplHelper8<

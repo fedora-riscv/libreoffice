@@ -124,6 +124,7 @@ Patch19: 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
 Patch20: 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
 Patch21: 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
 Patch22: 0001-fix-writing-of-strings-from-the-first-module.patch
+Patch23: 0001-refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -792,6 +793,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
 %patch21 -p1 -b .Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
 %patch22 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
+%patch23 -p1 -b .refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this

@@ -31,8 +31,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.99.2
-Release:        3%{?dist}
+Version:        3.4.99.3
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -61,7 +61,7 @@ Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 %endif
-Source19:       http://dev-www.libreoffice.org/src/a8b25a0bf696fd126a08319d88998492-libvisio-0.0.11.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/053a35c244bf132f806e198ac4d960aa-libvisio-0.0.12.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 
@@ -114,17 +114,12 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
-Patch13: 0001-fix-syntactic-error.patch
-Patch14: 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
-Patch15: 0001-gcc-trunk-avoid-confusion.patch
-Patch16: 0001-workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
-Patch17: 0001-smath-does-not-handle-accents-in-MathML.patch
-Patch18: 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
-Patch19: 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
-Patch20: 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
-Patch21: 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
-Patch22: 0001-fix-writing-of-strings-from-the-first-module.patch
-Patch23: 0001-refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
+Patch13: 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
+Patch14: 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
+Patch15: 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
+Patch16: 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
+Patch17: 0001-fix-writing-of-strings-from-the-first-module.patch
+Patch18: 0001-refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -783,17 +778,12 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
-%patch13 -p1 -b .fix-syntactic-error.patch
-%patch14 -p1 -b .gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
-%patch15 -p1 -b .gcc-trunk-avoid-confusion.patch
-%patch16 -p1 -b .workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
-%patch17 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
-%patch18 -p1 -b .workaround-internal-compiler-error-with-gcc-4.7.patch
-%patch19 -p1 -b .fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
-%patch20 -p1 -b .fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
-%patch21 -p1 -b .Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
-%patch22 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
-%patch23 -p1 -b .refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
+%patch13 -p1 -b .workaround-internal-compiler-error-with-gcc-4.7.patch
+%patch14 -p1 -b .fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
+%patch15 -p1 -b .fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
+%patch16 -p1 -b .Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
+%patch17 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
+%patch18 -p1 -b .refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -2070,7 +2060,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.99.2-3
+* Fri Jan 13 2012 David Tardon <dtardon@redhat.com> - 3.4.99.3-1
+- 3.5.0 beta3
+- drop integrated 0001-fix-syntactic-error.patch
+- drop integrated 0001-gcc-trunk-fix-error-unable-to-find-string-literal-op.patch
+- drop integrated 0001-gcc-trunk-avoid-confusion.patch
+- drop integrated 0001-workaround-for-LO-namespace-pollution-breaking-KDE4-.patch
+- drop integrated 0001-smath-does-not-handle-accents-in-MathML.patch
 - Resolves: rhbz#533318 smath does not handle accents in MathML
 - Resolves: rhbz#771108 English menu in writer despite installation of
   libreoffice-langpack-de

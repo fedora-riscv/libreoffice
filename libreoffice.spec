@@ -1129,6 +1129,11 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/sandbox.jar
 #remove dummy .dat files
 rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/root?.dat
 
+#remove if we do not build with kde support
+%if %{defined rhel}
+rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/kde-open-url
+%endif
+
 #set standard permissions for rpmlint
 find $RPM_BUILD_ROOT/%{baseinstdir} -exec chmod +w {} \;
 find $RPM_BUILD_ROOT/%{baseinstdir} -type d -exec chmod 0755 {} \;

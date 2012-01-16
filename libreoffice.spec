@@ -67,8 +67,12 @@ Source29:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #backwards compatability.
 Source30:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
+%if %{defined rhel} && 0%{?rhel} < 7
+Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
+Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+%endif
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-1.6.0-devel, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel <= 1.6.0, boost-devel, zlib-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -77,13 +81,19 @@ BuildRequires:  db4-devel, sane-backends-devel, libicu-devel, perl-Archive-Zip
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
-BuildRequires:  mdds-devel, lpsolve-devel, bsh, lucene, lucene-contrib
+BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
-BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel, junit4
-BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel, mythes-devel
-BuildRequires:  graphite2-devel, libwpg-devel, libwps-devel, vigra-devel
+BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
+BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel
+BuildRequires:  vigra-devel
 BuildRequires:  font(:lang=en)
+%if %{defined rhel} && 0%{?rhel} < 7
+BuildRequires:  hsqldb
+%else
+BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
+BuildRequires:  libwps-devel, junit4, perl-Digest-MD5
+%endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel
 %endif
@@ -136,6 +146,13 @@ Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 Patch38: 0001-smath-does-not-handle-accents-in-MathML.patch
 Patch39: 0001-fix-writing-of-strings-from-the-first-module.patch
 Patch40: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+%if %{defined rhel} && 0%{?rhel} < 7
+Patch41: libreoffice-libwpd08-1.patch
+Patch42: libreoffice-libwpd08-2.patch
+Patch43: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
+Patch44: libreoffice-gcj.patch
+Patch45: libreoffice-rhel6poppler.patch
+%endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -820,6 +837,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch38 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
 %patch39 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
 %patch40 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+%if %{defined rhel} && 0%{?rhel} < 7
+%patch41 -p1 -b .libwpd08-1.patch
+%patch42 -p1 -R -b .libreoffice-libwpd08-2.patch
+%patch43 -p1 -R -b .wpsimport
+%patch44 -p1 -b .gcj.patch
+%patch45 -p0 -b .rhel6poppler.patch
+%endif
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -857,8 +881,14 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if %{undefined rhel}
-%define distrooptions --enable-kde4
+%if %{defined rhel}
+%if 0%{?rhel} < 7
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%else
+%define distrooptions --without-system-hsqldb
+%endif
+%else
+%define distrooptions --without-system-hsqldb --enable-kde4
 %endif
 
 autoconf
@@ -880,8 +910,7 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --with-external-libtextcat-data \
- --without-system-translate-toolkit --without-system-hsqldb \
+ --with-external-libtextcat-data --without-system-translate-toolkit \
  %{distrooptions}
 
 mkdir -p ext_sources
@@ -895,32 +924,14 @@ cp %{SOURCE28} ext_sources
 cp %{SOURCE29} ext_sources
 cp %{SOURCE30} ext_sources
 cp %{SOURCE31} ext_sources
+%if %{defined rhel} && 0%{?rhel} < 7
+cp %{SOURCE32} ext_sources
+cp %{SOURCE33} ext_sources
+%endif
 touch src.downloaded
 
 . ./*[Ee]nv.[Ss]et.sh
 ./bootstrap
-
-#HANGING JAVA HACK
-cat << \EOF > solenv/bin/java
-#!/bin/sh
-status=1
-count=1
-while [ $status -ne 0 -a $count -lt 10 ]
-do
-        timeout -k 5m 5m $REALJAVA $*
-        status=$?
-        if [ $status -ne 0 ]; then
-                echo $REALJAVA hung, trying again, attempt $count
-        fi
-        count=$[count+1]
-done
-exit $status
-EOF
-chmod +x solenv/bin/java
-export REALJAVA=`which java`
-export PATH=solenv/bin:$PATH
-which java
-#HANGING JAVA HACK
 
 cd instsetoo_native
 if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
@@ -1345,7 +1356,12 @@ cd ../smoketestoo_native
 unset WITH_LANG
 #JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
 #SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
+%if %{defined rhel} && 0%{?rhel} < 7
+unset SOLAR_JAVA
+JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
+%else
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1546,7 +1562,9 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libvbahelper%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gen%{SOPOST}.so
 %{basisinstdir}/program/libvclplug_gtk%{SOPOST}.so
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/libwpgimport%{SOPOST}.so
+%endif
 %{basisinstdir}/program/libxmlfa%{SOPOST}.so
 %{basisinstdir}/program/libxmlfd%{SOPOST}.so
 %{basisinstdir}/program/libxmx%{SOPOST}.so
@@ -1809,7 +1827,9 @@ done
 %{basisinstdir}/help/en/sdatabase.*
 %dir %{basisinstdir}/program
 %dir %{basisinstdir}/program/classes
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/classes/hsqldb.jar
+%endif
 %{basisinstdir}/program/classes/sdbc_hsqldb.jar
 %{basisinstdir}/program/libabp%{SOPOST}.so
 %{basisinstdir}/program/libadabasui%{SOPOST}.so
@@ -1960,7 +1980,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/libhwp.so
 %{basisinstdir}/program/liblwpft%{SOPOST}.so
 %{basisinstdir}/program/libmsword%{SOPOST}.so
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{basisinstdir}/program/libmsworks%{SOPOST}.so
+%endif
 %{basisinstdir}/program/libswd%{SOPOST}.so
 %{basisinstdir}/program/libswui%{SOPOST}.so
 %{basisinstdir}/program/libt602filter%{SOPOST}.so

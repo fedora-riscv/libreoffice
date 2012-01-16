@@ -717,7 +717,7 @@ This package provides gdb pretty printers for package %{name}.
 # autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
 # openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
 # %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Yy:) \
+%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Vv:Yy:Zz) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \

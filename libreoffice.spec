@@ -888,6 +888,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch75 -p1 -b .let-Qt-call-XInitThreads-so-that-it-knows-it-s-been-.patch
 %patch76 -p1 -b .gdb-pretty-printers.patch
 %patch77 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+%patch78 -p1 -b .smoketestoo_native-build.patch
 %patch79 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
 %patch80 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 %patch81 -p1 -b .sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch

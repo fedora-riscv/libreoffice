@@ -815,7 +815,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l et -n Estonian -F -H -Y -o et_EE -V -z et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -z eu_ES -S
 %langpack -l fa -n Farsi -A -H -Y -S
-%if %{defined rhel} && 0%{?rhel} < 7 \
+%if %{defined rhel} && 0%{?rhel} < 7
 %langpack -l fi -n Finnish -F -A -o fi_FI -V -z fi_FI -S
 %else
 %langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S

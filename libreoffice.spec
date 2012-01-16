@@ -160,6 +160,7 @@ Patch42: libreoffice-libwpd08-2.patch
 Patch43: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch44: libreoffice-gcj.patch
 Patch45: libreoffice-rhel6poppler.patch
+Patch46: libreoffice-rhel6langs.patch
 %endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -985,6 +986,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch43 -p1 -R -b .wpsimport
 %patch44 -p1 -b .gcj.patch
 %patch45 -p0 -b .rhel6poppler.patch
+%patch46 -p0 -b .rhel6langs.patch
 %endif
 
 # these are horribly incomplete--empty translations and copied english

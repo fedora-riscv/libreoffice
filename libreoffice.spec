@@ -162,6 +162,7 @@ Patch44: libreoffice-gcj.patch
 Patch45: libreoffice-rhel6poppler.patch
 Patch46: libreoffice-rhel6langs.patch
 %endif
+Patch47: solenv.fix.mk.inheritance.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -988,6 +989,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch45 -p0 -b .rhel6poppler.patch
 %patch46 -p0 -b .rhel6langs.patch
 %endif
+%patch47 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

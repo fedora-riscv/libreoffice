@@ -158,6 +158,7 @@ Patch40: libreoffice-rhel6poppler.patch
 Patch41: libreoffice-rhel6langs.patch
 %endif
 Patch42: solenv.fix.mk.inheritance.patch
+Patch43: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -980,6 +981,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch41 -p0 -b .rhel6langs.patch
 %endif
 %patch42 -p1 -b .solenv.fix.mk.inheritance.patch
+%patch43 -p1 -b .rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

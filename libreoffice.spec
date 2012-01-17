@@ -1,4 +1,4 @@
-%define libo_version 3.4.4
+%define libo_version 3.4.5
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?dist}
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -141,28 +141,23 @@ Patch24: 0001-Related-rhbz-730225-avoid-segv-in-ld-this-was-set-to.patch
 Patch25: gdb-pretty-printers.patch
 Patch26: 0001-Related-fdo-37195-migrationoo3-not-registered.patch
 Patch27: 0001-Resolves-rhbz-738255-avoid-crash-on-NULL-pointer.patch
-Patch28: 0001-add-Oracle-Java-1.7.0-recognition.patch
-Patch29: 0001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
-Patch30: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
-Patch31: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
-Patch32: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
-Patch33: 0001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
-Patch34: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
-Patch35: 0001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
-Patch36: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
-Patch37: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
-Patch38: 0001-smath-does-not-handle-accents-in-MathML.patch
-Patch39: 0001-fix-writing-of-strings-from-the-first-module.patch
-Patch40: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+Patch28: 0001-Resolves-rhbz-751290-KDE-black-on-dark-tooltips.patch
+Patch29: 0001-gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+Patch30: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
+Patch31: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
+Patch32: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
+Patch33: 0001-smath-does-not-handle-accents-in-MathML.patch
+Patch34: 0001-fix-writing-of-strings-from-the-first-module.patch
+Patch35: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-Patch41: libreoffice-libwpd08-1.patch
-Patch42: libreoffice-libwpd08-2.patch
-Patch43: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
-Patch44: libreoffice-gcj.patch
-Patch45: libreoffice-rhel6poppler.patch
-Patch46: libreoffice-rhel6langs.patch
+Patch36: libreoffice-libwpd08-1.patch
+Patch37: libreoffice-libwpd08-2.patch
+Patch38: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
+Patch39: libreoffice-gcj.patch
+Patch40: libreoffice-rhel6poppler.patch
+Patch41: libreoffice-rhel6langs.patch
 %endif
-Patch47: solenv.fix.mk.inheritance.patch
+Patch42: solenv.fix.mk.inheritance.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -968,28 +963,23 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1
 %patch26 -p1 -b .fdo37195-migrationoo3-not-registered.patch
 %patch27 -p1 -b .rhbz738255-avoid-crash-on-NULL-pointer.patch
-%patch28 -p1 -b .add-Oracle-Java-1.7.0-recognition.patch
-%patch29 -p1 -b .fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
-%patch30 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
-%patch31 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
-%patch32 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
-%patch33 -p1 -b .fdo43308-Set-the-logic-straight-for-center-across-s.patch
-%patch34 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
-%patch35 -p1 -b .rhbz754051-Libreoffice-calc-crashes-when-r.patch
-%patch36 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
-%patch37 -p1 -b .fdo39159-fdo40482-temp-selection-print-doc.patch
-%patch38 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
-%patch39 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
-%patch40 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+%patch28 -p1 -b .rhbz751290-KDE-black-on-dark-tooltips.patch
+%patch29 -p1 -b .gtk3-fix-cairo-canvas-crash-for-non-X-or-svp-backend.patch
+%patch30 -p1 -b .rhbz759647-dispose-clears-mpPresTimer-befo.patch
+%patch31 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
+%patch32 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
+%patch33 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
+%patch34 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
+%patch35 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-%patch41 -p1 -b .libwpd08-1.patch
-%patch42 -p1 -R -b .libreoffice-libwpd08-2.patch
-%patch43 -p1 -R -b .wpsimport
-%patch44 -p1 -b .gcj.patch
-%patch45 -p0 -b .rhel6poppler.patch
-%patch46 -p0 -b .rhel6langs.patch
+%patch36 -p1 -b .libwpd08-1.patch
+%patch37 -p1 -R -b .libreoffice-libwpd08-2.patch
+%patch38 -p1 -R -b .wpsimport
+%patch39 -p1 -b .gcj.patch
+%patch40 -p0 -b .rhel6poppler.patch
+%patch41 -p0 -b .rhel6langs.patch
 %endif
-%patch47 -p1 -b .solenv.fix.mk.inheritance.patch
+%patch42 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2299,7 +2289,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 13 2012 David Tardon <dtardon@redhat.com> - 3.4.4.2-8-UNBUILT
+* Tue Jan 17 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-1
+- new upstream version 3.4.5
+- drop integrated 001-add-Oracle-Java-1.7.0-recognition.patch
+- drop integrated 001-fix-horizontal-scrollbars-with-KDE-oxygen-style-bnc-.patch
+- drop integrated 001-fdo-43308-Set-the-logic-straight-for-center-across-s.patch
+- drop integrated 001-Resolves-rhbz-754051-Libreoffice-calc-crashes-when-r.patch
+- drop integrated 001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 - Resolves: rhbz#771108 English menu in writer despite installation of
   libreoffice-langpack-de
 - Resolves: rhbz#661738 Very slow java database operations:

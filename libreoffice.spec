@@ -82,7 +82,7 @@ BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
 BuildRequires:  gecko-devel, libwpd-devel, hunspell-devel, unixODBC-devel
-BuildRequires:  db4-devel, sane-backends-devel, libicu-devel, perl-Archive-Zip
+BuildRequires:  db4-devel, sane-backends-devel, libicu-devel, perl(Archive::Zip)
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
@@ -97,7 +97,7 @@ BuildRequires:  font(:lang=en)
 BuildRequires:  hsqldb
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, junit4, perl-Digest-MD5
+BuildRequires:  libwps-devel, junit4, perl(Digest::MD5)
 %endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel

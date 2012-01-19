@@ -82,7 +82,7 @@ BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
-BuildRequires:  GConf2-devel
+BuildRequires:  GConf2-devel, ORBit2-devel
 BuildRequires:  font(:lang=en)
 %if %{defined rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb, db4-devel

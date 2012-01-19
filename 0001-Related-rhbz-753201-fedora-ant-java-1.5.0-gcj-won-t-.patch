@@ -46,3 +46,37 @@ index 220c4f4..f074fa8 100644
 -- 
 1.7.6.4
 
+diff -up libreoffice-3.4.4.2/scripting/java/build.xml.dt libreoffice-3.4.4.2/scripting/java/build.xml
+--- libreoffice-3.4.4.2/scripting/java/build.xml.dt	2011-12-07 12:31:17.491262301 +0100
++++ libreoffice-3.4.4.2/scripting/java/build.xml	2011-12-07 12:32:04.561151965 +0100
+@@ -42,9 +42,6 @@
+        Not needed in default build -->
+   <property name="netbeans.install.path" value="/export/home/netbeans"/>
+ 
+-  <property environment="env"/>
+-  <property name="env.BSH_JAR" value="${solar.jar}/bsh.jar"/>
+-
+   <!-- ==================== classpath setting ============================ -->
+   <path id="idlclasspath">
+     <pathelement location="${solar.jar}/jurt.jar"/>
+@@ -52,7 +49,7 @@
+     <pathelement location="${solar.jar}/juh.jar"/>
+     <pathelement location="${solar.jar}/java_uno.jar"/>
+     <pathelement location="${solar.jar}/ridl.jar"/>
+-    <pathelement location="${env.BSH_JAR}"/>
++    <pathelement location="${BSH_JAR}"/>
+     <pathelement location="${solar.jar}/js.jar"/>
+     <pathelement location="${jardir}"/>
+   </path> 
+diff -up libreoffice-3.4.4.2/scripting/java/makefile.mk.dt libreoffice-3.4.4.2/scripting/java/makefile.mk
+--- libreoffice-3.4.4.2/scripting/java/makefile.mk.dt	2011-12-07 12:31:11.820396072 +0100
++++ libreoffice-3.4.4.2/scripting/java/makefile.mk	2011-12-07 12:31:28.111011791 +0100
+@@ -29,6 +29,8 @@ PRJ=..
+ PRJNAME=scripting
+ TARGET=scriptruntimeforjava
+ 
++ANT_FLAGS := -DBSH_JAR="$(BSH_JAR)"
++
+ .INCLUDE : ant.mk
+ 
+ .IF "$(L10N_framework)"==""

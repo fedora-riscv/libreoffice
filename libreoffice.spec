@@ -63,7 +63,7 @@ Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5
 %endif
 Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 %endif
-Source19:       http://dev-www.libreoffice.org/src/053a35c244bf132f806e198ac4d960aa-libvisio-0.0.12.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/adb5c5c8398fd89ebee2d9b4e90e061e-libvisio-0.0.13.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 

@@ -31,7 +31,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.4.99.3
+Version:        3.5.0.1
 Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
@@ -116,12 +116,6 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
-Patch13: 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
-Patch14: 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
-Patch15: 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
-Patch16: 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
-Patch17: 0001-fix-writing-of-strings-from-the-first-module.patch
-Patch18: 0001-refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -780,12 +774,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
-%patch13 -p1 -b .workaround-internal-compiler-error-with-gcc-4.7.patch
-%patch14 -p1 -b .fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
-%patch15 -p1 -b .fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
-%patch16 -p1 -b .Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
-%patch17 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
-%patch18 -p1 -b .refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -2067,6 +2055,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 19 2012 David Tardon <dtardon@redhat.com> - 3.5.0.1-1
+- 3.5.0 rc1
+- drop integrated 0001-workaround-internal-compiler-error-with-gcc-4.7.patch
+- drop integrated 0001-fix-for-gcc-4.7-C-11-these-are-not-string-literal-op.patch
+- drop integrated 0001-fix-for-gcc-4.7-C-11-this-is-not-string-literal-oper.patch
+- drop integrated 0001-Revert-fast_merge-fix-mis-merge-of-first-module-s-st.patch
+- drop integrated 0001-fix-writing-of-strings-from-the-first-module.patch
+- drop integrated 0001-refactor-slightly-to-avoid-link-problems-with-gcc-4..patch
+
 * Fri Jan 13 2012 David Tardon <dtardon@redhat.com> - 3.4.99.3-1
 - 3.5.0 beta3
 - drop integrated 0001-fix-syntactic-error.patch

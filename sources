@@ -1,5 +1,5 @@
-ea6a0e5675a7634c07417b9419b369e6  libreoffice-core-3.4.99.3.tar.bz2
-5da48ca6516c92c6d724daa310dfa082  libreoffice-binfilter-3.4.99.3.tar.bz2
+266197710cd2348b7dfe5731f9782bf9  libreoffice-core-3.5.0.1.tar.bz2
+bbf426cf125307cff9bdd1219b14f450  libreoffice-binfilter-3.5.0.1.tar.bz2
 798b2ffdc8bcfe7bca2cf92b62caf685  798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 35c94d2df8893241173de1d16b6034c0  35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 ada24d37d8d638b3d8a9985e80bc2978  ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
@@ -7,10 +7,10 @@ ada24d37d8d638b3d8a9985e80bc2978  ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.
 17410483b5b5f267aa18b7e00b65e6e0  17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 b4cae0700aa1c2aef7eb7f345365e6f1  b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 053a35c244bf132f806e198ac4d960aa  053a35c244bf132f806e198ac4d960aa-libvisio-0.0.12.tar.bz2
-6bf0a6906991a83ad9f2595c65e7d9e7  libreoffice-help-3.4.99.3.tar.bz2
+f22e421b0117b09f27c709ea7322450d  libreoffice-help-3.5.0.1.tar.bz2
 e1c178b18f130b40494561f02bc1a948  e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 7c2549f6b0a8bb604e6c4c729ffdcfe6  7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
-d1567168e1b6300bbd97c00f1fae699d  libreoffice-translations-3.4.99.3.tar.bz2
+4730edbc9e7730aa65127108c40f5c35  libreoffice-translations-3.5.0.1.tar.bz2
 185d60944ea767075d27247c3162b3bc  185d60944ea767075d27247c3162b3bc-unowinreg.dll
 c1b5b8d1dd929a1261a6f8872d92b799  redhat-langpacks.tar.gz
 74939c9ea525374776f09bf972ede99f  libreoffice-multiliblauncher.sh

@@ -28,6 +28,8 @@
 %define with_lang ''
 %endif
 
+%bcond_without binfilter
+
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
@@ -116,7 +118,9 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
+%if %{with binfilter}
 Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
+%endif
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -504,6 +508,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 %endif
 
+%if %{with binfilter}
 %package binfilter
 Summary: Legacy binary filters for LibreOffice
 Group: Applications/Productivity
@@ -511,6 +516,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description binfilter
 Filters for old StarOffice binary formats.
+%endif
 
 %if 0%{?_enable_debug_packages}
 
@@ -806,7 +812,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
+%if %{with binfilter}
 %patch13 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
+%endif
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -863,7 +871,8 @@ autoconf
  --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
- --enable-binfilter --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
+ %{?with_binfilter:--enable-binfilter}
+ --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
@@ -1271,7 +1280,7 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base binfilter calc draw impress javafilter math startcenter writer; do
+for app in base %{?with_binfilter:binfilter} calc draw impress javafilter math startcenter writer; do
     desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
@@ -2071,6 +2080,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif
 
+%if %{with binfilter}
 %files binfilter
 %defattr(-,root,root,-)
 %{baseinstdir}/program/legacy_binfilters.rdb
@@ -2102,6 +2112,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/resource/bf_swen-US.res
 %{baseinstdir}/share/registry/binfilter.xcd
 %{_datadir}/applications/libreoffice-binfilter.desktop
+%endif
 
 %changelog
 * Thu Feb 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1

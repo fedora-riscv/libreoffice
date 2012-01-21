@@ -116,6 +116,7 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 %endif
+Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 # TODO: this in S390 only, so it can wait .-)
 #Patch13: solenv.fix.mk.inheritance.patch
 
@@ -503,6 +504,14 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 %endif
 
+%package binfilter
+Summary: Legacy binary filters for LibreOffice
+Group: Applications/Productivity
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+
+%description binfilter
+Filters for old StarOffice binary formats.
+
 %if 0%{?_enable_debug_packages}
 
 %define debug_package %{nil}
@@ -797,6 +806,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %endif
+%patch13 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 #%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
 
 # TODO: check this
@@ -1261,7 +1271,7 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base calc draw impress javafilter math startcenter writer; do
+for app in base binfilter calc draw impress javafilter math startcenter writer; do
     desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
@@ -1373,24 +1383,10 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/gnome-open-url.bin
 %{baseinstdir}/program/hatchwindowfactory.uno.so
 %{baseinstdir}/program/i18nsearch.uno.so
-%{baseinstdir}/program/legacy_binfilters.rdb
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
-%{baseinstdir}/program/libbf_sblo.so
-%{baseinstdir}/program/libbf_frmlo.so
-%{baseinstdir}/program/libbf_golo.so
-%{baseinstdir}/program/libbf_migratefilterlo.so
-%{baseinstdir}/program/libbf_ofalo.so
-%{baseinstdir}/program/libbf_schlo.so
-%{baseinstdir}/program/libbf_sdlo.so
-%{baseinstdir}/program/libbf_solo.so
-%{baseinstdir}/program/libbf_svtlo.so
-%{baseinstdir}/program/libbf_svxlo.so
-%{baseinstdir}/program/libbf_wrapperlo.so
-%{baseinstdir}/program/libbf_xolo.so
 %{baseinstdir}/program/libbiblo.so
-%{baseinstdir}/program/libbindetlo.so
 %{baseinstdir}/program/libcached1.so
 %{baseinstdir}/program/libcanvastoolslo.so
 %{baseinstdir}/program/libchart*lo.so
@@ -1449,7 +1445,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libhyphenlo.so
 %{baseinstdir}/program/libi18nregexplo.so
 %{baseinstdir}/program/libjdbclo.so
-%{baseinstdir}/program/liblegacy_binfilterslo.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
 %{baseinstdir}/program/liblocaledata_en.so
@@ -1531,12 +1526,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/resource/avmediaen-US.res
 %{baseinstdir}/program/resource/accen-US.res
 %{baseinstdir}/program/resource/basctlen-US.res
-%{baseinstdir}/program/resource/bf_frmen-US.res
-%{baseinstdir}/program/resource/bf_ofaen-US.res
-%{baseinstdir}/program/resource/bf_schen-US.res
-%{baseinstdir}/program/resource/bf_sden-US.res
-%{baseinstdir}/program/resource/bf_svten-US.res
-%{baseinstdir}/program/resource/bf_svxen-US.res
 %{baseinstdir}/program/resource/biben-US.res
 %{baseinstdir}/program/resource/calen-US.res
 %{baseinstdir}/program/resource/chartcontrolleren-US.res
@@ -1628,7 +1617,6 @@ rm -rf $RPM_BUILD_ROOT
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
-%{baseinstdir}/share/registry/binfilter.xcd
 %{baseinstdir}/share/registry/gnome.xcd
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
@@ -1855,7 +1843,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en/scalc.*
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libanalysislo.so
-%{baseinstdir}/program/libbf_sclo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
@@ -1867,7 +1854,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libsolverlo.so
 %dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/analysisen-US.res
-%{baseinstdir}/program/resource/bf_scen-US.res
 %{baseinstdir}/program/resource/dateen-US.res
 %{baseinstdir}/program/resource/foren-US.res
 %{baseinstdir}/program/resource/foruien-US.res
@@ -1917,7 +1903,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/swriter.*
 %dir %{baseinstdir}/program
-%{baseinstdir}/program/libbf_swlo.so
 %{baseinstdir}/program/libdoctoklo.so
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
@@ -1935,7 +1920,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libwriterfilterlo.so
 %{baseinstdir}/program/vbaswobj.uno.so
 %dir %{baseinstdir}/program/resource
-%{baseinstdir}/program/resource/bf_swen-US.res
 %{baseinstdir}/program/resource/t602filteren-US.res
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
@@ -1978,11 +1962,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/smath.*
 %dir %{baseinstdir}/program
-%{baseinstdir}/program/libbf_smlo.so
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %dir %{baseinstdir}/program/resource
-%{baseinstdir}/program/resource/bf_smen-US.res
 %{baseinstdir}/program/resource/smen-US.res
 %{baseinstdir}/share/registry/math.xcd
 %{baseinstdir}/program/smath
@@ -2089,10 +2071,43 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif
 
+%files binfilter
+%defattr(-,root,root,-)
+%{baseinstdir}/program/legacy_binfilters.rdb
+%{baseinstdir}/program/libbf_frmlo.so
+%{baseinstdir}/program/libbf_golo.so
+%{baseinstdir}/program/libbf_migratefilterlo.so
+%{baseinstdir}/program/libbf_ofalo.so
+%{baseinstdir}/program/libbf_sblo.so
+%{baseinstdir}/program/libbf_schlo.so
+%{baseinstdir}/program/libbf_sclo.so
+%{baseinstdir}/program/libbf_sdlo.so
+%{baseinstdir}/program/libbf_smlo.so
+%{baseinstdir}/program/libbf_solo.so
+%{baseinstdir}/program/libbf_svtlo.so
+%{baseinstdir}/program/libbf_svxlo.so
+%{baseinstdir}/program/libbf_swlo.so
+%{baseinstdir}/program/libbf_wrapperlo.so
+%{baseinstdir}/program/libbf_xolo.so
+%{baseinstdir}/program/libbindetlo.so
+%{baseinstdir}/program/liblegacy_binfilterslo.so
+%{baseinstdir}/program/resource/bf_frmen-US.res
+%{baseinstdir}/program/resource/bf_ofaen-US.res
+%{baseinstdir}/program/resource/bf_scen-US.res
+%{baseinstdir}/program/resource/bf_schen-US.res
+%{baseinstdir}/program/resource/bf_sden-US.res
+%{baseinstdir}/program/resource/bf_smen-US.res
+%{baseinstdir}/program/resource/bf_svten-US.res
+%{baseinstdir}/program/resource/bf_svxen-US.res
+%{baseinstdir}/program/resource/bf_swen-US.res
+%{baseinstdir}/share/registry/binfilter.xcd
+%{_datadir}/applications/libreoffice-binfilter.desktop
+
 %changelog
 * Thu Feb 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
 - 3.5.0 rc3
 - Resolves: rhbz#786328 add nlpsolver subpackage
+- split legacy binary filters into subpackage
 
 * Thu Jan 26 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.2-2
 - add libreoffice-postgresql subpackage

@@ -1,18 +1,6 @@
-From 25b90909a7a22f6900abbe9df12570a24e528c9a Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
-Date: Wed, 11 Jan 2012 20:47:54 +0000
-Subject: [PATCH] Resolves:fdo#44078 fix unfortunate name alias mixups with
- DejaVu fonts
-
----
- vcl/generic/fontmanager/fontconfig.cxx |   19 +++++++++++++++----
- 1 files changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/vcl/generic/fontmanager/fontconfig.cxx b/vcl/generic/fontmanager/fontconfig.cxx
-index 4d02a76..a120fb7 100644
---- a/vcl/generic/fontmanager/fontconfig.cxx
-+++ b/vcl/generic/fontmanager/fontconfig.cxx
-@@ -124,7 +124,7 @@ public:
+--- a/vcl/unx/source/fontmanager/fontconfig.cxx
++++ b/vcl/unx/source/fontmanager/fontconfig.cxx
+@@ -303,7 +303,7 @@
      boost::unordered_map< rtl::OString, rtl::OString, rtl::OStringHash > m_aFontNameToLocalized;
      boost::unordered_map< rtl::OString, rtl::OString, rtl::OStringHash > m_aLocalizedToCanonical;
  private:
@@ -20,8 +8,8 @@ index 4d02a76..a120fb7 100644
 +    void cacheLocalizedFontNames(const FcChar8 *origfontname, const FcChar8 *bestfontname, const std::vector< lang_and_element > &lang_and_elements);
  };
  
- FontCfgWrapper::FontCfgWrapper()
-@@ -296,6 +296,7 @@ namespace
+ oslGenericFunction FontCfgWrapper::loadSymbol( const char* pSymbol )
+@@ -665,6 +665,7 @@
  
          std::vector<lang_and_element>::const_iterator aEnd = elements.end();
          bool alreadyclosematch = false;
@@ -29,7 +17,7 @@ index 4d02a76..a120fb7 100644
          for( std::vector<lang_and_element>::const_iterator aIter = elements.begin(); aIter != aEnd; ++aIter )
          {
              const char *pLang = (const char*)aIter->first;
-@@ -307,7 +308,8 @@ namespace
+@@ -676,7 +677,8 @@
              }
              else if( alreadyclosematch )
              {
@@ -39,7 +27,7 @@ index 4d02a76..a120fb7 100644
                  continue;
              }
              else if( rtl_str_compare( pLang, sLangMatch.getStr()) == 0)
-@@ -316,10 +318,18 @@ namespace
+@@ -685,10 +687,18 @@
                  candidate = aIter->second;
                  alreadyclosematch = true;
              }
@@ -59,7 +47,7 @@ index 4d02a76..a120fb7 100644
              }
          }
          return candidate;
-@@ -327,7 +337,8 @@ namespace
+@@ -696,7 +706,8 @@
  }
  
  //Set up maps to quickly map between a fonts best UI name and all the rest of its names, and vice versa
@@ -69,6 +57,3 @@ index 4d02a76..a120fb7 100644
  {
      std::vector<lang_and_element>::const_iterator aEnd = lang_and_elements.end();
      for (std::vector<lang_and_element>::const_iterator aIter = lang_and_elements.begin(); aIter != aEnd; ++aIter)
--- 
-1.7.6.5
-

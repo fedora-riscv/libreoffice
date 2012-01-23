@@ -859,7 +859,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l si -n Sinhalese -F -H -O -S
 %langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -V -x sk_SK -S
 %langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -V -x sl_SI -S
-%langpack -l sr -n Serbian -F -H -Y -A -O v sr_CS -x sr_CS -S
+%langpack -l sr -n Serbian -F -H -Y -A -O -v sr_CS -x sr_CS -S
 %langpack -l ss -n Swati -F -H -o ss_ZA -S
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA -S

@@ -733,9 +733,9 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-r:Requires: %{-r*}} \
 %define obs openoffice.org-langpack \
 %define obsv 1:3.3.1 \
-%define aobs openoffice.org-langpack \
+%define aobs openoffice.org2-langpack \
 %define aobsv 1:3.0.0 \
-%define vaobs openoffice.org2-langpack \
+%define vaobs openoffice.org-langpack \
 %define vaobsv 1:2.0.3 \
 %if %{defined rhel} && 0%{?rhel} < 7 \
 %{-o: \

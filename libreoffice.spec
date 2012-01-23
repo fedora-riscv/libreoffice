@@ -826,7 +826,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l he -n Hebrew -F -H -o he_IL -V -x he_IL -S
 %langpack -l hi -n Hindi -F -H -Y -o hi_IN -v hi_IN -x hi_IN -S
 %langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -x hr_HR -S
-%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_IN -S
+%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -X -S
 %langpack -l ja -n Japanese -F -A -o ja_JP -V -x ja_JP -S
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -x ka_IN -S

@@ -742,12 +742,12 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-o: \
 Obsoletes: openoffice.org-i18n < 1.9.0 \
 Obsoletes: %{obs}-%{-o*} < %{obsv} \
-Provides: %{obs}-%{-o*} = 1:3.3.0  \
+Provides: %{obs}-%{-o*} = 1:3.3.1.1  \
 }%{!-o: \
 %{-O: \
 Obsoletes: openoffice.org-i18n < 1.9.0 \
 Obsoletes: %{obs}-%{lang} < %{obsv} \
-Provides: %{obs}-%{lang} = 1:3.3.0  \
+Provides: %{obs}-%{lang} = 1:3.3.1.1  \
 }} \
 %else \
 %{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
@@ -824,7 +824,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l gl -n Galician -F -H -Y -o gl_ES -V -x gl_ES -S
 %langpack -l gu -n Gujarati -F -H -Y -o gu_IN -x gu_IN -S
 %langpack -l he -n Hebrew -F -H -o he_IL -V -x he_IL -S
-%langpack -l hi -n Hindi -F -H -Y -o hi_IN -v hi_IN -x hi_IN -S
+%langpack -l hi -n Hindi -F -H -Y -o hi_IN -v hi-IN -x hi_IN -S
 %langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -x hr_HR -S
 %langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -X -S
@@ -852,7 +852,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -O -v pa_IN -x pa_IN -s pa-IN
 %langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -V -x pl_PL -S
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -V -X -S
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -V -x pt_BR -S
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -v pt -X -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -X -S
@@ -868,7 +868,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l te -n Telugu -F -H -Y -o te_IN -x te_IN -S
 %langpack -l th -n Thai -F -H -o th_TH -V -x th_TH -S
 %langpack -l tn -n Tswana -F -H -o tn_ZA -V -x tn_ZA -S
-%langpack -l tr -n Turkish -F -A -o tr_TR -V -x tr_TR -S
+%langpack -l tr -n Turkish -F -A -o tr_TR -V -X -S
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -V -x ts_ZA -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -O -S
 %if %{defined rhel} && 0%{?rhel} < 7
@@ -877,9 +877,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H -o ve_ZA -S
 %langpack -l xh -n Xhosa -F -H -o xh_ZA -S
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -v zh_CN -x zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -v zh-CN -x zh_CN -s zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -v zh_TW -x zh_TW -s zh-TW
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -v zh-TW -x zh_TW -s zh-TW
 %langpack -l zu -n Zulu -F -H -Y -o zu_ZA -V -x zu_ZA -S
 %undefine langpack_lang
 

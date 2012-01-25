@@ -56,11 +56,9 @@ Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #backwards compatability.
 Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
-%if %{defined rhel}
-%if 0%{?rhel} < 7
+%if %{defined rhel} && 0%{?rhel} < 7
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
-%endif
 Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 %endif
 Source19:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
@@ -89,10 +87,10 @@ BuildRequires:  hsqldb, db4-devel
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
 BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), libdb-devel
+BuildRequires:  mysql-connector-c++-devel
 %endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel
-BuildRequires:  mysql-connector-c++-devel
 %endif
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}

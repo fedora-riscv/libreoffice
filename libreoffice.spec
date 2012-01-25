@@ -31,17 +31,17 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.5.0.1
+Version:        3.5.0.2
 Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0:        %{source_url}/libreoffice-core-%{version}.tar.bz2
-Source1:        %{source_url}/libreoffice-binfilter-%{version}.tar.bz2
-Source2:        %{source_url}/libreoffice-help-%{version}.tar.bz2
-Source3:        %{source_url}/libreoffice-translations-%{version}.tar.bz2
+Source0:        %{source_url}/libreoffice-core-%{version}.tar.xz
+Source1:        %{source_url}/libreoffice-binfilter-%{version}.tar.xz
+Source2:        %{source_url}/libreoffice-help-%{version}.tar.xz
+Source3:        %{source_url}/libreoffice-translations-%{version}.tar.xz
 Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source5:        redhat-langpacks.tar.gz
 Source6:        libreoffice-multiliblauncher.sh
@@ -63,7 +63,7 @@ Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5
 %endif
 Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
 %endif
-Source19:       http://dev-www.libreoffice.org/src/adb5c5c8398fd89ebee2d9b4e90e061e-libvisio-0.0.13.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 
@@ -825,8 +825,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %endif
 
 autoconf
-# TODO: review the options
-# TODO: --with-poor-help-localizations is gone, IIRC
+# TODO: disable postgresql sdbc driver for now. Stephan to take a stab at it
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
@@ -847,6 +846,7 @@ autoconf
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-libcmis --without-system-libvisio \
  --without-system-sampleicc \
+ --disable-postgresql-sdbc \
  %{distrooptions}
 
 mkdir -p ext_sources
@@ -2056,6 +2056,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jan 25 2012 David Tardon <dtardon@redhat.com> - 3.5.0.2-1
+- 3.5.0 rc2
+
 * Thu Jan 19 2012 David Tardon <dtardon@redhat.com> - 3.5.0.1-1
 - 3.5.0 rc1
 - drop integrated 0001-workaround-internal-compiler-error-with-gcc-4.7.patch

@@ -813,7 +813,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -O -X -S
 %langpack -l et -n Estonian -F -H -Y -o et_EE -V -x et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -x eu_ES -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
+%endif
 %if %{defined rhel} && 0%{?rhel} < 7
 %langpack -l fi -n Finnish -F -A -o fi_FI -V -x fi_FI -S
 %else
@@ -829,12 +831,16 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -X -S
 %langpack -l ja -n Japanese -F -A -o ja_JP -V -x ja_JP -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -x ka_IN -S
+%endif
 %langpack -l ko -n Korean -F -H -A -o ko_KR -V -x ko_KR -S
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -x lt_LT -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
+%endif
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -x ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -x mr_IN -S
@@ -856,7 +862,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -v pt -X -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -X -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -O -S
+%endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -V -x sk_SK -S
 %langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -V -x sl_SI -S
 %langpack -l sr -n Serbian -F -H -Y -A -O -v sr_CS -x sr_CS -S

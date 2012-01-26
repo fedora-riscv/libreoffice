@@ -80,7 +80,7 @@ BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
-BuildRequires:  GConf2-devel, ORBit2-devel, poppler-cpp-devel
+BuildRequires:  GConf2-devel, ORBit2-devel, poppler-cpp-devel, postgresql-devel
 BuildRequires:  font(:lang=en)
 %if %{defined rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb, db4-devel
@@ -418,6 +418,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun javafilter
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+
+%package postgresql
+Summary: PostgreSQL connector for LibreOffice
+Group: Applications/Productivity
+Requires: %{name}-base = %{epoch}:%{version}-%{release}
+Requires: postgresql-libs
+
+%description postgresql
+A PostgreSQL connector for the database front-end for LibreOffice. Allows
+creation and management of PostgreSQL databases through a GUI.
 
 %package ure
 Summary: UNO Runtime Environment
@@ -823,7 +833,6 @@ export CXXFLAGS=$ARCH_FLAGS
 %endif
 
 autoconf
-# TODO: disable postgresql sdbc driver for now. Stephan to take a stab at it
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
@@ -844,7 +853,6 @@ autoconf
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-libcmis --without-system-libvisio \
  --without-system-sampleicc \
- --disable-postgresql-sdbc \
  %{distrooptions}
 
 mkdir -p ext_sources
@@ -2000,6 +2008,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/pocketexcel.xcd
 %{baseinstdir}/share/registry/pocketword.xcd
 
+%files postgresql
+%defattr(-,root,root,-)
+%{baseinstdir}/program/postgresql-sdbc.uno.so
+%{baseinstdir}/program/postgresql-sdbc-impl.uno.so
+%{baseinstdir}/program/postgresql-sdbc.ini
+%{baseinstdir}/program/services/postgresql-sdbc.rdb
+%{baseinstdir}/share/registry/postgresqlsdbc.xcd
+
 %files ure
 %defattr(-,root,root,-)
 %doc solver/unxlng*/bin/ure/LICENSE
@@ -2054,6 +2070,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 26 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.2-2
+- add libreoffice-postgresql subpackage
+
 * Wed Jan 25 2012 David Tardon <dtardon@redhat.com> - 3.5.0.2-1
 - 3.5.0 rc2
 

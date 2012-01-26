@@ -160,6 +160,7 @@ Patch41: libreoffice-rhel6langs.patch
 Patch42: solenv.fix.mk.inheritance.patch
 Patch43: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 Patch44: 0001-Resolves-fdo-44078-fix-unfortunate-name-alias-mixups.patch
+Patch45: libreoffice-ppc64.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -992,6 +993,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch42 -p1 -b .solenv.fix.mk.inheritance.patch
 %patch43 -p1 -b .rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 %patch44 -p1 -b .fdo44078-fix-unfortunate-name-alias-mixups.patch
+%patch45 -p1 -b .libreoffice-ppc64.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

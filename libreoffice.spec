@@ -73,7 +73,7 @@ BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
 BuildRequires:  gecko-devel, libwpd-devel, hunspell-devel, unixODBC-devel
 BuildRequires:  sane-backends-devel, libicu-devel, libXinerama-devel
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
-BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
+BuildRequires:  evolution-data-server-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl(Archive::Zip)
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync

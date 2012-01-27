@@ -60,10 +60,10 @@ Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f3453
 Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
-%endif
 Source19:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
+%endif
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
@@ -843,7 +843,7 @@ autoconf
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --without-system-libexttextcat --without-system-servlet-api \
+ --without-system-servlet-api \
  --with-system-jars --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --without-system-mozilla-headers --with-system-mythes --with-system-dicts \
@@ -851,7 +851,6 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --without-system-libcmis --without-system-libvisio \
  --without-system-sampleicc \
  %{distrooptions}
 
@@ -870,10 +869,10 @@ cp %{SOURCE15} ext_sources
 cp %{SOURCE16} ext_sources
 cp %{SOURCE17} ext_sources
 cp %{SOURCE18} ext_sources
-%endif
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
 cp %{SOURCE21} ext_sources
+%endif
 touch src.downloaded
 
 . ./Env.Host.sh

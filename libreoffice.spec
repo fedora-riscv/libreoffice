@@ -88,6 +88,7 @@ BuildRequires:  hsqldb, db4-devel
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
 BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), libdb-devel
 BuildRequires:  mysql-connector-c++-devel
+BuildRequires:  libcmis-devel, libexttextcat-devel, libvisio-devel
 %endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel

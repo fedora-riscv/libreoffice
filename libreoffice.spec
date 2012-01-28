@@ -1607,7 +1607,9 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
+%if %{defined rhel} && 0%{?rhel} < 7
 %{baseinstdir}/share/fingerprint
+%endif
 %{baseinstdir}/share/gallery
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf
@@ -1980,7 +1982,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
+%if %{defined rhel} && 0%{?rhel} < 7
 %{baseinstdir}/program/libvisioimportlo.so
+%endif
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter

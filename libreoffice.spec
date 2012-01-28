@@ -1874,6 +1874,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/help/en/sdraw.*
 %{baseinstdir}/share/registry/draw.xcd
+%if %{defined rhel} && 0%{?rhel} < 7
+%{baseinstdir}/program/libvisioimportlo.so
+%endif
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
 %{_datadir}/applications/libreoffice-draw.desktop
@@ -1982,9 +1985,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
-%if %{defined rhel} && 0%{?rhel} < 7
-%{baseinstdir}/program/libvisioimportlo.so
-%endif
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter

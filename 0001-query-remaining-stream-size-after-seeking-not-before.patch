@@ -1,0 +1,58 @@
+From b5a73d4b2b283d3d1a57ac0f66b608998960a873 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Lubo=C5=A1=20Lu=C5=88=C3=A1k?= <l.lunak@suse.cz>
+Date: Mon, 30 Jan 2012 19:07:43 +0100
+Subject: [PATCH] query remaining stream size after seeking, not before
+ (fdo#45255)
+
+---
+ sw/source/filter/ww8/ww8scan.cxx |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/sw/source/filter/ww8/ww8scan.cxx b/sw/source/filter/ww8/ww8scan.cxx
+index a97f383..593624b 100644
+--- a/sw/source/filter/ww8/ww8scan.cxx
++++ b/sw/source/filter/ww8/ww8scan.cxx
+@@ -1978,10 +1978,11 @@ WW8PLCFspecial::WW8PLCFspecial(SvStream* pSt, sal_uInt32 nFilePos,
+     const sal_uInt32 nValidMin=4;
+ 
+     sal_Size nOldPos = pSt->Tell();
+-    sal_Size nRemainingSize = pSt->remainingSize();
+ 
+-    bool bValid = checkSeek(*pSt, nFilePos) && (nRemainingSize >= nValidMin) &&
+-        (nPLCF >= nValidMin);
++    bool bValid = checkSeek(*pSt, nFilePos);
++    sal_Size nRemainingSize = pSt->remainingSize();
++    if( !(nRemainingSize >= nValidMin && nPLCF >= nValidMin ))
++        bValid = false;
+     nPLCF = bValid ? std::min(nRemainingSize, static_cast<sal_Size>(nPLCF)) : nValidMin;
+ 
+     // Pointer auf Pos- u. Struct-Array
+@@ -2136,9 +2137,7 @@ WW8PLCF::WW8PLCF(SvStream& rSt, WW8_FC nFilePos, sal_Int32 nPLCF, int nStruct,
+ void WW8PLCF::ReadPLCF(SvStream& rSt, WW8_FC nFilePos, sal_uInt32 nPLCF)
+ {
+     sal_Size nOldPos = rSt.Tell();
+-    sal_Size nRemainingSize = rSt.remainingSize();
+-
+-    bool bValid = checkSeek(rSt, nFilePos) && (nRemainingSize >= nPLCF);
++    bool bValid = checkSeek(rSt, nFilePos) && (rSt.remainingSize() >= nPLCF);
+ 
+     if (bValid)
+     {
+@@ -2317,10 +2316,11 @@ WW8PLCFpcd::WW8PLCFpcd(SvStream* pSt, sal_uInt32 nFilePos,
+     const sal_uInt32 nValidMin=4;
+ 
+     sal_Size nOldPos = pSt->Tell();
+-    sal_Size nRemainingSize = pSt->remainingSize();
+ 
+-    bool bValid = checkSeek(*pSt, nFilePos) && (nRemainingSize >= nValidMin) &&
+-        (nPLCF >= nValidMin);
++    bool bValid = checkSeek(*pSt, nFilePos);
++    sal_Size nRemainingSize = pSt->remainingSize();
++    if( !(nRemainingSize >= nValidMin && nPLCF >= nValidMin ))
++        bValid = false;
+     nPLCF = bValid ? std::min(nRemainingSize, static_cast<sal_Size>(nPLCF)) : nValidMin;
+ 
+     pPLCF_PosArray = new sal_Int32[ ( nPLCF + 3 ) / 4 ];    // Pointer auf Pos-Array
+-- 
+1.7.6.5
+

@@ -1,0 +1,37 @@
+commit 0712e5233c1e6c452f5c888351870047673f0da6
+Author: Michal Svec <msvec@novell.com>
+Date:   Tue Jul 12 14:16:42 2011 +0200
+
+    Do not pass the request for command line help to oosplash
+    
+    - both of these work now: 'libreoffice -h' and 'libreoffice --help'
+    - added two more options: 'libreoffice -V' and 'libreoffice --version'
+    - all of these options work even if there are instances running
+    - there's no 1s delay between startup and actual output
+
+diff --git a/desktop/scripts/soffice.sh b/desktop/scripts/soffice.sh
+index a97f68d..b23d452 100755
+--- a/desktop/scripts/soffice.sh
++++ b/desktop/scripts/soffice.sh
+@@ -97,5 +97,21 @@ AIX)
+     ;;
+ esac
+ 
++# do not pass the request for command line help to oosplash
++if test "$#" -eq 1; then
++    case "$1" in
++        -h | --h | --he | --hel | --help)
++            "$sd_prog/soffice.bin" --help
++            exit 0
++            ;;
++        -V | --v | --ve | --ver | --vers | --versi | --versio | --version)
++            "$sd_prog/soffice.bin" --version
++            exit 0
++            ;;
++        *)
++            ;;
++    esac
++fi
++
+ # oosplash does the rest: forcing pages in, javaldx etc. are
+ exec $VALGRINDCHECK "$sd_prog/oosplash.bin" "$@"

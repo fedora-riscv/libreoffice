@@ -31,8 +31,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        3.5.0.2
-Release:        2%{?dist}
+Version:        3.5.0.3
+Release:        1%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2072,6 +2072,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Fri 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
+- 3.5.0 rc3
+
 * Thu Jan 26 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.2-2
 - add libreoffice-postgresql subpackage
 

@@ -1,0 +1,31 @@
+From ec59889a80e9fd91fc94943a56173e27427ec4a5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?C=C3=A9dric=20Bosdonnat?= <cedric.bosdonnat.ooo@free.fr>
+Date: Fri, 13 Jan 2012 18:04:09 +0100
+Subject: [PATCH 2/4] fdo#40438: force calculating layout before Activate to
+ avoid crashes and loops
+
+(cherry picked from commit d83488f9795740857830aaf005e06e30d4e7d70c)
+
+Signed-off-by: Michael Stahl <mstahl@redhat.com>
+---
+ sw/source/ui/uiview/view1.cxx |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/sw/source/ui/uiview/view1.cxx b/sw/source/ui/uiview/view1.cxx
+index d1fdb5f..5f2b7a4 100644
+--- a/sw/source/ui/uiview/view1.cxx
++++ b/sw/source/ui/uiview/view1.cxx
+@@ -55,6 +55,10 @@ extern int bDocSzUpdated;
+ 
+ void SwView::Activate(sal_Bool bMDIActivate)
+ {
++    // fdo#40438 Update the layout to make sure everything is correct before showing the content
++    pWrtShell->StartAction();
++    pWrtShell->EndAction( sal_True );
++
+     // aktuelle View anmelden an der DocShell
+     // die View bleibt solange an der DocShell
+     // aktiv bis Sie zerstoert wird oder durch Activate eine
+-- 
+1.7.7.6
+

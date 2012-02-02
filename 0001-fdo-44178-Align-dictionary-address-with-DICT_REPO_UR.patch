@@ -1,0 +1,35 @@
+From 4073928dfd787ed805105f7ab2d5cfed5bb3393c Mon Sep 17 00:00:00 2001
+From: Lior Kaplan <kaplanlior@gmail.com>
+Date: Thu, 29 Dec 2011 00:28:29 +0200
+Subject: [PATCH 1/2] fdo#44178: Align dictionary address with DICT_REPO_URL
+ in instsetoo_native/util/openoffice.lst
+
+---
+ cui/source/options/optlingu.cxx |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cui/source/options/optlingu.cxx b/cui/source/options/optlingu.cxx
+index 66c2aee..e245e36 100644
+--- a/cui/source/options/optlingu.cxx
++++ b/cui/source/options/optlingu.cxx
+@@ -1137,7 +1137,7 @@ SvxLinguTabPage::SvxLinguTabPage( Window* pParent,
+             != SvtExtendedSecurityOptions::OPEN_NEVER )
+     {
+         aMoreDictsLink.SetURL( String(
+-            RTL_CONSTASCII_USTRINGPARAM( "http://extensions.libreoffice.org/dictionary/" ) ) );
++            RTL_CONSTASCII_USTRINGPARAM( "http://extensions.libreoffice.org/dictionaries/" ) ) );
+         aMoreDictsLink.SetClickHdl( LINK( this, SvxLinguTabPage, OpenURLHdl_Impl ) );
+     }
+     else
+@@ -2033,7 +2033,7 @@ SvxEditModulesDlg::SvxEditModulesDlg(Window* pParent, SvxLinguData_Impl& rData)
+             != SvtExtendedSecurityOptions::OPEN_NEVER )
+     {
+         aMoreDictsLink.SetURL( String(
+-            RTL_CONSTASCII_USTRINGPARAM( "http://extensions.libreoffice.org/dictionary/" ) ) );
++            RTL_CONSTASCII_USTRINGPARAM( "http://extensions.libreoffice.org/dictionaries/" ) ) );
+         aMoreDictsLink.SetClickHdl( LINK( this, SvxEditModulesDlg, OpenURLHdl_Impl ) );
+     }
+     else
+-- 
+1.7.7.6
+

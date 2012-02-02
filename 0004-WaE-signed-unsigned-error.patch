@@ -1,0 +1,35 @@
+From 1bdf3ff2b4499a08c62c43e7698038c07489a9d0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 22 Sep 2011 17:25:00 +0100
+Subject: [PATCH 4/5] WaE: signed/unsigned error
+
+Signed-off-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ vcl/source/glyphs/graphite_layout.cxx |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/source/glyphs/graphite_layout.cxx b/vcl/source/glyphs/graphite_layout.cxx
+index 5238609..4123414 100644
+--- a/vcl/source/glyphs/graphite_layout.cxx
++++ b/vcl/source/glyphs/graphite_layout.cxx
+@@ -329,7 +329,7 @@ GraphiteLayout::fillFrom(gr_segment * pSegment, ImplLayoutArgs &rArgs, float fSc
+             float leftBoundary = gr_slot_origin_X(clusterFirst);
+             float rightBoundary = (clusterAfter)?
+                 gr_slot_origin_X(clusterAfter) : gr_seg_advance_X(pSegment);
+-            size_t bFirstChar = gr_cinfo_base(gr_seg_cinfo(pSegment, nFirstCharInCluster));
++            int bFirstChar = gr_cinfo_base(gr_seg_cinfo(pSegment, nFirstCharInCluster));
+             if (mnSegCharOffset + bFirstChar >= mnMinCharPos &&
+                 mnSegCharOffset + bFirstChar < mnEndCharPos)
+             {
+@@ -339,7 +339,7 @@ GraphiteLayout::fillFrom(gr_segment * pSegment, ImplLayoutArgs &rArgs, float fSc
+                 {
+                     for (int i = nFirstCharInCluster; i <= nLastCharInCluster; i++)
+                     {
+-                        size_t ibase = gr_cinfo_base(gr_seg_cinfo(pSegment, i));
++                        int ibase = gr_cinfo_base(gr_seg_cinfo(pSegment, i));
+                         if (mnSegCharOffset + ibase >= mnEndCharPos)
+                             break;
+                         // from the point of view of the dx array, the xpos is
+-- 
+1.7.7.6
+

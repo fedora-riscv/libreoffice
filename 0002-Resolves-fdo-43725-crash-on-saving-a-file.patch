@@ -1,0 +1,163 @@
+From 0a646ae118e0a376481fc3cbc945031702b26c1a Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Sat, 21 Jan 2012 01:15:02 +0100
+Subject: [PATCH 2/5] Resolves fdo#43725 crash on saving a file
+
++ Checks out-of-bounds accesses in
+  ScFormatRangeStyles::GetStyleNameIndex() and
+  ScRowFormatRanges::AddRange() and prevents crashes.
+- The real cause seems to be some style row/repeat miscalculation
+  elsewhere, further investigation would be necessary.
+
+Signed-off-by: Norbert Thiebaud <nthiebaud@gmail.com>
+---
+ sc/source/filter/xml/XMLStylesExportHelper.cxx |   87 ++++++++++++++++++++----
+ 1 files changed, 74 insertions(+), 13 deletions(-)
+
+diff --git a/sc/source/filter/xml/XMLStylesExportHelper.cxx b/sc/source/filter/xml/XMLStylesExportHelper.cxx
+index 5ae0485..38d1523 100644
+--- a/sc/source/filter/xml/XMLStylesExportHelper.cxx
++++ b/sc/source/filter/xml/XMLStylesExportHelper.cxx
+@@ -680,10 +680,35 @@ void ScRowFormatRanges::AddRange(ScMyRowFormatRange& rFormatRange,
+     const sal_Int32 nRow)
+ {
+     DBG_ASSERT(pRowDefaults, "no row defaults");
++    if (!pRowDefaults)
++        return;
+     DBG_ASSERT(pColDefaults, "no column defaults");
++    if (!pColDefaults)
++        return;
++    sal_Int32 nPrevIndex;
++    bool bPrevAutoStyle;
++    OSL_ENSURE( static_cast<size_t>(nRow) < pRowDefaults->size(), "nRow out of bounds");
++    if (!(static_cast<size_t>(nRow) < pRowDefaults->size()))
++    {
++        /* This is only to prevent out-of-bounds accesses, once reached here
++         * there's something else going wrong, so FIXME there! */
++        if (pRowDefaults->empty())
++        {
++            nPrevIndex = -1;
++            bPrevAutoStyle = false;
++        }
++        else
++        {
++            nPrevIndex = (*pRowDefaults)[pRowDefaults->size()-1].nIndex;
++            bPrevAutoStyle = (*pRowDefaults)[pRowDefaults->size()-1].bIsAutoStyle;
++        }
++    }
++    else
++    {
++        nPrevIndex = (*pRowDefaults)[nRow].nIndex;
++        bPrevAutoStyle = (*pRowDefaults)[nRow].bIsAutoStyle;
++    }
+     sal_uInt32 nEnd (rFormatRange.nRepeatRows + nRow - 1);
+-    sal_Int32 nPrevIndex((*pRowDefaults)[nRow].nIndex);
+-    sal_Bool bPrevAutoStyle((*pRowDefaults)[nRow].bIsAutoStyle);
+     sal_uInt32 i(nRow + 1);
+     sal_Bool bReady(false);
+     while ((i < nEnd) && !bReady && (i < pRowDefaults->size()))
+@@ -700,12 +725,34 @@ void ScRowFormatRanges::AddRange(ScMyRowFormatRange& rFormatRange,
+         rFormatRange.nRepeatRows = i - nRow + 1;
+     if (nPrevIndex == -1)
+     {
+-        nPrevIndex = (*pColDefaults)[rFormatRange.nStartColumn].nIndex;
+-        bPrevAutoStyle = (*pColDefaults)[rFormatRange.nStartColumn].bIsAutoStyle;
+         sal_uInt32 nPrevStartCol(rFormatRange.nStartColumn);
+-        sal_uInt32 nRepeat((*pColDefaults)[rFormatRange.nStartColumn].nRepeat);
+-        nEnd = rFormatRange.nStartColumn + rFormatRange.nRepeatColumns;
+-        for(i = nPrevStartCol + nRepeat; i < nEnd; i += (*pColDefaults)[i].nRepeat)
++        OSL_ENSURE( static_cast<size_t>(nPrevStartCol) < pColDefaults->size(), "nPrevStartCol out of bounds");
++        sal_uInt32 nRepeat;
++        if (static_cast<size_t>(nPrevStartCol) < pColDefaults->size())
++        {
++            nRepeat = (*pColDefaults)[nPrevStartCol].nRepeat;
++            nPrevIndex = (*pColDefaults)[nPrevStartCol].nIndex;
++            bPrevAutoStyle = (*pColDefaults)[nPrevStartCol].bIsAutoStyle;
++        }
++        else
++        {
++            /* Again, this is to prevent out-of-bounds accesses, so FIXME
++             * elsewhere! */
++            if (pColDefaults->empty())
++            {
++                nRepeat = 1;
++                nPrevIndex = -1;
++                bPrevAutoStyle = false;
++            }
++            else
++            {
++                nRepeat = (*pColDefaults)[pColDefaults->size()-1].nRepeat;
++                nPrevIndex = (*pColDefaults)[pColDefaults->size()-1].nIndex;
++                bPrevAutoStyle = (*pColDefaults)[pColDefaults->size()-1].bIsAutoStyle;
++            }
++        }
++        nEnd = nPrevStartCol + rFormatRange.nRepeatColumns;
++        for(i = nPrevStartCol + nRepeat; i < nEnd && i < pColDefaults->size(); i += (*pColDefaults)[i].nRepeat)
+         {
+             DBG_ASSERT(sal_uInt32(nPrevStartCol + nRepeat) <= nEnd, "something wents wrong");
+             if ((nPrevIndex != (*pColDefaults)[i].nIndex) ||
+@@ -924,6 +971,8 @@ sal_Int32 ScFormatRangeStyles::GetStyleNameIndex(const sal_Int32 nTable,
+     const sal_Int32 nColumn, const sal_Int32 nRow, sal_Bool& bIsAutoStyle) const
+ {
+     DBG_ASSERT(static_cast<size_t>(nTable) < aTables.size(), "wrong table");
++    if (!(static_cast<size_t>(nTable) < aTables.size()))
++        return -1;
+     ScMyFormatRangeAddresses* pFormatRanges(aTables[nTable]);
+     ScMyFormatRangeAddresses::iterator aItr(pFormatRanges->begin());
+     ScMyFormatRangeAddresses::iterator aEndItr(pFormatRanges->end());
+@@ -947,6 +996,8 @@ sal_Int32 ScFormatRangeStyles::GetStyleNameIndex(const sal_Int32 nTable, const s
+     sal_Bool& bIsAutoStyle, sal_Int32& nValidationIndex, sal_Int32& nNumberFormat, const sal_Int32 nRemoveBeforeRow)
+ {
+     DBG_ASSERT(static_cast<size_t>(nTable) < aTables.size(), "wrong table");
++    if (!(static_cast<size_t>(nTable) < aTables.size()))
++        return -1;
+     ScMyFormatRangeAddresses* pFormatRanges(aTables[nTable]);
+     ScMyFormatRangeAddresses::iterator aItr(pFormatRanges->begin());
+     ScMyFormatRangeAddresses::iterator aEndItr(pFormatRanges->end());
+@@ -960,7 +1011,10 @@ sal_Int32 ScFormatRangeStyles::GetStyleNameIndex(const sal_Int32 nTable, const s
+             bIsAutoStyle = aItr->bIsAutoStyle;
+             nValidationIndex = aItr->nValidationIndex;
+             nNumberFormat = aItr->nNumberFormat;
+-            if (((*pRowDefaults)[nRow].nIndex != -1))
++            /* out-of-bounds is an error elsewhere, so FIXME there! */
++            OSL_ENSURE( static_cast<size_t>(nRow) < pRowDefaults->size(), "nRow out of bounds");
++            if (static_cast<size_t>(nRow) < pRowDefaults->size() &&
++                    ((*pRowDefaults)[nRow].nIndex != -1))
+             {
+                 if (((*pRowDefaults)[nRow].nIndex == (*aItr).nStyleNameIndex) &&
+                     ((*pRowDefaults)[nRow].bIsAutoStyle == (*aItr).bIsAutoStyle))
+@@ -968,12 +1022,17 @@ sal_Int32 ScFormatRangeStyles::GetStyleNameIndex(const sal_Int32 nTable, const s
+                 else
+                     return (*aItr).nStyleNameIndex;
+             }
+-            else if (((*pColDefaults)[nColumn].nIndex != -1) &&
+-                ((*pColDefaults)[nColumn].nIndex == (*aItr).nStyleNameIndex) &&
+-                ((*pColDefaults)[nColumn].bIsAutoStyle == (*aItr).bIsAutoStyle))
+-                return -1;
+             else
+-                return (*aItr).nStyleNameIndex;
++            {
++                OSL_ENSURE( static_cast<size_t>(nColumn) < pColDefaults->size(), "nColumn out of bounds");
++                if (static_cast<size_t>(nColumn) < pColDefaults->size() &&
++                        ((*pColDefaults)[nColumn].nIndex != -1) &&
++                        ((*pColDefaults)[nColumn].nIndex == (*aItr).nStyleNameIndex) &&
++                        ((*pColDefaults)[nColumn].bIsAutoStyle == (*aItr).bIsAutoStyle))
++                    return -1;
++                else
++                    return (*aItr).nStyleNameIndex;
++            }
+         }
+         else
+         {
+@@ -991,6 +1050,8 @@ void ScFormatRangeStyles::GetFormatRanges(const sal_Int32 nStartColumn, const sa
+ {
+     sal_Int32 nTotalColumns(nEndColumn - nStartColumn + 1);
+     DBG_ASSERT(static_cast<size_t>(nTable) < aTables.size(), "wrong table");
++    if (!(static_cast<size_t>(nTable) < aTables.size()))
++        return;
+     ScMyFormatRangeAddresses* pFormatRanges(aTables[nTable]);
+     ScMyFormatRangeAddresses::iterator aItr(pFormatRanges->begin());
+     ScMyFormatRangeAddresses::iterator aEndItr(pFormatRanges->end());
+-- 
+1.7.7.6
+

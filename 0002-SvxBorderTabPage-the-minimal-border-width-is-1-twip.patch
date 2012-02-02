@@ -1,0 +1,26 @@
+From 27e607c744bd8cbb26b8a6bdf42384eb4f77888c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 27 Jan 2012 23:44:26 +0100
+Subject: [PATCH 2/2] SvxBorderTabPage: the minimal border width is 1 twip
+
+Signed-off-by: Noel Power <noel.power@novell.com>
+---
+ cui/source/tabpages/border.src |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/cui/source/tabpages/border.src b/cui/source/tabpages/border.src
+index 10599d5..d1372c3 100644
+--- a/cui/source/tabpages/border.src
++++ b/cui/source/tabpages/border.src
+@@ -116,7 +116,7 @@ TabPage RID_SVXPAGE_BORDER
+         First = 25 ;
+         Last = 900 ;
+         Maximum = 900 ;
+-        Minimum = 25 ;
++        Minimum = 5 ;
+         DecimalDigits = 2 ;
+         Unit = FUNIT_POINT ;
+     };
+-- 
+1.7.7.6
+

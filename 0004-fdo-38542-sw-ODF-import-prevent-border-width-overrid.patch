@@ -1,0 +1,72 @@
+From fcdf6cde90c7f9f941a5664d4b0866adcfab5db9 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 25 Jan 2012 17:56:08 +0100
+Subject: [PATCH 4/4] fdo#38542: sw: ODF import: prevent border width
+ overriding:
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If there is a width in fo:border{,-left,-right,-top,-bottom}, then
+it should not override the values from
+style:border-line-width{,-left,-right,-top,-bottom}, which are more
+specific in case of "double" borders.
+
+Signed-off-by: Cédric Bosdonnat <cedric.bosdonnat.ooo@free.fr>
+Signed-off-by: Noel Power <noel.power@novell.com>
+---
+ sw/source/filter/xml/xmlithlp.cxx |   37 +++++++++++++++++++++----------------
+ 1 files changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/sw/source/filter/xml/xmlithlp.cxx b/sw/source/filter/xml/xmlithlp.cxx
+index 7946b81..6fe9072 100644
+--- a/sw/source/filter/xml/xmlithlp.cxx
++++ b/sw/source/filter/xml/xmlithlp.cxx
+@@ -198,23 +198,28 @@ sal_Bool lcl_frmitems_setXMLBorder( SvxBorderLine*& rpLine,
+        sal_Bool bDouble = (bHasWidth && API_LINE_DOUBLE == nStyle ) ||
+            rpLine->GetDistance();
+ 
+-       // The width has to be changed
+-       if( bHasWidth && USHRT_MAX != nNamedWidth )
++       // fdo#38542: for double borders, do not override the width
++       // set via style:border-line-width{,-left,-right,-top,-bottom}
++       if (!bDouble || !rpLine->GetWidth())
+        {
+-           if ( bDouble )
+-               rpLine->SetStyle( ::editeng::DOUBLE );
+-           rpLine->SetWidth( aBorderWidths[nNamedWidth] );
+-       }
+-       else
+-       {
+-           if( !bHasWidth )
+-               nWidth = rpLine->GetInWidth() + rpLine->GetDistance() +
+-                   rpLine->GetOutWidth();
+-
+-           rpLine->SetWidth( nWidth );
+-           if (bDouble)
+-           {   // fdo#38542: divide width by 3 for outer line, gap, inner line
+-               rpLine->ScaleMetrics(1, 3);
++           // The width has to be changed
++           if (bHasWidth && USHRT_MAX != nNamedWidth)
++           {
++               if (bDouble)
++                   rpLine->SetStyle( ::editeng::DOUBLE );
++               rpLine->SetWidth( aBorderWidths[nNamedWidth] );
++           }
++           else
++           {
++               if (!bHasWidth)
++                   nWidth = rpLine->GetInWidth() + rpLine->GetDistance() +
++                       rpLine->GetOutWidth();
++
++               rpLine->SetWidth( nWidth );
++               if (bDouble)
++               { // fdo#38542: divide width by 3 for outer line, gap, inner line
++                   rpLine->ScaleMetrics(1, 3);
++               }
+            }
+        }
+        lcl_frmitems_setXMLBorderStyle( *rpLine, nStyle );
+-- 
+1.7.7.6
+

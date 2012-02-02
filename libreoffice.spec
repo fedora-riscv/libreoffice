@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -161,6 +161,29 @@ Patch42: solenv.fix.mk.inheritance.patch
 Patch43: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 Patch44: 0001-Resolves-fdo-44078-fix-unfortunate-name-alias-mixups.patch
 Patch45: libreoffice-ppc64.patch
+Patch46: 0001-Fix-fdo-44040-VIEWING-Crash-when-page-preview-after-.patch
+Patch47: 0001-fdo-39118-Fixed-chart-listener-registration-during-O.patch
+Patch48: 0002-Resolves-fdo-43725-crash-on-saving-a-file.patch
+Patch49: 0003-resolved-fdo-45032-Calc-export-to-HTML-with-graphics.patch
+Patch50: 0004-resolved-rhbz-783556-crash-in-ScMatrix-GetDimensons-.patch
+Patch51: 0005-clone-token-in-ScFormulaResult-copy-ctor-instead-of-.patch
+Patch52: 0001-fdo-44178-Align-dictionary-address-with-DICT_REPO_UR.patch
+Patch53: 0002-SvxBorderTabPage-the-minimal-border-width-is-1-twip.patch
+Patch54: 0001-fdo-43193-fix-rotation-of-shapes-in-imported-MS-docu.patch
+Patch55: 0001-Fix-fdo-44065.patch
+Patch56: 0002-restore-special-DATE-handling-code-for-SbxValue-Comp.patch
+Patch57: 0003-Fixed-apparent-typos.patch
+Patch58: 0004-connectivity-fdo-43479-fix-crash-on-DISTINCT.patch
+Patch59: 0005-country-code-IN-is-not-in-use-for-these-locales-fdo-.patch
+Patch60: 0006-Fix-build-dupplicate-node-prop-VCL-DefaultFonts-bn.patch
+Patch61: 0007-remove-bn-IN-node-we-have-bn.patch
+Patch62: 0008-fdo-38542-SvxBorderLine-GuessLinesWidths.patch
+Patch63: 0004-WaE-signed-unsigned-error.patch
+Patch64: 0005-svtools-LineListBox-fix-handling-of-none-style.patch
+Patch65: 0001-fdo-38515-Fixed-crasher-in-dialog-destructor.patch
+Patch66: 0002-fdo-40438-force-calculating-layout-before-Activate-t.patch
+Patch67: 0003-fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
+Patch68: 0004-fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -994,6 +1017,29 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch43 -p1 -b .rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
 %patch44 -p1 -b .fdo44078-fix-unfortunate-name-alias-mixups.patch
 %patch45 -p1 -b .libreoffice-ppc64.patch
+%patch46 -p1 -b .Fix-fdo-44040-VIEWING-Crash-when-page-preview-after-.patch
+%patch47 -p1 -b .fdo-39118-Fixed-chart-listener-registration-during-O.patch
+%patch48 -p1 -b .Resolves-fdo-43725-crash-on-saving-a-file.patch
+%patch49 -p1 -b .resolved-fdo-45032-Calc-export-to-HTML-with-graphics.patch
+%patch50 -p1 -b .resolved-rhbz-783556-crash-in-ScMatrix-GetDimensons-.patch
+%patch51 -p1 -b .clone-token-in-ScFormulaResult-copy-ctor-instead-of-.patch
+%patch52 -p1 -b .fdo-44178-Align-dictionary-address-with-DICT_REPO_UR.patch
+%patch53 -p1 -b .SvxBorderTabPage-the-minimal-border-width-is-1-twip.patch
+%patch54 -p1 -b .fdo-43193-fix-rotation-of-shapes-in-imported-MS-docu.patch
+%patch55 -p1 -b .Fix-fdo-44065.patch
+%patch56 -p1 -b .restore-special-DATE-handling-code-for-SbxValue-Comp.patch
+%patch57 -p1 -b .Fixed-apparent-typos.patch
+%patch58 -p1 -b .connectivity-fdo-43479-fix-crash-on-DISTINCT.patch
+%patch59 -p1 -b .country-code-IN-is-not-in-use-for-these-locales-fdo-.patch
+%patch60 -p1 -b .Fix-build-dupplicate-node-prop-VCL-DefaultFonts-bn.patch
+%patch61 -p1 -b .remove-bn-IN-node-we-have-bn.patch
+%patch62 -p1 -b .fdo-38542-SvxBorderLine-GuessLinesWidths.patch
+%patch63 -p1 -b .WaE-signed-unsigned-error.patch
+%patch64 -p1 -b .svtools-LineListBox-fix-handling-of-none-style.patch
+%patch65 -p1 -b .fdo-38515-Fixed-crasher-in-dialog-destructor.patch
+%patch66 -p1 -b .fdo-40438-force-calculating-layout-before-Activate-t.patch
+%patch67 -p1 -b .fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
+%patch68 -p1 -b .fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2304,6 +2350,25 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 17 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-2-UNBUILT
+- Resolves: fdo#44040 VIEWING: Crash when page preview after <f4>
+- Resolves: fdo#39118 Fixed chart listener registration during ODS import
+- Resolves: fdo#43725 crash on saving a file
+- Resolves: fdo#45032 Calc export to HTML with graphics failed
+- Resolves: rhbz#783556 crash in ScMatrix::GetDimensons()
+- Resolves: fdo#44178 Align dictionary address with DICT_REPO_URL in
+  instsetoo_native/util/openoffice.lst
+- Resolves: fdo#43193 fix rotation of shapes in imported MS documents
+- Resolves: fdo#44065
+- Resolves: fdo#44385 restore special DATE handling code for SbxValue::Compute
+- Resolves: fdo#43479 fix crash on DISTINCT
+- Resolves: fdo#44208 country code 'IN' is not in use for these locales
+- Resolves: fdo#45107
+- Resolves: fdo#38542 "double" border line ODF import
+- Resolves: fdo#38515 crasher in dialog destructor
+- Resolves: fdo#40438 force calculating layout before Activate to
+  avoid crashes and loops
+
 * Tue Jan 17 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-1
 - new upstream version 3.4.5
 - drop integrated 001-add-Oracle-Java-1.7.0-recognition.patch

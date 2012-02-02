@@ -1,0 +1,47 @@
+From 756045dcffcdf2da3bc4d0c7bf0a55e5fc75106e Mon Sep 17 00:00:00 2001
+From: Andras Timar <atimar@suse.com>
+Date: Tue, 24 Jan 2012 19:01:44 +0100
+Subject: [PATCH 7/8] remove bn-IN node, we have bn
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ officecfg/registry/data/org/openoffice/VCL.xcu |   20 --------------------
+ 1 files changed, 0 insertions(+), 20 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/VCL.xcu b/officecfg/registry/data/org/openoffice/VCL.xcu
+index 55135cb..26d631b 100644
+--- a/officecfg/registry/data/org/openoffice/VCL.xcu
++++ b/officecfg/registry/data/org/openoffice/VCL.xcu
+@@ -859,26 +859,6 @@
+         <value>Lohit Assamese;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="bn-IN" oor:op="replace">
+-      <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+-      </prop>
+-      <prop oor:name="CTL_DISPLAY" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+-      </prop>
+-      <prop oor:name="CTL_HEADING" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+-      </prop>
+-      <prop oor:name="CTL_PRESENTATION" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+-      </prop>
+-      <prop oor:name="CTL_SPREADSHEET" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+-      </prop>
+-      <prop oor:name="CTL_TEXT" oor:op="replace" oor:type="xs:string">
+-        <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+-      </prop>
+-    </node>
+     <node oor:name="hi" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Hindi;Mangal;Lucidasans;Lucida Sans;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+-- 
+1.7.7.6
+

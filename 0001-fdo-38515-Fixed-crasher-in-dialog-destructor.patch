@@ -1,0 +1,27 @@
+From 36f83debd1b8a200515fafdf66bdd7a4aec01ad5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?C=C3=A9dric=20Bosdonnat?= <cedric.bosdonnat.ooo@free.fr>
+Date: Fri, 13 Jan 2012 16:08:17 +0100
+Subject: [PATCH 1/4] fdo#38515: Fixed crasher in dialog destructor
+
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+---
+ sw/source/ui/index/cnttab.cxx |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/sw/source/ui/index/cnttab.cxx b/sw/source/ui/index/cnttab.cxx
+index ae7dfad..fcfb2f8 100644
+--- a/sw/source/ui/index/cnttab.cxx
++++ b/sw/source/ui/index/cnttab.cxx
+@@ -358,6 +358,9 @@ SwMultiTOXTabDialog::~SwMultiTOXTabDialog()
+ {
+     SW_MOD()->GetModuleConfig()->SetShowIndexPreview(aShowExampleCB.IsChecked());
+ 
++    // fdo#38515 Avoid setting focus on deleted controls in the destructors
++    EnableInput( sal_False );
++
+     for(sal_uInt16 i = 0; i < nTypeCount; i++)
+     {
+         delete pFormArr[i];
+-- 
+1.7.7.6
+

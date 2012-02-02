@@ -1,0 +1,70 @@
+From 23ca5386808ace4ed73aeabadea44e96d696742b Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 31 Jan 2012 20:40:47 +0100
+Subject: [PATCH 5/5] clone token in ScFormulaResult copy-ctor instead of
+ referring
+
+Replaces commit e2b11f4fd79dce4116badb0ecf6477546ca5d0d4
+
+Prevent excessive references to single token instance during fill.
+
+Because if not, we may run out of the 16-bit integer space to
+store reference count.
+
+Signed-off-by: Kohei Yoshida <kohei.yoshida@suse.com>
+---
+ sc/inc/formularesult.hxx |   23 ++++++++++++++++++++---
+ 1 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/sc/inc/formularesult.hxx b/sc/inc/formularesult.hxx
+index bd68e52..454753b 100644
+--- a/sc/inc/formularesult.hxx
++++ b/sc/inc/formularesult.hxx
+@@ -41,6 +41,20 @@ class ScFormulaResult
+     static const Multiline MULTILINE_FALSE   = 1;
+     static const Multiline MULTILINE_TRUE    = 2;
+ 
++    // Clone token if the 16-bit only reference counter is nearing it's
++    // capacity during fill or copy&paste, leaving 4k for temporary passing
++    // around. (That should be enough for all times (TM) ;-)
++    static const sal_uInt16 MAX_TOKENREF_COUNT = 0xf000;
++    static void IncrementTokenRef( const formula::FormulaToken* & rp )
++    {
++        if (rp)
++        {
++            if (rp->GetRef() >= MAX_TOKENREF_COUNT)
++                rp = rp->Clone();
++            rp->IncRef();
++        }
++    }
++
+     union
+     {
+         double          mfValue;    // double result direct for performance and memory consumption
+@@ -94,8 +108,12 @@ public:
+                                             const ScMatrixFormulaCellToken* pMatFormula =
+                                                 r.GetMatrixFormulaCellToken();
+                                             if (pMatFormula)
++                                            {
+                                                 mpToken = new ScMatrixFormulaCellToken( *pMatFormula);
+-                                            mpToken->IncRef();
++                                                mpToken->IncRef();
++                                            }
++                                            else
++                                                IncrementTokenRef( mpToken);
+                                         }
+                                     }
+                                     else
+@@ -308,8 +326,7 @@ inline void ScFormulaResult::Assign( const ScFormulaResult & r )
+ inline void ScFormulaResult::SetToken( const formula::FormulaToken* p )
+ {
+     ResetToDefaults();
+-    if (p)
+-        p->IncRef();
++    IncrementTokenRef( p);
+     // Handle a result obtained from the interpreter to be assigned to a matrix
+     // formula cell's ScMatrixFormulaCellToken.
+     ScMatrixFormulaCellToken* pMatFormula = GetMatrixFormulaCellTokenNonConst();
+-- 
+1.7.7.6
+

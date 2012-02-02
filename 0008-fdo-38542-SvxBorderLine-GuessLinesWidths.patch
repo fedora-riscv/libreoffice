@@ -1,0 +1,70 @@
+From ed41167d5ffae11efdd9cb43b2d88a8147e6d13f Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 25 Jan 2012 22:43:39 +0100
+Subject: [PATCH 8/8] fdo#38542: SvxBorderLine::GuessLinesWidths:
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Importing style:border-line-width="0.002cm 0.088cm 0.141cm" (which older
+OOo/LO apparently could write) fails, because GuessLinesWidths can't find
+a matching style (result: standard "double" border, 3 equal width parts).
+Try to create a custom BorderWidthImpl of type DOUBLE instead, that
+preserves the individual widths.
+
+Signed-off-by: Cédric Bosdonnat <cedric.bosdonnat.ooo@free.fr>
+Signed-off-by: Noel Power <noel.power@novell.com>
+---
+ editeng/qa/items/borderline_test.cxx |    2 +-
+ editeng/source/items/borderline.cxx  |   21 ++++++++++++++++++---
+ 2 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/editeng/qa/items/borderline_test.cxx b/editeng/qa/items/borderline_test.cxx
+index 5d67b62..05172d6 100644
+--- a/editeng/qa/items/borderline_test.cxx
++++ b/editeng/qa/items/borderline_test.cxx
+@@ -85,7 +85,7 @@ void BorderLineTest::testGuessWidthNoMatch()
+     line.GuessLinesWidths( DOUBLE,
+             TEST_WIDTH + 1, TEST_WIDTH + 2, TEST_WIDTH + 3 );
+     CPPUNIT_ASSERT_EQUAL( DOUBLE, line.GetStyle() );
+-    CPPUNIT_ASSERT_EQUAL( long( 0 ), line.GetWidth() );
++    CPPUNIT_ASSERT_EQUAL( long( (3 * TEST_WIDTH) + 6 ), line.GetWidth() );
+ }
+ 
+ void BorderLineTest::testGuessWidthThinthickSmallgap()
+diff --git a/editeng/source/items/borderline.cxx b/editeng/source/items/borderline.cxx
+index de24284..88adf29 100644
+--- a/editeng/source/items/borderline.cxx
++++ b/editeng/source/items/borderline.cxx
+@@ -279,10 +279,25 @@ void SvxBorderLine::GuessLinesWidths( SvxBorderStyle nStyle, sal_uInt16 nOut, sa
+ 
+         // If anything matched, then set it
+         if ( nWidth > 0 )
++        {
+             nStyle = nTestStyle;
+-
+-        SetStyle( nStyle );
+-        m_nWidth = nWidth;
++            SetStyle( nStyle );
++            m_nWidth = nWidth;
++        }
++        else
++        {
++            // fdo#38542: not a known double, default to something custom...
++            SetStyle( nStyle );
++            m_nWidth = nOut + nIn + nDist;
++            if (nOut + nIn + nDist)
++            {
++                m_aWidthImpl = BorderWidthImpl(
++                    CHANGE_LINE1 | CHANGE_LINE2 | CHANGE_DIST,
++                    static_cast<double>(nOut ) / static_cast<double>(m_nWidth),
++                    static_cast<double>(nIn  ) / static_cast<double>(m_nWidth),
++                    static_cast<double>(nDist) / static_cast<double>(m_nWidth));
++            }
++        }
+     }
+     else
+     {
+-- 
+1.7.7.6
+

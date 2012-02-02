@@ -1,0 +1,120 @@
+From a899ab36646ae0b8d078c510725d014332294099 Mon Sep 17 00:00:00 2001
+From: Andras Timar <atimar@suse.com>
+Date: Tue, 24 Jan 2012 14:56:35 +0100
+Subject: [PATCH 5/8] country code 'IN' is not in use for these locales
+ fdo#44208, fdo#45107
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ officecfg/registry/data/org/openoffice/VCL.xcu |   22 +++++++++++-----------
+ 1 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/VCL.xcu b/officecfg/registry/data/org/openoffice/VCL.xcu
+index 6f52cb7..4dfdc23 100644
+--- a/officecfg/registry/data/org/openoffice/VCL.xcu
++++ b/officecfg/registry/data/org/openoffice/VCL.xcu
+@@ -839,7 +839,7 @@
+         <value>Lohit Nepali;Kalimati;Samanata;Sans</value>
+       </prop>
+     </node>
+-    <node oor:name="as-IN" oor:op="replace">
++    <node oor:name="as" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Assamese;Tahoma;Lucidasans;Lucida Sans;Supplement;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -859,7 +859,7 @@
+         <value>Lohit Assamese;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="bn-IN" oor:op="replace">
++    <node oor:name="bn" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -879,7 +879,7 @@
+         <value>Lohit Bengali;Vrinda;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="hi-IN" oor:op="replace">
++    <node oor:name="hi" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Hindi;Mangal;Lucidasans;Lucida Sans;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -899,7 +899,7 @@
+         <value>Lohit Hindi;Mangal;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="gu-IN" oor:op="replace">
++    <node oor:name="gu" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Gujarati;Shruti;Lucidasans;Lucida Sans;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -919,7 +919,7 @@
+         <value>Lohit Gujarati;Shruti;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="kn-IN" oor:op="replace">
++    <node oor:name="kn" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Kannada;Tunga;Lucidasans;Lucida Sans;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -939,7 +939,7 @@
+         <value>Lohit Kannada;Tunga;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="mai-IN" oor:op="replace">
++    <node oor:name="mai" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Maithili;Tahoma;Lucidasans;Lucida Sans;Supplement;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -959,7 +959,7 @@
+         <value>Lohit Maithili;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="ml-IN" oor:op="replace">
++    <node oor:name="ml" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>AnjaliOldLipi;Lohit Malayalam;Meera;Tahoma;Lucidasans;Lucida Sans;Supplement;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -979,7 +979,7 @@
+         <value>AnjaliOldLipi;Lohit Malayalam;Meera;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="mr-IN" oor:op="replace">
++    <node oor:name="mr" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Marathi;Tahoma;Lucidasans;Lucida Sans;Andale Sans UI;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -999,7 +999,7 @@
+         <value>Lohit Marathi;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="or-IN" oor:op="replace">
++    <node oor:name="or" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>utkal;Kalinga;Lohit Oriya;Samyak Oriya;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+@@ -1039,7 +1039,7 @@
+         <value>Raavi;Lohit Punjabi;Saab;Tahoma;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="ta-IN" oor:op="replace">
++    <node oor:name="ta" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Tamil;Latha;Sans Serif</value>
+       </prop>
+@@ -1059,7 +1059,7 @@
+         <value>Lohit Tamil;Latha;Lucidasans;Lucida Sans;Arial Unicode MS</value>
+       </prop>
+     </node>
+-    <node oor:name="te-IN" oor:op="replace">
++    <node oor:name="te" oor:op="replace">
+       <prop oor:name="UI_SANS" oor:op="replace" oor:type="xs:string">
+         <value>Lohit Telugu;Gautami;Lucidasans;Lucida Sans;Arial Unicode MS;Lucida Sans Unicode;clearlyU</value>
+       </prop>
+-- 
+1.7.7.6
+

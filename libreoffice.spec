@@ -248,6 +248,19 @@ The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
 without having to know the syntax of the MediaWiki markup language. Publish
 your new and existing documents transparently with writer to a wiki page.
 
+%package nlpsolver
+Summary: Non-linear solver engine for LibreOffice Calc
+Group: Applications/Productivity
+Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires(pre):    %{name}-core
+Requires(post):   %{name}-core
+Requires(preun):  %{name}-core
+Requires(postun): %{name}-core
+
+%description nlpsolver
+A non-linear solver engine for Calc as an alternative to the default linear
+programming model when more complex, nonlinear programming is required.
+
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
 Group: Applications/Productivity
@@ -840,7 +853,7 @@ autoconf
  --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
- --enable-binfilter --enable-ext-presenter-minimizer \
+ --enable-binfilter --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
@@ -1802,6 +1815,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
 %{baseinstdir}/share/extensions/wiki-publisher
 
+%files nlpsolver
+%defattr(-,root,root,-)
+%docdir %{baseinstdir}/share/extensions/nlpsolver/help
+%{baseinstdir}/share/extensions/nlpsolver
+
 %files ogltrans
 %defattr(-,root,root,-)
 %dir %{baseinstdir}
@@ -2074,6 +2092,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Fri 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
 - 3.5.0 rc3
+- Resolves: rhbz#786328 add nlpsolver subpackage
 
 * Thu Jan 26 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.2-2
 - add libreoffice-postgresql subpackage

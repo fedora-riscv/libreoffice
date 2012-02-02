@@ -68,14 +68,14 @@ Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdc
 %endif
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
+BuildRequires:  binutils, java-devel < 1:1.7.0, jre >= 1.6.0, boost-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
 BuildRequires:  gecko-devel, libwpd-devel, hunspell-devel, unixODBC-devel
 BuildRequires:  sane-backends-devel, libicu-devel, libXinerama-devel
 BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
-BuildRequires:  evolution-data-server-devel, nss-devel
+BuildRequires:  evolution-data-server-devel, nss-devel, zlib-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl(Archive::Zip)
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync

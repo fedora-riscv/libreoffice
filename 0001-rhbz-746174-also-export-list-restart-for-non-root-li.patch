@@ -1,0 +1,89 @@
+From 31c8d797c40644e73f119b59c596432ffb6cf7ae Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 20 Jan 2012 13:45:54 +0100
+Subject: [PATCH] rhbz#746174: also export list restart for non root list
+
+Signed-off-by: Petr Mladek <pmladek@suse.cz>
+---
+ xmloff/source/text/txtparae.cxx |   32 +++++++++++++++++++++-----------
+ 1 files changed, 21 insertions(+), 11 deletions(-)
+
+diff --git a/xmloff/source/text/txtparae.cxx b/xmloff/source/text/txtparae.cxx
+index 40d4203..18f078a 100644
+--- a/xmloff/source/text/txtparae.cxx
++++ b/xmloff/source/text/txtparae.cxx
+@@ -916,8 +916,8 @@ void XMLTextParagraphExport::exportListChange(
+             // Thus, for other document types <sListId> is empty.
+             const ::rtl::OUString sListId( rNextInfo.GetListId() );
+             bool bExportListStyle( true );
+-            bool bRestartNumberingAtContinuedRootList( false );
+-            sal_Int16 nRestartValueForContinuedRootList( -1 );
++            bool bRestartNumberingAtContinuedList( false );
++            sal_Int32 nRestartValueForContinuedList( -1 );
+             bool bContinueingPreviousSubList = !bRootListToBeStarted &&
+                                                rNextInfo.IsContinueingPreviousSubTree();
+             do {
+@@ -990,9 +990,9 @@ void XMLTextParagraphExport::exportListChange(
+                                  ( nListLevelsToBeOpened != 1 ||
+                                    !rNextInfo.HasStartValue() ) )
+                             {
+-                                bRestartNumberingAtContinuedRootList = true;
+-                                nRestartValueForContinuedRootList =
+-                                                rNextInfo.GetListLevelStartValue();
++                                bRestartNumberingAtContinuedList = true;
++                                nRestartValueForContinuedList =
++                                            rNextInfo.GetListLevelStartValue();
+                             }
+                         }
+ 
+@@ -1013,6 +1013,18 @@ void XMLTextParagraphExport::exportListChange(
+                     GetExport().AddAttribute( XML_NAMESPACE_TEXT, XML_STYLE_NAME,
+                             GetExport().EncodeStyleName( sListStyleName ) );
+                     bExportListStyle = false;
++
++
++                }
++                else
++                {
++                    // rhbz#746174: also export list restart for non root list
++                    if (rNextInfo.IsRestart() && !rNextInfo.HasStartValue())
++                    {
++                        bRestartNumberingAtContinuedList = true;
++                        nRestartValueForContinuedList =
++                                        rNextInfo.GetListLevelStartValue();
++                    }
+                 }
+ 
+                 if ( bContinueingPreviousSubList )
+@@ -1041,9 +1053,7 @@ void XMLTextParagraphExport::exportListChange(
+                 // <text:list-header> or <text:list-item>
+                 GetExport().CheckAttrList();
+ 
+-                /* Export start value in case of <bRestartNumberingAtContinuedRootList>
+-                   at correct list item (#i97309#)
+-                */
++                /* Export start value at correct list item (#i97309#) */
+                 if ( nListLevelsToBeOpened == 1 )
+                 {
+                     if ( rNextInfo.HasStartValue() )
+@@ -1053,14 +1063,14 @@ void XMLTextParagraphExport::exportListChange(
+                         GetExport().AddAttribute( XML_NAMESPACE_TEXT, XML_START_VALUE,
+                                       aBuffer.makeStringAndClear() );
+                     }
+-                    else if ( bRestartNumberingAtContinuedRootList )
++                    else if (bRestartNumberingAtContinuedList)
+                     {
+                         OUStringBuffer aBuffer;
+-                        aBuffer.append( (sal_Int32)nRestartValueForContinuedRootList );
++                        aBuffer.append( nRestartValueForContinuedList );
+                         GetExport().AddAttribute( XML_NAMESPACE_TEXT,
+                                                   XML_START_VALUE,
+                                                   aBuffer.makeStringAndClear() );
+-                        bRestartNumberingAtContinuedRootList = false;
++                        bRestartNumberingAtContinuedList = false;
+                     }
+                 }
+ 
+-- 
+1.7.7.6
+

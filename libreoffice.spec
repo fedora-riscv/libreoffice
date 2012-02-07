@@ -88,7 +88,7 @@ BuildRequires:  font(:lang=en)
 BuildRequires:  hsqldb, db4-devel
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), libdb-devel
+BuildRequires:  libwps-devel, junit, perl(Digest::MD5), libdb-devel
 BuildRequires:  mysql-connector-c++-devel
 BuildRequires:  libcmis-devel, libexttextcat-devel, libvisio-devel
 %endif
@@ -2115,6 +2115,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 07 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-2-UNBUILT
+- junit4 -> junit
+
 * Thu Feb 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
 - 3.5.0 rc3
 - Resolves: rhbz#786328 add nlpsolver subpackage

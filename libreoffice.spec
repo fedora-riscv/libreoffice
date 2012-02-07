@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -188,6 +188,15 @@ Patch69: 0001-rhbz-746174-also-export-list-restart-for-non-root-li.patch
 Patch70: 0001-resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
 Patch71: 0001-Do-not-pass-the-request-for-command-line-help-to-oos.patch
 Patch72: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
+Patch73: 0001-cast-from-BorderLine-to-BorderLine2-is-not-valid.patch
+Patch74: 0002-fix-getCellRangeByName-failure-for-named-range.patch
+Patch75: 0003-fdo-45450-sc-ODF-export-cell-styles.patch
+Patch76: 0001-fdo-45449-ODF-export-frames-invalid-min-width.patch
+Patch77: 0002-fdo-45534-ODF-export-fix-draw-fit-to-size.patch
+Patch78: 0001-fdo-38745-fix-hilariously-stupid-stack-guards.patch
+Patch79: 0002-fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
+Patch80: 0003-fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
+Patch81: 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1048,6 +1057,15 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch70 -p1 -b .resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
 %patch71 -p1 -b .Do-not-pass-the-request-for-command-line-help-to-oos.patch
 %patch72 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
+%patch73 -p1 -b .cast-from-BorderLine-to-BorderLine2-is-not-valid.patch
+%patch74 -p1 -b .fix-getCellRangeByName-failure-for-named-range.patch
+%patch75 -p1 -b .fdo-45450-sc-ODF-export-cell-styles.patch
+%patch76 -p1 -b .fdo-45449-ODF-export-frames-invalid-min-width.patch
+%patch77 -p1 -b .fdo-45534-ODF-export-fix-draw-fit-to-size.patch
+%patch78 -p1 -b .fdo-38745-fix-hilariously-stupid-stack-guards.patch
+%patch79 -p1 -b .fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
+%patch80 -p1 -b .fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
+%patch81 -p1 -b .fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2358,6 +2376,17 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-3.UNBUILT
+- Resolves: fdo#39117
+- Resolves: fdo#45450 Only write "style:vertical-justify" and
+  "css3t:text-justify" in ODF extended mode
+- Resolves: fdo#45449: ODF export: frames: invalid "min-width"
+- Resolves: fdo#45534: ODF export: fix draw:fit-to-size
+- Resolves: fdo#38745: fix hilariously stupid stack guards
+- Resolves: fdo#37024: SwView::SwView: fix BROWSE_MODE setting
+- Resolves: fdo#35661
+- Resolves: i#117545
+
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-2
 - Resolves: fdo#44040 VIEWING: Crash when page preview after <f4>
 - Resolves: fdo#39118 Fixed chart listener registration during ODS import

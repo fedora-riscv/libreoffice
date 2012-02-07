@@ -1,0 +1,58 @@
+From 2fb5f7cf09f33b7ae924b07dac45bf3e698da90c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 7 Feb 2012 10:54:04 +0000
+Subject: [PATCH 2/2] fdo#45534: ODF export: fix draw:fit-to-size
+
+In ODF 1.1 and 1.2 this attribute is of type boolean, so only write the
+new values if the extended format is selected.
+(regression introduced with e479f47f7d48dbd0d701bf347b6a2d5121ba3d34)
+
+Signed-off-by: Noel Power <noel.power@novell.com>
+---
+ xmloff/source/draw/sdpropls.cxx |   23 ++++++++++++++++++++++-
+ 1 files changed, 22 insertions(+), 1 deletions(-)
+
+diff --git a/xmloff/source/draw/sdpropls.cxx b/xmloff/source/draw/sdpropls.cxx
+index a87690d..4df1b01 100644
+--- a/xmloff/source/draw/sdpropls.cxx
++++ b/xmloff/source/draw/sdpropls.cxx
+@@ -619,6 +619,15 @@ SvXMLEnumMapEntry const pXML_VerticalAlign_Enum[] =
+     { XML_TOKEN_INVALID, 0 }
+ };
+ 
++SvXMLEnumMapEntry const pXML_FitToSize_Enum_Odf12[] =
++{
++    { XML_FALSE,        drawing::TextFitToSizeType_NONE },
++    { XML_TRUE,         drawing::TextFitToSizeType_PROPORTIONAL },
++    { XML_TRUE,         drawing::TextFitToSizeType_ALLLINES },
++    { XML_TRUE,         drawing::TextFitToSizeType_AUTOFIT },
++    { XML_TOKEN_INVALID, 0 }
++};
++
+ SvXMLEnumMapEntry const pXML_FitToSize_Enum[] =
+ {
+     { XML_FALSE,		drawing::TextFitToSizeType_NONE },
+@@ -1047,7 +1056,19 @@ const XMLPropertyHandler* XMLSdPropHdlFactory::GetPropertyHandler( sal_Int32 nTy
+                 pHdl = new XMLEnumPropertyHdl( pXML_VerticalAlign_Enum, ::getCppuType((const com::sun::star::drawing::TextVerticalAdjust*)0) );
+                 break;
+             case XML_SD_TYPE_FITTOSIZE:
+-                pHdl = new XMLEnumPropertyHdl( pXML_FitToSize_Enum, ::getCppuType((const com::sun::star::drawing::TextFitToSizeType*)0) );
++                {
++                    if (mpExport && (mpExport->getDefaultVersion()
++                                        <= SvtSaveOptions::ODFVER_012))
++                    {
++                        pHdl = new XMLEnumPropertyHdl(pXML_FitToSize_Enum_Odf12,
++                            ::getCppuType(static_cast<const com::sun::star::drawing::TextFitToSizeType*>(0)));
++                    }
++                    else
++                    {
++                        pHdl = new XMLEnumPropertyHdl(pXML_FitToSize_Enum,
++                            ::getCppuType(static_cast<const com::sun::star::drawing::TextFitToSizeType*>(0)));
++                    }
++                }
+                 break;
+             case XML_SD_TYPE_MEASURE_UNIT:
+                 pHdl = new XMLEnumPropertyHdl( pXML_MeasureUnit_Enum, ::getCppuType((const sal_Int32*)0) );
+-- 
+1.7.7.6
+

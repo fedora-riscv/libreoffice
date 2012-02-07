@@ -1,0 +1,109 @@
+From eb7c38705c03b12770d1d964f6e15c1d12719cc4 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 7 Feb 2012 10:48:59 +0000
+Subject: [PATCH 1/2] fdo#45449: ODF export: frames: invalid "min-width"
+
+XMLTextParagraphExport::addTextFrameAttributes: delay writing of the
+fo:min-width and fo:min-height attributes so that they end up at the
+draw:text-box element, and not at draw:frame where they are invalid.
+
+Testing reveals that the ODF import can already handle reading the
+attributes from the draw:text-box elements, so there doesn't seem to be
+a backward compatibility problem.
+
+Signed-off-by: Noel Power <noel.power@novell.com>
+---
+ xmloff/inc/xmloff/txtparae.hxx  |    3 ++-
+ xmloff/source/text/txtparae.cxx |   30 ++++++++++++++++++++++++------
+ 2 files changed, 26 insertions(+), 7 deletions(-)
+
+diff --git a/xmloff/inc/xmloff/txtparae.hxx b/xmloff/inc/xmloff/txtparae.hxx
+index dcb2d6f..dbe865e 100644
+--- a/xmloff/inc/xmloff/txtparae.hxx
++++ b/xmloff/inc/xmloff/txtparae.hxx
+@@ -266,7 +266,8 @@ protected:
+         const ::com::sun::star::uno::Reference <
+                 ::com::sun::star::beans::XPropertySet >& rPropSet,
+         sal_Bool bShape,
+-        ::rtl::OUString *pMinHeightValue = 0 );
++        ::rtl::OUString *pMinHeightValue = 0,
++        ::rtl::OUString *pMinWidthValue = 0 );
+ 
+     virtual void exportStyleAttributes(
+         const ::com::sun::star::uno::Reference<
+diff --git a/xmloff/source/text/txtparae.cxx b/xmloff/source/text/txtparae.cxx
+index d5962ec..066266d 100644
+--- a/xmloff/source/text/txtparae.cxx
++++ b/xmloff/source/text/txtparae.cxx
+@@ -2479,7 +2479,8 @@ sal_Bool lcl_txtpara_isBoundAsChar(
+ sal_Int32 XMLTextParagraphExport::addTextFrameAttributes(
+     const Reference < XPropertySet >& rPropSet,
+     sal_Bool bShape,
+-    OUString *pMinHeightValue )
++    OUString *pMinHeightValue,
++    OUString *pMinWidthValue)
+ {
+     sal_Int32 nShapeFeatures = SEF_DEFAULT;
+ 
+@@ -2582,8 +2583,13 @@ sal_Int32 XMLTextParagraphExport::addTextFrameAttributes(
+         }
+         GetExport().GetMM100UnitConverter().convertMeasure( sValue, nWidth );
+         if( SizeType::FIX != nWidthType )
+-            GetExport().AddAttribute( XML_NAMESPACE_FO, XML_MIN_WIDTH,
+-                                      sValue.makeStringAndClear() );
++        {
++            assert(pMinWidthValue);
++            if (pMinWidthValue)
++            {
++                *pMinWidthValue = sValue.makeStringAndClear();
++            }
++        }
+         else
+             GetExport().AddAttribute( XML_NAMESPACE_SVG, XML_WIDTH,
+                                       sValue.makeStringAndClear() );
+@@ -2654,8 +2660,13 @@ sal_Int32 XMLTextParagraphExport::addTextFrameAttributes(
+         GetExport().GetMM100UnitConverter().convertPercent( sValue,
+                                                             nRelHeight );
+         if( SizeType::MIN == nSizeType )
+-            GetExport().AddAttribute( XML_NAMESPACE_FO, XML_MIN_HEIGHT,
+-                                      sValue.makeStringAndClear() );
++        {
++            assert(pMinHeightValue);
++            if (pMinHeightValue)
++            {
++                *pMinHeightValue = sValue.makeStringAndClear();
++            }
++        }
+         else
+             GetExport().AddAttribute( XML_NAMESPACE_STYLE, XML_REL_HEIGHT,
+                                       sValue.makeStringAndClear() );
+@@ -2804,11 +2815,12 @@ void XMLTextParagraphExport::_exportTextFrame(
+ 
+     OUString sAutoStyle( sStyle );
+     OUString aMinHeightValue;
++    OUString sMinWidthValue;
+     sAutoStyle = Find( XML_STYLE_FAMILY_TEXT_FRAME, rPropSet, sStyle );
+     if( sAutoStyle.getLength() )
+         GetExport().AddAttribute( XML_NAMESPACE_DRAW, XML_STYLE_NAME,
+                               GetExport().EncodeStyleName( sAutoStyle ) );
+-    addTextFrameAttributes( rPropSet, sal_False, &aMinHeightValue );
++    addTextFrameAttributes(rPropSet, false, &aMinHeightValue, &sMinWidthValue);
+ 
+     SvXMLElementExport aElem( GetExport(), XML_NAMESPACE_DRAW,
+                               XML_FRAME, sal_False, sal_True );
+@@ -2817,6 +2829,12 @@ void XMLTextParagraphExport::_exportTextFrame(
+         GetExport().AddAttribute( XML_NAMESPACE_FO, XML_MIN_HEIGHT,
+                                   aMinHeightValue );
+ 
++    if (!sMinWidthValue.isEmpty())
++    {
++        GetExport().AddAttribute( XML_NAMESPACE_FO, XML_MIN_WIDTH,
++                                  sMinWidthValue );
++    }
++
+     // draw:chain-next-name
+     if( rPropSetInfo->hasPropertyByName( sChainNextName ) )
+     {
+-- 
+1.7.7.6
+

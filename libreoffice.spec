@@ -2380,7 +2380,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-3.UNBUILT
+* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-3
 - Resolves: fdo#39117
 - Resolves: fdo#45450 Only write "style:vertical-justify" and
   "css3t:text-justify" in ODF extended mode

@@ -2379,6 +2379,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#746174 also export list restart for non root list
 - Resolves: fdo#42784 BorderLine with only InnerWidth set does not work
 - Resolves: fdo#45255 edge-case .doc comment import
+- Resolves: rhbz#788045 fix soffice --help with instance already running
 
 * Tue Jan 17 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-1
 - new upstream version 3.4.5

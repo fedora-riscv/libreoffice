@@ -869,8 +869,7 @@ autoconf
  --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
  --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
- --enable-evolution2 --enable-cairo --enable-dbus --enable-opengl --enable-vba \
- %{?with_binfilter:--enable-binfilter}
+ --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
  --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
@@ -884,7 +883,7 @@ autoconf
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-sampleicc \
- %{distrooptions}
+ %{distrooptions} %{?with_binfilter:--enable-binfilter}
 
 mkdir -p ext_sources
 cp %{SOURCE4} ext_sources

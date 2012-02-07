@@ -197,6 +197,8 @@ Patch78: 0001-fdo-38745-fix-hilariously-stupid-stack-guards.patch
 Patch79: 0002-fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
 Patch80: 0003-fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
 Patch81: 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
+Patch82: 0001-fdo-45115-SwXTextTable-fix-setting-borders.patch
+Patch83: 0002-fdo-45115-sc-fix-setting-borders.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1066,6 +1068,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch79 -p1 -b .fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
 %patch80 -p1 -b .fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
 %patch81 -p1 -b .fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
+%patch82 -p1 -b .fdo-45115-SwXTextTable-fix-setting-borders.patch
+%patch83 -p1 -b .fdo-45115-sc-fix-setting-borders.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2386,6 +2390,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#37024: SwView::SwView: fix BROWSE_MODE setting
 - Resolves: fdo#35661
 - Resolves: i#117545
+- Resolves: fdo#45115: SwXTextTable, sc: fix setting borders
 
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-2
 - Resolves: fdo#44040 VIEWING: Crash when page preview after <f4>

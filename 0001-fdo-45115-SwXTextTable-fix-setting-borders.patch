@@ -1,0 +1,26 @@
+From ef9881001e4ddfa6bfbe7d83f482393bb76d926a Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 3 Feb 2012 18:49:56 +0100
+Subject: [PATCH 1/2] fdo#45115: SwXTextTable: fix setting borders
+
+This plus e549f52f16c4a519ed3eddb9c66c19bacc247590 fixes the problem.
+---
+ sw/source/core/unocore/unotbl.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sw/source/core/unocore/unotbl.cxx b/sw/source/core/unocore/unotbl.cxx
+index a928d15..9526160 100644
+--- a/sw/source/core/unocore/unotbl.cxx
++++ b/sw/source/core/unocore/unotbl.cxx
+@@ -136,7 +136,7 @@ sal_Bool lcl_LineToSvxLine(const table::BorderLine& rLine, SvxBorderLine& rSvxLi
+ {
+     rSvxLine.SetColor(Color(rLine.Color));
+ 
+-    rSvxLine.GuessLinesWidths( editeng::SvxBorderStyle(table::BorderLineStyle::SOLID),
++    rSvxLine.GuessLinesWidths( editeng::NO_STYLE,
+                                 MM100_TO_TWIP( rLine.OuterLineWidth ),
+                                 MM100_TO_TWIP( rLine.InnerLineWidth ),
+                                 MM100_TO_TWIP( rLine.LineDistance ) );
+-- 
+1.7.7.6
+

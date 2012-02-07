@@ -1,0 +1,27 @@
+From 697743161a6047902ee880851b23c9aef1bfa392 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 3 Feb 2012 21:06:18 +0100
+Subject: [PATCH 2/2] fdo#45115: sc: fix setting borders
+
+Same problem in ScHelperFunctions::GetBorderLine.
+---
+ sc/source/ui/unoobj/cellsuno.cxx |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/sc/source/ui/unoobj/cellsuno.cxx b/sc/source/ui/unoobj/cellsuno.cxx
+index 1bddc21..7844d9f 100644
+--- a/sc/source/ui/unoobj/cellsuno.cxx
++++ b/sc/source/ui/unoobj/cellsuno.cxx
+@@ -953,8 +953,7 @@ ScSubTotalFunc lcl_SummaryToSubTotal( sheet::GeneralFunction eSummary )
+ const ::editeng::SvxBorderLine* ScHelperFunctions::GetBorderLine( ::editeng::SvxBorderLine& rLine, const table::BorderLine& rStruct )
+ {
+     //  Calc needs Twips, and there are 1/100mm in the Uno structure
+-    rLine.SetStyle( ::editeng::SvxBorderStyle( table::BorderLineStyle::SOLID ) );
+-    rLine.GuessLinesWidths( rLine.GetStyle(),
++    rLine.GuessLinesWidths( editeng::NO_STYLE,
+         (sal_uInt16)HMMToTwips( rStruct.OuterLineWidth ),
+         (sal_uInt16)HMMToTwips( rStruct.InnerLineWidth ),
+         (sal_uInt16)HMMToTwips( rStruct.LineDistance ) );
+-- 
+1.7.7.6
+

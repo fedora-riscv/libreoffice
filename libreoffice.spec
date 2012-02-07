@@ -186,8 +186,7 @@ Patch67: 0003-fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
 Patch68: 0004-fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
 Patch69: 0001-rhbz-746174-also-export-list-restart-for-non-root-li.patch
 Patch70: 0001-resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
-Patch71: 0001-query-remaining-stream-size-after-seeking-not-before.patch
-Patch72: 0001-Do-not-pass-the-request-for-command-line-help-to-oos.patch
+Patch71: 0001-Do-not-pass-the-request-for-command-line-help-to-oos.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1046,8 +1045,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch68 -p1 -b .fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
 %patch69 -p1 -b .rhbz-746174-also-export-list-restart-for-non-root-li.patch
 %patch70 -p1 -b .resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
-%patch71 -p1 -b .query-remaining-stream-size-after-seeking-not-before.patch
-%patch72 -p1 -b .Do-not-pass-the-request-for-command-line-help-to-oos.patch
+%patch71 -p1 -b .Do-not-pass-the-request-for-command-line-help-to-oos.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

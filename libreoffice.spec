@@ -121,8 +121,7 @@ Patch12: libreoffice-rhel6poppler.patch
 %if %{with binfilter}
 Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-# TODO: this in S390 only, so it can wait .-)
-#Patch13: solenv.fix.mk.inheritance.patch
+Patch14: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -815,7 +814,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %if %{with binfilter}
 %patch13 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-#%patch13 -p1 -b .solenv.fix.mk.inheritance.patch
+%patch14 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2115,8 +2114,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Feb 07 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-2-UNBUILT
+* Tue Feb 07 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-2
 - junit4 -> junit
+- Resolves: rhbz#788042 skip splashscreen with quickstarter
 
 * Thu Feb 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
 - 3.5.0 rc3

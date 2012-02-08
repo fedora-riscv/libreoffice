@@ -1,0 +1,30 @@
+From e2bc0c04ba0c33e02f1842013041f26ccb2de77d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 2 Feb 2012 12:53:59 +0100
+Subject: [PATCH] fdo#45446: officecfg: turn off SaveBackwardCompatibleODF
+
+As detailed in the bug, this option is the reason why LO writes several
+elements and attributes that are not valid in ODF; the corresponding
+bugs in the import filters are all fixed in OOo 2.4 or earlier,
+so there is no reason to risk interoperability problems with other ODF
+impolementations for this any more.
+---
+ .../registry/data/org/openoffice/Office/Common.xcu |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/Office/Common.xcu b/officecfg/registry/data/org/openoffice/Office/Common.xcu
+index 215999a..744c7f2 100644
+--- a/officecfg/registry/data/org/openoffice/Office/Common.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/Common.xcu
+@@ -594,7 +594,7 @@
+   <node oor:name="Save">
+     <node oor:name="Document">
+       <prop oor:name="SaveBackwardCompatibleODF" oor:type="xs:boolean">
+-        <value>true</value>
++        <value>false</value>
+       </prop>
+       <prop oor:name="CreateBackup" install:module="gconflockdown">
+         <value oor:external=
+-- 
+1.7.7.6
+

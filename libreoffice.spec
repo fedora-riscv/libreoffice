@@ -200,6 +200,7 @@ Patch81: 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
 Patch82: 0001-fdo-45115-SwXTextTable-fix-setting-borders.patch
 Patch83: 0002-fdo-45115-sc-fix-setting-borders.patch
 Patch84: 0001-rhbz-701152-ignore-hidden-objects.patch
+Patch85: 0001-fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1072,6 +1073,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch82 -p1 -b .fdo-45115-SwXTextTable-fix-setting-borders.patch
 %patch83 -p1 -b .fdo-45115-sc-fix-setting-borders.patch
 %patch84 -p1 -b .rhbz-701152-ignore-hidden-objects.patch
+%patch85 -p1 -b .fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2385,18 +2387,19 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-4
 - Resolves: rhbz#701152 scrolling does not work as expected while
   viewing specific .doc file
+- Resolves: fdo#45446 turn off SaveBackwardCompatibleODF
 
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-3
 - Resolves: fdo#39117
 - Resolves: fdo#45450 Only write "style:vertical-justify" and
   "css3t:text-justify" in ODF extended mode
-- Resolves: fdo#45449: ODF export: frames: invalid "min-width"
-- Resolves: fdo#45534: ODF export: fix draw:fit-to-size
-- Resolves: fdo#38745: fix hilariously stupid stack guards
-- Resolves: fdo#37024: SwView::SwView: fix BROWSE_MODE setting
+- Resolves: fdo#45449 ODF export: frames: invalid "min-width"
+- Resolves: fdo#45534 ODF export: fix draw:fit-to-size
+- Resolves: fdo#38745 fix hilariously stupid stack guards
+- Resolves: fdo#37024 SwView::SwView: fix BROWSE_MODE setting
 - Resolves: fdo#35661
 - Resolves: i#117545
-- Resolves: fdo#45115: SwXTextTable, sc: fix setting borders
+- Resolves: fdo#45115 SwXTextTable, sc: fix setting borders
 
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-2
 - Resolves: fdo#44040 VIEWING: Crash when page preview after <f4>

@@ -2382,7 +2382,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-4-UNBUILT
+* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-4
 - Resolves: rhbz#701152 scrolling does not work as expected while
   viewing specific .doc file
 

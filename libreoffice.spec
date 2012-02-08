@@ -57,14 +57,13 @@ Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source15:       http://dev-www.libreoffice.org/extern/b4cae0700aa1c2aef7eb7f345365e6f1-translate-toolkit-1.8.1.tar.bz2
 %if %{defined rhel} && 0%{?rhel} < 7
-Source16:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
-Source17:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
-Source18:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
-Source19:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
-Source20:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
-Source21:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
+Source15:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
+Source16:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+Source17:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
+Source18:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
 %endif
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
@@ -895,14 +894,13 @@ cp %{SOURCE11} ext_sources
 cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
 cp %{SOURCE14} ext_sources
-cp %{SOURCE15} ext_sources
 %if %{defined rhel} && 0%{?rhel} < 7
+cp %{SOURCE15} ext_sources
 cp %{SOURCE16} ext_sources
 cp %{SOURCE17} ext_sources
 cp %{SOURCE18} ext_sources
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
-cp %{SOURCE21} ext_sources
 %endif
 touch src.downloaded
 

@@ -1,0 +1,40 @@
+From 34315e7ec4062f9521cd19951b5f7f6ad9ce0d2e Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 26 Jan 2012 14:03:13 +0100
+Subject: [PATCH] resolved fdo#38595 border width lost in ODF import
+
+---
+ sc/source/filter/xml/xmlstyli.cxx |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sc/source/filter/xml/xmlstyli.cxx b/sc/source/filter/xml/xmlstyli.cxx
+index 7691c4b..72155e6 100644
+--- a/sc/source/filter/xml/xmlstyli.cxx
++++ b/sc/source/filter/xml/xmlstyli.cxx
+@@ -170,12 +170,14 @@ void ScXMLCellImportPropertyMapper::finished(::std::vector< XMLPropertyState >&
+             pBorders[i]->maValue >>= aBorderLine;
+             if( pBorderWidths[i] )
+             {
++                // Merge style:border-line-width values to fo:border values. Do
++                // not override fo:border line width or line style with an
++                // empty value!
+                 table::BorderLine2 aBorderLineWidth;
+                 pBorderWidths[i]->maValue >>= aBorderLineWidth;
+                 aBorderLine.OuterLineWidth = aBorderLineWidth.OuterLineWidth;
+                 aBorderLine.InnerLineWidth = aBorderLineWidth.InnerLineWidth;
+                 aBorderLine.LineDistance = aBorderLineWidth.LineDistance;
+-                aBorderLine.LineWidth = aBorderLineWidth.LineWidth;
+                 pBorders[i]->maValue <<= aBorderLine;
+             }
+         }
+@@ -194,7 +196,6 @@ void ScXMLCellImportPropertyMapper::finished(::std::vector< XMLPropertyState >&
+             aBorderLine.OuterLineWidth = aBorderLineWidth.OuterLineWidth;
+             aBorderLine.InnerLineWidth = aBorderLineWidth.InnerLineWidth;
+             aBorderLine.LineDistance = aBorderLineWidth.LineDistance;
+-            aBorderLine.LineWidth = aBorderLineWidth.LineWidth;
+             pDiagBorders[i]->maValue <<= aBorderLine;
+             if (pDiagBorderWidths[i])
+                 pDiagBorderWidths[i]->mnIndex = -1;
+-- 
+1.7.7.6
+

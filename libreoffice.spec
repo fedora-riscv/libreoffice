@@ -121,6 +121,7 @@ Patch12: libreoffice-rhel6poppler.patch
 Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
 Patch14: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
+Patch15: 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -814,6 +815,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
 %patch14 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
+%patch15 -p1 -b .fdo43644-survive-registered-but-unavailabl.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2114,6 +2116,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Feb 07 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-2
 - junit4 -> junit
 - Resolves: rhbz#788042 skip splashscreen with quickstarter
+- with split binfilter we need fix for fdo#43644
 
 * Thu Feb 02 2012 David Tardon <dtardon@redhat.com> - 3.5.0.3-1
 - 3.5.0 rc3

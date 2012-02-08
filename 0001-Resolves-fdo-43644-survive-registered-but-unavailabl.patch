@@ -1,0 +1,44 @@
+From 62bd29f398c11956983288ae6dd109147cc2c094 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 8 Feb 2012 12:38:10 +0000
+Subject: [PATCH] Resolves: fdo#43644 survive registered but unavailable
+ binfilter
+
+---
+ wizards/source/importwizard/Main.xba |   13 ++++++++++++-
+ 1 files changed, 12 insertions(+), 1 deletions(-)
+
+diff --git a/wizards/source/importwizard/Main.xba b/wizards/source/importwizard/Main.xba
+index 8084fda..7385c6b 100644
+--- a/wizards/source/importwizard/Main.xba
++++ b/wizards/source/importwizard/Main.xba
+@@ -44,7 +44,7 @@ Sub Main()
+ 	ImportDialog.ImportPreview.BackGroundColor = RGB(0,60,126)	
+ 	ImportDialog.cmdGoOn.DefaultButton = True
+ 	ImportDialogArea.GetControl(&quot;optMSDocuments&quot;).SetFocus()
+-	oBinFilterComp = createUnoService( &quot;com.sun.star.comp.office.BF_MigrateFilter&quot; )
++	oBinFilterComp = createBF_MigrateFilterIfPossible()
+ 	ToggleCheckboxesWithBoolean(True)
+ 
+ 	RetValue = ImportDialogArea.Execute()
+@@ -186,6 +186,17 @@ Dim i as Integer
+ End Sub
+ 
+ 
++Function createBF_MigrateFilterIfPossible()
++Dim oService
++    On Error Goto RTError
++    oService = createUnoService(&quot;com.sun.star.comp.office.BF_MigrateFilter&quot;)
++    getBinFilterCompIfItExists = oService
++    Exit Function
++RTError:
++    createBF_MigrateFilterIfPossible = Nothing
++End Function
++
++
+ Function CheckInstalledModule(Index as Integer) as Boolean
+ Dim ModuleName as String
+ Dim NameList() as String
+-- 
+1.7.7.6
+

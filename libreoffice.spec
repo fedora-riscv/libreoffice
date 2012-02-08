@@ -67,7 +67,7 @@ Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdc
 %endif
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-1.6.0-openjdk-devel, boost-devel
+BuildRequires:  binutils, java-devel, boost-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -122,6 +122,7 @@ Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
 Patch14: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
 Patch15: 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
+Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -816,6 +817,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch14 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
 %patch15 -p1 -b .fdo43644-survive-registered-but-unavailabl.patch
+%patch16 -p1 -b .make-hsqldb-build-with-java-1.7.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

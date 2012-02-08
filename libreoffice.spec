@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -199,6 +199,7 @@ Patch80: 0003-fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
 Patch81: 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
 Patch82: 0001-fdo-45115-SwXTextTable-fix-setting-borders.patch
 Patch83: 0002-fdo-45115-sc-fix-setting-borders.patch
+Patch84: 0001-rhbz-701152-ignore-hidden-objects.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1070,6 +1071,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch81 -p1 -b .fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
 %patch82 -p1 -b .fdo-45115-SwXTextTable-fix-setting-borders.patch
 %patch83 -p1 -b .fdo-45115-sc-fix-setting-borders.patch
+%patch84 -p1 -b .rhbz-701152-ignore-hidden-objects.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2380,6 +2382,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-4-UNBUILT
+- Resolves: rhbz#701152 scrolling does not work as expected while
+  viewing specific .doc file
+
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-3
 - Resolves: fdo#39117
 - Resolves: fdo#45450 Only write "style:vertical-justify" and

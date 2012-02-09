@@ -2392,7 +2392,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5.UNBUILT
+* Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import
 - Resolves: fdo#40378 compile defined names that had unresolveds during load
 - Resolves: fdo#40590 stop abusing regular string token for XML import

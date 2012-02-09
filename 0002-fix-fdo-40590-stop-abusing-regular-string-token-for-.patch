@@ -1,0 +1,199 @@
+From a61057eb182d680eefaa996c0b4cd13ba4bdfcc0 Mon Sep 17 00:00:00 2001
+Message-Id: <a61057eb182d680eefaa996c0b4cd13ba4bdfcc0.1328734255.git.erack@redhat.com>
+From: Eike Rathke <erack@erack.de>
+Date: Wed, 8 Feb 2012 10:42:49 -0500
+Subject: [PATCH] fix fdo#40590 stop abusing regular string token for XML
+ import
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+During XML import formulas of defined names and conditional formatting
+were remembered as regular svString tokens that then later were
+retrieved without quotes for compilation. This didn't go along with the
+new ScRangeData::CompileUnresolvedXML() that recreates the formula
+string from an already tokenized form of the formula.
+
+Introduced FormulaToken::AddStringXML() with ocStringXML to sort those
+out and removed the IsImportingXML() hack from
+FormulaCompiler::AppendString(), the ocStringXML case is handled in
+FormulaCompiler::CreateStringFromToken().
+
+Signed-off-by: Kohei Yoshida <kohei.yoshida@suse.com>
+---
+ formula/inc/formula/FormulaCompiler.hxx     |    1 -
+ formula/inc/formula/compiler.hrc            |   25 +++++++++++++------------
+ formula/inc/formula/opcode.hxx              |    9 +++++----
+ formula/inc/formula/tokenarray.hxx          |    1 +
+ formula/source/core/api/FormulaCompiler.cxx |   24 +++++++-----------------
+ formula/source/core/api/token.cxx           |    7 +++++++
+ 6 files changed, 33 insertions(+), 34 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch"
+
+diff --git a/formula/inc/formula/FormulaCompiler.hxx b/formula/inc/formula/FormulaCompiler.hxx
+index 166d522..cc5c070 100644
+--- a/formula/inc/formula/FormulaCompiler.hxx
++++ b/formula/inc/formula/FormulaCompiler.hxx
+@@ -270,7 +270,6 @@ protected:
+     virtual void CreateStringFromMatrix(rtl::OUStringBuffer& rBuffer,FormulaToken* pTokenP);
+     virtual void CreateStringFromIndex(rtl::OUStringBuffer& rBuffer,FormulaToken* pTokenP);
+     virtual void LocalizeString( String& rName );	// modify rName - input: exact name
+-    virtual sal_Bool IsImportingXML() const;
+ 
+     sal_Bool   GetToken();
+     OpCode NextToken();
+diff --git a/formula/inc/formula/compiler.hrc b/formula/inc/formula/compiler.hrc
+index c1a8117..1fef2e6 100755
+--- a/formula/inc/formula/compiler.hrc
++++ b/formula/inc/formula/compiler.hrc
+@@ -44,18 +44,19 @@
+ #define SC_OPCODE_SEP                10
+ #define SC_OPCODE_MISSING            11     /* special OpCodes */
+ #define SC_OPCODE_BAD                12
+-#define SC_OPCODE_SPACES             13
+-#define SC_OPCODE_MAT_REF            14
+-#define SC_OPCODE_DB_AREA            15     /* additional access operators */
+-#define SC_OPCODE_MACRO              16
+-#define SC_OPCODE_COL_ROW_NAME       17
+-#define SC_OPCODE_COL_ROW_NAME_AUTO  18
+-#define SC_OPCODE_PERCENT_SIGN       19     /* operator _follows_ value */
+-#define SC_OPCODE_ARRAY_OPEN         20
+-#define SC_OPCODE_ARRAY_CLOSE        21
+-#define SC_OPCODE_ARRAY_ROW_SEP      22
+-#define SC_OPCODE_ARRAY_COL_SEP      23     /* some convs use sep != col_sep */
+-#define SC_OPCODE_STOP_DIV           24
++#define SC_OPCODE_STRINGXML          13
++#define SC_OPCODE_SPACES             14
++#define SC_OPCODE_MAT_REF            15
++#define SC_OPCODE_DB_AREA            16     /* additional access operators */
++#define SC_OPCODE_MACRO              17
++#define SC_OPCODE_COL_ROW_NAME       18
++#define SC_OPCODE_COL_ROW_NAME_AUTO  19
++#define SC_OPCODE_PERCENT_SIGN       20     /* operator _follows_ value */
++#define SC_OPCODE_ARRAY_OPEN         21
++#define SC_OPCODE_ARRAY_CLOSE        22
++#define SC_OPCODE_ARRAY_ROW_SEP      23
++#define SC_OPCODE_ARRAY_COL_SEP      24     /* some convs use sep != col_sep */
++#define SC_OPCODE_STOP_DIV           25
+ 
+ /*** error constants #... ***/
+ #define SC_OPCODE_START_ERRORS       30
+diff --git a/formula/inc/formula/opcode.hxx b/formula/inc/formula/opcode.hxx
+index 03e86eb..f417e11 100644
+--- a/formula/inc/formula/opcode.hxx
++++ b/formula/inc/formula/opcode.hxx
+@@ -53,10 +53,11 @@ enum OpCodeEnum
+         ocArrayRowSep       = SC_OPCODE_ARRAY_ROW_SEP,
+         ocArrayColSep       = SC_OPCODE_ARRAY_COL_SEP,
+     // Special OpCodes
+-        ocMissing			= SC_OPCODE_MISSING,
+-        ocBad				= SC_OPCODE_BAD,
+-        ocSpaces			= SC_OPCODE_SPACES,
+-        ocMatRef			= SC_OPCODE_MAT_REF,
++        ocMissing           = SC_OPCODE_MISSING,
++        ocBad               = SC_OPCODE_BAD,
++        ocStringXML         = SC_OPCODE_STRINGXML,
++        ocSpaces            = SC_OPCODE_SPACES,
++        ocMatRef            = SC_OPCODE_MAT_REF,
+     // Access commands
+         ocDBArea			= SC_OPCODE_DB_AREA,
+         ocMacro				= SC_OPCODE_MACRO,
+diff --git a/formula/inc/formula/tokenarray.hxx b/formula/inc/formula/tokenarray.hxx
+index 3c870de..cbbab00 100644
+--- a/formula/inc/formula/tokenarray.hxx
++++ b/formula/inc/formula/tokenarray.hxx
+@@ -214,6 +214,7 @@ public:
+     FormulaToken* AddExternal( const String& rStr, OpCode eOp = ocExternal );
+     FormulaToken* AddBad( const sal_Unicode* pStr );     /// ocBad with String
+     FormulaToken* AddBad( const String& rStr );          /// ocBad with String
++    FormulaToken* AddStringXML( const String& rStr );    /// ocStringXML with String, temporary during import
+ 
+     virtual FormulaToken* MergeArray( );
+ 
+diff --git a/formula/source/core/api/FormulaCompiler.cxx b/formula/source/core/api/FormulaCompiler.cxx
+index 8d0236d..3036b7a 100644
+--- a/formula/source/core/api/FormulaCompiler.cxx
++++ b/formula/source/core/api/FormulaCompiler.cxx
+@@ -1599,7 +1599,7 @@ FormulaToken* FormulaCompiler::CreateStringFromToken( rtl::OUStringBuffer& rBuff
+             break;
+ 
+             case svString:
+-                if( eOp == ocBad )
++                if( eOp == ocBad || eOp == ocStringXML )
+                     rBuffer.append(t->GetString());
+                 else
+                     AppendString( rBuffer, t->GetString() );
+@@ -1683,28 +1683,18 @@ void FormulaCompiler::AppendBoolean( rtl::OUStringBuffer& rBuffer, bool bVal )
+     rBuffer.append( mxSymbols->getSymbol(static_cast<OpCode>(bVal ? ocTrue : ocFalse)) );
+ }
+ // -----------------------------------------------------------------------------
+-sal_Bool FormulaCompiler::IsImportingXML() const
+-{
+-    return sal_False;
+-}
+-// -----------------------------------------------------------------------------
+ void FormulaCompiler::AppendString( rtl::OUStringBuffer& rBuffer, const String & rStr )
+ {
+-    if (IsImportingXML())
++    rBuffer.append(sal_Unicode('"'));
++    if ( lcl_UnicodeStrChr( rStr.GetBuffer(), '"' ) == NULL )
+         rBuffer.append( rStr );
+     else
+     {
+-        rBuffer.append(sal_Unicode('"'));
+-        if ( lcl_UnicodeStrChr( rStr.GetBuffer(), '"' ) == NULL )
+-            rBuffer.append( rStr );
+-        else
+-        {
+-            String aStr( rStr );
+-            aStr.SearchAndReplaceAll( '"', String( RTL_CONSTASCII_USTRINGPARAM( "\"\"")));
+-            rBuffer.append(aStr);
+-        }
+-        rBuffer.append(sal_Unicode('"'));
++        String aStr( rStr );
++        aStr.SearchAndReplaceAll( '"', String( RTL_CONSTASCII_USTRINGPARAM( "\"\"")));
++        rBuffer.append(aStr);
+     }
++    rBuffer.append(sal_Unicode('"'));
+ }
+ 
+ void FormulaCompiler::UpdateSeparatorsNative(
+diff --git a/formula/source/core/api/token.cxx b/formula/source/core/api/token.cxx
+index 0034466..cb9e783 100644
+--- a/formula/source/core/api/token.cxx
++++ b/formula/source/core/api/token.cxx
+@@ -313,6 +313,8 @@ bool FormulaTokenArray::AddFormulaToken(const sheet::FormulaToken& _aToken,Exter
+                     AddString( aStrVal );
+                 else if ( eOpCode == ocBad )
+                     AddBad( aStrVal );
++                else if ( eOpCode == ocStringXML )
++                    AddStringXML( aStrVal );
+                 else if ( eOpCode == ocExternal || eOpCode == ocMacro )
+                     AddToken( formula::FormulaExternalToken( eOpCode, aStrVal ) );
+                 else
+@@ -792,6 +794,11 @@ FormulaToken* FormulaTokenArray::AddBad( const String& rStr )
+     return Add( new FormulaStringOpToken( ocBad, rStr ) );
+ }
+ 
++FormulaToken* FormulaTokenArray::AddStringXML( const String& rStr )
++{
++    return Add( new FormulaStringOpToken( ocStringXML, rStr ) );
++}
++
+ 
+ 
+ void FormulaTokenArray::AddRecalcMode( ScRecalcMode nBits )
+
+--------------erAck-patch-parts--
+
+

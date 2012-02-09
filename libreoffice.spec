@@ -202,6 +202,9 @@ Patch83: 0002-fdo-45115-sc-fix-setting-borders.patch
 Patch84: 0001-rhbz-701152-ignore-hidden-objects.patch
 Patch85: 0001-fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
 Patch86: 0001-resolved-fdo-38595-border-width-lost-in-ODF-import.patch
+Patch87: 0001-fdo-40378-compile-defined-names-that-had-unresolveds.patch
+Patch88: 0002-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+Patch89: 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1076,6 +1079,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch84 -p1 -b .rhbz-701152-ignore-hidden-objects.patch
 %patch85 -p1 -b .fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
 %patch86 -p1 -b .resolved-fdo-38595-border-width-lost-in-ODF-import.patch
+%patch87 -p1 -b .fdo-40378-compile-defined-names-that-had-unresolveds.patch
+%patch88 -p1 -b .1fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+%patch89 -p1 -b .2fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2388,6 +2394,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5.UNBUILT
 - Resolves: fdo#38595 border width lost in ODF import
+- Resolves: fdo#40378 compile defined names that had unresolveds during load
+- Resolves: fdo#40590 stop abusing regular string token for XML import
 
 * Tue Feb 07 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-4
 - Resolves: rhbz#701152 scrolling does not work as expected while

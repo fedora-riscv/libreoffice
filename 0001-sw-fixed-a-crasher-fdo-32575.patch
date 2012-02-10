@@ -1,0 +1,29 @@
+From 39f9c0d4917fe14632c4a91e3e8a52e652fca4fa Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?C=C3=A9dric=20Bosdonnat?= <cedricbosdo@openoffice.org>
+Date: Fri, 11 Feb 2011 17:34:43 +0100
+Subject: [PATCH] sw: fixed a crasher, fdo#32575
+
+---
+ sw/source/ui/app/docsh2.cxx |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sw/source/ui/app/docsh2.cxx b/sw/source/ui/app/docsh2.cxx
+index 78f7b84..3bed99b 100644
+--- a/sw/source/ui/app/docsh2.cxx
++++ b/sw/source/ui/app/docsh2.cxx
+@@ -1476,8 +1476,10 @@ long SwDocShell::DdeSetData( const String& rItem, const String& rMimeType,
+ 
+ void SwDocShell::ReconnectDdeLink(SfxObjectShell& rServer)
+ {
+-    ::sfx2::LinkManager& rLinkManager = pDoc->GetLinkManager();
+-    rLinkManager.ReconnectDdeLink(rServer);
++    if ( pDoc ) {
++        ::sfx2::LinkManager& rLinkManager = pDoc->GetLinkManager();
++        rLinkManager.ReconnectDdeLink(rServer);
++    }
+ }
+ 
+ void SwDocShell::FillClass( SvGlobalName * pClassName,
+-- 
+1.7.7.6
+

@@ -32,7 +32,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -171,6 +171,7 @@ Patch79: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 Patch80: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch81: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 Patch82: 0001-fix-for-fdo-39773-crash-with-hidden-column-in-Data-F.patch
+Patch83: 0001-sw-fixed-a-crasher-fdo-32575.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -893,6 +894,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch80 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 %patch81 -p1 -b .sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 %patch82 -p1 -b .fdo39773-crash-with-hidden-column-in-Data-F.patch
+%patch83 -p1 -b .sw-fixed-a-crasher-fdo-32575.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2254,6 +2256,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Fri Feb 10 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-3
+- Resolves: rhbz#788971 SwDocShell::ReconnectDdeLink crash
+
 * Tue Jan 10 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-2
 - Resolves: rhbz#759647 dispose clears mpPresTimer
 - Resolves: rhbz#767708 write to mmap'ed file w/o disk space: SIGBUS

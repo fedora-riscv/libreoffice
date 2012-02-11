@@ -33,6 +33,9 @@ index 0418fc1..4de797c 100644
 +.ENDIF			# "$(SYSTEM_LIBXML)"!="YES"
 +.ENDIF
 +
+
+
+
 diff --git a/translations/source/nb/helpcontent2/source/text/scalc.po b/translations/source/nb/helpcontent2/source/text/scalc.po
 index 79d8255..eea430f 100644
 --- a/translations/source/nb/helpcontent2/source/text/scalc.po

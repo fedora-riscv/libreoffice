@@ -1,0 +1,71 @@
+From 619e36de3fec38d172e33a5f14fdc322e6ad479f Mon Sep 17 00:00:00 2001
+Message-Id: <619e36de3fec38d172e33a5f14fdc322e6ad479f.1329144791.git.erack@redhat.com>
+From: Eike Rathke <erack@erack.de>
+Date: Tue, 23 Aug 2011 16:34:42 +0000
+Subject: [PATCH] fdo#36109 in INDIRECT() make a non-existing sheet produce an
+ error again
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+* In lcl_ScAddress_Parse_OOo() don't assume non-existing sheets would be
+  external documents if there was no sheet separator. This lead to an
+  external reference being created that is only an error if
+  dereferenced, not if fed to ISERROR() and the like.
+* In ScInterpreter::ScIndirect() push errNoRef instead of
+  errInvalidArgument to produce a #REF! error.
+
+Signed-off-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ sc/source/core/tool/address.cxx  |    4 +++-
+ sc/source/core/tool/interpr1.cxx |    2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch"
+
+diff --git a/sc/source/core/tool/address.cxx b/sc/source/core/tool/address.cxx
+index 156043b..0c4e235 100644
+--- a/sc/source/core/tool/address.cxx
++++ b/sc/source/core/tool/address.cxx
+@@ -1013,12 +1013,14 @@ lcl_ScAddress_Parse_OOo( const sal_Unicode* p, ScDocument* pDoc, ScAddress& rAdd
+         if (!bExtDoc && (!pDoc || !pDoc->GetTable( aTab, nTab )))
+         {
+             // Specified table name is not found in this document.  Assume this is an external document.
+-            bExtDoc = true;
+             aDocName = aTab;
+             xub_StrLen n = aTab.SearchBackward('.');
+             if (n != STRING_NOTFOUND && n > 0)
++            {
+                 // Extension found.  Strip it.
+                 aTab.Erase(n);
++                bExtDoc = true;
++            }
+             else
+                 // No extension found.  This is probably not an external document.
+                 nBits = 0;
+diff --git a/sc/source/core/tool/interpr1.cxx b/sc/source/core/tool/interpr1.cxx
+index eb5ab56..f8b8dfb 100644
+--- a/sc/source/core/tool/interpr1.cxx
++++ b/sc/source/core/tool/interpr1.cxx
+@@ -6655,7 +6655,7 @@ void ScInterpreter::ScIndirect()
+             }
+             while (false);
+ 
+-            PushIllegalArgument();
++            PushError( errNoRef);
+         }
+     }
+ }
+
+--------------erAck-patch-parts--
+
+

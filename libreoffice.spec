@@ -207,6 +207,7 @@ Patch88: 0002-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 Patch89: 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 Patch90: libreoffice-ensure-non-broken-xml-tree.patch
 Patch91: 0001-preserve-timestamps-for-.py-files.patch
+Patch92: 0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1097,6 +1098,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch89 -p1 -b .2fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 %patch90 -p1 -b .ensure-non-broken-xml-tree.patch
 %patch91 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch92 -p1 -b .fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2411,6 +2413,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - ensure non broken xml help.tree files
 - ensure gdb .py files have the same timstamps so that multilib
   .pyc's and .pyo's have the same content (timestamp in binary cache)
+- Resolves: fdo#36109 in INDIRECT() make a non-existing sheet produce an error again
 
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import

@@ -21,9 +21,9 @@ diff --git a/solenv/inc/unitools.mk b/solenv/inc/unitools.mk
 index 0418fc1..4de797c 100644
 --- a/solenv/inc/unitools.mk
 +++ b/solenv/inc/unitools.mk
-@@ -42,6 +42,14 @@ XSLTPROC=$(AUGMENT_LIBRARY_PATH) xsltproc
+@@ -41,6 +41,14 @@
+ XSLTPROC*=$(AUGMENT_LIBRARY_PATH) xsltproc
  .ENDIF			# "$(SYSTEM_LIBXSLT)"!="YES"
- .ENDIF
  
 +.IF "$(XMLLINT)"==""
 +.IF "$(SYSTEM_LIBXML)"!="YES"
@@ -33,9 +33,9 @@ index 0418fc1..4de797c 100644
 +.ENDIF			# "$(SYSTEM_LIBXML)"!="YES"
 +.ENDIF
 +
-
-
-
+ ULFCONV*=$(AUGMENT_LIBRARY_PATH) $(SOLARBINDIR)/ulfconv
+ 
+ MAKEDEPEND*=$(AUGMENT_LIBRARY_PATH) $(SOLARBINDIR)/makedepend
 diff --git a/translations/source/nb/helpcontent2/source/text/scalc.po b/translations/source/nb/helpcontent2/source/text/scalc.po
 index 79d8255..eea430f 100644
 --- a/translations/source/nb/helpcontent2/source/text/scalc.po

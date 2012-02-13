@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -205,6 +205,7 @@ Patch86: 0001-resolved-fdo-38595-border-width-lost-in-ODF-import.patch
 Patch87: 0001-fdo-40378-compile-defined-names-that-had-unresolveds.patch
 Patch88: 0002-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 Patch89: 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+Patch90: libreoffice-ensure-non-broken-xml-tree.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1082,6 +1083,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch87 -p1 -b .fdo-40378-compile-defined-names-that-had-unresolveds.patch
 %patch88 -p1 -b .1fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 %patch89 -p1 -b .2fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+%patch90 -p1 -b .ensure-non-broken-xml-tree.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2392,6 +2394,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Feb 13 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
+- ensure non broken xml help.tree files
+
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import
 - Resolves: fdo#40378 compile defined names that had unresolveds during load

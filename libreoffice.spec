@@ -300,6 +300,8 @@ databases through a GUI.
 Summary: Create database reports from LibreOffice
 Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
@@ -353,6 +355,7 @@ Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
 Requires: jakarta-commons-codec, jakarta-commons-httpclient
 Requires: jakarta-commons-lang, jakarta-commons-logging
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
@@ -371,6 +374,8 @@ your new and existing documents transparently with writer to a wiki page.
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
 Group: Applications/Productivity
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
@@ -385,6 +390,8 @@ Requires good quality 3D support for your graphics card for best experience.
 %package presentation-minimizer
 Summary: Shrink LibreOffice presentations
 Group: Applications/Productivity
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
@@ -403,6 +410,8 @@ be removed.
 %package presenter-screen
 Summary: Presenter Screen for LibreOffice Presentations
 Group: Applications/Productivity
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
@@ -421,6 +430,8 @@ slide notes.
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core

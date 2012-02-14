@@ -1,0 +1,106 @@
+From 5885bf0a40b7e30d197216af5ba80568c36009cb Mon Sep 17 00:00:00 2001
+From: Lionel Elie Mamane <lionel@mamane.lu>
+Date: Mon, 16 Jan 2012 19:38:01 +0100
+Subject: [PATCH 1/2] fdo#44813: don't replace NULLs given by the database by
+ type-default values
+
+It makes no sense, because non-nullable columns can have NULL value.
+E.g. in "foo LEFT JOIN bar ON condition", the non-nullable columns of "bar"
+when it has no row matching "condition".
+
+Even when we are about to insert/update a row, we should not put a
+hard-coded value (that just happens to be the one constructed by the
+C++ default constructor for that type) in non-nullable columns: there
+is no guarantee that this value makes sense in that database's context.
+The database may or may not have a default value set for that column.
+If it has, we should leave it up to the database to set it automatically.
+If it has not, an error *is* the right reaction.
+
+Another place where this substitution does damage is when we refresh a
+row. We use the values we have read from the primary key to select the
+row again. So we should not mangle those, else the select returns no
+row and we mistakingly think the row has been deleted.
+
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+---
+ dbaccess/source/core/api/CacheSet.cxx      |    2 +-
+ dbaccess/source/core/api/KeySet.cxx        |   10 +++++-----
+ dbaccess/source/core/api/OptimisticSet.cxx |    2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/dbaccess/source/core/api/CacheSet.cxx b/dbaccess/source/core/api/CacheSet.cxx
+index ca3c4d1..7e18fa0 100644
+--- a/dbaccess/source/core/api/CacheSet.cxx
++++ b/dbaccess/source/core/api/CacheSet.cxx
+@@ -429,7 +429,7 @@ void OCacheSet::fillValueRow(ORowSetRow& _rRow,sal_Int32 _nPosition)
+     for(sal_Int32 i=1;aIter != aEnd;++aIter,++i)
+     {
+         aIter->setSigned(m_aSignedFlags[i-1]);
+-        aIter->fill(i,m_aColumnTypes[i-1],m_aNullable[i-1],this);
++        aIter->fill(i, m_aColumnTypes[i-1], this);
+     }
+ }
+ 
+diff --git a/dbaccess/source/core/api/KeySet.cxx b/dbaccess/source/core/api/KeySet.cxx
+index 5ae3385..407b700 100644
+--- a/dbaccess/source/core/api/KeySet.cxx
++++ b/dbaccess/source/core/api/KeySet.cxx
+@@ -758,7 +758,7 @@ void OKeySet::executeInsert( const ORowSetRow& _rInsertRow,const ::rtl::OUString
+ #endif
+                         SelectColumnsMetaData::iterator aFind = m_pKeyColumnNames->find(*aAutoIter);
+                         if ( aFind != m_pKeyColumnNames->end() )
+-                            (_rInsertRow->get())[aFind->second.nPosition].fill(i,aFind->second.nType,aFind->second.bNullable,xRow);
++                            (_rInsertRow->get())[aFind->second.nPosition].fill(i, aFind->second.nType, xRow);
+                     }
+                     bAutoValuesFetched = sal_True;
+                 }
+@@ -818,7 +818,7 @@ void OKeySet::executeInsert( const ORowSetRow& _rInsertRow,const ::rtl::OUString
+                         // we will only fetch values which are keycolumns
+                         SelectColumnsMetaData::iterator aFind = m_pKeyColumnNames->find(*aAutoIter);
+                         if ( aFind != aEnd )
+-                            (_rInsertRow->get())[aFind->second.nPosition].fill(i,aFind->second.nType,aFind->second.bNullable,xRow);
++                            (_rInsertRow->get())[aFind->second.nPosition].fill(i, aFind->second.nType, xRow);
+                     }
+                 }
+                 ::comphelper::disposeComponent(xStatement);
+@@ -1335,13 +1335,13 @@ sal_Bool OKeySet::fetchRow()
+     {
+         ORowSetRow aKeyRow = new connectivity::ORowVector< ORowSetValue >((*m_pKeyColumnNames).size() + m_pForeignColumnNames->size());
+         connectivity::ORowVector< ORowSetValue >::Vector::iterator aIter = aKeyRow->get().begin();
+-        // first fetch the values needed for the key column
++        // first fetch the values needed for the key columns
+         SelectColumnsMetaData::const_iterator aPosIter = (*m_pKeyColumnNames).begin();
+         SelectColumnsMetaData::const_iterator aPosEnd = (*m_pKeyColumnNames).end();
+         for(;aPosIter != aPosEnd;++aPosIter,++aIter)
+         {
+             const SelectColumnDescription& rColDesc = aPosIter->second;
+-            aIter->fill(rColDesc.nPosition,rColDesc.nType,rColDesc.bNullable,m_xDriverRow);
++            aIter->fill(rColDesc.nPosition, rColDesc.nType, m_xDriverRow);
+         }
+         // now fetch the values from the missing columns from other tables
+         aPosIter = (*m_pForeignColumnNames).begin();
+@@ -1349,7 +1349,7 @@ sal_Bool OKeySet::fetchRow()
+         for(;aPosIter != aPosEnd;++aPosIter,++aIter)
+         {
+             const SelectColumnDescription& rColDesc = aPosIter->second;
+-            aIter->fill(rColDesc.nPosition,rColDesc.nType,rColDesc.bNullable,m_xDriverRow);
++            aIter->fill(rColDesc.nPosition, rColDesc.nType, m_xDriverRow);
+         }
+         m_aKeyIter = m_aKeyMap.insert(OKeySetMatrix::value_type(m_aKeyMap.rbegin()->first+1,OKeySetValue(aKeyRow,::std::pair<sal_Int32,Reference<XRow> >(0,NULL)))).first;
+     }
+diff --git a/dbaccess/source/core/api/OptimisticSet.cxx b/dbaccess/source/core/api/OptimisticSet.cxx
+index 38dba0e..a84eb9c 100644
+--- a/dbaccess/source/core/api/OptimisticSet.cxx
++++ b/dbaccess/source/core/api/OptimisticSet.cxx
+@@ -722,7 +722,7 @@ void OptimisticSet::fillMissingValues(ORowSetValueVector::Vector& io_aRow) const
+                         {
+                             if ( aColIter->second.sTableName == aSqlIter->first )
+                             {
+-                                io_aRow[aColIter->second.nPosition].fill(i++,aColIter->second.nType,aColIter->second.bNullable,xRow);
++                                io_aRow[aColIter->second.nPosition].fill(i++, aColIter->second.nType, xRow);
+                                 io_aRow[aColIter->second.nPosition].setModified();
+                             }
+                         }
+-- 
+1.7.7.6
+

@@ -1,0 +1,29 @@
+From adb1ed5f13b4638690ca2966138eb2c61bdb1b53 Mon Sep 17 00:00:00 2001
+From: Lionel Elie Mamane <lionel@mamane.lu>
+Date: Tue, 14 Feb 2012 14:54:03 +0100
+Subject: [PATCH 2/2] odbc 64 bit crash: correct buffer length allocation for
+ a SQLLEN
+
+(cherry picked from commit 84d21e4de26bd69f7ca5b10f2c72779f07e11347)
+
+Signed-off-by: Michael Stahl <mstahl@redhat.com>
+---
+ connectivity/source/inc/odbc/OBoundParam.hxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/connectivity/source/inc/odbc/OBoundParam.hxx b/connectivity/source/inc/odbc/OBoundParam.hxx
+index 5817aac..b8856e9 100644
+--- a/connectivity/source/inc/odbc/OBoundParam.hxx
++++ b/connectivity/source/inc/odbc/OBoundParam.hxx
+@@ -68,7 +68,7 @@ namespace connectivity
+                 // to a Java sal_Int32.  The jdbcodbc 'C' bridge provides an
+                 // interface to do this.
+ 
+-                paramLength = new sal_Int8[4];
++                paramLength = new sal_Int8[sizeof(SQLLEN)];
+             }
+ 
+             //--------------------------------------------------------------------
+-- 
+1.7.7.6
+

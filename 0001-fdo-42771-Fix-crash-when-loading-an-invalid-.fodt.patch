@@ -1,0 +1,45 @@
+From 15fe1596b265aff57264145c0e69d36607cc15a5 Mon Sep 17 00:00:00 2001
+From: Jan Holesovsky <kendy@suse.cz>
+Date: Fri, 10 Feb 2012 17:54:03 +0100
+Subject: [PATCH 1/2] fdo#42771: Fix crash when loading an invalid .fodt.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+createTextCursorByRange() likes to throw runtime exception, even though it
+just means 'we were unable to create the cursor'.
+
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ xmloff/source/text/txtparai.cxx |   14 ++++++++++----
+ 1 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/xmloff/source/text/txtparai.cxx b/xmloff/source/text/txtparai.cxx
+index 3a73309..fb775a7 100644
+--- a/xmloff/source/text/txtparai.cxx
++++ b/xmloff/source/text/txtparai.cxx
+@@ -2034,10 +2034,16 @@ XMLParaContext::~XMLParaContext()
+     xTxtImport->InsertControlCharacter( ControlCharacter::APPEND_PARAGRAPH );
+ 
+     // create a cursor that select the whole last paragraph
+-    Reference < XTextCursor > xAttrCursor(
+-        xTxtImport->GetText()->createTextCursorByRange( xStart ));
+-    if( !xAttrCursor.is() )
+-        return; // Robust (defect file)
++    Reference < XTextCursor > xAttrCursor;
++    try {
++        xAttrCursor = xTxtImport->GetText()->createTextCursorByRange( xStart );
++        if( !xAttrCursor.is() )
++            return; // Robust (defect file)
++    } catch (uno::Exception &) {
++        // createTextCursorByRange() likes to throw runtime exception, even
++        // though it just means 'we were unable to create the cursor'
++        return;
++    }
+     xAttrCursor->gotoRange( xEnd, sal_True );
+ 
+     // xml:id for RDF metadata
+-- 
+1.7.7.6
+

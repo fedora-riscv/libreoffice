@@ -1,0 +1,159 @@
+From ee6e71cc5fcfda258ca2ce8e61544601e891eae6 Mon Sep 17 00:00:00 2001
+From: Lionel Elie Mamane <lionel@mamane.lu>
+Date: Wed, 18 Jan 2012 12:30:36 +0100
+Subject: [PATCH 2/2] fdo#44813: make the refresh query filter NULL-safe
+
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+---
+ dbaccess/source/core/api/KeySet.cxx |   77 ++++++++++++++++++++++++----------
+ dbaccess/source/core/api/KeySet.hxx |    5 ++
+ 2 files changed, 59 insertions(+), 23 deletions(-)
+
+diff --git a/dbaccess/source/core/api/KeySet.cxx b/dbaccess/source/core/api/KeySet.cxx
+index 407b700..8c7f83a 100644
+--- a/dbaccess/source/core/api/KeySet.cxx
++++ b/dbaccess/source/core/api/KeySet.cxx
+@@ -219,22 +219,56 @@ void OKeySet::findTableColumnsMatching_throw(   const Any& i_aTable,
+             m_aAutoColumns.push_back( keyColumn->first );
+     }
+ }
++namespace
++{
++    void appendOneKeyColumnClause( const ::rtl::OUString &tblName, const ::rtl::OUString &colName, ::rtl::OUStringBuffer &o_buf )
++    {
++        static ::rtl::OUString s_sDot(RTL_CONSTASCII_USTRINGPARAM("."));
++        static ::rtl::OUString s_sParam0(RTL_CONSTASCII_USTRINGPARAM(" ( 1 = ? AND "));
++        static ::rtl::OUString s_sParam1(RTL_CONSTASCII_USTRINGPARAM(" = ? OR 1 = ? AND "));
++        static ::rtl::OUString s_sParam2(RTL_CONSTASCII_USTRINGPARAM(" IS NULL ) "));
++        o_buf.append(s_sParam0);
++        o_buf.append(tblName);
++        o_buf.append(s_sDot);
++        o_buf.append(colName);
++        o_buf.append(s_sParam1);
++        o_buf.append(tblName);
++        o_buf.append(s_sDot);
++        o_buf.append(colName);
++        o_buf.append(s_sParam2);
++    }
++}
++
++void OKeySet::setOneKeyColumnParameter( sal_Int32 &nPos, const Reference< XParameters > &_xParameter, const connectivity::ORowSetValue &_rValue, sal_Int32 _nType, sal_Int32 _nScale ) const
++{
++    if ( _rValue.isNull() )
++    {
++        _xParameter->setByte( nPos++, 0 );
++        // We do the full call so that the right sqlType is passed to setNull
++        setParameter( nPos++, _xParameter, _rValue, _nType, _nScale );
++        _xParameter->setByte( nPos++, 1 );
++    }
++    else
++    {
++        _xParameter->setByte( nPos++, 1 );
++        setParameter( nPos++, _xParameter, _rValue, _nType, _nScale );
++        _xParameter->setByte( nPos++, 0 );
++    }
++}
++
+ ::rtl::OUStringBuffer OKeySet::createKeyFilter()
+ {
+     static ::rtl::OUString aAnd(RTL_CONSTASCII_USTRINGPARAM(" AND "));
+-    const ::rtl::OUString aQuote	= getIdentifierQuoteString();
++    const ::rtl::OUString aQuote    = getIdentifierQuoteString();
+     ::rtl::OUStringBuffer aFilter;
+-    static ::rtl::OUString s_sDot(RTL_CONSTASCII_USTRINGPARAM("."));
+-    static ::rtl::OUString s_sParam(RTL_CONSTASCII_USTRINGPARAM(" = ?"));
+     // create the where clause
+     Reference<XDatabaseMetaData> xMeta = m_xConnection->getMetaData();
+     SelectColumnsMetaData::iterator aPosEnd = m_pKeyColumnNames->end();
+     for(SelectColumnsMetaData::iterator aPosIter = m_pKeyColumnNames->begin();aPosIter != aPosEnd;)
+     {
+-        aFilter.append(::dbtools::quoteTableName( xMeta,aPosIter->second.sTableName,::dbtools::eInDataManipulation));
+-        aFilter.append(s_sDot);
+-        aFilter.append(::dbtools::quoteName( aQuote,aPosIter->second.sRealName));
+-        aFilter.append(s_sParam);
++        appendOneKeyColumnClause(::dbtools::quoteTableName( xMeta,aPosIter->second.sTableName,::dbtools::eInDataManipulation),
++                                 ::dbtools::quoteName( aQuote,aPosIter->second.sRealName),
++                                 aFilter);
+         ++aPosIter;
+         if(aPosIter != aPosEnd)
+             aFilter.append(aAnd);
+@@ -272,8 +306,6 @@ void OKeySet::construct(const Reference< XResultSet>& _xDriverSet,const ::rtl::O
+     {
+         static ::rtl::OUString aAnd(RTL_CONSTASCII_USTRINGPARAM(" AND "));
+         const ::rtl::OUString aQuote	= getIdentifierQuoteString();
+-        static ::rtl::OUString s_sDot(RTL_CONSTASCII_USTRINGPARAM("."));
+-        static ::rtl::OUString s_sParam(RTL_CONSTASCII_USTRINGPARAM(" = ?"));
+         const ::rtl::OUString* pIter = aSeq.getConstArray();
+         const ::rtl::OUString* pEnd	  = pIter + aSeq.getLength();
+         for(;pIter != pEnd;++pIter)
+@@ -290,12 +322,11 @@ void OKeySet::construct(const Reference< XResultSet>& _xDriverSet,const ::rtl::O
+                 for(SelectColumnsMetaData::iterator aPosIter = (*m_pForeignColumnNames).begin();aPosIter != aPosEnd;++aPosIter)
+                 {
+                     // look for columns not in the source columns to use them as filter as well
+-                        if ( aFilter.getLength() )
+-                            aFilter.append(aAnd);
+-                        aFilter.append(::dbtools::quoteName( aQuote,sSelectTableName));
+-                        aFilter.append(s_sDot);
+-                        aFilter.append(::dbtools::quoteName( aQuote,aPosIter->second.sRealName));
+-                        aFilter.append(s_sParam);
++                    if ( aFilter.getLength() )
++                        aFilter.append(aAnd);
++                    appendOneKeyColumnClause(::dbtools::quoteName( aQuote,sSelectTableName),
++                                             ::dbtools::quoteName( aQuote,aPosIter->second.sRealName),
++                                             aFilter);
+                 }
+                 break;
+             }
+@@ -875,12 +906,12 @@ void OKeySet::tryRefetch(const ORowSetRow& _rInsertRow,bool bRefetch)
+             connectivity::ORowVector< ORowSetValue >::Vector::const_iterator aIter2 = m_aKeyIter->second.first->get().begin();
+             SelectColumnsMetaData::const_iterator aPosIter = (*m_pKeyColumnNames).begin();
+             SelectColumnsMetaData::const_iterator aPosEnd = (*m_pKeyColumnNames).end();
+-            for(;aPosIter != aPosEnd;++aPosIter,++aIter2,++nPos)
+-                setParameter(nPos,xParameter,*aIter2,aPosIter->second.nType,aPosIter->second.nScale);
++            for(;aPosIter != aPosEnd;++aPosIter,++aIter2)
++                setOneKeyColumnParameter(nPos,xParameter,*aIter2,aPosIter->second.nType,aPosIter->second.nScale);
+             aPosIter = (*m_pForeignColumnNames).begin();
+             aPosEnd = (*m_pForeignColumnNames).end();
+-            for(;aPosIter != aPosEnd;++aPosIter,++aIter2,++nPos)
+-                setParameter(nPos,xParameter,*aIter2,aPosIter->second.nType,aPosIter->second.nScale);
++            for(;aPosIter != aPosEnd;++aPosIter,++aIter2)
++                setOneKeyColumnParameter(nPos,xParameter,*aIter2,aPosIter->second.nType,aPosIter->second.nScale);
+ 
+             m_xSet = m_xStatement->executeQuery();
+             OSL_ENSURE(m_xSet.is(),"No resultset form statement!");
+@@ -1308,12 +1339,12 @@ void SAL_CALL OKeySet::refreshRow() throw(SQLException, RuntimeException)
+     connectivity::ORowVector< ORowSetValue >::Vector::const_iterator aIter = m_aKeyIter->second.first->get().begin();
+     SelectColumnsMetaData::const_iterator aPosIter = (*m_pKeyColumnNames).begin();
+     SelectColumnsMetaData::const_iterator aPosEnd = (*m_pKeyColumnNames).end();
+-    for(;aPosIter != aPosEnd;++aPosIter,++aIter,++nPos)
+-        setParameter(nPos,xParameter,*aIter,aPosIter->second.nType,aPosIter->second.nScale);
++    for(;aPosIter != aPosEnd;++aPosIter,++aIter)
++        setOneKeyColumnParameter(nPos,xParameter,*aIter,aPosIter->second.nType,aPosIter->second.nScale);
+     aPosIter = (*m_pForeignColumnNames).begin();
+     aPosEnd = (*m_pForeignColumnNames).end();
+-    for(;aPosIter != aPosEnd;++aPosIter,++aIter,++nPos)
+-        setParameter(nPos,xParameter,*aIter,aPosIter->second.nType,aPosIter->second.nScale);
++    for(;aPosIter != aPosEnd;++aPosIter,++aIter)
++        setOneKeyColumnParameter(nPos,xParameter,*aIter,aPosIter->second.nType,aPosIter->second.nScale);
+ 
+     m_xSet = m_xStatement->executeQuery();
+     OSL_ENSURE(m_xSet.is(),"No resultset form statement!");
+diff --git a/dbaccess/source/core/api/KeySet.hxx b/dbaccess/source/core/api/KeySet.hxx
+index 826ec1a..84781d4 100644
+--- a/dbaccess/source/core/api/KeySet.hxx
++++ b/dbaccess/source/core/api/KeySet.hxx
+@@ -138,6 +138,11 @@ namespace dbaccess
+                                              const ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDatabaseMetaData>& i_xMeta,
+                                              const ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess>& i_xQueryColumns,
+                                              ::std::auto_ptr<SelectColumnsMetaData>& o_pKeyColumnNames);
++        void setOneKeyColumnParameter( sal_Int32 &nPos,
++                                       const ::com::sun::star::uno::Reference<  ::com::sun::star::sdbc::XParameters > &_xParameter,
++                                       const connectivity::ORowSetValue &_rValue,
++                                       sal_Int32 _nType,
++                                       sal_Int32 _nScale ) const;
+         ::rtl::OUStringBuffer createKeyFilter();
+         void tryRefetch(const ORowSetRow& _rInsertRow,bool bRefetch);
+         void executeUpdate(const ORowSetRow& _rInsertRow ,const ORowSetRow& _rOrginalRow,const ::rtl::OUString& i_sSQL,const ::rtl::OUString& i_sTableName,const ::std::vector<sal_Int32>& _aIndexColumnPositions = ::std::vector<sal_Int32>());
+-- 
+1.7.7.6
+

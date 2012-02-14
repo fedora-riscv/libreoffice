@@ -211,6 +211,12 @@ Patch92: 0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
 Patch93: 0001-fdo-41712-rename-members-to-track-down-assignments.patch
 Patch94: 0002-fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
 Patch95: 0003-fdo-41712-sw-remove-superfluous-flag.patch
+Patch96: 0001-fdo-42771-Fix-crash-when-loading-an-invalid-.fodt.patch
+Patch97: 0002-odbc-64-bit-crash-correct-buffer-length-allocation-f.patch
+Patch98: 0001-fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
+Patch99: 0002-fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
+Patch100: 0001-fdo-43399-hidden-radio-button-should-also-gets-unset.patch
+Patch101: 0002-fdo-40261-Fix-crash-in-XML-Form-Document.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1105,6 +1111,12 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch93 -p1 -b .fdo-41712-rename-members-to-track-down-assignments.patch
 %patch94 -p1 -b .fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
 %patch95 -p1 -b .fdo-41712-sw-remove-superfluous-flag.patch
+%patch96 -p1 -b .fdo-42771-Fix-crash-when-loading-an-invalid-.fodt.patch
+%patch97 -p1 -b .odbc-64-bit-crash-correct-buffer-length-allocation-f.patch
+%patch98 -p1 -b .fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
+%patch99 -p1 -b .fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
+%patch100 -p1 -b .fdo-43399-hidden-radio-button-should-also-gets-unset.patch
+%patch101 -p1 -b .fdo-40261-Fix-crash-in-XML-Form-Document.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2421,6 +2433,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
   .pyc's and .pyo's have the same content (timestamp in binary cache)
 - Resolves: fdo#36109 in INDIRECT() make a non-existing sheet produce an error again
 - Resolves: fdo#41712 sw: fix crash in layout frame linked lists
+- Resolves: fdo#42771 Fix crash when loading an invalid .fodt
+- Resolves: fdo#44813 make the refresh query filter NULL-safe
+- Resolves: fdo#43399 hidden radio button should also gets unset
+- Resolves: fdo#40261 Fix crash in XML Form Document
 
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import

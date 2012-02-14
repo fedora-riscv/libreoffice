@@ -208,6 +208,9 @@ Patch89: 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
 Patch90: libreoffice-ensure-non-broken-xml-tree.patch
 Patch91: 0001-preserve-timestamps-for-.py-files.patch
 Patch92: 0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
+Patch93: 0001-fdo-41712-rename-members-to-track-down-assignments.patch
+Patch94: 0002-fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
+Patch95: 0003-fdo-41712-sw-remove-superfluous-flag.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1099,6 +1102,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch90 -p1 -b .ensure-non-broken-xml-tree.patch
 %patch91 -p1 -b .preserve-timestamps-for-.py-files.patch
 %patch92 -p1 -b .fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
+%patch93 -p1 -b .fdo-41712-rename-members-to-track-down-assignments.patch
+%patch94 -p1 -b .fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
+%patch95 -p1 -b .fdo-41712-sw-remove-superfluous-flag.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2414,6 +2420,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - ensure gdb .py files have the same timstamps so that multilib
   .pyc's and .pyo's have the same content (timestamp in binary cache)
 - Resolves: fdo#36109 in INDIRECT() make a non-existing sheet produce an error again
+- Resolves: fdo#41712 sw: fix crash in layout frame linked lists
 
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import

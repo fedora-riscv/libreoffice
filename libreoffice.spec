@@ -18,7 +18,7 @@
 
 %if %{langpacks}
 %if %{defined rhel} && 0%{?rhel} < 7
-%define langpack_langs en-US af ar bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko lt mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %endif
@@ -102,6 +102,9 @@ Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-math = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
+%if %{defined rhel} && 0%{?rhel} < 7
+Obsoletes: openoffice.org < 1.9.0
+%endif
 
 Patch1:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
 Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
@@ -116,16 +119,17 @@ Patch9: libreoffice-libwpd08-2.patch
 Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
+Patch13: libreoffice-rhel6langs.patch
 %endif
 %if %{with binfilter}
-Patch13: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
+Patch14: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-Patch14: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
-Patch15: 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
-Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
-Patch17: libreoffice-ensure-non-broken-xml-tree.patch
-Patch18: 0001-preserve-timestamps-for-.py-files.patch
-Patch19: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
+Patch15: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
+Patch16: 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
+Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
+Patch18: libreoffice-ensure-non-broken-xml-tree.patch
+Patch19: 0001-preserve-timestamps-for-.py-files.patch
+Patch20: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -157,10 +161,24 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-core = 1:3.3.0
+Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
+Obsoletes: openoffice.org-libs < 1.9.0
+Obsoletes: openoffice.org-i18n < 1.9.0
+Obsoletes: openoffice.org-kde < 1.9.0
+Obsoletes: openoffice.org-langpack-eo < 1:2.0.0
+Obsoletes: openoffice.org2-core < 1:3.0.0
+%else
 Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
 Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
+%endif
 Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-testtools = 1:3.3.0
+Obsoletes: openoffice.org2-testtools < 1:3.0.0
+%endif
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -176,6 +194,10 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-pyuno < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-pyuno = 1:3.3.0
+Obsoletes: openoffice.org2-pyuno < 1:3.0.0
+%endif
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -191,6 +213,11 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-base-core = 1:3.3.0
+Provides: openoffice.org-base = 1:3.3.0, broffice.org-base = 1:3.3.0
+Obsoletes: openoffice.org2-base < 1:3.0.0
+%endif
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
@@ -208,6 +235,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-report-builder < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-report-builder = 1:3.3.0
+%endif
 
 %description report-builder
 Creates database reports from LibreOffice databases. The report builder can
@@ -224,6 +254,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-bsh < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-bsh = 1:3.3.0
+%endif
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
@@ -237,6 +270,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-rhino < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-rhino = 1:3.3.0
+%endif
 
 %description rhino
 Support JavaScript scripts in LibreOffice.
@@ -253,6 +289,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-wiki-publisher = 1:3.3.0
+%endif
 
 %description wiki-publisher
 The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
@@ -282,6 +321,9 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-ogltrans = 1:3.3.0
+%endif
 
 %description ogltrans
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
@@ -298,6 +340,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-presentation-minimizer = 1:3.3.0
+%endif
 
 %description presentation-minimizer
 The Presentation Minimizer is used to reduce the file size of the current
@@ -315,6 +360,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-presenter-screen = 1:3.3.0
+%endif
 
 %description presenter-screen
 The Presenter Screen is used to provides information on a second screen, that
@@ -332,6 +380,9 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-pdfimport < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-pdfimport = 1:3.3.0
+%endif
 
 %description pdfimport
 The PDF Importer imports PDF into drawing documents to preserve layout
@@ -343,6 +394,10 @@ Group: User Interface/X
 Requires: fontpackages-filesystem
 Obsoletes: openoffice.org-fonts < 1:3.3.1
 Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-fonts = 1:3.3.0
+Provides: openoffice.org-opensymbol-fonts = 1:3.3.0
+%endif
 BuildArch: noarch
 
 %description %{fontname}-fonts
@@ -356,6 +411,11 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-writer-core = 1:3.3.0
+Provides: openoffice.org-writer = 1:3.3.0, broffice.org-writer = 1:3.3.0
+Obsoletes: openoffice.org2-writer < 1:3.0.0
+%endif
 
 %description writer
 The LibreOffice Word Processor application.
@@ -366,6 +426,10 @@ Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-emailmerge < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-emailmerge = 1:3.3.0
+Obsoletes: openoffice.org2-emailmerge < 1:3.0.0
+%endif
 
 %description emailmerge
 Enables the LibreOffice writer module to mail-merge to email.
@@ -377,6 +441,10 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-calc-core = 1:3.3.0
+Provides: openoffice.org-calc = 1:3.3.0, broffice.org-calc = 1:3.3.0
+%endif
 
 %description calc
 The LibreOffice Spreadsheet application.
@@ -390,6 +458,11 @@ Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
 Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-draw-core = 1:3.3.0
+Provides: openoffice.org-draw = 1:3.3.0, broffice.org-draw = 1:3.3.0
+Obsoletes: openoffice.org2-draw < 1:3.0.0
+%endif
 
 %description draw
 The LibreOffice Drawing Application.
@@ -402,6 +475,11 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-impress-core = 1:3.3.0
+Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
+Obsoletes: openoffice.org2-impress < 1:3.0.0
+%endif
 
 %description impress
 The LibreOffice Presentation Application.
@@ -413,6 +491,11 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-math-core = 1:3.3.0
+Provides: openoffice.org-math = 1:3.3.0, broffice.org-math = 1:3.3.0
+Obsoletes: openoffice.org2-math < 1:3.0.0
+%endif
 
 %description math 
 The LibreOffice Equation Editor Application.
@@ -423,6 +506,10 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-graphicfilter = 1:3.3.0
+Obsoletes: openoffice.org2-graphicfilter < 1:3.0.0
+%endif
 
 %description graphicfilter
 The graphicfilter module for LibreOffice provides graphic filters, e.g. svg and
@@ -433,6 +520,10 @@ Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-xsltfilter = 1:3.3.0
+Obsoletes: openoffice.org2-xsltfilter < 1:3.0.0
+%endif
 
 %description xsltfilter
 The xsltfilter module for LibreOffice, provides additional docbook and
@@ -443,6 +534,10 @@ Summary: Optional javafilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-javafilter < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-javafilter = 1:3.3.0
+Obsoletes: openoffice.org2-javafilter < 1:3.0.0
+%endif
 
 %description javafilter
 The javafilter module for LibreOffice, provides additional AportisDoc,
@@ -469,6 +564,9 @@ Summary: UNO Runtime Environment
 Group: Development/Libraries
 Requires: unzip, jre >= 1.5.0
 Obsoletes: openoffice.org-ure < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-ure = 1:3.3.0
+%endif
 
 %description ure
 UNO is the component model of LibreOffice. UNO offers interoperability between
@@ -485,6 +583,9 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-sdk = 1:3.3.0, openoffice.org-devel = 1:3.3.0
+%endif
 
 %description sdk
 The LibreOffice SDK is an add-on for the LibreOffice office suite. It provides
@@ -497,6 +598,9 @@ Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-sdk-doc = 1:3.3.0
+%endif
 
 %description sdk-doc
 This provides documentation for programming using the LibreOffice APIs
@@ -508,6 +612,9 @@ Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-headless < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-headless = 1:3.3.0
+%endif
 
 %description headless
 A plug-in for LibreOffice that enables it to function without an X server. 
@@ -596,6 +703,8 @@ This package provides gdb pretty printers for package %{name}.
 # Mm: mythes dependency
 # n:  language name, e.g., Czech
 # Oo: Obsoletes: of openoffice.org-langpack
+# Vv: Very archaic Obsoletes: of openoffice.org-langpack
+# Xx: Archaic Obsoletes: of openoffice.org2-langpack
 # p:  Provides: of libreoffice-langpack
 # r:  comma-separated list of additional requires
 # Ss: filelist
@@ -606,7 +715,7 @@ This package provides gdb pretty printers for package %{name}.
 # autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
 # openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
 # %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Yy:) \
+%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Vv:Xx:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -624,7 +733,26 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-r:Requires: %{-r*}} \
 %define obs openoffice.org-langpack \
 %define obsv 1:3.3.1 \
+%define aobs openoffice.org2-langpack \
+%define aobsv 1:3.0.0 \
+%define vaobs openoffice.org-langpack \
+%define vaobsv 1:2.0.3 \
+%if %{defined rhel} && 0%{?rhel} < 7 \
+%{-o: \
+Obsoletes: openoffice.org-i18n < 1.9.0 \
+Obsoletes: %{obs}-%{-o*} < %{obsv} \
+Provides: %{obs}-%{-o*} = 1:3.3.1.1  \
+}%{!-o: \
+%{-O: \
+Obsoletes: openoffice.org-i18n < 1.9.0 \
+Obsoletes: %{obs}-%{lang} < %{obsv} \
+Provides: %{obs}-%{lang} = 1:3.3.1.1  \
+}} \
+%else \
 %{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
+%endif \
+%{-x:Obsoletes: %{aobs}-%{-x*} < %{aobsv}}%{!-x:%{-X:Obsoletes: %{aobs}-%{lang} < %{aobsv}}} \
+%{-v:Obsoletes: %{vaobs}-%{-v*} < %{vaobsv}}%{!-v:%{-V:Obsoletes: %{vaobs}-%{lang} < %{vaobsv}}} \
 %{-p:Provides: %{name}-langpack-%{-p*}} \
 \
 %description %{pkgname} \
@@ -668,92 +796,98 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %if %{langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -S
-%langpack -l ar -n Arabic -F -H -O -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
-%langpack -l as -n Assamese -F -H -Y -o as_IN -S
-%endif
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -o bg_BG -S
-%langpack -l bn -n Bengali -F -H -Y -O -S
-%langpack -l ca -n Catalan -F -H -Y -M -o ca_ES -S
-%langpack -l cs -n Czech -F -H -Y -M -A -o cs_CZ -S
-%langpack -l cy -n Welsh -F -H -Y -o cy_GB -S
-%langpack -l da -n Danish -F -H -Y -M -A -o da_DK -S
-%langpack -l de -n German -F -H -Y -M -A -O -S
+%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -V -x af_ZA -S
+%langpack -l ar -n Arabic -F -H -O -X -S
+%langpack -l as -n Assamese -F -H -Y -o as_IN -x as_IN -S
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -o bg_BG -V -x bg_BG -S
+%langpack -l bn -n Bengali -F -H -Y -O -v bn_IN -X -S
+%langpack -l ca -n Catalan -F -H -Y -M -o ca_ES -V -x ca_ES -S
+%langpack -l cs -n Czech -F -H -Y -M -A -o cs_CZ -V -x cs_CZ -S
+%langpack -l cy -n Welsh -F -H -Y -o cy_GB -V -x cy_GB -S
+%langpack -l da -n Danish -F -H -Y -M -A -o da_DK -V -x da_DK -S
+%langpack -l de -n German -F -H -Y -M -A -O -X -S
 %langpack -l dz -n Dzongkha -F -O -S
-%langpack -l el -n Greek -F -H -Y -M -o el_GR -S
+%langpack -l el -n Greek -F -H -Y -M -o el_GR -V -x el_GR -S
 %langpack -l en -n English -M -O
-%langpack -l es -n Spanish -F -H -Y -M -A -O -S
-%langpack -l et -n Estonian -F -H -Y -o et_EE -S
-%langpack -l eu -n Basque -F -H -Y -A -o eu_ES -S
+%langpack -l es -n Spanish -F -H -Y -M -A -O -X -S
+%langpack -l et -n Estonian -F -H -Y -o et_EE -V -x et_EE -S
+%langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -x eu_ES -S
 %if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
 %endif
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l fi -n Finnish -F -A -o fi_FI -V -x fi_FI -S
+%else
 %langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S
-%langpack -l fr -n French -F -H -Y -M -A -O -S
-%langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -S
-%langpack -l gl -n Galician -F -H -Y -o gl_ES -S
-%langpack -l gu -n Gujarati -F -H -Y -o gu_IN -S
-%langpack -l he -n Hebrew -F -H -o he_IL -S
-%langpack -l hi -n Hindi -F -H -Y -o hi_IN -S
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -S
-%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -S
-%langpack -l it -n Italian -F -H -Y -M -A -O -S
-%langpack -l ja -n Japanese -F -A -o ja_JP -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
-%langpack -l kn -n Kannada -F -H -Y -o kn_IN -S
 %endif
-%langpack -l ko -n Korean -F -H -A -o ko_KR -S
+%langpack -l fr -n French -F -H -Y -M -A -O -X -S
+%langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -x ga_IE -S
+%langpack -l gl -n Galician -F -H -Y -o gl_ES -V -x gl_ES -S
+%langpack -l gu -n Gujarati -F -H -Y -o gu_IN -x gu_IN -S
+%langpack -l he -n Hebrew -F -H -o he_IL -V -x he_IL -S
+%langpack -l hi -n Hindi -F -H -Y -o hi_IN -v hi-IN -x hi_IN -S
+%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -x hr_HR -S
+%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
+%langpack -l it -n Italian -F -H -Y -M -A -O -X -S
+%langpack -l ja -n Japanese -F -A -o ja_JP -V -x ja_JP -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
+%langpack -l kn -n Kannada -F -H -Y -o kn_IN -x ka_IN -S
+%endif
+%langpack -l ko -n Korean -F -H -A -o ko_KR -V -x ko_KR -S
 %{baseinstdir}/share/registry/korea.xcd
 
-%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -S
+%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -x lt_LT -S
 %if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
 %endif
 %langpack -l mai -n Maithili -F -o mai_IN -S
-%langpack -l ml -n Malayalam -F -H -Y -o ml_IN -S
-%langpack -l mr -n Marathi -F -H -Y -o mr_IN -S
-%langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -S
-%langpack -l nl -n Dutch -F -H -Y -M -A -O -S
-%langpack -l nn -n Nynorsk -F -H -Y -M -o nn_NO -S
+%langpack -l ml -n Malayalam -F -H -Y -o ml_IN -x ml_IN -S
+%langpack -l mr -n Marathi -F -H -Y -o mr_IN -x mr_IN -S
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l ms -n Malay -F -H -o ms_MY -V -x ms_MY -S
+%endif
+%langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -V -x nb_NO -S
+%langpack -l nl -n Dutch -F -H -Y -M -A -O -X -S
+%langpack -l nn -n Nynorsk -F -H -Y -M -o nn_NO -V -x nn_NO -S
 %define langpack_lang Southern Ndebele
 %langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA -S
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -S
-%langpack -l or -n Oriya -F -H -Y -o or_IN -S
-%langpack -l pa -n Punjabi -F -H -Y -O -s pa-IN
-%langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -S
+%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -x nso_ZA -S
+%langpack -l or -n Oriya -F -H -Y -o or_IN -x or_IN -S
+%langpack -l pa -n Punjabi -F -H -Y -O -v pa_IN -x pa_IN -s pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -V -x pl_PL -S
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -S
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -s pt
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -V -x pt_BR -S
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -v pt -X -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
-%langpack -l ru -n Russian -F -H -Y -M -A -O -S
+%langpack -l ru -n Russian -F -H -Y -M -A -O -X -S
 %if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -O -S
 %endif
-%langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -S
-%langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -S
-%langpack -l sr -n Serbian -F -H -Y -A -O -S
+%langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -V -x sk_SK -S
+%langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -V -x sl_SI -S
+%langpack -l sr -n Serbian -F -H -Y -A -O -v sr_CS -x sr_CS -S
 %langpack -l ss -n Swati -F -H -o ss_ZA -S
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA -S
-%langpack -l sv -n Swedish -F -H -Y -M -A -O -S
-%langpack -l ta -n Tamil -F -H -Y -o ta_IN -S
-%langpack -l te -n Telugu -F -H -Y -o te_IN -S
-%langpack -l th -n Thai -F -H -o th_TH -S
-%{baseinstdir}/share/registry/ctlseqcheck_th.xcd
-
-%langpack -l tn -n Tswana -F -H -o tn_ZA -S
-%langpack -l tr -n Turkish -F -A -o tr_TR -S
-%langpack -l ts -n Tsonga -F -H -o ts_ZA -S
+%langpack -l sv -n Swedish -F -H -Y -M -A -O -X -S
+%langpack -l ta -n Tamil -F -H -Y -o ta_IN -x ta_IN -S
+%langpack -l te -n Telugu -F -H -Y -o te_IN -x te_IN -S
+%langpack -l th -n Thai -F -H -o th_TH -V -x th_TH -S
+%langpack -l tn -n Tswana -F -H -o tn_ZA -V -x tn_ZA -S
+%langpack -l tr -n Turkish -F -A -o tr_TR -V -X -S
+%langpack -l ts -n Tsonga -F -H -o ts_ZA -V -x ts_ZA -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -O -S
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l ur -n Urdu -F -H -O -X -S
+%endif
 %langpack -l ve -n Venda -F -H -o ve_ZA -S
 %langpack -l xh -n Xhosa -F -H -o xh_ZA -S
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -v zh-CN -x zh_CN -s zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -s zh-TW
-%langpack -l zu -n Zulu -F -H -Y -o zu_ZA -S
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -v zh-TW -x zh_TW -s zh-TW
+%langpack -l zu -n Zulu -F -H -Y -o zu_ZA -V -x zu_ZA -S
 %undefine langpack_lang
 
 %endif
@@ -771,9 +905,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l eu -n Basque -X
 %{_datadir}/autocorr/acor_eu.dat
 
-%if %{undefined rhel} || 0%{?rhel} >= 7
 %autocorr -l fa -n Farsi
-%endif
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French
 %autocorr -l ga -n Irish
@@ -827,16 +959,17 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -R -b .wpsimport
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
+%patch13 -p0 -b .rhel6langs.patch
 %endif
 %if %{with binfilter}
-%patch13 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
+%patch14 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-%patch14 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
-%patch15 -p1 -b .fdo43644-survive-registered-but-unavailabl.patch
-%patch16 -p1 -b .make-hsqldb-build-with-java-1.7.patch
-%patch17 -p1 -b .ensure-non-broken-xml-tree.patch
-%patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
-%patch19 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
+%patch15 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
+%patch16 -p1 -b .fdo43644-survive-registered-but-unavailabl.patch
+%patch17 -p1 -b .make-hsqldb-build-with-java-1.7.patch
+%patch18 -p1 -b .ensure-non-broken-xml-tree.patch
+%patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch20 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -929,28 +1062,6 @@ touch src.downloaded
 
 . ./Env.Host.sh
 ./bootstrap
-
-#HANGING JAVA HACK
-cat << \EOF > solenv/bin/java
-#!/bin/sh
-status=1
-count=1
-while [ $status -ne 0 -a $count -lt 10 ]
-do
-        timeout -k 5m 5m $REALJAVA $*
-        status=$?
-        if [ $status -ne 0 ]; then
-                echo $REALJAVA hung, trying again, attempt $count
-        fi
-        count=$[count+1]
-done
-exit $status
-EOF
-chmod +x solenv/bin/java
-export REALJAVA=`which java`
-export PATH=solenv/bin:$PATH
-which java
-#HANGING JAVA HACK
 
 cd instsetoo_native
 if ! VERBOSE=true build --dlv_switch -link -P$NBUILDS --all -- -P$NDMAKES -s; then
@@ -1119,20 +1230,21 @@ ja      help    cjk             ko      help    cjk     \
 kn      nohelp  western         lt      nohelp  western \
 lv      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
-nb      help    western         nl      help    western \
-nn      help    western         nr      nohelp  western \
-nso     nohelp  western         or      nohelp  ctl     \
-pa-IN   nohelp  ctl             pl      help    western \
-pt      help    western         pt-BR   help    western \
-ro      nohelp  western         ru      help    western \
-sh      nohelp  western         si      help    ctl     \
-sk      help    western         sl      help    western \
-sr      nohelp  western         ss      nohelp  western \
-st      nohelp  western         sv      help    western \
-ta      nohelp  ctl             te      nohelp  western \
-th      nohelp  ctlseqcheck     tn      nohelp  western \
-tr      help    western         ts      nohelp  western \
-uk      help    western         ve      nohelp  western \
+ms      nohelp  western         nb      help    western \
+nl      help    western        	nn      help    western \
+nr      nohelp  western         nso     nohelp  western \
+or      nohelp  ctl            	pa-IN   nohelp  ctl     \
+pl      help    western         pt      help    western \
+pt-BR   help    western         ro      nohelp  western \
+ru      help    western        	sh      nohelp  western \
+si      help    ctl             sk      help    western \
+sl      help    western         sr      nohelp  western \
+ss      nohelp  western         st      nohelp  western \
+sv      help    western         ta      nohelp  ctl     \
+te      nohelp  western         th      nohelp  ctlseqcheck \
+tn      nohelp  western         tr      help    western \
+ts      nohelp  western         uk      help    western \
+ur      nohelp  western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \
 )

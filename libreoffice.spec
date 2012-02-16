@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -131,6 +131,7 @@ Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
 Patch18: libreoffice-ensure-non-broken-xml-tree.patch
 Patch19: 0001-preserve-timestamps-for-.py-files.patch
 Patch20: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
+Patch21: 0001-Fix-fdo-45177-avoid-linked-undo-for-the-while.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -971,6 +972,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .ensure-non-broken-xml-tree.patch
 %patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
 %patch20 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
+%patch21 -p1 -b .fdo45177-avoid-linked-undo-for-the-while.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2247,6 +2249,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 16 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.0.3-6.UNBUILT
+- Resolves: fdo#45177 avoid linked undo crash
+
 * Tue Feb 14 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-5
 - Resolves rhbz#789622: Adapt SDK to changed paths in LO installation
 

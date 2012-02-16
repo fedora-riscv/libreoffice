@@ -132,6 +132,7 @@ Patch18: libreoffice-ensure-non-broken-xml-tree.patch
 Patch19: 0001-preserve-timestamps-for-.py-files.patch
 Patch20: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 Patch21: 0001-Fix-fdo-45177-avoid-linked-undo-for-the-while.patch
+Patch22: 0001-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -973,6 +974,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
 %patch20 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 %patch21 -p1 -b .fdo45177-avoid-linked-undo-for-the-while.patch
+%patch22 -p1 -b .Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2251,6 +2253,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Feb 16 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.0.3-6.UNBUILT
 - Resolves: fdo#45177 avoid linked undo crash
+- Fix some apparent misuses of RTL_CONSTASCII_USTRINGPARAM (cherry-picked from
+  upstream libreoffice-3-5 branch)
 
 * Tue Feb 14 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.0.3-5
 - Resolves rhbz#789622: Adapt SDK to changed paths in LO installation

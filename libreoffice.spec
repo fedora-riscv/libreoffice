@@ -133,6 +133,9 @@ Patch19: 0001-preserve-timestamps-for-.py-files.patch
 Patch20: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 Patch21: 0001-Fix-fdo-45177-avoid-linked-undo-for-the-while.patch
 Patch22: 0001-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
+%if %{with binfilter}
+Patch23: binfilter-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
+%endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -975,6 +978,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
 %patch21 -p1 -b .fdo45177-avoid-linked-undo-for-the-while.patch
 %patch22 -p1 -b .Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
+%if %{with binfilter}
+%patch23 -p1 -b .binfilter-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
+%endif
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

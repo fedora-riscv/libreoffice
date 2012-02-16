@@ -14,8 +14,8 @@
 %define langpacks 1
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-#%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+#%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
 %if %{langpacks}
 %if %{defined rhel} && 0%{?rhel} < 7

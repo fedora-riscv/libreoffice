@@ -217,6 +217,9 @@ Patch98: 0001-fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
 Patch99: 0002-fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
 Patch100: 0001-fdo-43399-hidden-radio-button-should-also-gets-unset.patch
 Patch101: 0002-fdo-40261-Fix-crash-in-XML-Form-Document.patch
+Patch102: 0001-fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
+Patch103: 0001-fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
+Patch104: 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1117,6 +1120,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch99 -p1 -b .fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
 %patch100 -p1 -b .fdo-43399-hidden-radio-button-should-also-gets-unset.patch
 %patch101 -p1 -b .fdo-40261-Fix-crash-in-XML-Form-Document.patch
+%patch102 -p1 -b .fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
+%patch103 -p1 -b .fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
+%patch104 -p1 -b .fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2437,6 +2443,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#44813 make the refresh query filter NULL-safe
 - Resolves: fdo#43399 hidden radio button should also gets unset
 - Resolves: fdo#40261 Fix crash in XML Form Document
+- Resolves: fdo#45992 fix support for embedded images for basic Dialogs
+- Resolves: fdo#39510 fix yet more layout crashes in ~SwRootFrm
+- Resolves: fdo#39657 fix crash when parsing XML signatures
 
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import

@@ -14,7 +14,7 @@ diff --git a/solenv/bin/install-gdb-printers b/solenv/bin/install-gdb-printers
 index 99686cf..df327a0 100755
 --- a/solenv/bin/install-gdb-printers
 +++ b/solenv/bin/install-gdb-printers
-@@ -165,7 +165,7 @@ fi
+@@ -56,7 +56,7 @@ fi
  
  if [[ ${DESTDIR}${pythondir} != ${GDBDIR} ]]; then
      mkdir -p "${DESTDIR}${pythondir}" || die "cannot create dir '${DESTDIR}${pythondir}'"
@@ -22,7 +22,4 @@ index 99686cf..df327a0 100755
 +    cp -pr "${GDBDIR}/libreoffice" "${DESTDIR}${pythondir}"
  fi
  
- make_autoload cppu ure-link/lib libuno_cppu."$DYLIB".3
--- 
-1.7.7.6
-
+ make_autoload cppu ure/lib libuno_cppu.so.3

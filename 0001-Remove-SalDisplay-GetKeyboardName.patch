@@ -15,35 +15,40 @@ implicit call is done to refresh mappings...
 
 diff --git a/vcl/inc/unx/saldisp.hxx b/vcl/inc/unx/saldisp.hxx
 index 3e4eb4e..8c44784 100644
---- a/vcl/inc/unx/saldisp.hxx
-+++ b/vcl/inc/unx/saldisp.hxx
-@@ -323,7 +323,6 @@ protected:
-     KeySym          nShiftKeySym_;      // first shift modifier
-     KeySym          nCtrlKeySym_;       // first control modifier
-     KeySym          nMod1KeySym_;       // first mod1 modifier
--    rtl::OString m_aKeyboardName;
+--- a/vcl/unx/inc/saldisp.hxx
++++ b/vcl/unx/inc/saldisp.hxx
+@@ -371,7 +371,6 @@
+     KeySym			nShiftKeySym_;		// first shift modifier
+     KeySym			nCtrlKeySym_;		// first control modifier
+     KeySym			nMod1KeySym_;		// first mod1 modifier
+-    ByteString		m_aKeyboardName;
  
-     vcl_sal::WMAdaptor* m_pWMAdaptor;
- 
-@@ -427,7 +426,6 @@ public:
+     vcl_sal::WMAdaptor*	m_pWMAdaptor;
+     DtIntegrator*       m_pDtIntegrator;
+@@ -493,7 +492,6 @@
      { mpInputMethod = pInputMethod; }
-     void            SetKbdExtension(SalI18N_KeyboardExtension *pKbdExtension)
+     void			SetKbdExtension(SalI18N_KeyboardExtension *pKbdExtension)
      { mpKbdExtension = pKbdExtension; }
--    const char*     GetKeyboardName( bool bRefresh = false );
+-    const char*	GetKeyboardName( bool bRefresh = false );
      ::vcl_sal::WMAdaptor* getWMAdaptor() const { return m_pWMAdaptor; }
-     bool            IsXinerama() const { return m_bXinerama; }
-     const std::vector< Rectangle >& GetXineramaScreens() const { return m_aXineramaScreens; }
+     DtIntegrator* getDtIntegrator() const { return m_pDtIntegrator; }
+     bool			IsXinerama() const { return m_bXinerama; }
 diff --git a/vcl/unx/generic/app/keysymnames.cxx b/vcl/unx/generic/app/keysymnames.cxx
 index ce6a7e7..f4955a5 100644
---- a/vcl/unx/generic/app/keysymnames.cxx
-+++ b/vcl/unx/generic/app/keysymnames.cxx
-@@ -215,94 +215,4 @@ static const keyboard_layout type6_layout[] =
- #include <stdio.h>
+--- a/vcl/unx/source/app/keysymnames.cxx
++++ b/vcl/unx/source/app/keysymnames.cxx
+@@ -594,99 +594,4 @@
+ };
  #endif
  
+-
+-#if OSL_DEBUG_LEVEL > 1
+-#include <stdio.h>
+-#endif
+-
 -const char* SalDisplay::GetKeyboardName( bool bRefresh )
 -{
--    if (bRefresh || m_aKeyboardName.isEmpty())
+-    if( bRefresh || ! m_aKeyboardName.Len() )
 -    {
 -#if defined(SOLARIS)
 -        if( IsLocal() )
@@ -125,17 +130,17 @@ index ce6a7e7..f4955a5 100644
 -            }
 -        }
 -#endif
--        if (m_aKeyboardName.isEmpty())
+-        if( ! m_aKeyboardName.Len() )
 -            m_aKeyboardName = "<unknown keyboard>";
 -    }
--    return m_aKeyboardName.getStr();
+-    return m_aKeyboardName.GetBuffer();
 -}
 -
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/vcl/unx/generic/app/saldisp.cxx b/vcl/unx/generic/app/saldisp.cxx
 index 41b509b..cae3fafa 100644
---- a/vcl/unx/generic/app/saldisp.cxx
-+++ b/vcl/unx/generic/app/saldisp.cxx
+--- a/vcl/unx/source/app/saldisp.cxx
++++ b/vcl/unx/source/app/saldisp.cxx
 @@ -2170,14 +2170,10 @@ long SalX11Display::Dispatch( XEvent *pEvent )
              }
              break;
@@ -157,20 +162,12 @@ diff --git a/vcl/unx/gtk/app/gtkdata.cxx b/vcl/unx/gtk/app/gtkdata.cxx
 index 3685d11..b1bcf8e 100644
 --- a/vcl/unx/gtk/app/gtkdata.cxx
 +++ b/vcl/unx/gtk/app/gtkdata.cxx
-@@ -129,12 +129,7 @@ extern "C" {
+@@ -124,7 +124,7 @@
  void signalKeysChanged( GdkKeymap*, gpointer data )
  {
      GtkSalDisplay* pDisp = (GtkSalDisplay*)data;
--#if !GTK_CHECK_VERSION(3,0,0)
 -    pDisp->GetKeyboardName(true);
--#else
--    (void)pDisp;
--#warning FIXME: impl. / check signalKeysChanged ...
--#endif
 +#warning signalKeysChanged called
  }
  
  void signalScreenSizeChanged( GdkScreen* pScreen, gpointer data )
--- 
-1.7.7.6
-

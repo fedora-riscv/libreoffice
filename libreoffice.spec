@@ -221,8 +221,6 @@ Patch102: 0001-fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
 Patch103: 0001-fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
 Patch104: 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 Patch105: 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
-Patch106: 0001-Remove-SalDisplay-GetKeyboardName.patch
-Patch107: 0001-Remove-further-code-belonging-to-SalDisplay-GetKeybo.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1127,8 +1125,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch103 -p1 -b .fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
 %patch104 -p1 -b .fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 %patch105 -p1 -b .rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
-%patch106 -p1 -b .0001-Remove-SalDisplay-GetKeyboardName.patch
-%patch107 -p1 -b .0001-Remove-further-code-belonging-to-SalDisplay-GetKeybo.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2439,7 +2435,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Feb 22 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
+* Thu Feb 23 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
 - ensure non broken xml help.tree files
 - ensure gdb .py files have the same timstamps so that multilib
   .pyc's and .pyo's have the same content (timestamp in binary cache)
@@ -2453,7 +2449,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#39510 fix yet more layout crashes in ~SwRootFrm
 - Resolves: fdo#39657 fix crash when parsing XML signatures
 - Resolves: rhbz#794679 use proper Indian Rupee currency symbol U+20B9
-- Resolves: rhbz#796234 remove dangling XkbUseExtension code
 
 * Thu Feb 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-5
 - Resolves: fdo#38595 border width lost in ODF import

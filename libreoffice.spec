@@ -2243,7 +2243,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 26 2012 David Tardon <dtardon@redhat.com> - 3.5.1.1-1
+* Sun Feb 26 2012 David Tardon <dtardon@redhat.com> - 3.5.1.1-1
 - 3.5.1 rc1
 - drop 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
 - drop 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch

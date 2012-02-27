@@ -1516,6 +1516,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/fastsax.uno.so
 %{baseinstdir}/program/fpicker.uno.so
 %{baseinstdir}/program/fps_office.uno.so
+%{baseinstdir}/program/gengal
+%{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin
 %{baseinstdir}/program/hatchwindowfactory.uno.so

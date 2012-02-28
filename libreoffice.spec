@@ -1,4 +1,4 @@
-%define libo_version 3.5.0
+%define libo_version 3.5.1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        6%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -126,16 +126,9 @@ Patch13: libreoffice-rhel6langs.patch
 Patch14: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
 Patch15: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
-Patch16: 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
-Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
-Patch18: libreoffice-ensure-non-broken-xml-tree.patch
-Patch19: 0001-preserve-timestamps-for-.py-files.patch
-Patch20: 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
-Patch21: 0001-Fix-fdo-45177-avoid-linked-undo-for-the-while.patch
-Patch22: 0001-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
-%if %{with binfilter}
-Patch23: binfilter-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
-%endif
+Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
+Patch17: libreoffice-ensure-non-broken-xml-tree.patch
+Patch18: 0001-preserve-timestamps-for-.py-files.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -478,6 +471,7 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
@@ -880,6 +874,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ta -n Tamil -F -H -Y -o ta_IN -x ta_IN -S
 %langpack -l te -n Telugu -F -H -Y -o te_IN -x te_IN -S
 %langpack -l th -n Thai -F -H -o th_TH -V -x th_TH -S
+%{baseinstdir}/share/registry/ctlseqcheck_th.xcd
+
 %langpack -l tn -n Tswana -F -H -o tn_ZA -V -x tn_ZA -S
 %langpack -l tr -n Turkish -F -A -o tr_TR -V -X -S
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -V -x ts_ZA -S
@@ -971,16 +967,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
 %patch15 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
-%patch16 -p1 -b .fdo43644-survive-registered-but-unavailabl.patch
-%patch17 -p1 -b .make-hsqldb-build-with-java-1.7.patch
-%patch18 -p1 -b .ensure-non-broken-xml-tree.patch
-%patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
-%patch20 -p1 -b .Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
-%patch21 -p1 -b .fdo45177-avoid-linked-undo-for-the-while.patch
-%patch22 -p1 -b .Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
-%if %{with binfilter}
-%patch23 -p1 -b .binfilter-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
-%endif
+%patch16 -p1 -b .make-hsqldb-build-with-java-1.7.patch
+%patch17 -p1 -b .ensure-non-broken-xml-tree.patch
+%patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1530,6 +1519,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/fastsax.uno.so
 %{baseinstdir}/program/fpicker.uno.so
 %{baseinstdir}/program/fps_office.uno.so
+%{baseinstdir}/program/gengal
+%{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin
 %{baseinstdir}/program/hatchwindowfactory.uno.so
@@ -2257,7 +2248,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 16 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.0.3-6.UNBUILT
+* Sun Feb 26 2012 David Tardon <dtardon@redhat.com> - 3.5.1.1-1
+- 3.5.1 rc1
+- drop 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch
+- drop 0001-Resolves-rhbz-789622-Adapt-SDK-to-changed-paths-in-L.patch
+- drop 0001-Fix-fdo-45177-avoid-linked-undo-for-the-while.patch
+- drop 0001-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
+- drop binfilter-Fix-some-apparent-misuses-of-RTL_CONSTASCII_USTRINGP.patch
 - Resolves: fdo#45177 avoid linked undo crash
 - Fix some apparent misuses of RTL_CONSTASCII_USTRINGPARAM (cherry-picked from
   upstream libreoffice-3-5 branch)

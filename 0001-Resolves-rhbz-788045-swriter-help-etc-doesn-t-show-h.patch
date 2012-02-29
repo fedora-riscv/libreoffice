@@ -1,0 +1,39 @@
+From 3f9f18c53d9876106b274769dec9d0e3916feb8f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 29 Feb 2012 11:10:31 +0000
+Subject: [PATCH] Resolves: rhbz#788045 swriter --help etc doesn't show help
+
+because the test in soffice to skip oosplash is for only
+one argument, and swriter points to soffice with an additional
+--writer argument, so the test is skipped
+---
+ desktop/scripts/soffice.sh |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/desktop/scripts/soffice.sh b/desktop/scripts/soffice.sh
+index 4d14051..2d42613 100755
+--- a/desktop/scripts/soffice.sh
++++ b/desktop/scripts/soffice.sh
+@@ -158,8 +158,8 @@ if [ -n "$VALGRINDCHECK" -a -z "$VALGRIND" ] ; then
+ fi
+ 
+ # do not pass the request for command line help to oosplash
+-if test "$#" -eq 1; then
+-    case "$1" in
++for arg in $@ ; do
++    case "$arg" in
+         -h | --h | --he | --hel | --help)
+             "$sd_prog/soffice.bin" --help
+             exit 0
+@@ -171,7 +171,7 @@ if test "$#" -eq 1; then
+         *)
+             ;;
+     esac
+-fi
++done
+ 
+ # oosplash does the rest: forcing pages in, javaldx etc. are
+ exec $VALGRINDCHECK $STRACECHECK "$sd_prog/oosplash" "$@"
+-- 
+1.7.7.6
+

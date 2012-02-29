@@ -129,6 +129,7 @@ Patch15: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
 Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
 Patch17: libreoffice-ensure-non-broken-xml-tree.patch
 Patch18: 0001-preserve-timestamps-for-.py-files.patch
+Patch19: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -970,6 +971,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch16 -p1 -b .make-hsqldb-build-with-java-1.7.patch
 %patch17 -p1 -b .ensure-non-broken-xml-tree.patch
 %patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch19 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2248,6 +2250,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-2
+- Resolves: rhbz#788045 swriter --help doesn't show help
+
 * Sun Feb 26 2012 David Tardon <dtardon@redhat.com> - 3.5.1.1-1
 - 3.5.1 rc1
 - drop 0001-Resolves-fdo-43644-survive-registered-but-unavailabl.patch

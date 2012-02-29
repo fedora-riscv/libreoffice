@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -221,6 +221,8 @@ Patch102: 0001-fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
 Patch103: 0001-fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
 Patch104: 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 Patch105: 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
+Patch106: 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
+Patch107: 0001-Correctly-calculate-leap-year.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1125,6 +1127,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch103 -p1 -b .fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
 %patch104 -p1 -b .fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 %patch105 -p1 -b .rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
+%patch106 -p1 -b .fdo-31966-do-not-create-an-empty-slide-when-printing.patch
+%patch107 -p1 -b .Correctly-calculate-leap-year.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2435,6 +2439,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+
+* Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
+- Resolves: fdo#31966 do not create an empty slide when printing handouts
+
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help
 

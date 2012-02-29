@@ -18,8 +18,8 @@ index a97f68d..b23d452 100755
  esac
  
 +# do not pass the request for command line help to oosplash
-+if test "$#" -eq 1; then
-+    case "$1" in
++for arg in $@ ; do
++    case "$arg" in
 +        -h | --h | --he | --hel | --help)
 +            "$sd_prog/soffice.bin" --help
 +            exit 0
@@ -31,7 +31,7 @@ index a97f68d..b23d452 100755
 +        *)
 +            ;;
 +    esac
-+fi
++done
 +
  # oosplash does the rest: forcing pages in, javaldx etc. are
  exec $VALGRINDCHECK "$sd_prog/oosplash.bin" "$@"

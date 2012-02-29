@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2435,6 +2435,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
+- Resolves: rhbz#788045 swriter --help wouldn't display help
+
 * Thu Feb 23 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
 - ensure non broken xml help.tree files
 - ensure gdb .py files have the same timstamps so that multilib

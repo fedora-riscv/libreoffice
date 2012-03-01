@@ -19,7 +19,7 @@
 
 %if %{langpacks}
 %if %{defined rhel} && 0%{?rhel} < 7
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %endif
@@ -909,9 +909,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
 %langpack -l it -n Italian -F -H -Y -M -A -O -X -S
 %langpack -l ja -n Japanese -F -A -o ja_JP -V -x ja_JP -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -x ka_IN -S
-%endif
 %langpack -l ko -n Korean -F -H -A -o ko_KR -V -x ko_KR -S
 %{baseinstdir}/share/registry/korea.xcd
 
@@ -2455,6 +2453,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help
+- Resolves: rhbz#798983 Kannada langpack missing
 
 * Thu Feb 23 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
 - ensure non broken xml help.tree files

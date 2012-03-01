@@ -1,0 +1,29 @@
+From b975e59e7d5213f99ff22138a1065eb0f0a9cb07 Mon Sep 17 00:00:00 2001
+From: Rene Engelhard <rene@debian.org>
+Date: Thu, 1 Mar 2012 08:45:13 +0100
+Subject: [PATCH] fix nsplugin to create correct
+ com.sun.star.ucb.SimpleFileAccess instance
+
+Signed-off-by: Stephan Bergmann <sbergman@redhat.com>
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+Signed-off-by: Tor Lillqvist <tml@iki.fi>
+---
+ extensions/source/nsplugin/source/so_instance.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/extensions/source/nsplugin/source/so_instance.cxx b/extensions/source/nsplugin/source/so_instance.cxx
+index 658d73a..f14b7b3 100644
+--- a/extensions/source/nsplugin/source/so_instance.cxx
++++ b/extensions/source/nsplugin/source/so_instance.cxx
+@@ -243,7 +243,7 @@ sal_Bool SoPluginInstance::LoadDocument(NSP_HWND hParent)
+ 
+         //create stream for the document
+         Reference< ::com::sun::star::ucb::XSimpleFileAccess > xSimpleFileAccess(
+-            mxRemoteMSF->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.ucb.SimpleFileAccessw")) ),
++            mxRemoteMSF->createInstance( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.ucb.SimpleFileAccess")) ),
+             uno::UNO_QUERY );
+         if(!xSimpleFileAccess.is())
+         {
+-- 
+1.7.7.6
+

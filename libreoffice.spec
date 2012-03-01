@@ -223,6 +223,7 @@ Patch104: 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
 Patch105: 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
 Patch106: 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
 Patch107: 0001-Correctly-calculate-leap-year.patch
+Patch108: 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1129,6 +1130,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch105 -p1 -b .rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
 %patch106 -p1 -b .fdo-31966-do-not-create-an-empty-slide-when-printing.patch
 %patch107 -p1 -b .Correctly-calculate-leap-year.patch
+%patch108 -p1 -b .fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2442,6 +2444,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
+- fixes nsplugin
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

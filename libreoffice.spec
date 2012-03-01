@@ -224,6 +224,7 @@ Patch105: 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
 Patch106: 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
 Patch107: 0001-Correctly-calculate-leap-year.patch
 Patch108: 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
+Patch109: 0001-SwRootFrm-SwRootFrm-refactor.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1131,6 +1132,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch106 -p1 -b .fdo-31966-do-not-create-an-empty-slide-when-printing.patch
 %patch107 -p1 -b .Correctly-calculate-leap-year.patch
 %patch108 -p1 -b .fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
+%patch109 -p1 -b .SwRootFrm-SwRootFrm-refactor.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

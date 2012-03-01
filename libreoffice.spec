@@ -2445,15 +2445,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-
-* Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
+* Thu Mar 01 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator
+- Resolves: rhbz#798983 Kannada langpack missing
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help
-- Resolves: rhbz#798983 Kannada langpack missing
 
 * Thu Feb 23 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-6
 - ensure non broken xml help.tree files

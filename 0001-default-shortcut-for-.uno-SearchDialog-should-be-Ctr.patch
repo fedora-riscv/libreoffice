@@ -1,0 +1,53 @@
+From 3bb279c73e0034c7c50e5561de82c681a2f3b3b9 Mon Sep 17 00:00:00 2001
+From: Andras Timar <atimar@suse.com>
+Date: Wed, 14 Sep 2011 19:43:08 +0200
+Subject: [PATCH 1/2] default shortcut for .uno:SearchDialog should be Ctrl+H
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Ctrl+Alt+F was not good, because on some keyboard layouts it enters
+a character. Ctrl+Alt (=AltGr on Windows) should be avoided, if possible.
+
+Signed-off-by: Caolán McNamara <caolanm@redhat.com>
+---
+ .../data/org/openoffice/Office/Accelerators.xcu    |    9 ++-------
+ 1 files changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/Office/Accelerators.xcu b/officecfg/registry/data/org/openoffice/Office/Accelerators.xcu
+index 44de8c4..4fd42dc 100644
+--- a/officecfg/registry/data/org/openoffice/Office/Accelerators.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/Accelerators.xcu
+@@ -85,7 +85,7 @@
+      <value xml:lang="en-US">vnd.sun.star.findbar:FocusToFindbar</value>
+     </prop>
+    </node>
+-   <node oor:name="F_MOD1_MOD2" oor:op="replace">
++   <node oor:name="H_MOD1" oor:op="replace">
+     <prop oor:name="Command"><value xml:lang="x-no-translate">I10N SHORTCUTS - NO TRANSLATE</value>
+      <value xml:lang="en-US">.uno:SearchDialog</value>
+     </prop>
+@@ -235,7 +235,7 @@
+       <value xml:lang="en-US">vnd.sun.star.findbar:FocusToFindbar</value>
+      </prop>
+     </node>
+-    <node oor:name="F_MOD1_MOD2" oor:op="replace">
++    <node oor:name="H_MOD1" oor:op="replace">
+      <prop oor:name="Command"><value xml:lang="x-no-translate">I10N SHORTCUTS - NO TRANSLATE</value>
+       <value xml:lang="en-US">.uno.SearchDialog</value>
+      </prop>
+@@ -635,11 +635,6 @@
+       <value xml:lang="en-US">.uno:GoToStartSel</value>
+      </prop>
+     </node>
+-    <node oor:name="H_MOD1" oor:op="replace">
+-     <prop oor:name="Command"><value xml:lang="x-no-translate">I10N SHORTCUTS - NO TRANSLATE</value>
+-      <value xml:lang="de">.uno:SuperScript</value>
+-     </prop>
+-    </node>
+     <node oor:name="INSERT" oor:op="replace">
+      <prop oor:name="Command"><value xml:lang="x-no-translate">I10N SHORTCUTS - NO TRANSLATE</value>
+       <value xml:lang="en-US">.uno:InsertContents</value>
+-- 
+1.7.7.6
+

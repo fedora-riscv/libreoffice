@@ -225,6 +225,8 @@ Patch106: 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
 Patch107: 0001-Correctly-calculate-leap-year.patch
 Patch108: 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
 Patch109: 0001-SwRootFrm-SwRootFrm-refactor.patch
+Patch110: 0001-default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
+Patch111: 0002-fix-crash-using-instances-dialog-of-dataform-navigat.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1133,6 +1135,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch107 -p1 -b .Correctly-calculate-leap-year.patch
 %patch108 -p1 -b .fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
 %patch109 -p1 -b .SwRootFrm-SwRootFrm-refactor.patch
+%patch110 -p1 -b .default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
+%patch111 -p1 -b .fix-crash-using-instances-dialog-of-dataform-navigat.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2447,6 +2451,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin
+- Resolves: fdo#44816 crash using instances dialog of dataform navigator
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

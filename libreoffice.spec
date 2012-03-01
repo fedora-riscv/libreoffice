@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1426,7 +1426,7 @@ rm -rf icons/gnome applications application-registry
 #relocate the rest of them
 for icon in `find icons -type f`; do
     mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
-    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@office$ICONVERSION@office@`
+    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@office$ICONVERSION@office@ | sed -e s@office$PRODUCTVERSION@office@`
 done
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
 cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
@@ -2252,6 +2252,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-2
 - Resolves: rhbz#788045 swriter --help doesn't show help
+- Resolves: rhbz#798667 missing .desktop icons
 
 * Sun Feb 26 2012 David Tardon <dtardon@redhat.com> - 3.5.1.1-1
 - 3.5.1 rc1

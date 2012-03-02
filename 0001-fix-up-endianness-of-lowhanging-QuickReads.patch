@@ -1,0 +1,1807 @@
+From bd32449e0b8016e9d4e2b14848780f4a641394f2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 22 May 2011 16:38:54 +0100
+Subject: [PATCH] fix up endianness of lowhanging QuickReads
+
+---
+ lotuswordpro/source/filter/lwpatomholder.cxx       |    8 +-
+ lotuswordpro/source/filter/lwpbackgroundstuff.cxx  |    2 +-
+ lotuswordpro/source/filter/lwpbasetype.cxx         |   26 +++---
+ lotuswordpro/source/filter/lwpborderstuff.cxx      |   22 ++--
+ lotuswordpro/source/filter/lwpcolor.cxx            |    8 +-
+ lotuswordpro/source/filter/lwpcontent.cxx          |    8 +-
+ lotuswordpro/source/filter/lwpdivinfo.cxx          |    7 +-
+ lotuswordpro/source/filter/lwpdivopts.cxx          |   12 +-
+ lotuswordpro/source/filter/lwpdlvlist.cxx          |    2 +-
+ lotuswordpro/source/filter/lwpdoc.cxx              |    4 +-
+ lotuswordpro/source/filter/lwpfilter.cxx           |    2 +-
+ lotuswordpro/source/filter/lwpfont.cxx             |   46 ++++------
+ lotuswordpro/source/filter/lwpfootnote.cxx         |   21 ++--
+ lotuswordpro/source/filter/lwpfoundry.cxx          |   20 +---
+ lotuswordpro/source/filter/lwpfrib.cxx             |   17 ++--
+ lotuswordpro/source/filter/lwpfribptr.cxx          |   10 +--
+ lotuswordpro/source/filter/lwpfribtext.cxx         |   10 +-
+ lotuswordpro/source/filter/lwpidxmgr.cxx           |   38 +++-----
+ lotuswordpro/source/filter/lwplayout.cxx           |   43 ++++-----
+ lotuswordpro/source/filter/lwplnopts.cxx           |   10 +-
+ lotuswordpro/source/filter/lwpnotes.cxx            |    2 +-
+ .../source/filter/lwpnumberingoverride.cxx         |    8 +-
+ .../source/filter/lwpnumberingoverride.hxx         |    2 -
+ lotuswordpro/source/filter/lwpobjid.cxx            |   19 ++---
+ lotuswordpro/source/filter/lwpobjstrm.cxx          |  101 +++++++++++++-------
+ lotuswordpro/source/filter/lwpobjstrm.hxx          |   20 ++--
+ lotuswordpro/source/filter/lwppagehint.cxx         |   18 ++--
+ lotuswordpro/source/filter/lwppagelayout.cxx       |   14 +--
+ lotuswordpro/source/filter/lwppara.cxx             |   13 +--
+ lotuswordpro/source/filter/lwpparaproperty.cxx     |   12 +--
+ lotuswordpro/source/filter/lwpparaproperty.hxx     |   13 +--
+ lotuswordpro/source/filter/lwpprtinfo.cxx          |    9 +-
+ lotuswordpro/source/filter/lwpsection.cxx          |    6 +-
+ lotuswordpro/source/filter/lwpshadow.hxx           |    4 +-
+ lotuswordpro/source/filter/lwpsortopt.cxx          |   12 +-
+ lotuswordpro/source/filter/lwpsvstream.hxx         |   11 +--
+ lotuswordpro/source/filter/lwptabrack.cxx          |   12 +-
+ lotuswordpro/source/filter/lwptblcell.cxx          |    2 +-
+ lotuswordpro/source/filter/lwptblformula.cxx       |    6 +-
+ lotuswordpro/source/filter/lwptools.cxx            |   22 ++---
+ lotuswordpro/source/filter/lwpuidoc.cxx            |   12 +--
+ lotuswordpro/source/filter/lwpusewhen.hxx          |    4 +-
+ lotuswordpro/source/filter/lwpusrdicts.cxx         |    3 +-
+ lotuswordpro/source/filter/tocread.cxx             |    2 +-
+ 44 files changed, 292 insertions(+), 351 deletions(-)
+
+diff --git a/lotuswordpro/source/filter/lwpatomholder.cxx b/lotuswordpro/source/filter/lwpatomholder.cxx
+index 986f191..147571e 100644
+--- a/lotuswordpro/source/filter/lwpatomholder.cxx
++++ b/lotuswordpro/source/filter/lwpatomholder.cxx
+@@ -72,9 +72,8 @@ void LwpAtomHolder::Read(LwpObjectStream *pStrm)
+ {
+     //Refered to lwp: file40.cpp, QuickReadAtomHolder()
+ 
+-    sal_uInt16 len, diskSize;
+-    pStrm->QuickRead(&diskSize, sizeof(diskSize));
+-    pStrm->QuickRead(&len, sizeof(len));
++    sal_uInt16 diskSize = pStrm->QuickReaduInt16();
++    sal_uInt16 len = pStrm->QuickReaduInt16();
+ 
+     if (len == 0 || diskSize == 0) {
+         m_nAtom = BAD_ATOM;
+@@ -92,8 +91,7 @@ void LwpAtomHolder::Read(LwpObjectStream *pStrm)
+ */
+ void LwpAtomHolder::Skip(LwpObjectStream *pStrm)
+ {
+-    sal_uInt16 holdersize;
+-    pStrm->QuickRead(&holdersize, sizeof(holdersize));
++    sal_uInt16 holdersize = pStrm->QuickReaduInt16();
+     pStrm->SeekRel(holdersize);
+     m_nAtom = m_nAssocAtom = BAD_ATOM;
+ }
+diff --git a/lotuswordpro/source/filter/lwpbackgroundstuff.cxx b/lotuswordpro/source/filter/lwpbackgroundstuff.cxx
+index 4ace8ff..d26e0b3 100644
+--- a/lotuswordpro/source/filter/lwpbackgroundstuff.cxx
++++ b/lotuswordpro/source/filter/lwpbackgroundstuff.cxx
+@@ -70,7 +70,7 @@
+ 
+ void LwpBackgroundStuff::Read(LwpObjectStream* pStrm)
+ {
+-    pStrm->QuickRead(&m_nID, sizeof(m_nID));
++    m_nID = pStrm->QuickReaduInt16();
+     m_aFillColor.Read(pStrm);
+     m_aPatternColor.Read(pStrm);
+     pStrm->SkipExtra();
+diff --git a/lotuswordpro/source/filter/lwpbasetype.cxx b/lotuswordpro/source/filter/lwpbasetype.cxx
+index 9f3d2ad..879094d 100644
+--- a/lotuswordpro/source/filter/lwpbasetype.cxx
++++ b/lotuswordpro/source/filter/lwpbasetype.cxx
+@@ -59,29 +59,31 @@
+ */
+ void LwpPanoseNumber::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nFamilyType, sizeof(m_nFamilyType));
+-    pStrm->QuickRead(&m_nSerifStyle, sizeof(m_nSerifStyle));
+-    pStrm->QuickRead(&m_nWeight, sizeof(m_nWeight));
+-    pStrm->QuickRead(&m_nProportion, sizeof(m_nProportion));
+-    pStrm->QuickRead(&m_nContrast, sizeof(m_nContrast));
+-    pStrm->QuickRead(&m_nStrokeVariation, sizeof(m_nStrokeVariation));
+-    pStrm->QuickRead(&m_nArmStyle, sizeof(m_nArmStyle));
+-    pStrm->QuickRead(&m_nLetterform, sizeof(m_nLetterform));
+-    pStrm->QuickRead(&m_nMidline, sizeof(m_nMidline));
+-    pStrm->QuickRead(&m_nXHeight, sizeof(m_nXHeight));
++    m_nFamilyType = pStrm->QuickReaduInt8();
++    m_nSerifStyle = pStrm->QuickReaduInt8();
++    m_nWeight = pStrm->QuickReaduInt8();
++    m_nProportion = pStrm->QuickReaduInt8();
++    m_nContrast = pStrm->QuickReaduInt8();
++    m_nStrokeVariation = pStrm->QuickReaduInt8();
++    m_nArmStyle = pStrm->QuickReaduInt8();
++    m_nLetterform = pStrm->QuickReaduInt8();
++    m_nMidline = pStrm->QuickReaduInt8();
++    m_nXHeight = pStrm->QuickReaduInt8();
+ 
+ }
++
+ LwpPoint::LwpPoint()
+ {
+     Reset();
+ }
++
+ /**
+  * @descr       read point from object stream
+ */
+ void LwpPoint::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nX, sizeof(m_nX));
+-    pStrm->QuickRead(&m_nY, sizeof(m_nY));
++    m_nX = pStrm->QuickReadInt32();
++    m_nY = pStrm->QuickReadInt32();
+ }
+ /**
+  * @descr       reset to zero
+diff --git a/lotuswordpro/source/filter/lwpborderstuff.cxx b/lotuswordpro/source/filter/lwpborderstuff.cxx
+index 6d0780f..89f4062 100644
+--- a/lotuswordpro/source/filter/lwpborderstuff.cxx
++++ b/lotuswordpro/source/filter/lwpborderstuff.cxx
+@@ -82,11 +82,11 @@ LwpBorderStuff::LwpBorderStuff()
+ 
+ void    LwpBorderStuff::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nSides, sizeof(m_nSides) );
++    m_nSides = pStrm->QuickReaduInt16();
+     if( m_nSides&LEFT )
+     {
+-        pStrm->QuickRead(&m_nBoderGroupIDLeft, sizeof(m_nBoderGroupIDLeft));
+-        pStrm->QuickRead(&m_nWidthLeft, sizeof(m_nWidthLeft));
++        m_nBoderGroupIDLeft = pStrm->QuickReaduInt16();
++        m_nWidthLeft = pStrm->QuickReadInt32();
+         m_aColorLeft.Read(pStrm);
+ 
+         if( LwpFileHeader::m_nFileRevision < 0x000b )
+@@ -97,8 +97,8 @@ void    LwpBorderStuff::Read(LwpObjectStream *pStrm)
+ 
+     if( m_nSides&RIGHT )
+     {
+-        pStrm->QuickRead(&m_nBoderGroupIDRight, sizeof(m_nBoderGroupIDRight));
+-        pStrm->QuickRead(&m_nWidthRight, sizeof(m_nWidthRight));
++        m_nBoderGroupIDRight = pStrm->QuickReaduInt16();
++        m_nWidthRight = pStrm->QuickReadInt32();
+         m_aColorRight.Read(pStrm);
+ 
+         if( LwpFileHeader::m_nFileRevision < 0x000b )
+@@ -109,8 +109,8 @@ void    LwpBorderStuff::Read(LwpObjectStream *pStrm)
+ 
+     if( m_nSides&TOP )
+     {
+-        pStrm->QuickRead(&m_nBoderGroupIDTop, sizeof(m_nBoderGroupIDTop));
+-        pStrm->QuickRead(&m_nWidthTop, sizeof(m_nWidthTop));
++        m_nBoderGroupIDTop = pStrm->QuickReaduInt16();
++        m_nWidthTop = pStrm->QuickReadInt32();
+         m_aColorTop.Read(pStrm);
+ 
+         if( LwpFileHeader::m_nFileRevision < 0x000b )
+@@ -121,8 +121,8 @@ void    LwpBorderStuff::Read(LwpObjectStream *pStrm)
+ 
+     if( m_nSides&BOTTOM )
+     {
+-        pStrm->QuickRead(&m_nBoderGroupIDBottom, sizeof(m_nBoderGroupIDBottom));
+-        pStrm->QuickRead(&m_nWidthBottom, sizeof(m_nWidthBottom));
++        m_nBoderGroupIDBottom = pStrm->QuickReaduInt16();
++        m_nWidthBottom = pStrm->QuickReadInt32();
+         m_aColorBottom.Read(pStrm);
+ 
+         if( LwpFileHeader::m_nFileRevision < 0x000b )
+@@ -131,8 +131,8 @@ void    LwpBorderStuff::Read(LwpObjectStream *pStrm)
+         }
+     }
+ 
+-    pStrm->QuickRead( &m_nGroupIndent, sizeof(m_nGroupIndent) );
+-    pStrm->QuickRead( &m_nValid, sizeof(m_nValid) );
++    m_nGroupIndent = pStrm->QuickReadInt32();
++    m_nValid = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ 
+     if( LwpFileHeader::m_nFileRevision < 0x0010 )
+diff --git a/lotuswordpro/source/filter/lwpcolor.cxx b/lotuswordpro/source/filter/lwpcolor.cxx
+index 780db0e..791d0f9 100644
+--- a/lotuswordpro/source/filter/lwpcolor.cxx
++++ b/lotuswordpro/source/filter/lwpcolor.cxx
+@@ -68,10 +68,10 @@
+ */
+ void LwpColor::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nRed, sizeof(m_nRed));
+-    pStrm->QuickRead(&m_nGreen, sizeof(m_nGreen));
+-    pStrm->QuickRead(&m_nBlue, sizeof(m_nBlue));
+-    pStrm->QuickRead(&m_nExtra, sizeof(m_nExtra));
++    m_nRed = pStrm->QuickReaduInt16();
++    m_nGreen = pStrm->QuickReaduInt16();
++    m_nBlue = pStrm->QuickReaduInt16();
++    m_nExtra = pStrm->QuickReaduInt16();
+     ResolveRGB();
+ }
+ 
+diff --git a/lotuswordpro/source/filter/lwpcontent.cxx b/lotuswordpro/source/filter/lwpcontent.cxx
+index 339ab78..2296ef9 100644
+--- a/lotuswordpro/source/filter/lwpcontent.cxx
++++ b/lotuswordpro/source/filter/lwpcontent.cxx
+@@ -80,6 +80,7 @@ void LwpHeadContent::Read()
+ LwpContent::LwpContent(LwpObjectHeader &objHdr, LwpSvStream* pStrm)
+     : LwpDLNFVList(objHdr, pStrm)
+ {}
++
+ void LwpContent::Read()
+ {
+     LwpDLNFVList::Read();
+@@ -87,9 +88,7 @@ void LwpContent::Read()
+     LwpObjectStream* pStrm = m_pObjStrm;
+ 
+     m_LayoutsWithMe.Read(pStrm);
+-    //sal_uInt16 nFlagsSkip;
+-    //pStrm->QuickRead(&nFlagsSkip, sizeof(nFlagsSkip));
+-    pStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
++    m_nFlags = pStrm->QuickReaduInt16();
+     m_nFlags &= ~(CF_CHANGED | CF_DISABLEVALUECHECKING);
+     //LwpAtomHolder ClassName;
+     //ClassName.Read(pStrm);
+@@ -113,8 +112,7 @@ void LwpContent::Read()
+         }
+         else
+         {
+-            sal_uInt8 HasNotify;
+-            pStrm->QuickRead(&HasNotify, sizeof(HasNotify));
++            sal_uInt8 HasNotify = pStrm->QuickReaduInt8();
+             if(HasNotify)
+             {
+                 SkipID.ReadIndexed(pStrm);
+diff --git a/lotuswordpro/source/filter/lwpdivinfo.cxx b/lotuswordpro/source/filter/lwpdivinfo.cxx
+index 0728b1f..0315427 100644
+--- a/lotuswordpro/source/filter/lwpdivinfo.cxx
++++ b/lotuswordpro/source/filter/lwpdivinfo.cxx
+@@ -90,7 +90,7 @@ void LwpDivInfo::Read()
+     }
+ 
+     m_LayoutID.ReadIndexed(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
++    m_nFlags = m_pObjStrm->QuickReaduInt16();
+     if (LwpFileHeader::m_nFileRevision < 0x0010)  // In 98, graphic links count too
+     {
+         if ((m_nFlags & DI_ANYOLEDDELINKS) == 0)
+@@ -102,15 +102,14 @@ void LwpDivInfo::Read()
+     m_ClassName.Read(m_pObjStrm);
+     m_InitialLayoutID.ReadIndexed(m_pObjStrm);
+ 
+-    m_pObjStrm->QuickRead(&m_nPageNoStyle, sizeof(m_nPageNoStyle));
++    m_nPageNoStyle = m_pObjStrm->QuickReaduInt16();
+     m_TabColor.Read(m_pObjStrm);
+ 
+     // read filler page stuff
+     m_FillerPageTextID.ReadIndexed(m_pObjStrm);
+ 
+     // read external file object stuff
+-    sal_uInt16 type;
+-    m_pObjStrm->QuickRead(&type, sizeof(type));
++    /*sal_uInt16 type =*/ m_pObjStrm->QuickReaduInt16();
+     //cpExternalFile = LNULL;
+ 
+     assert(type==0);
+diff --git a/lotuswordpro/source/filter/lwpdivopts.cxx b/lotuswordpro/source/filter/lwpdivopts.cxx
+index a84ccaf..71381b6 100644
+--- a/lotuswordpro/source/filter/lwpdivopts.cxx
++++ b/lotuswordpro/source/filter/lwpdivopts.cxx
+@@ -73,10 +73,10 @@ LwpHyphenOptions::~LwpHyphenOptions()
+ 
+ void LwpHyphenOptions::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
+-    pStrm->QuickRead(&m_nZoneBefore, sizeof(m_nZoneBefore));
+-    pStrm->QuickRead(&m_nZoneAfter, sizeof(m_nZoneAfter));
+-    pStrm->QuickRead(&m_nMaxLines, sizeof(m_nMaxLines));
++    m_nFlags = pStrm->QuickReaduInt16();
++    m_nZoneBefore = pStrm->QuickReaduInt16();
++    m_nZoneAfter = pStrm->QuickReaduInt16();
++    m_nMaxLines = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ 
+@@ -87,7 +87,7 @@ LwpTextLanguage::~LwpTextLanguage(){}
+ 
+ void LwpTextLanguage::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nLanguage, sizeof(m_nLanguage));
++    m_nLanguage = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ 
+     if( LwpFileHeader::m_nFileRevision <= 0x0a)
+@@ -128,7 +128,7 @@ LwpDivisionOptions::~LwpDivisionOptions()
+ void LwpDivisionOptions::Read()
+ {
+     m_HyphOpts.Read(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nOptionFlag, sizeof(m_nOptionFlag));
++    m_nOptionFlag = m_pObjStrm->QuickReaduInt16();
+     m_Lang.Read(m_pObjStrm);
+     m_pObjStrm->SkipExtra();
+ }
+diff --git a/lotuswordpro/source/filter/lwpdlvlist.cxx b/lotuswordpro/source/filter/lwpdlvlist.cxx
+index 3fb66b6..01198b3 100644
+--- a/lotuswordpro/source/filter/lwpdlvlist.cxx
++++ b/lotuswordpro/source/filter/lwpdlvlist.cxx
+@@ -143,7 +143,7 @@ void LwpDLNFPVList::ReadPropertyList(LwpObjectStream* pObjStrm)
+ {
+     if( LwpFileHeader::m_nFileRevision >= 0x0000B)
+     {
+-        pObjStrm->QuickRead(&m_bHasProperties, sizeof(m_bHasProperties));
++        m_bHasProperties = pObjStrm->QuickReaduInt8();
+         if (m_bHasProperties)
+         {
+             m_pPropList = new LwpPropList;
+diff --git a/lotuswordpro/source/filter/lwpdoc.cxx b/lotuswordpro/source/filter/lwpdoc.cxx
+index 5fab1b3..60db658 100644
+--- a/lotuswordpro/source/filter/lwpdoc.cxx
++++ b/lotuswordpro/source/filter/lwpdoc.cxx
+@@ -94,7 +94,7 @@ void LwpDocument::Read()
+ 
+     ReadPlug();
+ 
+-    m_pObjStrm->QuickRead(&m_nPersistentFlags, sizeof(m_nPersistentFlags));
++    m_nPersistentFlags = m_pObjStrm->QuickReaduInt32();
+ 
+     //Skip the SortOption and UIDocument
+     {
+@@ -143,7 +143,7 @@ void LwpDocument::Read()
+ void LwpDocument::ReadPlug()
+ {
+     m_DocSockID.ReadIndexed(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
++    m_nFlags = m_pObjStrm->QuickReaduInt16();
+     m_pObjStrm->SkipExtra();
+ }
+ 
+diff --git a/lotuswordpro/source/filter/lwpfilter.cxx b/lotuswordpro/source/filter/lwpfilter.cxx
+index 4abed4e..f6a8b19 100644
+--- a/lotuswordpro/source/filter/lwpfilter.cxx
++++ b/lotuswordpro/source/filter/lwpfilter.cxx
+@@ -371,7 +371,7 @@ using namespace OpenStormBento;
+ 
+     sal_uInt32 nTag;
+     pStream->Seek(0x10);
+-    pStream->Read(&nTag, sizeof(nTag));
++    *pStream >> nTag;
+     if (nTag != 0x3750574c) // "LWP7"
+     {
+         // small file, needs decompression
+diff --git a/lotuswordpro/source/filter/lwpfont.cxx b/lotuswordpro/source/filter/lwpfont.cxx
+index e39f8f0..b5f1db7 100644
+--- a/lotuswordpro/source/filter/lwpfont.cxx
++++ b/lotuswordpro/source/filter/lwpfont.cxx
+@@ -60,13 +60,13 @@
+ 
+ void LwpFontAttrEntry::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nAttrBits, sizeof(m_nAttrBits));
+-    pStrm->QuickRead(&m_nAttrOverrideBits, sizeof(m_nAttrOverrideBits));
+-    pStrm->QuickRead(&m_nAttrApplyBits, sizeof(m_nAttrApplyBits));
+-    pStrm->QuickRead(&m_nAttrOverrideBits2, sizeof(m_nAttrOverrideBits2));
+-    pStrm->QuickRead(&m_nAttrApplyBits2, sizeof(m_nAttrApplyBits2));
+-    pStrm->QuickRead(&m_nCase, sizeof(m_nCase));
+-    pStrm->QuickRead(&m_nUnder, sizeof(m_nUnder));
++    m_nAttrBits = pStrm->QuickReaduInt16();
++    m_nAttrOverrideBits = pStrm->QuickReaduInt16();
++    m_nAttrApplyBits = pStrm->QuickReaduInt16();
++    m_nAttrOverrideBits2 = pStrm->QuickReaduInt8();
++    m_nAttrApplyBits2 = pStrm->QuickReaduInt8();
++    m_nCase = pStrm->QuickReaduInt8();
++    m_nUnder = pStrm->QuickReaduInt8();
+     pStrm->SkipExtra();
+ }
+ 
+@@ -254,7 +254,7 @@ LwpFontTable::LwpFontTable()
+ void LwpFontTable::Read(LwpObjectStream *pStrm)
+ {
+     m_pFontEntries = NULL;
+-    pStrm->QuickRead(&m_nCount, sizeof(m_nCount));
++    m_nCount = pStrm->QuickReaduInt16();
+     if(m_nCount>0)
+     {
+         m_pFontEntries = new LwpFontTableEntry[m_nCount];
+@@ -284,18 +284,18 @@ LwpFontTable::~LwpFontTable()
+ void LwpFontNameEntry::Read(LwpObjectStream *pStrm)
+ {
+     //Read CFontDescriptionOverrideBase
+-    pStrm->QuickRead(&m_nOverrideBits, sizeof(m_nOverrideBits));
+-    pStrm->QuickRead(&m_nApplyBits, sizeof(m_nApplyBits));
+-    pStrm->QuickRead(&m_nPointSize, sizeof(m_nPointSize));
+-    pStrm->QuickRead(&m_nOverstrike, sizeof(m_nOverstrike));
+-    pStrm->QuickRead(&m_nTightness, sizeof(m_nTightness));
++    m_nOverrideBits = pStrm->QuickReaduInt8();
++    m_nApplyBits = pStrm->QuickReaduInt8();
++    m_nPointSize = pStrm->QuickReaduInt32();
++    m_nOverstrike = pStrm->QuickReaduInt16();
++    m_nTightness = pStrm->QuickReaduInt16();
+     m_Color.Read(pStrm);
+     m_BackColor.Read(pStrm);
+     pStrm->SkipExtra();
+ 
+     //Read data of LwpFontNameEntry
+-    pStrm->QuickRead(&m_nFaceName, sizeof(m_nFaceName));
+-    pStrm->QuickRead(&m_nAltFaceName, sizeof(m_nAltFaceName));
++    m_nFaceName = pStrm->QuickReaduInt16();
++    m_nAltFaceName = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ #include "xfilter/xfcolor.hxx"
+@@ -381,7 +381,7 @@ LwpFontNameManager::~LwpFontNameManager()
+ 
+ void LwpFontNameManager::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nCount, sizeof(m_nCount));
++    m_nCount = pStrm->QuickReaduInt16();
+     if(m_nCount>0)
+     {
+         m_pFontNames = new LwpFontNameEntry[m_nCount];
+@@ -412,19 +412,9 @@ OUString LwpFontNameManager::GetNameByIndex(sal_uInt16 index)
+     return (m_FontTbl.GetFaceName(nameindex));
+ }
+ 
+-/*void LwpFontNameManager::Override(sal_uInt16 baseID, sal_uInt16 overID, XFFont* pFont)
++void LwpFontAttrManager::Read(LwpObjectStream *pStrm)
+ {
+-    //Override
+-    m_pFontNames[overID-1]. Override(&m_pFontNames[baseID-1], pFont);
+-}
+-
+-void LwpFontAttrManager::Override(sal_uInt16 baseID, sal_uInt16 overID, XFFont*pFont)
+-{
+-    m_pFontAttrs[overID-1]. Override(&m_pFontAttrs[baseID-1], pFont);
+-}*/
+-
+-void LwpFontAttrManager::Read(LwpObjectStream *pStrm) {
+-    pStrm->QuickRead(&m_nCount, sizeof(m_nCount));
++    m_nCount = pStrm->QuickReaduInt16();
+     m_pFontAttrs = new LwpFontAttrEntry[m_nCount];
+ 
+     for(sal_uInt16 i=0; i<m_nCount; i++)
+diff --git a/lotuswordpro/source/filter/lwpfootnote.cxx b/lotuswordpro/source/filter/lwpfootnote.cxx
+index 985e3f2..761af3c 100644
+--- a/lotuswordpro/source/filter/lwpfootnote.cxx
++++ b/lotuswordpro/source/filter/lwpfootnote.cxx
+@@ -161,8 +161,8 @@ LwpFootnote::~LwpFootnote()
+ void LwpFootnote::Read()
+ {
+     LwpOrderedObject::Read();
+-    m_pObjStrm->QuickRead(&m_nType, sizeof(m_nType));
+-    m_pObjStrm->QuickRead(&m_nRow, sizeof(m_nRow));
++    m_nType = m_pObjStrm->QuickReaduInt16();
++    m_nRow = m_pObjStrm->QuickReaduInt16();
+     m_Content.ReadIndexed(m_pObjStrm);
+     m_pObjStrm->SkipExtra();
+ }
+@@ -451,8 +451,8 @@ void LwpFootnoteTable::Read()
+  */
+ void LwpFootnoteNumberOptions::Read(LwpObjectStream *pObjStrm)
+ {
+-    pObjStrm->QuickRead(&m_nFlag, sizeof(m_nFlag));
+-    pObjStrm->QuickRead(&m_nStartingNumber, sizeof(m_nStartingNumber));
++    m_nFlag = pObjStrm->QuickReaduInt16();
++    m_nStartingNumber = pObjStrm->QuickReaduInt16();
+     m_LeadingText.Read(pObjStrm);
+     m_TrailingText.Read(pObjStrm);
+     pObjStrm->SkipExtra();
+@@ -463,14 +463,13 @@ void LwpFootnoteNumberOptions::Read(LwpObjectStream *pObjStrm)
+  */
+ void LwpFootnoteSeparatorOptions::Read(LwpObjectStream *pObjStrm)
+ {
+-    pObjStrm->QuickRead(&m_nFlag, sizeof(m_nFlag));
+-    pObjStrm->QuickRead(&m_nLength, sizeof(m_nLength));
+-    pObjStrm->QuickRead(&m_nIndent, sizeof(m_nIndent));
+-    pObjStrm->QuickRead(&m_nAbove, sizeof(m_nAbove));
+-    pObjStrm->QuickRead(&m_nBelow, sizeof(m_nBelow));
++    m_nFlag = pObjStrm->QuickReaduInt16();
++    m_nLength = pObjStrm->QuickReaduInt32();
++    m_nIndent = pObjStrm->QuickReaduInt32();
++    m_nAbove = pObjStrm->QuickReaduInt32();
++    m_nBelow = pObjStrm->QuickReaduInt32();
+     m_BorderStuff.Read(pObjStrm);
+     pObjStrm->SkipExtra();
+-
+ }
+ 
+ 
+@@ -489,7 +488,7 @@ LwpFootnoteOptions::~LwpFootnoteOptions()
+  */
+ void LwpFootnoteOptions::Read()
+ {
+-    m_pObjStrm->QuickRead(&m_nFlag, sizeof(m_nFlag));
++    m_nFlag = m_pObjStrm->QuickReaduInt16();
+     m_FootnoteNumbering.Read(m_pObjStrm);
+     m_EndnoteDivisionNumbering.Read(m_pObjStrm);
+     m_EndnoteDivisionGroupNumbering.Read(m_pObjStrm);
+diff --git a/lotuswordpro/source/filter/lwpfoundry.cxx b/lotuswordpro/source/filter/lwpfoundry.cxx
+index a2263d9..88ce206 100644
+--- a/lotuswordpro/source/filter/lwpfoundry.cxx
++++ b/lotuswordpro/source/filter/lwpfoundry.cxx
+@@ -132,7 +132,7 @@ void LwpFoundry::Read(LwpObjectStream *pStrm)
+     m_EnumLayoutTail.ReadIndexed(pStrm);
+     m_NamedObjects.ReadIndexed(pStrm);
+ 
+-    pStrm->QuickRead(&m_nLastClickHere, sizeof(m_nLastClickHere));
++    m_nLastClickHere = pStrm->QuickReaduInt32();
+     m_SmartTextMgr.ReadIndexed(pStrm);
+ 
+     m_ContentMgr.Read(pStrm);
+@@ -358,30 +358,22 @@ void LwpVersionManager::Read(LwpObjectStream *pStrm)
+ 
+ void LwpVersionManager::Skip(LwpObjectStream *pStrm)
+ {
++    /*sal_uInt32 cNextUserVersionID =*/ pStrm->QuickReaduInt32();
++    sal_uInt16 Count = pStrm->QuickReaduInt16();
+ 
+-    sal_uInt32 cNextUserVersionID;
+-    pStrm->QuickRead(&cNextUserVersionID, sizeof(cNextUserVersionID));
+-
+-    sal_uInt16 Count;
+-    pStrm->QuickRead(&Count, sizeof(Count));
+-
+-    sal_uInt32 tag;
+     while(Count--)
+     {
+-        pStrm->QuickRead(&tag, sizeof(tag));
+-        sal_uInt16 len;
++        sal_uInt32 tag = pStrm->QuickReaduInt32();
+         switch(tag)
+         {
+             case TAG_USER_VERSION:
+                 // TODO: skip the CUserVersionControl
+-                pStrm->QuickRead(&len, sizeof(len));
+-                pStrm->SeekRel(len);
++                pStrm->SeekRel(pStrm->QuickReaduInt16());
+                 //pStrm->SkipExtra(); //The length has included the extra
+                 break;
+ 
+             default:
+-                pStrm->QuickRead(&len, sizeof(sal_uInt16));
+-                pStrm->SeekRel(len);
++                pStrm->SeekRel(pStrm->QuickReaduInt16());
+                 pStrm->SkipExtra();
+                 break;
+         }
+diff --git a/lotuswordpro/source/filter/lwpfrib.cxx b/lotuswordpro/source/filter/lwpfrib.cxx
+index 3deedc8..a283416 100644
+--- a/lotuswordpro/source/filter/lwpfrib.cxx
++++ b/lotuswordpro/source/filter/lwpfrib.cxx
+@@ -339,11 +339,11 @@ void LwpFrib::ReadModifiers(LwpObjectStream* pObjStrm,ModifierInfo* pModInfo)
+ {
+     for(;;)
+     {
+-        sal_uInt8 Modifier(0);
+-        sal_uInt8 len(0);
++        bool bFailure;
+ 
+         // Get the modifier type
+-        if (pObjStrm->QuickRead(&Modifier, sizeof(Modifier)) != sizeof(Modifier))
++        sal_uInt8 Modifier = pObjStrm->QuickReaduInt8(&bFailure);
++        if (bFailure)
+             break;
+ 
+         // Stop when we hit the last modifier
+@@ -351,19 +351,20 @@ void LwpFrib::ReadModifiers(LwpObjectStream* pObjStrm,ModifierInfo* pModInfo)
+             break;
+ 
+         // Get the modifier length
+-        if (pObjStrm->QuickRead(&len, sizeof(len)) != sizeof(len))
++        sal_uInt8 len = pObjStrm->QuickReaduInt8(&bFailure);
++        if (bFailure)
+             break;
+ 
+         switch (Modifier)
+         {
+             case FRIB_MTAG_FONT:
+-                if (len > sizeof(pModInfo->FontID))
++                if (len != sizeof(pModInfo->FontID))
+                 {
+                     OSL_FAIL("FRIB_MTAG_FONT entry wrong size\n");
+                     pObjStrm->SeekRel(len);
+                 }
+                 else
+-                    pObjStrm->QuickRead(&pModInfo->FontID,len);
++                    pModInfo->FontID = pObjStrm->QuickReaduInt32();
+                 break;
+             case FRIB_MTAG_CHARSTYLE:
+                 pModInfo->HasCharStyle = sal_True;
+@@ -374,13 +375,13 @@ void LwpFrib::ReadModifiers(LwpObjectStream* pObjStrm,ModifierInfo* pModInfo)
+                 pModInfo->Language.Read(pObjStrm);
+                 break;
+             case FRIB_MTAG_CODEPAGE:
+-                if (len > sizeof(pModInfo->CodePage))
++                if (len != sizeof(pModInfo->CodePage))
+                 {
+                     OSL_FAIL("FRIB_MTAG_CODEPAGE entry wrong size\n");
+                     pObjStrm->SeekRel(len);
+                 }
+                 else
+-                    pObjStrm->QuickRead(&pModInfo->CodePage,len);
++                    pModInfo->CodePage = pObjStrm->QuickReaduInt16();
+                 break;
+             case FRIB_MTAG_ATTRIBUTE:
+                 pModInfo->aTxtAttrOverride.Read(pObjStrm);
+diff --git a/lotuswordpro/source/filter/lwpfribptr.cxx b/lotuswordpro/source/filter/lwpfribptr.cxx
+index 3511baf..ac6bb89 100644
+--- a/lotuswordpro/source/filter/lwpfribptr.cxx
++++ b/lotuswordpro/source/filter/lwpfribptr.cxx
+@@ -107,17 +107,13 @@ LwpFribPtr::~LwpFribPtr()
+ 
+ void LwpFribPtr::ReadPara(LwpObjectStream* pObjStrm)
+ {
+-    sal_uInt8 FribTag=0;
+-    sal_uInt8 FribType;
+-    sal_uInt8 FribEditor;
+-
+     LwpFrib* pCurFrib = m_pFribs = NULL;
+     for(;;)
+     {
+         // Get the frib type
+-        pObjStrm->QuickRead(&FribTag, sizeof(FribTag));
++        sal_uInt8 FribTag = pObjStrm->QuickReaduInt8();
+ 
+-        FribType = FribTag & ~FRIB_TAG_TYPEMASK;
++        sal_uInt8 FribType = FribTag & ~FRIB_TAG_TYPEMASK;
+ 
+         // Stop when we hit Elvis
+         if (FribType == FRIB_TAG_ELVIS)
+@@ -125,7 +121,7 @@ void LwpFribPtr::ReadPara(LwpObjectStream* pObjStrm)
+ 
+         // skip the editor ID
+         //pObjStrm->SeekRel(sizeof(sal_uInt8));
+-        pObjStrm->QuickRead(&FribEditor, sizeof(FribEditor));
++        sal_uInt8 FribEditor = pObjStrm->QuickReaduInt8();
+         if( FribType != FT_MAXIMUM )
+         {
+             LwpFrib* pFrib = LwpFrib::CreateFrib( m_pPara, pObjStrm, FribTag,FribEditor);
+diff --git a/lotuswordpro/source/filter/lwpfribtext.cxx b/lotuswordpro/source/filter/lwpfribtext.cxx
+index 09af2d5..d1c6f12 100644
+--- a/lotuswordpro/source/filter/lwpfribtext.cxx
++++ b/lotuswordpro/source/filter/lwpfribtext.cxx
+@@ -122,10 +122,10 @@ void LwpFribText::XFConvert(XFContentContainer* pXFPara,LwpStory* pStory)
+  */
+ void LwpFribParaNumber::Read(LwpObjectStream* pObjStrm, sal_uInt16 /*len*/)
+ {
+-    pObjStrm->QuickRead(&m_nStyleID, sizeof(m_nStyleID));
+-    pObjStrm->QuickRead(&m_nNumberChar, sizeof(m_nNumberChar));
+-    pObjStrm->QuickRead(&m_nLevel, sizeof(m_nLevel));
+-    pObjStrm->QuickRead(&m_nStart, sizeof(m_nStart));
++    m_nStyleID = pObjStrm->QuickReaduInt16();
++    m_nNumberChar = pObjStrm->QuickReaduInt16();
++    m_nLevel = pObjStrm->QuickReaduInt16();
++    m_nStart = pObjStrm->QuickReaduInt16();
+ }
+ 
+ /**
+@@ -153,7 +153,7 @@ LwpFribDocVar::~LwpFribDocVar()
+  */
+ void LwpFribDocVar::Read(LwpObjectStream* pObjStrm, sal_uInt16 /*len*/)
+ {
+-    pObjStrm->QuickRead(&m_nType, sizeof(m_nType));
++    m_nType = pObjStrm->QuickReaduInt16();
+     m_pName->Read(pObjStrm);
+ }
+ 
+diff --git a/lotuswordpro/source/filter/lwpidxmgr.cxx b/lotuswordpro/source/filter/lwpidxmgr.cxx
+index f798c29..ccd2c38 100644
+--- a/lotuswordpro/source/filter/lwpidxmgr.cxx
++++ b/lotuswordpro/source/filter/lwpidxmgr.cxx
+@@ -152,8 +152,7 @@ void LwpIndexManager::Read(LwpSvStream* pStrm)
+ void LwpIndexManager::ReadRootData(LwpObjectStream* pObjStrm)
+ {
+ 
+-    sal_uInt16 KeyCount = 0;
+-    pObjStrm->QuickRead(&KeyCount, sizeof(KeyCount));
++    sal_uInt16 KeyCount = pObjStrm->QuickReaduInt16();
+     m_nLeafCount = KeyCount ? KeyCount + 1 : 0;
+ 
+     if(KeyCount)
+@@ -174,15 +173,11 @@ void LwpIndexManager::ReadRootData(LwpObjectStream* pObjStrm)
+         }
+ 
+         for (k = 0; k < KeyCount; k++)
+-        {
+-            pObjStrm->QuickRead(&(m_RootObjs[k]->offset), sizeof(sal_uInt32));
+-        }
++            m_RootObjs[k]->offset = pObjStrm->QuickReaduInt32();
+ 
+         //read leaf index offset
+         for (k = 0; k < m_nLeafCount; k++)
+-        {
+-            pObjStrm->QuickRead(&(m_ChildIndex[k]), sizeof(sal_uInt32));
+-        }
++            m_ChildIndex[k] = pObjStrm->QuickReaduInt32();
+     }
+ 
+     ReadTimeTable(pObjStrm);
+@@ -196,10 +191,8 @@ void LwpIndexManager::ReadRootData(LwpObjectStream* pObjStrm)
+  */
+ void LwpIndexManager::ReadObjIndexData(LwpObjectStream* pObjStrm)
+ {
+-    sal_uInt16 KeyCount = 0;
+-    sal_uInt16 LeafCount = 0;
+-    pObjStrm->QuickRead(&KeyCount, sizeof(KeyCount));
+-    LeafCount = KeyCount + 1;
++    sal_uInt16 KeyCount = pObjStrm->QuickReaduInt16();
++    sal_uInt16 LeafCount = KeyCount + 1;
+ 
+     std::vector<LwpKey*> vObjIndexs;
+ 
+@@ -219,12 +212,10 @@ void LwpIndexManager::ReadObjIndexData(LwpObjectStream* pObjStrm)
+         }
+ 
+         for (k = 0; k < KeyCount; k++)
+-        {
+-            pObjStrm->QuickRead(&(vObjIndexs[k]->offset), sizeof(sal_uInt32));
+-        }
++            vObjIndexs[k]->offset = pObjStrm->QuickReaduInt32();
+ 
+         for (k = 0; k < LeafCount; k++)
+-            pObjStrm->QuickRead(&(m_TempVec[k]), sizeof(sal_uInt32));
++            m_TempVec[k] = pObjStrm->QuickReaduInt32();
+     }
+ 
+     for( sal_uInt16 j=0; j<LeafCount; j++ )
+@@ -294,8 +285,7 @@ void LwpIndexManager::ReadLeafIndex( LwpSvStream *pStrm )
+  */
+ void LwpIndexManager::ReadLeafData( LwpObjectStream *pObjStrm )
+ {
+-    sal_uInt16 KeyCount=0;
+-    pObjStrm->QuickRead(&KeyCount, sizeof(KeyCount));
++    sal_uInt16 KeyCount = pObjStrm->QuickReaduInt16();
+ 
+     if(KeyCount)
+     {
+@@ -312,9 +302,7 @@ void LwpIndexManager::ReadLeafData( LwpObjectStream *pObjStrm )
+         }
+ 
+         for (sal_uInt8 j = 0; j < KeyCount; j++)
+-        {
+-            pObjStrm->QuickRead(&(m_ObjectKeys.at(m_nKeyCount+j)->offset), sizeof(sal_uInt32));
+-        }
++            m_ObjectKeys.at(m_nKeyCount+j)->offset = pObjStrm->QuickReaduInt32();
+     }
+     m_nKeyCount += KeyCount;
+ }
+@@ -323,13 +311,11 @@ void LwpIndexManager::ReadLeafData( LwpObjectStream *pObjStrm )
+  */
+ void LwpIndexManager::ReadTimeTable(LwpObjectStream *pObjStrm)
+ {
+-    sal_uInt16 nTimeCount;
+-    pObjStrm->QuickRead(&nTimeCount, sizeof(nTimeCount));
++    sal_uInt16 nTimeCount = pObjStrm->QuickReaduInt16();
+ 
+-    sal_uInt32 atime;
+-    for(sal_uInt16 i=0; i<nTimeCount; i++)
++    for(sal_uInt16 i=0; i<nTimeCount; ++i)
+     {
+-        pObjStrm->QuickRead( &atime, sizeof(atime) );
++        sal_uInt32 atime = pObjStrm->QuickReaduInt32();
+         m_TimeTable.push_back(atime);
+     }
+ }
+diff --git a/lotuswordpro/source/filter/lwplayout.cxx b/lotuswordpro/source/filter/lwplayout.cxx
+index 1164aee..8931a16 100644
+--- a/lotuswordpro/source/filter/lwplayout.cxx
++++ b/lotuswordpro/source/filter/lwplayout.cxx
+@@ -88,14 +88,14 @@ void LwpVirtualLayout::Read()
+     LwpDLNFPVList::Read();
+ 
+     LwpObjectStream* pStrm = m_pObjStrm;
+-    pStrm->QuickRead(&m_nAttributes, sizeof(m_nAttributes));
+-    pStrm->QuickRead(&m_nAttributes2, sizeof(m_nAttributes2));
+-    pStrm->QuickRead(&m_nAttributes3, sizeof(m_nAttributes3));
+-    pStrm->QuickRead(&m_nOverrideFlag, sizeof(m_nOverrideFlag));
+-    pStrm->QuickRead(&m_nDirection, sizeof(m_nDirection));
++    m_nAttributes = pStrm->QuickReaduInt32();
++    m_nAttributes2 = pStrm->QuickReaduInt32();
++    m_nAttributes3 = pStrm->QuickReaduInt32();
++    m_nOverrideFlag = pStrm->QuickReaduInt32();
++    m_nDirection = pStrm->QuickReaduInt16();
+ 
+     //Note that two bytes is read into m_nEditorID instead of one byte.
+-    pStrm->QuickRead(&m_nEditorID, sizeof(m_nEditorID));
++    m_nEditorID = pStrm->QuickReaduInt16();
+ 
+     m_NextEnumerated.ReadIndexed(pStrm);
+     m_PreviousEnumerated.ReadIndexed(pStrm);
+@@ -553,11 +553,11 @@ LwpLayoutStyle::~LwpLayoutStyle()
+ 
+ void LwpLayoutStyle::Read(LwpObjectStream* pStrm)
+ {
+-    pStrm->QuickRead(&m_nStyleDefinition, sizeof(m_nStyleDefinition));
++    m_nStyleDefinition = pStrm->QuickReaduInt32();
+     m_pDescription->Read(pStrm);
+     if (pStrm->CheckExtra())
+     {
+-        pStrm->QuickRead(&m_nKey, 2);
++        m_nKey = pStrm->QuickReaduInt16();
+         pStrm->SkipExtra();
+     }
+ }
+@@ -578,8 +578,8 @@ LwpLayoutMisc::~LwpLayoutMisc()
+ 
+ void LwpLayoutMisc::Read(LwpObjectStream* pStrm)
+ {
+-    pStrm->QuickRead(&m_nGridType, 2);
+-    pStrm->QuickRead(&m_nGridDistance, 4);
++    m_nGridType = pStrm->QuickReaduInt16();
++    m_nGridDistance = pStrm->QuickReadInt32();
+     m_pContentStyle->Read(pStrm);
+     pStrm->SkipExtra();
+ }
+@@ -621,8 +621,7 @@ void LwpMiddleLayout::Read()
+     m_BasedOnStyle.ReadIndexed(pStrm);
+     m_TabPiece.ReadIndexed(pStrm);
+ 
+-    sal_uInt8 nWhatsItGot = 0;
+-    pStrm->QuickRead(&nWhatsItGot, 1);
++    sal_uInt8 nWhatsItGot = pStrm->QuickReaduInt8();
+ 
+     if (nWhatsItGot & DISK_GOT_STYLE_STUFF)
+     {
+@@ -1522,19 +1521,15 @@ void LwpLayout::Read()
+     }
+     else
+     {
+-        sal_uInt16 nSimple;
+-        pStrm->QuickRead(&nSimple, 2);
++        sal_uInt16 nSimple = pStrm->QuickReaduInt16();
+ 
+         if (!nSimple)
+         {
+             m_pUseWhen->Read(pStrm);
+ 
+-            sal_uInt8 nFlag;
+-            pStrm->QuickRead(&nFlag, 1);
++            sal_uInt8 nFlag = pStrm->QuickReaduInt8();
+             if (nFlag)
+-            {
+                 m_Positon.ReadIndexed(pStrm);
+-            }
+         }
+ 
+         m_LayColumns.ReadIndexed(pStrm);
+@@ -1994,13 +1989,12 @@ void LwpPlacableLayout::Read()
+     }
+     else
+     {
+-        sal_uInt16 simple;
+-        pStrm->QuickRead(&simple, sizeof(simple));
++        sal_uInt16 simple = pStrm->QuickReaduInt16();
+         if(!simple)
+         {
+-            pStrm->QuickRead(&m_nWrapType, sizeof(m_nWrapType));
+-            pStrm->QuickRead(&m_nBuoyancy, sizeof(m_nBuoyancy));
+-            pStrm->QuickRead(&m_nBaseLineOffset, sizeof(m_nBaseLineOffset));
++            m_nWrapType = pStrm->QuickReaduInt8();
++            m_nBuoyancy = pStrm->QuickReaduInt8();
++            m_nBaseLineOffset = pStrm->QuickReadInt32();
+             m_Script.Read( pStrm);
+         }
+         else
+@@ -2012,8 +2006,7 @@ void LwpPlacableLayout::Read()
+         m_LayRelativity.ReadIndexed( pStrm);
+         if(pStrm->CheckExtra())
+         {
+-            sal_uInt16 count;
+-            pStrm->QuickRead(&count, sizeof(count));
++            sal_uInt16 count = pStrm->QuickReaduInt16();
+             if(count)
+             {
+                 // temporily added by  to avoid assertion
+diff --git a/lotuswordpro/source/filter/lwplnopts.cxx b/lotuswordpro/source/filter/lwplnopts.cxx
+index 738bd81..48ddbcc 100644
+--- a/lotuswordpro/source/filter/lwplnopts.cxx
++++ b/lotuswordpro/source/filter/lwplnopts.cxx
+@@ -65,11 +65,11 @@ LwpLineNumberOptions::LwpLineNumberOptions(LwpObjectStream* pStrm)
+  */
+ void LwpLineNumberOptions::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nType, sizeof(m_nType));
+-    pStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
+-    pStrm->QuickRead(&m_nSeparator, sizeof(m_nSeparator));
+-    pStrm->QuickRead(&m_nSpacing, sizeof(m_nSpacing));
+-    pStrm->QuickRead(&m_nDistance, sizeof(m_nDistance));
++    m_nType = pStrm->QuickReaduInt16();
++    m_nFlags = pStrm->QuickReaduInt16();
++    m_nSeparator = pStrm->QuickReaduInt16();
++    m_nSpacing = pStrm->QuickReaduInt32();
++    m_nDistance = pStrm->QuickReaduInt32();
+     pStrm->SkipExtra();
+ }
+ /**
+diff --git a/lotuswordpro/source/filter/lwpnotes.cxx b/lotuswordpro/source/filter/lwpnotes.cxx
+index c11b72f..dc5c661 100644
+--- a/lotuswordpro/source/filter/lwpnotes.cxx
++++ b/lotuswordpro/source/filter/lwpnotes.cxx
+@@ -149,7 +149,7 @@ void LwpNoteLayout::Read()
+ {
+     LwpFrameLayout::Read();
+ 
+-    m_pObjStrm->QuickRead(&m_nTime, sizeof(m_nTime));
++    m_nTime = m_pObjStrm->QuickReaduInt32();
+     m_UserName.Read(m_pObjStrm);
+ 
+     LwpAtomHolder aUserInitials;
+diff --git a/lotuswordpro/source/filter/lwpnumberingoverride.cxx b/lotuswordpro/source/filter/lwpnumberingoverride.cxx
+index baad51c..47f3b9a 100644
+--- a/lotuswordpro/source/filter/lwpnumberingoverride.cxx
++++ b/lotuswordpro/source/filter/lwpnumberingoverride.cxx
+@@ -85,13 +85,13 @@ void    LwpNumberingOverride::Read(LwpObjectStream *pStrm)
+     {
+         ReadCommon(pStrm);
+ 
+-        pStrm->QuickRead(&m_nLevel, sizeof(m_nLevel));
+-        pStrm->QuickRead(&m_nPosition, sizeof(m_nPosition));
++        m_nLevel = pStrm->QuickReaduInt16();
++        m_nPosition = pStrm->QuickReaduInt16();
+     }
+ 
+     pStrm->SkipExtra();
+ }
+-//add by , 02/03/2005
++
+ void LwpNumberingOverride::Override(LwpNumberingOverride* pOther)
+ {
+     if (m_nApply & NO_LEVEL)
+@@ -148,11 +148,13 @@ void LwpNumberingOverride::OverrideLevel(sal_uInt16 nNewLv)
+     m_nLevel = nNewLv;
+     LwpOverride::Override(NO_LEVEL, STATE_ON);
+ }
++
+ void LwpNumberingOverride::OverridePosition(sal_uInt16 nNewPos)
+ {
+     m_nPosition = nNewPos;
+     LwpOverride::Override(NO_POSITION, STATE_ON);
+ }
++
+ void LwpNumberingOverride::OverrideHeading(sal_Bool bVal)
+ {
+     if (bVal)
+diff --git a/lotuswordpro/source/filter/lwpnumberingoverride.hxx b/lotuswordpro/source/filter/lwpnumberingoverride.hxx
+index ab8524e..68749a1 100644
+--- a/lotuswordpro/source/filter/lwpnumberingoverride.hxx
++++ b/lotuswordpro/source/filter/lwpnumberingoverride.hxx
+@@ -81,7 +81,6 @@ public:
+ public:
+     virtual void Read(LwpObjectStream *pStrm);
+ 
+-    //add by , 02/03/2005
+     void Override(LwpNumberingOverride* pOther);
+ 
+     inline sal_uInt16 GetLevel() const;
+@@ -126,7 +125,6 @@ inline sal_uInt16 LwpNumberingOverride::GetPosition() const
+     return m_nPosition;
+ }
+ 
+-//add by , 02/03/2005
+ inline sal_Bool LwpNumberingOverride::IsLevelOverridden()
+ {
+     return (sal_Bool)((m_nOverride & NO_LEVEL) != 0);
+diff --git a/lotuswordpro/source/filter/lwpobjid.cxx b/lotuswordpro/source/filter/lwpobjid.cxx
+index 28f54ad..e0d2a9783 100644
+--- a/lotuswordpro/source/filter/lwpobjid.cxx
++++ b/lotuswordpro/source/filter/lwpobjid.cxx
+@@ -90,8 +90,8 @@ sal_uInt32 LwpObjectID::Read(LwpSvStream *pStrm)
+ */
+ sal_uInt32 LwpObjectID::Read(LwpObjectStream *pObj)
+ {
+-    pObj->QuickRead(&m_nLow, sizeof(m_nLow));
+-    pObj->QuickRead(&m_nHigh, sizeof(m_nHigh));
++    m_nLow = pObj->QuickReaduInt32();
++    m_nHigh = pObj->QuickReaduInt16();
+     return DiskSize();
+ }
+ /**
+@@ -140,7 +140,7 @@ sal_uInt32 LwpObjectID::ReadIndexed(LwpObjectStream *pStrm)
+         return Read(pStrm);
+     }
+ 
+-    pStrm->QuickRead(&m_nIndex, sizeof(m_nIndex));
++    m_nIndex = pStrm->QuickReaduInt8();
+     if (m_nIndex)
+     {
+         m_bIsCompressed = sal_True;
+@@ -151,10 +151,8 @@ sal_uInt32 LwpObjectID::ReadIndexed(LwpObjectStream *pStrm)
+         m_nLow = pIdxMgr->GetObjTime( (sal_uInt16)m_nIndex);
+     }
+     else
+-    {
+-        pStrm->QuickRead(&m_nLow, sizeof(m_nLow));
+-    }
+-    pStrm->QuickRead(&m_nHigh, sizeof(m_nHigh));
++        m_nLow = pStrm->QuickReaduInt32();
++    m_nHigh = pStrm->QuickReaduInt16();
+     return DiskSizeIndexed();
+ }
+ /**
+@@ -188,11 +186,8 @@ sal_uInt32 LwpObjectID::ReadCompressed( LwpSvStream* pStrm, LwpObjectID &prev )
+ */
+ sal_uInt32 LwpObjectID::ReadCompressed( LwpObjectStream* pObj, LwpObjectID &prev )
+ {
+-
+-    sal_uInt32 len=0;
+-    sal_uInt8 diff;
+-
+-    len += pObj->QuickRead( &diff, sizeof(diff));
++    sal_uInt8 diff = pObj->QuickReaduInt8();
++    sal_uInt32 len=1;
+ 
+     if (diff == 255)
+     {
+diff --git a/lotuswordpro/source/filter/lwpobjstrm.cxx b/lotuswordpro/source/filter/lwpobjstrm.cxx
+index a86438d..d6c6fc8 100644
+--- a/lotuswordpro/source/filter/lwpobjstrm.cxx
++++ b/lotuswordpro/source/filter/lwpobjstrm.cxx
+@@ -204,88 +204,128 @@
+ /**
+  * @descr  Quick read sal_Bool
+  */
+-sal_Bool LwpObjectStream::QuickReadBool()
++sal_Bool LwpObjectStream::QuickReadBool(bool *pFailure)
+ {
+-    sal_uInt16 nValue;
+-    QuickRead(&nValue, 2);
+-    return (sal_Bool)(nValue != 0);
++    SVBT16 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return static_cast<sal_Bool>(SVBT16ToShort(aValue));
+ }
++
+ /**
+  * @descr  Quick read sal_uInt32
+  */
+-sal_uInt32 LwpObjectStream::QuickReaduInt32()
++sal_uInt32 LwpObjectStream::QuickReaduInt32(bool *pFailure)
+ {
+-    sal_uInt32 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    SVBT32 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return SVBT32ToUInt32(aValue);
+ }
++
+ /**
+  * @descr  Quick read sal_uInt32
+  */
+-sal_uInt16 LwpObjectStream::QuickReaduInt16()
++sal_uInt16 LwpObjectStream::QuickReaduInt16(bool *pFailure)
+ {
+-    sal_uInt16 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    SVBT16 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return SVBT16ToShort(aValue);
+ }
++
+ /**
+  * @descr  Quick read sal_Int32
+  */
+-sal_Int32 LwpObjectStream::QuickReadInt32()
++sal_Int32 LwpObjectStream::QuickReadInt32(bool *pFailure)
+ {
+-    sal_Int32 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    SVBT32 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return static_cast<sal_Int32>(SVBT32ToUInt32(aValue));
+ }
++
+ /**
+  * @descr  Quick read sal_Int16
+  */
+-sal_Int16 LwpObjectStream::QuickReadInt16()
++sal_Int16 LwpObjectStream::QuickReadInt16(bool *pFailure)
+ {
+-    sal_Int16 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    SVBT16 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++
++    return static_cast<sal_Int16>(SVBT16ToShort(aValue));
+ }
++
+ /**
+  * @descr  Quick read sal_Int8
+  */
+-sal_Int8 LwpObjectStream::QuickReadInt8()
++sal_Int8 LwpObjectStream::QuickReadInt8(bool *pFailure)
+ {
+-    sal_Int8 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    SVBT8 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return static_cast<sal_Int8>(SVBT8ToByte(aValue));
+ }
++
+ /**
+  * @descr  Quick read sal_uInt8
+  */
+-sal_uInt8 LwpObjectStream::QuickReaduInt8()
++sal_uInt8 LwpObjectStream::QuickReaduInt8(bool *pFailure)
++{
++    SVBT8 aValue = {0};
++    sal_uInt16 nRead = QuickRead(aValue, sizeof(aValue));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(aValue));
++    return SVBT8ToByte(aValue);
++}
++
++/**
++ * @descr  Quick read double
++ */
++double LwpObjectStream::QuickReadDouble(bool *pFailure)
+ {
+-    sal_uInt8 nValue;
+-    QuickRead(&nValue, sizeof(nValue));
+-    return nValue;
++    union
++    {
++        double d;
++        sal_uInt8 c[8];
++    } s;
++    memset(s.c, 0, sizeof(s.c));
++    sal_uInt16 nRead = QuickRead(s.c, sizeof(s.c));
++    if (pFailure)
++        *pFailure = (nRead != sizeof(s.c));
++#if defined(OSL_BIGENDIAN)
++    for (size_t i = 0; i < 4; ++i)
++        std::swap(s.c[i], s.c[7-i]);
++#endif
++    return s.d;
+ }
++
+ /**
+  * @descr  skip extra bytes
+  */
+ void LwpObjectStream::SkipExtra()
+ {
+-    sal_uInt16 extra;
+-
+-    QuickRead(&extra, sizeof(extra));
++    sal_uInt16 extra = QuickReaduInt16();
+     while (extra != 0)
+     {
+         assert(false);
+-        QuickRead(&extra, sizeof(extra));
++        extra = QuickReaduInt16();
+     }
+ }
++
+ /**
+  * @descr  check if extra bytes
+  */
+ sal_uInt16 LwpObjectStream::CheckExtra()
+ {
+-    sal_uInt16 extra;
+-    QuickRead(&extra, sizeof(extra));
+-    return extra;
++    return QuickReaduInt16();
+ }
+ /**
+  * @descr  decompress data buffer from pSrc to pDst
+diff --git a/lotuswordpro/source/filter/lwpobjstrm.hxx b/lotuswordpro/source/filter/lwpobjstrm.hxx
+index a4a1668..3c77bff 100644
+--- a/lotuswordpro/source/filter/lwpobjstrm.hxx
++++ b/lotuswordpro/source/filter/lwpobjstrm.hxx
+@@ -96,18 +96,16 @@ public:
+     void SkipExtra();
+     sal_uInt16 CheckExtra();
+ 
+-    //01/14/2005
+-    sal_Bool QuickReadBool();
+-    sal_uInt32 QuickReaduInt32();
+-    sal_uInt16 QuickReaduInt16();
+-    sal_uInt8 QuickReaduInt8();
+-    sal_Int32 QuickReadInt32();
+-    sal_Int16 QuickReadInt16();
+-    sal_Int8 QuickReadInt8();
+-    //end
++    sal_Bool QuickReadBool(bool *pFailure=NULL);
++    sal_uInt32 QuickReaduInt32(bool *pFailure=NULL);
++    sal_uInt16 QuickReaduInt16(bool *pFailure=NULL);
++    sal_uInt8 QuickReaduInt8(bool *pFailure=NULL);
++    sal_Int32 QuickReadInt32(bool *pFailure=NULL);
++    sal_Int16 QuickReadInt16(bool *pFailure=NULL);
++    sal_Int8 QuickReadInt8(bool *pFailure=NULL);
++    double QuickReadDouble(bool *pFailure=NULL);
+ 
+-    OUString QuickReadStringPtr(void);
+-    //void QuickReadString(unsigned char *pString, sal_uInt16 len);
++    OUString QuickReadStringPtr();
+     void QuickReadStringWithMax(unsigned char * pString, sal_uInt16 MaxLen);
+ 
+ public:
+diff --git a/lotuswordpro/source/filter/lwppagehint.cxx b/lotuswordpro/source/filter/lwppagehint.cxx
+index ef61671..166f0f5 100644
+--- a/lotuswordpro/source/filter/lwppagehint.cxx
++++ b/lotuswordpro/source/filter/lwppagehint.cxx
+@@ -95,20 +95,20 @@ void LwpPageHint::Read()
+     m_PageLayout.ReadIndexed(m_pObjStrm);
+     //m_ContentHints.ReadIndexed(m_pObjStrm);
+     m_ContentHints.Read(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nLastFootnoteSeen,sizeof(m_nLastFootnoteSeen));
+-    m_pObjStrm->QuickRead(&m_nLastFootnoteProcessed,sizeof(m_nLastFootnoteProcessed));
+-    m_pObjStrm->QuickRead(&m_nFlags,sizeof(m_nFlags));
+-    m_pObjStrm->QuickRead(&m_nPageNumber,sizeof(m_nPageNumber));
+-    m_pObjStrm->QuickRead(&m_nNumberStyle,sizeof(m_nNumberStyle));
++    m_nLastFootnoteSeen = m_pObjStrm->QuickReaduInt16();
++    m_nLastFootnoteProcessed = m_pObjStrm->QuickReaduInt16();
++    m_nFlags = m_pObjStrm->QuickReaduInt16();
++    m_nPageNumber = m_pObjStrm->QuickReaduInt16();
++    m_nNumberStyle = m_pObjStrm->QuickReaduInt16();
+     m_BeforeText.Read(m_pObjStrm);
+     m_AfterText.Read(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nNumberFlags,sizeof(m_nNumberFlags));
+-    m_pObjStrm->QuickRead(&m_nRenderedPageNumber,sizeof(m_nRenderedPageNumber));
++    m_nNumberFlags = m_pObjStrm->QuickReaduInt8();
++    m_nRenderedPageNumber = m_pObjStrm->QuickReaduInt16();
+     m_CurrentSection.ReadIndexed(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nCurrentSectionPage,sizeof(m_nCurrentSectionPage));
++    m_nCurrentSectionPage = m_pObjStrm->QuickReaduInt16();
+     //m_FootnoteSeen.ReadIndexed(m_pObjStrm);
+     m_FootnoteSeen.Read(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nLayoutPageNumber,sizeof(m_nLayoutPageNumber));
++    m_nLayoutPageNumber = m_pObjStrm->QuickReaduInt16();
+ 
+     m_pObjStrm->SkipExtra();
+ }
+diff --git a/lotuswordpro/source/filter/lwppagelayout.cxx b/lotuswordpro/source/filter/lwppagelayout.cxx
+index d3eab7b..5e860c7 100644
+--- a/lotuswordpro/source/filter/lwppagelayout.cxx
++++ b/lotuswordpro/source/filter/lwppagelayout.cxx
+@@ -102,13 +102,11 @@ void LwpPageLayout::Read()
+         // read PreRevBLayout...
+     }
+ 
+-    m_pObjStrm->QuickRead(&m_nPrinterBin, sizeof(m_nPrinterBin));
++    m_nPrinterBin = m_pObjStrm->QuickReaduInt16();
+     m_pPrinterBinName->Read(m_pObjStrm);
+ 
+     if (LwpFileHeader::m_nFileRevision >= 0x000B)
+-    {
+-        m_pObjStrm->QuickRead(&m_nBdroffset, sizeof(m_nBdroffset));
+-    }
++        m_nBdroffset = m_pObjStrm->QuickReadInt32();
+ 
+     if (m_pObjStrm->CheckExtra())
+     {
+@@ -742,9 +740,7 @@ void LwpHeaderLayout::Read()
+     LwpPlacableLayout::Read();
+ 
+     if(LwpFileHeader::m_nFileRevision >= 0x000E)
+-    {
+-        m_pObjStrm->QuickRead(&m_nBorderOffset, sizeof(m_nBorderOffset));
+-    }
++        m_nBorderOffset = m_pObjStrm->QuickReadInt32();
+     else
+         m_nBorderOffset = 0;
+     m_pObjStrm->SkipExtra();
+@@ -910,9 +906,7 @@ void LwpFooterLayout::Read()
+     LwpPlacableLayout::Read();
+ 
+     if(LwpFileHeader::m_nFileRevision >= 0x000E)
+-    {
+-        m_pObjStrm->QuickRead(&m_nBorderOffset, sizeof(m_nBorderOffset));
+-    }
++        m_nBorderOffset = m_pObjStrm->QuickReadInt32();
+     else
+         m_nBorderOffset = 0;
+     m_pObjStrm->SkipExtra();
+diff --git a/lotuswordpro/source/filter/lwppara.cxx b/lotuswordpro/source/filter/lwppara.cxx
+index 2ca5750..d3324dd 100644
+--- a/lotuswordpro/source/filter/lwppara.cxx
++++ b/lotuswordpro/source/filter/lwppara.cxx
+@@ -152,16 +152,13 @@ void LwpPara::Read()
+ 
+     sal_Bool Simple;
+     sal_Bool Notify = sal_False;
+-//  m_Fribs.SetPara(this);
+-//  LwpParaPropListProperty *PropList = NULL;
+     if(LwpFileHeader::m_nFileRevision<0x0006)
+         Simple = sal_False;
+     else if(LwpFileHeader::m_nFileRevision<0x000B)
+-        m_pObjStrm->QuickRead(&Simple, sizeof(Simple));
++        Simple = m_pObjStrm->QuickReaduInt8();
+     else
+     {
+-        sal_uInt8 Flag;
+-        m_pObjStrm->QuickRead(&Flag, sizeof(Flag));
++        sal_uInt8 Flag = m_pObjStrm->QuickReaduInt8();
+ 
+         const int DISK_SIMPLE = 1;
+         const int DISK_NOTIFY = 2;
+@@ -172,7 +169,7 @@ void LwpPara::Read()
+ 
+     if(!Simple)
+     {
+-        m_pObjStrm->QuickRead(&m_nOrdinal, sizeof(m_nOrdinal));
++        m_nOrdinal = m_pObjStrm->QuickReaduInt32();
+         if(LwpFileHeader::m_nFileRevision<0x000B)
+         {
+             // TODO: to process
+@@ -200,7 +197,7 @@ void LwpPara::Read()
+     else
+         m_nOrdinal = 0x0001;
+ 
+-    m_pObjStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
++    m_nFlags = m_pObjStrm->QuickReaduInt16();
+     m_ParaStyle.ReadIndexed(m_pObjStrm);
+ 
+     if(!Simple)
+@@ -228,7 +225,7 @@ void LwpPara::Read()
+                 PropList = LNULL;
+             }*/
+         }
+-        m_pObjStrm->QuickRead(&m_nLevel, sizeof(m_nLevel));
++        m_nLevel = m_pObjStrm->QuickReaduInt16();
+ 
+         // test
+         if (m_nLevel > 9)
+diff --git a/lotuswordpro/source/filter/lwpparaproperty.cxx b/lotuswordpro/source/filter/lwpparaproperty.cxx
+index dee3323..d250f19 100644
+--- a/lotuswordpro/source/filter/lwpparaproperty.cxx
++++ b/lotuswordpro/source/filter/lwpparaproperty.cxx
+@@ -67,25 +67,23 @@
+ 
+ LwpParaProperty* LwpParaProperty::ReadPropertyList(LwpObjectStream* pFile,LwpObject* Whole)
+ {
+-    sal_uInt32 tag;
+     LwpParaProperty* Prop= NULL;
+     LwpParaProperty* NewProp= NULL;
+-    sal_uInt16 Len;
+ 
+     for(;;)
+     {
+-        sal_uInt16 nRead;
++        bool bFailure;
+ 
+-        nRead = pFile->QuickRead(&tag,sizeof(sal_uInt32));
++        sal_uInt32 tag = pFile->QuickReaduInt32(&bFailure);
+         // Keep reading properties until we hit the end tag or
+         // the stream ends
+-        if (tag == TAG_ENDSUBOBJ || nRead != sizeof(sal_uInt32))
++        if (bFailure || tag == TAG_ENDSUBOBJ)
+             break;
+ 
+         // Get the length of this property
+-        nRead = pFile->QuickRead(&Len,sizeof(sal_uInt16));
++        sal_uInt16 Len = pFile->QuickReaduInt16(&bFailure);
+ 
+-        if (nRead != sizeof(sal_uInt16))
++        if (bFailure)
+             break;
+ 
+         // Create whatever kind of tag we just found
+diff --git a/lotuswordpro/source/filter/lwpparaproperty.hxx b/lotuswordpro/source/filter/lwpparaproperty.hxx
+index 31e3b62..667f9e9 100644
+--- a/lotuswordpro/source/filter/lwpparaproperty.hxx
++++ b/lotuswordpro/source/filter/lwpparaproperty.hxx
+@@ -123,14 +123,12 @@ public:
+         sal_uInt32  GetType(void);
+ 
+ private:
+-//      LwpAlignmentPiece m_Alignment;
+         LwpAlignmentOverride* m_pAlignment;
+ };
+ 
+ inline LwpAlignmentOverride* LwpParaAlignProperty::GetAlignment(void)
+ {
+-//  return static_cast<LwpAlignmentOverride*>(m_Alignment.m_pOverride);
+-    return m_pAlignment; //add by  1-24
++    return m_pAlignment;
+ }
+ 
+ class LwpParaIndentProperty : public LwpParaProperty
+@@ -140,14 +138,10 @@ public:
+         virtual ~LwpParaIndentProperty(void);
+         LwpIndentOverride* GetIndent(void);
+         sal_uInt32 GetType(void);
+-        //add by , 03/22/2005
+         inline LwpObjectID GetIndentID();
+-        //end add
+ 
+ private:
+-        //add by , 03/22/2005
+         LwpObjectID m_aIndentID;
+-        //end add
+         LwpIndentOverride* m_pIndent;
+ };
+ inline LwpObjectID LwpParaIndentProperty::GetIndentID()
+@@ -176,7 +170,6 @@ inline LwpSpacingOverride* LwpParaSpacingProperty::GetSpacing(void)
+     return m_pSpacing;
+ }
+ 
+-//add by , 01/25/2005////////////////////////////////////////////
+ class LwpParaBorderOverride;
+ class LwpParaBorderProperty : public LwpParaProperty
+ {
+@@ -269,8 +262,6 @@ inline LwpNumberingOverride* LwpParaNumberingProperty::GetLocalNumbering() const
+ {
+     return m_pNumberingOverride;
+ }
+-//end add/////////////////////////////////////////////////////////////
+-
+ 
+ class LwpParaTabRackProperty : public LwpParaProperty
+ {
+@@ -279,7 +270,7 @@ public:
+     ~LwpParaTabRackProperty(void);
+     inline sal_uInt32 GetType();
+ 
+-    inline LwpTabOverride* GetTab(); //should add by , note by  1/28
++    inline LwpTabOverride* GetTab();
+ 
+ private:
+     LwpTabOverride* m_pTabOverride;
+diff --git a/lotuswordpro/source/filter/lwpprtinfo.cxx b/lotuswordpro/source/filter/lwpprtinfo.cxx
+index 75adc1a..31d95a0 100644
+--- a/lotuswordpro/source/filter/lwpprtinfo.cxx
++++ b/lotuswordpro/source/filter/lwpprtinfo.cxx
+@@ -72,12 +72,10 @@ void LwpPrinterInfo::Read(LwpObjectStream* pStrm)
+   */
+ void LwpPrinterInfo::Skip(LwpObjectStream *pStrm)
+ {
+-    sal_uInt16 platform;
+-    pStrm->QuickRead(&platform, sizeof(platform));
++    /*sal_uInt16 platform =*/ pStrm->QuickReaduInt16();
+ 
+     //Skip the size and the buffer
+-    sal_uInt32 size;
+-    pStrm->QuickRead(&size, sizeof(size));
++    sal_uInt32 size = pStrm->QuickReaduInt32();
+     pStrm->SeekRel(static_cast<sal_uInt16>(size));
+ 
+     //Skip others printer infor
+@@ -93,8 +91,7 @@ void LwpPrinterInfo::Skip(LwpObjectStream *pStrm)
+         toSkip.Skip(pStrm);
+     }
+ 
+-    sal_uInt16 count;
+-    pStrm->QuickRead(&count, sizeof(count));
++    sal_uInt16 count = pStrm->QuickReaduInt16();
+     //Skip each selected division
+     LwpAtomHolder toSkip;
+     while(count--)
+diff --git a/lotuswordpro/source/filter/lwpsection.cxx b/lotuswordpro/source/filter/lwpsection.cxx
+index 52812b9..d8b991c 100644
+--- a/lotuswordpro/source/filter/lwpsection.cxx
++++ b/lotuswordpro/source/filter/lwpsection.cxx
+@@ -103,7 +103,7 @@ LwpSection::~LwpSection()
+ void LwpSection::Read()
+ {
+     LwpOrderedObject::Read();
+-    m_pObjStrm->QuickRead(&m_Flags, sizeof(m_Flags));
++    m_Flags = m_pObjStrm->QuickReaduInt16();
+     m_PageLayout.ReadIndexed(m_pObjStrm);
+     m_Color.Read(m_pObjStrm);
+     m_AtomHolder.Read(m_pObjStrm);
+@@ -138,8 +138,8 @@ void LwpIndexSection::Read()
+     m_ParentName.Read(m_pObjStrm);
+     m_DivisionName.Read(m_pObjStrm);
+     m_SectionName.Read(m_pObjStrm);
+-    m_pObjStrm->QuickRead(&m_nForm, sizeof(m_nForm));
+-    m_pObjStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
++    m_nForm = m_pObjStrm->QuickReaduInt16();
++    m_nFlags = m_pObjStrm->QuickReaduInt16();
+     m_pObjStrm->SkipExtra();
+ }
+ 
+diff --git a/lotuswordpro/source/filter/lwpshadow.hxx b/lotuswordpro/source/filter/lwpshadow.hxx
+index 8481f4f..e42f55a 100644
+--- a/lotuswordpro/source/filter/lwpshadow.hxx
++++ b/lotuswordpro/source/filter/lwpshadow.hxx
+@@ -71,8 +71,8 @@ public:
+     void Read(LwpObjectStream *pStrm)
+     {
+         m_aColor.Read(pStrm);
+-        pStrm->QuickRead(&m_nDirX, sizeof(m_nDirX));
+-        pStrm->QuickRead(&m_nDirY, sizeof(m_nDirY));
++        m_nDirX = pStrm->QuickReadInt32();
++        m_nDirY = pStrm->QuickReadInt32();
+         pStrm->SkipExtra();
+     }
+ 
+diff --git a/lotuswordpro/source/filter/lwpsortopt.cxx b/lotuswordpro/source/filter/lwpsortopt.cxx
+index 432cc2d..e4ce34d 100644
+--- a/lotuswordpro/source/filter/lwpsortopt.cxx
++++ b/lotuswordpro/source/filter/lwpsortopt.cxx
+@@ -66,9 +66,9 @@
+ 
+ void LwpSortKey::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nField, sizeof(m_nField));
+-    pStrm->QuickRead(&m_nFlag, sizeof(m_nFlag));
+-    pStrm->QuickRead(&m_nWord, sizeof(m_nWord));
++    m_nField = pStrm->QuickReaduInt16();
++    m_nFlag = pStrm->QuickReaduInt16();
++    m_nWord = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ LwpSortOption::LwpSortOption(LwpObjectStream* pStrm)
+@@ -80,9 +80,9 @@ LwpSortOption::LwpSortOption(LwpObjectStream* pStrm)
+  **/
+ void LwpSortOption::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nCount, sizeof(m_nCount));
+-    pStrm->QuickRead(&m_nFlags, sizeof(m_nFlags));
+-    pStrm->QuickRead(&m_nText, sizeof(m_nText));
++    m_nCount = pStrm->QuickReaduInt16();
++    m_nFlags = pStrm->QuickReaduInt16();
++    m_nText = pStrm->QuickReaduInt8();
+     for(sal_uInt8 i=0; i<3; i++)
+     {
+         m_Keys[i].Read(pStrm);
+diff --git a/lotuswordpro/source/filter/lwpsvstream.hxx b/lotuswordpro/source/filter/lwpsvstream.hxx
+index a613e38..4fd0a20 100644
+--- a/lotuswordpro/source/filter/lwpsvstream.hxx
++++ b/lotuswordpro/source/filter/lwpsvstream.hxx
+@@ -71,10 +71,9 @@ public:
+     sal_Int64 SeekRel( sal_Int64 pos );
+     sal_Int64 Tell();
+     sal_Int64 Seek( sal_Int64 pos );
+-//  sal_Int64 GetLength();
++
+     static const sal_uInt32 LWP_STREAM_BASE;
+ 
+-    // added by  for small file feature
+     LwpSvStream * GetCompressedStream()
+     {
+         return m_pCompressedStream;
+@@ -83,19 +82,15 @@ public:
+     {
+         return m_pStream;
+     }
+-    // end of added by
+ 
+ private:
+     // when the file opened is small file, m_pStream is the decompressed stream
+     // when not, m_pStream contains the normal stream
+     SvStream* m_pStream;
+ 
+-    // added by  for small file feature
+-    // when the file opened is small file, this stream is
+-    // for saving the compressed stream which is to be used for Chart/OLE as BENTO container
++    // when the file opened is small file, this stream is for saving the
++    // compressed stream which is to be used for Chart/OLE as BENTO container
+     LwpSvStream * m_pCompressedStream;
+-    // end of added by
+-
+ };
+ #endif
+ 
+diff --git a/lotuswordpro/source/filter/lwptabrack.cxx b/lotuswordpro/source/filter/lwptabrack.cxx
+index 11f20a8..5780ddb 100644
+--- a/lotuswordpro/source/filter/lwptabrack.cxx
++++ b/lotuswordpro/source/filter/lwptabrack.cxx
+@@ -72,11 +72,11 @@ LwpTab::LwpTab()
+ 
+ void    LwpTab::Read(LwpObjectStream *pStrm)
+ {
+-    pStrm->QuickRead(&m_nX, sizeof(m_nX));
+-    pStrm->QuickRead(&m_nType, sizeof(m_nType));
+-    pStrm->QuickRead(&m_nLeader, sizeof(m_nLeader));
+-    pStrm->QuickRead(&m_nRelativeType, sizeof(m_nRelativeType));
+-    pStrm->QuickRead(&m_nAlignChar, sizeof(m_nAlignChar));
++    m_nX = pStrm->QuickReaduInt32();
++    m_nType = pStrm->QuickReaduInt8();
++    m_nLeader = pStrm->QuickReaduInt8();
++    m_nRelativeType = pStrm->QuickReaduInt8();
++    m_nAlignChar = pStrm->QuickReaduInt16();
+ }
+ 
+ 
+@@ -90,7 +90,7 @@ void LwpTabRack::Read()
+ //  LwpObjectID     m_NextID;
+     m_NextID.ReadIndexed(m_pObjStrm);
+ 
+-    m_pObjStrm->QuickRead(&m_nNumTabs, sizeof(m_nNumTabs));
++    m_nNumTabs = m_pObjStrm->QuickReaduInt16();
+     for( int i=0; i<m_nNumTabs; i++ )
+     {
+         m_aTabs[i].Read(m_pObjStrm);
+diff --git a/lotuswordpro/source/filter/lwptblcell.cxx b/lotuswordpro/source/filter/lwptblcell.cxx
+index 7d7aaba..c3f5e6c 100644
+--- a/lotuswordpro/source/filter/lwptblcell.cxx
++++ b/lotuswordpro/source/filter/lwptblcell.cxx
+@@ -122,7 +122,7 @@ LwpNumericValue::~LwpNumericValue()
+ 
+ void LwpNumericValue::Read()
+ {
+-    m_pObjStrm->QuickRead(&cNumber, sizeof(cNumber));
++    cNumber = m_pObjStrm->QuickReadDouble();
+     m_pObjStrm->SkipExtra();
+ 
+ }
+diff --git a/lotuswordpro/source/filter/lwptblformula.cxx b/lotuswordpro/source/filter/lwptblformula.cxx
+index 2eca962..55082cb 100644
+--- a/lotuswordpro/source/filter/lwptblformula.cxx
++++ b/lotuswordpro/source/filter/lwptblformula.cxx
+@@ -100,8 +100,7 @@
+ */
+ sal_Bool LwpFormulaInfo::ReadConst()
+ {
+-    double Constant;
+-    m_pObjStrm->QuickRead(&Constant, sizeof(Constant));
++    double Constant = m_pObjStrm->QuickReadDouble();
+ 
+     m_aStack.push_back( new LwpFormulaConst(Constant) );
+ 
+@@ -116,9 +115,8 @@
+ */
+ sal_Bool LwpFormulaInfo::ReadText()
+ {
+-    sal_uInt16 nStrLen;
+     m_pObjStrm->QuickReadInt16(); //Disk Size
+-    nStrLen = m_pObjStrm->QuickReadInt16();
++    sal_uInt16 nStrLen = m_pObjStrm->QuickReadInt16();
+ 
+     auto_ptr<char> pBuf(new char[nStrLen+1]);
+     m_pObjStrm->QuickRead( pBuf.get(), nStrLen );
+diff --git a/lotuswordpro/source/filter/lwptools.cxx b/lotuswordpro/source/filter/lwptools.cxx
+index 4210954..f8c206d 100644
+--- a/lotuswordpro/source/filter/lwptools.cxx
++++ b/lotuswordpro/source/filter/lwptools.cxx
+@@ -125,9 +125,10 @@ sal_uInt16 LwpTools::QuickReadUnicode(LwpObjectStream* pObjStrm,
+         {
+             if(!flag)   //Not unicode string
+             {
+-                len = pObjStrm->QuickRead(&readbyte, sizeof(readbyte));
+-                if(!len) break;
+-                readLen+=len;
++                bool bFailure;
++                readbyte = pObjStrm->QuickReaduInt8(&bFailure);
++                if(bFailure) break;
++                readLen+=sizeof(readbyte);
+ 
+                 if(readbyte == 0x00)
+                 {
+@@ -150,9 +151,10 @@ sal_uInt16 LwpTools::QuickReadUnicode(LwpObjectStream* pObjStrm,
+             }
+             else        //unicode string
+             {
+-                len = pObjStrm->QuickRead(&readword, sizeof(readword));
+-                if(!len) break;
+-                readLen+=len;
++                bool bFailure;
++                readword = pObjStrm->QuickReaduInt16(&bFailure);
++                if(bFailure) break;
++                readLen+=sizeof(readword);
+ 
+                 if(readword == 0x0000)
+                 {
+@@ -176,12 +178,6 @@ sal_uInt16 LwpTools::QuickReadUnicode(LwpObjectStream* pObjStrm,
+                 }
+             }
+         }
+-//      if(sublen)
+-//      {
+-//          unibuf[sublen] = sal_Unicode('\0');
+-//          strBuf.append( OUString(unibuf) );
+-//          sublen = 0;
+-//      }
+         str = strBuf.makeStringAndClear();
+         return readLen;
+     }
+@@ -197,7 +193,7 @@ sal_Bool LwpTools::IsUnicodePacked(LwpObjectStream* pObjStrm, sal_uInt16 len)
+ 
+     for (sal_uInt16 i = 0; i < len; i++)
+     {
+-        pObjStrm->QuickRead(&byte, sizeof(byte));
++        byte = pObjStrm->QuickReaduInt8();
+         if (byte == 0x00)
+         {
+             pObjStrm->Seek(oldpos);
+diff --git a/lotuswordpro/source/filter/lwpuidoc.cxx b/lotuswordpro/source/filter/lwpuidoc.cxx
+index 10ffe08..5d5b2f8 100644
+--- a/lotuswordpro/source/filter/lwpuidoc.cxx
++++ b/lotuswordpro/source/filter/lwpuidoc.cxx
+@@ -85,8 +85,7 @@ void LwpUIDocument::Read(LwpObjectStream *pStrm)
+     m_MergedOpts.Read(pStrm);
+     m_SheetFullPath.ReadPathAtom(pStrm);
+ 
+-    sal_uInt16 saved_flags;
+-    pStrm->QuickRead(&saved_flags, sizeof(saved_flags));
++    sal_uInt16 saved_flags = pStrm->QuickReaduInt16();
+     m_nFlags  |= saved_flags;
+ 
+     if(pStrm->CheckExtra())
+@@ -100,8 +99,7 @@ void LwpUIDocument::Read(LwpObjectStream *pStrm)
+  **/
+ void LwpNamedProperties::Read(LwpObjectStream *pStrm)
+ {
+-    sal_uInt16 numEntries;
+-    pStrm->QuickRead(&numEntries, sizeof(numEntries));
++    sal_uInt16 numEntries = pStrm->QuickReaduInt16();
+ 
+     for (sal_uInt16 k = 0 ; k < numEntries; k++)
+     {
+@@ -118,7 +116,7 @@ void LwpAutoRunMacroOptions::Read(LwpObjectStream *pStrm)
+     m_OpenName.ReadPathAtom(pStrm);
+     m_CloseName.ReadPathAtom(pStrm);
+     m_NewName.ReadPathAtom(pStrm);
+-    pStrm->QuickRead(&m_OptionFlag, sizeof(m_OptionFlag));
++    m_OptionFlag = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ /**
+@@ -129,13 +127,13 @@ void LwpMergeOptions::Read(LwpObjectStream *pStrm)
+     m_RecordFile.ReadPathAtom(pStrm);
+     m_DescriptionFile.ReadPathAtom(pStrm);
+     m_Filter.Read(pStrm);
+-    pStrm->QuickRead(&m_nType, sizeof(m_nType));
++    m_nType = pStrm->QuickReaduInt16();
+ 
+     //Does not process m_nType here. Assume m_nType is 0.
+     // TODO: Read the CMergeDataFile
+     assert(m_nType==0);
+ 
+-    pStrm->QuickRead(&m_nLastActionFlag, sizeof(m_nLastActionFlag));
++    m_nLastActionFlag = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ 
+diff --git a/lotuswordpro/source/filter/lwpusewhen.hxx b/lotuswordpro/source/filter/lwpusewhen.hxx
+index 0be7f9e..4d14ef2 100644
+--- a/lotuswordpro/source/filter/lwpusewhen.hxx
++++ b/lotuswordpro/source/filter/lwpusewhen.hxx
+@@ -111,8 +111,8 @@ private:
+ 
+ inline void LwpUseWhen::Read(LwpObjectStream* pStrm)
+ {
+-    pStrm->QuickRead(&m_nFlags, 2);
+-    pStrm->QuickRead(&m_nUsePage, 2);
++    m_nFlags = pStrm->QuickReaduInt16();
++    m_nUsePage = pStrm->QuickReaduInt16();
+     pStrm->SkipExtra();
+ }
+ inline sal_Bool LwpUseWhen::IsUseOnAllPages()
+diff --git a/lotuswordpro/source/filter/lwpusrdicts.cxx b/lotuswordpro/source/filter/lwpusrdicts.cxx
+index 95b815c..d019506 100644
+--- a/lotuswordpro/source/filter/lwpusrdicts.cxx
++++ b/lotuswordpro/source/filter/lwpusrdicts.cxx
+@@ -74,8 +74,7 @@ LwpUserDictFiles::LwpUserDictFiles(LwpObjectStream *pStrm)
+  **/
+ void LwpUserDictFiles::Read(LwpObjectStream *pStrm)
+ {
+-    sal_uInt16 cnt;
+-    pStrm->QuickRead(&cnt, sizeof(cnt));
++    sal_uInt16 cnt = pStrm->QuickReaduInt16();
+     LwpAtomHolder word;
+     while(cnt--)
+     {
+diff --git a/lotuswordpro/source/filter/tocread.cxx b/lotuswordpro/source/filter/tocread.cxx
+index 14489c5..ee6e5c6 100644
+--- a/lotuswordpro/source/filter/tocread.cxx
++++ b/lotuswordpro/source/filter/tocread.cxx
+@@ -384,7 +384,7 @@ CBenTOCReader::ReadSegment(pCBenValue pValue, BenByte * pLookAhead)
+ 
+     UtBool Immediate = UT_FALSE;
+     UtBool EightByteOffset = UT_FALSE;
+-    unsigned long Offset, Length;
++    unsigned long Offset(0), Length;
+ 
+     switch (*pLookAhead)
+     {
+-- 
+1.7.7.6
+

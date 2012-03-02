@@ -227,6 +227,8 @@ Patch108: 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
 Patch109: 0001-SwRootFrm-SwRootFrm-refactor.patch
 Patch110: 0001-default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
 Patch111: 0002-fix-crash-using-instances-dialog-of-dataform-navigat.patch
+Patch112: 0001-fix-up-endianness-of-lowhanging-QuickReads.patch
+Patch113: 0001-fix-up-endianness-of-higher-hanging-QuickReads.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1135,6 +1137,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch109 -p1 -b .SwRootFrm-SwRootFrm-refactor.patch
 %patch110 -p1 -b .default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
 %patch111 -p1 -b .fix-crash-using-instances-dialog-of-dataform-navigat.patch
+%patch112 -p1 -b .fix-up-endianness-of-lowhanging-QuickReads.patch
+%patch113 -p1 -b .fix-up-endianness-of-higher-hanging-QuickReads.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2445,11 +2449,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Mar 01 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
+* Fri Mar 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator
 - Resolves: rhbz#798983 Kannada langpack missing
+- Resolves: rhbz#798026 fix endianess assumptions of lotuswordpro filter
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

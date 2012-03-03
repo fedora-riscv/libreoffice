@@ -1,0 +1,80 @@
+From 9519deda120b73b72e75d89c3b2ae3d66220ec2d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 2 Mar 2012 19:02:03 +0100
+Subject: [PATCH 1/2] fdo#39694: SwTxtFld: do expand the field in the ctor
+
+While only the text formatting is able to expand all fields correctly,
+this is still good enough for many field types and fixes a race
+condition when the field value is requested before layout is finished.
+(regression from CWS sw34bf01, 8485708f3001fca132c3353c464fe7187ef62bed)
+---
+ sw/inc/txtfld.hxx                 |    3 ++-
+ sw/source/core/crsr/crstrvl.cxx   |    3 ++-
+ sw/source/core/txtnode/atrfld.cxx |    7 +++++--
+ sw/source/core/txtnode/thints.cxx |    3 ++-
+ 4 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/sw/inc/txtfld.hxx b/sw/inc/txtfld.hxx
+index 3ecabb8..f574811 100644
+--- a/sw/inc/txtfld.hxx
++++ b/sw/inc/txtfld.hxx
+@@ -42,7 +42,8 @@ class SwTxtFld : public SwTxtAttr
+     SwTxtNode * m_pTxtNode;
+ 
+ public:
+-    SwTxtFld(SwFmtFld & rAttr, xub_StrLen const nStart);
++    SwTxtFld(SwFmtFld & rAttr, xub_StrLen const nStart,
++            bool const bInClipboard);
+     virtual ~SwTxtFld();
+ 
+     void CopyFld( SwTxtFld *pDest ) const;
+diff --git a/sw/source/core/crsr/crstrvl.cxx b/sw/source/core/crsr/crstrvl.cxx
+index fad9d8b..12e8e5f 100644
+--- a/sw/source/core/crsr/crstrvl.cxx
++++ b/sw/source/core/crsr/crstrvl.cxx
+@@ -710,7 +710,8 @@ sal_Bool SwCrsrShell::MoveFldType( const SwFieldType* pFldType, sal_Bool bNext,
+             SwFmtFld* pFmtFld = new SwFmtFld( SwDateTimeField(
+                 (SwDateTimeFieldType*)pDoc->GetSysFldType( RES_DATETIMEFLD ) ) );
+ 
+-            pTxtFld = new SwTxtFld( *pFmtFld, rPos.nContent.GetIndex() );
++            pTxtFld = new SwTxtFld( *pFmtFld, rPos.nContent.GetIndex(),
++                        pDoc->IsClipBoard() );
+             pTxtFld->ChgTxtNode( pTNd );
+         }
+ 
+diff --git a/sw/source/core/txtnode/atrfld.cxx b/sw/source/core/txtnode/atrfld.cxx
+index dc285ef..b0b0757 100644
+--- a/sw/source/core/txtnode/atrfld.cxx
++++ b/sw/source/core/txtnode/atrfld.cxx
+@@ -283,9 +283,12 @@ sal_Bool SwFmtFld::IsProtect() const
+ |*
+ *************************************************************************/
+ 
+-SwTxtFld::SwTxtFld(SwFmtFld & rAttr, xub_StrLen const nStartPos)
++SwTxtFld::SwTxtFld(SwFmtFld & rAttr, xub_StrLen const nStartPos,
++        bool const bInClipboard)
+     : SwTxtAttr( rAttr, nStartPos )
+-    , m_aExpand( rAttr.GetFld()->ExpandField(true) )
++// fdo#39694 the ExpandField here may not give the correct result in all cases,
++// but is better than nothing
++    , m_aExpand( rAttr.GetFld()->ExpandField(bInClipboard) )
+     , m_pTxtNode( 0 )
+ {
+     rAttr.pTxtAttr = this;
+diff --git a/sw/source/core/txtnode/thints.cxx b/sw/source/core/txtnode/thints.cxx
+index f6bf2e3..5064935 100644
+--- a/sw/source/core/txtnode/thints.cxx
++++ b/sw/source/core/txtnode/thints.cxx
+@@ -1035,7 +1035,8 @@ SwTxtAttr* MakeTxtAttr( SwDoc & rDoc, SfxPoolItem& rAttr,
+         pNew = new SwTxtINetFmt( (SwFmtINetFmt&)rNew, nStt, nEnd );
+         break;
+     case RES_TXTATR_FIELD:
+-        pNew = new SwTxtFld( static_cast<SwFmtFld &>(rNew), nStt );
++        pNew = new SwTxtFld( static_cast<SwFmtFld &>(rNew), nStt,
++                    rDoc.IsClipBoard() );
+         break;
+     case RES_TXTATR_FLYCNT:
+         {
+-- 
+1.7.7.6
+

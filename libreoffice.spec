@@ -229,6 +229,8 @@ Patch110: 0001-default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
 Patch111: 0002-fix-crash-using-instances-dialog-of-dataform-navigat.patch
 Patch112: 0001-fix-up-endianness-of-lowhanging-QuickReads.patch
 Patch113: 0001-fix-up-endianness-of-higher-hanging-QuickReads.patch
+Patch114: 0001-fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
+Patch115: 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1139,6 +1141,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch111 -p1 -b .fix-crash-using-instances-dialog-of-dataform-navigat.patch
 %patch112 -p1 -b .fix-up-endianness-of-lowhanging-QuickReads.patch
 %patch113 -p1 -b .fix-up-endianness-of-higher-hanging-QuickReads.patch
+%patch114 -p1 -b .fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
+%patch115 -p1 -b .fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2455,6 +2459,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator
 - Resolves: rhbz#798983 Kannada langpack missing
 - Resolves: rhbz#798026 fix endianess assumptions of lotuswordpro filter
+- Resolves: fdo#39694 SwTxtFld: expand new fields to fix race condition
+- Resolves: fdo#42073 sw: expand all text fields when setting properties
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

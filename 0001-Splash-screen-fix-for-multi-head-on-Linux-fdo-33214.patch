@@ -1,0 +1,79 @@
+From ca9fe5dff457794e55a6bb68633d2a4c2606bd63 Mon Sep 17 00:00:00 2001
+From: Josh Heidenreich <josh.sickmate@gmail.com>
+Date: Wed, 20 Jul 2011 14:17:33 +0930
+Subject: [PATCH] Splash screen fix for multi-head on Linux (fdo#33214)
+
+Uses xinerama to get the size of the primary screen
+---
+ desktop/unx/source/makefile.mk |    6 ++++++
+ desktop/unx/source/splashx.c   |   23 +++++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 0 deletions(-)
+
+diff --git a/desktop/unx/source/makefile.mk b/desktop/unx/source/makefile.mk
+index 2dea54a..7864dd8 100755
+--- a/desktop/unx/source/makefile.mk
++++ b/desktop/unx/source/makefile.mk
+@@ -42,6 +42,9 @@ dummy:
+ CFLAGS+=-DENABLE_QUICKSTART_LIBPNG
+ CFLAGS+=$(LIBPNG_CFLAGS)
+ .ENDIF
++.IF "$(USE_XINERAMA)"=="YES"
++CFLAGS+=-DUSE_XINERAMA
++.ENDIF
+ 
+ STDLIB=
+ 
+@@ -61,6 +64,9 @@ APP1STDLIBS = $(PTHREAD_LIBS) $(X11LINK_DYNAMIC) $(SALLIB)
+ .IF "$(ENABLE_QUICKSTART_LIBPNG)"=="TRUE"
+ APP1STDLIBS += $(LIBPNG_LIBS)
+ .ENDIF
++.IF "$(USE_XINERAMA)"=="YES"
++APP1STDLIBS += -lXinerama
++.ENDIF
+ .IF "$(OS)"=="SOLARIS"
+ APP1STDLIBS+= -lsocket
+ .ENDIF
+diff --git a/desktop/unx/source/splashx.c b/desktop/unx/source/splashx.c
+index c365d47..76ef3eb 100755
+--- a/desktop/unx/source/splashx.c
++++ b/desktop/unx/source/splashx.c
+@@ -32,6 +32,10 @@
+ #include <X11/Xatom.h>
+ #include <X11/Xutil.h>
+ 
++#ifdef USE_XINERAMA
++#include <X11/extensions/Xinerama.h>
++#endif
++
+ #define USE_LIBPNG
+ 
+ #include "osl/endian.h"
+@@ -511,6 +515,25 @@ int splash_create_window( int argc, char** argv )
+     int display_width = DisplayWidth( display, screen );
+     int display_height = DisplayHeight( display, screen );
+ 
++#ifdef USE_XINERAMA
++    int n_xinerama_screens = 1;
++    XineramaScreenInfo* p_screens = XineramaQueryScreens( display, &n_xinerama_screens );
++    if( p_screens )
++    {
++        int i = 0;
++        for( ; i < n_xinerama_screens; i++ )
++        {
++            if ( p_screens[i].screen_number == screen )
++            {
++                display_width = p_screens[i].width;
++                display_height = p_screens[i].height;
++                break;
++            }
++        }
++        XFree( p_screens );
++    }
++#endif
++
+     win = XCreateSimpleWindow( display, root_win,
+             ( display_width - width ) / 2, ( display_height - height ) / 2,
+             width, height, 0,
+-- 
+1.7.7.6
+

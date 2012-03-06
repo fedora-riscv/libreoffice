@@ -98,7 +98,7 @@ index 76562a3..ed22834 100644
          desktop::displayVersion();
          return EXIT_SUCCESS;
      }
-+    else if ( rCmdLineArgs.HasUnknown() )
++    else if ( pCmdLineArgs->HasUnknown() )
 +    {
 +        return EXIT_FAILURE;
 +    }

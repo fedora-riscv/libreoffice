@@ -107,16 +107,6 @@
  else
      AC_MSG_RESULT([internal])
      SYSTEM_LUCENE=NO
-@@ -5545,8 +5483,7 @@
-     test "$with_system_redland" != "no"; then
-     AC_MSG_RESULT([external])
-     SYSTEM_REDLAND=YES
--   dnl versions before 1.0.8 write RDF/XML that is useless for ODF (@xml:base)
--   PKG_CHECK_MODULES(REDLAND, redland >= 1.0.8)
-+    PKG_CHECK_MODULES( REDLAND, redland )
- else
-     AC_MSG_RESULT([internal])
-     BUILD_TYPE="$BUILD_TYPE REDLAND"
 diff --git a/writerperfect/util/makefile.mk b/writerperfect/util/makefile.mk
 index dca29e0..56bdfb2 100644
 --- a/writerperfect/util/makefile.mk

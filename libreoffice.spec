@@ -75,6 +75,9 @@ Source31:       http://download.go-oo.org/extern/b4cae0700aa1c2aef7eb7f345365e6f
 %if %{defined rhel} && 0%{?rhel} < 7
 Source32:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source33:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
+Source34:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source35:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source36:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
 %endif
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
 BuildRequires:  binutils, java-devel < 1:1.7.0, boost-devel, zlib-devel
@@ -87,7 +90,7 @@ BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
 BuildRequires:  evolution-data-server-devel, libtextcat-devel, nss-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib
-BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
+BuildRequires:  mesa-libGLU-devel, ant, ant-apache-regexp, rsync
 BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, libXinerama-devel
@@ -97,7 +100,7 @@ BuildRequires:  font(:lang=en)
 BuildRequires:  hsqldb
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, junit4, perl(Digest::MD5)
+BuildRequires:  libwps-devel, junit4, perl(Digest::MD5), redland-devel
 %endif
 %if %{undefined rhel}
 BuildRequires:  kdelibs4-devel
@@ -234,7 +237,8 @@ Patch115: 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
 Patch116: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch117: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch118: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-Patch119: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
+Patch119: 0001-Disable-problematic-reading-of-external-entities-in-.patch
+Patch120: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1150,7 +1154,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch116 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 %patch117 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 %patch118 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-%patch119 -p1 -b .Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
+%patch119 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
+%patch120 -p1 -b .Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1190,7 +1195,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if %{defined rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland
 %else
 %define distrooptions --without-system-hsqldb
 %endif
@@ -1234,6 +1239,9 @@ cp %{SOURCE31} ext_sources
 %if %{defined rhel} && 0%{?rhel} < 7
 cp %{SOURCE32} ext_sources
 cp %{SOURCE33} ext_sources
+cp %{SOURCE34} ext_sources
+cp %{SOURCE35} ext_sources
+cp %{SOURCE36} ext_sources
 %endif
 touch src.downloaded
 
@@ -1834,6 +1842,11 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libpreload%{SOPOST}.so
 %{basisinstdir}/program/libprotocolhandler%{SOPOST}.so
 %{basisinstdir}/program/libqstart_gtk%{SOPOST}.so
+%if %{defined rhel} && 0%{?rhel} < 7
+%{basisinstdir}/program/libraptor.so.1
+%{basisinstdir}/program/librasqal.so.1
+%{basisinstdir}/program/librdf.so.0
+%endif
 %{basisinstdir}/program/librecentfile.so
 %{basisinstdir}/program/libres%{SOPOST}.so
 %{basisinstdir}/program/libsax%{SOPOST}.so
@@ -2462,7 +2475,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
+* Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator

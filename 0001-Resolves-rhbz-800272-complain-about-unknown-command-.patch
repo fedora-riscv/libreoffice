@@ -77,7 +77,7 @@ diff --git a/desktop/source/app/officeipcthread.cxx b/desktop/source/app/officei
 index b2c6566..4306a67 100644
 --- a/desktop/source/app/officeipcthread.cxx
 +++ b/desktop/source/app/officeipcthread.cxx
-@@ -709,6 +709,12 @@ void OfficeIPCThread::execute()
+@@ -710,6 +710,12 @@
  #endif
                  continue;
              }
@@ -87,14 +87,14 @@ index b2c6566..4306a67 100644
 +                continue;
 +#endif
 +
-             const CommandLineArgs &rCurrentCmdLineArgs = Desktop::GetCommandLineArgs();
+             CommandLineArgs	*pCurrentCmdLineArgs = Desktop::GetCommandLineArgs();
  
              if ( aCmdLineArgs->IsQuickstart() )
 diff --git a/desktop/source/app/sofficemain.cxx b/desktop/source/app/sofficemain.cxx
 index 76562a3..ed22834 100644
 --- a/desktop/source/app/sofficemain.cxx
 +++ b/desktop/source/app/sofficemain.cxx
-@@ -71,6 +71,10 @@ extern "C" int DESKTOP_DLLPUBLIC soffice_main()
+@@ -63,6 +63,10 @@
          desktop::displayVersion();
          return EXIT_SUCCESS;
      }
@@ -104,7 +104,7 @@ index 76562a3..ed22834 100644
 +    }
  #endif
      return SVMain();
- #ifdef ANDROID
+ }
 -- 
 1.7.7.6
 

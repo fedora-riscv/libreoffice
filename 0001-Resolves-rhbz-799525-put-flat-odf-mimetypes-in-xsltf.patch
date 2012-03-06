@@ -1,0 +1,166 @@
+From 4564f9c207ab53c70a199a2dbcc0d8f155211256 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 6 Mar 2012 12:39:07 +0000
+Subject: [PATCH] Resolves: rhbz#799525 put flat odf mimetypes in
+ xsltfilter.desktop
+
+---
+ scp2/source/ooo/common_brand.scp                 |   10 ++++++++++
+ sysui/desktop/freedesktop/freedesktop-menus.spec |    1 +
+ sysui/desktop/menus/calc.desktop                 |    2 +-
+ sysui/desktop/menus/draw.desktop                 |    2 +-
+ sysui/desktop/menus/impress.desktop              |    2 +-
+ sysui/desktop/menus/writer.desktop               |    2 +-
+ sysui/desktop/menus/xsltfilter.desktop           |    9 +++++++++
+ sysui/desktop/share/launcher_genericname.ulf     |    3 +++
+ sysui/desktop/share/makefile.mk                  |    2 +-
+ sysui/desktop/suse/suse-menus.spec               |    1 +
+ 10 files changed, 29 insertions(+), 5 deletions(-)
+ create mode 100644 sysui/desktop/menus/xsltfilter.desktop
+
+diff --git a/scp2/source/ooo/common_brand.scp b/scp2/source/ooo/common_brand.scp
+index 69c0a71..4c594df 100644
+--- a/scp2/source/ooo/common_brand.scp
++++ b/scp2/source/ooo/common_brand.scp
+@@ -98,6 +98,7 @@ Module gid_Module_Root_Brand
+              gid_Brand_File_Share_Xdg_QStart,
+              gid_Brand_File_Share_Xdg_StartCenter,
+              gid_Brand_File_Share_Xdg_Writer,
++             gid_Brand_File_Share_Xdg_XsltFilter,
+              gid_Brand_File_Txt_Package,
+ 	     gid_License_Txt,
+ 	     git_License_Odt,
+@@ -791,6 +792,15 @@ File gid_Brand_File_Share_Xdg_BinFilter
+ End
+ #endif
+ 
++#if defined UNX && ! defined MACOSX
++File gid_Brand_File_Share_Xdg_XsltFilter
++    TXT_FILE_BODY;
++    Dir = gid_Brand_Dir_Share_Xdg;
++    Name = "xsltfilter.desktop";
++    Styles = (PACKED,SCPZIP_REPLACE);
++End
++#endif
++
+ // Profiles
+ 
+ Profile gid_Brand_Profile_Bootstrap_Ini
+diff --git a/sysui/desktop/freedesktop/freedesktop-menus.spec b/sysui/desktop/freedesktop/freedesktop-menus.spec
+index 78a33ae..039bdc2 100755
+--- a/sysui/desktop/freedesktop/freedesktop-menus.spec
++++ b/sysui/desktop/freedesktop/freedesktop-menus.spec
+@@ -387,6 +387,7 @@ done
+ /usr/share/applications/%unixfilename-startcenter.desktop
+ /usr/share/applications/%unixfilename-javafilter.desktop
+ /usr/share/applications/%unixfilename-binfilter.desktop
++/usr/share/applications/%unixfilename-xsltfilter.desktop
+ /usr/share/icons/gnome/*/apps/*png
+ /usr/share/icons/gnome/*/mimetypes/*png
+ /usr/share/icons/hicolor/*/apps/*png
+diff --git a/sysui/desktop/menus/calc.desktop b/sysui/desktop/menus/calc.desktop
+index c8899cd..b4c0385 100755
+--- a/sysui/desktop/menus/calc.desktop
++++ b/sysui/desktop/menus/calc.desktop
+@@ -5,7 +5,7 @@ Icon=calc
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Spreadsheets;
+ Exec=${UNIXBASISROOTNAME} --calc %U
+-MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-flat-xml;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;text/spreadsheet;
++MimeType=application/vnd.oasis.opendocument.spreadsheet;application/vnd.oasis.opendocument.spreadsheet-template;application/vnd.sun.xml.calc;application/vnd.sun.xml.calc.template;application/msexcel;application/vnd.ms-excel;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;application/vnd.ms-excel.sheet.macroenabled.12;application/vnd.openxmlformats-officedocument.spreadsheetml.template;application/vnd.ms-excel.template.macroenabled.12;application/vnd.ms-excel.sheet.binary.macroenabled.12;text/csv;application/x-dbf;text/spreadsheet;
+ Name=%PRODUCTNAME Calc
+ GenericName=Spreadsheet
+ Comment=Perform calculations, analyze information and manage lists in spreadsheets by using Calc.
+diff --git a/sysui/desktop/menus/draw.desktop b/sysui/desktop/menus/draw.desktop
+index 67ad422..231f320 100755
+--- a/sysui/desktop/menus/draw.desktop
++++ b/sysui/desktop/menus/draw.desktop
+@@ -5,7 +5,7 @@ Icon=draw
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Drawing;
+ Exec=${UNIXBASISROOTNAME} --draw %U
+-MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-flat-xml;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;
++MimeType=application/vnd.oasis.opendocument.graphics;application/vnd.oasis.opendocument.graphics-template;application/vnd.sun.xml.draw;application/vnd.sun.xml.draw.template;
+ Name=%PRODUCTNAME Draw
+ GenericName=Drawing Program
+ Comment=Create and edit drawings, flow charts, and logos by using Draw.
+diff --git a/sysui/desktop/menus/impress.desktop b/sysui/desktop/menus/impress.desktop
+index 91c937a..22d130d 100755
+--- a/sysui/desktop/menus/impress.desktop
++++ b/sysui/desktop/menus/impress.desktop
+@@ -5,7 +5,7 @@ Icon=impress
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Presentations;
+ Exec=${UNIXBASISROOTNAME} --impress %U
+-MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-flat-xml;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
++MimeType=application/vnd.oasis.opendocument.presentation;application/vnd.oasis.opendocument.presentation-template;application/vnd.sun.xml.impress;application/vnd.sun.xml.impress.template;application/mspowerpoint;application/vnd.ms-powerpoint;application/vnd.openxmlformats-officedocument.presentationml.presentation;application/vnd.ms-powerpoint.presentation.macroenabled.12;application/vnd.openxmlformats-officedocument.presentationml.template;application/vnd.ms-powerpoint.template.macroenabled.12;
+ Name=%PRODUCTNAME Impress
+ GenericName=Presentation
+ Comment=Create and edit presentations for slideshows, meeting and Web pages by using Impress.
+diff --git a/sysui/desktop/menus/writer.desktop b/sysui/desktop/menus/writer.desktop
+index 0db0d05..845b6d2 100755
+--- a/sysui/desktop/menus/writer.desktop
++++ b/sysui/desktop/menus/writer.desktop
+@@ -5,7 +5,7 @@ Icon=writer
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Wordprocessors;
+ Exec=${UNIXBASISROOTNAME} --writer %U
+-MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-flat-xml;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/msword;application/vnd.ms-word;application/x-doc;application/x-hwp;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.lotus-wordpro;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
++MimeType=application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.text-template;application/vnd.oasis.opendocument.text-web;application/vnd.oasis.opendocument.text-master;application/vnd.sun.xml.writer;application/vnd.sun.xml.writer.template;application/vnd.sun.xml.writer.global;application/msword;application/vnd.ms-word;application/x-doc;application/x-hwp;application/rtf;text/rtf;application/vnd.wordperfect;application/wordperfect;application/vnd.lotus-wordpro;application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroenabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroenabled.12;
+ Name=%PRODUCTNAME Writer
+ GenericName=Word Processor
+ Comment=Create and edit text and graphics in letters, reports, documents and Web pages by using Writer.
+diff --git a/sysui/desktop/menus/xsltfilter.desktop b/sysui/desktop/menus/xsltfilter.desktop
+new file mode 100644
+index 0000000..a6c3b1b
+--- /dev/null
++++ b/sysui/desktop/menus/xsltfilter.desktop
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Version=1.0
++Terminal=false
++Type=Application
++Exec=${UNIXBASISROOTNAME} %U
++MimeType=application/vnd.oasis.opendocument.text-flat-xml;application/vnd.oasis.opendocument.spreadsheet-flat-xml;application/vnd.oasis.opendocument.graphics-flat-xml;application/vnd.oasis.opendocument.presentation-flat-xml;
++Name=%PRODUCTNAME XSLT based filters
++GenericName=XSLT based filters
++NoDisplay=true
+diff --git a/sysui/desktop/share/launcher_genericname.ulf b/sysui/desktop/share/launcher_genericname.ulf
+index 6130e0b..09ccf8d 100755
+--- a/sysui/desktop/share/launcher_genericname.ulf
++++ b/sysui/desktop/share/launcher_genericname.ulf
+@@ -24,3 +24,6 @@ en-US = "Small Device Format Importer"
+ 
+ [binfilter]
+ en-US = "Legacy StarOffice 5 Binary Format Importer"
++
++[xsltfilter]
++en-US = "XSLT based filters"
+diff --git a/sysui/desktop/share/makefile.mk b/sysui/desktop/share/makefile.mk
+index f6b4dfa..1d99c84 100755
+--- a/sysui/desktop/share/makefile.mk
++++ b/sysui/desktop/share/makefile.mk
+@@ -53,7 +53,7 @@ ULFFILES= \
+     launcher_name.ulf
+ 
+ LAUNCHERLIST_APPS = writer calc draw impress math base printeradmin startcenter
+-LAUNCHERLIST = $(LAUNCHERLIST_APPS) qstart javafilter binfilter
++LAUNCHERLIST = $(LAUNCHERLIST_APPS) qstart javafilter binfilter xsltfilter
+ LAUNCHERDEPN = ../menus/{$(LAUNCHERLIST)}.desktop
+ 
+ LAUNCHERFLAGFILE = $(COMMONMISC)/$(TARGET)/xdg.flag
+diff --git a/sysui/desktop/suse/suse-menus.spec b/sysui/desktop/suse/suse-menus.spec
+index 74b67e6..ab053ec 100755
+--- a/sysui/desktop/suse/suse-menus.spec
++++ b/sysui/desktop/suse/suse-menus.spec
+@@ -358,6 +358,7 @@ done
+ /usr/share/applications/%unixfilename-startcenter.desktop
+ /usr/share/applications/%unixfilename-javafilter.desktop
+ /usr/share/applications/%unixfilename-binfilter.desktop
++/usr/share/applications/%unixfilename-xsltfilter.desktop
+ /opt/gnome/share/mime-info/*.keys
+ /opt/gnome/share/mime-info/*.mime
+ /opt/kde3/share/mimelnk/application/*.desktop
+-- 
+1.7.7.6
+

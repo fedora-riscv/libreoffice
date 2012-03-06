@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -130,6 +130,8 @@ Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
 Patch17: libreoffice-ensure-non-broken-xml-tree.patch
 Patch18: 0001-preserve-timestamps-for-.py-files.patch
 Patch19: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
+Patch20: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+Patch21: 0001-silence-SolarMutex-not-locked-spew.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -970,6 +972,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .ensure-non-broken-xml-tree.patch
 %patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
 %patch19 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
+%patch20 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+%patch21 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2248,6 +2252,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-3
+- Resolves: rhbz#799628 crash with chewing IM with g3g
+
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-2
 - Resolves: rhbz#788045 swriter --help doesn't show help
 - Resolves: rhbz#798667 missing .desktop icons

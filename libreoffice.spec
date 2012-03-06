@@ -233,6 +233,7 @@ Patch114: 0001-fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
 Patch115: 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
 Patch116: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch117: 0001-silence-SolarMutex-not-locked-spew.patch
+Patch118: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1147,6 +1148,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch115 -p1 -b .fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
 %patch116 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 %patch117 -p1 -b .silence-SolarMutex-not-locked-spew.patch
+%patch118 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2379,6 +2381,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{basisinstdir}/share/xslt/import
 %{basisinstdir}/share/xslt/import/uof
 %{basisinstdir}/share/registry/xsltfilter.xcd
+%{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files javafilter
 %defattr(-,root,root,-)
@@ -2466,6 +2469,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#39694 SwTxtFld: expand new fields to fix race condition
 - Resolves: fdo#42073 sw: expand all text fields when setting properties
 - Resolves: rhbz#799628 crash with chewing IM with g3g
+- Resolves: rhbz#799525 put flat odf mimetypes in xsltfilter.desktop
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

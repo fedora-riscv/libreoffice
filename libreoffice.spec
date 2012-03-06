@@ -124,20 +124,20 @@ Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
 Patch11: libreoffice-gcj.patch
 Patch12: libreoffice-rhel6poppler.patch
 Patch13: libreoffice-rhel6langs.patch
+Patch14: 0001-Disable-problematic-reading-of-external-entities-in-.patch
 %endif
 %if %{with binfilter}
-Patch14: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
+Patch15: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-Patch15: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
-Patch16: 0001-make-hsqldb-build-with-java-1.7.patch
-Patch17: libreoffice-ensure-non-broken-xml-tree.patch
-Patch18: 0001-preserve-timestamps-for-.py-files.patch
-Patch19: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
-Patch20: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-Patch21: 0001-silence-SolarMutex-not-locked-spew.patch
-Patch22: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-Patch23: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
-Patch24: 0001-Disable-problematic-reading-of-external-entities-in-.patch
+Patch16: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
+Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
+Patch18: libreoffice-ensure-non-broken-xml-tree.patch
+Patch19: 0001-preserve-timestamps-for-.py-files.patch
+Patch20: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
+Patch21: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+Patch22: 0001-silence-SolarMutex-not-locked-spew.patch
+Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -969,20 +969,20 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .gcj.patch
 %patch12 -p0 -b .rhel6poppler.patch
 %patch13 -p0 -b .rhel6langs.patch
+%patch14 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
 %endif
 %if %{with binfilter}
-%patch14 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
+%patch15 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %endif
-%patch15 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
-%patch16 -p1 -b .make-hsqldb-build-with-java-1.7.patch
-%patch17 -p1 -b .ensure-non-broken-xml-tree.patch
-%patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
-%patch19 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
-%patch20 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-%patch21 -p1 -b .silence-SolarMutex-not-locked-spew.patch
-%patch22 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-%patch23 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
-%patch24 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
+%patch16 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
+%patch17 -p1 -b .make-hsqldb-build-with-java-1.7.patch
+%patch18 -p1 -b .ensure-non-broken-xml-tree.patch
+%patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch20 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
+%patch21 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+%patch22 -p1 -b .silence-SolarMutex-not-locked-spew.patch
+%patch23 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+%patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

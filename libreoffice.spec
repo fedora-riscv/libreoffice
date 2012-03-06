@@ -133,6 +133,7 @@ Patch19: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
 Patch20: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch21: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch22: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+Patch23: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -976,6 +977,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 %patch21 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 %patch22 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+%patch23 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2258,6 +2260,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-3
 - Resolves: rhbz#799628 crash with chewing IM with g3g
 - Resolves: rhbz#799525 put flat odf mimetypes into xsltfilter.desktop
+- Resolves: rhbz#800272 complain about unknown commandline options
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-2
 - Resolves: rhbz#788045 swriter --help doesn't show help

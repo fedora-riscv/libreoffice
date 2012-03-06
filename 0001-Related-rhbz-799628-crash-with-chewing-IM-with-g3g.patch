@@ -1,0 +1,32 @@
+From 7e3ebe35a6a1a69b3a36f7eb41e1ec5c5905f714 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 5 Mar 2012 21:02:45 +0000
+Subject: [PATCH] Related: rhbz#799628 crash with chewing-IM with g3g
+
+---
+ vcl/unx/gtk/window/gtkframe.cxx |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletions(-)
+
+diff --git a/vcl/unx/gtk/window/gtkframe.cxx b/vcl/unx/gtk/window/gtkframe.cxx
+index 112e066..1cd1bd0 100644
+--- a/vcl/unx/gtk/window/gtkframe.cxx
++++ b/vcl/unx/gtk/window/gtkframe.cxx
+@@ -3984,8 +3984,14 @@ void GtkSalFrame::IMHandler::signalIMPreeditChanged( GtkIMContext*, gpointer im_
+         g_slist_free (attr_list);
+ 
+         // Set the sal attributes on our text
+-        for (int i = start; i < end; i++)
++        for (int i = start; i < end; ++i)
++        {
++            SAL_WARN_IF(i >= static_cast<int>(pThis->m_aInputFlags.size()),
++                "vcl.gtk", "pango attrib out of range?");
++            if (i >= static_cast<int>(pThis->m_aInputFlags.size()))
++                continue;
+             pThis->m_aInputFlags[i] |= sal_attr;
++        }
+     } while (pango_attr_iterator_next (iter));
+ 
+     pThis->m_aInputEvent.mpTextAttr         = &pThis->m_aInputFlags[0];
+-- 
+1.7.7.6
+

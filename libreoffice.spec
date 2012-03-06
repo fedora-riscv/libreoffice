@@ -231,6 +231,8 @@ Patch112: 0001-fix-up-endianness-of-lowhanging-QuickReads.patch
 Patch113: 0001-fix-up-endianness-of-higher-hanging-QuickReads.patch
 Patch114: 0001-fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
 Patch115: 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
+Patch116: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+Patch117: 0001-silence-SolarMutex-not-locked-spew.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1143,6 +1145,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch113 -p1 -b .fix-up-endianness-of-higher-hanging-QuickReads.patch
 %patch114 -p1 -b .fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
 %patch115 -p1 -b .fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
+%patch116 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+%patch117 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2453,7 +2457,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Mar 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
+* Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8.UNBUILT
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator
@@ -2461,6 +2465,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#798026 fix endianess assumptions of lotuswordpro filter
 - Resolves: fdo#39694 SwTxtFld: expand new fields to fix race condition
 - Resolves: fdo#42073 sw: expand all text fields when setting properties
+- Resolves: rhbz#799628 crash with chewing IM with g3g
 
 * Wed Feb 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-7
 - Resolves: rhbz#788045 swriter --help wouldn't display help

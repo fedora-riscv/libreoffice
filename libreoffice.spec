@@ -65,6 +65,9 @@ Source17:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2
 Source18:       http://dev-www.libreoffice.org/src/776ad69a63ac1e99abed176e54ce25d9-libvisio-0.0.14.tar.bz2
 Source19:       http://dev-www.libreoffice.org/src/e1c178b18f130b40494561f02bc1a948-libexttextcat-3.2.0.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/7c2549f6b0a8bb604e6c4c729ffdcfe6-libcmis-0.1.0.tar.gz
+Source21:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source22:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source23:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
 %endif
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
@@ -134,6 +137,7 @@ Patch20: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch21: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch22: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch23: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
+Patch24: 0001-Disable-problematic-reading-of-external-entities-in-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -978,6 +982,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 %patch22 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 %patch23 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
+%patch24 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1065,6 +1070,9 @@ cp %{SOURCE17} ext_sources
 cp %{SOURCE18} ext_sources
 cp %{SOURCE19} ext_sources
 cp %{SOURCE20} ext_sources
+cp %{SOURCE21} ext_sources
+cp %{SOURCE22} ext_sources
+cp %{SOURCE23} ext_sources
 %endif
 touch src.downloaded
 
@@ -1615,6 +1623,11 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libpllo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/libqstart_gtklo.so
+%if %{defined rhel} && 0%{?rhel} < 7
+%{basisinstdir}/program/libraptor.so.1
+%{basisinstdir}/program/librasqal.so.1
+%{basisinstdir}/program/librdf.so.0
+%endif
 %{baseinstdir}/program/librecentfile.so
 %{baseinstdir}/program/libreslo.so
 %{baseinstdir}/program/libsaxlo.so

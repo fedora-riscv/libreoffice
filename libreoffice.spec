@@ -1417,7 +1417,7 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base %{?with_binfilter:binfilter} calc draw impress javafilter math startcenter writer; do
+for app in base %{?with_binfilter:binfilter} calc draw impress javafilter math startcenter writer xsltfilter; do
     desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done

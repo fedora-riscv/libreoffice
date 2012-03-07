@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2270,6 +2270,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Mar 07 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-1
+- 3.5.1 rc2
+
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-3
 - Resolves: rhbz#799628 crash with chewing IM with g3g
 - Resolves: rhbz#799525 put flat odf mimetypes into xsltfilter.desktop

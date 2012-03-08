@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?dist}
+Release:        9%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -240,6 +240,7 @@ Patch118: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch119: 0001-Disable-problematic-reading-of-external-entities-in-.patch
 Patch120: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
 Patch121: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
+Patch122: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1158,6 +1159,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch119 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
 %patch120 -p1 -b .Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
 %patch121 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
+%patch122 -p1 -b .desktop-do-not-complain-about-soffice-command-line-o.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2477,6 +2479,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-9.UNBUILT
+
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8
 - Resolves: fdo#31966 do not create an empty slide when printing handouts
 - fixes nsplugin

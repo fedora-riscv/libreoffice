@@ -1,0 +1,41 @@
+From db21197de4383f75718190072171adab15e64a00 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 8 Mar 2012 15:49:52 +0100
+Subject: [PATCH] desktop: do not complain about soffice command line options:
+
+These are handled in the soffice wrapper script, but that is too stupid
+to be able to filter these out, so just ignore them in soffice.bin.
+
+(regression from 4efbd87e31e7488dfcdd1d07ff979f1f59b8b1f1)
+
+Also, print errors on stderr.
+---
+ desktop/source/app/cmdlineargs.cxx |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/desktop/source/app/cmdlineargs.cxx b/desktop/source/app/cmdlineargs.cxx
+index 5ae86ab..0bc6312 100644
+--- a/desktop/source/app/cmdlineargs.cxx
++++ b/desktop/source/app/cmdlineargs.cxx
+@@ -306,10 +306,16 @@ void CommandLineArgs::ParseCommandLine_Impl( Supplier& supplier )
+                     }
+ #if defined UNX
+                     else
++                    // because it's impossible to filter these options that
++                    // are handled in the soffice shell script with the
++                    // primitive tools that /bin/sh offers, ignore them here
++                    if (!oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("backtrace")) &&
++                        !oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("strace")) &&
++                        !oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("valgrind")))
+                     {
+-                        printf("Unknown option %s\n",
++                        fprintf(stderr, "Unknown option %s\n",
+                             rtl::OUStringToOString(aArg, osl_getThreadTextEncoding()).getStr());
+-                        printf("Run 'soffice --help' to see a full list of available command line options.\n");
++                        fprintf(stderr, "Run 'soffice --help' to see a full list of available command line options.\n");
+                         SetBoolParam_Impl( CMD_BOOLPARAM_UNKNOWN, sal_True );
+                     }
+ #endif
+-- 
+1.7.7.6
+

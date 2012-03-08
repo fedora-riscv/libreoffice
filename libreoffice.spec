@@ -138,6 +138,7 @@ Patch21: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch22: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
+Patch25: 0001-yet-another-clash-with-macro-name.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -983,6 +984,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 %patch23 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 %patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
+%patch25 -p1 -b .yet-another-clash-with-macro-name.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2270,7 +2272,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Mar 07 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-1
+* Thu Mar 08 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-1
 - 3.5.1 rc2
 
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-3

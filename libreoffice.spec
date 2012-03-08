@@ -2482,7 +2482,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - fixes nsplugin
 - Resolves: fdo#44816 crash using instances dialog of dataform navigator
 - Resolves: rhbz#798983 Kannada langpack missing
-- Resolves: rhbz#798026 fix endianess assumptions of lotuswordpro filter
+- Resolves: rhbz#798926 fix endianess assumptions of lotuswordpro filter
 - Resolves: fdo#39694 SwTxtFld: expand new fields to fix race condition
 - Resolves: fdo#42073 sw: expand all text fields when setting properties
 - Resolves: rhbz#799628 crash with chewing IM with g3g

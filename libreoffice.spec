@@ -2272,7 +2272,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Thu 08 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-1
+* Thu Mar 08 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-1
 - 3.5.1 rc2
 
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.1.1-3

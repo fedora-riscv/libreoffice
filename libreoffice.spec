@@ -392,6 +392,7 @@ Requires: jakarta-commons-codec, jakarta-commons-httpclient
 Requires: jakarta-commons-lang, jakarta-commons-logging
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core

@@ -242,6 +242,7 @@ Patch120: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
 Patch121: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 Patch122: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 Patch123: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+Patch124: 0001-rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1168,6 +1169,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch121 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
 %patch122 -p1 -b .desktop-do-not-complain-about-soffice-command-line-o.patch
 %patch123 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+%patch124 -p1 -b .rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
+
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
@@ -2488,6 +2491,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Mar 14 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-9.UNBUILT
 - Resolves: rhbz#770209 can't change paper tray setting while printing
+- Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8
 - Resolves: fdo#31966 do not create an empty slide when printing handouts

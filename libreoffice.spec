@@ -814,7 +814,7 @@ This package provides gdb pretty printers for package %{name}.
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
 # autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
 # openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
-# %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
+# %%langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
 %define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Vv:Xx:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
@@ -868,7 +868,7 @@ Provides additional %{langname} translations and resources for %{project}. \
 #
 # l: language code
 # n: language name
-# X  do not use default file match on %{_datadir}/autocorr/acor_%{lang}-*
+# X  do not use default file match on %%{_datadir}/autocorr/acor_%%{lang}-*
 #    in file list
 #
 # All remaining arguments are considered to be files and added to the file
@@ -1448,20 +1448,20 @@ ja      help    cjk             ko      help    cjk     \
 kn      nohelp  western         lt      nohelp  western \
 lv      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
-ms      nohelp  western		nb      help    western \
-nl      help    western 	nn      help    western \
-nr      nohelp  western		nso     nohelp  western \
-or      nohelp  ctl     	pa-IN   nohelp  ctl     \
-pl      help    western		pt      help    western \
-pt-BR   help    western		ro      nohelp  western \
-ru      help    western 	sh      nohelp  western \
+ms      nohelp  western         nb      help    western \
+nl      help    western         nn      help    western \
+nr      nohelp  western         nso     nohelp  western \
+or      nohelp  ctl             pa-IN   nohelp  ctl     \
+pl      help    western         pt      help    western \
+pt-BR   help    western         ro      nohelp  western \
+ru      help    western         sh      nohelp  western \
 si      help    ctl             sk      help    western \
-sl      help    western		sr      nohelp  western \
-ss      nohelp  western		st      nohelp  western \
-sv      help    western		ta      nohelp  ctl     \
-te      nohelp  western		th      nohelp  ctlseqcheck \
-tn      nohelp  western		tr      help    western \
-ts      nohelp  western		uk      help    western \
+sl      help    western         sr      nohelp  western \
+ss      nohelp  western         st      nohelp  western \
+sv      help    western         ta      nohelp  ctl     \
+te      nohelp  western         th      nohelp  ctlseqcheck \
+tn      nohelp  western         tr      help    western \
+ts      nohelp  western         uk      help    western \
 ur      nohelp  western         ve      nohelp  western \
 xh      nohelp  western         zh-CN   help    cjk     \
 zh-TW   help    cjk             zu      nohelp  western \

@@ -749,6 +749,11 @@ Group: Development/Debug
 AutoReqProv: 0
 Requires: libreoffice-core = %{epoch}:%{version}-%{release}
 Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-debuginfo < 1:3.3.1
+%if %{defined rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-debuginfo = 1:3.3.0
+Obsoletes: openoffice.org2-debuginfo < 1:3.0.0
+%endif
 
 %description debuginfo
 This package provides debug information for package %{name}.

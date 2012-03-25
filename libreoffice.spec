@@ -1,4 +1,4 @@
-%define libo_version 3.4.5
+%define libo_version 3.4.6
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?dist}
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -150,99 +150,35 @@ Patch30: 0001-Resolves-rhbz-759647-dispose-clears-mpPresTimer-befo.patch
 Patch31: 0001-Resolves-rhbz-761009-IFSD_Equal-is-asymmetrical.patch
 Patch32: 0001-Resolves-rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 Patch33: 0001-smath-does-not-handle-accents-in-MathML.patch
-Patch34: 0001-fix-writing-of-strings-from-the-first-module.patch
-Patch35: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+Patch34: 0001-Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-Patch36: libreoffice-libwpd08-1.patch
-Patch37: libreoffice-libwpd08-2.patch
-Patch38: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
-Patch39: libreoffice-gcj.patch
-Patch40: libreoffice-rhel6poppler.patch
-Patch41: libreoffice-rhel6langs.patch
+Patch35: libreoffice-libwpd08-1.patch
+Patch36: libreoffice-libwpd08-2.patch
+Patch37: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
+Patch38: libreoffice-gcj.patch
+Patch39: libreoffice-rhel6poppler.patch
+Patch40: libreoffice-rhel6langs.patch
 %endif
-Patch42: solenv.fix.mk.inheritance.patch
-Patch43: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
-Patch44: 0001-Resolves-fdo-44078-fix-unfortunate-name-alias-mixups.patch
-Patch45: libreoffice-ppc64.patch
-Patch46: 0001-Fix-fdo-44040-VIEWING-Crash-when-page-preview-after-.patch
-Patch47: 0001-fdo-39118-Fixed-chart-listener-registration-during-O.patch
-Patch48: 0002-Resolves-fdo-43725-crash-on-saving-a-file.patch
-Patch49: 0003-resolved-fdo-45032-Calc-export-to-HTML-with-graphics.patch
-Patch50: 0004-resolved-rhbz-783556-crash-in-ScMatrix-GetDimensons-.patch
-Patch51: 0005-clone-token-in-ScFormulaResult-copy-ctor-instead-of-.patch
-Patch52: 0001-fdo-44178-Align-dictionary-address-with-DICT_REPO_UR.patch
-Patch53: 0002-SvxBorderTabPage-the-minimal-border-width-is-1-twip.patch
-Patch54: 0001-fdo-43193-fix-rotation-of-shapes-in-imported-MS-docu.patch
-Patch55: 0001-Fix-fdo-44065.patch
-Patch56: 0002-restore-special-DATE-handling-code-for-SbxValue-Comp.patch
-Patch57: 0003-Fixed-apparent-typos.patch
-Patch58: 0004-connectivity-fdo-43479-fix-crash-on-DISTINCT.patch
-Patch59: 0005-country-code-IN-is-not-in-use-for-these-locales-fdo-.patch
-Patch60: 0006-Fix-build-dupplicate-node-prop-VCL-DefaultFonts-bn.patch
-Patch61: 0007-remove-bn-IN-node-we-have-bn.patch
-Patch62: 0008-fdo-38542-SvxBorderLine-GuessLinesWidths.patch
-Patch63: 0004-WaE-signed-unsigned-error.patch
-Patch64: 0005-svtools-LineListBox-fix-handling-of-none-style.patch
-Patch65: 0001-fdo-38515-Fixed-crasher-in-dialog-destructor.patch
-Patch66: 0002-fdo-40438-force-calculating-layout-before-Activate-t.patch
-Patch67: 0003-fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
-Patch68: 0004-fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
-Patch69: 0001-rhbz-746174-also-export-list-restart-for-non-root-li.patch
-Patch70: 0001-resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
-Patch71: 0001-Do-not-pass-the-request-for-command-line-help-to-oos.patch
-Patch72: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
-Patch73: 0001-cast-from-BorderLine-to-BorderLine2-is-not-valid.patch
-Patch74: 0002-fix-getCellRangeByName-failure-for-named-range.patch
-Patch75: 0003-fdo-45450-sc-ODF-export-cell-styles.patch
-Patch76: 0001-fdo-45449-ODF-export-frames-invalid-min-width.patch
-Patch77: 0002-fdo-45534-ODF-export-fix-draw-fit-to-size.patch
-Patch78: 0001-fdo-38745-fix-hilariously-stupid-stack-guards.patch
-Patch79: 0002-fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
-Patch80: 0003-fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
-Patch81: 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
-Patch82: 0001-fdo-45115-SwXTextTable-fix-setting-borders.patch
-Patch83: 0002-fdo-45115-sc-fix-setting-borders.patch
-Patch84: 0001-rhbz-701152-ignore-hidden-objects.patch
-Patch85: 0001-fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
-Patch86: 0001-resolved-fdo-38595-border-width-lost-in-ODF-import.patch
-Patch87: 0001-fdo-40378-compile-defined-names-that-had-unresolveds.patch
-Patch88: 0002-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
-Patch89: 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
-Patch90: libreoffice-ensure-non-broken-xml-tree.patch
-Patch91: 0001-preserve-timestamps-for-.py-files.patch
-Patch92: 0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
-Patch93: 0001-fdo-41712-rename-members-to-track-down-assignments.patch
-Patch94: 0002-fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
-Patch95: 0003-fdo-41712-sw-remove-superfluous-flag.patch
-Patch96: 0001-fdo-42771-Fix-crash-when-loading-an-invalid-.fodt.patch
-Patch97: 0002-odbc-64-bit-crash-correct-buffer-length-allocation-f.patch
-Patch98: 0001-fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
-Patch99: 0002-fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
-Patch100: 0001-fdo-43399-hidden-radio-button-should-also-gets-unset.patch
-Patch101: 0002-fdo-40261-Fix-crash-in-XML-Form-Document.patch
-Patch102: 0001-fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
-Patch103: 0001-fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
-Patch104: 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
-Patch105: 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
-Patch106: 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
-Patch107: 0001-Correctly-calculate-leap-year.patch
-Patch108: 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
-Patch109: 0001-SwRootFrm-SwRootFrm-refactor.patch
-Patch110: 0001-default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
-Patch111: 0002-fix-crash-using-instances-dialog-of-dataform-navigat.patch
-Patch112: 0001-fix-up-endianness-of-lowhanging-QuickReads.patch
-Patch113: 0001-fix-up-endianness-of-higher-hanging-QuickReads.patch
-Patch114: 0001-fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
-Patch115: 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
-Patch116: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-Patch117: 0001-silence-SolarMutex-not-locked-spew.patch
-Patch118: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-Patch119: 0001-Disable-problematic-reading-of-external-entities-in-.patch
-Patch120: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
-Patch121: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
-Patch122: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
-Patch123: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
-Patch124: 0001-rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
+Patch41: solenv.fix.mk.inheritance.patch
+Patch42: 0001-Related-rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
+Patch43: libreoffice-ppc64.patch
+Patch44: 0001-rhbz-746174-also-export-list-restart-for-non-root-li.patch
+Patch45: 0001-Do-not-pass-the-request-for-command-line-help-to-oos.patch
+Patch46: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
+Patch47: 0001-rhbz-701152-ignore-hidden-objects.patch
+Patch48: 0001-fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
+Patch49: libreoffice-ensure-non-broken-xml-tree.patch
+Patch50: 0001-preserve-timestamps-for-.py-files.patch
+Patch51: 0001-fix-up-endianness-of-lowhanging-QuickReads.patch
+Patch52: 0001-fix-up-endianness-of-higher-hanging-QuickReads.patch
+Patch53: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+Patch54: 0001-silence-SolarMutex-not-locked-spew.patch
+Patch55: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+Patch56: 0001-Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
+Patch57: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
+Patch58: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
+Patch59: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+Patch60: 0001-rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1077,99 +1013,35 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .rhbz761009-IFSD_Equal-is-asymmetrical.patch
 %patch32 -p1 -b .rhbz-767708-avoid-SIGBUS-writing-to-overcom.patch
 %patch33 -p1 -b .smath-does-not-handle-accents-in-MathML.patch
-%patch34 -p1 -b .fix-writing-of-strings-from-the-first-module.patch
-%patch35 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
+%patch34 -p1 -b .Confine-JDBC-driver-to-thread-affine-apartment-for-J.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-%patch36 -p1 -b .libwpd08-1.patch
-%patch37 -p1 -R -b .libreoffice-libwpd08-2.patch
-%patch38 -p1 -R -b .wpsimport
-%patch39 -p1 -b .gcj.patch
-%patch40 -p0 -b .rhel6poppler.patch
-%patch41 -p0 -b .rhel6langs.patch
+%patch35 -p1 -b .libwpd08-1.patch
+%patch36 -p1 -R -b .libreoffice-libwpd08-2.patch
+%patch37 -p1 -R -b .wpsimport
+%patch38 -p1 -b .gcj.patch
+%patch39 -p0 -b .rhel6poppler.patch
+%patch40 -p0 -b .rhel6langs.patch
 %endif
-%patch42 -p1 -b .solenv.fix.mk.inheritance.patch
-%patch43 -p1 -b .rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
-%patch44 -p1 -b .fdo44078-fix-unfortunate-name-alias-mixups.patch
-%patch45 -p1 -b .libreoffice-ppc64.patch
-%patch46 -p1 -b .Fix-fdo-44040-VIEWING-Crash-when-page-preview-after-.patch
-%patch47 -p1 -b .fdo-39118-Fixed-chart-listener-registration-during-O.patch
-%patch48 -p1 -b .Resolves-fdo-43725-crash-on-saving-a-file.patch
-%patch49 -p1 -b .resolved-fdo-45032-Calc-export-to-HTML-with-graphics.patch
-%patch50 -p1 -b .resolved-rhbz-783556-crash-in-ScMatrix-GetDimensons-.patch
-%patch51 -p1 -b .clone-token-in-ScFormulaResult-copy-ctor-instead-of-.patch
-%patch52 -p1 -b .fdo-44178-Align-dictionary-address-with-DICT_REPO_UR.patch
-%patch53 -p1 -b .SvxBorderTabPage-the-minimal-border-width-is-1-twip.patch
-%patch54 -p1 -b .fdo-43193-fix-rotation-of-shapes-in-imported-MS-docu.patch
-%patch55 -p1 -b .Fix-fdo-44065.patch
-%patch56 -p1 -b .restore-special-DATE-handling-code-for-SbxValue-Comp.patch
-%patch57 -p1 -b .Fixed-apparent-typos.patch
-%patch58 -p1 -b .connectivity-fdo-43479-fix-crash-on-DISTINCT.patch
-%patch59 -p1 -b .country-code-IN-is-not-in-use-for-these-locales-fdo-.patch
-%patch60 -p1 -b .Fix-build-dupplicate-node-prop-VCL-DefaultFonts-bn.patch
-%patch61 -p1 -b .remove-bn-IN-node-we-have-bn.patch
-%patch62 -p1 -b .fdo-38542-SvxBorderLine-GuessLinesWidths.patch
-%patch63 -p1 -b .WaE-signed-unsigned-error.patch
-%patch64 -p1 -b .svtools-LineListBox-fix-handling-of-none-style.patch
-%patch65 -p1 -b .fdo-38515-Fixed-crasher-in-dialog-destructor.patch
-%patch66 -p1 -b .fdo-40438-force-calculating-layout-before-Activate-t.patch
-%patch67 -p1 -b .fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
-%patch68 -p1 -b .fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
-%patch69 -p1 -b .rhbz746174-also-export-list-restart-for-non-root-li.patch
-%patch70 -p1 -b .resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
-%patch71 -p1 -b .Do-not-pass-the-request-for-command-line-help-to-oos.patch
-%patch72 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
-%patch73 -p1 -b .cast-from-BorderLine-to-BorderLine2-is-not-valid.patch
-%patch74 -p1 -b .fix-getCellRangeByName-failure-for-named-range.patch
-%patch75 -p1 -b .fdo-45450-sc-ODF-export-cell-styles.patch
-%patch76 -p1 -b .fdo-45449-ODF-export-frames-invalid-min-width.patch
-%patch77 -p1 -b .fdo-45534-ODF-export-fix-draw-fit-to-size.patch
-%patch78 -p1 -b .fdo-38745-fix-hilariously-stupid-stack-guards.patch
-%patch79 -p1 -b .fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
-%patch80 -p1 -b .fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
-%patch81 -p1 -b .fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
-%patch82 -p1 -b .fdo-45115-SwXTextTable-fix-setting-borders.patch
-%patch83 -p1 -b .fdo-45115-sc-fix-setting-borders.patch
-%patch84 -p1 -b .rhbz-701152-ignore-hidden-objects.patch
-%patch85 -p1 -b .fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
-%patch86 -p1 -b .resolved-fdo-38595-border-width-lost-in-ODF-import.patch
-%patch87 -p1 -b .fdo-40378-compile-defined-names-that-had-unresolveds.patch
-%patch88 -p1 -b .1fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
-%patch89 -p1 -b .2fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
-%patch90 -p1 -b .ensure-non-broken-xml-tree.patch
-%patch91 -p1 -b .preserve-timestamps-for-.py-files.patch
-%patch92 -p1 -b .fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
-%patch93 -p1 -b .fdo-41712-rename-members-to-track-down-assignments.patch
-%patch94 -p1 -b .fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
-%patch95 -p1 -b .fdo-41712-sw-remove-superfluous-flag.patch
-%patch96 -p1 -b .fdo-42771-Fix-crash-when-loading-an-invalid-.fodt.patch
-%patch97 -p1 -b .odbc-64-bit-crash-correct-buffer-length-allocation-f.patch
-%patch98 -p1 -b .fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
-%patch99 -p1 -b .fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
-%patch100 -p1 -b .fdo-43399-hidden-radio-button-should-also-gets-unset.patch
-%patch101 -p1 -b .fdo-40261-Fix-crash-in-XML-Form-Document.patch
-%patch102 -p1 -b .fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
-%patch103 -p1 -b .fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
-%patch104 -p1 -b .fdo-39657-fix-crash-when-parsing-XML-signatures.patch
-%patch105 -p1 -b .rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
-%patch106 -p1 -b .fdo-31966-do-not-create-an-empty-slide-when-printing.patch
-%patch107 -p1 -b .Correctly-calculate-leap-year.patch
-%patch108 -p1 -b .fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
-%patch109 -p1 -b .SwRootFrm-SwRootFrm-refactor.patch
-%patch110 -p1 -b .default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
-%patch111 -p1 -b .fix-crash-using-instances-dialog-of-dataform-navigat.patch
-%patch112 -p1 -b .fix-up-endianness-of-lowhanging-QuickReads.patch
-%patch113 -p1 -b .fix-up-endianness-of-higher-hanging-QuickReads.patch
-%patch114 -p1 -b .fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
-%patch115 -p1 -b .fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
-%patch116 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-%patch117 -p1 -b .silence-SolarMutex-not-locked-spew.patch
-%patch118 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-%patch119 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
-%patch120 -p1 -b .Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
-%patch121 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
-%patch122 -p1 -b .desktop-do-not-complain-about-soffice-command-line-o.patch
-%patch123 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
-%patch124 -p1 -b .rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
+%patch41 -p1 -b .solenv.fix.mk.inheritance.patch
+%patch42 -p1 -b .rhbz-753201-fedora-ant-java-1.5.0-gcj-won-t-.patch
+%patch43 -p1 -b .libreoffice-ppc64.patch
+%patch44 -p1 -b .rhbz746174-also-export-list-restart-for-non-root-li.patch
+%patch45 -p1 -b .Do-not-pass-the-request-for-command-line-help-to-oos.patch
+%patch46 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
+%patch47 -p1 -b .rhbz-701152-ignore-hidden-objects.patch
+%patch48 -p1 -b .fdo-45446-officecfg-turn-off-SaveBackwardCompatibleO.patch
+%patch49 -p1 -b .ensure-non-broken-xml-tree.patch
+%patch50 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch51 -p1 -b .fix-up-endianness-of-lowhanging-QuickReads.patch
+%patch52 -p1 -b .fix-up-endianness-of-higher-hanging-QuickReads.patch
+%patch53 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+%patch54 -p1 -b .silence-SolarMutex-not-locked-spew.patch
+%patch55 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+%patch56 -p1 -b .Splash-screen-fix-for-multi-head-on-Linux-fdo-33214.patch
+%patch57 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
+%patch58 -p1 -b .desktop-do-not-complain-about-soffice-command-line-o.patch
+%patch59 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+%patch60 -p1 -b .rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2489,7 +2361,72 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 14 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-9.UNBUILT
+* Sun Mar 25 2012 David Tardon <dtardon@redhat.com> - 3.4.6.2-1
+- new upstream version 3.4.6
+- drop intergrated 0001-fix-writing-of-strings-from-the-first-module.patch
+- drop intergrated 0001-Resolves-fdo-44078-fix-unfortunate-name-alias-mixups.patch
+- drop intergrated 0001-Fix-fdo-44040-VIEWING-Crash-when-page-preview-after-.patch
+- drop intergrated 0001-fdo-39118-Fixed-chart-listener-registration-during-O.patch
+- drop intergrated 0002-Resolves-fdo-43725-crash-on-saving-a-file.patch
+- drop intergrated 0003-resolved-fdo-45032-Calc-export-to-HTML-with-graphics.patch
+- drop intergrated 0004-resolved-rhbz-783556-crash-in-ScMatrix-GetDimensons-.patch
+- drop intergrated 0005-clone-token-in-ScFormulaResult-copy-ctor-instead-of-.patch
+- drop intergrated 0001-fdo-44178-Align-dictionary-address-with-DICT_REPO_UR.patch
+- drop intergrated 0002-SvxBorderTabPage-the-minimal-border-width-is-1-twip.patch
+- drop intergrated 0001-fdo-43193-fix-rotation-of-shapes-in-imported-MS-docu.patch
+- drop intergrated 0001-Fix-fdo-44065.patch
+- drop intergrated 0002-restore-special-DATE-handling-code-for-SbxValue-Comp.patch
+- drop intergrated 0003-Fixed-apparent-typos.patch
+- drop intergrated 0004-connectivity-fdo-43479-fix-crash-on-DISTINCT.patch
+- drop intergrated 0005-country-code-IN-is-not-in-use-for-these-locales-fdo-.patch
+- drop intergrated 0006-Fix-build-dupplicate-node-prop-VCL-DefaultFonts-bn.patch
+- drop intergrated 0007-remove-bn-IN-node-we-have-bn.patch
+- drop intergrated 0008-fdo-38542-SvxBorderLine-GuessLinesWidths.patch
+- drop intergrated 0004-WaE-signed-unsigned-error.patch
+- drop intergrated 0005-svtools-LineListBox-fix-handling-of-none-style.patch
+- drop intergrated 0001-fdo-38515-Fixed-crasher-in-dialog-destructor.patch
+- drop intergrated 0002-fdo-40438-force-calculating-layout-before-Activate-t.patch
+- drop intergrated 0003-fdo-38542-sw-ODF-import-divide-width-by-3-for-double.patch
+- drop intergrated 0004-fdo-38542-sw-ODF-import-prevent-border-width-overrid.patch
+- drop intergrated 0001-resolved-fdo-42784-BorderLine-with-only-InnerWidth-s.patch
+- drop intergrated 0001-cast-from-BorderLine-to-BorderLine2-is-not-valid.patch
+- drop intergrated 0002-fix-getCellRangeByName-failure-for-named-range.patch
+- drop intergrated 0003-fdo-45450-sc-ODF-export-cell-styles.patch
+- drop intergrated 0001-fdo-45449-ODF-export-frames-invalid-min-width.patch
+- drop intergrated 0002-fdo-45534-ODF-export-fix-draw-fit-to-size.patch
+- drop intergrated 0001-fdo-38745-fix-hilariously-stupid-stack-guards.patch
+- drop intergrated 0002-fdo-37024-SwView-SwView-fix-BROWSE_MODE-setting.patch
+- drop intergrated 0003-fdo-35661-fix-sw.SwXViewSettings-com-sun-star-text-V.patch
+- drop intergrated 0004-fs34b-i117545-patch-provided-by-mathias.bauer-oracle.patch
+- drop intergrated 0001-fdo-45115-SwXTextTable-fix-setting-borders.patch
+- drop intergrated 0002-fdo-45115-sc-fix-setting-borders.patch
+- drop intergrated 0001-resolved-fdo-38595-border-width-lost-in-ODF-import.patch
+- drop intergrated 0001-fdo-40378-compile-defined-names-that-had-unresolveds.patch
+- drop intergrated 0002-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+- drop intergrated 0003-fix-fdo-40590-stop-abusing-regular-string-token-for-.patch
+- drop intergrated 0001-fdo-36109-in-INDIRECT-make-a-non-existing-sheet-prod.patch
+- drop intergrated 0001-fdo-41712-rename-members-to-track-down-assignments.patch
+- drop intergrated 0002-fdo-41712-sw-fix-crash-in-layout-frame-linked-lists.patch
+- drop intergrated 0003-fdo-41712-sw-remove-superfluous-flag.patch
+- drop intergrated 0001-fdo-42771-Fix-crash-when-loading-an-invalid-.fodt.patch
+- drop intergrated 0002-odbc-64-bit-crash-correct-buffer-length-allocation-f.patch
+- drop intergrated 0001-fdo-44813-don-t-replace-NULLs-given-by-the-database-.patch
+- drop intergrated 0002-fdo-44813-make-the-refresh-query-filter-NULL-safe.patch
+- drop intergrated 0001-fdo-43399-hidden-radio-button-should-also-gets-unset.patch
+- drop intergrated 0002-fdo-40261-Fix-crash-in-XML-Form-Document.patch
+- drop intergrated 0001-fix-support-for-embedded-images-for-basic-Dialogs-fd.patch
+- drop intergrated 0001-fdo-39510-fix-yet-more-layout-crashes-in-SwRootFrm.patch
+- drop intergrated 0001-fdo-39657-fix-crash-when-parsing-XML-signatures.patch
+- drop intergrated 0001-rhbz-794679-use-proper-Indian-Rupee-currency-symbol.patch
+- drop intergrated 0001-fdo-31966-do-not-create-an-empty-slide-when-printing.patch
+- drop intergrated 0001-Correctly-calculate-leap-year.patch
+- drop intergrated 0001-fix-nsplugin-to-create-correct-com.sun.star.ucb.Simp.patch
+- drop intergrated 0001-SwRootFrm-SwRootFrm-refactor.patch
+- drop intergrated 0001-default-shortcut-for-.uno-SearchDialog-should-be-Ctr.patch
+- drop intergrated 0002-fix-crash-using-instances-dialog-of-dataform-navigat.patch
+- drop intergrated 0001-fdo-39694-SwTxtFld-do-expand-the-field-in-the-ctor.patch
+- drop intergrated 0002-fdo-42073-sw-expand-all-text-fields-when-setting-pro.patch
+- drop intergrated 0001-Disable-problematic-reading-of-external-entities-in-.patch
 - Resolves: rhbz#770209 can't change paper tray setting while printing
 - Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 

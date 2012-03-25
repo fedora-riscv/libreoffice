@@ -45,12 +45,15 @@
  
 --- fpicker/source/unx/kde4/KDE4FilePicker.cxx	2012-03-29 08:38:59.298664830 +0100
 +++ fpicker/source/unx/kde4/KDE4FilePicker.cxx	2012-03-29 08:39:17.772906408 +0100
-@@ -55,9 +55,6 @@
+@@ -55,12 +55,6 @@
  /* ********* Hack, but needed because of conflicting types... */
  #define Region QtXRegion
  
 -//kde has an enum that uses this...OO does too
+-#define LO_SETTINGS_MOUSE SETTINGS_MOUSE
 -#undef SETTINGS_MOUSE
+-#define LO_SETTINGS_LOCALE SETTINGS_LOCALE
+-#undef SETTINGS_LOCALE
 -
  #include <kfiledialog.h>
  #include <kwindowsystem.h>

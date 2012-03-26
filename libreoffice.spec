@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -139,6 +139,7 @@ Patch22: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+Patch27: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -986,6 +987,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 %patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
 %patch26 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+%patch27 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2273,6 +2275,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 26 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.2.1-2
+- Resolves: rhbz#806663 SlideshowImpl can outlive SdModule
+
 * Sun Mar 25 2012 David Tardon <dtardon@redhat.com> - 3.5.2.1-1
 - 3.5.2 rc1
 -drop integrated 0001-yet-another-clash-with-macro-name.patch

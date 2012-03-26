@@ -1,4 +1,4 @@
-%define libo_version 3.5.1
+%define libo_version 3.5.2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        2%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -138,7 +138,6 @@ Patch21: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
 Patch22: 0001-silence-SolarMutex-not-locked-spew.patch
 Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
-Patch25: 0001-yet-another-clash-with-macro-name.patch
 Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -726,7 +725,7 @@ This package provides gdb pretty printers for package %{name}.
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
 # autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
 # openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
-# %langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
+# %%langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
 %define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Vv:Xx:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
@@ -780,7 +779,7 @@ Provides additional %{langname} translations and resources for %{project}. \
 #
 # l: language code
 # n: language name
-# X  do not use default file match on %{_datadir}/autocorr/acor_%{lang}-*
+# X  do not use default file match on %%{_datadir}/autocorr/acor_%%{lang}-*
 #    in file list
 #
 # All remaining arguments are considered to be files and added to the file
@@ -986,7 +985,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .silence-SolarMutex-not-locked-spew.patch
 %patch23 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 %patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
-%patch25 -p1 -b .yet-another-clash-with-macro-name.patch
 %patch26 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 
 # TODO: check this
@@ -1252,12 +1250,12 @@ kn      nohelp  western         lt      nohelp  western \
 lv      nohelp  western         mai     nohelp  western \
 ml      nohelp  western         mr      nohelp  western \
 ms      nohelp  western         nb      help    western \
-nl      help    western        	nn      help    western \
+nl      help    western         nn      help    western \
 nr      nohelp  western         nso     nohelp  western \
-or      nohelp  ctl            	pa-IN   nohelp  ctl     \
+or      nohelp  ctl             pa-IN   nohelp  ctl     \
 pl      help    western         pt      help    western \
 pt-BR   help    western         ro      nohelp  western \
-ru      help    western        	sh      nohelp  western \
+ru      help    western         sh      nohelp  western \
 si      help    ctl             sk      help    western \
 sl      help    western         sr      nohelp  western \
 ss      nohelp  western         st      nohelp  western \
@@ -2275,6 +2273,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Mar 25 2012 David Tardon <dtardon@redhat.com> - 3.5.2.1-1
+- 3.5.2 rc1
+-drop integrated 0001-yet-another-clash-with-macro-name.patch
+
 * Wed Mar 14 2012 David Tardon <dtardon@redhat.com> - 3.5.1.2-2
 - Resolves: rhbz#770209 can't change paper tray setting while printing
 

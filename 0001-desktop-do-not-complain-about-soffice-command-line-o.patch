@@ -17,7 +17,7 @@ diff --git a/desktop/source/app/cmdlineargs.cxx b/desktop/source/app/cmdlineargs
 index 5ae86ab..0bc6312 100644
 --- a/desktop/source/app/cmdlineargs.cxx
 +++ b/desktop/source/app/cmdlineargs.cxx
-@@ -306,10 +306,16 @@ void CommandLineArgs::ParseCommandLine_Impl( Supplier& supplier )
+@@ -306,10 +306,17 @@ void CommandLineArgs::ParseCommandLine_Impl( Supplier& supplier )
                      }
  #if defined UNX
                      else
@@ -26,6 +26,7 @@ index 5ae86ab..0bc6312 100644
 +                    // primitive tools that /bin/sh offers, ignore them here
 +                    if (!oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("backtrace")) &&
 +                        !oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("strace")) &&
++                        !oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("nocrashreport")) &&
 +                        !oArg.equalsIgnoreAsciiCaseAsciiL(RTL_CONSTASCII_STRINGPARAM("valgrind")))
                      {
 -                        printf("Unknown option %s\n",

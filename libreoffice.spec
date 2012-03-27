@@ -2496,6 +2496,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 - Resolves: rhbz#806663 SlideshowImpl can outlive SdModule
 - Resolves: rhbz#807243 require correct version of hsqldb
+- Resolves: rhbz#807316 don't complain that --nocrashreport is unknown
 
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8
 - Resolves: fdo#31966 do not create an empty slide when printing handouts

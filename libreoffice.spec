@@ -140,6 +140,7 @@ Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
 Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 Patch27: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+Patch28: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -991,6 +992,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
 %patch26 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 %patch27 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+%patch28 -p1 -b .do-not-complain-about-soffice-command-line-o.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

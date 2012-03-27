@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?dist}
+Release:        10%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -318,6 +318,9 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: postgresql-jdbc
+%if %{defined rhel} && 0%{?rhel} < 7
+Requires:  hsqldb
+%endif
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
@@ -2489,9 +2492,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Mar 26 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-9.UNBUILT
+* Tue Mar 27 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-10
 - Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 - Resolves: rhbz#806663 SlideshowImpl can outlive SdModule
+- Resolves: rhbz#807243 require correct version of hsqldb
 
 * Tue Mar 06 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-8
 - Resolves: fdo#31966 do not create an empty slide when printing handouts

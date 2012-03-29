@@ -243,6 +243,7 @@ Patch121: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
 Patch122: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 Patch123: 0001-rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 Patch124: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+Patch125: libreoffice-kde4fix.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1173,6 +1174,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch122 -p1 -b .desktop-do-not-complain-about-soffice-command-line-o.patch
 %patch123 -p1 -b .rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 %patch124 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+%patch125 -p0 -b .libreoffice-kde4fix.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2492,7 +2494,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 27 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-10
+* Thu Mar 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-10
 - Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 - Resolves: rhbz#806663 SlideshowImpl can outlive SdModule
 - Resolves: rhbz#807243 require correct version of hsqldb

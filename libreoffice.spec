@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?dist}
+Release:        11%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -244,6 +244,7 @@ Patch122: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 Patch123: 0001-rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 Patch124: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 Patch125: libreoffice-kde4fix.patch
+Patch126: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1175,6 +1176,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch123 -p1 -b .rhbz-789022-SwNodes-fix-inconsistent-outline-check.patch
 %patch124 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 %patch125 -p0 -b .libreoffice-kde4fix.patch
+%patch126 -p1 -b .fdo-48096-torn-off-popups-trigger-keyboard-.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2494,6 +2496,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Apr 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-11
+- Resolves: rhbz#708041 focus problems and tearable menus
+
 * Thu Mar 29 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-10
 - Resolves: rhbz#789022 SwNodes: fix inconsistent outline check
 - Resolves: rhbz#806663 SlideshowImpl can outlive SdModule

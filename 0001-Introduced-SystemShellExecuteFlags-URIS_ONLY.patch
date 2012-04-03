@@ -1,0 +1,1119 @@
+From 4f1f9c6e6e6b07515bb601d7acbdb4705e266366 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 27 Mar 2012 13:56:12 +0200
+Subject: [PATCH] Introduced SystemShellExecuteFlags::URIS_ONLY
+
+(cherry-picked from commit d4b67611c421ebe9b75284106fe389b434419961)
+Conflicts:
+
+	extensions/source/update/check/updatecheck.cxx
+	filter/source/xsltdialog/xmlfiltertestdialog.cxx
+	sfx2/source/view/viewsh.cxx
+	shell/source/unix/exec/shellexec.cxx
+
+Replaced master's new MSG_ERR_NO_ABS_URI_REF with re-using
+RID_SECURITY_WARNING_NO_HYPERLINKS, to avoid introducing new resources
+into the LO 3.5 series that require localization.
+
+New css.system.SystemShellExecuteFlags.URIS_ONLY remains @since
+LibreOffice 3.6.  Officially, new features are only added when bumping
+the minor revision number, not the micro one (but backporting does not
+hurt here).
+
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+---
+ cui/source/dialogs/SpellDialog.cxx                 |    2 +-
+ cui/source/dialogs/about.cxx                       |    2 +-
+ cui/source/options/optimprove.cxx                  |    2 +-
+ cui/source/options/optimprove2.cxx                 |    2 +-
+ cui/source/options/optlingu.cxx                    |    2 +-
+ desktop/source/deployment/gui/dp_gui_dialog2.cxx   |    2 +-
+ .../source/deployment/gui/dp_gui_updatedialog.cxx  |    2 +-
+ embeddedobj/source/msole/oleembed.cxx              |    2 +-
+ extensions/source/update/check/updatecheck.cxx     |    2 +-
+ framework/source/dispatch/mailtodispatcher.cxx     |    2 +-
+ framework/source/dispatch/systemexec.cxx           |    2 +-
+ framework/source/services/backingwindow.cxx        |    2 +-
+ .../complextoolbarcontrols/MyProtocolHandler.cxx   |    2 +-
+ .../sun/star/system/SystemShellExecuteFlags.idl    |    6 +
+ offapi/com/sun/star/system/XSystemShellExecute.idl |    6 +-
+ sfx2/Library_sfx.mk                                |    1 +
+ sfx2/source/appl/appopen.cxx                       |  195 ++++++++------------
+ sfx2/source/appl/appserv.cxx                       |    4 +-
+ sfx2/source/appl/openuriexternally.cxx             |   99 ++++++++++
+ sfx2/source/appl/sfxhelp.cxx                       |    2 +-
+ sfx2/source/inc/openuriexternally.hxx              |   57 ++++++
+ sfx2/source/view/view.hrc                          |    2 +-
+ sfx2/source/view/view.src                          |   18 --
+ sfx2/source/view/viewsh.cxx                        |   29 +---
+ shell/source/unix/exec/shellexec.cxx               |   44 ++++-
+ shell/source/win32/SysShExec.cxx                   |   26 +++-
+ shell/source/win32/SysShExec.hxx                   |    6 +-
+ shell/source/win32/SysShentry.cxx                  |   13 +-
+ svtools/source/contnr/templwin.cxx                 |    2 +-
+ sw/source/ui/docvw/extedit.cxx                     |    2 +-
+ sw/source/ui/lingu/olmenu.cxx                      |    2 +-
+ swext/mediawiki/src/com/sun/star/wiki/Helper.java  |    2 +-
+ toolkit/source/awt/vclxwindows.cxx                 |    2 +-
+ uui/source/newerverwarn.cxx                        |    2 +-
+ 34 files changed, 343 insertions(+), 203 deletions(-)
+ create mode 100644 sfx2/source/appl/openuriexternally.cxx
+ create mode 100644 sfx2/source/inc/openuriexternally.hxx
+
+diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
+index feb6a7e..485105f 100644
+--- a/cui/source/dialogs/SpellDialog.cxx
++++ b/cui/source/dialogs/SpellDialog.cxx
+@@ -2147,7 +2147,7 @@ IMPL_LINK( SpellDialog, HandleHyperlink, svt::FixedHyperlink*, pHyperlink )
+         uno::Reference< com::sun::star::system::XSystemShellExecute > xSystemShellExecute(
+             ::comphelper::getProcessServiceFactory()->createInstance(
+                 DEFINE_CONST_UNICODE("com.sun.star.system.SystemShellExecute") ), uno::UNO_QUERY_THROW );
+-        xSystemShellExecute->execute( sURL, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++        xSystemShellExecute->execute( sURL, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+     }
+     catch ( uno::Exception& )
+     {
+diff --git a/cui/source/dialogs/about.cxx b/cui/source/dialogs/about.cxx
+index 0355574..b327d72 100644
+--- a/cui/source/dialogs/about.cxx
++++ b/cui/source/dialogs/about.cxx
+@@ -267,7 +267,7 @@ IMPL_LINK( AboutDialog, HandleHyperlink, svt::FixedHyperlink*, pHyperlink )
+         uno::Reference< com::sun::star::system::XSystemShellExecute > xSystemShellExecute(
+             ::comphelper::getProcessServiceFactory()->createInstance(
+                 DEFINE_CONST_UNICODE("com.sun.star.system.SystemShellExecute") ), uno::UNO_QUERY_THROW );
+-        xSystemShellExecute->execute( sURL, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++        xSystemShellExecute->execute( sURL, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+     }
+     catch ( uno::Exception& )
+     {
+diff --git a/cui/source/options/optimprove.cxx b/cui/source/options/optimprove.cxx
+index 0937e59..d2fdd51 100644
+--- a/cui/source/options/optimprove.cxx
++++ b/cui/source/options/optimprove.cxx
+@@ -153,7 +153,7 @@ IMPL_LINK( SvxImprovementDialog, HandleHyperlink, svt::FixedHyperlinkImage*, pHy
+             if ( xSystemShell.is() )
+             {
+                 xSystemShell->execute(
+-                    sURL, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
++                    sURL, ::rtl::OUString(), SystemShellExecuteFlags::URIS_ONLY );
+             }
+         }
+         catch( const uno::Exception& e )
+diff --git a/cui/source/options/optimprove2.cxx b/cui/source/options/optimprove2.cxx
+index 132247d..b29ed8d 100644
+--- a/cui/source/options/optimprove2.cxx
++++ b/cui/source/options/optimprove2.cxx
+@@ -122,7 +122,7 @@ IMPL_LINK( SvxImprovementOptionsPage, HandleHyperlink, svt::FixedHyperlinkImage*
+             if ( xSystemShell.is() )
+             {
+                 xSystemShell->execute(
+-                    sURL, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
++                    sURL, ::rtl::OUString(), SystemShellExecuteFlags::URIS_ONLY );
+             }
+         }
+         catch( const uno::Exception& e )
+diff --git a/cui/source/options/optlingu.cxx b/cui/source/options/optlingu.cxx
+index d716f7f..4847ab3 100644
+--- a/cui/source/options/optlingu.cxx
++++ b/cui/source/options/optlingu.cxx
+@@ -158,7 +158,7 @@ static void lcl_OpenURL( ::rtl::OUString sURL )
+                     RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.system.SystemShellExecute" ) ) ),
+                 uno::UNO_QUERY_THROW );
+             if ( xSystemShell.is() )
+-                xSystemShell->execute( sURL, ::rtl::OUString(), css::system::SystemShellExecuteFlags::DEFAULTS );
++                xSystemShell->execute( sURL, ::rtl::OUString(), css::system::SystemShellExecuteFlags::URIS_ONLY );
+         }
+         catch( const uno::Exception& e )
+         {
+diff --git a/desktop/source/deployment/gui/dp_gui_dialog2.cxx b/desktop/source/deployment/gui/dp_gui_dialog2.cxx
+index 58e06ed..90c2544 100644
+--- a/desktop/source/deployment/gui/dp_gui_dialog2.cxx
++++ b/desktop/source/deployment/gui/dp_gui_dialog2.cxx
+@@ -634,7 +634,7 @@ void DialogHelper::openWebBrowser( const OUString & sURL, const OUString &sTitle
+         uno::Reference< XSystemShellExecute > xSystemShellExecute(
+             m_xContext->getServiceManager()->createInstanceWithContext( OUSTR( "com.sun.star.system.SystemShellExecute" ), m_xContext), uno::UNO_QUERY_THROW);
+         //throws css::lang::IllegalArgumentException, css::system::SystemShellExecuteException
+-        xSystemShellExecute->execute( sURL, OUString(),  SystemShellExecuteFlags::DEFAULTS );
++        xSystemShellExecute->execute( sURL, OUString(),  SystemShellExecuteFlags::URIS_ONLY );
+     }
+     catch ( const uno::Exception& )
+     {
+diff --git a/desktop/source/deployment/gui/dp_gui_updatedialog.cxx b/desktop/source/deployment/gui/dp_gui_updatedialog.cxx
+index b8dabbb..841db30 100644
+--- a/desktop/source/deployment/gui/dp_gui_updatedialog.cxx
++++ b/desktop/source/deployment/gui/dp_gui_updatedialog.cxx
+@@ -1425,7 +1425,7 @@ IMPL_LINK( UpdateDialog, hyperlink_clicked, svt::FixedHyperlink*, pHyperlink )
+                 m_context), uno::UNO_QUERY_THROW);
+         //throws lang::IllegalArgumentException, system::SystemShellExecuteException
+         xSystemShellExecute->execute(
+-                                     sURL, ::rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::DEFAULTS);
++                                     sURL, ::rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY);
+     }
+     catch ( const uno::Exception& )
+     {
+diff --git a/embeddedobj/source/msole/oleembed.cxx b/embeddedobj/source/msole/oleembed.cxx
+index 4c5b4ff8..32bc790 100644
+--- a/embeddedobj/source/msole/oleembed.cxx
++++ b/embeddedobj/source/msole/oleembed.cxx
+@@ -879,7 +879,7 @@ void SAL_CALL OleEmbeddedObject::doVerb( sal_Int32 nVerbID )
+                     uno::Reference< ::com::sun::star::system::XSystemShellExecute > xSystemShellExecute( m_xFactory->createInstance(
+                         ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.system.SystemShellExecute"))),
+                         uno::UNO_QUERY_THROW);
+-                    xSystemShellExecute->execute(m_aTempDumpURL, ::rtl::OUString(), ::com::sun::star::system::SystemShellExecuteFlags::DEFAULTS);
++                    xSystemShellExecute->execute(m_aTempDumpURL, ::rtl::OUString(), ::com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY);
+                 }
+                 else
+                     throw embed::UnreachableStateException();
+diff --git a/extensions/source/update/check/updatecheck.cxx b/extensions/source/update/check/updatecheck.cxx
+index c88ea82..6485a77 100644
+--- a/extensions/source/update/check/updatecheck.cxx
++++ b/extensions/source/update/check/updatecheck.cxx
+@@ -1512,7 +1512,7 @@ UpdateCheck::showReleaseNote(const rtl::OUString& rURL) const
+     try {
+ 
+         if( xShellExecute.is() )
+-            xShellExecute->execute(rURL, rtl::OUString(), c3s::SystemShellExecuteFlags::DEFAULTS);
++            xShellExecute->execute(rURL, rtl::OUString(), c3s::SystemShellExecuteFlags::URIS_ONLY);
+     } catch(c3s::SystemShellExecuteException&) {
+     }
+ }
+diff --git a/framework/source/dispatch/mailtodispatcher.cxx b/framework/source/dispatch/mailtodispatcher.cxx
+index 96ef8cd..0f7d7c1 100644
+--- a/framework/source/dispatch/mailtodispatcher.cxx
++++ b/framework/source/dispatch/mailtodispatcher.cxx
+@@ -283,7 +283,7 @@ sal_Bool MailToDispatcher::implts_dispatch( const css::util::URL&
+             // start mail client
+             // Because there is no notofocation about success - we use case of
+             // no detected exception as SUCCESS - FAILED otherwhise.
+-            xSystemShellExecute->execute( aURL.Complete, ::rtl::OUString(), css::system::SystemShellExecuteFlags::DEFAULTS );
++            xSystemShellExecute->execute( aURL.Complete, ::rtl::OUString(), css::system::SystemShellExecuteFlags::URIS_ONLY );
+             bSuccess = sal_True;
+         }
+         catch (css::lang::IllegalArgumentException&)
+diff --git a/framework/source/dispatch/systemexec.cxx b/framework/source/dispatch/systemexec.cxx
+index e516a38..d3f5e78 100644
+--- a/framework/source/dispatch/systemexec.cxx
++++ b/framework/source/dispatch/systemexec.cxx
+@@ -192,7 +192,7 @@ void SAL_CALL SystemExec::dispatchWithNotification( const css::util::URL&
+             xFactory->createInstance(SERVICENAME_SYSTEMSHELLEXECUTE),
+             css::uno::UNO_QUERY_THROW);
+ 
+-        xShell->execute(sSystemURL, ::rtl::OUString(), css::system::SystemShellExecuteFlags::DEFAULTS);
++        xShell->execute(sSystemURL, ::rtl::OUString(), css::system::SystemShellExecuteFlags::URIS_ONLY);
+         impl_notifyResultListener(xListener, css::frame::DispatchResultState::SUCCESS);
+     }
+     catch(const css::uno::Exception&)
+diff --git a/framework/source/services/backingwindow.cxx b/framework/source/services/backingwindow.cxx
+index 290e7d3..697be90 100644
+--- a/framework/source/services/backingwindow.cxx
++++ b/framework/source/services/backingwindow.cxx
+@@ -943,7 +943,7 @@ IMPL_LINK( BackingWindow, ToolboxHdl, void*, EMPTYARG )
+                             rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.system.SystemShellExecute" ) ) ),
+                         UNO_QUERY_THROW);
+                     //throws css::lang::IllegalArgumentException, css::system::SystemShellExecuteException
+-                    xSystemShellExecute->execute( sURL, rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::DEFAULTS);
++                    xSystemShellExecute->execute( sURL, rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY);
+                 }
+             }
+         }
+diff --git a/odk/examples/cpp/complextoolbarcontrols/MyProtocolHandler.cxx b/odk/examples/cpp/complextoolbarcontrols/MyProtocolHandler.cxx
+index 1238cf9..e7d9336 100644
+--- a/odk/examples/cpp/complextoolbarcontrols/MyProtocolHandler.cxx
++++ b/odk/examples/cpp/complextoolbarcontrols/MyProtocolHandler.cxx
+@@ -277,7 +277,7 @@ void SAL_CALL BaseDispatch::dispatch( const URL& aURL, const Sequence < Property
+                 try
+ 
+                 {
+-                    xSystemShellExecute->execute( sURL, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
++                    xSystemShellExecute->execute( sURL, ::rtl::OUString(), SystemShellExecuteFlags::URIS_ONLY );
+                 }
+                 catch( Exception& rEx )
+                 {
+diff --git a/offapi/com/sun/star/system/SystemShellExecuteFlags.idl b/offapi/com/sun/star/system/SystemShellExecuteFlags.idl
+index cd93fa1..58950cb 100644
+--- a/offapi/com/sun/star/system/SystemShellExecuteFlags.idl
++++ b/offapi/com/sun/star/system/SystemShellExecuteFlags.idl
+@@ -47,6 +47,12 @@ published constants SystemShellExecuteFlags
+         method <member scope="com::sun::star::system">XSystemShellExecute::execute()</member> fails.
+      */
+     const long NO_SYSTEM_ERROR_MESSAGE = 1;
++
++    /** Only allows opening of absolute URI references.
++
++        @since LibreOffice 3.6
++     */
++    const long URIS_ONLY = 2;
+ };
+ 
+ //=============================================================================
+diff --git a/offapi/com/sun/star/system/XSystemShellExecute.idl b/offapi/com/sun/star/system/XSystemShellExecute.idl
+index 4440b04..4813fb4 100644
+--- a/offapi/com/sun/star/system/XSystemShellExecute.idl
++++ b/offapi/com/sun/star/system/XSystemShellExecute.idl
+@@ -64,8 +64,10 @@ published interface XSystemShellExecute: com::sun::star::uno::XInterface
+         avoid showing system error messages, in case of failures, etc.
+ 
+         @throws com::sun::star::lang::IllegalArgumentException
+-        when the specified flags are wrong or exclude each other.
+-.
++        when the specified flags are wrong or exclude each other; also thrown,
++        with an ArgumentPosition of 0, when nFlags contains URIS_ONLY and
++        aCommand is not an absolute URI reference
++
+         @throws com::sun::star::sys::SystemExecuteException
+         in the case of errors when trying to executed the specified command.
+ 
+diff --git a/sfx2/Library_sfx.mk b/sfx2/Library_sfx.mk
+index b8f5d37..2b636da 100644
+--- a/sfx2/Library_sfx.mk
++++ b/sfx2/Library_sfx.mk
+@@ -116,6 +116,7 @@ $(eval $(call gb_Library_add_exception_objects,sfx,\
+     sfx2/source/appl/module \
+     sfx2/source/appl/newhelp \
+     sfx2/source/appl/opengrf \
++    sfx2/source/appl/openuriexternally \
+     sfx2/source/appl/sfxhelp \
+     sfx2/source/appl/sfxpicklist \
+     sfx2/source/appl/shutdownicon \
+diff --git a/sfx2/source/appl/appopen.cxx b/sfx2/source/appl/appopen.cxx
+index 54b9b26..257668a 100644
+--- a/sfx2/source/appl/appopen.cxx
++++ b/sfx2/source/appl/appopen.cxx
+@@ -39,9 +39,8 @@
+ #include <com/sun/star/frame/XDispatchResultListener.hpp>
+ #include <com/sun/star/util/URL.hpp>
+ #include <com/sun/star/util/XURLTransformer.hpp>
+-#include <com/sun/star/system/XSystemShellExecute.hpp>
++#include <com/sun/star/system/SystemShellExecuteException.hpp>
+ #include <com/sun/star/document/XTypeDetection.hpp>
+-#include <com/sun/star/system/SystemShellExecuteFlags.hpp>
+ #include <com/sun/star/document/MacroExecMode.hpp>
+ #include <com/sun/star/document/UpdateDocMode.hpp>
+ #include <com/sun/star/task/ErrorCodeRequest.hpp>
+@@ -110,6 +109,7 @@
+ 
+ #define _SVSTDARR_STRINGSDTOR
+ #include <svl/svstdarr.hxx>
++#include "openuriexternally.hxx"
+ 
+ using namespace ::com::sun::star;
+ using namespace ::com::sun::star::beans;
+@@ -117,7 +117,6 @@ using namespace ::com::sun::star::frame;
+ using namespace ::com::sun::star::lang;
+ using namespace ::com::sun::star::uno;
+ using namespace ::com::sun::star::util;
+-using namespace ::com::sun::star::system;
+ using namespace ::com::sun::star::task;
+ using namespace ::com::sun::star::container;
+ using namespace ::cppu;
+@@ -961,140 +960,100 @@ void SfxApplication::OpenDocExec_Impl( SfxRequest& rReq )
+             if (!pFilter || !lcl_isFilterNativelySupported(*pFilter))
+             {
+                 // hyperlink does not link to own type => special handling (http, ftp) browser and (other external protocols) OS
+-                Reference< XSystemShellExecute > xSystemShellExecute( ::comphelper::getProcessServiceFactory()->createInstance(
+-                                                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.system.SystemShellExecute"))), UNO_QUERY );
+-                if ( xSystemShellExecute.is() )
++                if ( aINetProtocol == INET_PROT_MAILTO )
+                 {
+-                    if ( aINetProtocol == INET_PROT_MAILTO )
+-                    {
+-                        // don't dispatch mailto hyperlink to desktop dispatcher
+-                        rReq.RemoveItem( SID_TARGETNAME );
+-                        rReq.AppendItem( SfxStringItem( SID_TARGETNAME, String::CreateFromAscii("_self") ) );
+-                    }
+-                    else if ( aINetProtocol == INET_PROT_FTP ||
+-                         aINetProtocol == INET_PROT_HTTP ||
+-                         aINetProtocol == INET_PROT_HTTPS )
+-                    {
+-                        try
+-                        {
+-                            // start browser
+-                            ::rtl::OUString aURLString( aURL.Complete );
+-                            xSystemShellExecute->execute( aURLString, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
+-                        }
+-                        catch ( ::com::sun::star::lang::IllegalArgumentException& )
+-                        {
+-                            SolarMutexGuard aGuard;
+-                            Window *pWindow = SFX_APP()->GetTopWindow();
+-                            ErrorBox( pWindow, SfxResId( MSG_ERR_NO_WEBBROWSER_FOUND )).Execute();
+-                        }
+-                        catch ( ::com::sun::star::system::SystemShellExecuteException& )
+-                        {
+-                            SolarMutexGuard aGuard;
+-                            Window *pWindow = SFX_APP()->GetTopWindow();
+-                            ErrorBox( pWindow, SfxResId( MSG_ERR_NO_WEBBROWSER_FOUND )).Execute();
+-                        }
+-
+-                        return;
+-                    }
+-                    else
+-                    {
+-                        // check for "internal" protocols that should not be forwarded to the system
+-                        Sequence < ::rtl::OUString > aProtocols(2);
++                    // don't dispatch mailto hyperlink to desktop dispatcher
++                    rReq.RemoveItem( SID_TARGETNAME );
++                    rReq.AppendItem( SfxStringItem( SID_TARGETNAME, String::CreateFromAscii("_self") ) );
++                }
++                else if ( aINetProtocol == INET_PROT_FTP ||
++                     aINetProtocol == INET_PROT_HTTP ||
++                     aINetProtocol == INET_PROT_HTTPS )
++                {
++                    sfx2::openUriExternally(aURL.Complete, true);
++                    return;
++                }
++                else
++                {
++                    // check for "internal" protocols that should not be forwarded to the system
++                    Sequence < ::rtl::OUString > aProtocols(2);
+ 
+-                        // add special protocols that always should be treated as internal
+-                        aProtocols[0] = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("private:*"));
+-                        aProtocols[1] = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("vnd.sun.star.*"));
++                    // add special protocols that always should be treated as internal
++                    aProtocols[0] = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("private:*"));
++                    aProtocols[1] = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("vnd.sun.star.*"));
+ 
+-                        try
++                    try
++                    {
++                        // get registered protocol handlers from configuration
++                        Reference < XNameAccess > xAccess( ::comphelper::ConfigurationHelper::openConfig( ::comphelper::getProcessServiceFactory(),
++                            ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("org.openoffice.Office.ProtocolHandler/HandlerSet")), ::comphelper::ConfigurationHelper::E_READONLY ), UNO_QUERY );
++                        if ( xAccess.is() )
+                         {
+-                            // get registered protocol handlers from configuration
+-                            Reference < XNameAccess > xAccess( ::comphelper::ConfigurationHelper::openConfig( ::comphelper::getProcessServiceFactory(),
+-                                ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("org.openoffice.Office.ProtocolHandler/HandlerSet")), ::comphelper::ConfigurationHelper::E_READONLY ), UNO_QUERY );
+-                            if ( xAccess.is() )
++                            Sequence < ::rtl::OUString > aNames = xAccess->getElementNames();
++                            for ( sal_Int32 nName = 0; nName < aNames.getLength(); nName ++)
+                             {
+-                                Sequence < ::rtl::OUString > aNames = xAccess->getElementNames();
+-                                for ( sal_Int32 nName = 0; nName < aNames.getLength(); nName ++)
++                                Reference < XPropertySet > xSet;
++                                Any aRet = xAccess->getByName( aNames[nName] );
++                                aRet >>= xSet;
++                                if ( xSet.is() )
+                                 {
+-                                    Reference < XPropertySet > xSet;
+-                                    Any aRet = xAccess->getByName( aNames[nName] );
+-                                    aRet >>= xSet;
+-                                    if ( xSet.is() )
+-                                    {
+-                                        // copy protocols
+-                                        aRet = xSet->getPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("Protocols")) );
+-                                        Sequence < ::rtl::OUString > aTmp;
+-                                        aRet >>= aTmp;
+-
+-                                        // todo: add operator+= to SequenceAsVector class and use SequenceAsVector for aProtocols
+-                                        sal_Int32 nLength = aProtocols.getLength();
+-                                        aProtocols.realloc( nLength+aTmp.getLength() );
+-                                        for ( sal_Int32 n=0; n<aTmp.getLength(); n++ )
+-                                            aProtocols[(++nLength)-1] = aTmp[n];
+-                                    }
++                                    // copy protocols
++                                    aRet = xSet->getPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("Protocols")) );
++                                    Sequence < ::rtl::OUString > aTmp;
++                                    aRet >>= aTmp;
++
++                                    // todo: add operator+= to SequenceAsVector class and use SequenceAsVector for aProtocols
++                                    sal_Int32 nLength = aProtocols.getLength();
++                                    aProtocols.realloc( nLength+aTmp.getLength() );
++                                    for ( sal_Int32 n=0; n<aTmp.getLength(); n++ )
++                                        aProtocols[(++nLength)-1] = aTmp[n];
+                                 }
+                             }
+                         }
+-                        catch ( Exception& )
+-                        {
+-                            // registered protocols could not be read
+-                        }
++                    }
++                    catch ( Exception& )
++                    {
++                        // registered protocols could not be read
++                    }
+ 
+-                        sal_Bool bFound = sal_False;
+-                        for ( sal_Int32 nProt=0; nProt<aProtocols.getLength(); nProt++ )
++                    sal_Bool bFound = sal_False;
++                    for ( sal_Int32 nProt=0; nProt<aProtocols.getLength(); nProt++ )
++                    {
++                        WildCard aPattern(aProtocols[nProt]);
++                        if ( aPattern.Matches( aURL.Complete ) )
+                         {
+-                            WildCard aPattern(aProtocols[nProt]);
+-                            if ( aPattern.Matches( aURL.Complete ) )
+-                            {
+-                                bFound = sal_True;
+-                                break;
+-                            }
++                            bFound = sal_True;
++                            break;
+                         }
++                    }
+ 
+-                        if ( !bFound )
+-                        {
+-                            sal_Bool bLoadInternal = sal_False;
++                    if ( !bFound )
++                    {
++                        sal_Bool bLoadInternal = sal_False;
+ 
+-                            // security reservation: => we have to check the referer before executing
+-                            if (SFX_APP()->IsSecureURL(rtl::OUString(), &aReferer))
++                        // security reservation: => we have to check the referer before executing
++                        if (SFX_APP()->IsSecureURL(rtl::OUString(), &aReferer))
++                        {
++                            try
+                             {
+-                                ::rtl::OUString aURLString( aURL.Complete );
+-
+-                                try
+-                                {
+-                                    // give os this file
+-                                    xSystemShellExecute->execute( aURLString, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
+-                                }
+-                                catch ( ::com::sun::star::lang::IllegalArgumentException& )
+-                                {
+-                                    SolarMutexGuard aGuard;
+-                                    Window *pWindow = SFX_APP()->GetTopWindow();
+-                                    ErrorBox( pWindow, SfxResId( MSG_ERR_NO_WEBBROWSER_FOUND )).Execute();
+-                                }
+-                                catch ( ::com::sun::star::system::SystemShellExecuteException& )
+-                                {
+-                                    if ( !pFilter )
+-                                    {
+-                                        SolarMutexGuard aGuard;
+-                                        Window *pWindow = SFX_APP()->GetTopWindow();
+-                                        ErrorBox( pWindow, SfxResId( MSG_ERR_NO_WEBBROWSER_FOUND )).Execute();
+-                                    }
+-                                    else
+-                                    {
+-                                        rReq.RemoveItem( SID_TARGETNAME );
+-                                        rReq.AppendItem( SfxStringItem( SID_TARGETNAME, String::CreateFromAscii("_default") ) );
+-                                        bLoadInternal = sal_True;
+-                                    }
+-                                }
++                                sfx2::openUriExternally(
++                                    aURL.Complete, pFilter == 0);
+                             }
+-                            else
++                            catch ( ::com::sun::star::system::SystemShellExecuteException& )
+                             {
+-                                SfxErrorContext aCtx( ERRCTX_SFX_OPENDOC, aURL.Complete );
+-                                ErrorHandler::HandleError( ERRCODE_IO_ACCESSDENIED );
++                                rReq.RemoveItem( SID_TARGETNAME );
++                                rReq.AppendItem( SfxStringItem( SID_TARGETNAME, String::CreateFromAscii("_default") ) );
++                                bLoadInternal = sal_True;
+                             }
+-
+-                            if ( !bLoadInternal )
+-                                return;
+                         }
++                        else
++                        {
++                            SfxErrorContext aCtx( ERRCTX_SFX_OPENDOC, aURL.Complete );
++                            ErrorHandler::HandleError( ERRCODE_IO_ACCESSDENIED );
++                        }
++
++                        if ( !bLoadInternal )
++                            return;
+                     }
+                 }
+             }
+diff --git a/sfx2/source/appl/appserv.cxx b/sfx2/source/appl/appserv.cxx
+index ad68da7..5b8bd18 100644
+--- a/sfx2/source/appl/appserv.cxx
++++ b/sfx2/source/appl/appserv.cxx
+@@ -369,7 +369,7 @@ void SfxApplication::MiscExec_Impl( SfxRequest& rReq )
+                 uno::Reference< com::sun::star::system::XSystemShellExecute > xSystemShellExecute(
+                     ::comphelper::getProcessServiceFactory()->createInstance(
+                         DEFINE_CONST_UNICODE("com.sun.star.system.SystemShellExecute") ), uno::UNO_QUERY_THROW );
+-                xSystemShellExecute->execute( sURL, ::rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++                xSystemShellExecute->execute( sURL, ::rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+             }
+             catch ( uno::Exception& )
+             {
+@@ -977,7 +977,7 @@ void SfxApplication::OfaExec_Impl( SfxRequest& rReq )
+                     xSystemShell->execute(
+                         aURLBuf.makeStringAndClear(),
+                         ::rtl::OUString(),
+-                        css::system::SystemShellExecuteFlags::DEFAULTS );
++                        css::system::SystemShellExecuteFlags::URIS_ONLY );
+                 }
+             }
+             catch( const ::com::sun::star::uno::Exception& )
+diff --git a/sfx2/source/appl/openuriexternally.cxx b/sfx2/source/appl/openuriexternally.cxx
+new file mode 100644
+index 0000000..db889ce
+--- /dev/null
++++ b/sfx2/source/appl/openuriexternally.cxx
+@@ -0,0 +1,99 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * Version: MPL 1.1 / GPLv3+ / LGPLv3+
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License or as specified alternatively below. You may obtain a copy of
++ * the License at http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * Major Contributor(s):
++ * [ Copyright (C) 2012 Red Hat, Inc., Stephan Bergmann <sbergman@redhat.com>
++ *   (initial developer) ]
++ *
++ * All Rights Reserved.
++ *
++ * For minor contributions see the git repository.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either the GNU General Public License Version 3 or later (the "GPLv3+"), or
++ * the GNU Lesser General Public License Version 3 or later (the "LGPLv3+"),
++ * in which case the provisions of the GPLv3+ or the LGPLv3+ are applicable
++ * instead of those above.
++ */
++
++#include "sal/config.h"
++
++#include "com/sun/star/lang/IllegalArgumentException.hpp"
++#include "com/sun/star/system/XSystemShellExecute.hpp"
++#include "com/sun/star/system/SystemShellExecuteException.hpp"
++#include "com/sun/star/system/SystemShellExecuteFlags.hpp"
++#include "com/sun/star/uno/Reference.hxx"
++#include "com/sun/star/uno/RuntimeException.hpp"
++#include "com/sun/star/uno/XInterface.hpp"
++#include "comphelper/processfactory.hxx"
++#include "rtl/ustring.h"
++#include "rtl/ustring.hxx"
++#include "sfx2/app.hxx"
++#include "sfx2/sfxresid.hxx"
++#include "vcl/msgbox.hxx"
++#include "vcl/svapp.hxx"
++
++#include "openuriexternally.hxx"
++
++#include "app.hrc"
++
++namespace {
++
++namespace css = com::sun::star;
++
++}
++
++bool sfx2::openUriExternally(
++    rtl::OUString const & uri, bool handleSystemShellExecuteException)
++{
++    css::uno::Reference< css::system::XSystemShellExecute > exec(
++        comphelper::getProcessServiceFactory()->createInstance(
++            rtl::OUString(
++                RTL_CONSTASCII_USTRINGPARAM(
++                    "com.sun.star.system.SystemShellExecute"))),
++        css::uno::UNO_QUERY_THROW);
++    try {
++        exec->execute(
++            uri, rtl::OUString(),
++            css::system::SystemShellExecuteFlags::URIS_ONLY);
++        return true;
++    } catch (css::lang::IllegalArgumentException & e) {
++        if (e.ArgumentPosition != 0) {
++            throw css::uno::RuntimeException(
++                (rtl::OUString(
++                    RTL_CONSTASCII_USTRINGPARAM(
++                        "unexpected IllegalArgumentException: "))
++                 + e.Message),
++                css::uno::Reference< css::uno::XInterface >());
++        }
++        SolarMutexGuard g;
++        WarningBox wb(
++            SfxGetpApp()->GetTopWindow(),
++            SfxResId(RID_SECURITY_WARNING_NO_HYPERLINKS));
++        wb.SetText(SfxResId(RID_SECURITY_WARNING_TITLE));
++        wb.Execute();
++    } catch (css::system::SystemShellExecuteException &) {
++        if (!handleSystemShellExecuteException) {
++            throw;
++        }
++        SolarMutexGuard g;
++        ErrorBox(
++            SfxGetpApp()->GetTopWindow(),
++            SfxResId(MSG_ERR_NO_WEBBROWSER_FOUND)).
++            Execute();
++    }
++    return false;
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sfx2/source/appl/sfxhelp.cxx b/sfx2/source/appl/sfxhelp.cxx
+index 47f470e..b5650ac 100644
+--- a/sfx2/source/appl/sfxhelp.cxx
++++ b/sfx2/source/appl/sfxhelp.cxx
+@@ -693,7 +693,7 @@ static bool impl_showOnlineHelp( const String& rURL )
+ 
+         if ( xSystemShell.is() )
+         {
+-            xSystemShell->execute( aHelpLink, rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
++            xSystemShell->execute( aHelpLink, rtl::OUString(), SystemShellExecuteFlags::URIS_ONLY );
+             return true;
+         }
+     }
+diff --git a/sfx2/source/inc/openuriexternally.hxx b/sfx2/source/inc/openuriexternally.hxx
+new file mode 100644
+index 0000000..79a05a8
+--- /dev/null
++++ b/sfx2/source/inc/openuriexternally.hxx
+@@ -0,0 +1,57 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * Version: MPL 1.1 / GPLv3+ / LGPLv3+
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License or as specified alternatively below. You may obtain a copy of
++ * the License at http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * Major Contributor(s):
++ * [ Copyright (C) 2012 Red Hat, Inc., Stephan Bergmann <sbergman@redhat.com>
++ *   (initial developer) ]
++ *
++ * All Rights Reserved.
++ *
++ * For minor contributions see the git repository.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either the GNU General Public License Version 3 or later (the "GPLv3+"), or
++ * the GNU Lesser General Public License Version 3 or later (the "LGPLv3+"),
++ * in which case the provisions of the GPLv3+ or the LGPLv3+ are applicable
++ * instead of those above.
++ */
++
++#ifndef INCLUDED_SFX2_SOURCE_INC_OPENURIEXTERNALLY_HXX
++#define INCLUDED_SFX2_SOURCE_INC_OPENURIEXTERNALLY_HXX
++
++#include "sal/config.h"
++
++namespace rtl { class OUString; }
++
++namespace sfx2 {
++
++/// Open a URI via com.sun.star.system.SystemShellExecute
++///
++/// Handles XSystemShellExecute.execute's IllegalArgumentException (throwing a
++/// RuntimeException if it is unexpected, i.e., not caused by the given uri not
++/// being an absolute URI reference).
++///
++/// Handles XSystemShellExecute.execute's SystemShellExecuteException unless the
++/// given handleSystemShellExecuteException is false (in which case the
++/// exception is re-thrown).
++///
++/// @return true iff execution was successful
++bool openUriExternally(
++    rtl::OUString const & uri, bool handleSystemShellExecuteException);
++
++}
++
++#endif
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sfx2/source/view/view.hrc b/sfx2/source/view/view.hrc
+index 3dce1ec..adcc3a8 100755
+--- a/sfx2/source/view/view.hrc
++++ b/sfx2/source/view/view.hrc
+@@ -63,7 +63,7 @@
+ 
+ #define MSG_QUERY_OPENASTEMPLATE            (RID_SFX_VIEW_START+41)
+ #define MSG_CANT_CLOSE                      (RID_SFX_VIEW_START+42)
+-#define MSG_ERROR_NO_WEBBROWSER_FOUND       (RID_SFX_VIEW_START+43)
++
+ #define TP_FRAMEPROPERTIES                  (RID_SFX_VIEW_START+44)
+ 
+ #define FT_FRAMENAME                    3
+diff --git a/sfx2/source/view/view.src b/sfx2/source/view/view.src
+index b4c09a0..40a6862 100644
+--- a/sfx2/source/view/view.src
++++ b/sfx2/source/view/view.src
+@@ -170,21 +170,3 @@ String STR_REPAIREDDOCUMENT
+ {
+     Text [ en-US ] = " (repaired document)" ;
+ };
+-
+-ErrorBox MSG_ERROR_NO_WEBBROWSER_FOUND
+-{
+-    BUTTONS = WB_OK ;
+-    DEFBUTTON = WB_DEF_OK ;
+-    Message[ en-US ] = "%PRODUCTNAME could not find a web browser on your system. Please check your Desktop Preferences or install a web browser (for example, Mozilla) in the default  location requested during the browser installation." ;
+-};
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+diff --git a/sfx2/source/view/viewsh.cxx b/sfx2/source/view/viewsh.cxx
+index d85b2c6..394d346 100644
+--- a/sfx2/source/view/viewsh.cxx
++++ b/sfx2/source/view/viewsh.cxx
+@@ -39,8 +39,6 @@
+ #include <com/sun/star/beans/XPropertySet.hpp>
+ #include <com/sun/star/embed/EmbedStates.hpp>
+ #include <com/sun/star/embed/EmbedMisc.hpp>
+-#include <com/sun/star/system/XSystemShellExecute.hpp>
+-#include <com/sun/star/system/SystemShellExecuteFlags.hpp>
+ #include <com/sun/star/container/XContainerQuery.hpp>
+ #include <com/sun/star/frame/XStorable.hpp>
+ #include <com/sun/star/datatransfer/clipboard/XClipboard.hpp>
+@@ -86,6 +84,7 @@
+ #include "workwin.hxx"
+ #include <sfx2/objface.hxx>
+ #include <sfx2/docfilt.hxx>
++#include "openuriexternally.hxx"
+ 
+ #include <comphelper/processfactory.hxx>
+ 
+@@ -94,7 +93,6 @@ using namespace ::com::sun::star::uno;
+ using namespace ::com::sun::star::frame;
+ using namespace ::com::sun::star::beans;
+ using namespace ::com::sun::star::util;
+-using namespace ::com::sun::star::system;
+ using namespace ::cppu;
+ namespace css = ::com::sun::star;
+ 
+@@ -729,29 +727,8 @@ void SfxViewShell::ExecMisc_Impl( SfxRequest &rReq )
+                     return;
+                 }
+ 
+-                ::com::sun::star::uno::Reference< XSystemShellExecute > xSystemShellExecute( xSMGR->createInstance(
+-                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.system.SystemShellExecute"))),
+-                    css::uno::UNO_QUERY );
+-
+-                        sal_Bool bRet( sal_True );
+-                if ( xSystemShellExecute.is() )
+-                {
+-                    try
+-                    {
+-                                xSystemShellExecute->execute(
+-                                                    aFileURL, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
+-                    }
+-                    catch (const uno::Exception&)
+-                    {
+-                        SolarMutexGuard aGuard;
+-                        Window *pParent = SFX_APP()->GetTopWindow();
+-                                            ErrorBox( pParent, SfxResId( MSG_ERROR_NO_WEBBROWSER_FOUND )).Execute();
+-                        bRet = sal_False;
+-                    }
+-                }
+-
+-                rReq.Done(bRet);
+-                            break;
++                rReq.Done(sfx2::openUriExternally(aFileURL, true));
++                break;
+             }
+             else
+             {
+diff --git a/shell/source/unix/exec/shellexec.cxx b/shell/source/unix/exec/shellexec.cxx
+index db4570f..97e37ee 100644
+--- a/shell/source/unix/exec/shellexec.cxx
++++ b/shell/source/unix/exec/shellexec.cxx
+@@ -39,6 +39,7 @@
+ #include <com/sun/star/util/XMacroExpander.hpp>
+ #include <com/sun/star/uri/XExternalUriReferenceTranslator.hpp>
+ #include <com/sun/star/uri/ExternalUriReferenceTranslator.hpp>
++#include <com/sun/star/uri/UriReferenceFactory.hpp>
+ 
+ #include "uno/current_context.hxx"
+ 
+@@ -76,6 +77,8 @@ using namespace cppu;
+ 
+ namespace // private
+ {
++    namespace css = com::sun::star;
++
+     Sequence< OUString > SAL_CALL ShellExec_getSupportedServiceNames()
+     {
+         Sequence< OUString > aRet(1);
+@@ -132,10 +135,10 @@ void SAL_CALL ShellExec::execute( const OUString& aCommand, const OUString& aPar
+     // DESKTOP_LAUNCH, see http://freedesktop.org/pipermail/xdg/2004-August/004489.html
+     static const char *pDesktopLaunch = getenv( "DESKTOP_LAUNCH" );
+ 
+-    // Check wether aCommand contains a document url or not
+-    sal_Int32 nIndex = aCommand.indexOf( OUString( RTL_CONSTASCII_USTRINGPARAM(":/") ) );
+-
+-    if( nIndex > 0 || 0 == aCommand.compareToAscii("mailto:", 7) )
++    // Check whether aCommand contains an absolute URI reference:
++    css::uno::Reference< css::uri::XUriReference > uri(
++        css::uri::UriReferenceFactory::create(m_xContext)->parse(aCommand));
++    if (uri.is() && uri->isAbsolute())
+     {
+         // It seems to be a url ..
+         // We need to re-encode file urls because osl_getFileURLFromSystemPath converts
+@@ -155,7 +158,29 @@ void SAL_CALL ShellExec::execute( const OUString& aCommand, const OUString& aPar
+         }
+ 
+ #ifdef MACOSX
+-        aBuffer.append("open");
++        //TODO: Using open(1) with an argument that syntactically is an absolute
++        // URI reference does not necessarily give expected results:
++        // 1  If the given URI reference matches a supported scheme (e.g.,
++        //  "mailto:foo"):
++        // 1.1  If it matches an existing pathname (relative to CWD):  Results
++        //  in "mailto:foo?\n[0]\tcancel\n[1]\tOpen the file\tmailto:foo\n[2]\t
++        //  Open the URL\tmailto:foo\n\nWhich did you mean? Cancelled." on
++        //  stderr and SystemShellExecuteException.
++        // 1.2  If it does not match an exitsting pathname (relative to CWD):
++        //  Results in the corresponding application being opened with the given
++        //  document (e.g., Mail with a New Message).
++        // 2  If the given URI reference does not match a supported scheme
++        //  (e.g., "foo:bar"):
++        // 2.1  If it matches an existing pathname (relative to CWD) pointing to
++        //  an executable:  Results in execution of that executable.
++        // 2.2  If it matches an existing pathname (relative to CWD) pointing to
++        //  a non-executable regular file:  Results in opening it in TextEdit.
++        // 2.3  If it matches an existing pathname (relative to CWD) pointing to
++        //  a directory:  Results in opening it in Finder.
++        // 2.4  If it does not match an exitsting pathname (relative to CWD):
++        //  Results in "The file /.../foo:bar does not exits." (where "/..." is
++        //  the CWD) on stderr and SystemShellExecuteException.
++        aBuffer.append("open --");
+ #else
+         // The url launchers are expected to be in the $BRAND_BASE_DIR/program
+         // directory:
+@@ -233,6 +258,15 @@ void SAL_CALL ShellExec::execute( const OUString& aCommand, const OUString& aPar
+             aLaunchBuffer.append(" ");
+             escapeForShell(aLaunchBuffer, OUStringToOString(aURL, osl_getThreadTextEncoding()));
+         }
++    } else if ((nFlags & css::system::SystemShellExecuteFlags::URIS_ONLY) != 0)
++    {
++        throw css::lang::IllegalArgumentException(
++            (rtl::OUString(
++                RTL_CONSTASCII_USTRINGPARAM(
++                    "XSystemShellExecute.execute URIS_ONLY with non-absolute"
++                    " URI reference "))
++             + aCommand),
++            static_cast< cppu::OWeakObject * >(this), 0);
+     } else {
+         escapeForShell(aBuffer, OUStringToOString(aCommand, osl_getThreadTextEncoding()));
+         aBuffer.append(" ");
+diff --git a/shell/source/win32/SysShExec.cxx b/shell/source/win32/SysShExec.cxx
+index c35e445..318b7f56 100644
+--- a/shell/source/win32/SysShExec.cxx
++++ b/shell/source/win32/SysShExec.cxx
+@@ -36,6 +36,7 @@
+ #include <sal/macros.h>
+ 
+ #include <com/sun/star/system/SystemShellExecuteFlags.hpp>
++#include <com/sun/star/uri/UriReferenceFactory.hpp>
+ 
+ #define WIN32_LEAN_AND_MEAN
+ #if defined _MSC_VER
+@@ -79,6 +80,8 @@ using namespace cppu;
+ 
+ namespace // private
+ {
++    namespace css = com::sun::star;
++
+     Sequence< OUString > SAL_CALL SysShExec_getSupportedServiceNames()
+     {
+         Sequence< OUString > aRet(1);
+@@ -258,8 +261,9 @@ namespace // private
+ 
+ //-----------------------------------------------------------------------------------------
+ 
+-CSysShExec::CSysShExec( ) :
+-    WeakComponentImplHelper2< XSystemShellExecute, XServiceInfo >( m_aMutex )
++CSysShExec::CSysShExec( const Reference< css::uno::XComponentContext >& xContext ) :
++    WeakComponentImplHelper2< XSystemShellExecute, XServiceInfo >( m_aMutex ),
++    m_xContext(xContext)
+ {
+     /*
+      * As this service is declared thread-affine, it is ensured to be called from a
+@@ -284,12 +288,28 @@ void SAL_CALL CSysShExec::execute( const OUString& aCommand, const OUString& aPa
+             static_cast< XSystemShellExecute* >( this ),
+             1 );
+ 
+-    if (!(nFlags >= DEFAULTS && nFlags <= NO_SYSTEM_ERROR_MESSAGE))
++    if ((nFlags & ~(NO_SYSTEM_ERROR_MESSAGE | URIS_ONLY)) != 0)
+         throw IllegalArgumentException(
+             OUString(RTL_CONSTASCII_USTRINGPARAM("Invalid Flags specified")),
+             static_cast< XSystemShellExecute* >( this ),
+             3 );
+ 
++    if ((nFlags & URIS_ONLY) != 0)
++    {
++        css::uno::Reference< css::uri::XUriReference > uri(
++            css::uri::UriReferenceFactory::create(m_xContext)->parse(aCommand));
++        if (!(uri.is() && uri->isAbsolute()))
++        {
++            throw css::lang::IllegalArgumentException(
++                (rtl::OUString(
++                    RTL_CONSTASCII_USTRINGPARAM(
++                        "XSystemShellExecute.execute URIS_ONLY with"
++                        " non-absolute URI reference "))
++                 + aCommand),
++                static_cast< cppu::OWeakObject * >(this), 0);
++        }
++    }
++
+     /*  #i4789#; jump mark detection on system paths
+         if the given command is a system path (not http or
+         other uri schemes) and seems to have a jump mark
+diff --git a/shell/source/win32/SysShExec.hxx b/shell/source/win32/SysShExec.hxx
+index 84b9a74..3ba357f 100644
+--- a/shell/source/win32/SysShExec.hxx
++++ b/shell/source/win32/SysShExec.hxx
+@@ -36,6 +36,7 @@
+ #include <cppuhelper/compbase2.hxx>
+ #include <osl/mutex.hxx>
+ #include <com/sun/star/lang/XServiceInfo.hpp>
++#include <com/sun/star/uno/XComponentContext.hpp>
+ 
+ #include <com/sun/star/system/XSystemShellExecute.hpp>
+ 
+@@ -55,8 +56,11 @@ class CSysShExec :
+             com::sun::star::system::XSystemShellExecute,
+             com::sun::star::lang::XServiceInfo >
+ {
++    ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >
++    m_xContext;
++
+ public:
+-    CSysShExec( );
++    CSysShExec(const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& xContext);
+ 
+     //------------------------------------------------
+     // XSystemShellExecute
+diff --git a/shell/source/win32/SysShentry.cxx b/shell/source/win32/SysShentry.cxx
+index 874be55..37a9367 100644
+--- a/shell/source/win32/SysShentry.cxx
++++ b/shell/source/win32/SysShentry.cxx
+@@ -59,9 +59,9 @@ using com::sun::star::system::XSystemShellExecute;
+ 
+ namespace
+ {
+-    Reference< XInterface > SAL_CALL createInstance( const Reference< XMultiServiceFactory >& )
++    Reference< XInterface > SAL_CALL createInstance( const Reference< XComponentContext >& xContext )
+     {
+-        return Reference< XInterface >( static_cast< XSystemShellExecute* >( new CSysShExec( ) ) );
++        return Reference< XInterface >( static_cast< XSystemShellExecute* >( new CSysShExec(xContext) ) );
+     }
+ }
+ 
+@@ -72,19 +72,18 @@ extern "C"
+ // returns a factory to create XFilePicker-Services
+ //----------------------------------------------------------------------
+ 
+-SAL_DLLPUBLIC_EXPORT void* SAL_CALL component_getFactory( const sal_Char* pImplName, uno_Interface* pSrvManager, uno_Interface* /*pRegistryKey*/ )
++SAL_DLLPUBLIC_EXPORT void* SAL_CALL component_getFactory( const sal_Char* pImplName, uno_Interface*, uno_Interface* /*pRegistryKey*/ )
+ {
+     void* pRet = 0;
+ 
+-    if ( pSrvManager && ( 0 == rtl_str_compare( pImplName, SYSSHEXEC_IMPL_NAME ) ) )
++    if ( 0 == rtl_str_compare( pImplName, SYSSHEXEC_IMPL_NAME ) )
+     {
+         Sequence< OUString > aSNS( 1 );
+         aSNS.getArray( )[0] = OUString(RTL_CONSTASCII_USTRINGPARAM( SYSSHEXEC_SERVICE_NAME ));
+ 
+-        Reference< XSingleServiceFactory > xFactory ( createOneInstanceFactory(
+-            reinterpret_cast< XMultiServiceFactory* > ( pSrvManager ),
+-            OUString::createFromAscii( pImplName ),
++        Reference< XSingleComponentFactory > xFactory ( createSingleComponentFactory(
+             createInstance,
++            OUString::createFromAscii( pImplName ),
+             aSNS ) );
+         if ( xFactory.is() )
+         {
+diff --git a/svtools/source/contnr/templwin.cxx b/svtools/source/contnr/templwin.cxx
+index 66f80a4..85292a5 100644
+--- a/svtools/source/contnr/templwin.cxx
++++ b/svtools/source/contnr/templwin.cxx
+@@ -1919,7 +1919,7 @@ IMPL_LINK ( SvtDocumentTemplateDialog, OpenLinkHdl_Impl, svt::FixedHyperlink*, E
+                     RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.system.SystemShellExecute" ) ) ),
+                 uno::UNO_QUERY_THROW );
+             if ( xSystemShell.is() )
+-                xSystemShell->execute( sURL, ::rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++                xSystemShell->execute( sURL, ::rtl::OUString(), com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+             EndDialog( RET_CANCEL );
+         }
+         catch( const uno::Exception& e )
+diff --git a/sw/source/ui/docvw/extedit.cxx b/sw/source/ui/docvw/extedit.cxx
+index 1063682..98dc6aa 100644
+--- a/sw/source/ui/docvw/extedit.cxx
++++ b/sw/source/ui/docvw/extedit.cxx
+@@ -96,7 +96,7 @@ void pWorker(void *pThreadData)
+     uno::Reference< com::sun::star::system::XSystemShellExecute > xSystemShellExecute(
+             ::comphelper::getProcessServiceFactory()->createInstance(
+                 DEFINE_CONST_UNICODE("com.sun.star.system.SystemShellExecute") ), uno::UNO_QUERY_THROW );
+-    xSystemShellExecute->execute( pData->fileName, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++    xSystemShellExecute->execute( pData->fileName, rtl::OUString(),  com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+ }
+ 
+ void EditWithExternalTool(GraphicObject *pGraphicObject, SwWrtShell *rSh)
+diff --git a/sw/source/ui/lingu/olmenu.cxx b/sw/source/ui/lingu/olmenu.cxx
+index b85dfaa..51ee827 100644
+--- a/sw/source/ui/lingu/olmenu.cxx
++++ b/sw/source/ui/lingu/olmenu.cxx
+@@ -849,7 +849,7 @@ void SwSpellPopup::Execute( sal_uInt16 nId )
+                 ::comphelper::getProcessServiceFactory()->createInstance(
+                     DEFINE_CONST_UNICODE("com.sun.star.system.SystemShellExecute") ), uno::UNO_QUERY_THROW );
+             xSystemShellExecute->execute( sExplanationLink, rtl::OUString(),
+-                    com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++                    com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+         }
+         catch (const uno::Exception&)
+         {
+diff --git a/swext/mediawiki/src/com/sun/star/wiki/Helper.java b/swext/mediawiki/src/com/sun/star/wiki/Helper.java
+index 7ecd9ec..e392811 100644
+--- a/swext/mediawiki/src/com/sun/star/wiki/Helper.java
++++ b/swext/mediawiki/src/com/sun/star/wiki/Helper.java
+@@ -708,7 +708,7 @@ public class Helper
+                 Object oSystemShell = xContext.getServiceManager().createInstanceWithContext( "com.sun.star.system.SystemShellExecute", xContext );
+                 XSystemShellExecute xSystemShell = (XSystemShellExecute)UnoRuntime.queryInterface( XSystemShellExecute.class, oSystemShell );
+                 if ( xSystemShell != null )
+-                    xSystemShell.execute( sURL, "", SystemShellExecuteFlags.DEFAULTS );
++                    xSystemShell.execute( sURL, "", SystemShellExecuteFlags.URIS_ONLY );
+             }
+             catch( Exception e )
+             {
+diff --git a/toolkit/source/awt/vclxwindows.cxx b/toolkit/source/awt/vclxwindows.cxx
+index 2669f0f..c8c9edf 100644
+--- a/toolkit/source/awt/vclxwindows.cxx
++++ b/toolkit/source/awt/vclxwindows.cxx
+@@ -2979,7 +2979,7 @@ void VCLXFixedHyperlink::ProcessWindowEvent( const VclWindowEvent& rVclWindowEve
+                     {
+                         // start browser
+                         xSystemShellExecute->execute(
+-                            sURL, ::rtl::OUString(), ::com::sun::star::system::SystemShellExecuteFlags::DEFAULTS );
++                            sURL, ::rtl::OUString(), ::com::sun::star::system::SystemShellExecuteFlags::URIS_ONLY );
+                     }
+                     catch( uno::Exception& )
+                     {
+diff --git a/uui/source/newerverwarn.cxx b/uui/source/newerverwarn.cxx
+index 2fd8be7..bcdfa60 100644
+--- a/uui/source/newerverwarn.cxx
++++ b/uui/source/newerverwarn.cxx
+@@ -113,7 +113,7 @@ IMPL_LINK( NewerVersionWarningDialog, UpdateHdl, PushButton*, EMPTYARG )
+             if ( xSystemShell.is() && sNotifyURL.getLength() )
+             {
+                 xSystemShell->execute(
+-                    sNotifyURL, ::rtl::OUString(), SystemShellExecuteFlags::DEFAULTS );
++                    sNotifyURL, ::rtl::OUString(), SystemShellExecuteFlags::URIS_ONLY );
+             }
+         }
+         else
+-- 
+1.7.7.6
+

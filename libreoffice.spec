@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -142,6 +142,7 @@ Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 Patch27: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 Patch28: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 Patch29: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
+Patch30: 0001-Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 %patch28 -p1 -b .do-not-complain-about-soffice-command-line-o.patch
 %patch29 -p1 -b .fdo48096-torn-off-popups-trigger-keyboard-.patch
+%patch30 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2282,6 +2284,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 03 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.2.1-4.UNBUILT
+- Fix URIS_ONLY flag issue
+
 * Mon Apr 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.2.1-3
 - Resolves: rhbz#708041 focus problems with tearable menus
 

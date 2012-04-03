@@ -13,24 +13,24 @@ diff --git a/svx/source/tbxctrls/linectrl.cxx b/svx/source/tbxctrls/linectrl.cxx
 index c81177e..ccc047c4 100644
 --- a/svx/source/tbxctrls/linectrl.cxx
 +++ b/svx/source/tbxctrls/linectrl.cxx
-@@ -379,7 +379,7 @@ SvxLineEndWindow::SvxLineEndWindow(
+@@ -381,7 +381,7 @@
      const String& rWndTitle ) :
      SfxPopupWindow( nSlotId,
                      rFrame,
 -                    WinBits( WB_STDPOPUP ) ),
 +                    WinBits( WB_STDPOPUP | WB_OWNERDRAWDECORATION ) ),
-     aLineEndSet     ( this, WinBits( WB_ITEMBORDER | WB_3DLOOK | WB_NO_DIRECTSELECT ) ),
-     nCols           ( 2 ),
-     nLines          ( 12 ),
-@@ -400,7 +400,7 @@ SvxLineEndWindow::SvxLineEndWindow(
+     pLineEndList	( NULL ),
+     aLineEndSet		( this, WinBits( WB_ITEMBORDER | WB_3DLOOK | WB_NO_DIRECTSELECT ) ),
+     nCols			( 2 ),
+@@ -403,7 +403,7 @@
      SfxPopupWindow( nSlotId,
                      rFrame,
                      pParentWindow,
 -                    WinBits( WB_STDPOPUP ) ),
 +                    WinBits( WB_STDPOPUP | WB_OWNERDRAWDECORATION ) ),
-     aLineEndSet     ( this, WinBits( WB_ITEMBORDER | WB_3DLOOK | WB_NO_DIRECTSELECT ) ),
-     nCols           ( 2 ),
-     nLines          ( 12 ),
+     pLineEndList	( NULL ),
+     aLineEndSet		( this, WinBits( WB_ITEMBORDER | WB_3DLOOK | WB_NO_DIRECTSELECT ) ),
+     nCols			( 2 ),
 diff --git a/svx/source/tbxctrls/tbcontrl.cxx b/svx/source/tbxctrls/tbcontrl.cxx
 index cb56fac..f9f25a8 100644
 --- a/svx/source/tbxctrls/tbcontrl.cxx

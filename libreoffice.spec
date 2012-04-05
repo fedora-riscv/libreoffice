@@ -2284,8 +2284,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Apr 03 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.2.1-4.UNBUILT
+* Thu Apr 05 2012 Stephan Bergmann <sbergman@redhat.com> - 3.5.2.1-4
 - Fix URIS_ONLY flag issue
+- rebuild for db4
 
 * Mon Apr 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.2.1-3
 - Resolves: rhbz#708041 focus problems with tearable menus

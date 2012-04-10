@@ -1048,7 +1048,7 @@ export CXXFLAGS=$ARCH_FLAGS
 autoconf
 %configure \
  %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
- --with-build-version="Ver: %{version}-%{release}" --with-unix-wrapper=%{name} \
+ --with-build-version="%{version}-%{release}" --with-unix-wrapper=%{name} \
  --disable-ldap --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \

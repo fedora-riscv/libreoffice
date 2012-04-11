@@ -26,14 +26,14 @@ diff --git a/officecfg/registry/schema/org/openoffice/Office/Calc.xcs b/officecf
 index 700d716..0cd2ff3 100644
 --- a/officecfg/registry/schema/org/openoffice/Office/Calc.xcs
 +++ b/officecfg/registry/schema/org/openoffice/Office/Calc.xcs
-@@ -1098,7 +1098,7 @@
+@@ -1063,7 +1063,7 @@
                          <desc>List of Separators - as a String</desc>
                          <label>Separators</label>
                      </info>
 -                    <value>;    </value>
 +                    <value>,;&#9;</value>
                  </prop>
-                 <prop oor:name="TextSeparators" oor:type="xs:string" oor:nillable="false">
+                 <prop oor:name="TextSeparators" oor:type="xs:string">
                      <info>
 diff --git a/sc/source/ui/dbgui/scuiasciiopt.cxx b/sc/source/ui/dbgui/scuiasciiopt.cxx
 index 93d5cfc..2a3a2b94 100644

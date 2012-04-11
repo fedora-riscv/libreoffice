@@ -246,6 +246,7 @@ Patch124: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 Patch125: libreoffice-kde4fix.patch
 Patch126: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 Patch127: Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
+Patch128: 0001-fdo-38088-better-CSV-import-default-separators.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1179,6 +1180,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch125 -p0 -b .libreoffice-kde4fix.patch
 %patch126 -p1 -b .fdo-48096-torn-off-popups-trigger-keyboard-.patch
 %patch127 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
+%patch128 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2500,6 +2502,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Apr 03 2012 Stephan Bergmann <sbergman@redhat.com> - 3.4.5.2-12.UNBUILT
 - Fix URIS_ONLY flag issue
+- Resolves: fdo#38088 rhbz#810267 better CSV import default separators
 
 * Mon Apr 02 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-11
 - Resolves: rhbz#708041 focus problems and tearable menus

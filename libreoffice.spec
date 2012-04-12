@@ -2500,7 +2500,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Apr 03 2012 Stephan Bergmann <sbergman@redhat.com> - 3.4.5.2-12.UNBUILT
+* Thu Apr 12 2012 Stephan Bergmann <sbergman@redhat.com> - 3.4.5.2-12
 - Fix URIS_ONLY flag issue
 - Resolves: fdo#38088 rhbz#810267 better CSV import default separators
 

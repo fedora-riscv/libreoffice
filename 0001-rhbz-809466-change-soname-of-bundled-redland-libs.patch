@@ -1,0 +1,264 @@
+From 68c2ebc5940f59e92d8a5b1ff535796828cd9b87 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 13 Apr 2012 07:03:15 +0200
+Subject: [PATCH] rhbz#809466 change soname of bundled redland libs
+
+---
+ redland/prj/d.lst                                  |   24 ++++++++++----------
+ redland/raptor/makefile.mk                         |    7 +++--
+ redland/raptor/raptor-1.4.18.patch.bundled-soname  |   11 +++++++++
+ redland/raptor/raptor-1.4.18.patch.mingw           |    4 +-
+ redland/rasqal/makefile.mk                         |    7 +++--
+ redland/rasqal/rasqal-0.9.16.patch.bundled-soname  |   11 +++++++++
+ redland/rasqal/rasqal-0.9.16.patch.mingw           |    4 +-
+ redland/redland/makefile.mk                        |    7 +++--
+ redland/redland/redland-1.0.8.patch.bundled-soname |   11 +++++++++
+ redland/redland/redland-1.0.8.patch.mingw          |    4 +-
+ scp2/source/ooo/file_library_ooo.scp               |   24 ++++++++++----------
+ 11 files changed, 75 insertions(+), 39 deletions(-)
+ create mode 100644 redland/raptor/raptor-1.4.18.patch.bundled-soname
+ create mode 100644 redland/rasqal/rasqal-0.9.16.patch.bundled-soname
+ create mode 100644 redland/redland/redland-1.0.8.patch.bundled-soname
+
+diff --git a/redland/prj/d.lst b/redland/prj/d.lst
+index 5715417..39b7afa 100644
+--- a/redland/prj/d.lst
++++ b/redland/prj/d.lst
+@@ -1,17 +1,17 @@
+ mkdir: %_DEST%\inc%_EXT%\external
+ ..\%__SRC%\inc\*.h %_DEST%\inc%_EXT%\external\*.h
+-..\%__SRC%\lib\libraptor.so.1 %_DEST%\lib%_EXT%\libraptor.so.1
+-symlink: %_DEST%\lib%_EXT%\libraptor.so.1 %_DEST%\lib%_EXT%\libraptor.so
++..\%__SRC%\lib\libraptor-lo.so.1 %_DEST%\lib%_EXT%\libraptor-lo.so.1
++symlink: %_DEST%\lib%_EXT%\libraptor-lo.so.1 %_DEST%\lib%_EXT%\libraptor.so
+-..\%__SRC%\lib\libraptor.1.dylib %_DEST%\lib%_EXT%\libraptor.1.dylib
+-symlink: %_DEST%\lib%_EXT%\libraptor.1.dylib %_DEST%\lib%_EXT%\libraptor.dylib
+-..\%__SRC%\lib\librasqal.so.1 %_DEST%\lib%_EXT%\librasqal.so.1
+-symlink: %_DEST%\lib%_EXT%\librasqal.so.1 %_DEST%\lib%_EXT%\librasqal.so
++..\%__SRC%\lib\libraptor-lo.1.dylib %_DEST%\lib%_EXT%\libraptor-lo.1.dylib
++symlink: %_DEST%\lib%_EXT%\libraptor-lo.1.dylib %_DEST%\lib%_EXT%\libraptor.dylib
++..\%__SRC%\lib\librasqal-lo.so.1 %_DEST%\lib%_EXT%\librasqal-lo.so.1
++symlink: %_DEST%\lib%_EXT%\librasqal-lo.so.1 %_DEST%\lib%_EXT%\librasqal.so
+-..\%__SRC%\lib\librasqal.1.dylib %_DEST%\lib%_EXT%\librasqal.1.dylib
+-symlink: %_DEST%\lib%_EXT%\librasqal.1.dylib %_DEST%\lib%_EXT%\librasqal.dylib
+-..\%__SRC%\lib\librdf.so.0 %_DEST%\lib%_EXT%\librdf.so.0
+-symlink: %_DEST%\lib%_EXT%\librdf.so.0 %_DEST%\lib%_EXT%\librdf.so
++..\%__SRC%\lib\librasqal-lo.1.dylib %_DEST%\lib%_EXT%\librasqal-lo.1.dylib
++symlink: %_DEST%\lib%_EXT%\librasqal-lo.1.dylib %_DEST%\lib%_EXT%\librasqal.dylib
++..\%__SRC%\lib\librdf-lo.so.0 %_DEST%\lib%_EXT%\librdf-lo.so.0
++symlink: %_DEST%\lib%_EXT%\librdf-lo.so.0 %_DEST%\lib%_EXT%\librdf.so
+-..\%__SRC%\lib\librdf.0.dylib %_DEST%\lib%_EXT%\librdf.0.dylib
+-symlink: %_DEST%\lib%_EXT%\librdf.0.dylib %_DEST%\lib%_EXT%\librdf.dylib
++..\%__SRC%\lib\librdf-lo.0.dylib %_DEST%\lib%_EXT%\librdf-lo.0.dylib
++symlink: %_DEST%\lib%_EXT%\librdf-lo.0.dylib %_DEST%\lib%_EXT%\librdf.dylib
+ ..\%__SRC%\lib\*.lib %_DEST%\lib%_EXT%
+ ..\%__SRC%\lib\*.a %_DEST%\lib%_EXT%
+ ..\%__SRC%\lib\lib*.dll.a %_DEST%\lib%_EXT%\lib*.a
+diff --git a/redland/raptor/makefile.mk b/redland/raptor/makefile.mk
+index 54a46ab..dacdfac 100644
+--- a/redland/raptor/makefile.mk
++++ b/redland/raptor/makefile.mk
+@@ -59,5 +59,6 @@ OOO_PATCH_FILES= \
+     $(TARFILE_NAME).patch.win32 \
+     raptor-aix.patch \
+-    $(TARFILE_NAME).entities.patch
++    $(TARFILE_NAME).entities.patch \
++    $(TARFILE_NAME).patch.bundled-soname
+ 
+ PATCH_FILES=$(OOO_PATCH_FILES)
+@@ -204,6 +205,6 @@ OUT2BIN+=src/raptor-config
+ OUT2BIN+=src/raptor-config
+ .ELIF "$(OS)"=="AIX"
+-OUT2LIB+=src$/.libs$/libraptor.so.$(RAPTOR_MAJOR) src$/.libs$/libraptor.so
++OUT2LIB+=src$/.libs$/libraptor-lo.so.$(RAPTOR_MAJOR) src$/.libs$/libraptor.so
+ OUT2BIN+=src/raptor-config
+ .ELIF "$(OS)"=="WNT"
+ .IF "$(COM)"=="GCC"
+@@ -215,6 +216,6 @@ OUT2BIN+=src/raptor-config
+ # if we use dmake, this is done automagically
+ .ELSE
+-OUT2LIB+=src$/.libs$/libraptor.so.$(RAPTOR_MAJOR) src$/.libs$/libraptor.so
++OUT2LIB+=src$/.libs$/libraptor-lo.so.$(RAPTOR_MAJOR) src$/.libs$/libraptor.so
+ OUT2BIN+=src/raptor-config
+ .ENDIF
+ 
+diff --git a/redland/raptor/raptor-1.4.18.patch.bundled-soname b/redland/raptor/raptor-1.4.18.patch.bundled-soname
+new file mode 100644
+index 0000000..cd8e87e
+--- /dev/null
++++ b/redland/raptor/raptor-1.4.18.patch.bundled-soname
+@@ -0,0 +1,11 @@
++--- misc/raptor-1.4.18/src/Makefile.in
+++++ misc/build/raptor-1.4.18/src/Makefile.in
++@@ -404,7 +404,7 @@
++ 	$(am__append_20) $(am__append_21) $(am__append_22) \
++ 	$(am__append_23) $(am__append_24) $(am__append_25) \
++ 	$(am__append_26)
++-libraptor_la_LDFLAGS = -version-info @RAPTOR_LIBTOOL_VERSION@
+++libraptor_la_LDFLAGS = -version-info @RAPTOR_LIBTOOL_VERSION@ -release lo
++ libraptor_la_LIBADD = @LTLIBOBJS@
++ EXTRA_DIST = \
++ raptor-config.in \
+diff --git a/redland/rasqal/makefile.mk b/redland/rasqal/makefile.mk
+index dabaf78..764993c 100644
+--- a/redland/rasqal/makefile.mk
++++ b/redland/rasqal/makefile.mk
+@@ -57,7 +57,8 @@ OOO_PATCH_FILES= \
+     $(TARFILE_NAME).patch.ooo_build \
+     $(TARFILE_NAME).patch.dmake \
+     $(TARFILE_NAME).patch.win32 \
+-    rasqal-aix.patch
++    rasqal-aix.patch \
++    $(TARFILE_NAME).patch.bundled-soname
+ 
+ PATCH_FILES=$(OOO_PATCH_FILES)
+ 
+@@ -156,7 +157,7 @@ BUILD_DIR=$(CONFIGURE_DIR)
+ OUT2INC+=src$/rasqal.h
+ 
+ .IF "$(OS)"=="MACOSX"
+-OUT2LIB+=src$/.libs$/librasqal.$(RASQAL_MAJOR).dylib src$/.libs$/librasqal.dylib
++OUT2LIB+=src$/.libs$/librasqal-lo.$(RASQAL_MAJOR).dylib src$/.libs$/librasqal.dylib
+ OUT2BIN+=src/rasqal-config
+ .ELIF "$(OS)"=="WNT"
+ .IF "$(COM)"=="GCC"
+@@ -173,6 +174,6 @@ OUT2BIN+=src/rasqal-config
+ # if we use dmake, this is done automagically
+ .ELSE
+-OUT2LIB+=src$/.libs$/librasqal.so.$(RASQAL_MAJOR) src$/.libs$/librasqal.so
++OUT2LIB+=src$/.libs$/librasqal-lo.so.$(RASQAL_MAJOR) src$/.libs$/librasqal.so
+ OUT2BIN+=src/rasqal-config
+ .ENDIF
+ 
+diff --git a/redland/rasqal/rasqal-0.9.16.patch.bundled-soname b/redland/rasqal/rasqal-0.9.16.patch.bundled-soname
+new file mode 100644
+index 0000000..5e5bea4
+--- /dev/null
++++ b/redland/rasqal/rasqal-0.9.16.patch.bundled-soname
+@@ -0,0 +1,11 @@
++--- misc/rasqal-0.9.16/src/Makefile.in
+++++ misc/build/rasqal-0.9.16/src/Makefile.in
++@@ -355,7 +355,7 @@
++ 	rasqal_xsd_datatypes.c rasqal_decimal.c rasqal_datetime.c \
++ 	rasqal_rowsource.c rasqal_sparql_xml.c $(am__append_3) \
++ 	$(am__append_4) $(am__append_5)
++-librasqal_la_LDFLAGS = -version-info @RASQAL_LIBTOOL_VERSION@
+++librasqal_la_LDFLAGS = -version-info @RASQAL_LIBTOOL_VERSION@ -release lo
++ librasqal_la_LIBADD = @LTLIBOBJS@ @RASQAL_INTERNAL_LIBS@ @RASQAL_EXTERNAL_LIBS@ $(MEM_LIBS)
++ librasqal_la_DEPENDENCIES = @LTLIBOBJS@ @RASQAL_INTERNAL_LIBS@
++ EXTRA_DIST = \
+diff --git a/redland/redland/makefile.mk b/redland/redland/makefile.mk
+index 1eeeba0..cf7639f 100644
+--- a/redland/redland/makefile.mk
++++ b/redland/redland/makefile.mk
+@@ -57,7 +57,8 @@ OOO_PATCH_FILES= \
+     $(TARFILE_NAME).patch.dmake \
+     $(TARFILE_NAME).patch.ooo_build \
+     $(TARFILE_NAME).patch.win32 \
+-    redland-aix.patch
++    redland-aix.patch \
++    $(TARFILE_NAME).patch.bundled-soname
+ 
+ PATCH_FILES=$(OOO_PATCH_FILES) \
+ 
+@@ -163,7 +164,7 @@ BUILD_DIR=$(CONFIGURE_DIR)
+ OUT2INC+=librdf$/*.h
+ 
+ .IF "$(OS)"=="MACOSX"
+-OUT2LIB+=librdf$/.libs$/librdf.$(REDLAND_MAJOR).dylib
++OUT2LIB+=librdf$/.libs$/librdf-lo.$(REDLAND_MAJOR).dylib
+ .ELIF "$(OS)"=="WNT"
+ .IF "$(COM)"=="GCC"
+ OUT2LIB+=librdf$/.libs$/*.a
+@@ -176,6 +177,6 @@ OUT2BIN+=librdf$/.libs$/*.dll
+ # if we use dmake, this is done automagically
+ .ELSE
+-OUT2LIB+=librdf$/.libs$/librdf.so.$(REDLAND_MAJOR)
++OUT2LIB+=librdf$/.libs$/librdf-lo.so.$(REDLAND_MAJOR)
+ .ENDIF
+ 
+ # --- Targets ------------------------------------------------------
+diff --git a/redland/redland/redland-1.0.8.patch.bundled-soname b/redland/redland/redland-1.0.8.patch.bundled-soname
+new file mode 100644
+index 0000000..68c9dfe
+--- /dev/null
++++ b/redland/redland/redland-1.0.8.patch.bundled-soname
+@@ -0,0 +1,11 @@
++--- misc/redland-1.0.8/librdf/Makefile.in
+++++ misc/build/redland-1.0.8/librdf/Makefile.in
++@@ -463,7 +463,7 @@
++ rdf_parser_raptor.c
++ 
++ EXTRA_DIST = redland.spec redland.spec.in mysql-v1.ttl mysql-v2.ttl
++-librdf_la_LDFLAGS = -version-info @LIBRDF_LIBTOOL_VERSION@ \
+++librdf_la_LDFLAGS = -version-info @LIBRDF_LIBTOOL_VERSION@ -release lo \
++ @LIBRDF_LDFLAGS@ @LIBRDF_EXTERNAL_LIBS@ $(MEM_LIBS)
++ 
++ pkgdata_DATA = $(am__append_11)
+diff --git a/scp2/source/ooo/file_library_ooo.scp b/scp2/source/ooo/file_library_ooo.scp
+index 50562f3..6673568 100644
+--- a/scp2/source/ooo/file_library_ooo.scp
++++ b/scp2/source/ooo/file_library_ooo.scp
+@@ -1567,15 +1567,15 @@ File gid_File_Lib_Raptor
+     Dir = SCP2_OOO_BIN_DIR;
+   #ifdef UNX
+     #ifdef MACOSX
+-       Name = STRING(CONCAT4(libraptor,.,RAPTOR_MAJOR,UNXSUFFIX));
++       Name = STRING(CONCAT4(libraptor-lo,.,RAPTOR_MAJOR,UNXSUFFIX));
+     #else
+-       Name = STRING(CONCAT4(libraptor,UNXSUFFIX,.,RAPTOR_MAJOR));
++       Name = STRING(CONCAT4(libraptor-lo,UNXSUFFIX,.,RAPTOR_MAJOR));
+     #endif
+   #else
+    #ifdef _gcc3
+-    Name = "libraptor-1.dll";
++    Name = "libraptor-lo-1.dll";
+    #else
+-    Name = "raptor.dll";
++    Name = "raptor-lo.dll";
+    #endif
+   #endif
+ End
+@@ -1586,15 +1586,15 @@ File gid_File_Lib_Rasqal
+     Dir = SCP2_OOO_BIN_DIR;
+   #ifdef UNX
+     #ifdef MACOSX
+-       Name = STRING(CONCAT4(librasqal,.,RASQAL_MAJOR,UNXSUFFIX));
++       Name = STRING(CONCAT4(librasqal-lo,.,RASQAL_MAJOR,UNXSUFFIX));
+     #else
+-       Name = STRING(CONCAT4(librasqal,UNXSUFFIX,.,RASQAL_MAJOR));
++       Name = STRING(CONCAT4(librasqal-lo,UNXSUFFIX,.,RASQAL_MAJOR));
+     #endif
+   #else
+    #ifdef _gcc3
+-       Name = STRING(CONCAT3(librasqal-,RASQAL_MAJOR,.dll));
++       Name = STRING(CONCAT3(librasqal-lo-,RASQAL_MAJOR,.dll));
+    #else
+-    Name = "rasqal.dll";
++    Name = "rasqal-lo.dll";
+    #endif
+   #endif
+ End
+@@ -1605,15 +1605,15 @@ File gid_File_Lib_Rdf
+     Dir = SCP2_OOO_BIN_DIR;
+   #ifdef UNX
+     #ifdef MACOSX
+-       Name = STRING(CONCAT4(librdf,.,REDLAND_MAJOR,UNXSUFFIX));
++       Name = STRING(CONCAT4(librdf-lo,.,REDLAND_MAJOR,UNXSUFFIX));
+     #else
+-       Name = STRING(CONCAT4(librdf,UNXSUFFIX,.,REDLAND_MAJOR));
++       Name = STRING(CONCAT4(librdf-lo,UNXSUFFIX,.,REDLAND_MAJOR));
+     #endif
+   #else
+    #ifdef _gcc3
+-    Name = "librdf-0.dll";
++    Name = "librdf-lo-0.dll";
+    #else
+-    Name = "librdf.dll";
++    Name = "librdf-lo.dll";
+    #endif
+   #endif
+ End
+-- 
+1.7.7.6
+

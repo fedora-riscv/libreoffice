@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?dist}
+Release:        13%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -247,6 +247,7 @@ Patch125: libreoffice-kde4fix.patch
 Patch126: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 Patch127: Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 Patch128: 0001-fdo-38088-better-CSV-import-default-separators.patch
+Patch129: 0001-rhbz-809466-change-soname-of-bundled-redland-libs.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1181,6 +1182,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch126 -p1 -b .fdo-48096-torn-off-popups-trigger-keyboard-.patch
 %patch127 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 %patch128 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
+%patch129 -p1 -b .rhbz-809466-change-soname-of-bundled-redland-libs.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -1868,9 +1870,9 @@ rm -rf $RPM_BUILD_ROOT
 %{basisinstdir}/program/libprotocolhandler%{SOPOST}.so
 %{basisinstdir}/program/libqstart_gtk%{SOPOST}.so
 %if %{defined rhel} && 0%{?rhel} < 7
-%{basisinstdir}/program/libraptor.so.1
-%{basisinstdir}/program/librasqal.so.1
-%{basisinstdir}/program/librdf.so.0
+%{basisinstdir}/program/libraptor-lo.so.1
+%{basisinstdir}/program/librasqal-lo.so.1
+%{basisinstdir}/program/librdf-lo.so.0
 %endif
 %{basisinstdir}/program/librecentfile.so
 %{basisinstdir}/program/libres%{SOPOST}.so
@@ -2500,6 +2502,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 13 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-13-UNBUILT
+- Resolves: rhbz#809466 libreoffice-core (unintentionally) provides
+  libraptor.so.1()() and librdf.so.0()()
+
 * Thu Apr 12 2012 Stephan Bergmann <sbergman@redhat.com> - 3.4.5.2-12
 - Fix URIS_ONLY flag issue
 - Resolves: fdo#38088 rhbz#810267 better CSV import default separators

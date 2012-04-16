@@ -239,7 +239,7 @@ new file mode 100644
 index 0000000..e5a5d32
 --- /dev/null
 +++ b/solenv/gdb/libreoffice/sal.py
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,120 @@
 +# Version: MPL 1.1 / GPLv3+ / LGPLv3+
 +#
 +# The contents of this file are subject to the Mozilla Public License Version
@@ -325,7 +325,6 @@ index 0000000..e5a5d32
 +        self.val = val
 +
 +    def to_string(self):
-+        print("RtlReferencePrinter:to_string")
 +        pointee = self.val['m_pBody']
 +        if pointee:
 +            val = pointee.dereference()

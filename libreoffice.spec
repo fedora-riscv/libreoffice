@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -145,6 +145,7 @@ Patch29: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 Patch30: 0001-Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 Patch31: 0001-Simplify-code-and-use-proper-register-names-for-linu.patch
 Patch32: 0001-fdo-38088-better-CSV-import-default-separators.patch
+Patch33: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1001,6 +1002,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 %patch31 -p1 -b .Simplify-code-and-use-proper-register-names-for-linu.patch
 %patch32 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
+%patch33 -p1 -b .resolved-rhbz-813280-the-current-document-is-not-alw.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2288,6 +2290,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 18 2012 Eike Rathke <erack@redhat.com> - 3.5.2.1-7
+- Resolves: rhbz#813280 sheets cannot be moved in Calc
+
 * Wed Apr 11 2012 Eike Rathke <erack@redhat.com> - 3.5.2.1-6
 - Resolves: fdo#38088 rhbz#810267 better CSV import default separators
 

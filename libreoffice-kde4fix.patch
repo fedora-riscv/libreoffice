@@ -55,3 +55,14 @@
  #include <kfiledialog.h>
  #include <kwindowsystem.h>
  #include <kapplication.h>
+--- vcl/unx/kde4/KDEXLib.cxx	2012-04-18 15:51:31.996050751 +0100
++++ vcl/unx/kde4/KDEXLib.cxx	2012-04-18 15:52:23.119606979 +0100
+@@ -57,7 +57,7 @@
+ 
+ #include <stdio.h>
+ 
+-#if QT_VERSION >= QT_VERSION_CHECK( 4, 8, 1 )
++#if QT_VERSION >= QT_VERSION_CHECK( 4, 8, 2 )
+ #define QT_UNIX_EVENT_LOOP_SUPPORT
+ #ifdef KDE_HAVE_GLIB
+ #define GLIB_EVENT_LOOP_SUPPORT

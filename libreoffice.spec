@@ -86,7 +86,7 @@ BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
 BuildRequires:  GConf2-devel, ORBit2-devel, postgresql-devel
-BuildRequires:  font(:lang=en)
+BuildRequires:  liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 %if %{defined rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb, db4-devel
 %else

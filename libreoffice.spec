@@ -2504,7 +2504,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Apr 13 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-13-UNBUILT
+* Wed Apr 18 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-13
 - Resolves: rhbz#809466 libreoffice-core (unintentionally) provides
   libraptor.so.1()() and librdf.so.0()()
 - Resolves: rhbz#813280 sheets cannot be moved in Calc

@@ -248,6 +248,7 @@ Patch126: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 Patch127: Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 Patch128: 0001-fdo-38088-better-CSV-import-default-separators.patch
 Patch129: 0001-rhbz-809466-change-soname-of-bundled-redland-libs.patch
+Patch130: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1183,6 +1184,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch127 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 %patch128 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
 %patch129 -p1 -b .rhbz-809466-change-soname-of-bundled-redland-libs.patch
+%patch130 -p1 -b .rhbz-813280-the-current-document-is-not-alw.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2505,6 +2507,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Apr 13 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-13-UNBUILT
 - Resolves: rhbz#809466 libreoffice-core (unintentionally) provides
   libraptor.so.1()() and librdf.so.0()()
+- Resolves: rhbz#813280 sheets cannot be moved in Calc
 
 * Thu Apr 12 2012 Stephan Bergmann <sbergman@redhat.com> - 3.4.5.2-12
 - Fix URIS_ONLY flag issue

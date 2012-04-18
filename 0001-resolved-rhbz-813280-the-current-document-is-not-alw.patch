@@ -1,0 +1,111 @@
+From cafe54fc6b8ae195a87c77499f63ddb4e0de2d4e Mon Sep 17 00:00:00 2001
+Message-Id: <cafe54fc6b8ae195a87c77499f63ddb4e0de2d4e.1334751575.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 17 Apr 2012 21:31:50 +0200
+Subject: [PATCH] resolved rhbz#813280 the current document is not always the
+ first in list
+
+i.e. if more than one document open and dialog invoked on any but the first
+document.
+---
+ sc/source/ui/inc/mvtabdlg.hxx      |    4 +++-
+ sc/source/ui/miscdlgs/mvtabdlg.cxx |   27 +++++++++++++++++----------
+ 2 files changed, 20 insertions(+), 11 deletions(-)
+
+diff --git a/sc/source/ui/inc/mvtabdlg.hxx b/sc/source/ui/inc/mvtabdlg.hxx
+index a4b03ed..4a15a66 100644
+--- a/sc/source/ui/inc/mvtabdlg.hxx
++++ b/sc/source/ui/inc/mvtabdlg.hxx
+@@ -61,6 +61,7 @@ private:
+     void ResetRenameInput();
+     void CheckNewTabName();
+     ScDocument* GetSelectedDoc();
++    bool IsCurrentDocSelected() const;
+ 
+ private:
+     FixedLine       aFlAction;
+@@ -85,7 +86,8 @@ private:
+ 
+     const String&   mrDefaultName;
+ 
+-    sal_uInt16          nDocument;
++    sal_uInt16      mnCurrentDocPos;
++    sal_uInt16      nDocument;
+     SCTAB           nTable;
+     bool            bCopyTable:1;
+     bool            bRenameTable:1;
+diff --git a/sc/source/ui/miscdlgs/mvtabdlg.cxx b/sc/source/ui/miscdlgs/mvtabdlg.cxx
+index f50cdd0..e640feb 100644
+--- a/sc/source/ui/miscdlgs/mvtabdlg.cxx
++++ b/sc/source/ui/miscdlgs/mvtabdlg.cxx
+@@ -82,6 +82,7 @@ ScMoveTableDlg::ScMoveTableDlg( Window*       pParent,
+         maStrTabNameInvalid( ScResId(STR_TABNAME_WARN_INVALID) ),
+         //
+         mrDefaultName( rDefault ),
++        mnCurrentDocPos( 0 ),
+         nDocument   ( 0 ),
+         nTable      ( 0 ),
+         bCopyTable  ( false ),
+@@ -143,8 +144,13 @@ void ScMoveTableDlg::EnableRenameTable(sal_Bool bFlag)
+ void ScMoveTableDlg::ResetRenameInput()
+ {
+     if (mbEverEdited)
++    {
+         // Don't reset the name when the sheet name has ever been edited.
++        // But check the name, as this is also called for change of copy/move
++        // buttons and document listbox selection.
++        CheckNewTabName();
+         return;
++    }
+ 
+     if (!aEdTabName.IsEnabled())
+     {
+@@ -194,19 +200,15 @@ void ScMoveTableDlg::CheckNewTabName()
+         return;
+     }
+ 
+-    bool   bFound = false;
++    bool bMoveInCurrentDoc = (aBtnMove.IsChecked() && IsCurrentDocSelected());
++    bool bFound = false;
+     sal_uInt16 nLast  = aLbTable.GetEntryCount() - 1;
+-    for ( sal_uInt16 i=0; i<=nLast; ++i )
++    for ( sal_uInt16 i=0; i<=nLast && !bFound; ++i )
+     {
+         if ( rNewName == aLbTable.GetEntry( i ) )
+         {
+-            if( ( aBtnMove.IsChecked() ) &&
+-                ( aLbDoc.GetSelectEntryPos() == 0 ) &&
+-                ( aEdTabName.GetText() == mrDefaultName) )
+-
+-                // Move inside same document, thus same name is allowed.
+-                bFound = false;
+-            else
++            // Only for move within same document the same name is allowed.
++            if (!bMoveInCurrentDoc || aEdTabName.GetText() != mrDefaultName)
+                 bFound = true;
+         }
+     }
+@@ -230,6 +232,11 @@ ScDocument* ScMoveTableDlg::GetSelectedDoc()
+     return static_cast<ScDocument*>(aLbDoc.GetEntryData(nPos));
+ }
+ 
++bool ScMoveTableDlg::IsCurrentDocSelected() const
++{
++    return aLbDoc.GetSelectEntryPos() == mnCurrentDocPos;
++}
++
+ //------------------------------------------------------------------------
+ 
+ void ScMoveTableDlg::Init()
+@@ -270,7 +277,7 @@ void ScMoveTableDlg::InitDocListBox()
+ 
+             if ( pScSh == SfxObjectShell::Current() )
+             {
+-                nSelPos = i;
++                mnCurrentDocPos = nSelPos = i;
+                 aEntryName += sal_Unicode( ' ' );
+                 aEntryName += String( ScResId( STR_CURRENTDOC ) );
+             }
+-- 
+1.7.7.6
+

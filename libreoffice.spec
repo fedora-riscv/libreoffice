@@ -126,9 +126,7 @@ Patch12: libreoffice-rhel6poppler.patch
 Patch13: libreoffice-rhel6langs.patch
 Patch14: 0001-Disable-problematic-reading-of-external-entities-in-.patch
 %endif
-%if %{with binfilter}
 Patch15: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
-%endif
 Patch16: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
 Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
 Patch18: libreoffice-ensure-non-broken-xml-tree.patch
@@ -980,9 +978,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p0 -b .rhel6langs.patch
 %patch14 -p1 -b .Disable-problematic-reading-of-external-entities-in-.patch
 %endif
-%if %{with binfilter}
 %patch15 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
-%endif
 %patch16 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
 %patch17 -p1 -b .make-hsqldb-build-with-java-1.7.patch
 %patch18 -p1 -b .ensure-non-broken-xml-tree.patch

@@ -1,4 +1,4 @@
-%define libo_version 3.5.2
+%define libo_version 3.5.3
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -14,8 +14,8 @@
 %define langpacks 1
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-#%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
 %if %{langpacks}
 %if %{defined rhel} && 0%{?rhel} < 7
@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?dist}
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -142,10 +142,7 @@ Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
 Patch27: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 Patch28: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
 Patch29: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
-Patch30: 0001-Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
-Patch31: 0001-Simplify-code-and-use-proper-register-names-for-linu.patch
-Patch32: 0001-fdo-38088-better-CSV-import-default-separators.patch
-Patch33: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
+Patch30: 0001-fdo-38088-better-CSV-import-default-separators.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -999,10 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
 %patch28 -p1 -b .do-not-complain-about-soffice-command-line-o.patch
 %patch29 -p1 -b .fdo48096-torn-off-popups-trigger-keyboard-.patch
-%patch30 -p1 -b .Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
-%patch31 -p1 -b .Simplify-code-and-use-proper-register-names-for-linu.patch
-%patch32 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
-%patch33 -p1 -b .resolved-rhbz-813280-the-current-document-is-not-alw.patch
+%patch30 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2290,6 +2284,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 19 2012 David Tardon <dtardon@redhat.com> - 3.5.3.1-1
+- 3.5.3 rc1
+- drop integrated 0001-Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
+- drop integrated 0001-Simplify-code-and-use-proper-register-names-for-linu.patch
+- drop integrated 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
+
 * Wed Apr 18 2012 Eike Rathke <erack@redhat.com> - 3.5.2.1-7
 - Resolves: rhbz#813280 sheets cannot be moved in Calc
 

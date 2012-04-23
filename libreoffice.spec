@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        13%{?dist}
+Release:        14%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -249,6 +249,7 @@ Patch127: Introduced-SystemShellExecuteFlags-URIS_ONLY.patch
 Patch128: 0001-fdo-38088-better-CSV-import-default-separators.patch
 Patch129: 0001-rhbz-809466-change-soname-of-bundled-redland-libs.patch
 Patch130: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
+Patch131: 0001-rhbz-815216-add-missing-japanese-translations.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1185,6 +1186,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch128 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
 %patch129 -p1 -b .rhbz-809466-change-soname-of-bundled-redland-libs.patch
 %patch130 -p1 -b .rhbz-813280-the-current-document-is-not-alw.patch
+%patch131 -p1 -b .rhbz-815216-add-missing-japanese-translations.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2504,6 +2506,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Apr 23 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-14-UNBUILT
+- Resolves: rhbz#815216 Unlocalized strings in print dialog of Calc
+
 * Wed Apr 18 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-13
 - Resolves: rhbz#809466 libreoffice-core (unintentionally) provides
   libraptor.so.1()() and librdf.so.0()()

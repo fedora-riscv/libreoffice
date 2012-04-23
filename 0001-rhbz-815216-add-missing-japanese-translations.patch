@@ -1,0 +1,34 @@
+From 6d023b654b21f9a6cdc04cec0653a2dbffdd74d0 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 23 Apr 2012 10:39:22 +0200
+Subject: [PATCH] rhbz#815216 add missing japanese translations
+
+---
+ translations/source/ja/sc/source/ui/src.po |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/translations/source/ja/sc/source/ui/src.po b/translations/source/ja/sc/source/ui/src.po
+index 2f18e20..653ffee 100644
+--- a/translations/source/ja/sc/source/ui/src.po
++++ b/translations/source/ja/sc/source/ui/src.po
+@@ -749,7 +749,7 @@ msgstr "選択したセル"
+ 
+ #: scstring.src#SCSTR_PRINT_OPTIONS.7.itemlist.text
+ msgid "From which print"
+-msgstr ""
++msgstr "対象を印刷"
+ 
+ #: scstring.src#SCSTR_PRINT_OPTIONS.8.itemlist.text
+ msgid "All ~pages"
+@@ -761,7 +761,7 @@ msgstr "ページ(~g)"
+ 
+ #: scstring.src#SCSTR_PRINT_OPTIONS.10.itemlist.text
+ msgid "%PRODUCTNAME %s"
+-msgstr "%PRODUCTNAME Calc"
++msgstr "%PRODUCTNAME %s"
+ 
+ #: scstring.src#SCSTR_WARN_ME_IN_FUTURE_CHECK.string.text
+ msgid "Warn me about this in the future."
+-- 
+1.7.7.6
+

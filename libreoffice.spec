@@ -32,7 +32,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2256,6 +2256,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{basisinstdir}/program/kde-open-url
 
 %changelog
+* Tue Apr 24 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-4
+- bump n-v-r
+
 * Fri Feb 10 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-3
 - Resolves: rhbz#788971 SwDocShell::ReconnectDdeLink crash
 

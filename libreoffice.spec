@@ -143,6 +143,7 @@ Patch29: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
 Patch30: 0001-fdo-38088-better-CSV-import-default-separators.patch
 Patch31: 0001-save-register-arguments-first.patch
 Patch32: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
+Patch33: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -997,6 +998,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
 %patch31 -p1 -b .save-register-arguments-first.patch
 %patch32 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
+%patch33 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2286,6 +2288,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Apr 25 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-1
 - 3.5.3 rc2
+- fix broken test on 64bit big endian
 
 * Mon Apr 23 2012 David Tardon <dtardon@redhat.com> - 3.5.3.1-2
 - rebuild for icu

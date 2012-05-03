@@ -82,7 +82,7 @@ BuildRequires:  evolution-data-server-devel, nss-devel, zlib-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl(Archive::Zip)
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
-BuildRequires:  apache-commons-codec, apache-commons-httpclient, cppunit-devel
+BuildRequires:  apache-commons-codec, jakarta-commons-httpclient, cppunit-devel
 BuildRequires:  apache-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
 BuildRequires:  GConf2-devel, ORBit2-devel, postgresql-devel
@@ -297,7 +297,7 @@ Support JavaScript scripts in LibreOffice.
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
-Requires: apache-commons-codec, apache-commons-httpclient
+Requires: apache-commons-codec, jakarta-commons-httpclient
 Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}

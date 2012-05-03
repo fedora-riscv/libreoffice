@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -82,8 +82,8 @@ BuildRequires:  evolution-data-server-devel, nss-devel, zlib-devel
 BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
 BuildRequires:  lpsolve-devel, bsh, lucene, lucene-contrib, perl(Archive::Zip)
 BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
-BuildRequires:  jakarta-commons-codec, jakarta-commons-httpclient, cppunit-devel
-BuildRequires:  jakarta-commons-lang, poppler-devel, fontpackages-devel
+BuildRequires:  apache-commons-codec, apache-commons-httpclient, cppunit-devel
+BuildRequires:  apache-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
 BuildRequires:  GConf2-devel, ORBit2-devel, postgresql-devel
 BuildRequires:  liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
@@ -297,8 +297,8 @@ Support JavaScript scripts in LibreOffice.
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
-Requires: jakarta-commons-codec, jakarta-commons-httpclient
-Requires: jakarta-commons-lang, jakarta-commons-logging
+Requires: apache-commons-codec, apache-commons-httpclient
+Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
@@ -2286,6 +2286,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu May 03 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-2
+- rebuild for changed dependencies
+
 * Wed Apr 25 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-1
 - 3.5.3 rc2
 - fix broken test on 64bit big endian

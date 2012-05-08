@@ -1,0 +1,54 @@
+From 9cde511be7599b7ceea08bf898fae5d400c83b92 Mon Sep 17 00:00:00 2001
+Message-Id: <9cde511be7599b7ceea08bf898fae5d400c83b92.1336468489.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 8 May 2012 11:06:47 +0200
+Subject: [PATCH] resolved rhbz#819118 catch exception from VBA lib container
+
+If in an imported Excel document with VBA a sheet to be copied does not have
+a document object in the VBAProject container (whyever that may be the case)
+the getByName() rightly throws a NoSuchElement exception. Catch that.
+
+Backported to 3-4
+---
+ sc/source/ui/docshell/docsh5.cxx |   22 ++++++++++++++--------
+ 1 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/sc/source/ui/docshell/docsh5.cxx b/sc/source/ui/docshell/docsh5.cxx
+index a4b2527..3992aa8 100644
+--- a/sc/source/ui/docshell/docsh5.cxx
++++ b/sc/source/ui/docshell/docsh5.cxx
+@@ -940,17 +940,23 @@ sal_Bool ScDocShell::MoveTable( SCTAB nSrcTab, SCTAB nDestTab, sal_Bool bCopy, s
+                     nTabToUse = aDocument.GetMaxTableNumber() - 1;
+                 String sCodeName;
+                 String sSource;
+-                Reference< XNameContainer > xLib;
+-                if( xLibContainer.is() )
++                try
+                 {
+-                    com::sun::star::uno::Any aLibAny = xLibContainer->getByName( aLibName );
+-                    aLibAny >>= xLib;
++                    Reference< XNameContainer > xLib;
++                    if( xLibContainer.is() )
++                    {
++                        com::sun::star::uno::Any aLibAny = xLibContainer->getByName( aLibName );
++                        aLibAny >>= xLib;
++                    }
++                    if( xLib.is() )
++                    {
++                        rtl::OUString sRTLSource;
++                        xLib->getByName( sSrcCodeName ) >>= sRTLSource;
++                        sSource = sRTLSource;
++                    }
+                 }
+-                if( xLib.is() )
++                catch ( const com::sun::star::uno::Exception& )
+                 {
+-                    rtl::OUString sRTLSource;
+-                    xLib->getByName( sSrcCodeName ) >>= sRTLSource;
+-                    sSource = sRTLSource;
+                 }
+                 VBA_InsertModule( aDocument, nTabToUse, sCodeName, sSource );
+             }
+-- 
+1.7.7.6
+

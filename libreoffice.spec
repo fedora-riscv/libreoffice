@@ -250,6 +250,7 @@ Patch128: 0001-fdo-38088-better-CSV-import-default-separators.patch
 Patch129: 0001-rhbz-809466-change-soname-of-bundled-redland-libs.patch
 Patch130: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
 Patch131: 0001-rhbz-815216-add-missing-japanese-translations.patch
+Patch132: 0001-resolved-rhbz-819118-catch-exception-from-VBA-lib-co.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1187,6 +1188,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch129 -p1 -b .rhbz-809466-change-soname-of-bundled-redland-libs.patch
 %patch130 -p1 -b .rhbz-813280-the-current-document-is-not-alw.patch
 %patch131 -p1 -b .rhbz-815216-add-missing-japanese-translations.patch
+%patch132 -p1 -b .rhbz-819118-catch-exception-from-VBA-lib-co.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2506,8 +2508,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Apr 23 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-14-UNBUILT
+* Mon Apr 23 2012 David Tardon <dtardon@redhat.com> - 3.4.5.2-14
 - Resolves: rhbz#815216 Unlocalized strings in print dialog of Calc
+- Resolves: rhbz#819118 copying a certain sheet lets LibreOffice crash
 
 * Wed Apr 18 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-13
 - Resolves: rhbz#809466 libreoffice-core (unintentionally) provides

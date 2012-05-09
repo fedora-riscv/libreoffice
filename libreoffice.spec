@@ -491,7 +491,12 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+%if {%defined fedora} && 0%{?fedora} >= 18
 Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
+%endif
+%if %{defined rhel} && 0%{?rhel} >= 7
+Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
+%endif
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
@@ -2290,6 +2295,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed May 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-3
 - Resolves: rhbz#805743 a11y crash in impress/draw
+- Resolves: rhbz#813202 opengl slide transitions still a bit
+  problematic in Fedora 17
 
 * Thu May 03 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-2
 - rebuild for changed dependencies

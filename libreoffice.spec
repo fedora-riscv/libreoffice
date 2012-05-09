@@ -491,7 +491,7 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-%if {%defined fedora} && 0%{?fedora} >= 18
+%if %{defined fedora} && 0%{?fedora} >= 18
 Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
 %endif
 %if %{defined rhel} && 0%{?rhel} >= 7

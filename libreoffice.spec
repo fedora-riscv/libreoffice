@@ -843,7 +843,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %if %{defined rhel} && 0%{?rhel} < 7
 %langpack -l fi -n Finnish -F -A -o fi_FI -V -x fi_FI -S
 %else
-%langpack -l fi -n Finnish -F -r openoffice.org-voikko -A -o fi_FI -S
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -o fi_FI -S
 %endif
 %langpack -l fr -n French -F -H -Y -M -A -O -X -S
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -x ga_IE -S

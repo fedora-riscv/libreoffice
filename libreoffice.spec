@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -144,6 +144,7 @@ Patch30: 0001-fdo-38088-better-CSV-import-default-separators.patch
 Patch31: 0001-save-register-arguments-first.patch
 Patch32: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 Patch33: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
+Patch34: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -999,6 +1000,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .save-register-arguments-first.patch
 %patch32 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 %patch33 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
+%patch34 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2286,6 +2288,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-2
+- Resolves: rhbz#805743 a11y crash in impress/draw
+
 * Wed Apr 25 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-1
 - 3.5.3 rc2
 - fix broken test on 64bit big endian

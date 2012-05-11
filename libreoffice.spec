@@ -146,6 +146,9 @@ Patch32: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 Patch33: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
 Patch34: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
 Patch35: 0001-do-not-prepend-n-twice-it-confuses-KFileDialog-rhbz-.patch
+Patch36: 0001-incrementing-index-twice-in-one-run-seems-wrong.patch
+Patch37: 0001-fdo-49365-correctly-map-monitor-index-back-to-screen.patch
+Patch38: 0001-rhbz-809019-count-mirrored-monitors-as-one.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1008,6 +1011,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
 %patch34 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
 %patch35 -p1 -b .do-not-prepend-n-twice-it-confuses-KFileDialog-rhbz-.patch
+%patch36 -p1 -b .rhbz-809019-count-mirrored-monitors-as-one.patch
+%patch37 -p1 -b .incrementing-index-twice-in-one-run-seems-wrong.patch
+%patch38 -p1 -b .rhbz-809019-count-mirrored-monitors-as-one.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2297,6 +2303,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri May 11 2012 David Tardon <dtardon@redhat.com> - 3.5.3.2-4
 - Resolves: rhbz#820439 KDE export dialog broken for most formats
+- Resolves: fdo#49365 Libreoffice fails to start on second screen with
+  gtk vcl plugin
+- Resolves: rhbz#809019 Impress thinks a machine with 2 monitors in
+  clone mode is multihead
 
 * Wed May 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-3
 - Resolves: rhbz#805743 a11y crash in impress/draw

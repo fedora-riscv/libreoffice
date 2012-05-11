@@ -1,0 +1,25 @@
+From 9d5da4e1d12c224286f871b28b7df31215f67d31 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 26 Apr 2012 06:36:22 +0200
+Subject: [PATCH] incrementing index twice in one run seems wrong
+
+---
+ vcl/unx/gtk/app/gtksys.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/vcl/unx/gtk/app/gtksys.cxx b/vcl/unx/gtk/app/gtksys.cxx
+index bf3fba7..3927dbf 100644
+--- a/vcl/unx/gtk/app/gtksys.cxx
++++ b/vcl/unx/gtk/app/gtksys.cxx
+@@ -89,7 +89,7 @@ GtkSalSystem::getScreenMonitorFromIdx (GdkDisplay *pDisplay, int nIdx, gint &nMo
+     GdkScreen *pScreen = NULL;
+     for (gint i = 0; i < gdk_display_get_n_screens (pDisplay); i++)
+     {
+-        pScreen = gdk_display_get_screen (pDisplay, i++);
++        pScreen = gdk_display_get_screen (pDisplay, i);
+         if (!pScreen)
+             break;
+         if (nIdx > gdk_screen_get_n_monitors (pScreen))
+-- 
+1.7.7.6
+

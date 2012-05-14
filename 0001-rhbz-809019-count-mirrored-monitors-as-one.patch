@@ -29,7 +29,11 @@ diff --git a/vcl/inc/unx/gtk/gtksys.hxx b/vcl/inc/unx/gtk/gtksys.hxx
 index df9e79e..582d4b9 100644
 --- a/vcl/inc/unx/gtk/gtksys.hxx
 +++ b/vcl/inc/unx/gtk/gtksys.hxx
-@@ -36,7 +36,11 @@
+@@ -33,10 +33,15 @@
+ #include "generic/gensys.h"
+ #include <gtk/gtk.h>
+ #include <unx/saltype.h>
++#include <deque>
  
  class GtkSalSystem : public SalGenericSystem
  {
@@ -41,7 +45,7 @@ index df9e79e..582d4b9 100644
  public:
               GtkSalSystem();
      virtual ~GtkSalSystem();
-@@ -56,10 +60,11 @@ public:
+@@ -56,10 +61,11 @@
              { return getXScreenFromDisplayScreen( GetDisplayDefaultScreen() ); }
      int               GetDisplayXScreenCount();
      SalX11Screen      getXScreenFromDisplayScreen(unsigned int nDisplayScreen);

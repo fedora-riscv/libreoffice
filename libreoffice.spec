@@ -1,4 +1,4 @@
-%define libo_version 3.5.3
+%define libo_version 3.5.4
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -145,11 +145,7 @@ Patch31: 0001-save-register-arguments-first.patch
 Patch32: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 Patch33: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
 Patch34: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
-Patch35: 0001-do-not-prepend-n-twice-it-confuses-KFileDialog-rhbz-.patch
-Patch36: 0001-incrementing-index-twice-in-one-run-seems-wrong.patch
-Patch37: 0001-fdo-49365-correctly-map-monitor-index-back-to-screen.patch
-Patch38: 0001-rhbz-809019-count-mirrored-monitors-as-one.patch
-Patch39: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
+Patch35: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1011,12 +1007,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch32 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 %patch33 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
 %patch34 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
-%patch35 -p1 -b .do-not-prepend-n-twice-it-confuses-KFileDialog-rhbz-.patch
-%patch36 -p1 -b .rhbz-809019-count-mirrored-monitors-as-one.patch
-%patch37 -p1 -b .incrementing-index-twice-in-one-run-seems-wrong.patch
-%patch38 -p1 -b .rhbz-809019-count-mirrored-monitors-as-one.patch
 %if %{defined rhel} && 0%{?rhel} >= 7 || %{defined fedora} && 0%{?fedora} >= 18
-%patch39 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
+%patch35 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 %endif
 
 # TODO: check this
@@ -2305,6 +2297,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 16 2012 David Tardon <dtardon@redhat.com> - 3.5.4.1-1
+- 3.5.4 rc1
+- drop integrated 0001-do-not-prepend-n-twice-it-confuses-KFileDialog-rhbz-.patch
+- drop integrated 0001-incrementing-index-twice-in-one-run-seems-wrong.patch
+- drop integrated 0001-fdo-49365-correctly-map-monitor-index-back-to-screen.patch
+- drop integrated 0001-rhbz-809019-count-mirrored-monitors-as-one.patch
+
 * Sun May 13 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-5
 - Resolves: fdo#49849 line breaking fixes for Hebrew
 

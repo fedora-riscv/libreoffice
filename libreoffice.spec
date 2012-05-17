@@ -173,6 +173,7 @@ Patch81: 0001-sw-fdo-39159-fdo-40482-temp-selection-print-doc.patch
 Patch82: 0001-fix-for-fdo-39773-crash-with-hidden-column-in-Data-F.patch
 Patch83: 0001-sw-fixed-a-crasher-fdo-32575.patch
 Patch84: CVE-2012-1149.patch
+Patch85: CVE-2012-2334.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -897,6 +898,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch82 -p1 -b .fdo39773-crash-with-hidden-column-in-Data-F.patch
 %patch83 -p1 -b .sw-fixed-a-crasher-fdo-32575.patch
 %patch84 -p1 -b .CVE-2012-1149.patch
+%patch85 -p1 -b .CVE-2012-2334.patch
 
 touch scripting/source/pyprov/delzip
 touch scripting/util/provider/beanshell/delzip
@@ -2259,7 +2261,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Thu May 17 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-5
-- Resolves: rhbz#822216 CVE-2012-1149
+- Resolves: rhbz#822216 CVE-2012-1149, CVE-2012-2334
 
 * Tue Apr 24 2012 Caolán McNamara <caolanm@redhat.com> 1:3.3.4.1-4
 - bump n-v-r

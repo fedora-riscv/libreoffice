@@ -1619,7 +1619,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libiralo.so
 %{baseinstdir}/program/libitglo.so
 %{baseinstdir}/program/libitilo.so
-%{baseinstdir}/program/libofficebeanlo.so
+%{baseinstdir}/program/libofficebean.so
 %{baseinstdir}/program/liboooimprovecorelo.so
 %{baseinstdir}/program/libfilelo.so
 %{baseinstdir}/program/libfilterconfiglo.so

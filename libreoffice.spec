@@ -252,6 +252,7 @@ Patch130: 0001-resolved-rhbz-813280-the-current-document-is-not-alw.patch
 Patch131: 0001-rhbz-815216-add-missing-japanese-translations.patch
 Patch132: 0001-resolved-rhbz-819118-catch-exception-from-VBA-lib-co.patch
 Patch133: CVE-2012-1149.patch
+Patch134: 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1191,6 +1192,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch131 -p1 -b .rhbz-815216-add-missing-japanese-translations.patch
 %patch132 -p1 -b .rhbz-819118-catch-exception-from-VBA-lib-co.patch
 %patch133 -p1 -b .CVE-2012-1149
+%patch134 -p1 -b .0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

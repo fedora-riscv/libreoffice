@@ -1,0 +1,26 @@
+From 8f823b7d39154d2044e08174a858f8ef357a151a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Mat=C3=BA=C5=A1=20Kukan?= <matus.kukan@gmail.com>
+Date: Thu, 5 Jan 2012 17:32:21 +0100
+Subject: [PATCH] gcc-trunk: fix: unable to find string literal operator
+ 'operator FOO'
+
+---
+ sal/qa/osl/mutex/osl_Mutex.cxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sal/qa/osl/mutex/osl_Mutex.cxx b/sal/qa/osl/mutex/osl_Mutex.cxx
+index 10a95c1..f4f34d6 100644
+--- a/sal/qa/osl/mutex/osl_Mutex.cxx
++++ b/sal/qa/osl/mutex/osl_Mutex.cxx
+@@ -754,7 +754,7 @@ namespace osl_ClearableGuard
+             TimeValue aTimeVal_after;
+             osl_getSystemTime( &aTimeVal_after );
+             sal_Int32 nSec = aTimeVal_after.Seconds - aTimeVal_befor.Seconds;
+-            printf("nSec is %"SAL_PRIdINT32"\n", nSec);
++            printf("nSec is %" SAL_PRIdINT32 "\n", nSec);
+ 
+             myThread.join();
+ 
+-- 
+1.7.7.6
+

@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -150,6 +150,9 @@ Patch36: 0001-incrementing-index-twice-in-one-run-seems-wrong.patch
 Patch37: 0001-fdo-49365-correctly-map-monitor-index-back-to-screen.patch
 Patch38: 0001-rhbz-809019-count-mirrored-monitors-as-one.patch
 Patch39: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
+Patch40: 0001-Fix-buildissue-in-svtools-with-missing-include.patch
+Patch41: 0001-gcc-trunk-fix-unable-to-find-string-literal-operator.patch
+Patch42: 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1018,6 +1021,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %if %{defined rhel} && 0%{?rhel} >= 7 || %{defined fedora} && 0%{?fedora} >= 18
 %patch39 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 %endif
+%patch40 -p1 -b .0001-Fix-buildissue-in-svtools-with-missing-include.patch
+%patch41 -p1 -b .0001-gcc-trunk-fix-unable-to-find-string-literal-operator.patch
+%patch42 -p1 -b .0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2305,6 +2311,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu May 17 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-6
+- Resolves: rhbz#811226 ARM FTBFS
+
 * Sun May 13 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-5
 - Resolves: fdo#49849 line breaking fixes for Hebrew
 

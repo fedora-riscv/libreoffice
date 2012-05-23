@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2301,6 +2301,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 23 2012 David Tardon <dtardon@redhat.com> - 3.5.4.2-1
+- 3.5.4 rc2
+
 * Thu May 17 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.4.1-2
 - Resolves: rhbz#811226 ARM FTBFS
 

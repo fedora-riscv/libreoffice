@@ -1505,6 +1505,9 @@ unset WITH_LANG
 unset SOLAR_JAVA
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
 %else
+%ifarch s390 s390x
+unset SOLAR_JAVA
+%endif
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
 %endif
 

@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1515,6 +1515,9 @@ unset WITH_LANG
 unset SOLAR_JAVA
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
 %else
+%ifarch s390 s390x
+unset SOLAR_JAVA
+%endif
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
 %endif
 
@@ -2311,6 +2314,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 30 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-7
+- Resolves: rhbz#822522 S390 FTBFS
+
 * Thu May 17 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.3.2-6
 - Resolves: rhbz#811226 ARM FTBFS
 

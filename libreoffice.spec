@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -148,6 +148,7 @@ Patch34: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
 Patch35: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 Patch36: 0001-gcc-trunk-fix-unable-to-find-string-literal-operator.patch
 Patch37: 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
+Patch38: 0001-Resolves-rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1014,6 +1015,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch36 -p1 -b .gcc-trunk-fix-unable-to-find-string-literal-operator.patch
 %patch37 -p1 -b .ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
+%patch38 -p1 -b .rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1501,15 +1503,7 @@ cd smoketestoo_native
 unset WITH_LANG
 #JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
 #SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
-%if %{defined rhel} && 0%{?rhel} < 7
-unset SOLAR_JAVA
-JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout 2h build.pl
-%else
-%ifarch s390 s390x
-unset SOLAR_JAVA
-%endif
 JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -2304,6 +2298,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jun 08 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.4.2-2
+- Resolves: rhbz#826609, rhbz#820554 fix smoketest on ppc[64] and s390[x]
+
 * Wed May 23 2012 David Tardon <dtardon@redhat.com> - 3.5.4.2-1
 - 3.5.4 rc2
 

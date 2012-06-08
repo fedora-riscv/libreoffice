@@ -1,0 +1,49 @@
+diff -ru libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC64.mk libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC64.mk
+--- libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC64.mk	2012-06-08 09:43:20.530668539 +0100
++++ libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC64.mk	2012-06-08 09:44:39.776520838 +0100
+@@ -30,7 +30,6 @@
+ #please make generic modifications to unxgcc.mk or linux.mk
+ gb_CPUDEFS := -D$(CPUNAME)
+ gb_CXXFLAGS += -mminimal-toc
+-gb_CFLAGS += -fsigned-char
+ 
+ include $(GBUILDDIR)/platform/linux-POWERPC.mk
+ 
+diff -ru libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC.mk libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC.mk
+--- libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC.mk	2012-06-08 09:43:20.530668539 +0100
++++ libreoffice-3.4.5.2/solenv/gbuild/platform/linux-POWERPC.mk	2012-06-08 09:44:43.268558424 +0100
+@@ -31,8 +31,6 @@
+ gb_CPUDEFS += -DPOWERPC -DPPC
+ gb_Library_DLLPOSTFIX := lp
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -fsigned-char
+-gb_CFLAGS += -fsigned-char
+ 
+ include $(GBUILDDIR)/platform/unxgcc.mk
+ 
+diff -ru libreoffice-3.4.5.2/solenv/gbuild/platform/linux-S390.mk libreoffice-3.4.5.2/solenv/gbuild/platform/linux-S390.mk
+--- libreoffice-3.4.5.2/solenv/gbuild/platform/linux-S390.mk	2012-06-08 09:43:20.530668539 +0100
++++ libreoffice-3.4.5.2/solenv/gbuild/platform/linux-S390.mk	2012-06-08 09:44:33.246450558 +0100
+@@ -31,8 +31,8 @@
+ gb_CPUDEFS += -DS390
+ gb_Library_DLLPOSTFIX := l3
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -fsigned-char -fno-omit-frame-pointer
+-gb_CFLAGS += -fsigned-char -fno-omit-frame-pointer
++gb_CXXFLAGS += -fno-omit-frame-pointer
++gb_CFLAGS += -fno-omit-frame-pointer
+ 
+ include $(GBUILDDIR)/platform/linux.mk
+ 
+diff -ru libreoffice-3.4.5.2/solenv/inc/unxlngs390.mk libreoffice-3.4.5.2/solenv/inc/unxlngs390.mk
+--- libreoffice-3.4.5.2/solenv/inc/unxlngs390.mk	2012-06-08 09:43:20.741670807 +0100
++++ libreoffice-3.4.5.2/solenv/inc/unxlngs390.mk	2012-06-08 09:44:52.421656955 +0100
+@@ -30,7 +30,5 @@
+ PICSWITCH:=-fPIC
+ .INCLUDE : unxlng.mk
+ CDEFS+=-DS390
+-CFLAGS+=-fsigned-char -fno-omit-frame-pointer
+-CFLAGSCC+=-fsigned-char
+-CFLAGSCXX+=-fsigned-char
++CFLAGS+=-fno-omit-frame-pointer
+ DLLPOSTFIX=l3

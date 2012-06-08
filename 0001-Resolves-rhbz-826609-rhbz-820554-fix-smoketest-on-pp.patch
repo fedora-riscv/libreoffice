@@ -1,0 +1,69 @@
+diff --git a/solenv/gbuild/platform/LINUX_POWERPC64_GCC.mk b/solenv/gbuild/platform/LINUX_POWERPC64_GCC.mk
+index 33f6bd1..08e7b23 100644
+--- a/solenv/gbuild/platform/LINUX_POWERPC64_GCC.mk
++++ b/solenv/gbuild/platform/LINUX_POWERPC64_GCC.mk
+@@ -28,8 +28,7 @@
+ #please make generic modifications to unxgcc.mk or linux.mk
+ gb_CPUDEFS += -DPPC
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -mminimal-toc -fsigned-char
+-gb_CFLAGS += -fsigned-char
++gb_CXXFLAGS += -mminimal-toc
+ 
+ include $(GBUILDDIR)/platform/linux.mk
+ 
+diff --git a/solenv/gbuild/platform/LINUX_POWERPC_GCC.mk b/solenv/gbuild/platform/LINUX_POWERPC_GCC.mk
+index 1c78df0..6fe92ec 100644
+--- a/solenv/gbuild/platform/LINUX_POWERPC_GCC.mk
++++ b/solenv/gbuild/platform/LINUX_POWERPC_GCC.mk
+@@ -28,8 +28,6 @@
+ #please make generic modifications to unxgcc.mk or linux.mk
+ gb_CPUDEFS += -DPPC
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -fsigned-char
+-gb_CFLAGS += -fsigned-char
+ 
+ include $(GBUILDDIR)/platform/linux.mk
+ 
+diff --git a/solenv/gbuild/platform/LINUX_S390X_GCC.mk b/solenv/gbuild/platform/LINUX_S390X_GCC.mk
+index b352572..1d6889e 100644
+--- a/solenv/gbuild/platform/LINUX_S390X_GCC.mk
++++ b/solenv/gbuild/platform/LINUX_S390X_GCC.mk
+@@ -27,8 +27,8 @@
+ 
+ #please make generic modifications to unxgcc.mk or linux.mk
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -fsigned-char -fno-omit-frame-pointer
+-gb_CFLAGS += -fsigned-char -fno-omit-frame-pointer
++gb_CXXFLAGS += -fno-omit-frame-pointer
++gb_CFLAGS += -fno-omit-frame-pointer
+ 
+ include $(GBUILDDIR)/platform/linux.mk
+ 
+diff --git a/solenv/gbuild/platform/LINUX_S390_GCC.mk b/solenv/gbuild/platform/LINUX_S390_GCC.mk
+index b352572..1d6889e 100644
+--- a/solenv/gbuild/platform/LINUX_S390_GCC.mk
++++ b/solenv/gbuild/platform/LINUX_S390_GCC.mk
+@@ -27,8 +27,8 @@
+ 
+ #please make generic modifications to unxgcc.mk or linux.mk
+ gb_COMPILERDEFAULTOPTFLAGS := -O2
+-gb_CXXFLAGS += -fsigned-char -fno-omit-frame-pointer
+-gb_CFLAGS += -fsigned-char -fno-omit-frame-pointer
++gb_CXXFLAGS += -fno-omit-frame-pointer
++gb_CFLAGS += -fno-omit-frame-pointer
+ 
+ include $(GBUILDDIR)/platform/linux.mk
+ 
+diff --git a/solenv/inc/unxlngs390.mk b/solenv/inc/unxlngs390.mk
+index 0eac39a..af2518f 100644
+--- a/solenv/inc/unxlngs390.mk
++++ b/solenv/inc/unxlngs390.mk
+@@ -30,6 +30,4 @@
+ PICSWITCH:=-fPIC
+ .INCLUDE : unxlng.mk
+ CDEFS+=-DS390
+-CFLAGS+=-fsigned-char -fno-omit-frame-pointer
+-CFLAGSCC+=-fsigned-char
+-CFLAGSCXX+=-fsigned-char
++CFLAGS+=-fno-omit-frame-pointer

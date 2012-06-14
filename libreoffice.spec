@@ -1,4 +1,4 @@
-%define libo_version 3.5.4
+%define libo_version 3.5.5
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -128,28 +128,22 @@ Patch14: 0001-Disable-problematic-reading-of-external-entities-in-.patch
 %endif
 Patch15: 0001-move-binfilter-mime-types-into-extra-.desktop-file.patch
 Patch16: 0001-Resolves-rhbz-788042-skip-splashscreen-with-quicksta.patch
-Patch17: 0001-make-hsqldb-build-with-java-1.7.patch
-Patch18: libreoffice-ensure-non-broken-xml-tree.patch
-Patch19: 0001-preserve-timestamps-for-.py-files.patch
-Patch20: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
-Patch21: 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-Patch22: 0001-silence-SolarMutex-not-locked-spew.patch
-Patch23: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-Patch24: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
-Patch26: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
-Patch27: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
-Patch28: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
-Patch29: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
-Patch30: 0001-fdo-38088-better-CSV-import-default-separators.patch
-Patch31: 0001-save-register-arguments-first.patch
-Patch32: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
-Patch33: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
-Patch34: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
-Patch35: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
-Patch36: 0001-gcc-trunk-fix-unable-to-find-string-literal-operator.patch
-Patch37: 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
-Patch38: 0001-Resolves-rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
-Patch39: 0001-use-ure-instead-of-ure-link.patch
+Patch17: libreoffice-ensure-non-broken-xml-tree.patch
+Patch18: 0001-preserve-timestamps-for-.py-files.patch
+Patch19: 0001-Resolves-rhbz-788045-swriter-help-etc-doesn-t-show-h.patch
+Patch20: 0001-Resolves-rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+Patch21: 0001-Resolves-rhbz-800272-complain-about-unknown-command-.patch
+Patch22: 0001-fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+Patch23: 0001-Resolves-rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+Patch24: 0001-desktop-do-not-complain-about-soffice-command-line-o.patch
+Patch25: 0001-Resolves-fdo-48096-torn-off-popups-trigger-keyboard-.patch
+Patch26: 0001-fdo-38088-better-CSV-import-default-separators.patch
+Patch27: 0001-save-register-arguments-first.patch
+Patch28: 0001-do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
+Patch29: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
+Patch30: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
+Patch31: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
+Patch32: 0001-use-ure-instead-of-ure-link.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -994,30 +988,24 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch15 -p1 -b .move-binfilter-mime-types-into-extra-.desktop-file.patch
 %patch16 -p1 -b .rhbz788042-skip-splashscreen-with-quicksta.patch
-%patch17 -p1 -b .make-hsqldb-build-with-java-1.7.patch
-%patch18 -p1 -b .ensure-non-broken-xml-tree.patch
-%patch19 -p1 -b .preserve-timestamps-for-.py-files.patch
-%patch20 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
-%patch21 -p1 -b .rhbz-799628-crash-with-chewing-IM-with-g3g.patch
-%patch22 -p1 -b .silence-SolarMutex-not-locked-spew.patch
-%patch23 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
-%patch24 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
-%patch26 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
-%patch27 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
-%patch28 -p1 -b .do-not-complain-about-soffice-command-line-o.patch
-%patch29 -p1 -b .fdo48096-torn-off-popups-trigger-keyboard-.patch
-%patch30 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
-%patch31 -p1 -b .save-register-arguments-first.patch
-%patch32 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
-%patch33 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
-%patch34 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
+%patch17 -p1 -b .ensure-non-broken-xml-tree.patch
+%patch18 -p1 -b .preserve-timestamps-for-.py-files.patch
+%patch19 -p1 -b .rhbz788045-swriter-help-etc-doesn-t-show-h.patch
+%patch20 -p1 -b .rhbz-799525-put-flat-odf-mimetypes-in-xsltf.patch
+%patch21 -p1 -b .rhbz-800272-complain-about-unknown-command-.patch
+%patch22 -p1 -b .fix-setting-of-paper-tray-from-print-dialog-fdo-4393.patch
+%patch23 -p1 -b .rhbz-806663-SlideshowImpl-can-outlive-SdMod.patch
+%patch24 -p1 -b .do-not-complain-about-soffice-command-line-o.patch
+%patch25 -p1 -b .fdo48096-torn-off-popups-trigger-keyboard-.patch
+%patch26 -p1 -b .fdo-38088-better-CSV-import-default-separators.patch
+%patch27 -p1 -b .save-register-arguments-first.patch
+%patch28 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
+%patch29 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
+%patch30 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
 %if %{defined rhel} && 0%{?rhel} >= 7 || %{defined fedora} && 0%{?fedora} >= 18
-%patch35 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
+%patch31 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 %endif
-%patch36 -p1 -b .gcc-trunk-fix-unable-to-find-string-literal-operator.patch
-%patch37 -p1 -b .ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
-%patch38 -p1 -b .rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
-%patch39 -p1 -b .use-ure-instead-of-ure-link.patch
+%patch32 -p1 -b .use-ure-instead-of-ure-link.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2300,6 +2288,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 14 2012 David Tardon <dtardon@redhat.com> - 3.5.5.1-1
+- 3.5.5 rc1
+- drop integrated 0001-make-hsqldb-build-with-java-1.7.patch
+- drop integrated 0001-Related-rhbz-799628-crash-with-chewing-IM-with-g3g.patch
+- drop integrated 0001-silence-SolarMutex-not-locked-spew.patch
+- drop integrated 0001-gcc-trunk-fix-unable-to-find-string-literal-operator.patch
+- drop integrated 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
+- drop integrated 0001-Resolves-rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
+
 * Mon Jun 11 2012 David Tardon <dtardon@redhat.com> - 3.5.4.2-3
 - make gdb pretty printers for URE libs usable again
 

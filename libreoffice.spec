@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -168,7 +168,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
-Requires: lucene
+Requires: lucene, lucene-contrib
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -2288,6 +2288,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 18 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.5.1-2
+- Resolves: rhbz#830810 missing dependency on lucene-contrib
+
 * Thu Jun 14 2012 David Tardon <dtardon@redhat.com> - 3.5.5.1-1
 - 3.5.5 rc1
 - drop integrated 0001-make-hsqldb-build-with-java-1.7.patch

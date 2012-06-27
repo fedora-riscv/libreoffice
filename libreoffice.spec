@@ -125,11 +125,6 @@ Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
-Obsoletes: openoffice.org-core < 1:3.3.1
-Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
-Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
-Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
-Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 
 %description core
@@ -145,7 +140,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-pyuno < 1:3.3.1
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -159,8 +153,6 @@ Requires: postgresql-jdbc
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-base-core < 1:3.3.1
-Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
@@ -177,7 +169,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-report-builder < 1:3.3.1
 
 %description report-builder
 Creates database reports from LibreOffice databases. The report builder can
@@ -193,7 +184,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-bsh < 1:3.3.1
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
@@ -206,7 +196,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-rhino < 1:3.3.1
 
 %description rhino
 Support JavaScript scripts in LibreOffice.
@@ -223,7 +212,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
 
 %description wiki-publisher
 The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
@@ -252,7 +240,6 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
-Obsoletes: openoffice.org-ogltrans < 1:3.3.1
 
 %description ogltrans
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
@@ -268,7 +255,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
 
 %description presentation-minimizer
 The Presentation Minimizer is used to reduce the file size of the current
@@ -285,7 +271,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
 
 %description presenter-screen
 The Presenter Screen is used to provides information on a second screen, that
@@ -302,7 +287,6 @@ Requires(pre):    %{name}-core
 Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
-Obsoletes: openoffice.org-pdfimport < 1:3.3.1
 
 %description pdfimport
 The PDF Importer imports PDF into drawing documents to preserve layout
@@ -312,8 +296,6 @@ and enable basic editing of PDF documents.
 Summary: LibreOffice dingbats font
 Group: User Interface/X
 Requires: fontpackages-filesystem
-Obsoletes: openoffice.org-fonts < 1:3.3.1
-Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
 BuildArch: noarch
 
 %description %{fontname}-fonts
@@ -325,8 +307,6 @@ Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-writer-core < 1:3.3.1
-Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 
 %description writer
 The LibreOffice Word Processor application.
@@ -336,7 +316,6 @@ Summary: Email mail-merge component for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-emailmerge < 1:3.3.1
 
 %description emailmerge
 Enables the LibreOffice writer module to mail-merge to email.
@@ -346,8 +325,6 @@ Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-calc-core < 1:3.3.1
-Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 
 %description calc
 The LibreOffice Spreadsheet application.
@@ -359,8 +336,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-draw-core < 1:3.3.1
-Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
 
 %description draw
 The LibreOffice Drawing Application.
@@ -374,8 +349,6 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
 %endif
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-impress-core < 1:3.3.1
-Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
 
 %description impress
 The LibreOffice Presentation Application.
@@ -385,8 +358,6 @@ Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-math-core < 1:3.3.1
-Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 
 %description math 
 The LibreOffice Equation Editor Application.
@@ -396,7 +367,6 @@ Summary: LibreOffice Extra Graphic filters
 Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 
 %description graphicfilter
 The graphicfilter module for LibreOffice provides graphic filters, e.g. svg and
@@ -406,7 +376,6 @@ flash filters.
 Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 
 %description xsltfilter
 The xsltfilter module for LibreOffice, provides additional docbook and
@@ -416,7 +385,6 @@ xhtml export transforms. Install this to enable docbook export.
 Summary: Optional javafilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-javafilter < 1:3.3.1
 
 %description javafilter
 The javafilter module for LibreOffice, provides additional AportisDoc,
@@ -442,7 +410,6 @@ creation and management of PostgreSQL databases through a GUI.
 Summary: UNO Runtime Environment
 Group: Development/Libraries
 Requires: unzip, jre >= 1.5.0
-Obsoletes: openoffice.org-ure < 1:3.3.1
 
 %description ure
 UNO is the component model of LibreOffice. UNO offers interoperability between
@@ -458,7 +425,6 @@ Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
-Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
 
 %description sdk
 The LibreOffice SDK is an add-on for the LibreOffice office suite. It provides
@@ -470,7 +436,6 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 
 %description sdk-doc
 This provides documentation for programming using the LibreOffice APIs
@@ -481,7 +446,6 @@ Summary: LibreOffice Headless plug-in
 Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-headless < 1:3.3.1
 
 %description headless
 A plug-in for LibreOffice that enables it to function without an X server. 

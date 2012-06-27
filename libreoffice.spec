@@ -514,7 +514,6 @@ This package provides gdb pretty printers for package %{name}.
 # Additionally, it's possible
 # * to require autocorr, hunspell, hyphen or mythes package or font for
 #   given language,
-# * to obsolete openoffice.org-langpack package,
 # * to provide libreoffice-langpack-loc package, where loc is glibc
 #   locale--this is necessary for yum to pick it automatically,
 # * to require other, unrelated, packages,
@@ -531,9 +530,6 @@ This package provides gdb pretty printers for package %{name}.
 # l:  language code, e.g., cs
 # Mm: mythes dependency
 # n:  language name, e.g., Czech
-# Oo: Obsoletes: of openoffice.org-langpack
-# Vv: Very archaic Obsoletes: of openoffice.org-langpack
-# Xx: Archaic Obsoletes: of openoffice.org2-langpack
 # p:  Provides: of libreoffice-langpack
 # r:  comma-separated list of additional requires
 # Ss: filelist
@@ -541,10 +537,10 @@ This package provides gdb pretty printers for package %{name}.
 #
 # Example:
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
-# autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
-# openoffice.org-langpack-cs_CZ, and taking the files from cs.filelist:
-# %%langpack -l cs -n Czech -H -A -m cs-CZ -o cs_CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:Oo:p:r:Ss:Vv:Xx:Yy:) \
+# autocorr-cs, mythes-cs-CZ and suitable font and taking the files from
+# cs.filelist:
+# %%langpack -l cs -n Czech -H -A -m cs-CZ -S
+%define langpack(Aa:Ff:Hh:l:Mm:n:p:r:Ss:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -560,15 +556,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
 %{-r:Requires: %{-r*}} \
-%define obs openoffice.org-langpack \
-%define obsv 1:3.3.1 \
-%define aobs openoffice.org2-langpack \
-%define aobsv 1:3.0.0 \
-%define vaobs openoffice.org-langpack \
-%define vaobsv 1:2.0.3 \
-%{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
-%{-x:Obsoletes: %{aobs}-%{-x*} < %{aobsv}}%{!-x:%{-X:Obsoletes: %{aobs}-%{lang} < %{aobsv}}} \
-%{-v:Obsoletes: %{vaobs}-%{-v*} < %{vaobsv}}%{!-v:%{-V:Obsoletes: %{vaobs}-%{lang} < %{vaobsv}}} \
 %{-p:Provides: %{name}-langpack-%{-p*}} \
 \
 %description %{pkgname} \
@@ -612,82 +599,82 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %if %{langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -V -x af_ZA -S
-%langpack -l ar -n Arabic -F -H -O -X -S
-%langpack -l as -n Assamese -F -H -Y -o as_IN -x as_IN -S
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -o bg_BG -V -x bg_BG -S
-%langpack -l bn -n Bengali -F -H -Y -O -v bn_IN -X -S
-%langpack -l ca -n Catalan -F -H -Y -M -o ca_ES -V -x ca_ES -S
-%langpack -l cs -n Czech -F -H -Y -M -A -o cs_CZ -V -x cs_CZ -S
-%langpack -l cy -n Welsh -F -H -Y -o cy_GB -V -x cy_GB -S
-%langpack -l da -n Danish -F -H -Y -M -A -o da_DK -V -x da_DK -S
-%langpack -l de -n German -F -H -Y -M -A -O -X -S
-%langpack -l dz -n Dzongkha -F -O -S
-%langpack -l el -n Greek -F -H -Y -M -o el_GR -V -x el_GR -S
-%langpack -l en -n English -M -O
-%langpack -l es -n Spanish -F -H -Y -M -A -O -X -S
-%langpack -l et -n Estonian -F -H -Y -o et_EE -V -x et_EE -S
-%langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -x eu_ES -S
+%langpack -l af -n Afrikaans -F -H -Y -A -S
+%langpack -l ar -n Arabic -F -H -S
+%langpack -l as -n Assamese -F -H -Y -S
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -S
+%langpack -l bn -n Bengali -F -H -Y -S
+%langpack -l ca -n Catalan -F -H -Y -M -S
+%langpack -l cs -n Czech -F -H -Y -M -A -S
+%langpack -l cy -n Welsh -F -H -Y -S
+%langpack -l da -n Danish -F -H -Y -M -A -S
+%langpack -l de -n German -F -H -Y -M -A -S
+%langpack -l dz -n Dzongkha -F -S
+%langpack -l el -n Greek -F -H -Y -M -S
+%langpack -l en -n English -M
+%langpack -l es -n Spanish -F -H -Y -M -A -S
+%langpack -l et -n Estonian -F -H -Y -S
+%langpack -l eu -n Basque -F -H -Y -A -S
 %langpack -l fa -n Farsi -A -H -Y -S
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -o fi_FI -S
-%langpack -l fr -n French -F -H -Y -M -A -O -X -S
-%langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -x ga_IE -S
-%langpack -l gl -n Galician -F -H -Y -o gl_ES -V -x gl_ES -S
-%langpack -l gu -n Gujarati -F -H -Y -o gu_IN -x gu_IN -S
-%langpack -l he -n Hebrew -F -H -o he_IL -V -x he_IL -S
-%langpack -l hi -n Hindi -F -H -Y -o hi_IN -v hi-IN -x hi_IN -S
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -x hr_HR -S
-%langpack -l hu -n Hungarian -F -H -Y -M -A -o hu_HU -V -x hu_HU -S
-%langpack -l it -n Italian -F -H -Y -M -A -O -X -S
-%langpack -l ja -n Japanese -F -A -o ja_JP -V -x ja_JP -S
-%langpack -l kn -n Kannada -F -H -Y -o kn_IN -x ka_IN -S
-%langpack -l ko -n Korean -F -H -A -o ko_KR -V -x ko_KR -S
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -S
+%langpack -l fr -n French -F -H -Y -M -A -S
+%langpack -l ga -n Irish -F -H -Y -M -A -S
+%langpack -l gl -n Galician -F -H -Y -S
+%langpack -l gu -n Gujarati -F -H -Y -S
+%langpack -l he -n Hebrew -F -H -S
+%langpack -l hi -n Hindi -F -H -Y -S
+%langpack -l hr -n Croatian -F -H -Y -A -S
+%langpack -l hu -n Hungarian -F -H -Y -M -A -S
+%langpack -l it -n Italian -F -H -Y -M -A -S
+%langpack -l ja -n Japanese -F -A -S
+%langpack -l kn -n Kannada -F -H -Y -S
+%langpack -l ko -n Korean -F -H -A -S
 %{baseinstdir}/share/registry/korea.xcd
 
-%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -x lt_LT -S
+%langpack -l lt -n Lithuanian -F -H -Y -A -S
 %langpack -l lv -n Latvian -F -H -Y -M -S
-%langpack -l mai -n Maithili -F -o mai_IN -S
-%langpack -l ml -n Malayalam -F -H -Y -o ml_IN -x ml_IN -S
-%langpack -l mr -n Marathi -F -H -Y -o mr_IN -x mr_IN -S
-%langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -V -x nb_NO -S
-%langpack -l nl -n Dutch -F -H -Y -M -A -O -X -S
-%langpack -l nn -n Nynorsk -F -H -Y -M -o nn_NO -V -x nn_NO -S
+%langpack -l mai -n Maithili -F -S
+%langpack -l ml -n Malayalam -F -H -Y -S
+%langpack -l mr -n Marathi -F -H -Y -S
+%langpack -l nb -n Bokmal -F -H -Y -M -S
+%langpack -l nl -n Dutch -F -H -Y -M -A -S
+%langpack -l nn -n Nynorsk -F -H -Y -M -S
 %define langpack_lang Southern Ndebele
-%langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA -S
+%langpack -l nr -n %{langpack_lang} -F -H -S
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -x nso_ZA -S
-%langpack -l or -n Oriya -F -H -Y -o or_IN -x or_IN -S
-%langpack -l pa -n Punjabi -F -H -Y -O -v pa_IN -x pa_IN -s pa-IN
-%langpack -l pl -n Polish -F -H -Y -M -A -o pl_PL -V -x pl_PL -S
+%langpack -l nso -n %{langpack_lang} -F -H -S
+%langpack -l or -n Oriya -F -H -Y -S
+%langpack -l pa -n Punjabi -F -H -Y -s pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -S
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -o pt_BR -p pt_BR -V -x pt_BR -S
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -v pt -X -s pt
-%langpack -l ro -n Romanian -F -H -Y -M -O -S
-%langpack -l ru -n Russian -F -H -Y -M -A -O -X -S
-%langpack -l si -n Sinhalese -F -H -O -S
-%langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -V -x sk_SK -S
-%langpack -l sl -n Slovenian -F -H -Y -M -A -o sl_SI -V -x sl_SI -S
-%langpack -l sr -n Serbian -F -H -Y -A -O -v sr_CS -x sr_CS -S
-%langpack -l ss -n Swati -F -H -o ss_ZA -S
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -S
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -s pt
+%langpack -l ro -n Romanian -F -H -Y -M -S
+%langpack -l ru -n Russian -F -H -Y -M -A -S
+%langpack -l si -n Sinhalese -F -H -S
+%langpack -l sk -n Slovak -F -H -Y -M -A -S
+%langpack -l sl -n Slovenian -F -H -Y -M -A -S
+%langpack -l sr -n Serbian -F -H -Y -A -S
+%langpack -l ss -n Swati -F -H -S
 %define langpack_lang Southern Sotho
-%langpack -l st -n %{langpack_lang} -F -H -o st_ZA -S
-%langpack -l sv -n Swedish -F -H -Y -M -A -O -X -S
-%langpack -l ta -n Tamil -F -H -Y -o ta_IN -x ta_IN -S
-%langpack -l te -n Telugu -F -H -Y -o te_IN -x te_IN -S
-%langpack -l th -n Thai -F -H -o th_TH -V -x th_TH -S
+%langpack -l st -n %{langpack_lang} -F -H -S
+%langpack -l sv -n Swedish -F -H -Y -M -A -S
+%langpack -l ta -n Tamil -F -H -Y -S
+%langpack -l te -n Telugu -F -H -Y -S
+%langpack -l th -n Thai -F -H -S
 %{baseinstdir}/share/registry/ctlseqcheck_th.xcd
 
-%langpack -l tn -n Tswana -F -H -o tn_ZA -V -x tn_ZA -S
-%langpack -l tr -n Turkish -F -A -o tr_TR -V -X -S
-%langpack -l ts -n Tsonga -F -H -o ts_ZA -V -x ts_ZA -S
-%langpack -l uk -n Ukrainian -F -H -Y -M -O -S
-%langpack -l ve -n Venda -F -H -o ve_ZA -S
-%langpack -l xh -n Xhosa -F -H -o xh_ZA -S
+%langpack -l tn -n Tswana -F -H -S
+%langpack -l tr -n Turkish -F -A -S
+%langpack -l ts -n Tsonga -F -H -S
+%langpack -l uk -n Ukrainian -F -H -Y -M -S
+%langpack -l ve -n Venda -F -H -S
+%langpack -l xh -n Xhosa -F -H -S
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -o zh_CN -p zh_CN -v zh-CN -x zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -o zh_TW -p zh_TW -v zh-TW -x zh_TW -s zh-TW
-%langpack -l zu -n Zulu -F -H -Y -o zu_ZA -V -x zu_ZA -S
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s zh-TW
+%langpack -l zu -n Zulu -F -H -Y -S
 %undefine langpack_lang
 
 %endif

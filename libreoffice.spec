@@ -9,22 +9,22 @@
 %define __jar_repack %{nil}
 # don't worry about whitespace for now
 %define _default_patch_flags -s -l
-# undef to get english only and no-langpacks for a faster smoketest build
-%define langpacks 1
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
-%if %{langpacks}
+%bcond_without binfilter
+# undef to get english only and no-langpacks for a faster smoketest build
+%bcond_without langpacks
+
+%if %{with langpacks}
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
 %define with_lang ''
 %endif
-
-%bcond_without binfilter
 
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
@@ -597,7 +597,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %*
 
 
-%if %{langpacks}
+%if %{with langpacks}
 
 %langpack -l af -n Afrikaans -F -H -Y -A -S
 %langpack -l ar -n Arabic -F -H -S
@@ -681,7 +681,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %autocorr -l en -n English
 
-%if %{langpacks}
+%if %{with langpacks}
 
 %autocorr -l af -n Afrikaans
 %autocorr -l bg -n Bulgarian
@@ -867,7 +867,7 @@ fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
 mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
-%if %{langpacks}
+%if %{with langpacks}
 dmake ooolanguagepack
 rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
 for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
@@ -928,7 +928,7 @@ en_ZA_aliases="en-NA en-ZW"
 for lang in $en_ZA_aliases; do
         ln -sf acor_en-ZA.dat acor_$lang.dat
 done
-%if %{langpacks}
+%if %{with langpacks}
 af_ZA_aliases="af-NA"
 for lang in $af_ZA_aliases; do
         ln -sf acor_af-ZA.dat acor_$lang.dat
@@ -966,7 +966,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_datadir}
 mv -f $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr $RPM_BUILD_ROOT/%{_datadir}/autocorr
 chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
 
-%if %{langpacks}
+%if %{with langpacks}
 
 #auto generate the langpack file lists, format is...
 #langpack id, has help or not, autocorrection glob, script classification

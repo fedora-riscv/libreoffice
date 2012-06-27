@@ -1,0 +1,34 @@
+From 619e3d71759ded4c0bc9f344ac433c1037ed1fd2 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 21 Jun 2012 08:56:52 +0200
+Subject: [PATCH] specify the sourced file with path
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+"man source" says:
+
+"If filename does not contain a slash, file names  in  PATH  are used to
+find the directory containing file‐ name.  The file searched for in PATH
+need not  be  executable. When  bash  is  not  in posix  mode,  the
+current directory is searched if no file is found in PATH."
+
+Change-Id: I7dc15d30ba925c71d02da2cd8b91ea08192730fc
+---
+ config_host.mk.source |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config_host.mk.source b/config_host.mk.source
+index 042ffa2..10dd617 100644
+--- a/config_host.mk.source
++++ b/config_host.mk.source
+@@ -6,5 +6,5 @@
+ 
+ temp_conf=`mktemp config_host.mk.XXXXXX`
+ sed -e 's/^\s*\(export [A-Z0-9_]*=\)\(.*\)$/\1"\2"/' config_host.mk >$temp_conf
+-source $temp_conf
++source ./$temp_conf
+ rm $temp_conf
+-- 
+1.7.10.2
+

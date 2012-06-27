@@ -158,7 +158,7 @@ index 4d02a76..ecd3b5d 100644
 +    return NULL;
 +}
 +
- bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& rMissingCodes ) const
+ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& rMissingCodes )
  {
      bool bRet = false;
 @@ -764,14 +899,13 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
@@ -166,7 +166,7 @@ index 4d02a76..ecd3b5d 100644
  
      const rtl::OString aLangAttrib = MsLangId::convertLanguageToIsoByteString(rPattern.meLanguage);
 +    const FcChar8* pLangAttribUtf8 = NULL;
-     if( aLangAttrib.getLength() )
+     if( !aLangAttrib.isEmpty() )
      {
 -        const FcChar8* pLangAttribUtf8;
          if (aLangAttrib.equalsIgnoreAsciiCase(OString(RTL_CONSTASCII_STRINGPARAM("pa-in"))))

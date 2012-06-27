@@ -116,7 +116,7 @@ index 676acd5..4a599c9 100644
  //=========================================================================
  //=========================================================================
  //
-@@ -890,7 +947,10 @@ Reference< XInputStream > Content::openStream()
+@@ -787,7 +902,10 @@ Reference< XInputStream > Content::openStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -127,7 +127,7 @@ index 676acd5..4a599c9 100644
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -915,7 +975,10 @@ Reference< XInputStream > Content::openStreamNoLock()
+@@ -813,7 +930,10 @@ Reference< XInputStream > Content::openStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -138,7 +138,7 @@ index 676acd5..4a599c9 100644
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -940,7 +1003,10 @@ Reference< XStream > Content::openWriteableStream()
+@@ -838,7 +965,10 @@ Reference< XStream > Content::openWriteableStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -149,7 +149,7 @@ index 676acd5..4a599c9 100644
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -965,7 +1031,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
+@@ -863,7 +990,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -160,7 +160,7 @@ index 676acd5..4a599c9 100644
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -990,7 +1059,10 @@ sal_Bool Content::openStream( const Reference< XActiveDataSink >& rSink )
+@@ -888,7 +1019,10 @@ sal_Bool Content::openStream( const Reference< XActiveDataSink >& rSink )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -171,7 +171,7 @@ index 676acd5..4a599c9 100644
  
      OpenCommandArgument2 aArg;
      aArg.Mode       = OpenMode::DOCUMENT;
-@@ -1013,7 +1085,10 @@ sal_Bool Content::openStream( const Reference< XOutputStream >& rStream )
+@@ -911,7 +1045,10 @@ sal_Bool Content::openStream( const Reference< XOutputStream >& rStream )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )

@@ -531,8 +531,6 @@ This package provides gdb pretty printers for package %{name}.
 
 %files gdb-debug-support
 %defattr(-,root,root)
-# TODO does it make sense to install this?
-%{baseinstdir}/program/gdbtrace
 %{_datadir}/gdb/auto-load%{baseinstdir}
 %{_datadir}/libreoffice/gdb
 
@@ -1300,6 +1298,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/flat_logo.svg
 %{baseinstdir}/program/fpicker.uno.so
 %{baseinstdir}/program/fps_office.uno.so
+%{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url

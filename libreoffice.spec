@@ -1230,15 +1230,13 @@ export DESTDIR=$RPM_BUILD_ROOT
 install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
 
 
-# FIXME enable again
-# %%check
-# TODO: get rid of this
-# . ./config_host.mk.source
-# cd smoketestoo_native
-# unset WITH_LANG
-#JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" works around flawed accessibility check
-#SAL_USE_VCLPLUGIN="svp" uses the headless plugin for these tests
-# JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1" SAL_USE_VCLPLUGIN="svp" timeout -k 2m 2h build.pl
+%check
+unset WITH_LANG
+# work around flawed accessibility check
+export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
+# TODO is the timeout still needed?
+# FIXME find what is the problem
+# timeout -k 2m 2h make smoketest.subsequentcheck VERBOSE=t
 
 %clean
 rm -rf $RPM_BUILD_ROOT

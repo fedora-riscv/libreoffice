@@ -70,7 +70,6 @@ BuildRequires: icu
 BuildRequires: make
 BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
-BuildRequires: rsync
 BuildRequires: zip
 
 # libs / headers

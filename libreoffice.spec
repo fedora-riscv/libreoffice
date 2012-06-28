@@ -203,10 +203,6 @@ Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: python
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -232,10 +228,6 @@ Requires: pentaho-reporting-flow-engine
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description report-builder
 Creates database reports from LibreOffice databases. The report builder can
@@ -247,10 +239,6 @@ Summary: BeanShell support for LibreOffice
 Group: Development/Libraries
 Requires: bsh
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
@@ -259,10 +247,6 @@ Support BeanShell scripts in LibreOffice.
 Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description rhino
 Support JavaScript scripts in LibreOffice.
@@ -275,10 +259,6 @@ Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description wiki-publisher
 The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
@@ -291,10 +271,6 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description nlpsolver
 A non-linear solver engine for Calc as an alternative to the default linear
@@ -306,7 +282,6 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
 
 %description ogltrans
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
@@ -318,10 +293,6 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description presentation-minimizer
 The Presentation Minimizer is used to reduce the file size of the current
@@ -334,10 +305,6 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description presenter-screen
 The Presenter Screen is used to provides information on a second screen, that
@@ -350,10 +317,6 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
-Requires(pre):    %{name}-core
-Requires(post):   %{name}-core
-Requires(preun):  %{name}-core
-Requires(postun): %{name}-core
 
 %description pdfimport
 The PDF Importer imports PDF into drawing documents to preserve layout

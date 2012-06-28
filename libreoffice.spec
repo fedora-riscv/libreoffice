@@ -54,29 +54,97 @@ Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #backwards compatability.
 Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 
-BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel, boost-devel, automake, doxygen
-BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
-BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
-BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
-BuildRequires:  gecko-devel, libwpd-devel, hunspell-devel, unixODBC-devel
-BuildRequires:  sane-backends-devel, libicu-devel, libXinerama-devel
-BuildRequires:  freetype-devel, gtk2-devel, desktop-file-utils, hyphen-devel
-BuildRequires:  evolution-data-server-devel, nss-devel, zlib-devel
-BuildRequires:  gstreamer-devel, gstreamer-plugins-base-devel, openssl-devel
-BuildRequires:  lpsolve-devel, bsh, clucene-core-devel, perl(Archive::Zip)
-BuildRequires:  mesa-libGLU-devel, redland-devel, ant, ant-apache-regexp, rsync
-BuildRequires:  apache-commons-codec, jakarta-commons-httpclient, cppunit-devel
-BuildRequires:  apache-commons-lang, poppler-devel, fontpackages-devel
-BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
-BuildRequires:  GConf2-devel, postgresql-devel
-BuildRequires:  liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
-BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
-BuildRequires:  libwps-devel, junit, perl(Digest::MD5), libdb-devel
-BuildRequires:  mysql-connector-c++-devel, poppler-cpp-devel
-BuildRequires:  libcmis-devel, libexttextcat-devel, libvisio-devel
-BuildRequires:  libcdr-devel, libmspub-devel
-BuildRequires:  kdelibs4-devel
+# build tools
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: bc
+BuildRequires: binutils
+BuildRequires: bison
+BuildRequires: desktop-file-utils
+BuildRequires: doxygen
+BuildRequires: findutils
+BuildRequires: flex
+BuildRequires: gcc-c++
+BuildRequires: gperf
+BuildRequires: icu
+BuildRequires: make
+BuildRequires: perl(Archive::Zip)
+BuildRequires: perl(Digest::MD5)
+BuildRequires: rsync
+BuildRequires: zip
+
+# libs / headers
+BuildRequires: GConf2-devel
+BuildRequires: boost-devel
+BuildRequires: clucene-core-devel
+BuildRequires: cppunit-devel
+BuildRequires: cups-devel
+BuildRequires: evolution-data-server-devel
+BuildRequires: expat-devel
+BuildRequires: fontpackages-devel
+BuildRequires: freetype-devel
+BuildRequires: gecko-devel
+BuildRequires: graphite2-devel
+BuildRequires: gstreamer-devel
+BuildRequires: gstreamer-plugins-base-devel
+BuildRequires: gtk2-devel
+BuildRequires: hunspell-devel
+BuildRequires: hyphen-devel
+BuildRequires: kdelibs4-devel
+BuildRequires: libICE-devel
+BuildRequires: libXext-devel
+BuildRequires: libXinerama-devel
+BuildRequires: libXt-devel
+BuildRequires: libcdr-devel
+BuildRequires: libcmis-devel
+BuildRequires: libcurl-devel
+BuildRequires: libdb-devel
+BuildRequires: libexttextcat-devel
+BuildRequires: libicu-devel
+BuildRequires: libidn-devel
+BuildRequires: libjpeg-devel
+BuildRequires: libmspub-devel
+BuildRequires: librsvg2-devel
+BuildRequires: libvisio-devel
+BuildRequires: libwpd-devel
+BuildRequires: libwpg-devel
+BuildRequires: libwps-devel
+BuildRequires: libxml2-devel
+BuildRequires: libxslt-devel
+BuildRequires: lpsolve-devel
+BuildRequires: mdds-devel
+BuildRequires: mesa-libGLU-devel
+BuildRequires: mysql-connector-c++-devel
+BuildRequires: mythes-devel
+BuildRequires: neon-devel
+BuildRequires: nss-devel
+BuildRequires: openssl-devel
+BuildRequires: pam-devel
+BuildRequires: poppler-cpp-devel
+BuildRequires: poppler-devel
+BuildRequires: postgresql-devel
+BuildRequires: python-devel
+BuildRequires: redland-devel
+BuildRequires: sane-backends-devel
+BuildRequires: unixODBC-devel
+BuildRequires: vigra-devel
+BuildRequires: zlib-devel
+
+# java stuff
+BuildRequires: ant
+BuildRequires: ant-apache-regexp
+BuildRequires: apache-commons-codec
+BuildRequires: apache-commons-lang
+BuildRequires: bsh
+BuildRequires: jakarta-commons-httpclient
+BuildRequires: java-devel
+BuildRequires: junit
+BuildRequires: pentaho-reporting-flow-engine
+
+# fonts needed for unit tests
+BuildRequires: liberation-mono-fonts >= 1.0
+BuildRequires: liberation-sans-fonts >= 1.0
+BuildRequires: liberation-serif-fonts >= 1.0
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}

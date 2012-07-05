@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease .beta3
 %define vendoroption --with-vendor="The Fedora Project"
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
@@ -30,7 +30,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{libo_prerelease}%{?dist}
+Release:        3%{libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -161,9 +161,6 @@ Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 Patch8: 0001-specify-the-sourced-file-with-path.patch
-Patch9: 0001-disable-failing-check.patch
-Patch10: 0001-remove-useless-extern-declaration.patch
-Patch11: 0001-fix-invalid-.desktop-files.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -769,9 +766,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch8  -p1 -b .specify-the-sourced-file-with-path.patch
-%patch9  -p1 -b .disable-failing-check.patch
-%patch10 -p1 -b .remove-useless-extern-declaration.patch
-%patch11 -p1 -b .fix-invalid-.desktop-files.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2004,6 +1998,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 05 2012 David Tardon <dtardon@redhat.com> - 3.6.0.0-3
+- 3.6.0 beta3
+
 * Mon Jul  2 2012 Marek Kasik <mkasik@redhat.com> - 3.6.0.0-2
 - Rebuild (poppler-0.20.1)
 

@@ -922,6 +922,8 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
             $file.in > $file
         chmod 755 $file
     done
+    # we don't want to install the input files
+    rm -f setsdkenv_unix.csh.in setsdkenv_unix.sh.in
 #fix permissions
     find examples -type f -exec chmod -x {} \;
 popd

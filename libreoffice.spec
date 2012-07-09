@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -144,6 +144,7 @@ Patch29: 0001-wrong-types-used-here-breaks-64bit-bigendian.patch
 Patch30: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
 Patch31: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 Patch32: 0001-use-ure-instead-of-ure-link.patch
+Patch33: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1006,6 +1007,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 %endif
 %patch32 -p1 -b .use-ure-instead-of-ure-link.patch
+%patch33 -p1 -b .rhbz-838368-view-ignored-while-view-accepte.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2288,6 +2290,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.5.3-2
+- Resolves: rhbz#838368 --view ignored while -view accepted
+
 * Tue Jul 03 2012 David Tardon <dtardon@redhat.com> - 3.5.5.3-1
 - 3.5.5 final
 - drop integrated 0001-make-hsqldb-build-with-java-1.7.patch

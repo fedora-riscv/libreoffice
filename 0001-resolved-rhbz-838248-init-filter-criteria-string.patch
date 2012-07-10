@@ -1,0 +1,72 @@
+From 22ccbeef9c88b01ac841de37dfcb5985dc05a530 Mon Sep 17 00:00:00 2001
+Message-Id: <22ccbeef9c88b01ac841de37dfcb5985dc05a530.1341913622.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 9 Jul 2012 18:31:30 +0200
+Subject: [PATCH] resolved rhbz#838248 init filter criteria string
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+In ScFilterDlg::Init() the string displayed as criteria was empty if
+query is ByValue or ByDate. From earlier times the dialog assumed that
+the query string was always set corresponding to the value, but internal
+handling was changed.
+
+Change-Id: I4f10654f4015b38f7ddba9d6727e06806f1d6b77
+Signed-off-by: Kohei Yoshida <kohei.yoshida@gmail.com>
+---
+ sc/source/ui/dbgui/filtdlg.cxx |   26 +++++++++++++++++++++++++-
+ 1 files changed, 25 insertions(+), 1 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-rhbz-838248-init-filter-criteria-string.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-rhbz-838248-init-filter-criteria-string.patch"
+
+diff --git a/sc/source/ui/dbgui/filtdlg.cxx b/sc/source/ui/dbgui/filtdlg.cxx
+index 93ad302..c744d85 100644
+--- a/sc/source/ui/dbgui/filtdlg.cxx
++++ b/sc/source/ui/dbgui/filtdlg.cxx
+@@ -318,7 +318,31 @@ void ScFilterDlg::Init( const SfxItemSet& rArgSet )
+                 maCondLbArr[i]->Disable();
+             }
+             else
+-                aValStr = rItem.maString;
++            {
++                if (rItem.maString.isEmpty())
++                {
++                    if (rItem.meType == ScQueryEntry::ByValue)
++                        pDoc->GetFormatTable()->GetInputLineString( rItem.mfVal, 0, aValStr);
++                    else if (rItem.meType == ScQueryEntry::ByDate)
++                    {
++                        SvNumberFormatter* pFormatter = pDoc->GetFormatTable();
++                        pFormatter->GetInputLineString( rItem.mfVal,
++                                pFormatter->GetStandardFormat( NUMBERFORMAT_DATE), aValStr);
++                    }
++                    else
++                    {
++                        SAL_WARN( "sc", "ScFilterDlg::Init: empty query string, really?");
++                        aValStr = rItem.maString;
++                    }
++                }
++                else
++                {
++                    // XXX NOTE: if not ByString we just assume this has been
++                    // set to a proper string corresponding to the numeric
++                    // value earlier!
++                    aValStr = rItem.maString;
++                }
++            }
+         }
+         else if ( i == 0 )
+         {
+
+--------------erAck-patch-parts--
+
+

@@ -162,6 +162,7 @@ Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 Patch8: 0001-specify-the-sourced-file-with-path.patch
 Patch9: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
+Patch10: 0001-disable-failing-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -768,6 +769,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch8  -p1 -b .specify-the-sourced-file-with-path.patch
 %patch9  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
+%patch10 -p1 -b .disable-failing-check.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

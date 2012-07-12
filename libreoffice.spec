@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta3
+# %%define libo_prerelease
 %define vendoroption --with-vendor="The Fedora Project"
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
@@ -29,17 +29,17 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        4%{libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0:        %{source_url}/libreoffice-core-%{version}%{libo_prerelease}.tar.xz
-Source1:        %{source_url}/libreoffice-binfilter-%{version}%{libo_prerelease}.tar.xz
-Source2:        %{source_url}/libreoffice-help-%{version}%{libo_prerelease}.tar.xz
-Source3:        %{source_url}/libreoffice-translations-%{version}%{libo_prerelease}.tar.xz
+Source0:        %{source_url}/libreoffice-core-%{version}%{?libo_prerelease}.tar.xz
+Source1:        %{source_url}/libreoffice-binfilter-%{version}%{?libo_prerelease}.tar.xz
+Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
+Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
 Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source5:        redhat-langpacks.tar.gz
 Source6:        libreoffice-multiliblauncher.sh
@@ -160,9 +160,9 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-Patch8: 0001-specify-the-sourced-file-with-path.patch
-Patch9: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch10: 0001-disable-failing-check.patch
+Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
+# TODO: look what the problem is
+Patch9:  0001-disable-failing-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -767,9 +767,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch8  -p1 -b .specify-the-sourced-file-with-path.patch
-%patch9  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch10 -p1 -b .disable-failing-check.patch
+%patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
+%patch9  -p1 -b .disable-failing-check.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2004,6 +2003,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 12 2012 David Tardon <dtardon@redhat.com> - 3.6.0.1-1
+- 3.6.0 rc1
+
 * Mon Jul 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.6.0.0-4
 - Resolves: rhbz#838368 --view ignored while -view accepted
 

@@ -23,7 +23,6 @@
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
-%define with_lang ''
 %endif
 
 Summary:        Free Software Productivity Suite
@@ -826,7 +825,7 @@ touch autogen.lastrun
  --without-system-mozilla-headers --with-system-mythes --with-system-dicts \
  --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
- %{with_lang} --with-poor-help-localizations="$POORHELPS" \
+ %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  --without-system-hsqldb --enable-kde4 \
  %{?with_binfilter:--enable-binfilter} \

@@ -1,0 +1,973 @@
+diff -ru libreoffice-3.5.5.3.orig/cui/source/options/optlingu.cxx libreoffice-3.5.5.3/cui/source/options/optlingu.cxx
+--- libreoffice-3.5.5.3.orig/cui/source/options/optlingu.cxx	2012-07-13 12:37:15.032259144 +0100
++++ libreoffice-3.5.5.3/cui/source/options/optlingu.cxx	2012-07-16 08:49:26.294209540 +0100
+@@ -1150,12 +1150,6 @@
+     aLinguDicsEditPB.SetAccessibleName(sAccessibleNameDicsEdit);
+     aLinguOptionsEditPB.SetAccessibleName(sAccessibleNameOptionEdit);
+ 
+-    // force recalculation of hash value used for checking the need of updating
+-    // because new dictionaries might be installed / downloaded.
+-    //! Thus it needs to be called now since it may infuence the supported languages
+-    //! to be reported AND the found user-dictionaries(!) as well.
+-    SvxLinguConfigUpdate::UpdateAll( sal_True );
+-
+     xProp = uno::Reference< XPropertySet >( SvxGetLinguPropertySet(), UNO_QUERY );
+     xDicList = uno::Reference< XDictionaryList >( SvxGetDictionaryList(), UNO_QUERY );
+     if (xDicList.is())
+diff -ru libreoffice-3.5.5.3.orig/editeng/inc/editeng/unolingu.hxx libreoffice-3.5.5.3/editeng/inc/editeng/unolingu.hxx
+--- libreoffice-3.5.5.3.orig/editeng/inc/editeng/unolingu.hxx	2012-07-13 12:37:16.109269892 +0100
++++ libreoffice-3.5.5.3/editeng/inc/editeng/unolingu.hxx	2012-07-16 08:49:26.294209540 +0100
+@@ -46,29 +46,6 @@
+ class Window;
+ 
+ ///////////////////////////////////////////////////////////////////////////
+-// SvxLinguConfigUpdate
+-// class to update configuration items when (before!) the linguistic is used.
+-//
+-// This class is called by all the dummy implementations to update all of the
+-// configuration (list of used/available services) when the linguistic is
+-// accessed for the first time.
+-
+-class SvxLinguConfigUpdate
+-{
+-    static sal_Int32    nCurrentDataFilesChangedCheckValue;
+-    static sal_Int16    nNeedUpdating;  // n == -1 => needs to be checked
+-                                    // n ==  0 => already updated, nothing to be done
+-                                    // n ==  1 => needs to be updated
+-
+-    static sal_Int32 CalcDataFilesChangedCheckValue();
+-
+-public:
+-
+-    EDITENG_DLLPUBLIC static void UpdateAll( sal_Bool bForceCheck = sal_False );
+-    static sal_Bool IsNeedUpdateAll( sal_Bool bForceCheck = sal_False );
+-};
+-
+-///////////////////////////////////////////////////////////////////////////
+ 
+ class EDITENG_DLLPUBLIC LinguMgr
+ {
+diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3.5.5.3/editeng/source/misc/unolingu.cxx
+--- libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx	2012-07-13 12:37:15.900267806 +0100
++++ libreoffice-3.5.5.3/editeng/source/misc/unolingu.cxx	2012-07-16 08:52:53.919596778 +0100
+@@ -90,368 +90,6 @@
+     return xRes;
+ }
+ 
+-sal_Bool lcl_FindEntry( const OUString &rEntry, const Sequence< OUString > &rCfgSvcs )
+-{
+-    sal_Int32 nRes = -1;
+-    sal_Int32 nEntries = rCfgSvcs.getLength();
+-    const OUString *pEntry = rCfgSvcs.getConstArray();
+-    for (sal_Int32 i = 0;  i < nEntries && nRes == -1;  ++i)
+-    {
+-        if (rEntry == pEntry[i])
+-            nRes = i;
+-    }
+-    return nRes != -1;
+-}
+-
+-
+-Sequence< OUString > lcl_RemoveMissingEntries(
+-        const Sequence< OUString > &rCfgSvcs,
+-        const Sequence< OUString > &rAvailSvcs )
+-{
+-    Sequence< OUString > aRes( rCfgSvcs.getLength() );
+-    OUString *pRes = aRes.getArray();
+-    sal_Int32 nCnt = 0;
+-
+-    sal_Int32 nEntries = rCfgSvcs.getLength();
+-    const OUString *pEntry = rCfgSvcs.getConstArray();
+-    for (sal_Int32 i = 0;  i < nEntries;  ++i)
+-    {
+-        if (pEntry[i].getLength() && lcl_FindEntry( pEntry[i], rAvailSvcs ))
+-            pRes[ nCnt++ ] = pEntry[i];
+-    }
+-
+-    aRes.realloc( nCnt );
+-    return aRes;
+-}
+-
+-
+-Sequence< OUString > lcl_GetLastFoundSvcs(
+-        SvtLinguConfig &rCfg,
+-        const OUString &rLastFoundList ,
+-        const Locale &rAvailLocale )
+-{
+-    Sequence< OUString > aRes;
+-
+-    OUString aCfgLocaleStr( MsLangId::convertLanguageToIsoString(
+-                                SvxLocaleToLanguage( rAvailLocale ) ) );
+-
+-    Sequence< OUString > aNodeNames( rCfg.GetNodeNames(rLastFoundList) );
+-    sal_Bool bFound = lcl_FindEntry( aCfgLocaleStr, aNodeNames);
+-
+-    if (bFound)
+-    {
+-        Sequence< OUString > aNames(1);
+-        OUString &rNodeName = aNames.getArray()[0];
+-        rNodeName = rLastFoundList;
+-        rNodeName += OUString::valueOf( (sal_Unicode)'/' );
+-        rNodeName += aCfgLocaleStr;
+-        Sequence< Any > aValues( rCfg.GetProperties( aNames ) );
+-        if (aValues.getLength())
+-        {
+-            OSL_ENSURE( aValues.getLength() == 1, "unexpected length of sequence" );
+-            Sequence< OUString > aSvcImplNames;
+-            if (aValues.getConstArray()[0] >>= aSvcImplNames)
+-                aRes = aSvcImplNames;
+-            else
+-            {
+-                OSL_FAIL( "type mismatch" );
+-            }
+-        }
+-    }
+-
+-    return aRes;
+-}
+-
+-
+-Sequence< OUString > lcl_GetNewEntries(
+-        const Sequence< OUString > &rLastFoundSvcs,
+-        const Sequence< OUString > &rAvailSvcs )
+-{
+-    sal_Int32 nLen = rAvailSvcs.getLength();
+-    Sequence< OUString > aRes( nLen );
+-    OUString *pRes = aRes.getArray();
+-    sal_Int32 nCnt = 0;
+-
+-    const OUString *pEntry = rAvailSvcs.getConstArray();
+-    for (sal_Int32 i = 0;  i < nLen;  ++i)
+-    {
+-        if (pEntry[i].getLength() && !lcl_FindEntry( pEntry[i], rLastFoundSvcs ))
+-            pRes[ nCnt++ ] = pEntry[i];
+-    }
+-
+-    aRes.realloc( nCnt );
+-    return aRes;
+-}
+-
+-
+-Sequence< OUString > lcl_MergeSeq(
+-        const Sequence< OUString > &rCfgSvcs,
+-        const Sequence< OUString > &rNewSvcs )
+-{
+-    Sequence< OUString > aRes( rCfgSvcs.getLength() + rNewSvcs.getLength() );
+-    OUString *pRes = aRes.getArray();
+-    sal_Int32 nCnt = 0;
+-
+-    for (sal_Int32 k = 0;  k < 2;  ++k)
+-    {
+-        // add previously configuerd service first and append
+-        // new found services at the end
+-        const Sequence< OUString > &rSeq = k == 0 ? rCfgSvcs : rNewSvcs;
+-
+-        sal_Int32 nLen = rSeq.getLength();
+-        const OUString *pEntry = rSeq.getConstArray();
+-        for (sal_Int32 i = 0;  i < nLen;  ++i)
+-        {
+-            if (pEntry[i].getLength() && !lcl_FindEntry( pEntry[i], aRes ))
+-                pRes[ nCnt++ ] = pEntry[i];
+-        }
+-    }
+-
+-    aRes.realloc( nCnt );
+-    return aRes;
+-}
+-
+-sal_Int16 SvxLinguConfigUpdate::nNeedUpdating = -1;
+-sal_Int32 SvxLinguConfigUpdate::nCurrentDataFilesChangedCheckValue = -1;
+-
+-void SvxLinguConfigUpdate::UpdateAll( sal_Bool bForceCheck )
+-{
+-    RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::UpdateAll" );
+-
+-    if (IsNeedUpdateAll( bForceCheck ))
+-    {
+-        typedef OUString OUstring_t;
+-        typedef Sequence< OUString > Sequence_OUString_t;
+-        typedef std::vector< OUstring_t > OUString_vector_t;
+-        typedef std::set< OUstring_t > OUString_set_t;
+-        std::vector< OUString_vector_t > aVector;
+-        typedef std::map< OUstring_t, Sequence_OUString_t > list_entry_map_t;
+-
+-        RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::UpdateAll - updating..." );
+-
+-        OSL_ENSURE( nNeedUpdating == 1, "SvxLinguConfigUpdate::UpdateAll already updated!" );
+-
+-        uno::Reference< XLinguServiceManager > xLngSvcMgr( GetLngSvcMgr_Impl() );
+-        OSL_ENSURE( xLngSvcMgr.is(), "service manager missing");
+-        if (!xLngSvcMgr.is())
+-            return;
+-
+-        SvtLinguConfig aCfg;
+-
+-        const int nNumServices = 4;
+-        const sal_Char * apServices[nNumServices]       =  { SN_SPELLCHECKER, SN_GRAMMARCHECKER, SN_HYPHENATOR, SN_THESAURUS };
+-        const sal_Char * apCurLists[nNumServices]       =  { "ServiceManager/SpellCheckerList",       "ServiceManager/GrammarCheckerList",       "ServiceManager/HyphenatorList",       "ServiceManager/ThesaurusList" };
+-        const sal_Char * apLastFoundLists[nNumServices] =  { "ServiceManager/LastFoundSpellCheckers", "ServiceManager/LastFoundGrammarCheckers", "ServiceManager/LastFoundHyphenators", "ServiceManager/LastFoundThesauri" };
+-
+-        // usage of indices as above: 0 = spell checker, 1 = grammar checker, 2 = hyphenator, 3 = thesaurus
+-        std::vector< list_entry_map_t > aLastFoundSvcs(nNumServices);
+-        std::vector< list_entry_map_t > aCurSvcs(nNumServices);
+-
+-        for (int k = 0;  k < nNumServices;  ++k)
+-        {
+-            OUString aService( ::rtl::OUString::createFromAscii( apServices[k] ) );
+-            OUString aActiveList( ::rtl::OUString::createFromAscii( apCurLists[k] ) );
+-            OUString aLastFoundList( ::rtl::OUString::createFromAscii( apLastFoundLists[k] ) );
+-            sal_Int32 i;
+-
+-            //
+-            // remove configured but not available language/services entries
+-            //
+-            Sequence< OUString > aNodeNames( aCfg.GetNodeNames( aActiveList ) );   // list of configured locales
+-            sal_Int32 nNodeNames = aNodeNames.getLength();
+-            const OUString *pNodeName = aNodeNames.getConstArray();
+-            for (i = 0;  i < nNodeNames;  ++i)
+-            {
+-                Locale aLocale( SvxCreateLocale( MsLangId::convertIsoStringToLanguage(pNodeName[i]) ) );
+-                Sequence< OUString > aCfgSvcs(
+-                        xLngSvcMgr->getConfiguredServices( aService, aLocale ));
+-                Sequence< OUString > aAvailSvcs(
+-                        xLngSvcMgr->getAvailableServices( aService, aLocale ));
+-#if OSL_DEBUG_LEVEL > 1
+-                const OUString * pCfgSvcs   = aCfgSvcs.getConstArray();;
+-                const OUString * pAvailSvcs = aAvailSvcs.getConstArray();;
+-                (void) pCfgSvcs;
+-                (void) pAvailSvcs;
+-#endif
+-                aCfgSvcs = lcl_RemoveMissingEntries( aCfgSvcs, aAvailSvcs );
+-
+-                aCurSvcs[k][ pNodeName[i] ] = aCfgSvcs;
+-            }
+-
+-            //
+-            // add new available language/servcice entries
+-            //
+-            uno::Reference< XAvailableLocales > xAvail( xLngSvcMgr, UNO_QUERY );
+-            Sequence< Locale > aAvailLocales( xAvail->getAvailableLocales(aService) );
+-            sal_Int32 nAvailLocales = aAvailLocales.getLength();
+-            const Locale *pAvailLocale = aAvailLocales.getConstArray();
+-            for (i = 0;  i < nAvailLocales;  ++i)
+-            {
+-                Sequence< OUString > aAvailSvcs(
+-                        xLngSvcMgr->getAvailableServices( aService, pAvailLocale[i] ));
+-                Sequence< OUString > aLastSvcs(
+-                        lcl_GetLastFoundSvcs( aCfg, aLastFoundList , pAvailLocale[i] ));
+-                Sequence< OUString > aNewSvcs =
+-                        lcl_GetNewEntries( aLastSvcs, aAvailSvcs );
+-#if OSL_DEBUG_LEVEL > 1
+-                const OUString * pAvailSvcs = aAvailSvcs.getConstArray();
+-                const OUString * pLastSvcs  = aLastSvcs.getConstArray();
+-                const OUString * pNewSvcs   = aNewSvcs.getConstArray();
+-                (void) pAvailSvcs;
+-                (void) pLastSvcs;
+-                (void) pNewSvcs;
+-#endif
+-
+-                OUString aCfgLocaleStr( MsLangId::convertLanguageToIsoString(
+-                                            SvxLocaleToLanguage( pAvailLocale[i] ) ) );
+-                Sequence< OUString > aCfgSvcs( aCurSvcs[k][ aCfgLocaleStr ] );
+-
+-                // merge services list (previously configured to be listed first).
+-                aCfgSvcs = lcl_MergeSeq( aCfgSvcs, aNewSvcs );
+-
+-/*
+-                // there is at most one Hyphenator per language allowed
+-                // to be configured, thus we only use the first one found.
+-                if (k == 2 && aCfgSvcs.getLength() > 1)
+-                    aCfgSvcs.realloc(1);
+-*/
+-                aCurSvcs[k][ aCfgLocaleStr ] = aCfgSvcs;
+-            }
+-
+-            //
+-            // set last found services to currently available ones
+-            //
+-            for (i = 0;  i < nAvailLocales;  ++i)
+-            {
+-                Sequence< OUString > aSvcImplNames(
+-                        xLngSvcMgr->getAvailableServices( aService, pAvailLocale[i] ) );
+-
+-#if OSL_DEBUG_LEVEL > 1
+-                sal_Int32 nSvcs = aSvcImplNames.getLength();
+-                const OUString *pSvcImplName = aSvcImplNames.getConstArray();
+-                for (sal_Int32 j = 0;  j < nSvcs;  ++j)
+-                {
+-                    OUString aImplName( pSvcImplName[j] );
+-                }
+-#endif
+-
+-                OUString aCfgLocaleStr( MsLangId::convertLanguageToIsoString(
+-                                            SvxLocaleToLanguage( pAvailLocale[i] ) ) );
+-                aLastFoundSvcs[k][ aCfgLocaleStr ] = aSvcImplNames;
+-            }
+-        }
+-
+-        //
+-        // write new data back to configuration
+-        //
+-        for (int k = 0;  k < nNumServices;  ++k)
+-        {
+-            for (int i = 0;  i < 2;  ++i)
+-            {
+-                const sal_Char *pSubNodeName = (i == 0) ? apCurLists[k] : apLastFoundLists[k];
+-                OUString aSubNodeName( ::rtl::OUString::createFromAscii(pSubNodeName) );
+-
+-                list_entry_map_t &rCurMap = (i == 0) ? aCurSvcs[k] : aLastFoundSvcs[k];
+-                list_entry_map_t::const_iterator aIt( rCurMap.begin() );
+-                sal_Int32 nVals = static_cast< sal_Int32 >( rCurMap.size() );
+-                Sequence< PropertyValue > aNewValues( nVals );
+-                PropertyValue *pNewValue = aNewValues.getArray();
+-                while (aIt != rCurMap.end())
+-                {
+-                    OUString aCfgEntryName( aSubNodeName );
+-                    aCfgEntryName += OUString::valueOf( (sal_Unicode) '/' );
+-                    aCfgEntryName += (*aIt).first;
+-
+-#if OSL_DEBUG_LEVEL > 1
+-                    Sequence< OUString > aSvcImplNames( (*aIt).second );
+-                    sal_Int32 nSvcs = aSvcImplNames.getLength();
+-                    const OUString *pSvcImplName = aSvcImplNames.getConstArray();
+-                    for (sal_Int32 j = 0;  j < nSvcs;  ++j)
+-                    {
+-                        OUString aImplName( pSvcImplName[j] );
+-                    }
+-#endif
+-                    pNewValue->Name  = aCfgEntryName;
+-                    pNewValue->Value <<= (*aIt).second;
+-                    ++pNewValue;
+-                    ++aIt;
+-                }
+-                OSL_ENSURE( pNewValue - aNewValues.getArray() == nVals,
+-                        "possible mismatch of sequence size and property number" );
+-
+-                {
+-                    RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::UpdateAll - ReplaceSetProperties" );
+-                    // add new or replace existing entries.
+-                    sal_Bool bRes = aCfg.ReplaceSetProperties( aSubNodeName, aNewValues );
+-                    if (!bRes)
+-                    {
+-#if OSL_DEBUG_LEVEL > 1
+-                        OSL_FAIL( "failed to set new configuration values" );
+-#endif
+-                    }
+-                }
+-            }
+-        }
+-        OSL_ENSURE( nCurrentDataFilesChangedCheckValue != -1, "SvxLinguConfigUpdate::UpdateAll DataFilesChangedCheckValue not yet calculated!" );
+-        Any aAny;
+-
+-        // for the time being (developer builds until OOo 3.0)
+-        // we should always check for everything available
+-        // otherwise we may miss a new installed extension dicitonary
+-        // just because e.g. the spellchecker is not asked what
+-        // languages it does support currently...
+-        // Since the check is on-demand occuring and executed once it should
+-        // not be too troublesome.
+-        // In OOo 3.0 we will not need the respective code anymore at all.
+-//      aAny <<= nCurrentDataFilesChangedCheckValue;
+-        aAny <<= (sal_Int32) -1;    // keep the value set to 'need to check'
+-
+-        aCfg.SetProperty( A2OU( "DataFilesChangedCheckValue" ), aAny );
+-
+-        //! Note 1: the new values are commited when the 'aCfg' object
+-        //!     gets destroyed.
+-        //! Note 2: the new settings in the configuration get applied
+-        //!     because the 'LngSvcMgr' (in linguistic/source/lngsvcmgr.hxx)
+-        //!     listens to the configuration for changes of the relevant
+-        //!     properties and then applies the new settings.
+-
+-        // nothing needs to be done anymore
+-        nNeedUpdating = 0;
+-    }
+-}
+-
+-
+-sal_Int32 SvxLinguConfigUpdate::CalcDataFilesChangedCheckValue()
+-{
+-    RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::CalcDataFilesChangedCheckValue" );
+-
+-    sal_Int32 nHashVal = 0;
+-    // nothing to be checked anymore since those old directory paths are gone by now
+-    return nHashVal;
+-}
+-
+-
+-sal_Bool SvxLinguConfigUpdate::IsNeedUpdateAll( sal_Bool bForceCheck )
+-{
+-    RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::IsNeedUpdateAll" );
+-    if (nNeedUpdating == -1 || bForceCheck )    // need to check if updating is necessary
+-    {
+-        // calculate hash value for current data files
+-        nCurrentDataFilesChangedCheckValue = CalcDataFilesChangedCheckValue();
+-
+-        // compare hash value and check value to see if anything has changed
+-        // and thus the configuration needs to be updated
+-        SvtLinguOptions aLinguOpt;
+-        SvtLinguConfig aCfg;
+-        aCfg.GetOptions( aLinguOpt );
+-        nNeedUpdating = (nCurrentDataFilesChangedCheckValue == aLinguOpt.nDataFilesChangedCheckValue) ? 0 : 1;
+-    }
+-    OSL_ENSURE( nNeedUpdating != -1,
+-            "need for linguistic configuration update should have been already checked." );
+-
+-    return nNeedUpdating == 1;
+-}
+-
+ 
+ //! Dummy implementation in order to avoid loading of lingu DLL
+ //! when only the XSupportedLocales interface is used.
+@@ -520,10 +158,6 @@
+ 
+ void ThesDummy_Impl::GetThes_Impl()
+ {
+-    // update configuration before accessing the service
+-    if (SvxLinguConfigUpdate::IsNeedUpdateAll())
+-        SvxLinguConfigUpdate::UpdateAll();
+-
+     if (!xThes.is())
+     {
+         uno::Reference< XLinguServiceManager > xLngSvcMgr( GetLngSvcMgr_Impl() );
+@@ -543,8 +177,7 @@
+         ThesDummy_Impl::getLocales()
+             throw(uno::RuntimeException)
+ {
+-    if (!SvxLinguConfigUpdate::IsNeedUpdateAll())   // configuration already update and thus lingu DLL's already loaded ?
+-        GetThes_Impl();
++    GetThes_Impl();
+     if (xThes.is())
+         return xThes->getLocales();
+     else if (!pLocaleSeq)       // if not already loaded save startup time by avoiding loading them now
+@@ -557,8 +190,7 @@
+         ThesDummy_Impl::hasLocale( const lang::Locale& rLocale )
+             throw(uno::RuntimeException)
+ {
+-    if (!SvxLinguConfigUpdate::IsNeedUpdateAll())   // configuration already update and thus lingu DLL's already loaded ?
+-        GetThes_Impl();
++    GetThes_Impl();
+     if (xThes.is())
+         return xThes->hasLocale( rLocale );
+     else if (!pLocaleSeq)       // if not already loaded save startup time by avoiding loading them now
+@@ -632,10 +264,6 @@
+ 
+ void SpellDummy_Impl::GetSpell_Impl()
+ {
+-    // update configuration before accessing the service
+-    if (SvxLinguConfigUpdate::IsNeedUpdateAll())
+-        SvxLinguConfigUpdate::UpdateAll();
+-
+     if (!xSpell.is())
+     {
+         uno::Reference< XLinguServiceManager > xLngSvcMgr( GetLngSvcMgr_Impl() );
+@@ -748,10 +376,6 @@
+ 
+ void HyphDummy_Impl::GetHyph_Impl()
+ {
+-    // update configuration before accessing the service
+-    if (SvxLinguConfigUpdate::IsNeedUpdateAll())
+-        SvxLinguConfigUpdate::UpdateAll();
+-
+     if (!xHyph.is())
+     {
+         uno::Reference< XLinguServiceManager > xLngSvcMgr( GetLngSvcMgr_Impl() );
+diff -ru libreoffice-3.5.5.3.orig/linguistic/Library_lng.mk libreoffice-3.5.5.3/linguistic/Library_lng.mk
+--- libreoffice-3.5.5.3.orig/linguistic/Library_lng.mk	2012-07-13 12:23:35.568866084 +0100
++++ libreoffice-3.5.5.3/linguistic/Library_lng.mk	2012-07-16 08:49:27.810226966 +0100
+@@ -56,6 +56,7 @@
+ 	tl \
+ 	ucbhelper \
+ 	utl \
++	vcl \
+ 	xo \
+     $(gb_STDLIBS) \
+ ))
+diff -ru libreoffice-3.5.5.3.orig/linguistic/prj/build.lst libreoffice-3.5.5.3/linguistic/prj/build.lst
+--- libreoffice-3.5.5.3.orig/linguistic/prj/build.lst	2012-07-13 12:23:35.611866523 +0100
++++ libreoffice-3.5.5.3/linguistic/prj/build.lst	2012-07-16 08:49:27.820227082 +0100
+@@ -1,2 +1,2 @@
+-lg  linguistic  :   svl xmloff ucbhelper comphelper ICU:icu LIBXSLT:libxslt NULL
++lg  linguistic  :   svl vcl xmloff ucbhelper comphelper ICU:icu LIBXSLT:libxslt NULL
+ lg	linguistic\prj							nmake		-	all	lg_prj NULL
+diff -ru libreoffice-3.5.5.3.orig/linguistic/source/lngsvcmgr.cxx libreoffice-3.5.5.3/linguistic/source/lngsvcmgr.cxx
+--- libreoffice-3.5.5.3.orig/linguistic/source/lngsvcmgr.cxx	2012-07-13 12:23:35.585866257 +0100
++++ libreoffice-3.5.5.3/linguistic/source/lngsvcmgr.cxx	2012-07-16 08:49:27.829227184 +0100
+@@ -27,6 +27,7 @@
+  ************************************************************************/
+ 
+ 
++#include <com/sun/star/deployment/ExtensionManager.hpp>
+ #include <com/sun/star/registry/XRegistryKey.hpp>
+ #include <com/sun/star/container/XContentEnumerationAccess.hpp>
+ #include <com/sun/star/container/XEnumeration.hpp>
+@@ -270,8 +271,6 @@
+     }
+ }
+ 
+-
+-//IMPL_LINK( LngSvcMgrListenerHelper, TimeOut, Timer*, pTimer )
+ long LngSvcMgrListenerHelper::Timeout()
+ {
+     osl::MutexGuard aGuard( GetLinguMutex() );
+@@ -483,11 +482,98 @@
+     pNames[2] = A2OU( "ServiceManager/HyphenatorList" );
+     pNames[3] = A2OU( "ServiceManager/ThesaurusList" );
+     EnableNotification( aNames );
++
++    UpdateAll();
++
++    aUpdateTimer.SetTimeout(500);
++    aUpdateTimer.SetTimeoutHdl(LINK(this, LngSvcMgr, updateAndBroadcast));
++
++    // request to be notified if an extension has been added/removed
++    uno::Reference<uno::XComponentContext> xContext(comphelper::getProcessComponentContext());
++
++    uno::Reference<deployment::XExtensionManager> xExtensionManager(
++        deployment::ExtensionManager::get(xContext));
++    if (xExtensionManager.is())
++    {
++        xMB = uno::Reference<util::XModifyBroadcaster>(xExtensionManager, uno::UNO_QUERY_THROW);
++
++        uno::Reference<util::XModifyListener> xListener(this);
++        xMB->addModifyListener( xListener );
++    }
++}
++
++// ::com::sun::star::util::XModifyListener
++void LngSvcMgr::modified(const lang::EventObject&)
++    throw(uno::RuntimeException)
++{
++    osl::MutexGuard aGuard(GetLinguMutex());
++    //assume that if an extension has been added/removed that
++    //it might be a dictionary extension, so drop our cache
++
++    delete pAvailSpellSvcs;
++    pAvailSpellSvcs = NULL;
++    delete pAvailGrammarSvcs;
++    pAvailGrammarSvcs = NULL;
++    delete pAvailHyphSvcs;
++    pAvailHyphSvcs = NULL;
++    delete pAvailThesSvcs;
++    pAvailThesSvcs = NULL;
++
++    //schedule in an update to execute in the main thread
++    aUpdateTimer.Start();
++}
++
++//run update, and inform everyone that dictionaries (may) have changed, this
++//needs to be run in the main thread because
++//utl::ConfigChangeListener_Impl::changesOccurred grabs the SolarMutex and we
++//get notified that an extension was added from an extension manager thread
++IMPL_LINK_NOARG(LngSvcMgr, updateAndBroadcast)
++{
++    osl::MutexGuard aGuard( GetLinguMutex() );
++
++    UpdateAll();
++
++    if (pListenerHelper)
++    {
++        pListenerHelper->AddLngSvcEvt(
++                linguistic2::LinguServiceEventFlags::SPELL_CORRECT_WORDS_AGAIN |
++                linguistic2::LinguServiceEventFlags::SPELL_WRONG_WORDS_AGAIN |
++                linguistic2::LinguServiceEventFlags::PROOFREAD_AGAIN |
++                linguistic2::LinguServiceEventFlags::HYPHENATE_AGAIN );
++    }
++
++    return 0;
+ }
+ 
++void LngSvcMgr::stopListening()
++{
++    osl::MutexGuard aGuard(GetLinguMutex());
++
++    if (xMB.is())
++    {
++        try
++        {
++                uno::Reference<util::XModifyListener>  xListener(this);
++                xMB->removeModifyListener(xListener);
++        }
++        catch (const uno::Exception&)
++        {
++        }
++
++        xMB.clear();
++    }
++}
++
++void LngSvcMgr::disposing(const lang::EventObject&)
++    throw (uno::RuntimeException)
++{
++    stopListening();
++}
+ 
+ LngSvcMgr::~LngSvcMgr()
+ {
++    stopListening();
++
+     // memory for pSpellDsp, pHyphDsp, pThesDsp, pListenerHelper
+     // will be freed in the destructor of the respective Reference's
+     // xSpellDsp, xGrammarDsp, xHyphDsp, xThesDsp
+@@ -498,6 +584,252 @@
+     delete pAvailThesSvcs;
+ }
+ 
++namespace
++{
++    using lang::Locale;
++    using uno::Any;
++    using uno::Sequence;
++
++    sal_Bool lcl_FindEntry( const OUString &rEntry, const Sequence< OUString > &rCfgSvcs )
++    {
++        sal_Int32 nRes = -1;
++        sal_Int32 nEntries = rCfgSvcs.getLength();
++        const OUString *pEntry = rCfgSvcs.getConstArray();
++        for (sal_Int32 i = 0;  i < nEntries && nRes == -1;  ++i)
++        {
++            if (rEntry == pEntry[i])
++                nRes = i;
++        }
++        return nRes != -1;
++    }
++
++    Sequence< OUString > lcl_GetLastFoundSvcs(
++            SvtLinguConfig &rCfg,
++            const OUString &rLastFoundList ,
++            const Locale &rAvailLocale )
++    {
++        Sequence< OUString > aRes;
++
++        OUString aCfgLocaleStr( MsLangId::convertLanguageToIsoString(
++                                    LocaleToLanguage( rAvailLocale ) ) );
++
++        Sequence< OUString > aNodeNames( rCfg.GetNodeNames(rLastFoundList) );
++        sal_Bool bFound = lcl_FindEntry( aCfgLocaleStr, aNodeNames);
++
++        if (bFound)
++        {
++            Sequence< OUString > aNames(1);
++            OUString &rNodeName = aNames.getArray()[0];
++            rNodeName = rLastFoundList;
++            rNodeName += OUString::valueOf( (sal_Unicode)'/' );
++            rNodeName += aCfgLocaleStr;
++            Sequence< Any > aValues( rCfg.GetProperties( aNames ) );
++            if (aValues.getLength())
++            {
++                OSL_ENSURE( aValues.getLength() == 1, "unexpected length of sequence" );
++                Sequence< OUString > aSvcImplNames;
++                if (aValues.getConstArray()[0] >>= aSvcImplNames)
++                    aRes = aSvcImplNames;
++                else
++                {
++                    OSL_FAIL( "type mismatch" );
++                }
++            }
++        }
++
++        return aRes;
++    }
++
++    Sequence< OUString > lcl_RemoveMissingEntries(
++            const Sequence< OUString > &rCfgSvcs,
++            const Sequence< OUString > &rAvailSvcs )
++    {
++        Sequence< OUString > aRes( rCfgSvcs.getLength() );
++        OUString *pRes = aRes.getArray();
++        sal_Int32 nCnt = 0;
++
++        sal_Int32 nEntries = rCfgSvcs.getLength();
++        const OUString *pEntry = rCfgSvcs.getConstArray();
++        for (sal_Int32 i = 0;  i < nEntries;  ++i)
++        {
++            if (!pEntry[i].isEmpty() && lcl_FindEntry( pEntry[i], rAvailSvcs ))
++                pRes[ nCnt++ ] = pEntry[i];
++        }
++
++        aRes.realloc( nCnt );
++        return aRes;
++    }
++
++    Sequence< OUString > lcl_GetNewEntries(
++            const Sequence< OUString > &rLastFoundSvcs,
++            const Sequence< OUString > &rAvailSvcs )
++    {
++        sal_Int32 nLen = rAvailSvcs.getLength();
++        Sequence< OUString > aRes( nLen );
++        OUString *pRes = aRes.getArray();
++        sal_Int32 nCnt = 0;
++
++        const OUString *pEntry = rAvailSvcs.getConstArray();
++        for (sal_Int32 i = 0;  i < nLen;  ++i)
++        {
++            if (!pEntry[i].isEmpty() && !lcl_FindEntry( pEntry[i], rLastFoundSvcs ))
++                pRes[ nCnt++ ] = pEntry[i];
++        }
++
++        aRes.realloc( nCnt );
++        return aRes;
++    }
++
++    Sequence< OUString > lcl_MergeSeq(
++            const Sequence< OUString > &rCfgSvcs,
++            const Sequence< OUString > &rNewSvcs )
++    {
++        Sequence< OUString > aRes( rCfgSvcs.getLength() + rNewSvcs.getLength() );
++        OUString *pRes = aRes.getArray();
++        sal_Int32 nCnt = 0;
++
++        for (sal_Int32 k = 0;  k < 2;  ++k)
++        {
++            // add previously configuerd service first and append
++            // new found services at the end
++            const Sequence< OUString > &rSeq = k == 0 ? rCfgSvcs : rNewSvcs;
++
++            sal_Int32 nLen = rSeq.getLength();
++            const OUString *pEntry = rSeq.getConstArray();
++            for (sal_Int32 i = 0;  i < nLen;  ++i)
++            {
++                if (!pEntry[i].isEmpty() && !lcl_FindEntry( pEntry[i], aRes ))
++                    pRes[ nCnt++ ] = pEntry[i];
++            }
++        }
++
++        aRes.realloc( nCnt );
++        return aRes;
++    }
++}
++
++void LngSvcMgr::UpdateAll()
++{
++    using beans::PropertyValue;
++    using lang::Locale;
++    using uno::Sequence;
++
++    typedef OUString OUstring_t;
++    typedef Sequence< OUString > Sequence_OUString_t;
++    typedef std::map< OUstring_t, Sequence_OUString_t > list_entry_map_t;
++
++    SvtLinguConfig aCfg;
++
++    const int nNumServices = 4;
++    const sal_Char * apServices[nNumServices]       =  { SN_SPELLCHECKER, SN_GRAMMARCHECKER, SN_HYPHENATOR, SN_THESAURUS };
++    const sal_Char * apCurLists[nNumServices]       =  { "ServiceManager/SpellCheckerList",       "ServiceManager/GrammarCheckerList",       "ServiceManager/HyphenatorList",       "ServiceManager/ThesaurusList" };
++    const sal_Char * apLastFoundLists[nNumServices] =  { "ServiceManager/LastFoundSpellCheckers", "ServiceManager/LastFoundGrammarCheckers", "ServiceManager/LastFoundHyphenators", "ServiceManager/LastFoundThesauri" };
++
++    // usage of indices as above: 0 = spell checker, 1 = grammar checker, 2 = hyphenator, 3 = thesaurus
++    std::vector< list_entry_map_t > aLastFoundSvcs(nNumServices);
++    std::vector< list_entry_map_t > aCurSvcs(nNumServices);
++
++    for (int k = 0;  k < nNumServices;  ++k)
++    {
++        OUString aService( ::rtl::OUString::createFromAscii( apServices[k] ) );
++        OUString aActiveList( ::rtl::OUString::createFromAscii( apCurLists[k] ) );
++        OUString aLastFoundList( ::rtl::OUString::createFromAscii( apLastFoundLists[k] ) );
++        sal_Int32 i;
++
++        //
++        // remove configured but not available language/services entries
++        //
++        Sequence< OUString > aNodeNames( aCfg.GetNodeNames( aActiveList ) );   // list of configured locales
++        sal_Int32 nNodeNames = aNodeNames.getLength();
++        const OUString *pNodeName = aNodeNames.getConstArray();
++        for (i = 0;  i < nNodeNames;  ++i)
++        {
++            Locale aLocale( CreateLocale( MsLangId::convertIsoStringToLanguage(pNodeName[i]) ) );
++            Sequence< OUString > aCfgSvcs( getConfiguredServices( aService, aLocale ));
++            Sequence< OUString > aAvailSvcs( getAvailableServices( aService, aLocale ));
++
++            aCfgSvcs = lcl_RemoveMissingEntries( aCfgSvcs, aAvailSvcs );
++
++            aCurSvcs[k][ pNodeName[i] ] = aCfgSvcs;
++        }
++
++        //
++        // add new available language/service entries
++        // and
++        // set last found services to currently available ones
++        //
++        Sequence< Locale > aAvailLocales( getAvailableLocales(aService) );
++        sal_Int32 nAvailLocales = aAvailLocales.getLength();
++        const Locale *pAvailLocale = aAvailLocales.getConstArray();
++        for (i = 0;  i < nAvailLocales;  ++i)
++        {
++            OUString aCfgLocaleStr( MsLangId::convertLanguageToIsoString(
++                                        LocaleToLanguage( pAvailLocale[i] ) ) );
++
++            Sequence< OUString > aAvailSvcs( getAvailableServices( aService, pAvailLocale[i] ));
++
++            aLastFoundSvcs[k][ aCfgLocaleStr ] = aAvailSvcs;
++
++            Sequence< OUString > aLastSvcs(
++                    lcl_GetLastFoundSvcs( aCfg, aLastFoundList , pAvailLocale[i] ));
++            Sequence< OUString > aNewSvcs =
++                    lcl_GetNewEntries( aLastSvcs, aAvailSvcs );
++
++            Sequence< OUString > aCfgSvcs( aCurSvcs[k][ aCfgLocaleStr ] );
++
++            // merge services list (previously configured to be listed first).
++            aCfgSvcs = lcl_MergeSeq( aCfgSvcs, aNewSvcs );
++
++            aCurSvcs[k][ aCfgLocaleStr ] = aCfgSvcs;
++        }
++    }
++
++    //
++    // write new data back to configuration
++    //
++    for (int k = 0;  k < nNumServices;  ++k)
++    {
++        for (int i = 0;  i < 2;  ++i)
++        {
++            const sal_Char *pSubNodeName = (i == 0) ? apCurLists[k] : apLastFoundLists[k];
++            OUString aSubNodeName( ::rtl::OUString::createFromAscii(pSubNodeName) );
++
++            list_entry_map_t &rCurMap = (i == 0) ? aCurSvcs[k] : aLastFoundSvcs[k];
++            list_entry_map_t::const_iterator aIt( rCurMap.begin() );
++            sal_Int32 nVals = static_cast< sal_Int32 >( rCurMap.size() );
++            Sequence< PropertyValue > aNewValues( nVals );
++            PropertyValue *pNewValue = aNewValues.getArray();
++            while (aIt != rCurMap.end())
++            {
++                OUString aCfgEntryName( aSubNodeName );
++                aCfgEntryName += OUString::valueOf( (sal_Unicode) '/' );
++                aCfgEntryName += (*aIt).first;
++
++                pNewValue->Name  = aCfgEntryName;
++                pNewValue->Value <<= (*aIt).second;
++                ++pNewValue;
++                ++aIt;
++            }
++            OSL_ENSURE( pNewValue - aNewValues.getArray() == nVals,
++                    "possible mismatch of sequence size and property number" );
++
++            {
++                // add new or replace existing entries.
++                sal_Bool bRes = aCfg.ReplaceSetProperties( aSubNodeName, aNewValues );
++                if (!bRes)
++                {
++#if OSL_DEBUG_LEVEL > 1
++                    OSL_FAIL( "failed to set new configuration values" );
++#endif
++                }
++            }
++        }
++    }
++
++    //The new settings in the configuration get applied ! because we are
++    //listening to the configuration for changes of the relevant ! properties
++    //and Notify applies the new settings.
++}
+ 
+ void LngSvcMgr::Notify( const uno::Sequence< OUString > &rPropertyNames )
+ {
+@@ -1263,32 +1595,21 @@
+ 
+     if (0 == rServiceName.compareToAscii( SN_SPELLCHECKER ))
+     {
+-        // don't used cached data here (force re-evaluation in order to have downloaded dictionaries
+-        // already found without the need to restart the office
+-        delete pAvailSpellSvcs;  pAvailSpellSvcs = 0;
+         GetAvailableSpellSvcs_Impl();
+         pInfoArray = pAvailSpellSvcs;
+     }
+     else if (0 == rServiceName.compareToAscii( SN_GRAMMARCHECKER ))
+     {
+-// disable force re-loading of the cache - re-start needed for new grammer checkers: fdo#35270
+-//        delete pAvailGrammarSvcs;  pAvailGrammarSvcs = 0;
+         GetAvailableGrammarSvcs_Impl();
+         pInfoArray = pAvailGrammarSvcs;
+     }
+     else if (0 == rServiceName.compareToAscii( SN_HYPHENATOR ))
+     {
+-        // don't used cached data here (force re-evaluation in order to have downloaded dictionaries
+-        // already found without the need to restart the office
+-        delete pAvailHyphSvcs;  pAvailHyphSvcs = 0;
+         GetAvailableHyphSvcs_Impl();
+         pInfoArray = pAvailHyphSvcs;
+     }
+     else if (0 == rServiceName.compareToAscii( SN_THESAURUS ))
+     {
+-        // don't used cached data here (force re-evaluation in order to have downloaded dictionaries
+-        // already found without the need to restart the office
+-        delete pAvailThesSvcs;  pAvailThesSvcs = 0;
+         GetAvailableThesSvcs_Impl();
+         pInfoArray = pAvailThesSvcs;
+     }
+diff -ru libreoffice-3.5.5.3.orig/linguistic/source/lngsvcmgr.hxx libreoffice-3.5.5.3/linguistic/source/lngsvcmgr.hxx
+--- libreoffice-3.5.5.3.orig/linguistic/source/lngsvcmgr.hxx	2012-07-13 12:23:35.598866391 +0100
++++ libreoffice-3.5.5.3/linguistic/source/lngsvcmgr.hxx	2012-07-16 08:49:27.833227231 +0100
+@@ -30,7 +30,7 @@
+ #define _LINGUISTIC_LNGSVCMGR_HXX_
+ 
+ #include <uno/lbnames.h>            // CPPU_CURRENT_LANGUAGE_BINDING_NAME macro, which specify the environment type
+-#include <cppuhelper/implbase4.hxx> // helper for implementations
++#include <cppuhelper/implbase5.hxx> // helper for implementations
+ #include <cppuhelper/interfacecontainer.h>  //OMultiTypeInterfaceContainerHelper
+ 
+ 
+@@ -39,8 +39,10 @@
+ #include <com/sun/star/lang/XComponent.hpp>
+ #include <com/sun/star/linguistic2/XLinguServiceManager.hpp>
+ #include <com/sun/star/linguistic2/XAvailableLocales.hpp>
++#include <com/sun/star/util/XModifyBroadcaster.hpp>
++#include <com/sun/star/util/XModifyListener.hpp>
+ #include <unotools/configitem.hxx>
+-
++#include <vcl/timer.hxx>
+ #include <boost/ptr_container/ptr_vector.hpp>
+ 
+ #include "linguistic/misc.hxx"
+@@ -65,12 +67,13 @@
+ 
+ 
+ class LngSvcMgr :
+-    public cppu::WeakImplHelper4
++    public cppu::WeakImplHelper5
+     <
+         com::sun::star::linguistic2::XLinguServiceManager,
+         com::sun::star::linguistic2::XAvailableLocales,
+         com::sun::star::lang::XComponent,
+-        com::sun::star::lang::XServiceInfo
++        com::sun::star::lang::XServiceInfo,
++        com::sun::star::util::XModifyListener
+     >,
+     private utl::ConfigItem
+ {
+@@ -90,6 +93,12 @@
+     com::sun::star::uno::Reference<
+         ::com::sun::star::lang::XEventListener >        xListenerHelper;
+ 
++    com::sun::star::uno::Reference<
++        ::com::sun::star::util::XModifyBroadcaster>     xMB;
++
++    Timer                                               aUpdateTimer;
++
++
+     com::sun::star::uno::Sequence<
+         com::sun::star::lang::Locale >                  aAvailSpellLocales;
+     com::sun::star::uno::Sequence<
+@@ -140,6 +149,10 @@
+     virtual void    Notify( const com::sun::star::uno::Sequence< rtl::OUString > &rPropertyNames );
+     virtual void    Commit();
+ 
++    void UpdateAll();
++    void stopListening();
++    DECL_LINK( updateAndBroadcast, void* );
++
+ public:
+     LngSvcMgr();
+     virtual ~LngSvcMgr();
+@@ -167,6 +180,11 @@
+     virtual ::sal_Bool SAL_CALL supportsService( const ::rtl::OUString& ServiceName ) throw (::com::sun::star::uno::RuntimeException);
+     virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getSupportedServiceNames(  ) throw (::com::sun::star::uno::RuntimeException);
+ 
++    // XEventListener
++    virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& rSource ) throw(::com::sun::star::uno::RuntimeException);
++
++    // XModifyListener
++    virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& rEvent ) throw(::com::sun::star::uno::RuntimeException);
+ 
+     static inline ::rtl::OUString   getImplementationName_Static();
+     static ::com::sun::star::uno::Sequence< ::rtl::OUString > getSupportedServiceNames_Static() throw();

@@ -50,7 +50,7 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/inc/editeng/unolingu.hxx libreoffice-3
 diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3.5.5.3/editeng/source/misc/unolingu.cxx
 --- libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx	2012-07-13 12:37:15.900267806 +0100
 +++ libreoffice-3.5.5.3/editeng/source/misc/unolingu.cxx	2012-07-16 08:52:53.919596778 +0100
-@@ -90,368 +90,6 @@
+@@ -90,365 +90,6 @@
      return xRes;
  }
  
@@ -80,7 +80,7 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -    const OUString *pEntry = rCfgSvcs.getConstArray();
 -    for (sal_Int32 i = 0;  i < nEntries;  ++i)
 -    {
--        if (pEntry[i].getLength() && lcl_FindEntry( pEntry[i], rAvailSvcs ))
+-        if (!pEntry[i].isEmpty() && lcl_FindEntry( pEntry[i], rAvailSvcs ))
 -            pRes[ nCnt++ ] = pEntry[i];
 -    }
 -
@@ -139,7 +139,7 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -    const OUString *pEntry = rAvailSvcs.getConstArray();
 -    for (sal_Int32 i = 0;  i < nLen;  ++i)
 -    {
--        if (pEntry[i].getLength() && !lcl_FindEntry( pEntry[i], rLastFoundSvcs ))
+-        if (!pEntry[i].isEmpty() && !lcl_FindEntry( pEntry[i], rLastFoundSvcs ))
 -            pRes[ nCnt++ ] = pEntry[i];
 -    }
 -
@@ -166,7 +166,7 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -        const OUString *pEntry = rSeq.getConstArray();
 -        for (sal_Int32 i = 0;  i < nLen;  ++i)
 -        {
--            if (pEntry[i].getLength() && !lcl_FindEntry( pEntry[i], aRes ))
+-            if (!pEntry[i].isEmpty() && !lcl_FindEntry( pEntry[i], aRes ))
 -                pRes[ nCnt++ ] = pEntry[i];
 -        }
 -    }
@@ -186,9 +186,6 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -    {
 -        typedef OUString OUstring_t;
 -        typedef Sequence< OUString > Sequence_OUString_t;
--        typedef std::vector< OUstring_t > OUString_vector_t;
--        typedef std::set< OUstring_t > OUString_set_t;
--        std::vector< OUString_vector_t > aVector;
 -        typedef std::map< OUstring_t, Sequence_OUString_t > list_entry_map_t;
 -
 -        RTL_LOGFILE_CONTEXT( aLog, "svx: SvxLinguConfigUpdate::UpdateAll - updating..." );
@@ -232,8 +229,8 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -                Sequence< OUString > aAvailSvcs(
 -                        xLngSvcMgr->getAvailableServices( aService, aLocale ));
 -#if OSL_DEBUG_LEVEL > 1
--                const OUString * pCfgSvcs   = aCfgSvcs.getConstArray();;
--                const OUString * pAvailSvcs = aAvailSvcs.getConstArray();;
+-                const OUString * pCfgSvcs   = aCfgSvcs.getConstArray();
+-                const OUString * pAvailSvcs = aAvailSvcs.getConstArray();
 -                (void) pCfgSvcs;
 -                (void) pAvailSvcs;
 -#endif
@@ -416,7 +413,7 @@ diff -ru libreoffice-3.5.5.3.orig/editeng/source/misc/unolingu.cxx libreoffice-3
 -    return nNeedUpdating == 1;
 -}
 -
- 
+
  //! Dummy implementation in order to avoid loading of lingu DLL
  //! when only the XSupportedLocales interface is used.
 @@ -520,10 +158,6 @@
@@ -511,8 +508,8 @@ diff -ru libreoffice-3.5.5.3.orig/linguistic/source/lngsvcmgr.cxx libreoffice-3.
  {
      osl::MutexGuard aGuard( GetLinguMutex() );
 @@ -483,11 +482,98 @@
-     pNames[2] = A2OU( "ServiceManager/HyphenatorList" );
-     pNames[3] = A2OU( "ServiceManager/ThesaurusList" );
+     pNames[2] = "ServiceManager/HyphenatorList";
+     pNames[3] = "ServiceManager/ThesaurusList";
      EnableNotification( aNames );
 +
 +    UpdateAll();

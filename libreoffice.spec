@@ -14,8 +14,13 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
+# use rpmbuild --without binfilter (or mock --without binfilter) to get
+# a faster build without old binary filters
+# fedpkg compile/install/local/mockbuild does not handle --without ATM,
+# so it is necessary to change this to bcond_with to achieve the same
+# effect
 %bcond_without binfilter
-# undef to get english only and no-langpacks for a faster smoketest build
+# get english only and no-langpacks for a faster smoketest build
 %bcond_without langpacks
 
 %if %{with langpacks}

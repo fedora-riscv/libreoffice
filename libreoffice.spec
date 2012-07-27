@@ -33,8 +33,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.4
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2011,6 +2011,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 27 2012 David Tardon <dtardon@redhat.com> - 1:3.6.0.4-1
+- 3.6.0 rc4
+
 * Thu Jul 26 2012 David Tardon <dtardon@redhat.com> - 1:3.6.0.3-2
 - Resolves: rhbz#842552 crash in pptx import
 

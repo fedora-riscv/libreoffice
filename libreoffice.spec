@@ -1107,6 +1107,9 @@ cp %{SOURCE23} ext_sources
 %endif
 touch src.downloaded
 
+# rhbz#832603 abi problems with c++11
+sed -i -e s,HAVE_CXX0X=.TRUE.,HAVE_CXX0X=, ./Env.Host.sh
+
 . ./Env.Host.sh
 ./bootstrap
 
@@ -2296,8 +2299,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jul 26 2012 David Tardon <dtardon@redhat.com> - 1:3.5.5.3-5-UNBUILT
+* Thu Jul 26 2012 David Tardon <dtardon@redhat.com> - 1:3.5.5.3-5
 - Resolves: rhbz#842552 crash in pptx import
+- Resolves: rhbz#832603 abi problems with c++11
 
 * Mon Jul 16 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.5.3-4
 - Resolves: rhbz#836937 insanely slow with Zemberek

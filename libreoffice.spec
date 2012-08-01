@@ -33,7 +33,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        17%{?dist}
+Release:        18%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and (CDDL or GPLv2) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -255,6 +255,7 @@ Patch133: CVE-2012-1149.patch
 Patch134: 0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 Patch135: CVE-2012-2334.patch
 Patch136: 0001-Resolves-rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
+Patch137: CVE-2012-2665.backport.3-4.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1197,6 +1198,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch134 -p1 -b .0001-ppc-yyinput-returns-a-int-truncating-to-unsigned-cha.patch
 %patch135 -p1 -b .CVE-2012-2334
 %patch136 -p1 -b .rhbz-826609-rhbz-820554-fix-smoketest-on-pp.patch
+%patch137 -p1 -b .CVE-2012-2665
 
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
@@ -2516,6 +2518,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Aug 01 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-18
+- Resolves: CVE-2012-2665
+
 * Fri Jun 08 2012 Caolán McNamara <caolanm@redhat.com> - 3.4.5.2-17
 - Resolves: rhbz#826609, rhbz#820554 fix smoketest on ppc[64], s390[x]
 

@@ -69,9 +69,12 @@ Source21:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db8
 Source22:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
 Source23:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
 %endif
+#https://svn.boost.org/trac/boost/ticket/6167 means we need c++11, but gcc 4.7.[01]'s c++11x is
+#abi incompatible with c++03
+Source24:       http://dev-www.libreoffice.org/src/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
 
 BuildRequires:  zip, findutils, autoconf, flex, bison, icu, gperf, gcc-c++
-BuildRequires:  binutils, java-devel, boost-devel
+BuildRequires:  binutils, java-devel
 BuildRequires:  python-devel, expat-devel, libxml2-devel, libxslt-devel, bc
 BuildRequires:  neon-devel, libcurl-devel, libidn-devel, pam-devel, cups-devel
 BuildRequires:  libXext-devel, libXt-devel, libICE-devel, libjpeg-devel, make
@@ -148,7 +151,6 @@ Patch33: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
 Patch34: 0001-resolved-rhbz-838248-init-filter-criteria-string.patch
 Patch35: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch36: 0001-rhbz-842552-always-create-text-content.patch
-Patch37: libreoffice-gcc-4.7.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1015,7 +1017,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz-838248-init-filter-criteria-string.patch
 %patch35 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch36 -p1 -b .rhbz-842552-always-create-text-content.patch
-%patch37 -p1 -b .libreoffice-gcc-4.7.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1083,7 +1084,7 @@ autoconf
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --without-system-sampleicc \
+ --without-system-sampleicc --without-system-boost \
  %{distrooptions} %{?with_binfilter:--enable-binfilter}
 
 mkdir -p ext_sources
@@ -1107,6 +1108,7 @@ cp %{SOURCE21} ext_sources
 cp %{SOURCE22} ext_sources
 cp %{SOURCE23} ext_sources
 %endif
+cp %{SOURCE24} ext_sources
 touch src.downloaded
 
 # rhbz#832603 abi problems with c++11

@@ -97,3 +97,41 @@ index 58a1299..62c59ad 100644
  }
  
  
+diff --git a/vcl.orig/unx/generic/app/saldisp.cxx b/vcl/unx/generic/app/saldisp.cxx
+index ca7a73a..6ce67fe 100644
+--- a/vcl.orig/unx/generic/app/saldisp.cxx
++++ b/vcl/unx/generic/app/saldisp.cxx
+@@ -783,7 +783,8 @@ void SalDisplay::Init()
+     m_bXinerama         = false;
+ 
+     int nDisplayScreens = ScreenCount( pDisp_ );
+-    m_aScreens = std::vector<ScreenData>(nDisplayScreens);
++    std::vector<ScreenData> aFoo(nDisplayScreens);
++    m_aScreens.swap(aFoo);
+ 
+     mbExactResolution = false;
+     /*  #i15507#
+diff --git a/vcl.orig/unx/generic/printer/printerinfomanager.cxx b/vcl/unx/generic/printer/printerinfomanager.cxx
+index 0f6f221..7928dc8 100644
+--- a/vcl.orig/unx/generic/printer/printerinfomanager.cxx
++++ b/vcl/unx/generic/printer/printerinfomanager.cxx
+@@ -240,7 +240,8 @@ void PrinterInfoManager::initialize()
+     // have to iterate over all possible files
+     // there should be only one global setup section in all
+     // available config files
+-    m_aGlobalDefaults = PrinterInfo();
++    PrinterInfo aFoo;
++    m_aGlobalDefaults = aFoo;
+ 
+     // need a parser for the PPDContext. generic printer should do.
+     m_aGlobalDefaults.m_pParser = PPDParser::getParser( String( RTL_CONSTASCII_USTRINGPARAM( "SGENPRT" ) ) );
+@@ -669,7 +670,8 @@ void PrinterInfoManager::changePrinterInfo( const OUString& rPrinter, const Prin
+ 
+     if( it != m_aPrinters.end() )
+     {
+-        it->second.m_aInfo      = rNewInfo;
++        PrinterInfo aFoo(rNewInfo);
++        it->second.m_aInfo = aFoo;
+         // recalculate font substitutions
+         fillFontSubstitutions( it->second.m_aInfo );
+         it->second.m_bModified  = true;

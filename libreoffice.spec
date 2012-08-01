@@ -148,6 +148,7 @@ Patch33: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
 Patch34: 0001-resolved-rhbz-838248-init-filter-criteria-string.patch
 Patch35: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch36: 0001-rhbz-842552-always-create-text-content.patch
+Patch37: libreoffice-gcc-4.7.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1014,6 +1015,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz-838248-init-filter-criteria-string.patch
 %patch35 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch36 -p1 -b .rhbz-842552-always-create-text-content.patch
+%patch37 -p1 -b .libreoffice-gcc-4.7.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2302,6 +2304,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu Jul 26 2012 David Tardon <dtardon@redhat.com> - 1:3.5.5.3-5
 - Resolves: rhbz#842552 crash in pptx import
 - Resolves: rhbz#832603 abi problems with c++11
+- add libreoffice-gcc-4.7.patch to build with gcc 4.7
 
 * Mon Jul 16 2012 Caolán McNamara <caolanm@redhat.com> - 3.5.5.3-4
 - Resolves: rhbz#836937 insanely slow with Zemberek

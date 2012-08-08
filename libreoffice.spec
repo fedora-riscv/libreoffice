@@ -1,4 +1,4 @@
-%define libo_version 3.5.5
+%define libo_version 3.5.6
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -34,8 +34,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        5%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -148,9 +148,7 @@ Patch30: 0001-Resolves-rhbz-805743-a11y-call-doShow-after-we-have-.patch
 Patch31: 0001-Resolves-fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 Patch32: 0001-use-ure-instead-of-ure-link.patch
 Patch33: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch34: 0001-resolved-rhbz-838248-init-filter-criteria-string.patch
-Patch35: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-Patch36: 0001-rhbz-842552-always-create-text-content.patch
+Patch34: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1014,9 +1012,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch32 -p1 -b .use-ure-instead-of-ure-link.patch
 %patch33 -p1 -b .rhbz-838368-view-ignored-while-view-accepte.patch
-%patch34 -p1 -b .rhbz-838248-init-filter-criteria-string.patch
-%patch35 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-%patch36 -p1 -b .rhbz-842552-always-create-text-content.patch
+%patch34 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2303,6 +2299,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Aug 08 2012 David Tardon <dtardon@redhat.com> - 1:3.5.6.2-1
+- 3.5.6 rc2
+- drop integrated 0001-resolved-rhbz-838248-init-filter-criteria-string.patch
+- drop integrated 0001-rhbz-842552-always-create-text-content.patch
+
 * Thu Jul 26 2012 David Tardon <dtardon@redhat.com> - 1:3.5.5.3-5
 - Resolves: rhbz#842552 crash in pptx import
 - Resolves: rhbz#832603 abi problems with c++11

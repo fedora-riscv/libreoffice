@@ -33,13 +33,13 @@
 +
  #collect all bootstrap variables specified on the command line
  #so that they can be passed as arguments to javaldx later on
- #Recognize the "sync" option. sync must be applied without any other
+ for arg in $@
 @@ -110,6 +137,8 @@
  # SAL_NO_XINITTHREADS=true; export SAL_NO_XINITTHREADS
  
  # execute binary
--exec "$sd_prog/unopkg.bin" "$@" $JVMFWKPARAMS \
-+"$sd_prog/unopkg.bin" "$@" $JVMFWKPARAMS \
+-exec "$sd_prog/unopkg.bin" "$@" \
++"$sd_prog/unopkg.bin" "$@" \
      "-env:INIFILENAME=vnd.sun.star.pathname:$sd_prog/redirectrc"
 -
 +if [ -n "$INSTDIR" ]; then

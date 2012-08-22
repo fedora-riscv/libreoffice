@@ -169,6 +169,7 @@ Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
 Patch9:  0001-disable-failing-check.patch
 Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
+Patch12: 0001-configure-fix-S390X-CPUNAME.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -777,6 +778,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch9  -p1 -b .disable-failing-check.patch
 %patch10 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
+%patch12 -p1 -b .0001-configure-fix-S390X-CPUNAME.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

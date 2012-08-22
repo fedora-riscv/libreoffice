@@ -150,6 +150,7 @@ Patch32: 0001-use-ure-instead-of-ure-link.patch
 Patch33: 0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
 Patch34: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch35: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
+Patch36: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1015,6 +1016,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .rhbz-838368-view-ignored-while-view-accepte.patch
 %patch34 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch35 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
+%patch36 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2303,6 +2305,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Aug 22 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-2
 - Resolves: rhbz#846775 Clipboard must be disposed before Selection
+- Resolves: rhbz#842292 crash in scrolling multiselection in draw
 
 * Wed Aug 08 2012 David Tardon <dtardon@redhat.com> - 1:3.5.6.2-1
 - 3.5.6 rc2

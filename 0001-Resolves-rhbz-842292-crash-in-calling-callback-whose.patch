@@ -36,7 +36,7 @@ diff --git a/sd/source/ui/slidesorter/controller/SlsScrollBarManager.cxx b/sd/so
 index a45f640..4a2d808 100644
 --- a/sd/source/ui/slidesorter/controller/SlsScrollBarManager.cxx
 +++ b/sd/source/ui/slidesorter/controller/SlsScrollBarManager.cxx
-@@ -617,13 +617,15 @@ bool ScrollBarManager::RepeatAutoScroll (void)
+@@ -617,13 +617,15 @@
          }
      }
  
@@ -53,7 +53,7 @@ index a45f640..4a2d808 100644
 +    maAutoScrollFunctor = ::boost::function<void(void)>();
 +}
  
- IMPL_LINK_NOARG(ScrollBarManager, AutoScrollTimeoutHandler)
+ IMPL_LINK(ScrollBarManager, AutoScrollTimeoutHandler, Timer *, EMPTYARG)
  {
 diff --git a/sd/source/ui/slidesorter/controller/SlsSelectionFunction.cxx b/sd/source/ui/slidesorter/controller/SlsSelectionFunction.cxx
 index 6217c07..16c23ad 100644

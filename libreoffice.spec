@@ -170,6 +170,7 @@ Patch9:  0001-disable-failing-check.patch
 Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch12: 0001-configure-fix-S390X-CPUNAME.patch
+Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -779,6 +780,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
 %patch12 -p1 -b .0001-configure-fix-S390X-CPUNAME.patch
+%patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2015,6 +2017,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Aug 22 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.1.1-2
 - Resolves: rhbz#846775 Clipboard must be disposed before selection
+- Resolves: rhbz#842292 crash in scrolling multiselection in draw
 
 * Wed Aug 15 2012 David Tardon <dtardon@redhat.com> - 1:3.6.1.1-1
 - 3.6.1 rc1

@@ -53,7 +53,7 @@ index a45f640..4a2d808 100644
 +    maAutoScrollFunctor = ::boost::function<void(void)>();
 +}
  
- IMPL_LINK(ScrollBarManager, AutoScrollTimeoutHandler, Timer *, EMPTYARG)
+ IMPL_LINK_NOARG(ScrollBarManager, AutoScrollTimeoutHandler)
  {
 diff --git a/sd/source/ui/slidesorter/controller/SlsSelectionFunction.cxx b/sd/source/ui/slidesorter/controller/SlsSelectionFunction.cxx
 index 6217c07..16c23ad 100644

@@ -912,9 +912,6 @@ for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
   rm -rf $langpack
 done
 %endif
-rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/share/prereg
-#give a consistent javasettingsunopkginstall.xml
-$RPM_BUILD_ROOT/%{baseinstdir}/program/unopkg list --bundled || :
 export WITH_LANG="en-US"
 dmake sdkoo
 mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
@@ -1525,7 +1522,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_tango.zip
-%{baseinstdir}/share/config/javasettingsunopkginstall.xml
 %{baseinstdir}/share/config/psetup.xpm
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg

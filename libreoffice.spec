@@ -34,7 +34,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -193,7 +193,7 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
-Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
+Requires: hunspell-en-US, hyphen-en, hyphen >= 2.4, autocorr-en
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -645,7 +645,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l de -n German -F -H -Y -M -A -S
 %langpack -l dz -n Dzongkha -F -S
 %langpack -l el -n Greek -F -H -Y -M -S
-%langpack -l en -n English -M
+%langpack -l en -n English -F -H -Y -M -A -S
 %langpack -l es -n Spanish -F -H -Y -M -A -S
 %langpack -l et -n Estonian -F -H -Y -S
 %langpack -l eu -n Basque -F -H -Y -A -S
@@ -2009,6 +2009,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Aug 29 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.1.2-2
+- Related: rhbz#850709 hunspell en-US available standalone so
+  make English langpack require hunspell-en and core just
+  bare bones hunspell-en-US
+
 * Sun Aug 26 2012 David Tardon <dtardon@redhat.com> - 1:3.6.1.2-1
 - 3.6.1 rc2
 

@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -152,6 +152,7 @@ Patch34: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch35: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch36: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
 Patch37: 0001-Resolves-rhbz-855972-crash-on-switching-to-outline-v.patch
+Patch38: 0001-Do-not-check-the-stored-DIFAT-sector-count.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1019,6 +1020,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
 %patch36 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
 %patch37 -p1 -b .rhbz-855972-crash-on-switching-to-outline-v.patch
+%patch38 -p1 -b .Do-not-check-the-stored-DIFAT-sector-count.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2305,6 +2307,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Sep 11 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-4
+- Resolves: rhbz#855507 large ole2 compound files fail to load
+
 * Mon Sep 10 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-3
 - Resolves: rhbz#855972 crash on switching to outline view
 

@@ -171,7 +171,6 @@ Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
 Patch14: 0001-Resolves-rhbz-855972-crash-on-switching-to-outline-v.patch
-Patch15: 0001-Do-not-check-the-stored-DIFAT-sector-count.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -782,7 +781,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
 %patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
 %patch14 -p1 -b .rhbz-855972-crash-on-switching-to-outline-v.patch
-%patch15 -p1 -b .Do-not-check-the-stored-DIFAT-sector-count.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

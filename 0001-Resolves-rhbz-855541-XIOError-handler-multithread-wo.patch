@@ -60,7 +60,7 @@ index 8f3151c..867883f 100644
 +    XSetIOErrorHandler(aOrigXIOErrorHandler);
  }
  
- void GtkData::Dispose()
+ void GtkData::Yield( bool bWait, bool bHandleAllCurrentEvents )
 @@ -664,6 +677,7 @@ void GtkData::Init()
      // init gtk/gdk
      gtk_init_check( &nParams, &pCmdLineAry );

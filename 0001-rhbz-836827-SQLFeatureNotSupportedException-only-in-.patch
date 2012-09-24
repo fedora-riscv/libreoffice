@@ -1,0 +1,69 @@
+From 93a0d9eee0f4dced348b040961f44f977e9504a7 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 24 Sep 2012 09:35:56 +0200
+Subject: [PATCH] rhbz#836827: SQLFeatureNotSupportedException only in Java 6
+
+...so if the patched hsqldb.jar is compiled with Java 7, it creates instances of
+SQLFeatureNotSupportedException, and when at LO runtime a Java 5 gcj is used,
+loading the relevant hsqldb.jar classes will fail with a NoClassDefFoundError
+caused by a ClassNotFoundException.
+
+Adding java.sql.Driver.getParentLogger in Java 7 was an incompatible change, but
+it appears that the java.sql framework is prepared to handle old implementations
+(for which the JVM will throw AbstractMethodError), so it appears that it works
+to fake that AbstractMethodError here.
+
+Change-Id: Id1fddc9cbdd8c88cd68fb5877ec59fe8d61e1562
+---
+ hsqldb/patches/jdbc-4.1.patch | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/hsqldb/patches/jdbc-4.1.patch b/hsqldb/patches/jdbc-4.1.patch
+index 4c4eb85..68180a2 100644
+--- a/hsqldb/patches/jdbc-4.1.patch
++++ b/hsqldb/patches/jdbc-4.1.patch
+@@ -231,7 +231,7 @@
+  // boucherb@users 20040411 - doc 1.7.2 - javadoc updates toward 1.7.2 final
+  
+  /**
+-@@ -323,4 +328,12 @@
++@@ -323,4 +328,15 @@
+      }
+  
+  //#endif JAVA6
+@@ -239,7 +239,10 @@
+ +//#ifdef JAVA7
+ +    public Logger getParentLogger() throws SQLFeatureNotSupportedException
+ +    {
+-+        throw new SQLFeatureNotSupportedException("Not supported yet.");
+++        throw new AbstractMethodError(
+++            "org.hsqldb.jdbc.jdbcDataSource.getParentLogger should throw" +
+++            " SQLFeatureNotSupportedException, but that is not yet available" +
+++            " in Java 5");
+ +    }
+ +
+ +//#endif JAVA7
+@@ -299,7 +302,7 @@
+  // fredt@users 20011220 - patch 1.7.0 by fredt
+  // new version numbering scheme
+  // fredt@users 20020320 - patch 1.7.0 - JDBC 2 support and error trapping
+-@@ -321,4 +326,12 @@
++@@ -321,4 +326,15 @@
+              DriverManager.registerDriver(new jdbcDriver());
+          } catch (Exception e) {}
+      }
+@@ -307,7 +310,10 @@
+ +//#ifdef JAVA7
+ +    public Logger getParentLogger() throws SQLFeatureNotSupportedException
+ +    {
+-+        throw new SQLFeatureNotSupportedException("Not supported yet.");
+++        throw new AbstractMethodError(
+++            "org.hsqldb.jdbcDriver.getParentLogger should throw" +
+++            " SQLFeatureNotSupportedException, but that is not yet available" +
+++            " in Java 5");
+ +    }
+ +
+ +//#endif JAVA7
+-- 
+1.7.11.4
+

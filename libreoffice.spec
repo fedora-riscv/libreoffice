@@ -178,7 +178,7 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
-Requires: hunspell-en, hyphen-en, hyphen >= 2.4, autocorr-en
+Requires: hunspell-en-US, hyphen-en, hyphen >= 2.4, autocorr-en
 Requires: lucene, lucene-contrib
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
@@ -843,7 +843,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l de -n German -F -H -Y -M -A -O -X -S
 %langpack -l dz -n Dzongkha -F -O -S
 %langpack -l el -n Greek -F -H -Y -M -o el_GR -V -x el_GR -S
-%langpack -l en -n English -M -O
+%langpack -l en -n English -F -H -Y -M -A -O
 %langpack -l es -n Spanish -F -H -Y -M -A -O -X -S
 %langpack -l et -n Estonian -F -H -Y -o et_EE -V -x et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -x eu_ES -S
@@ -2311,10 +2311,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Sep 12 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-5-UNBUILT
+* Mon Sep 24 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-5
 - Resolves: rhbz#855541 XIOError handler multithread woes
 - Resolves: rhbz#836827 Connection to datasource could not be established using
   gcj
+- Related: rhbz#850709 hunspell en-US available standalone so
+  make English langpack require hunspell-en and core just
+  bare bones hunspell-en-US
 
 * Tue Sep 11 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-4
 - Resolves: rhbz#855507 large ole2 compound files fail to load

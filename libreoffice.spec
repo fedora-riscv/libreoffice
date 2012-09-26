@@ -33,8 +33,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2013,6 +2013,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Sep 26 2012 David Tardon <dtardon@redhat.com> - 1:3.6.2.2-1
+- 3.6.2 rc2
+
 * Wed Sep 12 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.2.1-2
 - Resolves: rhbz#855541 XIOError handler multithread woes
 

@@ -157,6 +157,10 @@ Patch39: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
 Patch40: 0001-rhbz-836827-SQLFeatureNotSupportedException-only-in-.patch
 Patch41: 0001-n-744509-Alignment-of-text-is-wrong.patch
 Patch42: 0001-rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
+Patch43: 0001-rhbz-852128-sw-avoid-table-undo-crash.patch
+Patch44: 0002-rhbz-689053-fix-crash-following-delete-at-last-table.patch
+Patch45: 0003-rhbz-820283-fix-crashes-in-DOCX-table-import.patch
+Patch46: 0004-rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1029,6 +1033,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch40 -p1 -b .rhbz-836827-SQLFeatureNotSupportedException-only-in-.patch
 %patch41 -p1 -b .n-744509-Alignment-of-text-is-wrong.patch
 %patch42 -p1 -b .rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
+%patch43 -p1 -b .rhbz-852128-sw-avoid-table-undo-crash.patch
+%patch44 -p1 -b .rhbz-689053-fix-crash-following-delete-at-last-table.patch
+%patch45 -p1 -b .rhbz-820283-fix-crashes-in-DOCX-table-import.patch
+%patch46 -p1 -b .rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2317,6 +2325,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Sep 28 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.6.2-7-UNBUILT
 - Related: rhbz#826526 Inform user about unsupported PDF encryption formats
+- Resolves: rhbz#852128 Writer: avoid table undo crash
+- Resolves: rhbz#689053 Writer: fix crash following delete at last table cell
+- Resolves: rhbz#820283 Writer: fix crashes in DOCX table import
+- Resolves: rhbz#827695 Writer: prevent crashes after incomplete print
 
 * Fri Sep 28 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-6
 - Resolves: fdo#54565 text misaligned in pptx

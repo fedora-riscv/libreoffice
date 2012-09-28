@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -156,6 +156,7 @@ Patch38: 0001-Do-not-check-the-stored-DIFAT-sector-count.patch
 Patch39: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
 Patch40: 0001-rhbz-836827-SQLFeatureNotSupportedException-only-in-.patch
 Patch41: 0001-n-744509-Alignment-of-text-is-wrong.patch
+Patch42: 0001-rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1027,6 +1028,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch39 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
 %patch40 -p1 -b .rhbz-836827-SQLFeatureNotSupportedException-only-in-.patch
 %patch41 -p1 -b .n-744509-Alignment-of-text-is-wrong.patch
+%patch42 -p1 -b .rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2313,6 +2315,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Sep 28 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.6.2-7-UNBUILT
+- Related: rhbz#826526 Inform user about unsupported PDF encryption formats
+
 * Fri Sep 28 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.6.2-6
 - Resolves: fdo#54565 text misaligned in pptx
 

@@ -1,0 +1,257 @@
+From 33fcf4e7010f95b083f22309b4ddbe6a6686c5d6 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Fri, 28 Sep 2012 18:26:44 +0200
+Subject: [PATCH] rhbz#826526 Inform user about unsupported PDF encryption
+ formats
+
+...with a crudely reused "Version Incompatibility" message box (TODO: improve),
+rather than keeping asking for a password.
+
+(cherry picked from commit d3d720b14c0bbfc849f8562d02b471e223e1b0bc)
+
+Conflicts:
+	sdext/source/pdfimport/wrapper/wrapper.cxx
+
+Change-Id: I8239232704a4426af7a14a729840d184a502d2df
+---
+ sdext/source/pdfimport/inc/pdfihelper.hxx      |  4 ++
+ sdext/source/pdfimport/inc/pdfparse.hxx        |  3 +
+ sdext/source/pdfimport/misc/pwdinteract.cxx    | 41 +++++++++++++-
+ sdext/source/pdfimport/pdfparse/pdfentries.cxx | 15 +++--
+ sdext/source/pdfimport/wrapper/wrapper.cxx     | 76 +++++++++++++++-----------
+ 5 files changed, 101 insertions(+), 38 deletions(-)
+
+diff --git a/sdext/source/pdfimport/inc/pdfihelper.hxx b/sdext/source/pdfimport/inc/pdfihelper.hxx
+index d8f7d3c..ad4774a 100644
+--- a/sdext/source/pdfimport/inc/pdfihelper.hxx
++++ b/sdext/source/pdfimport/inc/pdfihelper.hxx
+@@ -196,6 +196,10 @@ namespace pdfi
+                       bool                                                 bFirstTry,
+                       const rtl::OUString&                                 rDocName
+                       );
++
++    void reportUnsupportedEncryptionFormat(
++        com::sun::star::uno::Reference<
++            com::sun::star::task::XInteractionHandler > const & handler);
+ }
+ 
+ #define USTR(x) rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( x ) )
+diff --git a/sdext/source/pdfimport/inc/pdfparse.hxx b/sdext/source/pdfimport/inc/pdfparse.hxx
+index 1cfd82e..2e9f00f 100644
+--- a/sdext/source/pdfimport/inc/pdfparse.hxx
++++ b/sdext/source/pdfimport/inc/pdfparse.hxx
+@@ -253,6 +253,9 @@ struct PDFFile : public PDFContainer
+     virtual PDFEntry* clone() const;
+ 
+     bool isEncrypted() const;
++
++    bool usesSupportedEncryptionFormat() const;
++
+     // this method checks whether rPwd is compatible with
+     // either user or owner password and sets up decrypt data in that case
+     // returns true if decryption can be done
+diff --git a/sdext/source/pdfimport/misc/pwdinteract.cxx b/sdext/source/pdfimport/misc/pwdinteract.cxx
+index e5fb674..f68c31e 100644
+--- a/sdext/source/pdfimport/misc/pwdinteract.cxx
++++ b/sdext/source/pdfimport/misc/pwdinteract.cxx
+@@ -26,9 +26,14 @@
+  *
+  ************************************************************************/
+ 
++#include "sal/config.h"
++
++#include <cassert>
+ 
+ #include "pdfihelper.hxx"
+ 
++#include <boost/noncopyable.hpp>
++#include <com/sun/star/task/ErrorCodeRequest.hpp>
+ #include <com/sun/star/task/XInteractionHandler.hpp>
+ #include <com/sun/star/task/XInteractionRequest.hpp>
+ #include <com/sun/star/task/XInteractionPassword.hpp>
+@@ -36,8 +41,9 @@
+ 
+ #include <cppuhelper/exc_hlp.hxx>
+ #include <cppuhelper/compbase2.hxx>
++#include <cppuhelper/implbase1.hxx>
+ #include <cppuhelper/basemutex.hxx>
+-
++#include <tools/errcode.hxx>
+ 
+ using namespace com::sun::star;
+ 
+@@ -125,6 +131,32 @@ void SAL_CALL PDFPasswordRequest::select() throw (uno::RuntimeException)
+     m_bSelected = true;
+ }
+ 
++class UnsupportedEncryptionFormatRequest:
++    public cppu::WeakImplHelper1< task::XInteractionRequest >,
++    private boost::noncopyable
++{
++public:
++    UnsupportedEncryptionFormatRequest() {}
++
++private:
++    virtual ~UnsupportedEncryptionFormatRequest() {}
++
++    virtual uno::Any SAL_CALL getRequest() throw (uno::RuntimeException) {
++        return uno::makeAny(
++            task::ErrorCodeRequest(
++                rtl::OUString(), uno::Reference< uno::XInterface >(),
++                ERRCODE_IO_WRONGVERSION));
++            //TODO: should be something more informative than crudely reused
++            // ERRCODE_IO_WRONGVERSION
++    }
++
++    virtual uno::Sequence< uno::Reference< task::XInteractionContinuation > >
++    SAL_CALL getContinuations() throw (uno::RuntimeException) {
++        return
++            uno::Sequence< uno::Reference< task::XInteractionContinuation > >();
++    }
++};
++
+ } // namespace
+ 
+ namespace pdfi
+@@ -159,6 +191,13 @@ bool getPassword( const uno::Reference< task::XInteractionHandler >& xHandler,
+     return bSuccess;
+ }
+ 
++void reportUnsupportedEncryptionFormat(
++    uno::Reference< task::XInteractionHandler > const & handler)
++{
++    assert(handler.is());
++    handler->handle(new UnsupportedEncryptionFormatRequest);
++}
++
+ }
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sdext/source/pdfimport/pdfparse/pdfentries.cxx b/sdext/source/pdfimport/pdfparse/pdfentries.cxx
+index 69c7662..8d4a8b7 100644
+--- a/sdext/source/pdfimport/pdfparse/pdfentries.cxx
++++ b/sdext/source/pdfimport/pdfparse/pdfentries.cxx
+@@ -1223,17 +1223,22 @@ static bool check_user_password( const OString& rPwd, PDFFileImplData* pData )
+     return bValid;
+ }
+ 
++bool PDFFile::usesSupportedEncryptionFormat() const
++{
++    return m_pData->m_bStandardHandler &&
++        m_pData->m_nAlgoVersion >= 1 &&
++        m_pData->m_nAlgoVersion <= 2 &&
++        m_pData->m_nStandardRevision >= 2 &&
++        m_pData->m_nStandardRevision <= 3;
++}
++
+ bool PDFFile::setupDecryptionData( const OString& rPwd ) const
+ {
+     if( !impl_getData()->m_bIsEncrypted )
+         return rPwd.getLength() == 0;
+ 
+     // check if we can handle this encryption at all
+-    if( ! m_pData->m_bStandardHandler ||
+-        m_pData->m_nAlgoVersion < 1 ||
+-        m_pData->m_nAlgoVersion > 2 ||
+-        m_pData->m_nStandardRevision < 2 ||
+-        m_pData->m_nStandardRevision > 3 )
++    if( ! usesSupportedEncryptionFormat() )
+         return false;
+ 
+     if( ! m_pData->m_aCipher )
+diff --git a/sdext/source/pdfimport/wrapper/wrapper.cxx b/sdext/source/pdfimport/wrapper/wrapper.cxx
+index b09b504..5b5f509 100644
+--- a/sdext/source/pdfimport/wrapper/wrapper.cxx
++++ b/sdext/source/pdfimport/wrapper/wrapper.cxx
+@@ -935,44 +935,56 @@ static bool checkEncryption( const rtl::OUString&
+             o_rIsEncrypted = pPDFFile->isEncrypted();
+             if( o_rIsEncrypted )
+             {
+-                bool bAuthenticated = false;
+-                if( io_rPwd.getLength() )
++                if( pPDFFile->usesSupportedEncryptionFormat() )
+                 {
+-                    rtl::OString aIsoPwd = rtl::OUStringToOString( io_rPwd,
+-                                                                   RTL_TEXTENCODING_ISO_8859_1 );
+-                    bAuthenticated = pPDFFile->setupDecryptionData( aIsoPwd.getStr() );
+-                    // trash password string on heap
+-                    rtl_zeroMemory( (void*)aIsoPwd.getStr(), aIsoPwd.getLength() );
+-                }
+-                if( bAuthenticated )
+-                    bSuccess = true;
+-                else
+-                {
+-                    if( i_xIHdl.is() )
++                    bool bAuthenticated = false;
++                    if( io_rPwd.getLength() )
++                    {
++                        rtl::OString aIsoPwd = rtl::OUStringToOString( io_rPwd,
++                                                                       RTL_TEXTENCODING_ISO_8859_1 );
++                        bAuthenticated = pPDFFile->setupDecryptionData( aIsoPwd.getStr() );
++                        // trash password string on heap
++                        rtl_zeroMemory( (void*)aIsoPwd.getStr(), aIsoPwd.getLength() );
++                    }
++                    if( bAuthenticated )
++                        bSuccess = true;
++                    else
+                     {
+-                        bool bEntered = false;
+-                        do
++                        if( i_xIHdl.is() )
+                         {
+-                            bEntered = getPassword( i_xIHdl, io_rPwd, ! bEntered, i_rDocName );
+-                            rtl::OString aIsoPwd = rtl::OUStringToOString( io_rPwd,
+-                                                                           RTL_TEXTENCODING_ISO_8859_1 );
+-                            bAuthenticated = pPDFFile->setupDecryptionData( aIsoPwd.getStr() );
+-                            // trash password string on heap
+-                            rtl_zeroMemory( (void*)aIsoPwd.getStr(), aIsoPwd.getLength() );
+-                        } while( bEntered && ! bAuthenticated );
++                            bool bEntered = false;
++                            do
++                            {
++                                bEntered = getPassword( i_xIHdl, io_rPwd, ! bEntered, i_rDocName );
++                                rtl::OString aIsoPwd = rtl::OUStringToOString( io_rPwd,
++                                                                               RTL_TEXTENCODING_ISO_8859_1 );
++                                bAuthenticated = pPDFFile->setupDecryptionData( aIsoPwd.getStr() );
++                                // trash password string on heap
++                                rtl_zeroMemory( (void*)aIsoPwd.getStr(), aIsoPwd.getLength() );
++                            } while( bEntered && ! bAuthenticated );
++                        }
++
++                        OSL_TRACE( "password: %s", bAuthenticated ? "matches" : "does not match" );
++                        bSuccess = bAuthenticated;
++                    }
++                    // trash password string on heap
++                    rtl_zeroMemory( (void*)io_rPwd.getStr(), io_rPwd.getLength()*sizeof(sal_Unicode) );
++                    if( bAuthenticated )
++                    {
++                        rtl::OUStringBuffer aBuf( 128 );
++                        aBuf.appendAscii( "_OOO_pdfi_Credentials_" );
++                        aBuf.append( pPDFFile->getDecryptionKey() );
++                        io_rPwd = aBuf.makeStringAndClear();
+                     }
+-
+-                    OSL_TRACE( "password: %s", bAuthenticated ? "matches" : "does not match" );
+-                    bSuccess = bAuthenticated;
+                 }
+-                // trash password string on heap
+-                rtl_zeroMemory( (void*)io_rPwd.getStr(), io_rPwd.getLength()*sizeof(sal_Unicode) );
+-                if( bAuthenticated )
++                else if( i_xIHdl.is() )
+                 {
+-                    rtl::OUStringBuffer aBuf( 128 );
+-                    aBuf.appendAscii( "_OOO_pdfi_Credentials_" );
+-                    aBuf.append( pPDFFile->getDecryptionKey() );
+-                    io_rPwd = aBuf.makeStringAndClear();
++                    reportUnsupportedEncryptionFormat( i_xIHdl );
++                        //TODO: this should either be handled further down the
++                        // call stack, or else information that this has already
++                        // been handled should be passed down the call stack, so
++                        // that SfxBaseModel::load does not show an additional
++                        // "General Error" message box
+                 }
+             }
+             else
+-- 
+1.7.11.4
+

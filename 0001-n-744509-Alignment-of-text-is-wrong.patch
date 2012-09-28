@@ -1,0 +1,32 @@
+From a71c878cd0b443a0d8473d8e4eb43d66f37ce2c0 Mon Sep 17 00:00:00 2001
+From: Muthu Subramanian <sumuthu@suse.com>
+Date: Fri, 3 Feb 2012 16:20:34 +0530
+Subject: [PATCH] n#744509: Alignment of text is wrong.
+
+According to section 21.1.2.2.7 [pPr], "If this [algn]
+attribute is omitted, then a value of left is implied."
+---
+ oox/source/drawingml/textparagraphpropertiescontext.cxx | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/oox/source/drawingml/textparagraphpropertiescontext.cxx b/oox/source/drawingml/textparagraphpropertiescontext.cxx
+index 9d06ae1..d3c91cd 100644
+--- a/oox/source/drawingml/textparagraphpropertiescontext.cxx
++++ b/oox/source/drawingml/textparagraphpropertiescontext.cxx
+@@ -64,12 +64,7 @@ TextParagraphPropertiesContext::TextParagraphPropertiesContext( ContextHandler&
+     PropertyMap& rPropertyMap( mrTextParagraphProperties.getTextParagraphPropertyMap() );
+ 
+     // ST_TextAlignType
+-    if ( xAttribs->hasAttribute( XML_algn ) )
+-    {
+-        sal_Int32 nAlign = xAttribs->getOptionalValueToken( XML_algn, XML_l );
+-        rPropertyMap[ PROP_ParaAdjust ] <<= GetParaAdjust( nAlign );
+-    }
+-//  OSL_TRACE( "OOX: para adjust %d", GetParaAdjust( nAlign ));
++    rPropertyMap[ PROP_ParaAdjust ] <<= GetParaAdjust( xAttribs->getOptionalValueToken( XML_algn, XML_l ) );
+     // TODO see to do the same with RubyAdjust
+ 
+     // ST_Coordinate32
+-- 
+1.7.11.4
+

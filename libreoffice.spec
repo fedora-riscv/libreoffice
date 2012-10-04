@@ -1,4 +1,4 @@
-%define libo_version 3.5.6
+%define libo_version 3.5.7
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?dist}
+Release:        1%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2323,7 +2323,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Sep 28 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.6.2-7-UNBUILT
+* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-1
+- update to 3.5.7
 - Related: rhbz#826526 Inform user about unsupported PDF encryption formats
 - Resolves: rhbz#852128 Writer: avoid table undo crash
 - Resolves: rhbz#689053 Writer: fix crash following delete at last table cell

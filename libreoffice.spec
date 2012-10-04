@@ -2325,7 +2325,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2-UNBUILT
+* Thu Oct 04 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.7.2-2
 - Resolves: rhbz#863052 fix ZipIOException on mismatched timestamps
 - Resolves: rhbz#820283 Writer: fix crashes in DOCX table import
 - Resolves: rhbz#861680 Writer: DOCX import: fix crash on tables in substreams

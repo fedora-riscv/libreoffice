@@ -159,7 +159,7 @@ Patch41: 0001-n-744509-Alignment-of-text-is-wrong.patch
 Patch42: 0001-rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
 Patch43: 0001-rhbz-852128-sw-avoid-table-undo-crash.patch
 Patch44: 0002-rhbz-689053-fix-crash-following-delete-at-last-table.patch
-Patch45: 0003-rhbz-820283-fix-crashes-in-DOCX-table-import.patch
+Patch45: 0001-rhbz-820283-fdo-55462-sw-better-fix-for-DOCX-table-i.patch
 Patch46: 0004-rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
 Patch47: 0001-fdo-49819-fdo-54609-Do-not-consider-timestamp-differ.patch
 
@@ -1036,7 +1036,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch42 -p1 -b .rhbz-826526-Inform-user-about-unsupported-PDF-encryp.patch
 %patch43 -p1 -b .rhbz-852128-sw-avoid-table-undo-crash.patch
 %patch44 -p1 -b .rhbz-689053-fix-crash-following-delete-at-last-table.patch
-%patch45 -p1 -b .rhbz-820283-fix-crashes-in-DOCX-table-import.patch
+%patch45 -p1 -b .rhbz-820283-fdo-55462-sw-better-fix-for-DOCX-table-i.patch
 %patch46 -p1 -b .rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
 %patch47 -p1 -b .fdo-49819-fdo-54609-Do-not-consider-timestamp-differ.patch
 
@@ -2325,8 +2325,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2-UNBUILT_PENDING_DOCX_FIX
+* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2-UNBUILT
 - Resolves: rhbz#863052 fix ZipIOException on mismatched timestamps
+- Resolves: rhbz#820283 Writer: fix crashes in DOCX table import
+- Resolves: rhbz#861680 Writer: DOCX import: fix crash on tables in substreams
 
 * Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-1
 - update to 3.5.7

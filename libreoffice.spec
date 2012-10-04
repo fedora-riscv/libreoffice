@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -161,6 +161,7 @@ Patch43: 0001-rhbz-852128-sw-avoid-table-undo-crash.patch
 Patch44: 0002-rhbz-689053-fix-crash-following-delete-at-last-table.patch
 Patch45: 0003-rhbz-820283-fix-crashes-in-DOCX-table-import.patch
 Patch46: 0004-rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
+Patch47: 0001-fdo-49819-fdo-54609-Do-not-consider-timestamp-differ.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1037,6 +1038,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch44 -p1 -b .rhbz-689053-fix-crash-following-delete-at-last-table.patch
 %patch45 -p1 -b .rhbz-820283-fix-crashes-in-DOCX-table-import.patch
 %patch46 -p1 -b .rhbz-827695-sw-prevent-crashes-after-incomplete-prin.patch
+%patch47 -p1 -b .fdo-49819-fdo-54609-Do-not-consider-timestamp-differ.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2323,6 +2325,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2
+- Resolves: rhbz#863052 fix ZipIOException on mismatched timestamps
+
 * Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-1
 - update to 3.5.7
 - Related: rhbz#826526 Inform user about unsupported PDF encryption formats

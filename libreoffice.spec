@@ -2325,7 +2325,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2
+* Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-2-UNBUILT_PENDING_DOCX_FIX
 - Resolves: rhbz#863052 fix ZipIOException on mismatched timestamps
 
 * Thu Oct 04 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-1

@@ -34,7 +34,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -172,6 +172,7 @@ Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
 Patch14: 0001-Resolves-rhbz-855972-crash-on-switching-to-outline-v.patch
 Patch15: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
+Patch16: 0001-fdo-52022-Simple-LargeControlPoints-actually-can-hav.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -783,6 +784,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
 %patch14 -p1 -b .rhbz-855972-crash-on-switching-to-outline-v.patch
 %patch15 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
+%patch16 -p1 -b .fdo-52022-Simple-LargeControlPoints-actually-can-hav.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2013,6 +2015,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Oct 05 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.2.2-2
+- Resolves: fdo#52022 Part of data in userdir is lost on upgrade
+
 * Wed Sep 26 2012 David Tardon <dtardon@redhat.com> - 1:3.6.2.2-1
 - 3.6.2 rc2
 

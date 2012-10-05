@@ -1,0 +1,173 @@
+From d59639f10067f8bc449a7ad7241c461f59b8d5e4 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Fri, 5 Oct 2012 15:00:39 +0200
+Subject: [PATCH] fdo#46071: Do not hide windows based on nil "Visible"
+ property
+
+This appears to be messy:  The /org.openoffice.Office.Views/WindowType
+configuration group template has both a nilable bool "Visible" property and a
+UserData/Data string property that encodes various things like geometry---but
+also visibility---in a string.
+
+Now, likely due to the problem that has meanwhile been fixed through
+f3f79cc9e6c265baf48955d53f7e888205e0b3e0 "Resolves fdo#46074: Fix
+Partial::contains for paths that go past a leaf node," some
+registrymodification.xcu files in the wild contain such WindowType entries in
+"default" state, without a UserData/Data string and with a nil "Visible"
+property.
+
+The way SfxChildWindow::InitializeChildWinFactory_Impl and
+SvtViewOptions::IsVisible are implemented, they will always lead to an invisible
+window for such broken registrymodification.xcu data (as IsVisible unhelpfully
+returns false for a nil value, and InitializeChildWinFactory_Impl uses that
+value when there is no UserData/Data string).
+
+For the Math formula editor window (ID 30378) this means that it can disappear
+from the UI completely, as there appears to be no UI trigger for the user to
+show it in case it is hidden.
+
+The fix is to introdue SvtViewOptions::HasVisible (which only returns true if
+the property is not nil) and change InitializeChidlWinFactory_Impl to only use
+the value of IsVisible() if HasVisible() returns true.  This makes the code even
+more baroque, but this is a rather central, generic piece of code for all sorts
+of windows, so I do not want to break any other uses by e.g. changing IsVisible
+to return true for a nil property.
+
+Change-Id: Iae40075a7116a8aabd2d25aa9334709522e23d8f
+(cherry picked from commit 9db74c6133ede2a28af077fd563398176ff0d858)
+---
+ sfx2/source/appl/childwin.cxx          |  2 +-
+ unotools/inc/unotools/viewoptions.hxx  |  7 ++++++
+ unotools/source/config/viewoptions.cxx | 40 ++++++++++++++++++++++++++++------
+ 3 files changed, 41 insertions(+), 8 deletions(-)
+
+diff --git a/sfx2/source/appl/childwin.cxx b/sfx2/source/appl/childwin.cxx
+index a698002..13afd10 100644
+--- a/sfx2/source/appl/childwin.cxx
++++ b/sfx2/source/appl/childwin.cxx
+@@ -365,7 +365,7 @@ void SfxChildWindow::InitializeChildWinFactory_Impl( sal_uInt16 nId, SfxChildWin
+     // load configuration
+     SvtViewOptions aWinOpt( E_WINDOW, String::CreateFromInt32( nId ) );
+ 
+-    if ( aWinOpt.Exists() )
++    if ( aWinOpt.Exists() && aWinOpt.HasVisible() )
+         rInfo.bVisible  = aWinOpt.IsVisible(); // set state from configuration. Can be overwritten by UserData, see below
+ 
+     ::com::sun::star::uno::Sequence < ::com::sun::star::beans::NamedValue > aSeq = aWinOpt.GetUserData();
+diff --git a/unotools/inc/unotools/viewoptions.hxx b/unotools/inc/unotools/viewoptions.hxx
+index 34c0059..faad441 100644
+--- a/unotools/inc/unotools/viewoptions.hxx
++++ b/unotools/inc/unotools/viewoptions.hxx
+@@ -264,6 +264,13 @@ class UNOTOOLS_DLLPUBLIC SvtViewOptions: public utl::detail::Options
+         sal_Bool IsVisible (                 ) const;
+         void     SetVisible( sal_Bool bState );
+ 
++        /** Return true if the "Visible" property actually has a non-nil value
++
++            (IsVisible will somewhat arbitrarily return false if the property is
++            nil.)
++        */
++        bool HasVisible() const;
++
+         /*-****************************************************************************************************//**
+             @short      use it to set/get the extended user data (consisting of a set of named scalar values)
+             @descr      It's supported for ALL types!
+diff --git a/unotools/source/config/viewoptions.cxx b/unotools/source/config/viewoptions.cxx
+index 112ffbb..a327c77 100644
+--- a/unotools/source/config/viewoptions.cxx
++++ b/unotools/source/config/viewoptions.cxx
+@@ -283,6 +283,8 @@ class SvtViewOptionsBase_Impl
+ {
+     //-------------------------------------------------------------------------------------------------------------
+     public:
++        enum State { STATE_NONE, STATE_FALSE, STATE_TRUE };
++
+                                                         SvtViewOptionsBase_Impl ( const ::rtl::OUString&                                sList    );
+         virtual                                        ~SvtViewOptionsBase_Impl (                                                                );
+         sal_Bool                                        Exists                  ( const ::rtl::OUString&                                sName    );
+@@ -296,7 +298,7 @@ class SvtViewOptionsBase_Impl
+         sal_Int32                                       GetPageID               ( const ::rtl::OUString&                                sName    );
+         void                                            SetPageID               ( const ::rtl::OUString&                                sName    ,
+                                                                                         sal_Int32                                       nID      );
+-        sal_Bool                                        GetVisible              ( const ::rtl::OUString&                                sName    );
++        State                                           GetVisible              ( const ::rtl::OUString&                                sName    );
+         void                                            SetVisible              ( const ::rtl::OUString&                                sName    ,
+                                                                                         sal_Bool                                        bVisible );
+         css::uno::Any                                   GetUserItem             ( const ::rtl::OUString&                                sName    ,
+@@ -703,28 +705,33 @@ void SvtViewOptionsBase_Impl::SetPageID( const ::rtl::OUString& sName ,
+ }
+ 
+ //*****************************************************************************************************************
+-sal_Bool SvtViewOptionsBase_Impl::GetVisible( const ::rtl::OUString& sName )
++SvtViewOptionsBase_Impl::State SvtViewOptionsBase_Impl::GetVisible( const ::rtl::OUString& sName )
+ {
+     #ifdef DEBUG_VIEWOPTIONS
+     ++m_nReadCount;
+     #endif
+ 
+-    sal_Bool bVisible = sal_False;
++    State eState = STATE_NONE;
+     try
+     {
+         css::uno::Reference< css::beans::XPropertySet > xNode(
+             impl_getSetNode(sName, sal_False),
+             css::uno::UNO_QUERY);
+         if (xNode.is())
+-            xNode->getPropertyValue(PROPERTY_VISIBLE) >>= bVisible;
++        {
++            sal_Bool bVisible = sal_False;
++            if (xNode->getPropertyValue(PROPERTY_VISIBLE) >>= bVisible)
++            {
++                eState = bVisible ? STATE_TRUE : STATE_FALSE;
++            }
++        }
+     }
+     catch(const css::uno::Exception& ex)
+         {
+-            bVisible = sal_False;
+             SVTVIEWOPTIONS_LOG_UNEXPECTED_EXCEPTION(ex)
+         }
+ 
+-    return bVisible;
++    return eState;
+ }
+ 
+ //*****************************************************************************************************************
+@@ -1082,7 +1089,7 @@ sal_Bool SvtViewOptions::IsVisible() const
+ 
+     sal_Bool bState = sal_False;
+     if( m_eViewType == E_WINDOW )
+-        bState = m_pDataContainer_Windows->GetVisible( m_sViewName );
++        bState = m_pDataContainer_Windows->GetVisible( m_sViewName ) == SvtViewOptionsBase_Impl::STATE_TRUE;
+ 
+     return bState;
+ }
+@@ -1104,6 +1111,25 @@ void SvtViewOptions::SetVisible( sal_Bool bState )
+ }
+ 
+ //*****************************************************************************************************************
++//  public method
++//*****************************************************************************************************************
++bool SvtViewOptions::HasVisible() const
++{
++    // Ready for multithreading
++    ::osl::MutexGuard aGuard( GetOwnStaticMutex() );
++
++    // Safe impossible cases.
++    // These call isn't allowed for dialogs, tab-dialogs or tab-pages!
++    OSL_ENSURE( !(m_eViewType==E_DIALOG||m_eViewType==E_TABDIALOG||m_eViewType==E_TABPAGE), "SvtViewOptions::IsVisible()\nCall not allowed for Dialogs, TabDialogs or TabPages! I do nothing!\n" );
++
++    bool bState = false;
++    if( m_eViewType == E_WINDOW )
++        bState = m_pDataContainer_Windows->GetVisible( m_sViewName ) != SvtViewOptionsBase_Impl::STATE_NONE;
++
++    return bState;
++}
++
++//*****************************************************************************************************************
+ css::uno::Sequence< css::beans::NamedValue > SvtViewOptions::GetUserData() const
+ {
+     // Ready for multithreading
+-- 
+1.7.11.4
+

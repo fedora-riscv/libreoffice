@@ -170,10 +170,7 @@ Patch9:  0001-disable-failing-check.patch
 Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
-Patch14: 0001-Resolves-rhbz-855972-crash-on-switching-to-outline-v.patch
-Patch15: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
-Patch16: 0001-fdo-52022-Simple-LargeControlPoints-actually-can-hav.patch
-Patch17: 0001-fdo-46071-Do-not-hide-windows-based-on-nil-Visible-p.patch
+Patch14: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -783,10 +780,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
 %patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
-%patch14 -p1 -b .rhbz-855972-crash-on-switching-to-outline-v.patch
-%patch15 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
-%patch16 -p1 -b .fdo-52022-Simple-LargeControlPoints-actually-can-hav.patch
-%patch17 -p1 -b .fdo-46071-Do-not-hide-windows-based-on-nil-Visible-p.patch
+%patch14 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2019,6 +2013,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Oct 11 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.1-1
 - 3.6.3 rc1
+- drop integrated 0001-Resolves-rhbz-855972-crash-on-switching-to-outline-v.patch
+- drop integrated 0001-fdo-52022-Simple-LargeControlPoints-actually-can-hav.patch
+- drop integrated 0001-fdo-46071-Do-not-hide-windows-based-on-nil-Visible-p.patch
 
 * Fri Oct 05 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.2.2-3
 - Resolves: fdo#46071 Do not hide windows based on nil Visible property

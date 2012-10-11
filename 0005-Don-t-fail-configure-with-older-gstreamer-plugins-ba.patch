@@ -1,0 +1,30 @@
+From 9aa662f549625ae4dd4d9fe2f54a1943923b9774 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fridrich=20=C5=A0trba?= <fridrich.strba@bluewin.ch>
+Date: Fri, 31 Aug 2012 16:00:01 +0200
+Subject: [PATCH 5/7] Don't fail configure with older
+ gstreamer-plugins-base-0.10
+
+Change-Id: Ia00293747d6041b86975f0e6539246310abfb957
+Signed-off-by: David Tardon <dtardon@redhat.com>
+---
+ configure.in | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/configure.in b/configure.in
+index 0b60c3f..0351551 100644
+--- a/configure.in
++++ b/configure.in
+@@ -8971,7 +8971,9 @@ if test "$build_gstreamer_0_10" = "yes"; then
+     if test "x$enable_gstreamer_0_10" != "xno"; then
+         ENABLE_GSTREAMER_0_10="TRUE"
+         AC_MSG_RESULT([yes])
+-        PKG_CHECK_MODULES( GSTREAMER_0_10, gstreamer-0.10 gstreamer-plugins-base-0.10 gstreamer-interfaces-0.10 )
++        PKG_CHECK_MODULES( [GSTREAMER_0_10], [gstreamer-0.10 gstreamer-plugins-base-0.10 gstreamer-interfaces-0.10],, [
++            PKG_CHECK_MODULES(  [GSTREAMER_0_10], [gstreamer-0.10 gstreamer-plugins-base-0.10] )
++        ])
+     else
+         AC_MSG_RESULT([no])
+     fi
+-- 
+1.7.11.4
+

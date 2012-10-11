@@ -1,0 +1,832 @@
+From a3f96fb4ddcc657f4448089eff07531735f23979 Mon Sep 17 00:00:00 2001
+From: Michael Meeks <michael.meeks@suse.com>
+Date: Mon, 30 Jul 2012 15:15:58 +0200
+Subject: [PATCH 2/7] gstreamer: make gstreamer 1.0 and 0.10 dual compile
+
+Add fallback activation of an _OLD media component to the core.
+Compile both a 0.10 and 1.0 version of the gstreamer component
+
+Conflicts:
+	distro-configs/LibreOfficeAndroidX86.conf
+	distro-configs/LibreOfficeLinux.conf
+
+Change-Id: I91f65d05391cb2d7e02f9cff18f96178a128705O1
+---
+ Repository.mk                                      |  1 +
+ avmedia/Library_avmediagst.mk                      |  8 +--
+ avmedia/Module_avmedia.mk                          |  6 ++
+ .../gstreamer/avmediagstreamer_0_10.component      |  6 ++
+ avmedia/source/gstreamer/gst_0_10.cxx              | 15 +++++
+ avmedia/source/gstreamer/gstplayer.cxx             | 69 ++++++++++++++--------
+ avmedia/source/gstreamer/gstplayer.hxx             |  4 +-
+ avmedia/source/gstreamer/gstuno.cxx                | 17 ++++--
+ avmedia/source/inc/mediamisc.hxx                   | 11 +---
+ avmedia/source/viewer/mediawindowbase_impl.cxx     | 21 ++++++-
+ config_host.mk.in                                  |  3 +
+ configure.in                                       | 41 +++++++++++--
+ distro-configs/LibreOfficeAndroid.conf             |  1 +
+ distro-configs/LibreOfficeLinux.conf               |  2 +-
+ distro-configs/LibreOfficeOpenBSD.conf             |  2 +-
+ distro-configs/LibreOfficeiOS.conf                 |  1 +
+ distro-configs/OxygenOfficeLinux.conf              |  2 +-
+ postprocess/packcomponents/makefile.mk             |  4 ++
+ scp2/InstallModule_ooo.mk                          |  3 +
+ scp2/source/ooo/file_library_ooo.scp               |  6 +-
+ scp2/source/ooo/module_hidden_ooo.scp              | 19 +++---
+ svx/source/sdr/contact/viewcontact.cxx             |  2 +-
+ 22 files changed, 174 insertions(+), 70 deletions(-)
+ create mode 100644 avmedia/source/gstreamer/avmediagstreamer_0_10.component
+ create mode 100644 avmedia/source/gstreamer/gst_0_10.cxx
+
+diff --git a/Repository.mk b/Repository.mk
+index 67ba527..881029e 100644
+--- a/Repository.mk
++++ b/Repository.mk
+@@ -417,6 +417,7 @@ endif
+ 
+ $(eval $(call gb_Helper_register_libraries,PLAINLIBS_OOO, \
+     avmediagst \
++    avmediagst_0_10 \
+     avmediawin \
+     cached1 \
+     collator_data \
+diff --git a/avmedia/Library_avmediagst.mk b/avmedia/Library_avmediagst.mk
+index b6323bb..b7eeacd 100644
+--- a/avmedia/Library_avmediagst.mk
++++ b/avmedia/Library_avmediagst.mk
+@@ -33,8 +33,9 @@ $(eval $(call gb_Library_set_componentfile,avmediagst,avmedia/source/gstreamer/a
+ $(eval $(call gb_Library_set_include,avmediagst,\
+ 	$$(INCLUDE) \
+ 	-I$(SRCDIR)/avmedia/source/inc \
+-	$(shell pkg-config --cflags gstreamer-0.10, gstreamer-plugins-base-0.10) \
++	$(GSTREAMER_CFLAGS) \
+ ))
++$(eval $(call gb_Library_add_libs,avmediagst,$(GSTREAMER_LIBS)))
+ 
+ $(eval $(call gb_Library_use_api,avmediagst,\
+ 	udkapi \
+@@ -57,11 +58,6 @@ $(eval $(call gb_Library_use_libraries,avmediagst,\
+ 	$(gb_STDLIBS) \
+ ))
+ 
+-$(eval $(call gb_Library_add_libs,avmediagst,\
+-	$(shell pkg-config --libs gstreamer-0.10, gstreamer-plugins-base-0.10) \
+-	-lgstinterfaces-0.10 \
+-))
+-
+ $(eval $(call gb_Library_add_exception_objects,avmediagst,\
+ 	avmedia/source/gstreamer/gstmanager \
+ 	avmedia/source/gstreamer/gstplayer \
+diff --git a/avmedia/Module_avmedia.mk b/avmedia/Module_avmedia.mk
+index 729c24f..ef50457 100644
+--- a/avmedia/Module_avmedia.mk
++++ b/avmedia/Module_avmedia.mk
+@@ -40,6 +40,12 @@ $(eval $(call gb_Module_add_targets,avmedia,\
+ ))
+ endif
+ 
++ifeq ($(ENABLE_GSTREAMER_0_10),TRUE)
++$(eval $(call gb_Module_add_targets,avmedia,\
++	Library_avmediagst_0_10 \
++))
++endif
++
+ ifeq ($(GUIBASE),aqua)
+ $(eval $(call gb_Module_add_targets,avmedia,\
+ 	Library_avmediaQuickTime \
+diff --git a/avmedia/source/gstreamer/avmediagstreamer_0_10.component b/avmedia/source/gstreamer/avmediagstreamer_0_10.component
+new file mode 100644
+index 0000000..3fc61d7
+--- /dev/null
++++ b/avmedia/source/gstreamer/avmediagstreamer_0_10.component
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<component loader="com.sun.star.loader.SharedLibrary" xmlns="http://openoffice.org/2010/uno-components">
++  <implementation name="com.sun.star.comp.media.Manager_GStreamer_0_10">
++    <service name="com.sun.star.comp.avmedia.Manager_GStreamer_0_10"/>
++  </implementation>
++</component>
+diff --git a/avmedia/source/gstreamer/gst_0_10.cxx b/avmedia/source/gstreamer/gst_0_10.cxx
+new file mode 100644
+index 0000000..a0624c4
+--- /dev/null
++++ b/avmedia/source/gstreamer/gst_0_10.cxx
+@@ -0,0 +1,15 @@
++#define AVMEDIA_GST_0_10
++
++// forward compatibility goodness
++#include <gst/interfaces/xoverlay.h>
++#define gst_video_overlay_expose(a) gst_x_overlay_expose(GST_X_OVERLAY (a))
++#define gst_video_overlay_set_window_handle(a,b) gst_x_overlay_set_xwindow_id( \
++                                                    reinterpret_cast<GstXOverlay *>(a), (b) )
++#define GST_VIDEO_OVERLAY(a) reinterpret_cast<GstVideoOverlay *>(a)
++
++// #define GstVideoOverlay GstXOverlay
++
++#include "gstmanager.cxx"
++#include "gstplayer.cxx"
++#include "gstuno.cxx"
++#include "gstwindow.cxx"
+diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
+index d95342a..28e5d34 100644
+--- a/avmedia/source/gstreamer/gstplayer.cxx
++++ b/avmedia/source/gstreamer/gstplayer.cxx
+@@ -33,7 +33,6 @@
+ #include <vcl/syschild.hxx>
+ #include <vcl/sysdata.hxx>
+ 
+-
+ #include "gstplayer.hxx"
+ #include "gstframegrabber.hxx"
+ #include "gstwindow.hxx"
+@@ -45,8 +44,14 @@
+ #define AVMEDIA_GST_PLAYER_IMPLEMENTATIONNAME "com.sun.star.comp.avmedia.Player_GStreamer"
+ #define AVMEDIA_GST_PLAYER_SERVICENAME "com.sun.star.media.Player_GStreamer"
+ 
+-#if OSL_DEBUG_LEVEL > 2
+-#define DBG OSL_TRACE
++#ifdef AVMEDIA_GST_0_10
++#  define AVVERSION "gst 0.10: "
++#else
++#  define AVVERSION "gst 1.0: "
++#endif
++
++#if 1 //OSL_DEBUG_LEVEL > 2
++#define DBG(...) do { fprintf (stderr, "%s", AVVERSION); fprintf (stderr, __VA_ARGS__); fprintf (stderr, "\n"); } while (0);
+ #else
+ #define DBG(...)
+ #endif
+@@ -83,15 +88,22 @@ Player::Player( const uno::Reference< lang::XMultiServiceFactory >& rxMgr ) :
+ 
+     mbInitialized = gst_init_check( &argc, &argv, &pError );
+ 
++    DBG( "%p Player::Player", this );
++
+     if (pError != NULL)
++    {
+         // TODO: thow an exception?
++        DBG( "%p Player::Player error '%s'", this, pError->message );
+         g_error_free (pError);
++    }
+ }
+ 
+ // ------------------------------------------------------------------------------
+ 
+ Player::~Player()
+ {
++    DBG( "%p Player::~Player", this );
++
+     // Release the elements and pipeline
+     if( mbInitialized )
+     {
+@@ -160,7 +172,7 @@ static gboolean wrap_element_query_position (GstElement *element, GstFormat form
+ {
+ #ifdef AVMEDIA_GST_0_10
+     GstFormat my_format = format;
+-    return gst_element_query_position( mpPlaybin, &my_format, cur) && my_format == format && *cur > 0L;
++    return gst_element_query_position( element, &my_format, cur) && my_format == format && *cur > 0L;
+ #else
+     return gst_element_query_position( element, format, cur );
+ #endif
+@@ -170,7 +182,7 @@ static gboolean wrap_element_query_duration (GstElement *element, GstFormat form
+ {
+ #ifdef AVMEDIA_GST_0_10
+     GstFormat my_format = format;
+-    return gst_element_query_duration( mpPlaybin, &my_format, duration) && my_format == format && *duration > 0L;
++    return gst_element_query_duration( element, &my_format, duration) && my_format == format && *duration > 0L;
+ #else
+     return gst_element_query_duration( element, format, duration );
+ #endif
+@@ -178,21 +190,27 @@ static gboolean wrap_element_query_duration (GstElement *element, GstFormat form
+ 
+ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+ {
+-    DBG( "%p processSyncMessage: %s", this, GST_MESSAGE_TYPE_NAME( message ) );
++//    DBG( "%p processSyncMessage has handle: %s", this, GST_MESSAGE_TYPE_NAME( message ) );
+ 
+-#if OSL_DEBUG_LEVEL > 0
++#if 1 // OSL_DEBUG_LEVEL > 0
+     if ( GST_MESSAGE_TYPE( message ) == GST_MESSAGE_ERROR )
+     {
+         GError* error;
+         gchar* error_debug;
+ 
+         gst_message_parse_error( message, &error, &error_debug );
+-        OSL_TRACE("gstreamer error: '%s' debug: '%s'", error->message, error_debug);
++        fprintf(stderr, "gstreamer error: '%s' debug: '%s'", error->message, error_debug);
+     }
+ #endif
+ 
+-    if (gst_message_has_name (message, "prepare-xwindow-id") && mnWindowID != 0 )
++#ifdef AVMEDIA_GST_0_10
++    if (message->structure &&
++        !strcmp( gst_structure_get_name( message->structure ), "prepare-xwindow-id" ) && mnWindowID != 0 )
++#else
++    if (gst_message_has_name (message, "prepare-window-handle") && mnWindowID != 0 )
++#endif
+     {
++        DBG( "%p processSyncMessage has handle: %s", this, GST_MESSAGE_TYPE_NAME( message ) );
+         if( mpXOverlay )
+             g_object_unref( G_OBJECT ( mpXOverlay ) );
+         mpXOverlay = GST_VIDEO_OVERLAY( GST_MESSAGE_SRC( message ) );
+@@ -208,7 +226,8 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+ 
+             gst_message_parse_state_changed (message, NULL, &newstate, &pendingstate);
+ 
+-            DBG( "%p state change received, new state %d", this, newstate );
++            DBG( "%p state change received, new state %d pending %d", this,
++                 (int)newstate, (int)pendingstate );
+             if( newstate == GST_STATE_PAUSED &&
+                 pendingstate == GST_STATE_VOID_PENDING ) {
+ 
+@@ -280,7 +299,7 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+                     mnWidth = w;
+                     mnHeight = h;
+ 
+-                    DBG( "queried size: %d x %d", mnWidth, mnHeight );
++                    fprintf (stderr, "queried size: %d x %d", mnWidth, mnHeight );
+ 
+                     maSizeCondition.set();
+                 }
+@@ -289,6 +308,7 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+         }
+ #endif
+     } else if( GST_MESSAGE_TYPE( message ) == GST_MESSAGE_ERROR ) {
++        fprintf (stderr, "Error !\n");
+         if( mnWidth == 0 ) {
+             // an error occurred, set condition so that OOo thread doesn't wait for us
+             maSizeCondition.set();
+@@ -353,7 +373,7 @@ bool Player::create( const ::rtl::OUString& rURL )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-void SAL_CALL Player::start(  )
++void SAL_CALL Player::start()
+     throw (uno::RuntimeException)
+ {
+     // set the pipeline state to READY and run the loop
+@@ -366,7 +386,7 @@ void SAL_CALL Player::start(  )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-void SAL_CALL Player::stop(  )
++void SAL_CALL Player::stop()
+     throw (uno::RuntimeException)
+ {
+     // set the pipeline in PAUSED STATE
+@@ -397,7 +417,7 @@ sal_Bool SAL_CALL Player::isPlaying()
+ 
+ // ------------------------------------------------------------------------------
+ 
+-double SAL_CALL Player::getDuration(  )
++double SAL_CALL Player::getDuration()
+     throw (uno::RuntimeException)
+ {
+     // slideshow checks for non-zero duration, so cheat here
+@@ -432,14 +452,13 @@ void SAL_CALL Player::setMediaTime( double fTime )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-double SAL_CALL Player::getMediaTime(  )
++double SAL_CALL Player::getMediaTime()
+     throw (uno::RuntimeException)
+ {
+     double position = 0.0;
+ 
+     if( mpPlaybin ) {
+         // get current position in the stream
+-        GstFormat format = GST_FORMAT_TIME;
+         gint64 gst_position;
+         if( wrap_element_query_position( mpPlaybin, GST_FORMAT_TIME, &gst_position ) )
+             position = gst_position / 1E9;
+@@ -450,7 +469,7 @@ double SAL_CALL Player::getMediaTime(  )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-double SAL_CALL Player::getRate(  )
++double SAL_CALL Player::getRate()
+     throw (uno::RuntimeException)
+ {
+     double rate = 0.0;
+@@ -475,7 +494,7 @@ void SAL_CALL Player::setPlaybackLoop( sal_Bool bSet )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-sal_Bool SAL_CALL Player::isPlaybackLoop(  )
++sal_Bool SAL_CALL Player::isPlaybackLoop()
+     throw (uno::RuntimeException)
+ {
+     // TODO check how to do with GST
+@@ -506,7 +525,7 @@ void SAL_CALL Player::setMute( sal_Bool bSet )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-sal_Bool SAL_CALL Player::isMute(  )
++sal_Bool SAL_CALL Player::isMute()
+     throw (uno::RuntimeException)
+ {
+     return mbMuted;
+@@ -530,7 +549,7 @@ void SAL_CALL Player::setVolumeDB( sal_Int16 nVolumeDB )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-sal_Int16 SAL_CALL Player::getVolumeDB(  )
++sal_Int16 SAL_CALL Player::getVolumeDB()
+     throw (uno::RuntimeException)
+ {
+     sal_Int16 nVolumeDB(0);
+@@ -548,7 +567,7 @@ sal_Int16 SAL_CALL Player::getVolumeDB(  )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-awt::Size SAL_CALL Player::getPreferredPlayerWindowSize(  )
++awt::Size SAL_CALL Player::getPreferredPlayerWindowSize()
+     throw (uno::RuntimeException)
+ {
+     awt::Size aSize( 0, 0 );
+@@ -556,7 +575,7 @@ awt::Size SAL_CALL Player::getPreferredPlayerWindowSize(  )
+     DBG( "%p Player::getPreferredPlayerWindowSize, member %d x %d", this, mnWidth, mnHeight );
+ 
+     TimeValue aTimeout = { 10, 0 };
+-#if OSL_DEBUG_LEVEL > 2
++#if 1 // OSL_DEBUG_LEVEL > 2
+     osl::Condition::Result aResult =
+ #endif
+                                  maSizeCondition.wait( &aTimeout );
+@@ -612,7 +631,7 @@ uno::Reference< ::media::XPlayerWindow > SAL_CALL Player::createPlayerWindow( co
+ 
+ // ------------------------------------------------------------------------------
+ 
+-uno::Reference< media::XFrameGrabber > SAL_CALL Player::createFrameGrabber(  )
++uno::Reference< media::XFrameGrabber > SAL_CALL Player::createFrameGrabber()
+     throw (uno::RuntimeException)
+ {
+     uno::Reference< media::XFrameGrabber > xRet;
+@@ -622,7 +641,7 @@ uno::Reference< media::XFrameGrabber > SAL_CALL Player::createFrameGrabber(  )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-::rtl::OUString SAL_CALL Player::getImplementationName(  )
++::rtl::OUString SAL_CALL Player::getImplementationName()
+     throw (uno::RuntimeException)
+ {
+     return ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( AVMEDIA_GST_PLAYER_IMPLEMENTATIONNAME ) );
+@@ -638,7 +657,7 @@ sal_Bool SAL_CALL Player::supportsService( const ::rtl::OUString& ServiceName )
+ 
+ // ------------------------------------------------------------------------------
+ 
+-uno::Sequence< ::rtl::OUString > SAL_CALL Player::getSupportedServiceNames(  )
++uno::Sequence< ::rtl::OUString > SAL_CALL Player::getSupportedServiceNames()
+     throw (uno::RuntimeException)
+ {
+     uno::Sequence< ::rtl::OUString > aRet(1);
+diff --git a/avmedia/source/gstreamer/gstplayer.hxx b/avmedia/source/gstreamer/gstplayer.hxx
+index b5d7d83..65c3e46 100644
+--- a/avmedia/source/gstreamer/gstplayer.hxx
++++ b/avmedia/source/gstreamer/gstplayer.hxx
+@@ -34,7 +34,7 @@
+ 
+ #include "com/sun/star/media/XPlayer.hdl"
+ 
+-typedef struct _GstXOverlay GstXOverlay;
++typedef struct _GstVideoOverlay GstVideoOverlay;
+ 
+ namespace avmedia { namespace gstreamer {
+ 
+@@ -95,7 +95,7 @@ private:
+     sal_Bool                mbInitialized;
+ 
+     long                    mnWindowID;
+-    GstXOverlay*            mpXOverlay;
++    GstVideoOverlay*        mpXOverlay;
+     gint64                  mnDuration;
+     int                     mnWidth;
+     int                     mnHeight;
+diff --git a/avmedia/source/gstreamer/gstuno.cxx b/avmedia/source/gstreamer/gstuno.cxx
+index 8095353..affb8eb2 100644
+--- a/avmedia/source/gstreamer/gstuno.cxx
++++ b/avmedia/source/gstreamer/gstuno.cxx
+@@ -26,6 +26,7 @@
+  *
+  ************************************************************************/
+ 
++#include "mediamisc.hxx"
+ #include "gstmanager.hxx"
+ 
+ using namespace ::com::sun::star;
+@@ -34,6 +35,14 @@ using namespace ::com::sun::star;
+ // - factory methods -
+ // -------------------
+ 
++#ifdef AVMEDIA_GST_0_10
++#  define IMPL_NAME    "com.sun.star.comp.media.Manager_GStreamer_0_10"
++#  define SERVICE_NAME AVMEDIA_MANAGER_SERVICE_NAME_OLD // "com.sun.star.comp.avmedia.Manager_GStreamer_0_10"
++#else
++#  define IMPL_NAME    "com.sun.star.comp.media.Manager_GStreamer"
++#  define SERVICE_NAME AVMEDIA_MANAGER_SERVICE_NAME // "com.sun.star.comp.avmedia.Manager_GStreamer"
++#endif
++
+ static uno::Reference< uno::XInterface > SAL_CALL create_MediaPlayer( const uno::Reference< lang::XMultiServiceFactory >& rxFact )
+ {
+     return uno::Reference< uno::XInterface >( *new ::avmedia::gstreamer::Manager( rxFact ) );
+@@ -44,14 +53,12 @@ extern "C" SAL_DLLPUBLIC_EXPORT void* SAL_CALL component_getFactory( const sal_C
+     uno::Reference< lang::XSingleServiceFactory > xFactory;
+     void*                                   pRet = 0;
+ 
+-    if( rtl_str_compare( pImplName, "com.sun.star.comp.media.Manager_GStreamer" ) == 0 )
++    if( rtl_str_compare( pImplName, IMPL_NAME ) == 0 )
+     {
+-        const ::rtl::OUString aServiceName( ::rtl::OUString("com.sun.star.media.Manager_GStreamer" ) );
+-
++        const ::rtl::OUString aServiceName( SERVICE_NAME );
+         xFactory = uno::Reference< lang::XSingleServiceFactory >( ::cppu::createSingleFactory(
+                         reinterpret_cast< lang::XMultiServiceFactory* >( pServiceManager ),
+-                        ::rtl::OUString("com.sun.star.comp.media.Manager_GStreamer" ),
+-                        create_MediaPlayer, uno::Sequence< ::rtl::OUString >( &aServiceName, 1 ) ) );
++                        IMPL_NAME, create_MediaPlayer, uno::Sequence< ::rtl::OUString >( &aServiceName, 1 ) ) );
+     }
+ 
+     if( xFactory.is() )
+diff --git a/avmedia/source/inc/mediamisc.hxx b/avmedia/source/inc/mediamisc.hxx
+index 8f129bb..f042629 100644
+--- a/avmedia/source/inc/mediamisc.hxx
++++ b/avmedia/source/inc/mediamisc.hxx
+@@ -30,23 +30,14 @@ class ResMgr;
+ 
+ #define AVMEDIA_RESID( nId ) ResId( nId, * ::avmedia::GetResMgr() )
+ 
+-#ifdef GSTREAMER
+-#define AVMEDIA_MANAGER_SERVICE_NAME "com.sun.star.comp.avmedia.Manager_GStreamer"
+-#else
+ #ifdef WNT
+-
+ #define AVMEDIA_MANAGER_SERVICE_NAME "com.sun.star.comp.avmedia.Manager_DirectX"
+-
+ #else
+ #ifdef QUARTZ
+-
+ #define AVMEDIA_MANAGER_SERVICE_NAME "com.sun.star.comp.avmedia.Manager_QuickTime"
+-
+ #else
+-
++#define AVMEDIA_MANAGER_SERVICE_NAME_OLD "com.sun.star.comp.avmedia.Manager_GStreamer_0_10"
+ #define AVMEDIA_MANAGER_SERVICE_NAME "com.sun.star.comp.avmedia.Manager_GStreamer"
+-
+-#endif
+ #endif
+ #endif
+ 
+diff --git a/avmedia/source/viewer/mediawindowbase_impl.cxx b/avmedia/source/viewer/mediawindowbase_impl.cxx
+index 79e0bdf..fd2ffba 100644
+--- a/avmedia/source/viewer/mediawindowbase_impl.cxx
++++ b/avmedia/source/viewer/mediawindowbase_impl.cxx
+@@ -72,10 +72,25 @@ uno::Reference< media::XPlayer > MediaWindowBaseImpl::createPlayer( const ::rtl:
+     {
+         try
+         {
++            uno::Reference< ::com::sun::star::media::XManager > xManager;
+ 
+-            uno::Reference< ::com::sun::star::media::XManager > xManager(
+-                xFactory->createInstance( ::rtl::OUString( AVMEDIA_MANAGER_SERVICE_NAME ) ),
+-                uno::UNO_QUERY );
++            try {
++                xManager = uno::Reference< ::com::sun::star::media::XManager >(
++                        xFactory->createInstance( AVMEDIA_MANAGER_SERVICE_NAME ),
++                        uno::UNO_QUERY );
++            } catch ( const uno::Exception &e ) {
++            }
++
++// a fallback path just for gstreamer which has
++// two significant versions deployed at once ...
++#ifdef AVMEDIA_MANAGER_SERVICE_NAME_OLD
++            if( !xManager.is() )
++            {
++                xManager = uno::Reference< ::com::sun::star::media::XManager >(
++                        xFactory->createInstance( AVMEDIA_MANAGER_SERVICE_NAME_OLD ),
++                        uno::UNO_QUERY );
++            }
++#endif
+ 
+             if( xManager.is() )
+             {
+diff --git a/config_host.mk.in b/config_host.mk.in
+index 4fb80d1..42355cc 100644
+--- a/config_host.mk.in
++++ b/config_host.mk.in
+@@ -112,6 +112,7 @@ export ENABLE_GIO=@ENABLE_GIO@
+ export ENABLE_GNOMEVFS=@ENABLE_GNOMEVFS@
+ export ENABLE_GRAPHITE=@ENABLE_GRAPHITE@
+ export ENABLE_GSTREAMER=@ENABLE_GSTREAMER@
++export ENABLE_GSTREAMER_0_10=@ENABLE_GSTREAMER_0_10@
+ export ENABLE_GTK3=@ENABLE_GTK3@
+ export ENABLE_GTK=@ENABLE_GTK@
+ export ENABLE_GTK_PRINT=@ENABLE_GTK_PRINT@
+@@ -182,6 +183,8 @@ export GRAPHITE_LIBS=@GRAPHITE_LIBS@
+ @x_Cygwin@ export GREP=@WIN_GREP@
+ export GSTREAMER_CFLAGS=@GSTREAMER_CFLAGS@
+ export GSTREAMER_LIBS=@GSTREAMER_LIBS@
++export GSTREAMER_0_10_CFLAGS=@GSTREAMER_0_10_CFLAGS@
++export GSTREAMER_0_10_LIBS=@GSTREAMER_0_10_LIBS@
+ export GTHREAD_CFLAGS=@GTHREAD_CFLAGS@
+ export GTHREAD_LIBS=@GTHREAD_LIBS@
+ export GTK3_CFLAGS=@GTK3_CFLAGS@
+diff --git a/configure.in b/configure.in
+index 651963a..46b9892 100644
+--- a/configure.in
++++ b/configure.in
+@@ -171,6 +171,7 @@ case "$host_os" in
+ solaris*)
+     test_gtk=yes
+     build_gstreamer=yes
++    build_gstreamer_0_10=yes
+     test_tde=yes
+     test_kde=yes
+     test_freetype=yes
+@@ -200,6 +201,7 @@ solaris*)
+ linux-gnu*|k*bsd*-gnu*)
+     test_gtk=yes
+     build_gstreamer=yes
++    build_gstreamer_0_10=yes
+     test_tde=yes
+     test_kde=yes
+     test_kde4=yes
+@@ -287,6 +289,7 @@ darwin*) # Mac OS X or iOS
+ freebsd*)
+     test_gtk=yes
+     build_gstreamer=yes
++    build_gstreamer_0_10=yes
+     test_tde=yes
+     test_kde=yes
+     test_kde4=yes
+@@ -316,6 +319,7 @@ freebsd*)
+ *netbsd*)
+     test_gtk=yes
+     build_gstreamer=yes
++    build_gstreamer_0_10=yes
+     test_tde=no
+     test_kde=no
+     test_kde4=yes
+@@ -344,6 +348,7 @@ openbsd*)
+ dragonfly*)
+     test_gtk=yes
+     build_gstreamer=yes
++    build_gstreamer_0_10=yes
+     test_tde=yes
+     test_kde=yes
+     test_kde4=yes
+@@ -354,6 +359,7 @@ dragonfly*)
+ 
+ linux-androideabi*)
+     build_gstreamer=no
++    build_gstreamer_0_10=no
+     test_cups=no
+     test_fontconfig=no
+     test_freetype=no
+@@ -855,9 +861,14 @@ AC_ARG_ENABLE(randr-link,
+ ,enable_randr_link=yes)
+ 
+ AC_ARG_ENABLE(gstreamer,
+-    AS_HELP_STRING([--disable-gstreamer],
++    AS_HELP_STRING([--enable-gstreamer],
++        [Enable building with the new gstreamer 1.0 avmedia backend.]),
++,enable_gstreamer=no)
++
++AC_ARG_ENABLE(gstreamer-0-10,
++    AS_HELP_STRING([--disable-gstreamer-0-10],
+         [Disable building the gstreamer avmedia backend.]),
+-,enable_gstreamer=yes)
++,enable_gstreamer_0_10=yes)
+ 
+ AC_ARG_ENABLE(neon,
+     AS_HELP_STRING([--disable-neon],
+@@ -3703,6 +3714,7 @@ if test "$enable_headless" = "yes"; then
+     test_fontconfig=yes
+     test_gtk=no
+     build_gstreamer=no
++    build_gstreamer_0_10=no
+     test_tde=no
+     test_kde=no
+     test_kde4=no
+@@ -8936,20 +8948,39 @@ dnl ===================================================================
+ 
+ ENABLE_GSTREAMER=""
+ 
+-if test  "$build_gstreamer" = "yes"; then
++if test "$build_gstreamer" = "yes"; then
+ 
+     AC_MSG_CHECKING([whether to enable the GStreamer avmedia backend])
+     if test "x$enable_gstreamer" != "xno"; then
+         ENABLE_GSTREAMER="TRUE"
+         AC_MSG_RESULT([yes])
+-        PKG_CHECK_MODULES( GSTREAMER, gstreamer-0.10 gstreamer-plugins-base-0.10 )
++        PKG_CHECK_MODULES( GSTREAMER, gstreamer-1.0 gstreamer-plugins-base-1.0 gstreamer-video-1.0 )
+     else
+         AC_MSG_RESULT([no])
+     fi
+ fi
+-
++AC_SUBST(GSTREAMER_CFLAGS)
++AC_SUBST(GSTREAMER_LIBS)
+ AC_SUBST(ENABLE_GSTREAMER)
+ 
++
++ENABLE_GSTREAMER_0_10=""
++if test "$build_gstreamer_0_10" = "yes"; then
++
++    AC_MSG_CHECKING([whether to enable the GStreamer avmedia backend])
++    if test "x$enable_gstreamer_0_10" != "xno"; then
++        ENABLE_GSTREAMER_0_10="TRUE"
++        AC_MSG_RESULT([yes])
++        PKG_CHECK_MODULES( GSTREAMER_0_10, gstreamer-0.10 gstreamer-plugins-base-0.10 )
++    else
++        AC_MSG_RESULT([no])
++    fi
++fi
++
++AC_SUBST(GSTREAMER_0_10_CFLAGS)
++AC_SUBST(GSTREAMER_0_10_LIBS)
++AC_SUBST(ENABLE_GSTREAMER_0_10)
++
+ dnl ===================================================================
+ dnl Check whether the OpenGL libraries are available
+ dnl ===================================================================
+diff --git a/distro-configs/LibreOfficeAndroid.conf b/distro-configs/LibreOfficeAndroid.conf
+index d789052..8acf153 100644
+--- a/distro-configs/LibreOfficeAndroid.conf
++++ b/distro-configs/LibreOfficeAndroid.conf
+@@ -6,6 +6,7 @@
+ --disable-ext-report-builder
+ --disable-gconf
+ --disable-gnome-vfs
++--disable-gstreamer-0-10
+ --disable-gstreamer
+ --disable-lockdown
+ --disable-mozilla
+diff --git a/distro-configs/LibreOfficeLinux.conf b/distro-configs/LibreOfficeLinux.conf
+index 21342e4..8e0ff3e 100644
+--- a/distro-configs/LibreOfficeLinux.conf
++++ b/distro-configs/LibreOfficeLinux.conf
+@@ -26,7 +26,7 @@
+ --enable-odk
+ --enable-lockdown
+ --enable-kde
+---enable-gstreamer
++--enable-gstreamer-0-10
+ --enable-evolution2
+ --enable-gnome-vfs
+ --enable-ext-wiki-publisher
+diff --git a/distro-configs/LibreOfficeOpenBSD.conf b/distro-configs/LibreOfficeOpenBSD.conf
+index f55550a..b03a03f 100644
+--- a/distro-configs/LibreOfficeOpenBSD.conf
++++ b/distro-configs/LibreOfficeOpenBSD.conf
+@@ -11,7 +11,7 @@
+ --disable-randr-link
+ --disable-unix-qstart-libpng
+ --enable-binfilter
+---enable-gstreamer
++--enable-gstreamer-0-10
+ --enable-lockdown
+ --enable-ext-presenter-minimizer
+ --enable-ext-pdfimport
+diff --git a/distro-configs/LibreOfficeiOS.conf b/distro-configs/LibreOfficeiOS.conf
+index 705cb63..67afb67 100644
+--- a/distro-configs/LibreOfficeiOS.conf
++++ b/distro-configs/LibreOfficeiOS.conf
+@@ -7,6 +7,7 @@
+ --disable-extension-integration
+ --disable-gconf
+ --disable-gnome-vfs
++--disable-gstreamer-0-10
+ --disable-gstreamer
+ --disable-librsvg
+ --disable-lockdown
+diff --git a/distro-configs/OxygenOfficeLinux.conf b/distro-configs/OxygenOfficeLinux.conf
+index a9203f2..62cd1d6 100644
+--- a/distro-configs/OxygenOfficeLinux.conf
++++ b/distro-configs/OxygenOfficeLinux.conf
+@@ -73,7 +73,7 @@
+ --without-junit
+ --with-helppack-integration
+ --enable-odk
+---enable-gstreamer
++--enable-gstreamer-0-10
+ --enable-graphite
+ --enable-dependency-tracking
+ --enable-python=internal
+diff --git a/postprocess/packcomponents/makefile.mk b/postprocess/packcomponents/makefile.mk
+index 09e296b..572d9c2 100644
+--- a/postprocess/packcomponents/makefile.mk
++++ b/postprocess/packcomponents/makefile.mk
+@@ -403,6 +403,10 @@ my_components += component/connectivity/source/drivers/evoab2/evoab
+ my_components += component/avmedia/source/gstreamer/avmediagstreamer
+ .END
+ 
++.IF "$(OS)" != "WNT" && "$(ENABLE_GSTREAMER_0_10)" != ""
++my_components += component/avmedia/source/gstreamer/avmediagstreamer_0_10
++.END
++
+ .INCLUDE: target.mk
+ 
+ ALLTAR : $(MISC)/services.rdb
+diff --git a/scp2/InstallModule_ooo.mk b/scp2/InstallModule_ooo.mk
+index 0c49414..b6b2a0e 100644
+--- a/scp2/InstallModule_ooo.mk
++++ b/scp2/InstallModule_ooo.mk
+@@ -152,6 +152,9 @@ $(eval $(call gb_InstallModule_add_defs,scp2/ooo,\
+ 	$(if $(filter TRUE,$(ENABLE_GSTREAMER)),\
+ 		-DGSTREAMER \
+ 	) \
++	$(if $(filter TRUE,$(ENABLE_GSTREAMER_0_10)),\
++		-DGSTREAMER_0_10 \
++	) \
+ 	$(if $(WINDOWS_SDK_HOME),\
+ 		-DHAVE_WINDOWS_SDK \
+ 	) \
+diff --git a/scp2/source/ooo/file_library_ooo.scp b/scp2/source/ooo/file_library_ooo.scp
+index 66c50e2..40466b3 100644
+--- a/scp2/source/ooo/file_library_ooo.scp
++++ b/scp2/source/ooo/file_library_ooo.scp
+@@ -1415,7 +1415,11 @@ STD_LIB_FILE( gid_File_Lib_AVMedia, avmedia )
+ 
+ #ifdef GSTREAMER
+ SPECIAL_LIB_FILE_PATCH( gid_File_Lib_AVMediaGStreamer, avmediagst )
+-#elif defined WNT
++#endif
++#ifdef GSTREAMER_0_10
++SPECIAL_LIB_FILE_PATCH( gid_File_Lib_AVMediaGStreamer_0_10, avmediagst_0_10 )
++#endif
++#if defined WNT
+ #ifdef ENABLE_DIRECTX
+ SPECIAL_LIB_FILE( gid_File_Lib_AVMediaWin, avmediawin )
+ #endif
+diff --git a/scp2/source/ooo/module_hidden_ooo.scp b/scp2/source/ooo/module_hidden_ooo.scp
+index 76e062b..ef4c59b 100644
+--- a/scp2/source/ooo/module_hidden_ooo.scp
++++ b/scp2/source/ooo/module_hidden_ooo.scp
+@@ -203,15 +203,15 @@ Module gid_Module_Root_Files_4
+ 	gid_File_Lib_Charttools,
+ 	gid_File_Lib_Ctl,
+ 	gid_File_Lib_Cui,
+-    gid_File_Lib_Sdbt,
+-    gid_File_Lib_Dbmm,
++	gid_File_Lib_Sdbt,
++	gid_File_Lib_Dbmm,
+ 	gid_File_Lib_Dba,
+ 	gid_File_Lib_Dbase2,
+ 	gid_File_Lib_Dbaxml,
+ 	gid_File_Lib_Dbt,
+ 	gid_File_Lib_Dbfile,
+ 	gid_File_Lib_Drawinglayer,
+-        gid_File_Lib_Editeng,
++	gid_File_Lib_Editeng,
+ 	gid_File_Lib_Flat,
+ 	gid_File_Lib_For,
+ 	gid_File_Lib_Forui,
+@@ -250,15 +250,16 @@ Module gid_Module_Root_Files_4
+ 	gid_File_Lib_Svx,
+ 	gid_File_Lib_AVMedia,
+ 	gid_File_Lib_AVMediaWin,
+-    gid_File_Lib_AVMediaGStreamer,
++	gid_File_Lib_AVMediaGStreamer,
++	gid_File_Lib_AVMediaGStreamer_0_10,
+ 	gid_File_Lib_BaseGfx,
+-    gid_File_Lib_Merged,
++	gid_File_Lib_Merged,
+ 	gid_File_Lib_Sysdtrans,
+ 	gid_File_Lib_Sw,
+ 	gid_File_Lib_TextConversionDlgs,
+ 	gid_File_Lib_Tk,
+-    gid_File_Lib_Acc,
+-    gid_File_Lib_BaseBmp,
++	gid_File_Lib_Acc,
++	gid_File_Lib_BaseBmp,
+ 	gid_File_Lib_Tools,
+ 	gid_File_Lib_Utl,
+ 	gid_File_Lib_Uui,
+@@ -284,8 +285,8 @@ Module gid_Module_Root_Files_4
+ 	gid_File_Lib_Fwm,
+ 	gid_File_Lib_Lprx2,
+ 	gid_File_Lib_Lprxw,
+-    gid_File_Lib_Libtextcat,
+-    gid_File_Lib_Guesslang,
++	gid_File_Lib_Libtextcat,
++	gid_File_Lib_Guesslang,
+ 	gid_File_Lib_Tfu);
+ End
+ 
+diff --git a/svx/source/sdr/contact/viewcontact.cxx b/svx/source/sdr/contact/viewcontact.cxx
+index 3f1f986..b4dec00 100644
+--- a/svx/source/sdr/contact/viewcontact.cxx
++++ b/svx/source/sdr/contact/viewcontact.cxx
+@@ -269,7 +269,7 @@ namespace sdr
+ 
+         drawinglayer::primitive2d::Primitive2DSequence ViewContact::createViewIndependentPrimitive2DSequence() const
+         {
+-            // This is the default impelemtation and should never be called (see header). If this is called,
++            // This is the default implementation and should never be called (see header). If this is called,
+             // someone implemented a ViewContact (VC) visualisation object without defining the visualisation by
+             // providing a seqence of primitives -> which cannot be correct.
+             // Since we have no access to any known model data here, the default implementation creates a yellow placeholder
+-- 
+1.7.11.4
+

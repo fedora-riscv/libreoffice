@@ -1,0 +1,45 @@
+From 9a54dc0d4db8eab09c9eee01be09815276da3088 Mon Sep 17 00:00:00 2001
+From: Michael Meeks <michael.meeks@suse.com>
+Date: Tue, 18 Sep 2012 17:29:31 +0100
+Subject: [PATCH 7/7] gstreamer: fix leaking pads.
+
+Conflicts:
+	avmedia/source/gstreamer/gstplayer.cxx
+
+Change-Id: Ie0ffb62c4f75f8af9c2268c07dfabf14ba036115
+---
+ avmedia/source/gstreamer/gstplayer.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
+index 4bcca8e..448ea2d 100644
+--- a/avmedia/source/gstreamer/gstplayer.cxx
++++ b/avmedia/source/gstreamer/gstplayer.cxx
+@@ -271,6 +271,7 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+                                 gst_structure_get_int( pStructure, "height", &mnHeight );
+                                 DBG( "queried size: %d x %d", mnWidth, mnHeight );
+                             }
++                            g_object_unref (pPad);
+                         }
+                     }
+ 
+@@ -297,7 +298,7 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+ 
+                 caps = gst_pad_get_current_caps( pad );
+ 
+-                if( gst_structure_get( gst_caps_get_structure (caps, 0),
++                if( gst_structure_get( gst_caps_get_structure( caps, 0 ),
+                                        "width", G_TYPE_INT, &w,
+                                        "height", G_TYPE_INT, &h,
+                                        NULL ) ) {
+@@ -309,6 +310,7 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+                     maSizeCondition.set();
+                 }
+                 gst_caps_unref( caps );
++                g_object_unref( pad );
+             }
+         }
+ #endif
+-- 
+1.7.11.4
+

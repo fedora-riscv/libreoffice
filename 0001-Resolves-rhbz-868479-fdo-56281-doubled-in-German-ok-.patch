@@ -21,15 +21,16 @@ diff --git a/vcl/source/control/button.cxx b/vcl/source/control/button.cxx
 index 373143b..d2336ec 100644
 --- a/vcl/source/control/button.cxx
 +++ b/vcl/source/control/button.cxx
-@@ -157,12 +157,15 @@ XubString Button::GetStandardText( StandardButtonType eButton )
+@@ -152,13 +152,15 @@ XubString Button::GetStandardText( StandardButtonType eButton )
          sal_uInt32 nResId = aResIdAry[(sal_uInt16)eButton].nResId;
-         aText = ResId(nResId, *pResMgr).toString();
- 
+         ResId aResId( nResId, *pResMgr );
+         aText = String( aResId );
+-
 -        // Windows (apparently) has some magic auto-accelerator evil around
 -        // ok / cancel so add this only for Unix
 -#ifdef UNX
 -        if( nResId == SV_BUTTONTEXT_OK || nResId == SV_BUTTONTEXT_CANCEL )
--            aText.Insert( rtl::OUString("~"), 0 );
+-            aText.Insert( String::CreateFromAscii("~"), 0 );
 +        if (nResId == SV_BUTTONTEXT_OK || nResId == SV_BUTTONTEXT_CANCEL)
 +        {
 +#ifndef WNT
@@ -42,6 +43,3 @@ index 373143b..d2336ec 100644
      }
      else
      {
--- 
-1.7.11.7
-

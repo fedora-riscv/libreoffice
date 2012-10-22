@@ -36,8 +36,8 @@ index 373143b..d2336ec 100644
 +#ifndef WNT
 +            // Windows (apparently) has some magic auto-accelerator evil around
 +            // ok / cancel so add accelerators only for Unix
-+            if (aText.Search('~') == STRING_NOTFOUND)
-+                aText.Insert(rtl::OUString(RTL_CONSTASCII_STRINGPARAM("~")), 0);
++            if (aText.Search(sal_Unicode('~')) == STRING_NOTFOUND)
++                aText.Insert( String::CreateFromAscii("~"), 0 );
  #endif
 +        }
      }

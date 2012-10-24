@@ -33,8 +33,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -178,7 +178,6 @@ Patch18: 0004-tweak-old-school-gstreamer-link-line.patch
 Patch19: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
 Patch20: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
 Patch21: 0007-gstreamer-fix-leaking-pads.patch
-Patch22: 0001-Resolves-rhbz-868479-fdo-56281-doubled-in-German-ok-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -796,7 +795,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
 %patch20 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
 %patch21 -p1 -b .gstreamer-fix-leaking-pads.patch
-%patch22 -p1 -b .rhbz-868479-fdo-56281-doubled-in-German-ok-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2028,6 +2026,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Oct 24 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-1
+- 3.6.3 rc2
+- drop integrated 0001-Resolves-rhbz-868479-fdo-56281-doubled-in-German-ok-.patch
+
 * Mon Oct 22 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.1-3
 - Resolves: rhbz#868479 guard against duplicated ~ in OK/Cancel
 

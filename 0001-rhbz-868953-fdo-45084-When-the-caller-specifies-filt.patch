@@ -1,0 +1,76 @@
+From dc9b4a29f1928fabcd4094942d32bc5985091838 Mon Sep 17 00:00:00 2001
+Message-Id: <dc9b4a29f1928fabcd4094942d32bc5985091838.1351006472.git.erack@redhat.com>
+From: Kohei Yoshida <kohei.yoshida@gmail.com>
+Date: Tue, 22 May 2012 12:55:22 -0400
+Subject: [PATCH] rhbz#868953 fdo#45084 When the caller specifies filter type,
+ stick to it
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+and don't overwrite it.
+
+(cherry picked from commit 552bebe6fa27fa58d07d87283a4b24e6052ab3d4)
+
+Conflicts:
+
+	filter/source/config/cache/typedetection.cxx
+
+Change-Id: I35a3efc506bbcc33ea4c3d2466929f8227dae102
+Signed-off-by: Eike Rathke <erack@redhat.com>
+---
+ filter/source/config/cache/typedetection.cxx |   19 ++++++++++++-------
+ 1 files changed, 12 insertions(+), 7 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-rhbz-868953-fdo-45084-When-the-caller-specifies-filt.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-rhbz-868953-fdo-45084-When-the-caller-specifies-filt.patch"
+
+diff --git a/filter/source/config/cache/typedetection.cxx b/filter/source/config/cache/typedetection.cxx
+index 25b3742..5b73b89 100644
+--- a/filter/source/config/cache/typedetection.cxx
++++ b/filter/source/config/cache/typedetection.cxx
+@@ -143,9 +143,18 @@ TypeDetection::~TypeDetection()
+     css::uno::Reference< css::util::XURLTransformer > xParser(m_xSMGR->createInstance(SERVICE_URLTRANSFORMER), css::uno::UNO_QUERY);
+     xParser->parseStrict(aURL);
+ 
+-    //*******************************************
+-    // preselected filter, type or document service?
+-    // use it as first "flat" detected type later!
++    rtl::OUString aSelectedFilter = stlDescriptor.getUnpackedValueOrDefault(
++        comphelper::MediaDescriptor::PROP_FILTERNAME(), rtl::OUString());
++    if (!aSelectedFilter.isEmpty())
++    {
++        // Caller specified the filter type.  Honor it.  Just get the default
++        // type for that filter, and bail out.
++        if (impl_validateAndSetFilterOnDescriptor(stlDescriptor, aSelectedFilter))
++            return stlDescriptor[comphelper::MediaDescriptor::PROP_TYPENAME()].get<rtl::OUString>();
++    }
++
++    // preselected type or document service? use it as first "flat" detected
++    // type later!
+     FlatDetection lFlatTypes;
+     impl_getPreselection(aURL, stlDescriptor, lFlatTypes);
+ 
+@@ -690,10 +699,6 @@ void TypeDetection::impl_getPreselection(const css::util::URL&                aP
+     if (sSelectedType.getLength())
+         impl_getPreselectionForType(sSelectedType, aParsedURL, rFlatTypes);
+ 
+-    ::rtl::OUString sSelectedFilter = rDescriptor.getUnpackedValueOrDefault(::comphelper::MediaDescriptor::PROP_FILTERNAME(), ::rtl::OUString());
+-    if (sSelectedFilter.getLength())
+-        impl_getPreselectionForFilter(sSelectedFilter, aParsedURL, rFlatTypes);
+-
+     ::rtl::OUString sSelectedDoc = rDescriptor.getUnpackedValueOrDefault(::comphelper::MediaDescriptor::PROP_DOCUMENTSERVICE(), ::rtl::OUString());
+     if (sSelectedDoc.getLength())
+         impl_getPreselectionForDocumentService(sSelectedDoc, aParsedURL, rFlatTypes);
+
+--------------erAck-patch-parts--
+
+

@@ -1,0 +1,214 @@
+From db698b1878a38c732e73bf0e5ab06368b1a5f29a Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 19 Sep 2012 12:54:24 +0200
+Subject: [PATCH 1/4] convert java XSL transformer into extension
+
+Change-Id: Ided6c480969764073056830722c8996e0df52285
+(cherry picked from commit 25113cd050d931b0e195fda6d6da9864a575070e)
+---
+ filter/Extension_xslt2_transformer.mk          | 18 +++++++++++++++++
+ filter/Module_filter.mk                        |  1 +
+ filter/source/xsltfilter/components.rdb        |  8 ++++++++
+ filter/source/xsltfilter/description-en-US.txt |  1 +
+ filter/source/xsltfilter/description.xml       | 28 ++++++++++++++++++++++++++
+ filter/source/xsltfilter/manifest.xml          |  6 ++++++
+ postprocess/packcomponents/makefile.mk         |  1 -
+ scp2/InstallModule_ooo.mk                      |  3 ---
+ scp2/source/ooo/common_brand.scp               |  3 ---
+ scp2/source/ooo/file_library_ooo.scp           |  1 -
+ scp2/source/ooo/file_ooo.scp                   |  6 ------
+ scp2/source/ooo/module_hidden_ooo.scp          |  1 -
+ 12 files changed, 62 insertions(+), 15 deletions(-)
+ create mode 100644 filter/Extension_xslt2_transformer.mk
+ create mode 100644 filter/source/xsltfilter/components.rdb
+ create mode 100644 filter/source/xsltfilter/description-en-US.txt
+ create mode 100644 filter/source/xsltfilter/description.xml
+ create mode 100644 filter/source/xsltfilter/manifest.xml
+
+diff --git a/filter/Extension_xslt2_transformer.mk b/filter/Extension_xslt2_transformer.mk
+new file mode 100644
+index 0000000..ab239d8
+--- /dev/null
++++ b/filter/Extension_xslt2_transformer.mk
+@@ -0,0 +1,18 @@
++# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
++#
++# This file is part of the LibreOffice project.
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++
++$(eval $(call gb_Extension_Extension,xslt2-transformer,filter/source/xsltfilter))
++
++$(eval $(call gb_Extension_add_files,xslt2-transformer,,\
++    $(call gb_Jar_get_outdir_target,saxon9) \
++    $(call gb_Jar_get_outdir_target,XSLTFilter) \
++	$(SRCDIR)/filter/source/xsltfilter/components.rdb \
++))
++
++# vim: set noet sw=4 ts=4:
+diff --git a/filter/Module_filter.mk b/filter/Module_filter.mk
+index 922d4f5..9c18157 100644
+--- a/filter/Module_filter.mk
++++ b/filter/Module_filter.mk
+@@ -72,6 +72,7 @@ $(eval $(call gb_Module_add_targets,filter,\
+ 
+ ifneq ($(SOLAR_JAVA),)
+ $(eval $(call gb_Module_add_targets,filter,\
++	Extension_xslt2_transformer \
+ 	Jar_XSLTFilter \
+ 	Jar_XSLTValidate \
+ ))
+diff --git a/filter/source/xsltfilter/components.rdb b/filter/source/xsltfilter/components.rdb
+new file mode 100644
+index 0000000..080cb7a
+--- /dev/null
++++ b/filter/source/xsltfilter/components.rdb
+@@ -0,0 +1,8 @@
++<?xml version="1.0"?>
++<components xmlns="http://openoffice.org/2010/uno-components">
++    <component loader="com.sun.star.loader.Java2" uri="./XSLTFilter.jar">
++        <implementation name="XSLTransformer">
++            <service name="com.sun.star.comp.JAXTHelper"/>
++        </implementation>
++    </component>
++</components>
+diff --git a/filter/source/xsltfilter/description-en-US.txt b/filter/source/xsltfilter/description-en-US.txt
+new file mode 100644
+index 0000000..88c8abf
+--- /dev/null
++++ b/filter/source/xsltfilter/description-en-US.txt
+@@ -0,0 +1 @@
++The xslt2-transformer implements a transformer for XSLT import/export filters with support for XSLT 2.0.
+diff --git a/filter/source/xsltfilter/description.xml b/filter/source/xsltfilter/description.xml
+new file mode 100644
+index 0000000..ae6abcb
+--- /dev/null
++++ b/filter/source/xsltfilter/description.xml
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<description
++
++    xmlns="http://openoffice.org/extensions/description/2006"
++    xmlns:dep="http://libreoffice.org/extensions/description/2011"
++    xmlns:xlink="http://www.w3.org/1999/xlink">
++
++    <identifier value="org.libreoffice.JavaXSLT2Transformer"/>
++
++    <dependencies>
++        <dep:LibreOffice-minimal-version value="3.7"/>
++    </dependencies>
++
++    <version value="1.0.0"/>
++
++    <publisher>
++        <name xlink:href="http://www.documentfoundation.org" lang="en-US">The Document Foundation</name>
++    </publisher>
++
++    <display-name>
++        <name lang="en-US">XSLT 2.0 transformer</name>
++    </display-name>
++
++    <extension-description>
++      <src xlink:href="description-en-US.txt" lang="en-US" />
++    </extension-description>
++
++</description>
+diff --git a/filter/source/xsltfilter/manifest.xml b/filter/source/xsltfilter/manifest.xml
+new file mode 100644
+index 0000000..a443e65
+--- /dev/null
++++ b/filter/source/xsltfilter/manifest.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE manifest:manifest PUBLIC "-//OpenOffice.org//DTD Manifest 1.0//EN" "Manifest.dtd">
++<manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
++  <manifest:file-entry manifest:media-type="application/vnd.sun.star.uno-components"
++                       manifest:full-path="components.rdb"/>
++</manifest:manifest>
+diff --git a/postprocess/packcomponents/makefile.mk b/postprocess/packcomponents/makefile.mk
+index 09e296b..ccb87f0 100644
+--- a/postprocess/packcomponents/makefile.mk
++++ b/postprocess/packcomponents/makefile.mk
+@@ -288,7 +288,6 @@ my_components += component/framework/util/lomenubar
+ .IF "$(SOLAR_JAVA)" == "TRUE"
+ my_components += \
+     component/xmerge/source/bridge/XMergeBridge \
+-    component/filter/source/xsltfilter/XSLTFilter.jar \
+     component/filter/source/xsltvalidate/XSLTValidate \
+     component/scripting/java/ScriptFramework \
+     component/scripting/java/ScriptProviderForJava \
+diff --git a/scp2/InstallModule_ooo.mk b/scp2/InstallModule_ooo.mk
+index 0c49414..640ea3a 100644
+--- a/scp2/InstallModule_ooo.mk
++++ b/scp2/InstallModule_ooo.mk
+@@ -158,9 +158,6 @@ $(eval $(call gb_InstallModule_add_defs,scp2/ooo,\
+ 	$(if $(filter YES,$(SYSTEM_HSQLDB)),\
+ 		-DHSQLDB_JAR=\""$(call gb_Helper_make_path,$(HSQLDB_JAR))"\" \
+ 	) \
+-	$(if $(filter YES,$(SYSTEM_SAXON)),\
+-		-DSAXON_JAR=\""$(call gb_Helper_make_path,$(SAXON_JAR))"\" \
+-	) \
+ 	$(if $(filter-out YES,$(WITH_MOZILLA)),\
+ 		-DWITHOUT_MOZILLA \
+ 	) \
+diff --git a/scp2/source/ooo/common_brand.scp b/scp2/source/ooo/common_brand.scp
+index 997a142..83c5c21 100644
+--- a/scp2/source/ooo/common_brand.scp
++++ b/scp2/source/ooo/common_brand.scp
+@@ -1259,9 +1259,6 @@ ProfileItem gid_Brand_Profileitem_Fundamental_Ure_Java_Classpath_Urls
+ #ifdef SYSTEM_HSQLDB
+     ValueList1 = HSQLDB_JAR;
+ #endif
+-#ifdef SYSTEM_SAXON
+-    ValueList2 = SAXON_JAR;
+-#endif
+ End
+ 
+ ProfileItem gid_Brand_Profileitem_Fundamental_Ure_Bin_Dir
+diff --git a/scp2/source/ooo/file_library_ooo.scp b/scp2/source/ooo/file_library_ooo.scp
+index 66c50e2..f3448e5 100644
+--- a/scp2/source/ooo/file_library_ooo.scp
++++ b/scp2/source/ooo/file_library_ooo.scp
+@@ -1382,7 +1382,6 @@ STD_LIB_FILE( gid_File_Lib_Textfd, textfd )
+ STD_LIB_FILE( gid_File_Lib_Odfflatxml, odfflatxml )
+ 
+ #ifdef SOLAR_JAVA
+-STD_JAR_FILE( gid_File_Jar_Xsltfilter, XSLTFilter )
+ STD_JAR_FILE( gid_File_Jar_Xsltvalidate, XSLTValidate )
+ #endif
+ 
+diff --git a/scp2/source/ooo/file_ooo.scp b/scp2/source/ooo/file_ooo.scp
+index ebdcf25..e274fc3 100644
+--- a/scp2/source/ooo/file_ooo.scp
++++ b/scp2/source/ooo/file_ooo.scp
+@@ -469,12 +469,6 @@ End
+ 
+ #endif
+ 
+-#ifdef SOLAR_JAVA
+-#ifndef SYSTEM_SAXON
+-STD_JAR_FILE( gid_File_Jar_Saxon, saxon9 )
+-#endif
+-#endif
+-
+ #ifndef AIX
+ #ifndef DISABLE_PYUNO
+ 
+diff --git a/scp2/source/ooo/module_hidden_ooo.scp b/scp2/source/ooo/module_hidden_ooo.scp
+index 76e062b..e00a38b 100644
+--- a/scp2/source/ooo/module_hidden_ooo.scp
++++ b/scp2/source/ooo/module_hidden_ooo.scp
+@@ -129,7 +129,6 @@ Module gid_Module_Root_Files_3
+ 	Default = YES;
+ 	Styles = (HIDDEN_ROOT);
+ 	Files = (gid_File_Dat_Root3,
+-	gid_File_Jar_Saxon,
+ 	gid_File_Jar_Unoil,
+ 	gid_File_Jar_Hsqldb,
+ 	gid_File_Jar_Hsqldb_Sdbc,
+-- 
+1.7.11.7
+

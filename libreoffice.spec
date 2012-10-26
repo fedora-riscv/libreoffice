@@ -34,8 +34,8 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
-License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
+Release:        2%{?libo_prerelease}%{?dist}
+License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -52,11 +52,10 @@ Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff
 Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
 Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source11:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-Source12:       http://hg.services.openoffice.org/binaries/ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
-Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
+Source12:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source13:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 
 # build tools
 BuildRequires: autoconf
@@ -178,6 +177,10 @@ Patch18: 0004-tweak-old-school-gstreamer-link-line.patch
 Patch19: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
 Patch20: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
 Patch21: 0007-gstreamer-fix-leaking-pads.patch
+Patch22: 0001-convert-java-XSL-transformer-into-extension.patch
+Patch23: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
+Patch24: 0003-drop-saxon-based-XSLT-transformer.patch
+Patch25: 0004-remove-all-traces-of-saxon.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -795,6 +798,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
 %patch20 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
 %patch21 -p1 -b .gstreamer-fix-leaking-pads.patch
+%patch22 -p1 -b .convert-java-XSL-transformer-into-extension.patch
+%patch23 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
+%patch24 -p1 -b .drop-saxon-based-XSLT-transformer.patch
+%patch25 -p1 -b .remove-all-traces-of-saxon.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -868,7 +875,6 @@ cp %{SOURCE10} ext_sources
 cp %{SOURCE11} ext_sources
 cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
-cp %{SOURCE14} ext_sources
 
 if ! make VERBOSE=true; then
     # TODO Do we still need this? I think parallel build is reliable
@@ -2026,6 +2032,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Oct 26 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-2
+- Resolves: rhbz#824035 do not bundle saxon
+
 * Wed Oct 24 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-1
 - 3.6.3 rc2
 - drop integrated 0001-Resolves-rhbz-868479-fdo-56281-doubled-in-German-ok-.patch

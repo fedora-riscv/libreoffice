@@ -1306,7 +1306,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/classes/letter.jar
 %{baseinstdir}/program/classes/officebean.jar
 %{baseinstdir}/program/classes/report.jar
-%{baseinstdir}/program/classes/saxon9.jar
 %{baseinstdir}/program/classes/ScriptFramework.jar
 %{baseinstdir}/program/classes/ScriptProviderForJava.jar
 %{baseinstdir}/program/classes/table.jar
@@ -1314,7 +1313,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/classes/web.jar
 %{baseinstdir}/program/classes/XMergeBridge.jar
 %{baseinstdir}/program/classes/xmerge.jar
-%{baseinstdir}/program/classes/XSLTFilter.jar
 %{baseinstdir}/program/classes/XSLTValidate.jar
 %{baseinstdir}/program/cmdmail.uno.so
 %{baseinstdir}/program/libdeployment.so

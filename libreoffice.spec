@@ -4,7 +4,13 @@
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
 # %%define libo_prerelease
+# rhbz#715152 state vendor
+%if 0%{?rhel}
+%define vendoroption --with-vendor="Red Hat, Inc."
+%endif
+%if 0%{?fedora}
 %define vendoroption --with-vendor="The Fedora Project"
+%endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # don't worry about whitespace for now

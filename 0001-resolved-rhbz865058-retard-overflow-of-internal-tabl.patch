@@ -1,0 +1,55 @@
+From fef1b6e42dc22d764140ea0f8e690225c697bb96 Mon Sep 17 00:00:00 2001
+Message-Id: <fef1b6e42dc22d764140ea0f8e690225c697bb96.1351699658.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 26 Oct 2012 18:09:20 +0200
+Subject: [PATCH] resolved rhbz865058 retard overflow of internal table of
+ number formats
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Due to an insane amount of ridiculous "user-defined" number formats the
+internal table may overflow during import, stave off and increase the
+number of available slots to another arbitrary limit.
+(cherry picked from commit 075e9ca0b96f37b3561824c23af60872d6a9d80a)
+
+Conflicts:
+
+	svl/inc/svl/zforlist.hxx
+
+Change-Id: I2fb85c83a65d6c5b3183aeb3a3bda88828473a3c
+Reviewed-on: https://gerrit.libreoffice.org/951
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Tested-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ svl/inc/svl/zforlist.hxx |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch"
+
+diff --git a/svl/inc/svl/zforlist.hxx b/svl/inc/svl/zforlist.hxx
+index 2dfa273..0a70557 100644
+--- a/svl/inc/svl/zforlist.hxx
++++ b/svl/inc/svl/zforlist.hxx
+@@ -63,7 +63,7 @@ namespace rtl {
+     class OUString;
+ }
+ 
+-#define SV_COUNTRY_LANGUAGE_OFFSET  5000    // Max count of formats per country/language
++#define SV_COUNTRY_LANGUAGE_OFFSET 10000    // Max count of formats per country/language
+ #define SV_MAX_ANZ_STANDARD_FORMATE  100    // Max count of builtin default formats per CL
+ 
+ // Format types
+
+--------------erAck-patch-parts--
+
+

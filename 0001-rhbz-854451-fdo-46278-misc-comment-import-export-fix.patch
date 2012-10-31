@@ -1,0 +1,87 @@
+From 89b99a414e38b12df13a097ada1d6f2f72039408 Mon Sep 17 00:00:00 2001
+Message-Id: <89b99a414e38b12df13a097ada1d6f2f72039408.1351714946.git.erack@redhat.com>
+From: Noel Power <noel.power@novell.com>
+Date: Tue, 2 Oct 2012 18:04:55 +0100
+Subject: [PATCH] rhbz#854451 fdo#46278 - misc comment import/export fixes
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+detect whether note/comment is shown on import
+export state of note ( shown/hidden )
+
+parts of Change-Id: I59b446175217479ce7960287aa540df8c6b2b1e
+Signed-off-by: Michael Meeks <michael.meeks@suse.com>
+(cherry picked from commit ebc8ebaff65ac02d410c8e9e39c2776131955cd7)
+
+Conflicts:
+
+	sc/source/filter/oox/commentsbuffer.cxx
+
+Change of sc/source/filter/oox/commentsbuffer.cxx merged to
+oox/source/xls/commentsbuffer.cxx instead.
+
+Change-Id: Ief52da32fcb43d6c066f84205cf2d1cfee6ed126
+Signed-off-by: Eike Rathke <erack@redhat.com>
+---
+ oox/source/export/vmlexport.cxx     |    3 ++-
+ oox/source/xls/commentsbuffer.cxx   |    3 +--
+ sc/source/filter/xcl97/xcl97rec.cxx |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch"
+
+diff --git a/oox/source/export/vmlexport.cxx b/oox/source/export/vmlexport.cxx
+index 554d49f..0b4b470 100644
+--- a/oox/source/export/vmlexport.cxx
++++ b/oox/source/export/vmlexport.cxx
+@@ -662,7 +662,8 @@ void VMLExport::Commit( EscherPropertyContainer& rProps, const Rectangle& rRect
+                 break;
+ 
+             case ESCHER_Prop_fHidden:
+-                m_pShapeStyle->append( ";visibility:hidden" );
++                if ( !it->nPropValue )
++                    m_pShapeStyle->append( ";visibility:hidden" );
+                 break;
+             default:
+ #if OSL_DEBUG_LEVEL > 0
+diff --git a/oox/source/xls/commentsbuffer.cxx b/oox/source/xls/commentsbuffer.cxx
+index 55dd28b..067cafe 100644
+--- a/oox/source/xls/commentsbuffer.cxx
++++ b/oox/source/xls/commentsbuffer.cxx
+@@ -268,8 +268,7 @@ void Comment::finalizeImport()
+                         // position and formatting
+                         pNoteShape->convertFormatting( xAnnoShape );
+                         // visibility
+-                        const ::oox::vml::ClientData* pClientData = pNoteShape->getClientData();
+-                        xAnno->setIsVisible( pClientData && pClientData->mbVisible );
++                        bVisible = pNoteShape->getTypeModel().mbVisible;
+                     }
+                 }
+             break;
+diff --git a/sc/source/filter/xcl97/xcl97rec.cxx b/sc/source/filter/xcl97/xcl97rec.cxx
+index 56f30fe..106d63e 100644
+--- a/sc/source/filter/xcl97/xcl97rec.cxx
++++ b/sc/source/filter/xcl97/xcl97rec.cxx
+@@ -566,7 +566,7 @@ VmlCommentExporter::VmlCommentExporter( sax_fastparser::FSHelperPtr p, ScAddress
+ void VmlCommentExporter::Commit( EscherPropertyContainer& rProps, const Rectangle& rRect )
+ {
+     lcl_FillProps( rProps, mpCaption, mbVisible );
+-    rProps.AddOpt( ESCHER_Prop_fHidden, 1 );            // bool field
++    rProps.AddOpt( ESCHER_Prop_fHidden, mbVisible ); // bool field
+ 
+     VMLExport::Commit( rProps, rRect );
+ }
+
+--------------erAck-patch-parts--
+
+

@@ -165,6 +165,7 @@ Patch47: 0001-fdo-49819-fdo-54609-Do-not-consider-timestamp-differ.patch
 Patch48: 0001-Resolves-rhbz-868479-fdo-56281-doubled-in-German-ok-.patch
 Patch49: 0001-rhbz-868953-fdo-45084-When-the-caller-specifies-filt.patch
 Patch50: 0001-fdo-49517-Revert-fdo-46102-Load-Java-scripts-with-cl.patch
+Patch51: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1045,6 +1046,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch48 -p1 -b .rhbz-868479-fdo-56281-doubled-in-German-ok-.patch
 %patch49 -p1 -b .rhbz-868953-fdo-45084-When-the-caller-specifies-filt.patch
 %patch50 -p1 -b .fdo-49517-Revert-fdo-46102-Load-Java-scripts-with-cl.patch
+%patch51 -p1 -b .rhbz865058-retard-overflow-of-internal-tabl.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2333,6 +2335,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Oct 29 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-5-UNBUILT
 - Resolves: fdo#49517 Java macro embedded in document will not run
+- Resolves: rhbz#865058 increase number of user-defined format codes
 
 * Wed Oct 24 2012 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-4
 - Resolves: rhbz#868953 Calc: open HTML documents from file dialog

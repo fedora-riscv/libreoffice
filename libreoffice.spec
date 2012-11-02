@@ -170,8 +170,7 @@ Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-# TODO: look what the problem is
-Patch9:  0001-disable-failing-check.patch
+Patch9:  0001-fix-sdext-build-with-poppler-0.19.x.patch
 Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
 Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
@@ -794,7 +793,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch9  -p1 -b .disable-failing-check.patch
+%patch9  -p1 -b .fix-sdext-build-with-poppler-0.19.x.patch
 %patch10 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
 %patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
 %patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch

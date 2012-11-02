@@ -188,6 +188,7 @@ Patch24: 0003-drop-saxon-based-XSLT-transformer.patch
 Patch25: 0004-remove-all-traces-of-saxon.patch
 Patch26: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
 Patch27: 0001-fdo-47157-adding-Keywords-to-.desktop-files.patch
+Patch28: 0001-do-not-strip-install-set.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -810,7 +811,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .drop-saxon-based-XSLT-transformer.patch
 %patch25 -p1 -b .remove-all-traces-of-saxon.patch
 %patch26 -p1 -b .rhbz865058-retard-overflow-of-internal-tabl.patch
-%patch27 -p1 -b  .fdo-47157-adding-Keywords-to-.desktop-files.patch
+%patch27 -p1 -b .fdo-47157-adding-Keywords-to-.desktop-files.patch
+%patch28 -p1 -b .do-not-strip-install-set.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2039,8 +2041,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 01 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-4
+* Fri Nov 02 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-4
 - Resolves: rhbz#871929 add keywords to desktop files
+- fix debuginfo
 
 * Wed Oct 31 2012 Eike Rathke <erack@redhat.com> - 1:3.6.3.2-3
 - Resolves: rhbz#865058 increase number of user-defined format codes

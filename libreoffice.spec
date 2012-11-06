@@ -167,6 +167,7 @@ Patch49: 0001-rhbz-868953-fdo-45084-When-the-caller-specifies-filt.patch
 Patch50: 0001-fdo-49517-Revert-fdo-46102-Load-Java-scripts-with-cl.patch
 Patch51: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
 Patch52: 0001-rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch
+Patch53: 0001-kill-this-hard-coded-sheet-limit-for-xlsx-import-rhb.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1049,6 +1050,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch50 -p1 -b .fdo-49517-Revert-fdo-46102-Load-Java-scripts-with-cl.patch
 %patch51 -p1 -b .rhbz865058-retard-overflow-of-internal-tabl.patch
 %patch52 -p1 -b .rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch
+%patch53 -p1 -b .kill-this-hard-coded-sheet-limit-for-xlsx-import-rhb.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2335,10 +2337,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Oct 31 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-5-UNBUILT
+* Thu Nov 06 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-5
 - Resolves: fdo#49517 Java macro embedded in document will not run
 - Resolves: rhbz#865058 increase number of user-defined format codes
 - Resolves: rhbz#854451 fdo#46278 Calc: import/export .xlsx comment visibility
+- Resolves: rhbz#864858 Calc: import more than 256 sheets from .xlsx
 
 * Wed Oct 24 2012 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-4
 - Resolves: rhbz#868953 Calc: open HTML documents from file dialog

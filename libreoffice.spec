@@ -40,7 +40,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2041,6 +2041,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Nov 06 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-5
+- bump for libexttextcat
+
 * Fri Nov 02 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-4
 - Resolves: rhbz#871929 add keywords to desktop files
 - fix debuginfo

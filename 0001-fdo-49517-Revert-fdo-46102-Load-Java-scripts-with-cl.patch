@@ -1,4 +1,4 @@
-From 7ea7fb009ddcfb0723e88ba0c5778b5fdbe2b553 Mon Sep 17 00:00:00 2001
+From cabcfa6732224ad36db52e33fb96f1d776c43f2d Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Fri, 26 Oct 2012 16:22:16 +0200
 Subject: [PATCH] fdo#49517: Revert "fdo#46102: Load Java scripts with class
@@ -34,6 +34,7 @@ shared extension, then loading StartScriptDispatch.odt attached to fdo#46012 and
 pressing the "Start Java via ScriptProvider" button.
 
 Change-Id: I31cd16b3720ffeb1058722d4d1fdffb773f8a067
+(cherry picked from commit 7ea7fb009ddcfb0723e88ba0c5778b5fdbe2b553)
 ---
  .../script/framework/container/ScriptMetaData.java | 46 ++--------------------
  .../framework/provider/ClassLoaderFactory.java     |  6 +--
@@ -44,10 +45,10 @@ Change-Id: I31cd16b3720ffeb1058722d4d1fdffb773f8a067
  6 files changed, 9 insertions(+), 54 deletions(-)
 
 diff --git a/scripting/java/com/sun/star/script/framework/container/ScriptMetaData.java b/scripting/java/com/sun/star/script/framework/container/ScriptMetaData.java
-index f39e8b9..eb1e560 100644
+index 178f480..1cf99d7 100755
 --- a/scripting/java/com/sun/star/script/framework/container/ScriptMetaData.java
 +++ b/scripting/java/com/sun/star/script/framework/container/ScriptMetaData.java
-@@ -41,14 +41,7 @@ import com.sun.star.script.framework.io.UCBStreamHandler;
+@@ -50,14 +50,7 @@ import com.sun.star.script.framework.io.UCBStreamHandler;
  
  import com.sun.star.ucb.XSimpleFileAccess2;
  
@@ -62,7 +63,7 @@ index f39e8b9..eb1e560 100644
  
  public class ScriptMetaData extends ScriptEntry implements Cloneable {
      private boolean hasSource = false;
-@@ -244,8 +237,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
+@@ -253,8 +246,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
          return "\nParcelLocation = " + getParcelLocation() + "\nLocationPlaceHolder = " + locationPlaceHolder + super.toString();
      }
  
@@ -72,16 +73,16 @@ index f39e8b9..eb1e560 100644
      {
      try
      {
-@@ -272,7 +264,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
+@@ -282,7 +274,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
          {
-             String relativeClasspath =  stk.nextToken();
+             String relativeClasspath =  (String)stk.nextElement();
              String pathToProcess  = PathUtils.make_url( parcelPath, relativeClasspath);
 -            URL url = expandURL( context, pathToProcess );
 +            URL url = createURL( pathToProcess );
              if ( url != null )
              {
                  classPathVec.add (  url  );
-@@ -281,7 +273,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
+@@ -291,7 +283,7 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
          }
          if ( classPathVec.size() == 0)
          {
@@ -90,7 +91,7 @@ index f39e8b9..eb1e560 100644
              if ( url != null )
              {
                  classPathVec.add(url);
-@@ -298,38 +290,6 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
+@@ -308,38 +300,6 @@ public class ScriptMetaData extends ScriptEntry implements Cloneable {
      }
  
      }
@@ -130,10 +131,10 @@ index f39e8b9..eb1e560 100644
      {
          URL url = null;
 diff --git a/scripting/java/com/sun/star/script/framework/provider/ClassLoaderFactory.java b/scripting/java/com/sun/star/script/framework/provider/ClassLoaderFactory.java
-index a831919..4086a3c 100644
+index 081204f..641ca58 100755
 --- a/scripting/java/com/sun/star/script/framework/provider/ClassLoaderFactory.java
 +++ b/scripting/java/com/sun/star/script/framework/provider/ClassLoaderFactory.java
-@@ -22,7 +22,6 @@ import java.net.*;
+@@ -31,7 +31,6 @@ import java.net.*;
  
  import com.sun.star.script.framework.log.LogUtils;
  import com.sun.star.script.framework.container.ScriptMetaData;
@@ -141,7 +142,7 @@ index a831919..4086a3c 100644
  
  /**
   *  Class Loader Factory
-@@ -31,12 +30,11 @@ public class ClassLoaderFactory
+@@ -43,12 +42,11 @@ public class ClassLoaderFactory
  {
      private ClassLoaderFactory() {}
  
@@ -157,10 +158,10 @@ index a831919..4086a3c 100644
          for ( int i=0; i < classPath.length; i++ )
          {
 diff --git a/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptEditorForBeanShell.java b/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptEditorForBeanShell.java
-index 4fd6a94..0497bd9 100644
+index 9f6739d..cbbcfc3 100755
 --- a/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptEditorForBeanShell.java
 +++ b/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptEditorForBeanShell.java
-@@ -192,8 +192,7 @@ public class ScriptEditorForBeanShell
+@@ -202,8 +202,7 @@ public class ScriptEditorForBeanShell
              try {
                  ClassLoader cl = null;
                  try {
@@ -171,10 +172,10 @@ index 4fd6a94..0497bd9 100644
                  catch (Exception ignore) // TODO re-examine error handling
                  {
 diff --git a/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptProviderForBeanShell.java b/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptProviderForBeanShell.java
-index bed3c7a..ea23768 100644
+index 22a9ea8..95c7278 100755
 --- a/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptProviderForBeanShell.java
 +++ b/scripting/java/com/sun/star/script/framework/provider/beanshell/ScriptProviderForBeanShell.java
-@@ -187,8 +187,7 @@ class ScriptImpl implements XScript
+@@ -196,8 +196,7 @@ class ScriptImpl implements XScript
              ClassLoader cl = null;
              URL sourceUrl = null;
              try {
@@ -185,10 +186,10 @@ index bed3c7a..ea23768 100644
              }
              catch ( java.net.MalformedURLException mfu )
 diff --git a/scripting/java/com/sun/star/script/framework/provider/java/ScriptProviderForJava.java b/scripting/java/com/sun/star/script/framework/provider/java/ScriptProviderForJava.java
-index 6c5024b..090f162 100644
+index 3f392f7..707ea05 100755
 --- a/scripting/java/com/sun/star/script/framework/provider/java/ScriptProviderForJava.java
 +++ b/scripting/java/com/sun/star/script/framework/provider/java/ScriptProviderForJava.java
-@@ -191,7 +191,7 @@ class ScriptImpl implements XScript
+@@ -205,7 +205,7 @@ class ScriptImpl implements XScript
              try {
                  LogUtils.DEBUG( "Classloader starting..." );
                  scriptLoader = ClassLoaderFactory.getURLClassLoader(
@@ -198,10 +199,10 @@ index 6c5024b..090f162 100644
              }
              catch (MalformedURLException mfe )
 diff --git a/scripting/java/com/sun/star/script/framework/provider/javascript/ScriptProviderForJavaScript.java b/scripting/java/com/sun/star/script/framework/provider/javascript/ScriptProviderForJavaScript.java
-index aa36af8..73ce9c5 100644
+index 39205d4..9f04d91 100755
 --- a/scripting/java/com/sun/star/script/framework/provider/javascript/ScriptProviderForJavaScript.java
 +++ b/scripting/java/com/sun/star/script/framework/provider/javascript/ScriptProviderForJavaScript.java
-@@ -186,8 +186,7 @@ class ScriptImpl implements XScript
+@@ -195,8 +195,7 @@ class ScriptImpl implements XScript
              ClassLoader cl = null;
              URL sourceUrl = null;
              try {

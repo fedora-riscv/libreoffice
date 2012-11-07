@@ -66,7 +66,7 @@ diff --git a/vcl/inc/vcl/settings.hxx b/vcl/inc/vcl/settings.hxx
 index 9a0a856..1052b49 100644
 --- a/vcl/inc/vcl/settings.hxx
 +++ b/vcl/inc/vcl/settings.hxx
-@@ -348,7 +348,10 @@ private:
+@@ -323,7 +323,10 @@
      sal_uLong                           mnPreferredSymbolsStyle;
      sal_uInt16                          mnSkipDisabledInMenus;
      sal_Bool                            mbHideDisabledMenuItems;
@@ -76,9 +76,9 @@ index 9a0a856..1052b49 100644
 +    //primary means scroll by single page. Secondary button takes the alternative behaviour
 +    sal_Bool                        mbPrimaryButtonWarpsSlider;
      Wallpaper                       maWorkspaceGradient;
-     DialogStyle                     maDialogStyle;
-     FrameStyle                      maFrameStyle;
-@@ -649,10 +652,14 @@ public:
+     const void*                     mpFontOptions;
+ };
+@@ -628,10 +631,14 @@
                                          { CopyData(); mpData->mbHideDisabledMenuItems = bHideDisabledMenuItems; }
      sal_Bool                            GetHideDisabledMenuItems() const
                                          { return mpData->mbHideDisabledMenuItems; }
@@ -145,7 +145,7 @@ diff --git a/vcl/source/control/scrbar.cxx b/vcl/source/control/scrbar.cxx
 index dad66f6..9e90362 100644
 --- a/vcl/source/control/scrbar.cxx
 +++ b/vcl/source/control/scrbar.cxx
-@@ -946,7 +946,12 @@ void ScrollBar::ImplDragThumb( const Point& rMousePos )
+@@ -948,7 +948,12 @@
  
  void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
  {
@@ -159,7 +159,7 @@ index dad66f6..9e90362 100644
      {
          const Point&    rMousePos = rMEvt.GetPosPixel();
          sal_uInt16          nTrackFlags = 0;
-@@ -962,7 +967,7 @@ void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
+@@ -964,7 +969,7 @@
                  bIsInside:
                  maBtn1Rect.IsInside( rMousePos ) )
          {
@@ -168,7 +168,7 @@ index dad66f6..9e90362 100644
              {
                  nTrackFlags     = STARTTRACK_BUTTONREPEAT;
                  meScrollType    = SCROLL_LINEUP;
-@@ -974,7 +979,7 @@ void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
+@@ -978,7 +983,7 @@
                  bIsInside:
                  maBtn2Rect.IsInside( rMousePos ) )
          {
@@ -177,7 +177,7 @@ index dad66f6..9e90362 100644
              {
                  nTrackFlags     = STARTTRACK_BUTTONREPEAT;
                  meScrollType    = SCROLL_LINEDOWN;
-@@ -986,7 +991,10 @@ void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
+@@ -992,7 +997,10 @@
              bool bThumbHit = HitTestNativeControl( CTRL_SCROLLBAR, bHorizontal? PART_THUMB_HORZ : PART_THUMB_VERT,
                                                     maThumbRect, rMousePos, bIsInside )
                               ? bIsInside : maThumbRect.IsInside( rMousePos );
@@ -189,7 +189,7 @@ index dad66f6..9e90362 100644
              if( bDragHandling )
              {
                  if( mpData )
-@@ -1003,7 +1011,7 @@ void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
+@@ -1009,7 +1017,7 @@
                      mnDragDraw      = SCRBAR_DRAW_THUMB;
  
                      // calculate mouse offset
@@ -198,15 +198,14 @@ index dad66f6..9e90362 100644
                      {
                          bDragToMouse = sal_True;
                          if ( GetStyle() & WB_HORZ )
-@@ -1023,9 +1031,9 @@ void ScrollBar::MouseButtonDown( const MouseEvent& rMEvt )
-                     ImplDraw( mnDragDraw, this );
-                 }
+@@ -1031,9 +1039,9 @@
+                 else
+                     Sound::Beep( SOUND_DISABLE, this );
              }
 -            else if( HitTestNativeControl( CTRL_SCROLLBAR, bHorizontal? PART_TRACK_HORZ_AREA : PART_TRACK_VERT_AREA,
--                                           aControlRegion, rMousePos, bIsInside )?
--                bIsInside : sal_True )
 +            else if(bPage && (HitTestNativeControl( CTRL_SCROLLBAR, bHorizontal? PART_TRACK_HORZ_AREA : PART_TRACK_VERT_AREA,
-+                                           aControlRegion, rMousePos, bIsInside ) ?
+                                            aControlRegion, rMousePos, bIsInside )?
+-                bIsInside : sal_True )
 +                bIsInside : sal_True) )
              {
                  nTrackFlags = STARTTRACK_BUTTONREPEAT;

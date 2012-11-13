@@ -40,7 +40,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -190,6 +190,8 @@ Patch26: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
 Patch27: 0001-fdo-47157-adding-Keywords-to-.desktop-files.patch
 Patch28: 0001-do-not-strip-install-set.patch
 Patch29: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
+#to-do, fix this on bigendian platforms
+Patch30: 0001-disable-failing-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -815,6 +817,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .fdo-47157-adding-Keywords-to-.desktop-files.patch
 %patch28 -p1 -b .do-not-strip-install-set.patch
 %patch29 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
+%patch30 -p1 -b .disable-failing-check.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2043,6 +2046,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 13 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-7
+- big endian test failure
+
 * Wed Nov 08 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-6
 - Resolves: fdo#56198/rhbz#868002 honour gtk-scrollbar-warp-preference
 

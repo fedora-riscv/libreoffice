@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -169,6 +169,7 @@ Patch51: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
 Patch52: 0001-rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch
 Patch53: 0001-kill-this-hard-coded-sheet-limit-for-xlsx-import-rhb.patch
 Patch54: 0001-Resolves-fdo-56009-fdo-54695-Calculate-positions-of-.patch
+Patch55: 0001-Enable-NPP_Initialize-Shutdown-again.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1053,6 +1054,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch52 -p1 -b .rhbz-854451-fdo-46278-misc-comment-import-export-fix.patch
 %patch53 -p1 -b .kill-this-hard-coded-sheet-limit-for-xlsx-import-rhb.patch
 %patch54 -p1 -b .fdo-56009-fdo-54695-Calculate-positions-of-.patch
+%patch55 -p1 -b .Enable-NPP_Initialize-Shutdown-again.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2339,6 +2341,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 13 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7-UNBUILT
+- Resolves: rendering documents in browser plug-in
+
 * Mon Nov 12 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.5.7.2-6
 - Resolves: rhbz#875140 fix position of cell-anchored charts
 

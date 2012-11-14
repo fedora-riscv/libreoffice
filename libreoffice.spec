@@ -30,7 +30,11 @@
 %bcond_without langpacks
 
 %if %{with langpacks}
+%if %{defined rhel} && 0%{?rhel} < 7
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
+%else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%endif
 %define with_lang --with-lang="%{langpack_langs}"
 %else
 %define langpack_langs en-US
@@ -62,6 +66,23 @@ Source12:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source13:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+%if %{defined rhel} && 0%{?rhel} < 7
+Source14:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
+Source15:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
+Source16:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source17:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source18:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source19:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
+Source21:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
+Source22:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
+Source23:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
+Source24:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
+Source25:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source26:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
+Source27:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+ExcludeArch: ppc64
+%endif
 
 # build tools
 BuildRequires: autoconf
@@ -84,7 +105,9 @@ BuildRequires: zip
 # libs / headers
 BuildRequires: GConf2-devel
 BuildRequires: boost-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: clucene-core-devel
+%endif
 BuildRequires: cppunit-devel
 BuildRequires: cups-devel
 BuildRequires: evolution-data-server-devel
@@ -92,45 +115,69 @@ BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: freetype-devel
 BuildRequires: gecko-devel
+%if %{defined rhel} && 0%{?rhel} < 7
+BuildRequires: gstreamer-devel
+BuildRequires: gstreamer-plugins-base-devel
+%else
 BuildRequires: graphite2-devel
 BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-base-devel
+%endif
 BuildRequires: gtk2-devel
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
+%if %{undefined rhel}
 BuildRequires: kdelibs4-devel
+%endif
 BuildRequires: libICE-devel
 BuildRequires: libXext-devel
 BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
 BuildRequires: libcmis-devel
+%endif
 BuildRequires: libcurl-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libdb-devel
+%else
+BuildRequires: db4-devel
+%endif
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libexttextcat-devel
+%endif
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 BuildRequires: libjpeg-devel
-BuildRequires: libmspub-devel
 BuildRequires: librsvg2-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
 BuildRequires: libwpg-devel
 BuildRequires: libwps-devel
+%endif
 BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: lpsolve-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: mdds-devel
+%endif
 BuildRequires: mesa-libGLU-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: mysql-connector-c++-devel
 BuildRequires: mythes-devel
+%endif
 BuildRequires: neon-devel
 BuildRequires: nss-devel
 BuildRequires: openssl-devel
 BuildRequires: pam-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: poppler-cpp-devel
+%endif
 BuildRequires: poppler-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
+%endif
 BuildRequires: python-devel
 BuildRequires: redland-devel
 BuildRequires: sane-backends-devel
@@ -141,14 +188,23 @@ BuildRequires: zlib-devel
 # java stuff
 BuildRequires: ant
 BuildRequires: ant-apache-regexp
+%if %{defined rhel} && 0%{?rhel} < 7
+BuildRequires: jakarta-commons-codec
+BuildRequires: jakarta-commons-lang
+%else
 BuildRequires: apache-commons-codec
 BuildRequires: apache-commons-lang
+%endif
 BuildRequires: bsh
+%if %{defined rhel} && 0%{?rhel} < 7
+BuildRequires: hsqldb
+%endif
 BuildRequires: jakarta-commons-httpclient
 BuildRequires: java-devel
+%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: junit
+%endif
 BuildRequires: pentaho-reporting-flow-engine
-
 # fonts needed for unit tests
 BuildRequires: liberation-mono-fonts >= 1.0
 BuildRequires: liberation-sans-fonts >= 1.0
@@ -189,6 +245,13 @@ Patch24: 0001-do-not-strip-install-set.patch
 Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
 #to-do, fix this on bigendian platforms
 Patch26: 0001-disable-failing-check.patch
+Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
+Patch28: 0001-fix-build-with-icu-4.0.patch
+%if %{defined rhel} && 0%{?rhel} < 7
+Patch29: libreoffice-rhel6gcj.patch
+Patch30: libreoffice-rhel6poppler.patch
+Patch31: libreoffice-rhel6langs.patch
+%endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -238,6 +301,9 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: postgresql-jdbc
+%if %{defined rhel} && 0%{?rhel} < 7
+Requires:  hsqldb
+%endif
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
@@ -279,8 +345,13 @@ Support JavaScript scripts in LibreOffice.
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
+%if %{defined rhel} && 0%{?rhel} < 7
+Requires: jakarta-commons-codec, jakarta-commons-httpclient
+Requires: jakarta-commons-lang, jakarta-commons-logging
+%else
 Requires: apache-commons-codec, jakarta-commons-httpclient
 Requires: apache-commons-lang, apache-commons-logging
+%endif
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
@@ -448,6 +519,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %postun javafilter
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %package postgresql
 Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
@@ -457,6 +529,7 @@ Requires: postgresql-libs
 %description postgresql
 A PostgreSQL connector for the database front-end for LibreOffice. Allows
 creation and management of PostgreSQL databases through a GUI.
+%endif
 
 %package ure
 Summary: UNO Runtime Environment
@@ -504,6 +577,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
+%if %{undefined rhel}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -511,6 +585,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+%endif
 
 %if %{with binfilter}
 %package binfilter
@@ -665,8 +740,14 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -S
 %langpack -l et -n Estonian -F -H -Y -S
 %langpack -l eu -n Basque -F -H -Y -A -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
+%endif
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l fi -n Finnish -F -A -S
+%else
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -S
+%endif
 %langpack -l fr -n French -F -H -Y -M -A -S
 %langpack -l ga -n Irish -F -H -Y -M -A -S
 %langpack -l gl -n Galician -F -H -Y -S
@@ -682,8 +763,13 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
+%endif
 %langpack -l mai -n Maithili -F -S
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l ms -n Malay -F -H -S
+%endif
 %langpack -l ml -n Malayalam -F -H -Y -S
 %langpack -l mr -n Marathi -F -H -Y -S
 %langpack -l nb -n Bokmal -F -H -Y -M -S
@@ -701,7 +787,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -S
 %langpack -l ru -n Russian -F -H -Y -M -A -S
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S
+%endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -S
 %langpack -l sl -n Slovenian -F -H -Y -M -A -S
 %langpack -l sr -n Serbian -F -H -Y -A -S
@@ -718,6 +806,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l tr -n Turkish -F -A -S
 %langpack -l ts -n Tsonga -F -H -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -S
+%if %{defined rhel} && 0%{?rhel} < 7
+%langpack -l ur -n Urdu -F -H -S
+%endif
 %langpack -l ve -n Venda -F -H -S
 %langpack -l xh -n Xhosa -F -H -S
 %define langpack_lang Simplified Chinese
@@ -809,6 +900,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .do-not-strip-install-set.patch
 %patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
 %patch26 -p1 -b .disable-failing-check.patch
+%patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
+%patch28 -p1 -b .fix-build-with-icu-4.0.patch
+%if %{defined rhel} && 0%{?rhel} < 7
+%patch29 -p1 -b .rhel6gcj.patch
+%patch30 -p1 -b .rhel6poppler.patch
+%patch31 -p1 -b .rhel6langs.patch
+%endif
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -830,10 +928,12 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=$SMP_MFLAGS
 NBUILDS=`dc -e "$SMP_MFLAGS v p"`
 
+%if %{undefined rhel}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
+%endif
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
@@ -845,6 +945,16 @@ done
 export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
+
+%if %{defined rhel}
+%if 0%{?rhel} < 7
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc
+%else
+%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes
+%endif
+%else
+%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes
+%endif
 
 aclocal -I m4
 autoconf
@@ -863,13 +973,12 @@ touch autogen.lastrun
  --without-system-servlet-api \
  --with-system-jars --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
- --without-system-mozilla-headers --with-system-mythes --with-system-dicts \
- --without-system-saxon --with-external-dict-dir=/usr/share/myspell \
+ --without-system-mozilla-headers --with-system-dicts \
+ --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- --without-system-hsqldb --enable-kde4 \
- --disable-gstreamer-0-10 --enable-gstreamer \
+ %{distrooptions} \
  %{?with_binfilter:--enable-binfilter} \
  --disable-fetch-external
 
@@ -882,12 +991,29 @@ cp %{SOURCE10} ext_sources
 cp %{SOURCE11} ext_sources
 cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
+%if %{defined rhel} && 0%{?rhel} < 7
+cp %{SOURCE14} ext_sources
+cp %{SOURCE15} ext_sources
+cp %{SOURCE16} ext_sources
+cp %{SOURCE17} ext_sources
+cp %{SOURCE18} ext_sources
+cp %{SOURCE19} ext_sources
+cp %{SOURCE20} ext_sources
+cp %{SOURCE21} ext_sources
+cp %{SOURCE22} ext_sources
+cp %{SOURCE23} ext_sources
+cp %{SOURCE24} ext_sources
+cp %{SOURCE25} ext_sources
+cp %{SOURCE26} ext_sources
+cp %{SOURCE27} ext_sources
+cp -r translations/source/en-GB translations/source/ms
+cp -r translations/source/en-GB translations/source/ur
+%endif
 
 if ! make VERBOSE=true; then
     # TODO Do we still need this? I think parallel build is reliable
     # enough these days...
-    # make GMAKE_OPTIONS=-rj1
-    exit 1
+    make GMAKE_OPTIONS=-rj1
 fi
 
 # TODO: get rid of this
@@ -1266,13 +1392,15 @@ export DESTDIR=$RPM_BUILD_ROOT
 install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
 
 
-%check
-unset WITH_LANG
-# work around flawed accessibility check
-export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-# TODO is the timeout still needed?
-# FIXME find what is the problem
-# timeout -k 2m 2h make smoketest.subsequentcheck VERBOSE=t
+#%check
+#unset WITH_LANG
+## work around flawed accessibility check
+#export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
+#%if %{defined rhel} && 0%{?rhel} < 7
+#timeout 2h make smoketest.subsequentcheck
+#%else
+#timeout -k 2m 2h make smoketest.subsequentcheck
+#%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1302,6 +1430,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/addin
 %{baseinstdir}/program/basprov.uno.so
+%{baseinstdir}/program/cairocanvas.uno.so
 %{baseinstdir}/program/canvasfactory.uno.so
 %{baseinstdir}/program/cde-open-url
 %dir %{baseinstdir}/program/classes
@@ -1336,6 +1465,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin
 %{baseinstdir}/program/hatchwindowfactory.uno.so
+%{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/i18nsearch.uno.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
@@ -1536,7 +1666,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/vbaevents.uno.so
 %{baseinstdir}/program/vclcanvas.uno.so
 %{baseinstdir}/program/versionrc
-%{baseinstdir}/program/cairocanvas.uno.so
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java
@@ -1664,6 +1793,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/soffice
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc
+%if %{defined rhel} && 0%{?rhel} < 7
+%{baseinstdir}/program/libraptor-lo.so.1
+%{baseinstdir}/program/librasqal-lo.so.1
+%{baseinstdir}/program/librdf-lo.so.0
+%{baseinstdir}/program/libclucene.so
+%{baseinstdir}/program/liblcms2.so.2
+%{baseinstdir}/share/fingerprint
+%endif
 
 %post core
 update-mime-database %{_datadir}/mime &> /dev/null || :
@@ -1694,7 +1831,9 @@ done
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
+%endif
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
@@ -1846,6 +1985,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
+%if %{undefined rhel} || 0%{?rhel} >= 7
+%{baseinstdir}/program/libmsworks%{SOPOST}.so
+%endif
 %{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswuilo.so
 %{baseinstdir}/program/libt602filterlo.so
@@ -1944,6 +2086,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/pocketexcel.xcd
 %{baseinstdir}/share/registry/pocketword.xcd
 
+%if %{undefined rhel} || 0%{?rhel} >= 7
 %files postgresql
 %defattr(-,root,root,-)
 %{baseinstdir}/program/postgresql-sdbc.uno.so
@@ -1951,6 +2094,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/postgresql-sdbc.ini
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
 %{baseinstdir}/share/registry/postgresqlsdbc.xcd
+%endif
 
 %files ure
 %defattr(-,root,root,-)
@@ -1994,13 +2138,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 
+%if %{undefined rhel}
 %files kde
 %defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
-%{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/kde4be1.uno.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
+%endif
 
 %if %{with binfilter}
 %files binfilter

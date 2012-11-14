@@ -1,0 +1,16 @@
+--- a/scp2/source/ooo/common_brand.scp.convert-java-XSL-transformer-into-extension.patch
++++ b/scp2/source/ooo/common_brand.scp.convert-java-XSL-transformer-into-extension.patch
+@@ -1256,11 +1256,9 @@
+     Section = "Bootstrap";
+     Key = "URE_MORE_JAVA_CLASSPATH_URLS";
+     Value = "";
++    ValueList1 = "$ORIGIN/../ure-link/lib";
+ #ifdef SYSTEM_HSQLDB
+-    ValueList1 = HSQLDB_JAR;
+-#endif
+-#ifdef SYSTEM_SAXON
+-    ValueList2 = SAXON_JAR;
++    ValueList2 = HSQLDB_JAR;
+ #endif
+ End
+ 

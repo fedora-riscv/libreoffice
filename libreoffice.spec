@@ -40,7 +40,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -403,9 +403,6 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-%if %{defined fedora} && 0%{?fedora} >= 18
-Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
-%endif
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 
 %description impress
@@ -2046,6 +2043,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 14 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-8
+- Resolves: rhbz#872815 ogltrans effects still suboptimal
+
 * Tue Nov 13 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-7
 - big endian test failure
 

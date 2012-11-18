@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.3
+%define libo_version 3.6.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -39,8 +39,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -170,28 +170,25 @@ Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch9:  0001-fix-sdext-build-with-poppler-0.19.x.patch
-Patch10: 0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-Patch11: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
-Patch13: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
-Patch14: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
-Patch15: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
-Patch16: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-Patch17: 0003-make-avmedia-build-with-gstreamer-0.10.patch
-Patch18: 0004-tweak-old-school-gstreamer-link-line.patch
-Patch19: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-Patch20: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
-Patch21: 0007-gstreamer-fix-leaking-pads.patch
-Patch22: 0001-convert-java-XSL-transformer-into-extension.patch
-Patch23: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
-Patch24: 0003-drop-saxon-based-XSLT-transformer.patch
-Patch25: 0004-remove-all-traces-of-saxon.patch
-Patch26: 0001-resolved-rhbz865058-retard-overflow-of-internal-tabl.patch
-Patch27: 0001-fdo-47157-adding-Keywords-to-.desktop-files.patch
-Patch28: 0001-do-not-strip-install-set.patch
-Patch29: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
+Patch9:  0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
+Patch10: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
+Patch11: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
+Patch12: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
+Patch13: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
+Patch14: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
+Patch15: 0003-make-avmedia-build-with-gstreamer-0.10.patch
+Patch16: 0004-tweak-old-school-gstreamer-link-line.patch
+Patch17: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
+Patch18: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
+Patch19: 0007-gstreamer-fix-leaking-pads.patch
+Patch20: 0001-convert-java-XSL-transformer-into-extension.patch
+Patch21: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
+Patch22: 0003-drop-saxon-based-XSLT-transformer.patch
+Patch23: 0004-remove-all-traces-of-saxon.patch
+Patch24: 0001-do-not-strip-install-set.patch
+Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
 #to-do, fix this on bigendian platforms
-Patch30: 0001-disable-failing-check.patch
+Patch26: 0001-disable-failing-check.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -794,27 +791,24 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch9  -p1 -b .fix-sdext-build-with-poppler-0.19.x.patch
-%patch10 -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-%patch11 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
-%patch13 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
-%patch14 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
-%patch15 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
-%patch16 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-%patch17 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
-%patch18 -p1 -b .tweak-old-school-gstreamer-link-line.patch
-%patch19 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-%patch20 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
-%patch21 -p1 -b .gstreamer-fix-leaking-pads.patch
-%patch22 -p1 -b .convert-java-XSL-transformer-into-extension.patch
-%patch23 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
-%patch24 -p1 -b .drop-saxon-based-XSLT-transformer.patch
-%patch25 -p1 -b .remove-all-traces-of-saxon.patch
-%patch26 -p1 -b .rhbz865058-retard-overflow-of-internal-tabl.patch
-%patch27 -p1 -b .fdo-47157-adding-Keywords-to-.desktop-files.patch
-%patch28 -p1 -b .do-not-strip-install-set.patch
-%patch29 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
-%patch30 -p1 -b .disable-failing-check.patch
+%patch9  -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
+%patch10 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
+%patch11 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
+%patch12 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
+%patch13 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
+%patch14 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
+%patch15 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
+%patch16 -p1 -b .tweak-old-school-gstreamer-link-line.patch
+%patch17 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
+%patch18 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
+%patch19 -p1 -b .gstreamer-fix-leaking-pads.patch
+%patch20 -p1 -b .convert-java-XSL-transformer-into-extension.patch
+%patch21 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
+%patch22 -p1 -b .drop-saxon-based-XSLT-transformer.patch
+%patch23 -p1 -b .remove-all-traces-of-saxon.patch
+%patch24 -p1 -b .do-not-strip-install-set.patch
+%patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
+%patch26 -p1 -b .disable-failing-check.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2043,6 +2037,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Nov 18 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.1-1
+- 3.6.4 rc1
+
 * Wed Nov 14 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-8
 - Resolves: rhbz#872815 ogltrans effects still suboptimal
 

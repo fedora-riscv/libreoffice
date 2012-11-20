@@ -2046,10 +2046,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Nov 13 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-7
 - big endian test failure
 
-* Wed Nov 08 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-6
+* Thu Nov 08 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-6
 - Resolves: fdo#56198/rhbz#868002 honour gtk-scrollbar-warp-preference
 
-* Mon Nov 06 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-5
+* Tue Nov 06 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.3.2-5
 - bump for libexttextcat
 
 * Fri Nov 02 2012 David Tardon <dtardon@redhat.com> - 1:3.6.3.2-4
@@ -2144,7 +2144,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Mon Jul 09 2012 Caolán McNamara <caolanm@redhat.com> - 3.6.0.0-4
 - Resolves: rhbz#838368 --view ignored while -view accepted
 
-* Wed Jul 05 2012 David Tardon <dtardon@redhat.com> - 3.6.0.0-3
+* Thu Jul 05 2012 David Tardon <dtardon@redhat.com> - 3.6.0.0-3
 - 3.6.0 beta3
 
 * Mon Jul  2 2012 Marek Kasik <mkasik@redhat.com> - 3.6.0.0-2
@@ -2576,7 +2576,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#695509 crash in RefreshDocumentLB
 - bubble down configure test findings on visibility
 
-* Tue Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
+* Mon Apr 11 2011 Caolán McNamara <caolanm@redhat.com> 3.3.99.1-1
 - 3.4 beta1
 - drop openoffice.org-1.9.123.ooo53397.prelinkoptimize.desktop.patch
   in favour of ooosplash
@@ -2668,7 +2668,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Mar 08 2011 David Tardon <dtardon@redhat.com> 3.3.1.2-4
 - install 128x128 px icons
 
-* Thu Mar 02 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
+* Wed Mar 02 2011 Caolán McNamara <caolanm@redhat.com> 3.3.1.2-3
 - Resolves: rhbz#681159 crash in writer
 - Resolves: rhbz#672818 crash in writer
 - Resolves: fdo#33701 ensure node outlives path
@@ -2778,7 +2778,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Wed Nov 03 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-5
 - Resolves: rhbz#649210 add Sinhalese langpack
 
-* Sun Oct 30 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-4
+* Sat Oct 30 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-4
 - langpack macro hard-coded version number
 
 * Fri Oct 22 2010 Caolán McNamara <caolanm@redhat.com> 3.2.99.2-3

@@ -1058,7 +1058,7 @@ nl      help    western         nn      help    western \
 nr      nohelp  western         nso     nohelp  western \
 or      nohelp  ctl             pa-IN   nohelp  ctl     \
 pl      help    western         pt      help    western \
-pt-BR   help    western         ro      nohelp  western \
+pt-BR   help    western         ro      help    western \
 ru      help    western         sh      nohelp  western \
 si      help    ctl             sk      help    western \
 sl      help    western         sr      nohelp  western \

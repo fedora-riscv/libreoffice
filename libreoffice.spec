@@ -81,7 +81,6 @@ Source24:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f536
 Source25:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source26:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
 Source27:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
-ExcludeArch: ppc64
 %endif
 
 # build tools
@@ -246,12 +245,11 @@ Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
 #to-do, fix this on bigendian platforms
 Patch26: 0001-disable-failing-check.patch
 Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
-Patch28: 0001-fix-build-with-icu-4.0.patch
-Patch29: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
+Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-Patch30: libreoffice-rhel6gcj.patch
-Patch31: libreoffice-rhel6poppler.patch
-Patch32: libreoffice-rhel6langs.patch
+Patch29: libreoffice-rhel6gcj.patch
+Patch30: libreoffice-rhel6poppler.patch
+Patch31: libreoffice-rhel6langs.patch
 %endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -902,12 +900,11 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
 %patch26 -p1 -b .disable-failing-check.patch
 %patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
-%patch28 -p1 -b .fix-build-with-icu-4.0.patch
-%patch29 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
+%patch28 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-%patch30 -p1 -b .rhel6gcj.patch
-%patch31 -p1 -b .rhel6poppler.patch
-%patch32 -p1 -b .rhel6langs.patch
+%patch29 -p1 -b .rhel6gcj.patch
+%patch30 -p1 -b .rhel6poppler.patch
+%patch31 -p1 -b .rhel6langs.patch
 %endif
 
 # TODO: check this

@@ -196,6 +196,8 @@ BuildRequires: java-devel
 BuildRequires: junit
 %endif
 BuildRequires: pentaho-reporting-flow-engine
+BuildRequires: tomcat-servlet-3.0-api
+
 # fonts needed for unit tests
 BuildRequires: liberation-mono-fonts >= 1.0
 BuildRequires: liberation-sans-fonts >= 1.0
@@ -903,8 +905,8 @@ touch autogen.lastrun
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-scripting-beanshell --enable-scripting-javascript \
- --without-system-servlet-api \
  --with-system-jars --with-vba-package-format="builtin" \
+ --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \

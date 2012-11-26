@@ -841,7 +841,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch2  -p1 -b .ooo86080.unopkg.bodge.patch
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch5  -p1 -b .ooo101274.opening-a-directory.patch
+# FIXME build error
+#%%patch5  -p1 -b .ooo101274.opening-a-directory.patch
 # FIXME ask Eike/Caolan about the broken hunk
 #%%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch

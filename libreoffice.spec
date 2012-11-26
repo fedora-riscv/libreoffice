@@ -860,14 +860,6 @@ echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
 #don't build localized helps which are poorly translated
 POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
-#convert _smp_mflags to dmake equivalent
-SMP_MFLAGS=%{?_smp_mflags}
-SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
-if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
-# NDMAKES (or --with-max-jobs) is what is used for tail_build. We surely
-# want as much paralelism as possible there.
-NDMAKES=$SMP_MFLAGS
-NBUILDS=`dc -e "$SMP_MFLAGS v p"`
 
 %if 0%{?!rhel}
 # KDE bits
@@ -902,18 +894,18 @@ autoconf
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
- %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
+ %vendoroption %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
  --with-build-version="%{version}-%{release}" --with-unix-wrapper=%{name} \
- --disable-ldap --disable-epm --disable-mathmldtd \
+ --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
- --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
+ --enable-scripting-beanshell --enable-scripting-javascript \
  --without-system-servlet-api \
  --with-system-jars --with-vba-package-format="builtin" \
  --with-system-libs --with-system-headers --with-system-mozilla \
- --without-system-mozilla-headers --with-system-dicts \
+ --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \

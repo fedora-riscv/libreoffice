@@ -27,7 +27,7 @@
 %bcond_without langpacks
 
 %if %{with langpacks}
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
@@ -61,7 +61,7 @@ Source12:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source13:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Source14:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
 Source15:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
 Source16:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
@@ -109,7 +109,7 @@ BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: freetype-devel
 BuildRequires: gecko-devel
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
 BuildRequires: gstreamer-plugins-base-devel
 %else
@@ -178,7 +178,7 @@ BuildRequires: zlib-devel
 # java stuff
 BuildRequires: ant
 BuildRequires: ant-apache-regexp
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: jakarta-commons-codec
 BuildRequires: jakarta-commons-lang
 %else
@@ -186,7 +186,7 @@ BuildRequires: apache-commons-codec
 BuildRequires: apache-commons-lang
 %endif
 BuildRequires: bsh
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
 %endif
 BuildRequires: jakarta-commons-httpclient
@@ -218,7 +218,7 @@ Patch7:  libreoffice-installfix.patch
 #to-do, fix this on bigendian platforms
 Patch26: 0001-disable-failing-check.patch
 Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Patch29: libreoffice-rhel6gcj.patch
 Patch30: libreoffice-rhel6poppler.patch
 Patch31: libreoffice-rhel6langs.patch
@@ -272,7 +272,7 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: postgresql-jdbc
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
 %endif
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -316,7 +316,7 @@ Support JavaScript scripts in LibreOffice.
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Requires: jakarta-commons-codec, jakarta-commons-httpclient
 Requires: jakarta-commons-lang, jakarta-commons-logging
 %else
@@ -704,7 +704,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %if %{undefined rhel} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
 %endif
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l fi -n Finnish -F -A -S
 %else
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -S
@@ -728,7 +728,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l lv -n Latvian -F -H -Y -M -S
 %endif
 %langpack -l mai -n Maithili -F -S
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l ms -n Malay -F -H -S
 %endif
 %langpack -l ml -n Malayalam -F -H -Y -S
@@ -767,7 +767,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l tr -n Turkish -F -A -S
 %langpack -l ts -n Tsonga -F -H -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -S
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l ur -n Urdu -F -H -S
 %endif
 %langpack -l ve -n Venda -F -H -S
@@ -843,10 +843,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 #%%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch26 -p1 -b .disable-failing-check.patch
-%if %{defined rhel} && 0%{?rhel} < 7
-#%patch29 -p1 -b .rhel6gcj.patch
-#%patch30 -p1 -b .rhel6poppler.patch
-#%patch31 -p1 -b .rhel6langs.patch
+%if 0%{?rhel} && 0%{?rhel} < 7
+%patch29 -p1 -b .rhel6gcj.patch
+%patch30 -p1 -b .rhel6poppler.patch
+%patch31 -p1 -b .rhel6langs.patch
 %endif
 
 # TODO: check this
@@ -887,7 +887,7 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if %{defined rhel}
+%if 0%{?rhel}
 %if 0%{?rhel} < 7
 %define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc
 %else
@@ -929,7 +929,7 @@ cp %{SOURCE10} ext_sources
 cp %{SOURCE11} ext_sources
 cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 cp %{SOURCE14} ext_sources
 cp %{SOURCE15} ext_sources
 cp %{SOURCE16} ext_sources
@@ -1334,7 +1334,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 #unset WITH_LANG
 ## work around flawed accessibility check
 #export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-#%if %{defined rhel} && 0%{?rhel} < 7
+#%if 0%{?rhel} && 0%{?rhel} < 7
 #timeout 2h make smoketest.subsequentcheck
 #%else
 #timeout -k 2m 2h make smoketest.subsequentcheck
@@ -1731,7 +1731,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/soffice
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %{baseinstdir}/program/libraptor-lo.so.1
 %{baseinstdir}/program/librasqal-lo.so.1
 %{baseinstdir}/program/librdf-lo.so.0

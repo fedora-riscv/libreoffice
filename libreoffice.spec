@@ -914,10 +914,6 @@ rm -rf translations/source/{gu,he,hr}/helpcontent2
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
-#don't build localized helps which aren't translated
-POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
-#don't build localized helps which are poorly translated
-POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
 #convert _smp_mflags to dmake equivalent
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
@@ -975,9 +971,8 @@ touch autogen.lastrun
  --without-system-mozilla-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
- %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- %{distrooptions} \
+ %{?with_lang} %{distrooptions} \
  %{?with_binfilter:--enable-binfilter} \
  --disable-fetch-external
 

@@ -29,16 +29,16 @@ index 676acd5..4a599c9 100644
  
  #include <cppuhelper/implbase1.hxx>
 +#include <com/sun/star/beans/PropertyValue.hpp>
+ #include <com/sun/star/ucb/CheckinArgument.hpp>
  #include <com/sun/star/ucb/ContentCreationError.hpp>
  #include <com/sun/star/ucb/XCommandEnvironment.hpp>
- #include <com/sun/star/ucb/XCommandInfo.hpp>
 @@ -47,6 +48,8 @@
  #include <com/sun/star/ucb/ContentAction.hpp>
  #include <com/sun/star/ucb/OpenCommandArgument2.hpp>
  #include <com/sun/star/ucb/InsertCommandArgument.hpp>
 +#include <com/sun/star/ucb/IOErrorCode.hpp>
 +#include <com/sun/star/ucb/InteractiveAugmentedIOException.hpp>
- #include <com/sun/star/ucb/GlobalTransferCommandArgument.hpp>
+ #include <com/sun/star/ucb/GlobalTransferCommandArgument2.hpp>
  #include <com/sun/star/ucb/NameClash.hpp>
  #include <com/sun/star/ucb/OpenMode.hpp>
 @@ -64,6 +67,8 @@
@@ -49,7 +49,7 @@ index 676acd5..4a599c9 100644
 +
  #include <ucbhelper/macros.hxx>
  #include <ucbhelper/content.hxx>
- #include <ucbhelper/contentbroker.hxx>
+ #include <ucbhelper/activedatasink.hxx>
 @@ -71,6 +76,10 @@
  #include <ucbhelper/activedatastreamer.hxx>
  #include <ucbhelper/interactionrequest.hxx>

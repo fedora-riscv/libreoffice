@@ -33,7 +33,7 @@ index de1506a..5522e69 100644
 -        //  except when font size is from conditional formatting.
 -        //! Allow clipping when vertically merged?
 -        if ( eType != OUTTYPE_PRINTER ||
--            ( pDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
+-            ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
 -            ( rParam.mpCondSet && SFX_ITEM_SET ==
 -                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
 +        if (UseNormalClip(rParam.mnCellY, rParam.mpCondSet))
@@ -68,7 +68,7 @@ index de1506a..5522e69 100644
 -        //  except when font size is from conditional formatting.
 -        //! Allow clipping when vertically merged?
 -        if ( eType != OUTTYPE_PRINTER ||
--            ( pDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
+-            ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
 -            ( rParam.mpCondSet && SFX_ITEM_SET ==
 -                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
 +
@@ -84,7 +84,7 @@ index de1506a..5522e69 100644
 -        //  except when font size is from conditional formatting.
 -        //! Allow clipping when vertically merged?
 -        if ( eType != OUTTYPE_PRINTER ||
--            ( pDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
+-            ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
 -            ( rParam.mpCondSet && SFX_ITEM_SET ==
 -                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
 +        if (UseNormalClip(rParam.mnCellY, rParam.mpCondSet))
@@ -92,7 +92,7 @@ index de1506a..5522e69 100644
          else
              bSimClip = true;
 @@ -4460,6 +4456,20 @@ void ScOutputData::DrawEditAsianVertical(DrawEditParam& rParam)
-     rParam.adjustForHyperlinkInPDF(aURLStart, pDev);
+     rParam.adjustForHyperlinkInPDF(aURLStart, mpDev);
  }
  
 +bool ScOutputData::UseNormalClip(SCROW nCellY, const SfxItemSet* pCondSet)

@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.4
+%define libo_version 4.0.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-# %%define libo_prerelease
+%define libo_prerelease .alpha1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -20,13 +20,10 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
-# use rpmbuild --without binfilter (or mock --without binfilter) to get
-# a faster build without old binary filters
+# get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
-%bcond_without binfilter
-# get english only and no-langpacks for a faster smoketest build
 %bcond_without langpacks
 
 %if %{with langpacks}
@@ -43,21 +40,19 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.0
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0:        %{source_url}/libreoffice-core-%{version}%{?libo_prerelease}.tar.xz
-Source1:        %{source_url}/libreoffice-binfilter-%{version}%{?libo_prerelease}.tar.xz
+Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
 Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
 Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
 Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source5:        redhat-langpacks.tar.gz
 Source6:        libreoffice-multiliblauncher.sh
-Source7:        http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
 Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
 Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
@@ -138,17 +133,13 @@ BuildRequires: libcmis-devel
 %endif
 BuildRequires: libcurl-devel
 %if %{undefined rhel} || 0%{?rhel} >= 7
-BuildRequires: libdb-devel
-%else
-BuildRequires: db4-devel
-%endif
-%if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libexttextcat-devel
 %endif
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 BuildRequires: libjpeg-devel
-BuildRequires: librsvg2-devel
+BuildRequires: liblangtag-devel
+BuildRequires: liborcus-devel
 %if %{undefined rhel} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
@@ -224,27 +215,8 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch9:  0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-Patch10: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
-Patch11: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
-Patch12: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
-Patch13: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
-Patch14: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-Patch15: 0003-make-avmedia-build-with-gstreamer-0.10.patch
-Patch16: 0004-tweak-old-school-gstreamer-link-line.patch
-Patch17: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-Patch18: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
-Patch19: 0007-gstreamer-fix-leaking-pads.patch
-Patch20: 0001-convert-java-XSL-transformer-into-extension.patch
-Patch21: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
-Patch22: 0003-drop-saxon-based-XSLT-transformer.patch
-Patch23: 0004-remove-all-traces-of-saxon.patch
-Patch24: 0001-do-not-strip-install-set.patch
-Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
 #to-do, fix this on bigendian platforms
 Patch26: 0001-disable-failing-check.patch
-Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
 Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if %{defined rhel} && 0%{?rhel} < 7
 Patch29: libreoffice-rhel6gcj.patch
@@ -586,16 +558,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 %endif
 
-%if %{with binfilter}
-%package binfilter
-Summary: Legacy binary filters for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-
-%description binfilter
-Filters for old StarOffice binary formats.
-%endif
-
 %if 0%{?_enable_debug_packages}
 
 %define debug_package %{nil}
@@ -861,9 +823,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 
 %prep
-%setup -q -c -a 1 -a 2 -a 3
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -a 2 -a 3
 rm -rf git-hooks */git-hooks
-for a in */*; do mv `pwd`/$a .; done
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -878,33 +839,14 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
+# FIXME ask Eike/Caolan about the broken hunk
+#%%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch9  -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-%patch10 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
-%patch11 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
-%patch12 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
-%patch13 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
-%patch14 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-%patch15 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
-%patch16 -p1 -b .tweak-old-school-gstreamer-link-line.patch
-%patch17 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-%patch18 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
-%patch19 -p1 -b .gstreamer-fix-leaking-pads.patch
-%patch20 -p1 -b .convert-java-XSL-transformer-into-extension.patch
-%patch21 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
-%patch22 -p1 -b .drop-saxon-based-XSLT-transformer.patch
-%patch23 -p1 -b .remove-all-traces-of-saxon.patch
-%patch24 -p1 -b .do-not-strip-install-set.patch
-%patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
 %patch26 -p1 -b .disable-failing-check.patch
-%patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
-%patch28 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if %{defined rhel} && 0%{?rhel} < 7
-%patch29 -p1 -b .rhel6gcj.patch
-%patch30 -p1 -b .rhel6poppler.patch
-%patch31 -p1 -b .rhel6langs.patch
+#%patch29 -p1 -b .rhel6gcj.patch
+#%patch30 -p1 -b .rhel6poppler.patch
+#%patch31 -p1 -b .rhel6langs.patch
 %endif
 
 # TODO: check this
@@ -966,7 +908,6 @@ touch autogen.lastrun
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
- --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
  --without-system-servlet-api \
@@ -978,12 +919,10 @@ touch autogen.lastrun
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  %{distrooptions} \
- %{?with_binfilter:--enable-binfilter} \
  --disable-fetch-external
 
 mkdir -p ext_sources
 cp %{SOURCE4} ext_sources
-cp %{SOURCE7} ext_sources
 cp %{SOURCE8} ext_sources
 cp %{SOURCE9} ext_sources
 cp %{SOURCE10} ext_sources
@@ -1354,7 +1293,7 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base %{?with_binfilter:binfilter} calc draw impress javafilter math startcenter writer xsltfilter; do
+for app in base calc draw impress javafilter math startcenter writer xsltfilter; do
     # FIXME enable again
     # desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
@@ -2146,41 +2085,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif
 
-%if %{with binfilter}
-%files binfilter
-%defattr(-,root,root,-)
-%{baseinstdir}/program/legacy_binfilters.rdb
-%{baseinstdir}/program/libbf_frmlo.so
-%{baseinstdir}/program/libbf_golo.so
-%{baseinstdir}/program/libbf_migratefilterlo.so
-%{baseinstdir}/program/libbf_ofalo.so
-%{baseinstdir}/program/libbf_sblo.so
-%{baseinstdir}/program/libbf_schlo.so
-%{baseinstdir}/program/libbf_sclo.so
-%{baseinstdir}/program/libbf_sdlo.so
-%{baseinstdir}/program/libbf_smlo.so
-%{baseinstdir}/program/libbf_solo.so
-%{baseinstdir}/program/libbf_svtlo.so
-%{baseinstdir}/program/libbf_svxlo.so
-%{baseinstdir}/program/libbf_swlo.so
-%{baseinstdir}/program/libbf_wrapperlo.so
-%{baseinstdir}/program/libbf_xolo.so
-%{baseinstdir}/program/libbindetlo.so
-%{baseinstdir}/program/liblegacy_binfilterslo.so
-%{baseinstdir}/program/resource/bf_frmen-US.res
-%{baseinstdir}/program/resource/bf_ofaen-US.res
-%{baseinstdir}/program/resource/bf_scen-US.res
-%{baseinstdir}/program/resource/bf_schen-US.res
-%{baseinstdir}/program/resource/bf_sden-US.res
-%{baseinstdir}/program/resource/bf_smen-US.res
-%{baseinstdir}/program/resource/bf_svten-US.res
-%{baseinstdir}/program/resource/bf_svxen-US.res
-%{baseinstdir}/program/resource/bf_swen-US.res
-%{baseinstdir}/share/registry/binfilter.xcd
-%{_datadir}/applications/libreoffice-binfilter.desktop
-%endif
-
 %changelog
+* Mon Nov 26 2012 David Tardon <dtardon@redhat.com> - 1:4.0.0.0.alpha1-1
+- 4.0.0 alpha1
+
 * Sun Nov 18 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.1-1
 - 3.6.4 rc1
 

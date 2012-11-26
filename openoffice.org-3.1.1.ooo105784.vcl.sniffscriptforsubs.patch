@@ -23,7 +23,7 @@ index 4d02a76..ecd3b5d 100644
  #include <algorithm>
  
 @@ -747,6 +750,138 @@ static void addtopattern(FcPattern *pPattern,
-     }
+     return 0;
  }
  
 +static const char* pick_sample_language(const sal_uInt32 cCode)

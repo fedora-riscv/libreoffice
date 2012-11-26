@@ -840,7 +840,8 @@ rm -rf git-hooks */git-hooks
 mv -f redhat.soc extras/source/palettes/standard.soc
 %patch1  -p1
 %patch2  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
+# FIXME build error
+#%%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
 # FIXME build error
 #%%patch5  -p1 -b .ooo101274.opening-a-directory.patch

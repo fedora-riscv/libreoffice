@@ -823,7 +823,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -a 2 -a 3
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 3
 rm -rf git-hooks */git-hooks
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \

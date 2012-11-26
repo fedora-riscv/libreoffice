@@ -53,6 +53,7 @@ Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerele
 Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source5:        redhat-langpacks.tar.gz
 Source6:        libreoffice-multiliblauncher.sh
+Source7:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
 Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
@@ -915,6 +916,7 @@ touch autogen.lastrun
 
 mkdir -p ext_sources
 cp %{SOURCE4} ext_sources
+cp %{SOURCE7} ext_sources
 cp %{SOURCE8} ext_sources
 cp %{SOURCE9} ext_sources
 cp %{SOURCE10} ext_sources

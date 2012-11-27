@@ -949,8 +949,8 @@ echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 %install
 rm -rf $RPM_BUILD_ROOT
-# TODO: get rid of this
-. ./config_host.mk.source
+# TODO investigate use of make distro-pack-install
+. ./bin/get_config_variables `sed -n -e '/^export/s/^export \([A-Z0-9_]\+\).*/\1/p' config_host.mk`
 #figure out the icon version
 export `grep "^PRODUCTVERSIONSHORT =" solenv/inc/productversion.mk | sed -e "s/ //g"`
 export `grep "PRODUCTVERSION[ ]*=[ ]*" solenv/inc/productversion.mk | sed -e "s/ //g"`

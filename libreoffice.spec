@@ -861,6 +861,34 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
 
+mkdir -p ext_sources
+cp %{SOURCE4} ext_sources
+cp %{SOURCE7} ext_sources
+cp %{SOURCE8} ext_sources
+cp %{SOURCE9} ext_sources
+cp %{SOURCE10} ext_sources
+cp %{SOURCE11} ext_sources
+cp %{SOURCE12} ext_sources
+cp %{SOURCE13} ext_sources
+%if 0%{?rhel} && 0%{?rhel} < 7
+cp %{SOURCE14} ext_sources
+cp %{SOURCE15} ext_sources
+cp %{SOURCE16} ext_sources
+cp %{SOURCE17} ext_sources
+cp %{SOURCE18} ext_sources
+cp %{SOURCE19} ext_sources
+cp %{SOURCE20} ext_sources
+cp %{SOURCE21} ext_sources
+cp %{SOURCE22} ext_sources
+cp %{SOURCE23} ext_sources
+cp %{SOURCE24} ext_sources
+cp %{SOURCE25} ext_sources
+cp %{SOURCE26} ext_sources
+cp %{SOURCE27} ext_sources
+cp -r translations/source/en-GB translations/source/ms
+cp -r translations/source/en-GB translations/source/ur
+%endif
+
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 #don't build localized helps which aren't translated
@@ -919,34 +947,6 @@ touch autogen.lastrun
  --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
  %{distrooptions} \
  --disable-fetch-external
-
-mkdir -p ext_sources
-cp %{SOURCE4} ext_sources
-cp %{SOURCE7} ext_sources
-cp %{SOURCE8} ext_sources
-cp %{SOURCE9} ext_sources
-cp %{SOURCE10} ext_sources
-cp %{SOURCE11} ext_sources
-cp %{SOURCE12} ext_sources
-cp %{SOURCE13} ext_sources
-%if 0%{?rhel} && 0%{?rhel} < 7
-cp %{SOURCE14} ext_sources
-cp %{SOURCE15} ext_sources
-cp %{SOURCE16} ext_sources
-cp %{SOURCE17} ext_sources
-cp %{SOURCE18} ext_sources
-cp %{SOURCE19} ext_sources
-cp %{SOURCE20} ext_sources
-cp %{SOURCE21} ext_sources
-cp %{SOURCE22} ext_sources
-cp %{SOURCE23} ext_sources
-cp %{SOURCE24} ext_sources
-cp %{SOURCE25} ext_sources
-cp %{SOURCE26} ext_sources
-cp %{SOURCE27} ext_sources
-cp -r translations/source/en-GB translations/source/ms
-cp -r translations/source/en-GB translations/source/ur
-%endif
 
 if ! make VERBOSE=true; then
     # TODO Do we still need this? I think parallel build is reliable

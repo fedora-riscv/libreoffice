@@ -954,13 +954,14 @@ if ! make VERBOSE=true; then
     make GMAKE_OPTIONS=-rj1
 fi
 
-# TODO: get rid of this
-. ./config_host.mk.source
 #generate the icons and mime type stuff
 export DESTDIR=../../../output
 export KDEMAINDIR=/usr
 export GNOMEDIR=/usr
 export GNOME_MIME_THEME=hicolor
+# TODO use empty variables? Should make the renaming hacks in %%install
+# unnecessary.
+. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION
 cd sysui/unxlng*/misc/libreoffice
 ./create_tree.sh
 

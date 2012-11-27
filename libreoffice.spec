@@ -861,30 +861,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
 
-mkdir -p ext_sources
-cp %{SOURCE4} ext_sources
-cp %{SOURCE7} ext_sources
-cp %{SOURCE8} ext_sources
-cp %{SOURCE9} ext_sources
-cp %{SOURCE10} ext_sources
-cp %{SOURCE11} ext_sources
-cp %{SOURCE12} ext_sources
-cp %{SOURCE13} ext_sources
 %if 0%{?rhel} && 0%{?rhel} < 7
-cp %{SOURCE14} ext_sources
-cp %{SOURCE15} ext_sources
-cp %{SOURCE16} ext_sources
-cp %{SOURCE17} ext_sources
-cp %{SOURCE18} ext_sources
-cp %{SOURCE19} ext_sources
-cp %{SOURCE20} ext_sources
-cp %{SOURCE21} ext_sources
-cp %{SOURCE22} ext_sources
-cp %{SOURCE23} ext_sources
-cp %{SOURCE24} ext_sources
-cp %{SOURCE25} ext_sources
-cp %{SOURCE26} ext_sources
-cp %{SOURCE27} ext_sources
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 %endif
@@ -895,6 +872,8 @@ echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
 #don't build localized helps which are poorly translated
 POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
+# path to external tarballs
+EXTSRCDIR=`dirname %{SOURCE0}`
 
 %if 0%{?!rhel}
 # KDE bits
@@ -944,7 +923,7 @@ touch autogen.lastrun
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
- --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
+ --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
  %{distrooptions} \
  --disable-fetch-external
 

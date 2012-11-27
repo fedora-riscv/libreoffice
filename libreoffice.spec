@@ -1102,7 +1102,7 @@ nl      help    western         nn      help    western \
 nr      nohelp  western         nso     nohelp  western \
 or      nohelp  ctl             pa-IN   nohelp  ctl     \
 pl      help    western         pt      help    western \
-pt-BR   help    western         ro      help    western \
+pt-BR   help    western         ro      nohelp  western \
 ru      help    western         sh      nohelp  western \
 si      help    ctl             sk      help    western \
 sl      help    western         sr      nohelp  western \
@@ -1354,10 +1354,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/agenda.jar
 %{baseinstdir}/program/classes/commonwizards.jar
-%{baseinstdir}/program/classes/fax.jar
 %{baseinstdir}/program/classes/form.jar
 %{baseinstdir}/program/classes/query.jar
-%{baseinstdir}/program/classes/letter.jar
 %{baseinstdir}/program/classes/officebean.jar
 %{baseinstdir}/program/classes/report.jar
 %{baseinstdir}/program/classes/ScriptFramework.jar
@@ -1385,6 +1383,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/hatchwindowfactory.uno.so
 %{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/i18nsearch.uno.so
+%{baseinstdir}/program/ldapbe2.uno.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
@@ -1443,7 +1442,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
-%{baseinstdir}/program/libi18nregexplo.so
 %{baseinstdir}/program/libjdbclo.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
@@ -1452,6 +1450,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/liblocaledata_euro.so
 %{baseinstdir}/program/liblocaledata_others.so
 %{baseinstdir}/program/libmcnttype.so
+%{baseinstdir}/program/libmorklo.so
 %{baseinstdir}/program/libmozbootstrap.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/mtfrenderer.uno.so
@@ -1509,6 +1508,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
 %{baseinstdir}/program/libxstor.so
+# TODO how useful this is in Fedora?
+%{baseinstdir}/program/losessioninstall.uno.so
 %{baseinstdir}/program/migrationoo2.uno.so
 %{baseinstdir}/program/migrationoo3.uno.so
 %{baseinstdir}/program/msforms.uno.so
@@ -1524,7 +1525,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/resource/accen-US.res
 %{baseinstdir}/program/resource/basctlen-US.res
 %{baseinstdir}/program/resource/biben-US.res
-%{baseinstdir}/program/resource/calen-US.res
 %{baseinstdir}/program/resource/chartcontrolleren-US.res
 %{baseinstdir}/program/resource/cuien-US.res
 %{baseinstdir}/program/resource/dbaen-US.res
@@ -1579,6 +1579,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/ucptdoc1.uno.so
 %{baseinstdir}/program/unorc
 %{baseinstdir}/program/updatefeed.uno.so
+# TODO do we need this?
+%{baseinstdir}/program/ui-previewer
 %{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
 %{baseinstdir}/program/vbaevents.uno.so
@@ -1595,10 +1597,13 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_tango.zip
+# TODO what's this? How it differs from images_tango.zip?
+%{baseinstdir}/share/config/images_tango_testing.zip
 %{baseinstdir}/share/config/psetup.xpm
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
+%{baseinstdir}/share/config/soffice.cfg/*/ui
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
@@ -1616,12 +1621,12 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/registry/Langpack-en-US.xcd
 %dir %{baseinstdir}/share/registry/res
 %{baseinstdir}/share/registry/res/fcfg_langpack_en-US.xcd
-%dir %{baseinstdir}/share/samples
-%{baseinstdir}/share/samples/en-US
 %dir %{baseinstdir}/share/template
 %{baseinstdir}/share/template/en-US
 %dir %{baseinstdir}/share/template/common
+%{baseinstdir}/share/template/common/internal
 %{baseinstdir}/share/template/common/layout
+%{baseinstdir}/share/template/common/wizard
 %{baseinstdir}/share/template/wizard
 %dir %{baseinstdir}/share/wordbook
 %{baseinstdir}/share/wordbook/en-GB.dic
@@ -1674,7 +1679,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libucpfile1.so
 %{baseinstdir}/program/libutllo.so
 %{baseinstdir}/program/libvcllo.so
-%{baseinstdir}/program/libxcrlo.so
+%{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/localebe1.uno.so
 %{baseinstdir}/program/ucpgio1.uno.so
@@ -1689,9 +1694,9 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/setuprc
 %doc %{baseinstdir}/CREDITS.odt
 %doc %{baseinstdir}/LICENSE
+%doc %{baseinstdir}/LICENSE.html
 %doc %{baseinstdir}/LICENSE.odt
 %doc %{baseinstdir}/NOTICE
-%doc %{baseinstdir}/THIRDPARTYLICENSEREADME.html
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
@@ -1811,8 +1816,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/OGLTrans.uno.so
-%dir %{baseinstdir}/share/config
-%dir %{baseinstdir}/share/config/soffice.cfg
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
@@ -1903,9 +1906,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
-%if 0%{?fedora} || 0%{?rhel} >= 7
-%{baseinstdir}/program/libmsworks%{SOPOST}.so
-%endif
 %{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswuilo.so
 %{baseinstdir}/program/libt602filterlo.so
@@ -1933,8 +1933,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
-%dir %{baseinstdir}/share/config
-%dir %{baseinstdir}/share/config/soffice.cfg
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml

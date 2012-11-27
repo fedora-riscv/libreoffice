@@ -100,7 +100,7 @@ BuildRequires: zip
 # libs / headers
 BuildRequires: GConf2-devel
 BuildRequires: boost-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: clucene-core-devel
 %endif
 BuildRequires: cppunit-devel
@@ -121,19 +121,19 @@ BuildRequires: gstreamer1-plugins-base-devel
 BuildRequires: gtk2-devel
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
-%if 0%{?!rhel}
+%if 0%{?fedora}
 BuildRequires: kdelibs4-devel
 %endif
 BuildRequires: libICE-devel
 BuildRequires: libXext-devel
 BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
 BuildRequires: libcmis-devel
 %endif
 BuildRequires: libcurl-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libexttextcat-devel
 %endif
 BuildRequires: libicu-devel
@@ -141,7 +141,7 @@ BuildRequires: libidn-devel
 BuildRequires: libjpeg-devel
 BuildRequires: liblangtag-devel
 BuildRequires: liborcus-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
 BuildRequires: libwpg-devel
@@ -150,11 +150,11 @@ BuildRequires: libwps-devel
 BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: lpsolve-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: mdds-devel
 %endif
 BuildRequires: mesa-libGLU-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: mysql-connector-c++-devel
 BuildRequires: mythes-devel
 %endif
@@ -162,11 +162,11 @@ BuildRequires: neon-devel
 BuildRequires: nss-devel
 BuildRequires: openssl-devel
 BuildRequires: pam-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: poppler-cpp-devel
 %endif
 BuildRequires: poppler-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
 BuildRequires: python-devel
@@ -192,7 +192,7 @@ BuildRequires: hsqldb
 %endif
 BuildRequires: jakarta-commons-httpclient
 BuildRequires: java-devel
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: junit
 %endif
 BuildRequires: pentaho-reporting-flow-engine
@@ -494,7 +494,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %postun javafilter
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %package postgresql
 Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
@@ -552,7 +552,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%if 0%{?!rhel}
+%if 0%{?fedora}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -705,7 +705,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -S
 %langpack -l et -n Estonian -F -H -Y -S
 %langpack -l eu -n Basque -F -H -Y -A -S
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -728,7 +728,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -S
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
 %endif
 %langpack -l mai -n Maithili -F -S
@@ -752,7 +752,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -S
 %langpack -l ru -n Russian -F -H -Y -M -A -S
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S
 %endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -S
@@ -875,7 +875,7 @@ POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 
-%if 0%{?!rhel}
+%if 0%{?fedora}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
@@ -1749,7 +1749,7 @@ done
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
@@ -1903,7 +1903,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libmsworks%{SOPOST}.so
 %endif
 %{baseinstdir}/program/libswdlo.so
@@ -2004,7 +2004,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/pocketexcel.xcd
 %{baseinstdir}/share/registry/pocketword.xcd
 
-%if 0%{?!rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %files postgresql
 %defattr(-,root,root,-)
 %{baseinstdir}/program/postgresql-sdbc.uno.so
@@ -2056,7 +2056,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 
-%if 0%{?!rhel}
+%if 0%{?fedora}
 %files kde
 %defattr(-,root,root,-)
 %dir %{baseinstdir}

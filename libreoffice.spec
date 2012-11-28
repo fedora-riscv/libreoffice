@@ -220,7 +220,6 @@ Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 #to-do, fix this on bigendian platforms
 Patch26: 0001-disable-failing-check.patch
-Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 Patch29: libreoffice-rhel6gcj.patch
 Patch30: libreoffice-rhel6poppler.patch

@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -242,8 +242,7 @@ Patch22: 0003-drop-saxon-based-XSLT-transformer.patch
 Patch23: 0004-remove-all-traces-of-saxon.patch
 Patch24: 0001-do-not-strip-install-set.patch
 Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
-#to-do, fix this on bigendian platforms
-Patch26: 0001-disable-failing-check.patch
+Patch26: 0001-bigendian-utext-mixup-triggering-regression-test-fai.patch
 Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
 Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -898,7 +897,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .remove-all-traces-of-saxon.patch
 %patch24 -p1 -b .do-not-strip-install-set.patch
 %patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
-%patch26 -p1 -b .disable-failing-check.patch
+%patch26 -p1 -b .bigendian-utext-mixup-triggering-regression-test-fai.patch
 %patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
 %patch28 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -2176,6 +2175,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 28 2012 Caolán McNamara <caolanm@redhat.com> - 1:3.6.4.1-2
+- fix docx import on big endian
+
 * Sun Nov 18 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.1-1
 - 3.6.4 rc1
 

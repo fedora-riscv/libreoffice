@@ -25,6 +25,8 @@
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
 %bcond_without langpacks
+# simplify building before libcmis-0.3 is available
+%bcond_without libcmis
 
 %if %{with langpacks}
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -78,6 +80,9 @@ Source25:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfd
 Source26:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
 Source27:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
 %endif
+%if %{with libcmis}
+Source28:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
+%endif
 
 # build tools
 BuildRequires: autoconf
@@ -130,7 +135,9 @@ BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
-BuildRequires: libcmis-devel
+%if %{without libcmis}
+BuildRequires: libcmis-devel >= 0.3
+%endif
 %endif
 BuildRequires: libcurl-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -924,6 +931,7 @@ touch autogen.lastrun
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
  %{distrooptions} \
+ %{?with_libcmis:--without-system-libcmis} \
  --disable-fetch-external
 
 if ! make VERBOSE=true; then

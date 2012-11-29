@@ -1,18 +1,18 @@
-From 7e3bdb601c02e60b772e64ec9d11c56881c9a643 Mon Sep 17 00:00:00 2001
+From 1be2e01e592466aec2e60fbf1af528cfab1572db Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 1 Dec 2011 14:02:07 +0100
-Subject: [PATCH 1/2] #i101274 a directory on command line is silently ignored
+Subject: [PATCH] #i101274 a directory on command line is silently ignored
 
 ---
- .../source/misc/stillreadwriteinteraction.cxx      |    1 +
- ucbhelper/source/client/content.cxx                |   75 ++++++++++++++++++++
- 2 files changed, 76 insertions(+), 0 deletions(-)
+ .../source/misc/stillreadwriteinteraction.cxx      |  1 +
+ ucbhelper/source/client/content.cxx                | 75 ++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
 
 diff --git a/comphelper/source/misc/stillreadwriteinteraction.cxx b/comphelper/source/misc/stillreadwriteinteraction.cxx
-index 124564d..506f31c 100644
+index b3dd6e8..d0f5738 100644
 --- a/comphelper/source/misc/stillreadwriteinteraction.cxx
 +++ b/comphelper/source/misc/stillreadwriteinteraction.cxx
-@@ -96,6 +96,7 @@ ucbhelper::InterceptedInteraction::EInterceptionState StillReadWriteInteraction:
+@@ -87,6 +87,7 @@ ucbhelper::InterceptedInteraction::EInterceptionState StillReadWriteInteraction:
              bAbort = (
                  (exIO.Code == css::ucb::IOErrorCode_ACCESS_DENIED     )
                  || (exIO.Code == css::ucb::IOErrorCode_LOCKING_VIOLATION )
@@ -21,10 +21,10 @@ index 124564d..506f31c 100644
  #ifdef MACOSX
                  // this is a workaround for MAC, on this platform if the file is locked
 diff --git a/ucbhelper/source/client/content.cxx b/ucbhelper/source/client/content.cxx
-index 676acd5..4a599c9 100644
+index 95e589f..d7fc181 100644
 --- a/ucbhelper/source/client/content.cxx
 +++ b/ucbhelper/source/client/content.cxx
-@@ -38,6 +38,7 @@
+@@ -27,6 +27,7 @@
  #include <cppuhelper/weak.hxx>
  
  #include <cppuhelper/implbase1.hxx>
@@ -32,7 +32,7 @@ index 676acd5..4a599c9 100644
  #include <com/sun/star/ucb/CheckinArgument.hpp>
  #include <com/sun/star/ucb/ContentCreationError.hpp>
  #include <com/sun/star/ucb/XCommandEnvironment.hpp>
-@@ -47,6 +48,8 @@
+@@ -37,6 +38,8 @@
  #include <com/sun/star/ucb/ContentAction.hpp>
  #include <com/sun/star/ucb/OpenCommandArgument2.hpp>
  #include <com/sun/star/ucb/InsertCommandArgument.hpp>
@@ -41,7 +41,7 @@ index 676acd5..4a599c9 100644
  #include <com/sun/star/ucb/GlobalTransferCommandArgument2.hpp>
  #include <com/sun/star/ucb/NameClash.hpp>
  #include <com/sun/star/ucb/OpenMode.hpp>
-@@ -64,6 +67,8 @@
+@@ -56,12 +59,18 @@
  #include <com/sun/star/sdbc/XRow.hpp>
  #include <com/sun/star/lang/IllegalArgumentException.hpp>
  #include <com/sun/star/beans/UnknownPropertyException.hpp>
@@ -50,7 +50,6 @@ index 676acd5..4a599c9 100644
  #include <ucbhelper/macros.hxx>
  #include <ucbhelper/content.hxx>
  #include <ucbhelper/activedatasink.hxx>
-@@ -71,6 +76,10 @@
  #include <ucbhelper/activedatastreamer.hxx>
  #include <ucbhelper/interactionrequest.hxx>
  #include <ucbhelper/cancelcommandexecution.hxx>
@@ -61,7 +60,7 @@ index 676acd5..4a599c9 100644
  
  using namespace com::sun::star::container;
  using namespace com::sun::star::beans;
-@@ -373,6 +382,54 @@ static Reference< XContent > getContent(
+@@ -283,6 +292,54 @@ static Reference< XContent > getContent(
      return Reference< XContent >();
  }
  
@@ -70,16 +69,16 @@ index 676acd5..4a599c9 100644
 +
 +void
 +lcl_displayMessage(
++        const Reference<XComponentContext>& rContext,
 +        const Reference<XCommandEnvironment>& rEnvironment,
 +        const rtl::OUString& rUri)
 +{
 +    // Create exception
-+    const Reference<XContentProviderManager> xCPM(
-+            getContentBroker(true)->getContentProviderManagerInterface());
++    const Reference<XUniversalContentBroker> xBroker(UniversalContentBroker::create(rContext));
 +    const PropertyValue aUriProperty(
 +            rtl::OUString::createFromAscii("Uri"),
 +            -1,
-+            makeAny(getSystemPathFromFileURL(xCPM, rUri)),
++            makeAny(getSystemPathFromFileURL(xBroker, rUri)),
 +            PropertyState_DIRECT_VALUE)
 +        ;
 +    Sequence<Any> lArguments(1);
@@ -116,72 +115,72 @@ index 676acd5..4a599c9 100644
  //=========================================================================
  //=========================================================================
  //
-@@ -787,7 +902,10 @@ Reference< XInputStream > Content::openStream()
+@@ -699,7 +756,10 @@ Reference< XInputStream > Content::openStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return Reference< XInputStream >();
 +    }
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -813,7 +930,10 @@ Reference< XInputStream > Content::openStreamNoLock()
+@@ -724,7 +784,10 @@ Reference< XInputStream > Content::openStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return Reference< XInputStream >();
 +    }
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -838,7 +965,10 @@ Reference< XStream > Content::openWriteableStream()
+@@ -749,7 +812,10 @@ Reference< XStream > Content::openWriteableStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return Reference< XStream >();
 +    }
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -863,7 +990,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
+@@ -774,7 +840,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return Reference< XStream >();
 +    }
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -888,7 +1019,10 @@ sal_Bool Content::openStream( const Reference< XActiveDataSink >& rSink )
+@@ -799,7 +868,10 @@ sal_Bool Content::openStream( const Reference< XActiveDataSink >& rSink )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return sal_False;
 +    }
  
      OpenCommandArgument2 aArg;
      aArg.Mode       = OpenMode::DOCUMENT;
-@@ -911,7 +1045,10 @@ sal_Bool Content::openStream( const Reference< XOutputStream >& rStream )
+@@ -822,7 +894,10 @@ sal_Bool Content::openStream( const Reference< XOutputStream >& rStream )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
-+        lcl_displayMessage(m_xImpl->getEnvironment(), getURL());
++        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
          return sal_False;
 +    }
  
      OpenCommandArgument2 aArg;
      aArg.Mode       = OpenMode::DOCUMENT;
 -- 
-1.7.7.3
+1.8.0
 

@@ -1272,8 +1272,7 @@ sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
 for app in base calc draw impress javafilter math startcenter writer xsltfilter; do
-    # FIXME enable again
-    # desktop-file-validate $app.desktop
+    desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd

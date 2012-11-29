@@ -47,7 +47,6 @@ Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
 Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
@@ -586,7 +585,6 @@ Debug information is useful when developing applications that use this
 package or when debugging this package.
 
 %files debuginfo -f debugfiles.list
-%defattr(-,root,root)
 
 %package gdb-debug-support
 Summary: Additional support for debugging with gdb
@@ -598,7 +596,6 @@ AutoReqProv: 0
 This package provides gdb pretty printers for package %{name}.
 
 %files gdb-debug-support
-%defattr(-,root,root)
 %{_datadir}/gdb/auto-load%{baseinstdir}
 %{_datadir}/libreoffice/gdb
 
@@ -659,7 +656,6 @@ Provides additional %{langname} translations and resources for %{project}. \
 \
 %define filelist %{-s:-f %{-s*}.filelist}%{!-s:%{-S:-f %{lang}.filelist}} \
 %files %{pkgname} %{filelist} \
-%defattr(-,root,root,-) \
 %*
 
 
@@ -686,7 +682,6 @@ BuildArch: noarch \
 Rules for auto-correcting common %{langname} typing errors. \
 \
 %files -n %{pkgname} \
-%defattr(-,root,root,-) \
 %doc solver/unxlng*/bin/ure/LICENSE \
 %dir %{_datadir}/autocorr \
 %{!-X:%{_datadir}/autocorr/acor_%{lang}-*} \
@@ -952,7 +947,6 @@ echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
 # TODO investigate use of make distro-pack-install
 . ./bin/get_config_variables `sed -n -e '/^export/s/^export \([A-Z0-9_]\+\).*/\1/p' config_host.mk`
 #figure out the icon version
@@ -1324,14 +1318,9 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 #timeout -k 2m 2h make smoketest.subsequentcheck
 #%endif
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
-%defattr(-,root,root,-)
 
 %files core
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
 %docdir %{baseinstdir}/help/en
@@ -1753,7 +1742,6 @@ done
 
 
 %files base
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
@@ -1788,35 +1776,29 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files report-builder
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/report-builder/help
 %{baseinstdir}/share/extensions/report-builder
 
 %files bsh
-%defattr(-,root,root,-)
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
 %{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
 %{baseinstdir}/share/Scripts/beanshell
 
 %files rhino
-%defattr(-,root,root,-)
 %{baseinstdir}/program/classes/js.jar
 %{baseinstdir}/program/classes/ScriptProviderForJavaScript.jar
 %{baseinstdir}/program/services/scriptproviderforjavascript.rdb
 %{baseinstdir}/share/Scripts/javascript
 
 %files wiki-publisher
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
 %{baseinstdir}/share/extensions/wiki-publisher
 
 %files nlpsolver
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/nlpsolver/help
 %{baseinstdir}/share/extensions/nlpsolver
 
 %files ogltrans
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/OGLTrans.uno.so
@@ -1825,17 +1807,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/ogltrans.xcd
 
 %files presentation-minimizer
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/presentation-minimizer/help
 %{baseinstdir}/share/extensions/presentation-minimizer
 
 %files presenter-screen
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/presenter-screen/help
 %{baseinstdir}/share/extensions/presenter-screen
 
 %files pdfimport
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/pdfimport/help
 %{baseinstdir}/share/extensions/pdfimport
 
@@ -1843,7 +1822,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc solver/unxlng*/bin/ure/LICENSE
 
 %files calc
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/scalc.*
 %dir %{baseinstdir}/program
@@ -1878,7 +1856,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files draw
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/help/en/sdraw.*
@@ -1895,7 +1872,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files emailmerge
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/mailmerge.py*
@@ -1903,7 +1879,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/officehelper.py*
 
 %files writer
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/swriter.*
 %dir %{baseinstdir}/program
@@ -1931,7 +1906,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files impress
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/simpress.*
 %dir %{baseinstdir}/program
@@ -1953,7 +1927,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files math
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/smath.*
 %dir %{baseinstdir}/program
@@ -1973,7 +1946,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files graphicfilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libflashlo.so
@@ -1981,7 +1953,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/share/xslt
 %{baseinstdir}/share/xslt/docbook
@@ -1994,7 +1965,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files javafilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
@@ -2008,7 +1978,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %files postgresql
-%defattr(-,root,root,-)
 %{baseinstdir}/program/postgresql-sdbc.uno.so
 %{baseinstdir}/program/postgresql-sdbc-impl.uno.so
 %{baseinstdir}/program/postgresql-sdbc.ini
@@ -2017,32 +1986,27 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files ure
-%defattr(-,root,root,-)
 %doc solver/unxlng*/bin/ure/LICENSE
 %dir %{baseinstdir}
 %{ureinstdir}
 
 %files sdk
-%defattr(-,root,root,-)
 %{sdkinstdir}/
 %exclude %{sdkinstdir}/docs/
 %exclude %{sdkinstdir}/examples/
 
 %files sdk-doc
-%defattr(-,root,root,-)
 %docdir %{sdkinstdir}/docs
 %{sdkinstdir}/docs/
 %{sdkinstdir}/examples/
 
 %files headless
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libbasebmplo.so
 %{baseinstdir}/program/libvclplug_svplo.so
 
 %files pyuno
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libpyuno.so
@@ -2060,7 +2024,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora}
 %files kde
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/kde4be1.uno.so

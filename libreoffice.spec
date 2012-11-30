@@ -1978,9 +1978,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
-%if 0%{?fedora} || 0%{?rhel} >= 7
-%{baseinstdir}/program/libmsworks%{SOPOST}.so
-%endif
 %{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswuilo.so
 %{baseinstdir}/program/libt602filterlo.so

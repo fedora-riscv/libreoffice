@@ -974,6 +974,12 @@ fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
 mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
+# The installer currently sets UserInstallation to
+# $ORIGIN/../libreoffice/4, which is of course total nonsense. Because I
+# have no inclination to crawl through mountains of perl code to figure out
+# where it comes from, I am just going to replace it by a sensible
+# value here.
+sed -i -e '/UserInstallation/s@\$ORIGIN/..@$SYSUSERCONFIG@' $RPM_BUILD_ROOT/%{baseinstdir}/program/bootstraprc
 %if %{with langpacks}
 dmake ooolanguagepack
 rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log

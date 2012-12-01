@@ -1601,7 +1601,11 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
+# UI translations go into langpacks
+%exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res
 %{baseinstdir}/share/config/soffice.cfg/*/ui
+# UI translations go into langpacks
+%exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd

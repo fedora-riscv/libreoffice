@@ -52,7 +52,6 @@ Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
 Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
 Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
 Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source5:        redhat-langpacks.tar.gz
 Source6:        libreoffice-multiliblauncher.sh
 Source7:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
@@ -601,6 +600,16 @@ This package provides gdb pretty printers for package %{name}.
 
 %endif
 
+%define _langpack_common() \
+%{baseinstdir}/program/resource/*%{1}.res  \
+%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1} \
+%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1} \
+%{baseinstdir}/share/template/%{1} \
+%{baseinstdir}/share/registry/Langpack-%{1}.xcd \
+%{baseinstdir}/share/registry/res/registry_%{1}.xcd \
+%{baseinstdir}/share/registry/res/fcfg_langpack_%{1}.xcd \
+%{nil}
+
 # Defines a language pack subpackage.
 #
 # It's necessary to define language code (-l) and language name (-n).
@@ -617,23 +626,30 @@ This package provides gdb pretty printers for package %{name}.
 # All remaining arguments are considered to be files and added to the file
 # list.
 #
-# Aa: autocorr dependency
-# Ff: font language dependency
-# Hh: hunspell dependency
-# l:  language code, e.g., cs
-# Mm: mythes dependency
-# n:  language name, e.g., Czech
-# p:  Provides: of libreoffice-langpack
-# r:  comma-separated list of additional requires
-# Ss: filelist
-# Yy: hyphen dependency
+# Aa:  autocorr dependency
+# c:   additional config file (just the name stem)
+# E    the package does not contain any files (i.e., has empty filelist)
+# Ff:  font language dependency
+# Hh:  hunspell dependency
+# i:   additional language added to this package
+# L:   language code for files
+# l:   language code, e.g., cs
+# Mm:  mythes dependency
+# n:   language name, e.g., Czech
+# p:   Provides: of libreoffice-langpack
+# r:   comma-separated list of additional requires
+# S:s: script classification (cjk, ctl). -T is only a marker, as it does
+#      not add any .xcd into the package (to be used for CTL scripts
+#      that should not be sequence checked)
+# T    has help files
+# Yy:  hyphen dependency
 #
 # Example:
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
-# autocorr-cs, mythes-cs-CZ and suitable font and taking the files from
-# cs.filelist:
-# %%langpack -l cs -n Czech -H -A -m cs-CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:p:r:Ss:Yy:) \
+# autocorr-cs, mythes-cs-CZ and suitable font:
+# %%langpack -l cs -n Czech -H -A -m cs-CZ
+#  b de g  jk   o q  tuvwx z BCD  G IJK  NOPQR  UVWX Z0123456789
+%define langpack(Aa:c:EFf:Hh:iL:l:Mm:n:p:r:S:s:TYy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -654,10 +670,19 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for %{project}. \
 \
-%define filelist %{-s:-f %{-s*}.filelist}%{!-s:%{-S:-f %{lang}.filelist}} \
-%files %{pkgname} %{filelist} \
-%*
-
+%files %{pkgname} \
+%{!-E: \
+%define _langpack_lang %{-L:%{-L*}}%{!-L:%{-l*}} \
+%{expand:%%_langpack_common %{_langpack_lang}} \
+%{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
+%{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
+%{-T: \
+%docdir %{baseinstdir}/help/%{_langpack_lang} \
+%{baseinstdir}/help/%{_langpack_lang} \
+} \
+%{-i:%{expand:%%_langpack_common %{-i*}}} \
+} \
+%{nil}
 
 # Defines an auto-correction subpackage.
 #
@@ -684,104 +709,101 @@ Rules for auto-correcting common %{langname} typing errors. \
 %files -n %{pkgname} \
 %doc solver/unxlng*/bin/ure/LICENSE \
 %dir %{_datadir}/autocorr \
-%{!-X:%{_datadir}/autocorr/acor_%{lang}-*} \
+%{!?-X:%{_datadir}/autocorr/acor_%{lang}-*} \
 %*
 
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -S
-%langpack -l ar -n Arabic -F -H -S
-%langpack -l as -n Assamese -F -H -Y -S
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -S
-%langpack -l bn -n Bengali -F -H -Y -S
-%langpack -l ca -n Catalan -F -H -Y -M -S
-%langpack -l cs -n Czech -F -H -Y -M -A -S
-%langpack -l cy -n Welsh -F -H -Y -S
-%langpack -l da -n Danish -F -H -Y -M -A -S
-%langpack -l de -n German -F -H -Y -M -A -S
-%langpack -l dz -n Dzongkha -F -S
-%langpack -l el -n Greek -F -H -Y -M -S
-%langpack -l en -n English -F -H -Y -M -A
-%langpack -l es -n Spanish -F -H -Y -M -A -S
-%langpack -l et -n Estonian -F -H -Y -S
-%langpack -l eu -n Basque -F -H -Y -A -S
+%langpack -l af -n Afrikaans -F -H -Y -A
+%langpack -l ar -n Arabic -F -H -s ctl
+%langpack -l as -n Assamese -F -H -Y
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -T
+%langpack -l bn -n Bengali -F -H -Y -T
+%langpack -l ca -n Catalan -F -H -Y -M -T
+%langpack -l cs -n Czech -F -H -Y -M -A -T
+%langpack -l cy -n Welsh -F -H -Y
+%langpack -l da -n Danish -F -H -Y -M -A -T
+%langpack -l de -n German -F -H -Y -M -A -T
+%langpack -l dz -n Dzongkha -F -s ctl -T
+%langpack -l el -n Greek -F -H -Y -M -T
+%langpack -l en -n English -F -H -Y -M -A -E
+%langpack -l es -n Spanish -F -H -Y -M -A -T
+%langpack -l et -n Estonian -F -H -Y -T
+%langpack -l eu -n Basque -F -H -Y -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l fa -n Farsi -A -H -Y -S
+%langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l fi -n Finnish -F -A -S
+%langpack -l fi -n Finnish -F -A -T
 %else
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -S
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T
 %endif
-%langpack -l fr -n French -F -H -Y -M -A -S
-%langpack -l ga -n Irish -F -H -Y -M -A -S
-%langpack -l gl -n Galician -F -H -Y -S
-%langpack -l gu -n Gujarati -F -H -Y -S
-%langpack -l he -n Hebrew -F -H -S
-%langpack -l hi -n Hindi -F -H -Y -S
-%langpack -l hr -n Croatian -F -H -Y -A -S
-%langpack -l hu -n Hungarian -F -H -Y -M -A -S
-%langpack -l it -n Italian -F -H -Y -M -A -S
-%langpack -l ja -n Japanese -F -A -S
-%langpack -l kn -n Kannada -F -H -Y -S
-%langpack -l ko -n Korean -F -H -A -S
-%{baseinstdir}/share/registry/korea.xcd
-
-%langpack -l lt -n Lithuanian -F -H -Y -A -S
+%langpack -l fr -n French -F -H -Y -M -A -T
+%langpack -l ga -n Irish -F -H -Y -M -A
+%langpack -l gl -n Galician -F -H -Y -T
+%langpack -l gu -n Gujarati -F -H -Y -s ctl
+%langpack -l he -n Hebrew -F -H -s ctl
+%langpack -l hi -n Hindi -F -H -Y -s ctl -T
+%langpack -l hr -n Croatian -F -H -Y -A
+%langpack -l hu -n Hungarian -F -H -Y -M -A -T
+%langpack -l it -n Italian -F -H -Y -M -A -T
+%langpack -l ja -n Japanese -F -A -s cjk -T
+%langpack -l kn -n Kannada -F -H -Y
+%langpack -l ko -n Korean -F -H -A -s cjk -T -c korea
+%langpack -l lt -n Lithuanian -F -H -Y -A
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l lv -n Latvian -F -H -Y -M -S
+%langpack -l lv -n Latvian -F -H -Y -M
 %endif
-%langpack -l mai -n Maithili -F -S
+%langpack -l mai -n Maithili -F
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ms -n Malay -F -H -S
+%langpack -l ms -n Malay -F -H
 %endif
-%langpack -l ml -n Malayalam -F -H -Y -S
-%langpack -l mr -n Marathi -F -H -Y -S
-%langpack -l nb -n Bokmal -F -H -Y -M -S
-%langpack -l nl -n Dutch -F -H -Y -M -A -S
-%langpack -l nn -n Nynorsk -F -H -Y -M -S
+%langpack -l ml -n Malayalam -F -H -Y
+%langpack -l mr -n Marathi -F -H -Y
+%langpack -l nb -n Bokmal -F -H -Y -M -T
+%langpack -l nl -n Dutch -F -H -Y -M -A -T
+%langpack -l nn -n Nynorsk -F -H -Y -M -T
 %define langpack_lang Southern Ndebele
-%langpack -l nr -n %{langpack_lang} -F -H -S
+%langpack -l nr -n %{langpack_lang} -F -H
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -S
-%langpack -l or -n Oriya -F -H -Y -S
-%langpack -l pa -n Punjabi -F -H -Y -s pa-IN
-%langpack -l pl -n Polish -F -H -Y -M -A -S
+%langpack -l nso -n %{langpack_lang} -F -H
+%langpack -l or -n Oriya -F -H -Y -s ctl
+%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -T
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -S
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -s pt
-%langpack -l ro -n Romanian -F -H -Y -M -S
-%langpack -l ru -n Russian -F -H -Y -M -A -S
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt
+%langpack -l ro -n Romanian -F -H -Y -M
+%langpack -l ru -n Russian -F -H -Y -M -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l si -n Sinhalese -F -H -S
+%langpack -l si -n Sinhalese -F -H -S ctl -T
 %endif
-%langpack -l sk -n Slovak -F -H -Y -M -A -S
-%langpack -l sl -n Slovenian -F -H -Y -M -A -S
-%langpack -l sr -n Serbian -F -H -Y -A -S
-%langpack -l ss -n Swati -F -H -S
+%langpack -l sk -n Slovak -F -H -Y -M -A -T
+%langpack -l sl -n Slovenian -F -H -Y -M -A -T
+#rhbz#452379 clump serbian translations together
+%langpack -l sr -n Serbian -F -H -Y -A -i sh
+%langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
-%langpack -l st -n %{langpack_lang} -F -H -S
-%langpack -l sv -n Swedish -F -H -Y -M -A -S
-%langpack -l ta -n Tamil -F -H -Y -S
-%langpack -l te -n Telugu -F -H -Y -S
-%langpack -l th -n Thai -F -H -S
-%{baseinstdir}/share/registry/ctlseqcheck_th.xcd
-
-%langpack -l tn -n Tswana -F -H -S
-%langpack -l tr -n Turkish -F -A -S
-%langpack -l ts -n Tsonga -F -H -S
-%langpack -l uk -n Ukrainian -F -H -Y -M -S
+%langpack -l st -n %{langpack_lang} -F -H
+%langpack -l sv -n Swedish -F -H -Y -M -A -T
+%langpack -l ta -n Tamil -F -H -Y -s ctl
+%langpack -l te -n Telugu -F -H -Y
+%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
+%langpack -l tn -n Tswana -F -H
+%langpack -l tr -n Turkish -F -A -T
+%langpack -l ts -n Tsonga -F -H
+%langpack -l uk -n Ukrainian -F -H -Y -M -T
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ur -n Urdu -F -H -S
+%langpack -l ur -n Urdu -F -H
 %endif
-%langpack -l ve -n Venda -F -H -S
-%langpack -l xh -n Xhosa -F -H -S
+%langpack -l ve -n Venda -F -H
+%langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s zh-TW
-%langpack -l zu -n Zulu -F -H -Y -S
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW
+%langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
 %endif
@@ -1055,80 +1077,6 @@ popd
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}
 mv -f $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr $RPM_BUILD_ROOT/%{_datadir}/autocorr
 chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
-
-%if %{with langpacks}
-
-#auto generate the langpack file lists, format is...
-#langpack id, has help or not, autocorrection glob, script classification
-langpackdetails=\
-(\
-af      nohelp  western         ar      nohelp  ctl     \
-as      nohelp  western         bg      help    western \
-bn      help    western         ca      help    western \
-cs      help    western         cy      nohelp  western \
-da      help    western         de      help    western \
-dz      help    ctl             el      help    western \
-es      help    western         et      help    western \
-eu      help    western         fa      nohelp  ctl     \
-fi      help    western         fr      help    western \
-ga      nohelp  western         gl      help    western \
-gu      nohelp  ctl             he      nohelp  ctl     \
-hi      help    ctl             hr      nohelp  western \
-hu      help    western         it      help    western \
-ja      help    cjk             ko      help    cjk     \
-kn      nohelp  western         lt      nohelp  western \
-lv      nohelp  western         mai     nohelp  western \
-ml      nohelp  western         mr      nohelp  western \
-ms      nohelp  western         nb      help    western \
-nl      help    western         nn      help    western \
-nr      nohelp  western         nso     nohelp  western \
-or      nohelp  ctl             pa-IN   nohelp  ctl     \
-pl      help    western         pt      help    western \
-pt-BR   help    western         ro      nohelp  western \
-ru      help    western         sh      nohelp  western \
-si      help    ctl             sk      help    western \
-sl      help    western         sr      nohelp  western \
-ss      nohelp  western         st      nohelp  western \
-sv      help    western         ta      nohelp  ctl     \
-te      nohelp  western         th      nohelp  ctlseqcheck \
-tn      nohelp  western         tr      help    western \
-ts      nohelp  western         uk      help    western \
-ur      nohelp  western         ve      nohelp  western \
-xh      nohelp  western         zh-CN   help    cjk     \
-zh-TW   help    cjk             zu      nohelp  western \
-)
-
-tar xzf %{SOURCE5}
-
-i=0
-while [ $i -lt ${#langpackdetails[@]} ]; do
-   lang=${langpackdetails[$i]}
-   sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-common.template > $lang.filelist
-   i=$[i+1]
-   help=${langpackdetails[$i]}
-   if [ "$help" = "help" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-help.template >> $lang.filelist
-   fi
-   i=$[i+1]
-   type=${langpackdetails[$i]}
-   if [ "$type" = "cjk" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-cjk.template >> $lang.filelist
-   fi
-   #rh217269 upstream made a decision to sequence check all ctl languages
-   #I think this is wrong, and only Thai should be sequence checked
-   if [ "$type" = "ctlseqcheck" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-ctl.template >> $lang.filelist
-   fi
-   if [ "$type" = "ctl" ]; then
-     rm -f $RPM_BUILD_ROOT/%{baseinstdir}/share/registry/ctl_$lang.xcd
-   fi
-   i=$[i+1]
-done
-
-#rhbz#452379 clump serbian translations together
-cat sh.filelist >> sr.filelist
-
-%endif
 
 #remove it in case we didn't build with gcj
 rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/sandbox.jar

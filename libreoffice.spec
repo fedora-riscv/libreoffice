@@ -827,6 +827,14 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %endif
 
+%define make_autocorr_aliases(l:) \
+%{?-l: \
+for lang in %{*}; do \
+    ln -sf acor_%{-l*}.dat acor_$lang.dat \
+done \
+} \
+%{!?-l:%{error:-l must be present}}
+
 %prep
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 3
 rm -rf git-hooks */git-hooks
@@ -1026,49 +1034,19 @@ popd
 #Set some aliases to canonical autocorrect language files for locales with matching languages
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr
 
-en_GB_aliases="en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT"
-for lang in $en_GB_aliases; do
-        ln -sf acor_en-GB.dat acor_$lang.dat
-done
-en_US_aliases="en-PH"
-for lang in $en_US_aliases; do
-        ln -sf acor_en-US.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l en-GB en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT
+%make_autocorr_aliases -l en-US en-PH
 #en-ZA exists and has a good autocorrect file with two or three extras that make sense for 
 #neighbouring english speaking territories
-en_ZA_aliases="en-NA en-ZW"
-for lang in $en_ZA_aliases; do
-        ln -sf acor_en-ZA.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l en-ZA en-NA en-ZW
 %if %{with langpacks}
-af_ZA_aliases="af-NA"
-for lang in $af_ZA_aliases; do
-        ln -sf acor_af-ZA.dat acor_$lang.dat
-done
-de_DE_aliases="de-AT de-BE de-CH de-LI de-LU"
-for lang in $de_DE_aliases; do
-        ln -sf acor_de-DE.dat acor_$lang.dat
-done
-es_ES_aliases="es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE"
-for lang in $es_ES_aliases; do
-        ln -sf acor_es-ES.dat acor_$lang.dat
-done
-fr_FR_aliases="fr-BE fr-CA fr-CH fr-LU fr-MC"
-for lang in $fr_FR_aliases; do
-        ln -sf acor_fr-FR.dat acor_$lang.dat
-done
-it_IT_aliases="it-CH"
-for lang in $it_IT_aliases; do
-        ln -sf acor_it-IT.dat acor_$lang.dat
-done
-nl_NL_aliases="nl-AW"
-for lang in $nl_NL_aliases; do
-        ln -s acor_nl-NL.dat acor_$lang.dat
-done
-sv_SE_aliases="sv-FI"
-for lang in $sv_SE_aliases; do
-        ln -s acor_sv-SE.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l af-ZA af-NA
+%make_autocorr_aliases -l de-DE de-AT de-BE de-CH de-LI de-LU
+%make_autocorr_aliases -l es-ES es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE
+%make_autocorr_aliases -l fr-FR fr-BE fr-CA fr-CH fr-LU fr-MC
+%make_autocorr_aliases -l it-IT it-CH
+%make_autocorr_aliases -l nl-NL nl-AW
+%make_autocorr_aliases -l sv-SE sv-FI
 %else
 rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif

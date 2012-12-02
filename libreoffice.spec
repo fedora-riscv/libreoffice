@@ -686,14 +686,14 @@ Provides additional %{langname} translations and resources for %{project}. \
 
 # Defines an auto-correction subpackage.
 #
+# i: add autocorrections from additional language
 # l: language code
 # n: language name
-# X  do not use default file match on %%{_datadir}/autocorr/acor_%%{lang}-*
-#    in file list
+# L  the filename does not contain country code
 #
 # All remaining arguments are considered to be files and added to the file
 # list.
-%define autocorr(l:n:X) \
+%define autocorr(i:Ll:n:) \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname autocorr-%{lang} \
 %define langname %{-n:%{-n*}}%{!-n:%{error:Language name not defined}} \
@@ -709,9 +709,10 @@ Rules for auto-correcting common %{langname} typing errors. \
 %files -n %{pkgname} \
 %doc solver/unxlng*/bin/ure/LICENSE \
 %dir %{_datadir}/autocorr \
-%{!?-X:%{_datadir}/autocorr/acor_%{lang}-*} \
-%*
-
+%{-L:%{_datadir}/autocorr/acor_%{lang}.dat} \
+%{!-L:%{_datadir}/autocorr/acor_%{lang}-*.dat} \
+%{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
+%{nil}
 
 %if %{with langpacks}
 
@@ -818,9 +819,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l da -n Danish
 %autocorr -l de -n German
 %autocorr -l es -n Spanish
-%autocorr -l eu -n Basque -X
-%{_datadir}/autocorr/acor_eu.dat
-
+%autocorr -l eu -n Basque -L
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French
@@ -839,9 +838,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l ru -n Russian
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
-%autocorr -l sr -n Serbian
-%{_datadir}/autocorr/acor_sh-*
-
+#rhbz#452379 clump serbian autocorrections together
+%autocorr -l sr -n Serbian -i sh
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese

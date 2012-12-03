@@ -638,9 +638,9 @@ This package provides gdb pretty printers for package %{name}.
 # n:   language name, e.g., Czech
 # p:   Provides: of libreoffice-langpack
 # r:   comma-separated list of additional requires
-# S:s: script classification (cjk, ctl). -T is only a marker, as it does
-#      not add any .xcd into the package (to be used for CTL scripts
-#      that should not be sequence checked)
+# S:s: script classification (cjk, ctl). -S is only a marker, as it does
+#      not add any .xcd into the package (the file does not exist for at
+#      least one CTL-using locale, si)
 # T    has help files
 # Yy:  hyphen dependency
 #

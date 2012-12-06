@@ -145,6 +145,7 @@ BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 BuildRequires: libjpeg-devel
 BuildRequires: liblangtag-devel
+BuildRequires: libmspub-devel
 BuildRequires: liborcus-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel

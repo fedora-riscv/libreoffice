@@ -2343,7 +2343,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Nov 13 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7-UNBUILT
+* Thu Dec 06 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7
 - Resolves: rendering documents in browser plug-in
 - Resolves: rhbz#882240 end of undo stack crash
 

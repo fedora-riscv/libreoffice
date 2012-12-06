@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.4
+%define libo_version 4.0.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-# %%define libo_prerelease
+%define libo_prerelease .beta1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -20,14 +20,13 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
-# use rpmbuild --without binfilter (or mock --without binfilter) to get
-# a faster build without old binary filters
+# get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
-%bcond_without binfilter
-# get english only and no-langpacks for a faster smoketest build
 %bcond_without langpacks
+# simplify building before libcmis-0.3 is available
+%bcond_with libcmis
 
 %if %{with langpacks}
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -43,44 +42,44 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source0:        %{source_url}/libreoffice-core-%{version}%{?libo_prerelease}.tar.xz
-Source1:        %{source_url}/libreoffice-binfilter-%{version}%{?libo_prerelease}.tar.xz
-Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
-Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
-Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source5:        redhat-langpacks.tar.gz
-Source6:        libreoffice-multiliblauncher.sh
-Source7:        http://hg.services.openoffice.org/binaries/fdb27bfe2dbe2e7b57ae194d9bf36bab-SampleICC-1.3.2.tar.gz
-Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
-Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source11:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-Source12:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
+Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
+Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
+Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
+Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source4:        libreoffice-multiliblauncher.sh
+Source5:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
+Source6:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source7:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source8:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source9:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source10:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source13:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source11:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %if 0%{?rhel} && 0%{?rhel} < 7
-Source14:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
-Source15:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
-Source16:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
-Source17:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
-Source18:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
-Source19:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
-Source20:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
-Source21:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source22:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
-Source23:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
-Source24:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
-Source25:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source26:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
-Source27:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+Source12:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
+Source13:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
+Source14:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source15:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source16:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source17:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
+Source18:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
+Source21:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
+Source22:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
+Source23:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source24:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
+Source25:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+%endif
+%if %{with libcmis}
+Source26:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 %endif
 
 # build tools
@@ -134,21 +133,19 @@ BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
-BuildRequires: libcmis-devel
+%if %{without libcmis}
+BuildRequires: libcmis-devel >= 0.3
+%endif
 %endif
 BuildRequires: libcurl-devel
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libdb-devel
-%else
-BuildRequires: db4-devel
-%endif
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libexttextcat-devel
 %endif
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 BuildRequires: libjpeg-devel
-BuildRequires: librsvg2-devel
+BuildRequires: liblangtag-devel
+BuildRequires: liborcus-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
@@ -204,6 +201,8 @@ BuildRequires: java-devel
 BuildRequires: junit
 %endif
 BuildRequires: pentaho-reporting-flow-engine
+BuildRequires: tomcat-servlet-3.0-api
+
 # fonts needed for unit tests
 BuildRequires: liberation-mono-fonts >= 1.0
 BuildRequires: liberation-sans-fonts >= 1.0
@@ -224,32 +223,14 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch9:  0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-Patch10: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
-Patch11: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
-Patch12: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
-Patch13: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
-Patch14: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-Patch15: 0003-make-avmedia-build-with-gstreamer-0.10.patch
-Patch16: 0004-tweak-old-school-gstreamer-link-line.patch
-Patch17: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-Patch18: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
-Patch19: 0007-gstreamer-fix-leaking-pads.patch
-Patch20: 0001-convert-java-XSL-transformer-into-extension.patch
-Patch21: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
-Patch22: 0003-drop-saxon-based-XSLT-transformer.patch
-Patch23: 0004-remove-all-traces-of-saxon.patch
-Patch24: 0001-do-not-strip-install-set.patch
-Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
-Patch26: 0001-bigendian-utext-mixup-triggering-regression-test-fai.patch
-Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
-Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
+#to-do, fix this on bigendian platforms
+Patch8: 0001-disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-Patch29: libreoffice-rhel6gcj.patch
-Patch30: libreoffice-rhel6poppler.patch
-Patch31: libreoffice-rhel6langs.patch
+Patch9: libreoffice-rhel6gcj.patch
+Patch10: libreoffice-rhel6poppler.patch
+Patch11: libreoffice-rhel6langs.patch
 %endif
+Patch12: 0001-temporarily-disable-failing-test.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -585,16 +566,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 %endif
 
-%if %{with binfilter}
-%package binfilter
-Summary: Legacy binary filters for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-
-%description binfilter
-Filters for old StarOffice binary formats.
-%endif
-
 %if 0%{?_enable_debug_packages}
 
 %define debug_package %{nil}
@@ -613,7 +584,6 @@ Debug information is useful when developing applications that use this
 package or when debugging this package.
 
 %files debuginfo -f debugfiles.list
-%defattr(-,root,root)
 
 %package gdb-debug-support
 Summary: Additional support for debugging with gdb
@@ -625,11 +595,20 @@ AutoReqProv: 0
 This package provides gdb pretty printers for package %{name}.
 
 %files gdb-debug-support
-%defattr(-,root,root)
 %{_datadir}/gdb/auto-load%{baseinstdir}
 %{_datadir}/libreoffice/gdb
 
 %endif
+
+%define _langpack_common() \
+%{baseinstdir}/program/resource/*%{1}.res  \
+%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1} \
+%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1} \
+%{baseinstdir}/share/template/%{1} \
+%{baseinstdir}/share/registry/Langpack-%{1}.xcd \
+%{baseinstdir}/share/registry/res/registry_%{1}.xcd \
+%{baseinstdir}/share/registry/res/fcfg_langpack_%{1}.xcd \
+%{nil}
 
 # Defines a language pack subpackage.
 #
@@ -647,23 +626,30 @@ This package provides gdb pretty printers for package %{name}.
 # All remaining arguments are considered to be files and added to the file
 # list.
 #
-# Aa: autocorr dependency
-# Ff: font language dependency
-# Hh: hunspell dependency
-# l:  language code, e.g., cs
-# Mm: mythes dependency
-# n:  language name, e.g., Czech
-# p:  Provides: of libreoffice-langpack
-# r:  comma-separated list of additional requires
-# Ss: filelist
-# Yy: hyphen dependency
+# Aa:  autocorr dependency
+# c:   additional config file (just the name stem)
+# E    the package does not contain any files (i.e., has empty filelist)
+# Ff:  font language dependency
+# Hh:  hunspell dependency
+# i:   additional language added to this package
+# L:   language code for files
+# l:   language code, e.g., cs
+# Mm:  mythes dependency
+# n:   language name, e.g., Czech
+# p:   Provides: of libreoffice-langpack
+# r:   comma-separated list of additional requires
+# S:s: script classification (cjk, ctl). -S is only a marker, as it does
+#      not add any .xcd into the package (the file does not exist for at
+#      least one CTL-using locale, si)
+# T    has help files
+# Yy:  hyphen dependency
 #
 # Example:
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
-# autocorr-cs, mythes-cs-CZ and suitable font and taking the files from
-# cs.filelist:
-# %%langpack -l cs -n Czech -H -A -m cs-CZ -S
-%define langpack(Aa:Ff:Hh:l:Mm:n:p:r:Ss:Yy:) \
+# autocorr-cs, mythes-cs-CZ and suitable font:
+# %%langpack -l cs -n Czech -H -A -m cs-CZ
+#  b de g  jk   o q  tuvwx z BCD  G IJK  NOPQR  UVWX Z0123456789
+%define langpack(Aa:c:EFf:Hh:iL:l:Mm:n:p:r:S:s:TYy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -684,22 +670,30 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for %{project}. \
 \
-%define filelist %{-s:-f %{-s*}.filelist}%{!-s:%{-S:-f %{lang}.filelist}} \
-%files %{pkgname} %{filelist} \
-%defattr(-,root,root,-) \
-%*
-
+%files %{pkgname} \
+%{!-E: \
+%define _langpack_lang %{-L:%{-L*}}%{!-L:%{-l*}} \
+%{expand:%%_langpack_common %{_langpack_lang}} \
+%{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
+%{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
+%{-T: \
+%docdir %{baseinstdir}/help/%{_langpack_lang} \
+%{baseinstdir}/help/%{_langpack_lang} \
+} \
+%{-i:%{expand:%%_langpack_common %{-i*}}} \
+} \
+%{nil}
 
 # Defines an auto-correction subpackage.
 #
+# i: add autocorrections from additional language
 # l: language code
 # n: language name
-# X  do not use default file match on %%{_datadir}/autocorr/acor_%%{lang}-*
-#    in file list
+# L  the filename does not contain country code
 #
 # All remaining arguments are considered to be files and added to the file
 # list.
-%define autocorr(l:n:X) \
+%define autocorr(i:Ll:n:) \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname autocorr-%{lang} \
 %define langname %{-n:%{-n*}}%{!-n:%{error:Language name not defined}} \
@@ -713,107 +707,104 @@ BuildArch: noarch \
 Rules for auto-correcting common %{langname} typing errors. \
 \
 %files -n %{pkgname} \
-%defattr(-,root,root,-) \
 %doc solver/unxlng*/bin/ure/LICENSE \
 %dir %{_datadir}/autocorr \
-%{!-X:%{_datadir}/autocorr/acor_%{lang}-*} \
-%*
-
+%{-L:%{_datadir}/autocorr/acor_%{lang}.dat} \
+%{!-L:%{_datadir}/autocorr/acor_%{lang}-*.dat} \
+%{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
+%{nil}
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -S
-%langpack -l ar -n Arabic -F -H -S
-%langpack -l as -n Assamese -F -H -Y -S
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -S
-%langpack -l bn -n Bengali -F -H -Y -S
-%langpack -l ca -n Catalan -F -H -Y -M -S
-%langpack -l cs -n Czech -F -H -Y -M -A -S
-%langpack -l cy -n Welsh -F -H -Y -S
-%langpack -l da -n Danish -F -H -Y -M -A -S
-%langpack -l de -n German -F -H -Y -M -A -S
-%langpack -l dz -n Dzongkha -F -S
-%langpack -l el -n Greek -F -H -Y -M -S
-%langpack -l en -n English -F -H -Y -M -A
-%langpack -l es -n Spanish -F -H -Y -M -A -S
-%langpack -l et -n Estonian -F -H -Y -S
-%langpack -l eu -n Basque -F -H -Y -A -S
+%langpack -l af -n Afrikaans -F -H -Y -A
+%langpack -l ar -n Arabic -F -H -s ctl
+%langpack -l as -n Assamese -F -H -Y
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -T
+%langpack -l bn -n Bengali -F -H -Y -T
+%langpack -l ca -n Catalan -F -H -Y -M -T
+%langpack -l cs -n Czech -F -H -Y -M -A -T
+%langpack -l cy -n Welsh -F -H -Y
+%langpack -l da -n Danish -F -H -Y -M -A -T
+%langpack -l de -n German -F -H -Y -M -A -T
+%langpack -l dz -n Dzongkha -F -s ctl -T
+%langpack -l el -n Greek -F -H -Y -M -T
+%langpack -l en -n English -F -H -Y -M -A -E
+%langpack -l es -n Spanish -F -H -Y -M -A -T
+%langpack -l et -n Estonian -F -H -Y -T
+%langpack -l eu -n Basque -F -H -Y -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l fa -n Farsi -A -H -Y -S
+%langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l fi -n Finnish -F -A -S
+%langpack -l fi -n Finnish -F -A -T
 %else
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -S
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T
 %endif
-%langpack -l fr -n French -F -H -Y -M -A -S
-%langpack -l ga -n Irish -F -H -Y -M -A -S
-%langpack -l gl -n Galician -F -H -Y -S
-%langpack -l gu -n Gujarati -F -H -Y -S
-%langpack -l he -n Hebrew -F -H -S
-%langpack -l hi -n Hindi -F -H -Y -S
-%langpack -l hr -n Croatian -F -H -Y -A -S
-%langpack -l hu -n Hungarian -F -H -Y -M -A -S
-%langpack -l it -n Italian -F -H -Y -M -A -S
-%langpack -l ja -n Japanese -F -A -S
-%langpack -l kn -n Kannada -F -H -Y -S
-%langpack -l ko -n Korean -F -H -A -S
-%{baseinstdir}/share/registry/korea.xcd
-
-%langpack -l lt -n Lithuanian -F -H -Y -A -S
+%langpack -l fr -n French -F -H -Y -M -A -T
+%langpack -l ga -n Irish -F -H -Y -M -A
+%langpack -l gl -n Galician -F -H -Y -T
+%langpack -l gu -n Gujarati -F -H -Y -s ctl
+%langpack -l he -n Hebrew -F -H -s ctl
+%langpack -l hi -n Hindi -F -H -Y -s ctl -T
+%langpack -l hr -n Croatian -F -H -Y -A
+%langpack -l hu -n Hungarian -F -H -Y -M -A -T
+%langpack -l it -n Italian -F -H -Y -M -A -T
+%langpack -l ja -n Japanese -F -A -s cjk -T
+%langpack -l kn -n Kannada -F -H -Y
+%langpack -l ko -n Korean -F -H -A -s cjk -T -c korea
+%langpack -l lt -n Lithuanian -F -H -Y -A
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l lv -n Latvian -F -H -Y -M -S
+%langpack -l lv -n Latvian -F -H -Y -M
 %endif
-%langpack -l mai -n Maithili -F -S
+%langpack -l mai -n Maithili -F
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ms -n Malay -F -H -S
+%langpack -l ms -n Malay -F -H
 %endif
-%langpack -l ml -n Malayalam -F -H -Y -S
-%langpack -l mr -n Marathi -F -H -Y -S
-%langpack -l nb -n Bokmal -F -H -Y -M -S
-%langpack -l nl -n Dutch -F -H -Y -M -A -S
-%langpack -l nn -n Nynorsk -F -H -Y -M -S
+%langpack -l ml -n Malayalam -F -H -Y
+%langpack -l mr -n Marathi -F -H -Y
+%langpack -l nb -n Bokmal -F -H -Y -M -T
+%langpack -l nl -n Dutch -F -H -Y -M -A -T
+%langpack -l nn -n Nynorsk -F -H -Y -M -T
 %define langpack_lang Southern Ndebele
-%langpack -l nr -n %{langpack_lang} -F -H -S
+%langpack -l nr -n %{langpack_lang} -F -H
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -S
-%langpack -l or -n Oriya -F -H -Y -S
-%langpack -l pa -n Punjabi -F -H -Y -s pa-IN
-%langpack -l pl -n Polish -F -H -Y -M -A -S
+%langpack -l nso -n %{langpack_lang} -F -H
+%langpack -l or -n Oriya -F -H -Y -s ctl
+%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -T
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -S
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -s pt
-%langpack -l ro -n Romanian -F -H -Y -M -S
-%langpack -l ru -n Russian -F -H -Y -M -A -S
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt
+%langpack -l ro -n Romanian -F -H -Y -M
+%langpack -l ru -n Russian -F -H -Y -M -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l si -n Sinhalese -F -H -S
+%langpack -l si -n Sinhalese -F -H -S ctl -T
 %endif
-%langpack -l sk -n Slovak -F -H -Y -M -A -S
-%langpack -l sl -n Slovenian -F -H -Y -M -A -S
-%langpack -l sr -n Serbian -F -H -Y -A -S
-%langpack -l ss -n Swati -F -H -S
+%langpack -l sk -n Slovak -F -H -Y -M -A -T
+%langpack -l sl -n Slovenian -F -H -Y -M -A -T
+#rhbz#452379 clump serbian translations together
+%langpack -l sr -n Serbian -F -H -Y -A -i sh
+%langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
-%langpack -l st -n %{langpack_lang} -F -H -S
-%langpack -l sv -n Swedish -F -H -Y -M -A -S
-%langpack -l ta -n Tamil -F -H -Y -S
-%langpack -l te -n Telugu -F -H -Y -S
-%langpack -l th -n Thai -F -H -S
-%{baseinstdir}/share/registry/ctlseqcheck_th.xcd
-
-%langpack -l tn -n Tswana -F -H -S
-%langpack -l tr -n Turkish -F -A -S
-%langpack -l ts -n Tsonga -F -H -S
-%langpack -l uk -n Ukrainian -F -H -Y -M -S
+%langpack -l st -n %{langpack_lang} -F -H
+%langpack -l sv -n Swedish -F -H -Y -M -A -T
+%langpack -l ta -n Tamil -F -H -Y -s ctl
+%langpack -l te -n Telugu -F -H -Y
+%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
+%langpack -l tn -n Tswana -F -H
+%langpack -l tr -n Turkish -F -A -T
+%langpack -l ts -n Tsonga -F -H
+%langpack -l uk -n Ukrainian -F -H -Y -M -T
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ur -n Urdu -F -H -S
+%langpack -l ur -n Urdu -F -H
 %endif
-%langpack -l ve -n Venda -F -H -S
-%langpack -l xh -n Xhosa -F -H -S
+%langpack -l ve -n Venda -F -H
+%langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s zh-TW
-%langpack -l zu -n Zulu -F -H -Y -S
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW
+%langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
 %endif
@@ -828,9 +819,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l da -n Danish
 %autocorr -l de -n German
 %autocorr -l es -n Spanish
-%autocorr -l eu -n Basque -X
-%{_datadir}/autocorr/acor_eu.dat
-
+%autocorr -l eu -n Basque -L
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French
@@ -849,9 +838,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l ru -n Russian
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
-%autocorr -l sr -n Serbian
-%{_datadir}/autocorr/acor_sh-*
-
+#rhbz#452379 clump serbian autocorrections together
+%autocorr -l sr -n Serbian -i sh
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese
@@ -859,10 +847,17 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %endif
 
+%define make_autocorr_aliases(l:) \
+%{?-l: \
+for lang in %{*}; do \
+    ln -sf acor_%{-l*}.dat acor_$lang.dat \
+done \
+} \
+%{!?-l:%{error:-l must be present}}
+
 %prep
-%setup -q -c -a 1 -a 2 -a 3
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
-for a in */*; do mv `pwd`/$a .; done
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -879,48 +874,32 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch9  -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-%patch10 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
-%patch11 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
-%patch12 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
-%patch13 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
-%patch14 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-%patch15 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
-%patch16 -p1 -b .tweak-old-school-gstreamer-link-line.patch
-%patch17 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-%patch18 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
-%patch19 -p1 -b .gstreamer-fix-leaking-pads.patch
-%patch20 -p1 -b .convert-java-XSL-transformer-into-extension.patch
-%patch21 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
-%patch22 -p1 -b .drop-saxon-based-XSLT-transformer.patch
-%patch23 -p1 -b .remove-all-traces-of-saxon.patch
-%patch24 -p1 -b .do-not-strip-install-set.patch
-%patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
-%patch26 -p1 -b .bigendian-utext-mixup-triggering-regression-test-fai.patch
-%patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
-%patch28 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
+%patch8 -p1 -b .disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-%patch29 -p1 -b .rhel6gcj.patch
-%patch30 -p1 -b .rhel6poppler.patch
-%patch31 -p1 -b .rhel6langs.patch
+%patch9 -p1 -b .rhel6gcj.patch
+%patch10 -p1 -b .rhel6poppler.patch
+%patch11 -p1 -b .rhel6langs.patch
 %endif
+%patch12 -p1 -b .temporarily-disable-failing-test.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings
 rm -rf translations/source/{gu,he,hr}/helpcontent2
 
+%if 0%{?rhel} && 0%{?rhel} < 7
+cp -r translations/source/en-GB translations/source/ms
+cp -r translations/source/en-GB translations/source/ur
+%endif
+
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
-#convert _smp_mflags to dmake equivalent
-SMP_MFLAGS=%{?_smp_mflags}
-SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
-if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
-# NDMAKES (or --with-max-jobs) is what is used for tail_build. We surely
-# want as much paralelism as possible there.
-NDMAKES=$SMP_MFLAGS
-NBUILDS=`dc -e "$SMP_MFLAGS v p"`
+#don't build localized helps which aren't translated
+POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
+#don't build localized helps which are poorly translated
+POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
+# path to external tarballs
+EXTSRCDIR=`dirname %{SOURCE0}`
 
 %if 0%{?fedora}
 # KDE bits
@@ -955,53 +934,25 @@ autoconf
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
- %vendoroption --with-num-cpus=$NBUILDS --with-max-jobs=$NDMAKES \
+ %vendoroption %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
  --with-build-version="%{version}-%{release}" --with-unix-wrapper=%{name} \
- --disable-ldap --disable-epm --disable-mathmldtd \
+ --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
- --enable-ext-presenter-console --enable-ext-pdfimport \
  --enable-ext-wiki-publisher --enable-ext-report-builder \
- --enable-ext-scripting-beanshell --enable-ext-scripting-javascript \
- --without-system-servlet-api \
+ --enable-scripting-beanshell --enable-scripting-javascript \
  --with-system-jars --with-vba-package-format="builtin" \
+ --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar \
  --with-system-libs --with-system-headers --with-system-mozilla \
- --without-system-mozilla-headers --with-system-dicts \
+ --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
- --with-external-tar=`pwd`/ext_sources --with-java-target-version=1.5 \
- %{?with_lang} %{distrooptions} \
- %{?with_binfilter:--enable-binfilter} \
+ %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
+ --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
+ %{distrooptions} \
+ %{?with_libcmis:--without-system-libcmis} \
  --disable-fetch-external
-
-mkdir -p ext_sources
-cp %{SOURCE4} ext_sources
-cp %{SOURCE7} ext_sources
-cp %{SOURCE8} ext_sources
-cp %{SOURCE9} ext_sources
-cp %{SOURCE10} ext_sources
-cp %{SOURCE11} ext_sources
-cp %{SOURCE12} ext_sources
-cp %{SOURCE13} ext_sources
-%if 0%{?rhel} && 0%{?rhel} < 7
-cp %{SOURCE14} ext_sources
-cp %{SOURCE15} ext_sources
-cp %{SOURCE16} ext_sources
-cp %{SOURCE17} ext_sources
-cp %{SOURCE18} ext_sources
-cp %{SOURCE19} ext_sources
-cp %{SOURCE20} ext_sources
-cp %{SOURCE21} ext_sources
-cp %{SOURCE22} ext_sources
-cp %{SOURCE23} ext_sources
-cp %{SOURCE24} ext_sources
-cp %{SOURCE25} ext_sources
-cp %{SOURCE26} ext_sources
-cp %{SOURCE27} ext_sources
-cp -r translations/source/en-GB translations/source/ms
-cp -r translations/source/en-GB translations/source/ur
-%endif
 
 if ! make VERBOSE=true; then
     # TODO Do we still need this? I think parallel build is reliable
@@ -1009,13 +960,14 @@ if ! make VERBOSE=true; then
     make GMAKE_OPTIONS=-rj1
 fi
 
-# TODO: get rid of this
-. ./config_host.mk.source
 #generate the icons and mime type stuff
 export DESTDIR=../../../output
 export KDEMAINDIR=/usr
 export GNOMEDIR=/usr
 export GNOME_MIME_THEME=hicolor
+# TODO use empty variables? Should make the renaming hacks in %%install
+# unnecessary.
+. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION
 cd sysui/unxlng*/misc/libreoffice
 ./create_tree.sh
 
@@ -1023,9 +975,8 @@ echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
-# TODO: get rid of this
-. ./config_host.mk.source
+# TODO investigate use of make distro-pack-install
+. ./bin/get_config_variables `sed -n -e '/^export/s/^export \([A-Z0-9_]\+\).*/\1/p' config_host.mk`
 #figure out the icon version
 export `grep "^PRODUCTVERSIONSHORT =" solenv/inc/productversion.mk | sed -e "s/ //g"`
 export `grep "PRODUCTVERSION[ ]*=[ ]*" solenv/inc/productversion.mk | sed -e "s/ //g"`
@@ -1051,6 +1002,12 @@ fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
 mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
+# The installer currently sets UserInstallation to
+# $ORIGIN/../libreoffice/4, which is of course total nonsense. Because I
+# have no inclination to crawl through mountains of perl code to figure out
+# where it comes from, I am just going to replace it by a sensible
+# value here.
+sed -i -e '/UserInstallation/s@\$ORIGIN/..@$SYSUSERCONFIG@' $RPM_BUILD_ROOT/%{baseinstdir}/program/bootstraprc
 %if %{with langpacks}
 dmake ooolanguagepack
 rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
@@ -1097,49 +1054,19 @@ popd
 #Set some aliases to canonical autocorrect language files for locales with matching languages
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr
 
-en_GB_aliases="en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT"
-for lang in $en_GB_aliases; do
-        ln -sf acor_en-GB.dat acor_$lang.dat
-done
-en_US_aliases="en-PH"
-for lang in $en_US_aliases; do
-        ln -sf acor_en-US.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l en-GB en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT
+%make_autocorr_aliases -l en-US en-PH
 #en-ZA exists and has a good autocorrect file with two or three extras that make sense for 
 #neighbouring english speaking territories
-en_ZA_aliases="en-NA en-ZW"
-for lang in $en_ZA_aliases; do
-        ln -sf acor_en-ZA.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l en-ZA en-NA en-ZW
 %if %{with langpacks}
-af_ZA_aliases="af-NA"
-for lang in $af_ZA_aliases; do
-        ln -sf acor_af-ZA.dat acor_$lang.dat
-done
-de_DE_aliases="de-AT de-BE de-CH de-LI de-LU"
-for lang in $de_DE_aliases; do
-        ln -sf acor_de-DE.dat acor_$lang.dat
-done
-es_ES_aliases="es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE"
-for lang in $es_ES_aliases; do
-        ln -sf acor_es-ES.dat acor_$lang.dat
-done
-fr_FR_aliases="fr-BE fr-CA fr-CH fr-LU fr-MC"
-for lang in $fr_FR_aliases; do
-        ln -sf acor_fr-FR.dat acor_$lang.dat
-done
-it_IT_aliases="it-CH"
-for lang in $it_IT_aliases; do
-        ln -sf acor_it-IT.dat acor_$lang.dat
-done
-nl_NL_aliases="nl-AW"
-for lang in $nl_NL_aliases; do
-        ln -s acor_nl-NL.dat acor_$lang.dat
-done
-sv_SE_aliases="sv-FI"
-for lang in $sv_SE_aliases; do
-        ln -s acor_sv-SE.dat acor_$lang.dat
-done
+%make_autocorr_aliases -l af-ZA af-NA
+%make_autocorr_aliases -l de-DE de-AT de-BE de-CH de-LI de-LU
+%make_autocorr_aliases -l es-ES es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE
+%make_autocorr_aliases -l fr-FR fr-BE fr-CA fr-CH fr-LU fr-MC
+%make_autocorr_aliases -l it-IT it-CH
+%make_autocorr_aliases -l nl-NL nl-AW
+%make_autocorr_aliases -l sv-SE sv-FI
 %else
 rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif
@@ -1148,80 +1075,6 @@ popd
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}
 mv -f $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr $RPM_BUILD_ROOT/%{_datadir}/autocorr
 chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
-
-%if %{with langpacks}
-
-#auto generate the langpack file lists, format is...
-#langpack id, has help or not, autocorrection glob, script classification
-langpackdetails=\
-(\
-af      nohelp  western         ar      nohelp  ctl     \
-as      nohelp  western         bg      help    western \
-bn      help    western         ca      help    western \
-cs      help    western         cy      nohelp  western \
-da      help    western         de      help    western \
-dz      help    ctl             el      help    western \
-es      help    western         et      help    western \
-eu      help    western         fa      nohelp  ctl     \
-fi      help    western         fr      help    western \
-ga      nohelp  western         gl      help    western \
-gu      nohelp  ctl             he      nohelp  ctl     \
-hi      help    ctl             hr      nohelp  western \
-hu      help    western         it      help    western \
-ja      help    cjk             ko      help    cjk     \
-kn      nohelp  western         lt      nohelp  western \
-lv      nohelp  western         mai     nohelp  western \
-ml      nohelp  western         mr      nohelp  western \
-ms      nohelp  western         nb      help    western \
-nl      help    western         nn      help    western \
-nr      nohelp  western         nso     nohelp  western \
-or      nohelp  ctl             pa-IN   nohelp  ctl     \
-pl      help    western         pt      help    western \
-pt-BR   help    western         ro      help    western \
-ru      help    western         sh      nohelp  western \
-si      help    ctl             sk      help    western \
-sl      help    western         sr      nohelp  western \
-ss      nohelp  western         st      nohelp  western \
-sv      help    western         ta      nohelp  ctl     \
-te      nohelp  western         th      nohelp  ctlseqcheck \
-tn      nohelp  western         tr      help    western \
-ts      nohelp  western         uk      help    western \
-ur      nohelp  western         ve      nohelp  western \
-xh      nohelp  western         zh-CN   help    cjk     \
-zh-TW   help    cjk             zu      nohelp  western \
-)
-
-tar xzf %{SOURCE5}
-
-i=0
-while [ $i -lt ${#langpackdetails[@]} ]; do
-   lang=${langpackdetails[$i]}
-   sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-common.template > $lang.filelist
-   i=$[i+1]
-   help=${langpackdetails[$i]}
-   if [ "$help" = "help" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-help.template >> $lang.filelist
-   fi
-   i=$[i+1]
-   type=${langpackdetails[$i]}
-   if [ "$type" = "cjk" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-cjk.template >> $lang.filelist
-   fi
-   #rh217269 upstream made a decision to sequence check all ctl languages
-   #I think this is wrong, and only Thai should be sequence checked
-   if [ "$type" = "ctlseqcheck" ]; then
-     sed -e "s/LANG/$lang/g" langpacks/libreoffice.langpack-ctl.template >> $lang.filelist
-   fi
-   if [ "$type" = "ctl" ]; then
-     rm -f $RPM_BUILD_ROOT/%{baseinstdir}/share/registry/ctl_$lang.xcd
-   fi
-   i=$[i+1]
-done
-
-#rhbz#452379 clump serbian translations together
-cat sh.filelist >> sr.filelist
-
-%endif
 
 #remove it in case we didn't build with gcj
 rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/sandbox.jar
@@ -1307,12 +1160,12 @@ echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
 echo exec libreoffice --base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
-cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
 
-cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
@@ -1348,9 +1201,8 @@ echo "NoDisplay=true" >> startcenter.desktop
 sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base %{?with_binfilter:binfilter} calc draw impress javafilter math startcenter writer xsltfilter; do
-    # FIXME enable again
-    # desktop-file-validate $app.desktop
+for app in base calc draw impress javafilter math startcenter writer xsltfilter; do
+    desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
@@ -1395,14 +1247,9 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 #timeout -k 2m 2h make smoketest.subsequentcheck
 #%endif
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
-%defattr(-,root,root,-)
 
 %files core
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
 %docdir %{baseinstdir}/help/en
@@ -1429,10 +1276,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/agenda.jar
 %{baseinstdir}/program/classes/commonwizards.jar
-%{baseinstdir}/program/classes/fax.jar
 %{baseinstdir}/program/classes/form.jar
 %{baseinstdir}/program/classes/query.jar
-%{baseinstdir}/program/classes/letter.jar
 %{baseinstdir}/program/classes/officebean.jar
 %{baseinstdir}/program/classes/report.jar
 %{baseinstdir}/program/classes/ScriptFramework.jar
@@ -1460,6 +1305,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/hatchwindowfactory.uno.so
 %{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/i18nsearch.uno.so
+%{baseinstdir}/program/ldapbe2.uno.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
@@ -1518,7 +1364,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
-%{baseinstdir}/program/libi18nregexplo.so
 %{baseinstdir}/program/libjdbclo.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
@@ -1527,6 +1372,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/liblocaledata_euro.so
 %{baseinstdir}/program/liblocaledata_others.so
 %{baseinstdir}/program/libmcnttype.so
+%{baseinstdir}/program/libmorklo.so
 %{baseinstdir}/program/libmozbootstrap.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/mtfrenderer.uno.so
@@ -1584,6 +1430,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
 %{baseinstdir}/program/libxstor.so
+# TODO how useful this is in Fedora?
+%{baseinstdir}/program/losessioninstall.uno.so
 %{baseinstdir}/program/migrationoo2.uno.so
 %{baseinstdir}/program/migrationoo3.uno.so
 %{baseinstdir}/program/msforms.uno.so
@@ -1599,7 +1447,6 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/resource/accen-US.res
 %{baseinstdir}/program/resource/basctlen-US.res
 %{baseinstdir}/program/resource/biben-US.res
-%{baseinstdir}/program/resource/calen-US.res
 %{baseinstdir}/program/resource/chartcontrolleren-US.res
 %{baseinstdir}/program/resource/cuien-US.res
 %{baseinstdir}/program/resource/dbaen-US.res
@@ -1654,6 +1501,8 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/ucptdoc1.uno.so
 %{baseinstdir}/program/unorc
 %{baseinstdir}/program/updatefeed.uno.so
+# TODO do we need this?
+%{baseinstdir}/program/ui-previewer
 %{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
 %{baseinstdir}/program/vbaevents.uno.so
@@ -1670,10 +1519,17 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_tango.zip
+# TODO what's this? How it differs from images_tango.zip?
+%{baseinstdir}/share/config/images_tango_testing.zip
 %{baseinstdir}/share/config/psetup.xpm
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
+# UI translations go into langpacks
+%exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res
+%{baseinstdir}/share/config/soffice.cfg/*/ui
+# UI translations go into langpacks
+%exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
@@ -1691,12 +1547,12 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/registry/Langpack-en-US.xcd
 %dir %{baseinstdir}/share/registry/res
 %{baseinstdir}/share/registry/res/fcfg_langpack_en-US.xcd
-%dir %{baseinstdir}/share/samples
-%{baseinstdir}/share/samples/en-US
 %dir %{baseinstdir}/share/template
 %{baseinstdir}/share/template/en-US
 %dir %{baseinstdir}/share/template/common
+%{baseinstdir}/share/template/common/internal
 %{baseinstdir}/share/template/common/layout
+%{baseinstdir}/share/template/common/wizard
 %{baseinstdir}/share/template/wizard
 %dir %{baseinstdir}/share/wordbook
 %{baseinstdir}/share/wordbook/en-GB.dic
@@ -1749,7 +1605,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libucpfile1.so
 %{baseinstdir}/program/libutllo.so
 %{baseinstdir}/program/libvcllo.so
-%{baseinstdir}/program/libxcrlo.so
+%{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/localebe1.uno.so
 %{baseinstdir}/program/ucpgio1.uno.so
@@ -1764,9 +1620,9 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/setuprc
 %doc %{baseinstdir}/CREDITS.odt
 %doc %{baseinstdir}/LICENSE
+%doc %{baseinstdir}/LICENSE.html
 %doc %{baseinstdir}/LICENSE.odt
 %doc %{baseinstdir}/NOTICE
-%doc %{baseinstdir}/THIRDPARTYLICENSEREADME.html
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
@@ -1819,7 +1675,6 @@ done
 
 
 %files base
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
@@ -1854,56 +1709,45 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files report-builder
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/report-builder/help
 %{baseinstdir}/share/extensions/report-builder
 
 %files bsh
-%defattr(-,root,root,-)
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
 %{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
 %{baseinstdir}/share/Scripts/beanshell
 
 %files rhino
-%defattr(-,root,root,-)
 %{baseinstdir}/program/classes/js.jar
 %{baseinstdir}/program/classes/ScriptProviderForJavaScript.jar
 %{baseinstdir}/program/services/scriptproviderforjavascript.rdb
 %{baseinstdir}/share/Scripts/javascript
 
 %files wiki-publisher
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
 %{baseinstdir}/share/extensions/wiki-publisher
 
 %files nlpsolver
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/nlpsolver/help
 %{baseinstdir}/share/extensions/nlpsolver
 
 %files ogltrans
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/OGLTrans.uno.so
-%dir %{baseinstdir}/share/config
-%dir %{baseinstdir}/share/config/soffice.cfg
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 
 %files presentation-minimizer
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/presentation-minimizer/help
 %{baseinstdir}/share/extensions/presentation-minimizer
 
 %files presenter-screen
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/presenter-screen/help
 %{baseinstdir}/share/extensions/presenter-screen
 
 %files pdfimport
-%defattr(-,root,root,-)
 %docdir %{baseinstdir}/share/extensions/pdfimport/help
 %{baseinstdir}/share/extensions/pdfimport
 
@@ -1911,7 +1755,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc solver/unxlng*/bin/ure/LICENSE
 
 %files calc
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/scalc.*
 %dir %{baseinstdir}/program
@@ -1946,7 +1789,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files draw
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/help/en/sdraw.*
@@ -1963,7 +1805,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files emailmerge
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/mailmerge.py*
@@ -1971,7 +1812,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/officehelper.py*
 
 %files writer
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/swriter.*
 %dir %{baseinstdir}/program
@@ -1999,14 +1839,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files impress
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/simpress.*
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
-%dir %{baseinstdir}/share/config
-%dir %{baseinstdir}/share/config/soffice.cfg
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml
@@ -2023,7 +1860,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files math
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %{baseinstdir}/help/en/smath.*
 %dir %{baseinstdir}/program
@@ -2043,7 +1879,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files graphicfilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libflashlo.so
@@ -2051,7 +1886,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/share/xslt
 %{baseinstdir}/share/xslt/docbook
@@ -2064,7 +1898,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files javafilter
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
@@ -2078,7 +1911,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %files postgresql
-%defattr(-,root,root,-)
 %{baseinstdir}/program/postgresql-sdbc.uno.so
 %{baseinstdir}/program/postgresql-sdbc-impl.uno.so
 %{baseinstdir}/program/postgresql-sdbc.ini
@@ -2087,32 +1919,27 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files ure
-%defattr(-,root,root,-)
 %doc solver/unxlng*/bin/ure/LICENSE
 %dir %{baseinstdir}
 %{ureinstdir}
 
 %files sdk
-%defattr(-,root,root,-)
 %{sdkinstdir}/
 %exclude %{sdkinstdir}/docs/
 %exclude %{sdkinstdir}/examples/
 
 %files sdk-doc
-%defattr(-,root,root,-)
 %docdir %{sdkinstdir}/docs
 %{sdkinstdir}/docs/
 %{sdkinstdir}/examples/
 
 %files headless
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libbasebmplo.so
 %{baseinstdir}/program/libvclplug_svplo.so
 
 %files pyuno
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libpyuno.so
@@ -2130,48 +1957,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora}
 %files kde
-%defattr(-,root,root,-)
 %dir %{baseinstdir}
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/kde4be1.uno.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif
 
-%if %{with binfilter}
-%files binfilter
-%defattr(-,root,root,-)
-%{baseinstdir}/program/legacy_binfilters.rdb
-%{baseinstdir}/program/libbf_frmlo.so
-%{baseinstdir}/program/libbf_golo.so
-%{baseinstdir}/program/libbf_migratefilterlo.so
-%{baseinstdir}/program/libbf_ofalo.so
-%{baseinstdir}/program/libbf_sblo.so
-%{baseinstdir}/program/libbf_schlo.so
-%{baseinstdir}/program/libbf_sclo.so
-%{baseinstdir}/program/libbf_sdlo.so
-%{baseinstdir}/program/libbf_smlo.so
-%{baseinstdir}/program/libbf_solo.so
-%{baseinstdir}/program/libbf_svtlo.so
-%{baseinstdir}/program/libbf_svxlo.so
-%{baseinstdir}/program/libbf_swlo.so
-%{baseinstdir}/program/libbf_wrapperlo.so
-%{baseinstdir}/program/libbf_xolo.so
-%{baseinstdir}/program/libbindetlo.so
-%{baseinstdir}/program/liblegacy_binfilterslo.so
-%{baseinstdir}/program/resource/bf_frmen-US.res
-%{baseinstdir}/program/resource/bf_ofaen-US.res
-%{baseinstdir}/program/resource/bf_scen-US.res
-%{baseinstdir}/program/resource/bf_schen-US.res
-%{baseinstdir}/program/resource/bf_sden-US.res
-%{baseinstdir}/program/resource/bf_smen-US.res
-%{baseinstdir}/program/resource/bf_svten-US.res
-%{baseinstdir}/program/resource/bf_svxen-US.res
-%{baseinstdir}/program/resource/bf_swen-US.res
-%{baseinstdir}/share/registry/binfilter.xcd
-%{_datadir}/applications/libreoffice-binfilter.desktop
-%endif
-
 %changelog
+* Thu Dec 06 2012 David Tardon <dtardon@redhat.com> - 1:4.0.0.0-2.beta1
+- 4.0.0 beta1
+
 * Thu Nov 29 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-1
 - 3.6.4 rc3
 

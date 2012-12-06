@@ -1,18 +1,18 @@
-From 36644331aad8382ccab7fb19d7ab3339bbff0c20 Mon Sep 17 00:00:00 2001
+From bda1b906c7bee734dfc7242b60b7b1510886aee0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 1 Dec 2011 14:18:09 +0100
-Subject: [PATCH 2/2] #i105784# vcl: improve selection of fallback font by
+Subject: [PATCH] #i105784# vcl: improve selection of fallback font by
  supplying language hint when none exists
 
 ---
- vcl/generic/fontmanager/fontconfig.cxx |  143 +++++++++++++++++++++++++++++++-
- 1 files changed, 141 insertions(+), 2 deletions(-)
+ vcl/generic/fontmanager/fontconfig.cxx | 141 +++++++++++++++++++++++++++++++++
+ 1 file changed, 141 insertions(+)
 
 diff --git a/vcl/generic/fontmanager/fontconfig.cxx b/vcl/generic/fontmanager/fontconfig.cxx
-index 4d02a76..ecd3b5d 100644
+index 8270585..82ac6bc 100644
 --- a/vcl/generic/fontmanager/fontconfig.cxx
 +++ b/vcl/generic/fontmanager/fontconfig.cxx
-@@ -89,6 +89,9 @@ using namespace psp;
+@@ -91,6 +91,9 @@ using namespace psp;
  
  #include "sal/alloca.h"
  
@@ -22,8 +22,8 @@ index 4d02a76..ecd3b5d 100644
  #include <utility>
  #include <algorithm>
  
-@@ -747,6 +750,138 @@ static void addtopattern(FcPattern *pPattern,
-     }
+@@ -911,6 +914,138 @@ IMPL_LINK_NOARG(PrintFontManager, autoInstallFontLangSupport)
+     return 0;
  }
  
 +static const char* pick_sample_language(const sal_uInt32 cCode)
@@ -161,23 +161,15 @@ index 4d02a76..ecd3b5d 100644
  bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& rMissingCodes )
  {
      bool bRet = false;
-@@ -764,14 +899,13 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
-     FcPatternAddString(pPattern, FC_FAMILY, pTargetNameUtf8);
+@@ -929,6 +1064,7 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
  
-     const rtl::OString aLangAttrib = MsLangId::convertLanguageToIsoByteString(rPattern.meLanguage);
-+    const FcChar8* pLangAttribUtf8 = NULL;
-     if( !aLangAttrib.isEmpty() )
-     {
--        const FcChar8* pLangAttribUtf8;
-         if (aLangAttrib.equalsIgnoreAsciiCase(OString(RTL_CONSTASCII_STRINGPARAM("pa-in"))))
-             pLangAttribUtf8 = (FcChar8*)"pa";
-         else
-             pLangAttribUtf8 = (FcChar8*)aLangAttrib.getStr();
--        FcPatternAddString(pPattern, FC_LANG, pLangAttribUtf8);
-     }
+     const LanguageTag aLangTag(rPattern.meLanguage);
+     const rtl::OString aLangAttrib = mapToFontConfigLangTag(aLangTag);
++    const FcChar8* pLangAttribUtf8 = (const FcChar8*)aLangAttrib.getStr();
+     if (!aLangAttrib.isEmpty())
+         FcPatternAddString(pPattern, FC_LANG, (FcChar8*)aLangAttrib.getStr());
  
-     // Add required Unicode characters, if any
-@@ -783,11 +917,16 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
+@@ -941,11 +1077,16 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
             // also handle unicode surrogates
             const sal_uInt32 nCode = rMissingCodes.iterateCodePoints( &nStrIndex );
             FcCharSetAddChar( unicodes, nCode );
@@ -195,5 +187,5 @@ index 4d02a76..ecd3b5d 100644
          rPattern.meWidthType, rPattern.mePitch);
  
 -- 
-1.7.7.3
+1.8.0
 

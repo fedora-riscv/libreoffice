@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .alpha1
+%define libo_prerelease .beta1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -26,7 +26,7 @@
 # effect
 %bcond_without langpacks
 # simplify building before libcmis-0.3 is available
-%bcond_without libcmis
+%bcond_with libcmis
 
 %if %{with langpacks}
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -43,43 +43,43 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
-Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
-Source3:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
-Source4:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source6:        libreoffice-multiliblauncher.sh
-Source7:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source8:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source9:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
-Source10:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source11:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-Source12:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
+Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
+Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
+Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source4:        libreoffice-multiliblauncher.sh
+Source5:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
+Source6:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source7:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source8:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source9:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source10:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3a3350407632-STLport-4.5.tar.gz
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source13:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source11:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %if 0%{?rhel} && 0%{?rhel} < 7
-Source14:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
-Source15:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
-Source16:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
-Source17:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
-Source18:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
-Source19:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
-Source20:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
-Source21:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source22:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
-Source23:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
-Source24:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
-Source25:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source26:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
-Source27:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+Source12:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
+Source13:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
+Source14:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source15:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source16:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source17:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
+Source18:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
+Source19:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
+Source20:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
+Source21:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
+Source22:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
+Source23:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source24:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
+Source25:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
 %endif
 %if %{with libcmis}
-Source28:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
+Source26:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 %endif
 
 # build tools
@@ -224,13 +224,13 @@ Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 #to-do, fix this on bigendian platforms
-Patch26: 0001-disable-failing-check.patch
+Patch8: 0001-disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-Patch29: libreoffice-rhel6gcj.patch
-Patch30: libreoffice-rhel6poppler.patch
-Patch31: libreoffice-rhel6langs.patch
+Patch9: libreoffice-rhel6gcj.patch
+Patch10: libreoffice-rhel6poppler.patch
+Patch11: libreoffice-rhel6langs.patch
 %endif
-Patch32: 0001-temporarily-disable-failing-test.patch
+Patch12: 0001-temporarily-disable-failing-test.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -856,7 +856,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 3
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -874,13 +874,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch26 -p1 -b .disable-failing-check.patch
+%patch8 -p1 -b .disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-%patch29 -p1 -b .rhel6gcj.patch
-%patch30 -p1 -b .rhel6poppler.patch
-%patch31 -p1 -b .rhel6langs.patch
+%patch9 -p1 -b .rhel6gcj.patch
+%patch10 -p1 -b .rhel6poppler.patch
+%patch11 -p1 -b .rhel6langs.patch
 %endif
-%patch32 -p1 -b .temporarily-disable-failing-test.patch
+%patch12 -p1 -b .temporarily-disable-failing-test.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1160,12 +1160,12 @@ echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
 echo exec libreoffice --base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
 
-cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
 
-cp -f %{SOURCE6} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
 chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
@@ -1964,7 +1964,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 26 2012 David Tardon <dtardon@redhat.com> - 1:4.0.0.0.alpha1-1
+* Thu Dec 06 2012 David Tardon <dtardon@redhat.com> - 1:4.0.0.0-2.beta1
+- 4.0.0 beta1
+
+* Mon Nov 26 2012 David Tardon <dtardon@redhat.com> - 1:4.0.0.0-1.alpha1
 - 4.0.0 alpha1
 
 * Sun Nov 18 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.1-1

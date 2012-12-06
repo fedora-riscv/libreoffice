@@ -17,9 +17,9 @@ index 2d506be..648cafa 100644
  
  $(eval $(call gb_Module_add_check_targets,sdext,\
 -    CppunitTest_pdfimport \
- ))
- endif
- 
+     CustomTarget_pdfimport \
+     Executable_pdf2xml \
+     Executable_pdfunzip \
 -- 
 1.8.0
 

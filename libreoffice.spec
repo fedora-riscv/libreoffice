@@ -134,7 +134,7 @@ BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
 %if %{without libcmis}
-BuildRequires: libcmis-devel >= 0.3
+BuildRequires: libcmis-devel >= 0.3.0
 %endif
 %endif
 BuildRequires: libcurl-devel
@@ -143,7 +143,7 @@ BuildRequires: libexttextcat-devel
 %endif
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
-BuildRequires: libjpeg-devel
+BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel
 BuildRequires: libmspub-devel
 BuildRequires: liborcus-devel
@@ -166,6 +166,7 @@ BuildRequires: mythes-devel
 %endif
 BuildRequires: neon-devel
 BuildRequires: nss-devel
+BuildRequires: openldap-devel
 BuildRequires: openssl-devel
 BuildRequires: pam-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7

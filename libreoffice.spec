@@ -102,6 +102,7 @@ BuildRequires: zip
 
 # libs / headers
 BuildRequires: GConf2-devel
+BuildRequires: bluez-libs-devel
 BuildRequires: boost-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: clucene-core-devel

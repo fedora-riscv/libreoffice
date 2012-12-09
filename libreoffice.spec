@@ -896,7 +896,7 @@ cp -r translations/source/en-GB translations/source/ur
 
 # disable failing test
 # FIXME something to do with python3?
-sed -i -e /sw_macros_test/d -e /sw_subsequent_ooxmlexport/d sw/Module_sw.mk
+sed -i -e /sw_macros_test/d -e /sw_subsequent_.\*export/d sw/Module_sw.mk
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

@@ -177,7 +177,7 @@ BuildRequires: poppler-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
-BuildRequires: python-devel
+BuildRequires: python3-devel
 BuildRequires: redland-devel
 BuildRequires: sane-backends-devel
 BuildRequires: unixODBC-devel
@@ -235,7 +235,6 @@ Patch11: libreoffice-rhel6langs.patch
 %endif
 Patch12: 0001-temporarily-disable-failing-test.patch
 
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
 %define ureinstdir %{baseinstdir}/ure
@@ -272,7 +271,7 @@ Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: python
+Requires: python3
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -1090,8 +1089,8 @@ find $RPM_BUILD_ROOT/%{baseinstdir} -exec chmod +w {} \;
 find $RPM_BUILD_ROOT/%{baseinstdir} -type d -exec chmod 0755 {} \;
 
 # move python bits into site-packages
-mkdir -p $RPM_BUILD_ROOT/%{python_sitearch}
-pushd $RPM_BUILD_ROOT/%{python_sitearch}
+mkdir -p $RPM_BUILD_ROOT/%{python3_sitearch}
+pushd $RPM_BUILD_ROOT/%{python3_sitearch}
 echo "import sys, os" > uno.py
 echo "sys.path.append('%{baseinstdir}/program')" >> uno.py
 echo "os.putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%{baseinstdir}/program/fundamentalrc')" >> uno.py
@@ -1953,8 +1952,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/wizards
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/python
-%{python_sitearch}/uno.py*
-%{python_sitearch}/unohelper.py*
+%{python3_sitearch}/uno.py*
+%{python3_sitearch}/unohelper.py*
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 

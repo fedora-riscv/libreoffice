@@ -2040,13 +2040,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/pythonloader.uno.so
 %{baseinstdir}/program/pythonloader.unorc
+%{baseinstdir}/program/pythonscript.py*
 %{baseinstdir}/program/pyuno.so
 %{baseinstdir}/program/wizards
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/python
 %{python3_sitearch}/uno.py*
 %{python3_sitearch}/unohelper.py*
-%{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %if 0%{?fedora}

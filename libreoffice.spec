@@ -145,9 +145,9 @@ BuildRequires: libexttextcat-devel
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: liblangtag-devel
+BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
-BuildRequires: liborcus-devel
+BuildRequires: liborcus-devel >= 0.3.0
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
@@ -177,7 +177,7 @@ BuildRequires: poppler-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
-BuildRequires: python3-devel
+BuildRequires: python3-devel >= 3.3.0
 BuildRequires: redland-devel
 BuildRequires: sane-backends-devel
 BuildRequires: unixODBC-devel

@@ -1293,7 +1293,6 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/classes/web.jar
 %{baseinstdir}/program/classes/XMergeBridge.jar
 %{baseinstdir}/program/classes/xmerge.jar
-%{baseinstdir}/program/classes/XSLTValidate.jar
 %{baseinstdir}/program/cmdmail.uno.so
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so

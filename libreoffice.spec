@@ -867,7 +867,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt
-%langpack -l ro -n Romanian -F -H -Y -M
+%langpack -l ro -n Romanian -F -H -Y -M -T
 %langpack -l ru -n Russian -F -H -Y -M -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S ctl -T
@@ -880,7 +880,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H
 %langpack -l sv -n Swedish -F -H -Y -M -A -T
-%langpack -l ta -n Tamil -F -H -Y -s ctl
+%langpack -l ta -n Tamil -F -H -Y -s ctl -T
 %langpack -l te -n Telugu -F -H -Y
 %langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
 %langpack -l tn -n Tswana -F -H

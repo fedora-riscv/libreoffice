@@ -1495,6 +1495,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libspalo.so
 %{baseinstdir}/program/libspelllo.so
 %{baseinstdir}/program/libsrtrs1.so
+%{baseinstdir}/program/libsvgiolo.so
 %{baseinstdir}/program/libsvxlo.so
 %{baseinstdir}/program/libsvxcorelo.so
 %{baseinstdir}/program/libswlo.so
@@ -1582,6 +1583,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/resource/xmlsecen-US.res
 %{baseinstdir}/program/resource/xsltdlgen-US.res
 %{baseinstdir}/program/senddoc
+%dir %{baseinstdir}/program/services
 %{baseinstdir}/program/services/services.rdb
 %{baseinstdir}/program/simplecanvas.uno.so
 %{baseinstdir}/program/slideshow.uno.so
@@ -1860,6 +1862,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
+%{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so
 %{baseinstdir}/program/libscfiltlo.so
@@ -1870,6 +1873,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/resource/dateen-US.res
 %{baseinstdir}/program/resource/foren-US.res
 %{baseinstdir}/program/resource/foruien-US.res
+%{baseinstdir}/program/resource/pricingen-US.res
 %{baseinstdir}/program/resource/scen-US.res
 %{baseinstdir}/program/resource/solveren-US.res
 %{baseinstdir}/program/vbaobj.uno.so
@@ -2045,11 +2049,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/pythonloader.unorc
 %{baseinstdir}/program/pythonscript.py*
 %{baseinstdir}/program/pyuno.so
+%{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/python
 %{python3_sitearch}/uno.py*
 %{python3_sitearch}/unohelper.py*
+%{python3_sitearch}/__pycache__/uno.cpython-*
+%{python3_sitearch}/__pycache__/unohelper.cpython-*
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %if 0%{?fedora}

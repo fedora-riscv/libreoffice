@@ -411,6 +411,7 @@ The Presentation Minimizer is used to reduce the file size of the current
 presentation. Images will be compressed, and data that is no longer needed will
 be removed.
 
+# TODO should presenter-screen be merged into impress now?
 %package presenter-screen
 Summary: Presenter Screen for LibreOffice Presentations
 Group: Applications/Productivity
@@ -1838,8 +1839,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/presentation-minimizer
 
 %files presenter-screen
-%docdir %{baseinstdir}/share/extensions/presenter-screen/help
-%{baseinstdir}/share/extensions/presenter-screen
+%{baseinstdir}/program/PresenterScreen.uno.so
 
 %files pdfimport
 %docdir %{baseinstdir}/share/extensions/pdfimport/help

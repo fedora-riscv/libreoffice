@@ -411,22 +411,6 @@ The Presentation Minimizer is used to reduce the file size of the current
 presentation. Images will be compressed, and data that is no longer needed will
 be removed.
 
-# TODO should presenter-screen be merged into impress now?
-%package presenter-screen
-Summary: Presenter Screen for LibreOffice Presentations
-Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-presenter-screen = 1:3.3.0
-%endif
-
-%description presenter-screen
-The Presenter Screen is used to provides information on a second screen, that
-typically is not visible to the audience when delivering a presentation. e.g.
-slide notes.
-
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
@@ -513,10 +497,12 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
+Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
+Provides: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-impress-core = 1:3.3.0
 Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
+Provides: openoffice.org-presenter-screen = 1:3.3.0
 %endif
 
 %description impress
@@ -1840,9 +1826,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %docdir %{baseinstdir}/share/extensions/presentation-minimizer/help
 %{baseinstdir}/share/extensions/presentation-minimizer
 
-%files presenter-screen
-%{baseinstdir}/program/PresenterScreen.uno.so
-
 %files pdfimport
 %{baseinstdir}/program/pdfimport.uno.so
 %{baseinstdir}/program/xpdfimport
@@ -1945,6 +1928,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/program
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
+%{baseinstdir}/program/PresenterScreen.uno.so
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml

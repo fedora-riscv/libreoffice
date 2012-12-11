@@ -1842,8 +1842,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/PresenterScreen.uno.so
 
 %files pdfimport
-%docdir %{baseinstdir}/share/extensions/pdfimport/help
-%{baseinstdir}/share/extensions/pdfimport
+%{baseinstdir}/program/pdfimport.uno.so
+%{baseinstdir}/program/xpdfimport
+%{baseinstdir}/share/registry/pdfimport.xcd
+%dir %{baseinstdir}/share/xpdfimport
+%{baseinstdir}/share/xpdfimport/xpdfimport_err.pdf
 
 %_font_pkg -n %{fontname} opens___.ttf
 %doc solver/unxlng*/bin/ure/LICENSE

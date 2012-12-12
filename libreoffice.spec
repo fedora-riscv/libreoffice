@@ -274,10 +274,10 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
-%if 0%{?rhel} && 0%{?rhel} < 7
-Requires: hunspell-en-US
-%else
+%if %{defined rhel} && 0%{?rhel} < 7
 Requires: hunspell-en
+%else
+Requires: hunspell-en-US
 %endif
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4

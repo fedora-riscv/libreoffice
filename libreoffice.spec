@@ -272,8 +272,8 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-core = 1:3.3.0
-Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
+Provides: openoffice.org-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
 %endif
 
 %description core
@@ -286,7 +286,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: python
-Provides: openoffice.org-pyuno = 1:3.3.0
+Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
 %else
 Requires: python3
 %endif
@@ -307,8 +307,8 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-base-core = 1:3.3.0
-Provides: openoffice.org-base = 1:3.3.0, broffice.org-base = 1:3.3.0
+Provides: openoffice.org-base-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-base%{?_isa} = 1:3.3.0, broffice.org-base%{?_isa} = 1:3.3.0
 %endif
 
 %description base
@@ -323,7 +323,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-report-builder = 1:3.3.0
+Provides: openoffice.org-report-builder%{?_isa} = 1:3.3.0
 %endif
 
 %description report-builder
@@ -337,7 +337,7 @@ Group: Development/Libraries
 Requires: bsh
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-bsh = 1:3.3.0
+Provides: openoffice.org-bsh%{?_isa} = 1:3.3.0
 %endif
 
 %description bsh
@@ -348,7 +348,7 @@ Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-rhino = 1:3.3.0
+Provides: openoffice.org-rhino%{?_isa} = 1:3.3.0
 %endif
 
 %description rhino
@@ -368,7 +368,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-wiki-publisher = 1:3.3.0
+Provides: openoffice.org-wiki-publisher%{?_isa} = 1:3.3.0
 %endif
 
 %description wiki-publisher
@@ -394,7 +394,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-ogltrans = 1:3.3.0
+Provides: openoffice.org-ogltrans%{?_isa} = 1:3.3.0
 %endif
 
 %description ogltrans
@@ -408,7 +408,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-presentation-minimizer = 1:3.3.0
+Provides: openoffice.org-presentation-minimizer%{?_isa} = 1:3.3.0
 %endif
 
 %description presentation-minimizer
@@ -423,7 +423,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-pdfimport = 1:3.3.0
+Provides: openoffice.org-pdfimport%{?_isa} = 1:3.3.0
 %endif
 
 %description pdfimport
@@ -450,8 +450,8 @@ Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-writer-core = 1:3.3.0
-Provides: openoffice.org-writer = 1:3.3.0, broffice.org-writer = 1:3.3.0
+Provides: openoffice.org-writer-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-writer%{?_isa} = 1:3.3.0, broffice.org-writer%{?_isa} = 1:3.3.0
 %endif
 
 %description writer
@@ -463,7 +463,7 @@ Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-emailmerge = 1:3.3.0
+Provides: openoffice.org-emailmerge%{?_isa} = 1:3.3.0
 %endif
 
 %description emailmerge
@@ -475,8 +475,8 @@ Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-calc-core = 1:3.3.0
-Provides: openoffice.org-calc = 1:3.3.0, broffice.org-calc = 1:3.3.0
+Provides: openoffice.org-calc-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-calc%{?_isa} = 1:3.3.0, broffice.org-calc%{?_isa} = 1:3.3.0
 %endif
 
 %description calc
@@ -490,8 +490,8 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-draw-core = 1:3.3.0
-Provides: openoffice.org-draw = 1:3.3.0, broffice.org-draw = 1:3.3.0
+Provides: openoffice.org-draw-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-draw%{?_isa} = 1:3.3.0, broffice.org-draw%{?_isa} = 1:3.3.0
 %endif
 
 %description draw
@@ -503,11 +503,11 @@ Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
-Provides: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
+Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-impress-core = 1:3.3.0
-Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
-Provides: openoffice.org-presenter-screen = 1:3.3.0
+Provides: openoffice.org-impress-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-impress%{?_isa} = 1:3.3.0, broffice.org-impress%{?_isa} = 1:3.3.0
+Provides: openoffice.org-presenter-screen%{?_isa} = 1:3.3.0
 %endif
 
 %description impress
@@ -519,8 +519,8 @@ Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-math-core = 1:3.3.0
-Provides: openoffice.org-math = 1:3.3.0, broffice.org-math = 1:3.3.
+Provides: openoffice.org-math-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-math%{?_isa} = 1:3.3.0, broffice.org-math%{?_isa} = 1:3.3.0
 %endif
 
 %description math 
@@ -532,7 +532,7 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-graphicfilter = 1:3.3.0
+Provides: openoffice.org-graphicfilter%{?_isa} = 1:3.3.0
 %endif
 
 %description graphicfilter
@@ -544,7 +544,7 @@ Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-xsltfilter = 1:3.3.0
+Provides: openoffice.org-xsltfilter%{?_isa} = 1:3.3.0
 %endif
 
 %description xsltfilter
@@ -556,7 +556,7 @@ Summary: Optional javafilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-javafilter = 1:3.3.0
+Provides: openoffice.org-javafilter%{?_isa} = 1:3.3.0
 %endif
 
 %description javafilter
@@ -586,7 +586,7 @@ Summary: UNO Runtime Environment
 Group: Development/Libraries
 Requires: unzip, jre >= 1.5.0
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-ure = 1:3.3.0
+Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
 %endif
 
 %description ure
@@ -604,7 +604,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-sdk = 1:3.3.0, openoffice.org-devel = 1:3.3.0
+Provides: openoffice.org-sdk%{?_isa} = 1:3.3.0, openoffice.org-devel%{?_isa} = 1:3.3.0
 %endif
 
 %description sdk
@@ -618,7 +618,7 @@ Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-sdk-doc = 1:3.3.0
+Provides: openoffice.org-sdk-doc%{?_isa} = 1:3.3.0
 %endif
 
 %description sdk-doc
@@ -631,7 +631,7 @@ Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-headless = 1:3.3.0
+Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
 %endif
 
 %description headless

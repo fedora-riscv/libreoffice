@@ -270,6 +270,7 @@ Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
+Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0

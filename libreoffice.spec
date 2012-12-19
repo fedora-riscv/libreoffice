@@ -19,6 +19,8 @@
 # http://dev-builds.libreoffice.org/pre-releases/src
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# URL for external projects' tarballs
+%define external_url http://dev-www.libreoffice.org/src/
 
 # get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
@@ -51,29 +53,29 @@ Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar
 Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
-Source5:        http://hg.services.openoffice.org/binaries/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source6:        http://hg.services.openoffice.org/binaries/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source7:        http://hg.services.openoffice.org/binaries/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
-Source8:       http://hg.services.openoffice.org/binaries/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source9:       http://hg.services.openoffice.org/binaries/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source5:        %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
+Source6:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source7:        %{external_url}/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source8:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source10:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %if 0%{?rhel} && 0%{?rhel} < 7
-Source11:       http://dev-www.libreoffice.org/src/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
-Source12:       http://dev-www.libreoffice.org/src/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
-Source13:       http://dev-www.libreoffice.org/src/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
-Source14:       http://dev-www.libreoffice.org/src/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
-Source15:       http://dev-www.libreoffice.org/src/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
-Source16:       http://dev-www.libreoffice.org/src/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
-Source17:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
-Source18:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source19:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
-Source20:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
-Source21:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
-Source22:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
-Source24:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+Source11:       %{external_url}/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
+Source12:       %{external_url}/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
+Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
+Source14:       %{external_url}/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
+Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source16:       %{external_url}/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
+Source17:       %{external_url}/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
+Source18:       %{external_url}/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
+Source19:       %{external_url}/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
+Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
+Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
+Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source23:       %{external_url}/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
+Source24:       %{external_url}/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
 %endif
 
 # build tools

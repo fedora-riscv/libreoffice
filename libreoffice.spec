@@ -25,8 +25,6 @@
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
 %bcond_without langpacks
-# simplify building before libcmis-0.3 is available
-%bcond_with libcmis
 
 %if %{with langpacks}
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -73,13 +71,10 @@ Source18:       http://dev-www.libreoffice.org/src/3c0037fb07dea2f0bbae8386fa7c6
 Source19:       http://dev-www.libreoffice.org/src/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
 Source20:       http://dev-www.libreoffice.org/src/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
 Source21:       http://dev-www.libreoffice.org/src/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
-Source22:       http://dev-www.libreoffice.org/src/0d2dcdfbf28d6208751b33057f5361f0-libcmis-0.2.3.tar.gz
+Source22:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source23:       http://dev-www.libreoffice.org/src/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source24:       http://dev-www.libreoffice.org/src/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
 Source25:       http://dev-www.libreoffice.org/src/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
-%endif
-%if %{with libcmis}
-Source26:       http://dev-www.libreoffice.org/src/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 %endif
 
 # build tools
@@ -134,9 +129,7 @@ BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
-%if %{without libcmis}
 BuildRequires: libcmis-devel >= 0.3.0
-%endif
 %endif
 BuildRequires: libcurl-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -1039,7 +1032,6 @@ touch autogen.lastrun
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
  %{distrooptions} \
- %{?with_libcmis:--without-system-libcmis} \
  --disable-fetch-external
 
 if ! make VERBOSE=true; then

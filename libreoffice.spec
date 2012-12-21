@@ -18,7 +18,7 @@
 %define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
 %if %{langpacks}
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
@@ -58,7 +58,7 @@ Source13:       http://hg.services.openoffice.org/binaries/18f577b374d60b3c760a3
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source14:       http://hg.services.openoffice.org/binaries/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Source15:       http://dev-www.libreoffice.org/src/0ff7d225d087793c8c2c680d77aac3e7-mdds_0.5.3.tar.bz2
 Source16:       http://hg.services.openoffice.org/binaries/067201ea8b126597670b5eff72e1f66c-mythes-1.2.0.tar.gz
 Source17:       http://dev-www.libreoffice.org/src/0981bda6548a8c8233ffce2b6e4b2a23-mysql-connector-c++-1.1.0.tar.gz
@@ -90,7 +90,7 @@ BuildRequires:  apache-commons-lang, poppler-devel, fontpackages-devel
 BuildRequires:  pentaho-reporting-flow-engine, vigra-devel, librsvg2-devel
 BuildRequires:  GConf2-devel, ORBit2-devel, postgresql-devel
 BuildRequires:  liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires:  hsqldb, db4-devel
 %else
 BuildRequires:  mdds-devel, mythes-devel, graphite2-devel, libwpg-devel
@@ -98,7 +98,7 @@ BuildRequires:  libwps-devel, junit, perl(Digest::MD5), libdb-devel
 BuildRequires:  mysql-connector-c++-devel, poppler-cpp-devel
 BuildRequires:  libcmis-devel, libexttextcat-devel, libvisio-devel
 %endif
-%if %{undefined rhel}
+%if 0%{?fedora}
 BuildRequires:  kdelibs4-devel
 %endif
 
@@ -109,7 +109,7 @@ Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-math = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Obsoletes: openoffice.org < 1.9.0
 %endif
 
@@ -120,7 +120,7 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Patch8: libreoffice-libwpd08-1.patch
 Patch9: libreoffice-libwpd08-2.patch
 Patch10: 0001-wpsimport-writerperfect.diff-WPS-Import-filter-core-.patch
@@ -202,7 +202,7 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
 Obsoletes: openoffice.org-libs < 1.9.0
@@ -216,7 +216,7 @@ Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3
 %endif
 Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-testtools = 1:3.3.0
 Obsoletes: openoffice.org2-testtools < 1:3.0.0
 %endif
@@ -235,7 +235,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-pyuno < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-pyuno = 1:3.3.0
 Obsoletes: openoffice.org2-pyuno < 1:3.0.0
 %endif
@@ -249,7 +249,7 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: postgresql-jdbc
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
 %endif
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -257,7 +257,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-base-core = 1:3.3.0
 Provides: openoffice.org-base = 1:3.3.0, broffice.org-base = 1:3.3.0
 Obsoletes: openoffice.org2-base < 1:3.0.0
@@ -279,7 +279,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-report-builder < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-report-builder = 1:3.3.0
 %endif
 
@@ -298,7 +298,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-bsh < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-bsh = 1:3.3.0
 %endif
 
@@ -314,7 +314,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-rhino < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-rhino = 1:3.3.0
 %endif
 
@@ -334,7 +334,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-wiki-publisher = 1:3.3.0
 %endif
 
@@ -366,7 +366,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires(pre):    %{name}-core
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-ogltrans = 1:3.3.0
 %endif
 
@@ -385,7 +385,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-presentation-minimizer = 1:3.3.0
 %endif
 
@@ -405,7 +405,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-presenter-screen = 1:3.3.0
 %endif
 
@@ -425,7 +425,7 @@ Requires(post):   %{name}-core
 Requires(preun):  %{name}-core
 Requires(postun): %{name}-core
 Obsoletes: openoffice.org-pdfimport < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-pdfimport = 1:3.3.0
 %endif
 
@@ -439,7 +439,7 @@ Group: User Interface/X
 Requires: fontpackages-filesystem
 Obsoletes: openoffice.org-fonts < 1:3.3.1
 Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-fonts = 1:3.3.0
 Provides: openoffice.org-opensymbol-fonts = 1:3.3.0
 %endif
@@ -456,7 +456,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-writer-core = 1:3.3.0
 Provides: openoffice.org-writer = 1:3.3.0, broffice.org-writer = 1:3.3.0
 Obsoletes: openoffice.org2-writer < 1:3.0.0
@@ -471,7 +471,7 @@ Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-emailmerge < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-emailmerge = 1:3.3.0
 Obsoletes: openoffice.org2-emailmerge < 1:3.0.0
 %endif
@@ -486,7 +486,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-calc-core = 1:3.3.0
 Provides: openoffice.org-calc = 1:3.3.0, broffice.org-calc = 1:3.3.0
 %endif
@@ -503,7 +503,7 @@ Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
 Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-draw-core = 1:3.3.0
 Provides: openoffice.org-draw = 1:3.3.0, broffice.org-draw = 1:3.3.0
 Obsoletes: openoffice.org2-draw < 1:3.0.0
@@ -520,13 +520,13 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if %{defined fedora} && 0%{?fedora} >= 18
 Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
 %endif
-%if %{defined rhel} && 0%{?rhel} >= 7
+%if 0%{?rhel} && 0%{?rhel} >= 7
 Requires: %{name}-ogltrans = %{epoch}:%{version}-%{release}
 %endif
 Requires: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-impress-core = 1:3.3.0
 Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
 Obsoletes: openoffice.org2-impress < 1:3.0.0
@@ -542,7 +542,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-math-core = 1:3.3.0
 Provides: openoffice.org-math = 1:3.3.0, broffice.org-math = 1:3.3.0
 Obsoletes: openoffice.org2-math < 1:3.0.0
@@ -557,7 +557,7 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-graphicfilter = 1:3.3.0
 Obsoletes: openoffice.org2-graphicfilter < 1:3.0.0
 %endif
@@ -571,7 +571,7 @@ Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-xsltfilter = 1:3.3.0
 Obsoletes: openoffice.org2-xsltfilter < 1:3.0.0
 %endif
@@ -585,7 +585,7 @@ Summary: Optional javafilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-javafilter < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-javafilter = 1:3.3.0
 Obsoletes: openoffice.org2-javafilter < 1:3.0.0
 %endif
@@ -615,7 +615,7 @@ Summary: UNO Runtime Environment
 Group: Development/Libraries
 Requires: unzip, jre >= 1.5.0
 Obsoletes: openoffice.org-ure < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-ure = 1:3.3.0
 %endif
 
@@ -634,7 +634,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-sdk = 1:3.3.0, openoffice.org-devel = 1:3.3.0
 %endif
 
@@ -649,7 +649,7 @@ Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-sdk-doc = 1:3.3.0
 %endif
 
@@ -663,7 +663,7 @@ Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-headless < 1:3.3.1
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-headless = 1:3.3.0
 %endif
 
@@ -672,7 +672,7 @@ A plug-in for LibreOffice that enables it to function without an X server.
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
 
-%if %{undefined rhel}
+%if 0%{?fedora}
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -788,7 +788,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %define aobsv 1:3.0.0 \
 %define vaobs openoffice.org-langpack \
 %define vaobsv 1:2.0.3 \
-%if %{defined rhel} && 0%{?rhel} < 7 \
+%if 0%{?rhel} && 0%{?rhel} < 7 \
 %{-o: \
 Obsoletes: openoffice.org-i18n < 1.9.0 \
 Obsoletes: %{obs}-%{-o*} < %{obsv} \
@@ -863,10 +863,10 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -O -X -S
 %langpack -l et -n Estonian -F -H -Y -o et_EE -V -x et_EE -S
 %langpack -l eu -n Basque -F -H -Y -A -o eu_ES -V -x eu_ES -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -S
 %endif
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l fi -n Finnish -F -A -o fi_FI -V -x fi_FI -S
 %else
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -o fi_FI -S
@@ -886,13 +886,13 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/registry/korea.xcd
 
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -x lt_LT -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M -S
 %endif
 %langpack -l mai -n Maithili -F -o mai_IN -S
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -x ml_IN -S
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -x mr_IN -S
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l ms -n Malay -F -H -o ms_MY -V -x ms_MY -S
 %endif
 %langpack -l nb -n Bokmal -F -H -Y -M -o nb_NO -V -x nb_NO -S
@@ -910,7 +910,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -o pt_PT -p pt_PT -v pt -X -s pt
 %langpack -l ro -n Romanian -F -H -Y -M -O -S
 %langpack -l ru -n Russian -F -H -Y -M -A -O -X -S
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -O -S
 %endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -o sk_SK -V -x sk_SK -S
@@ -929,7 +929,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l tr -n Turkish -F -A -o tr_TR -V -X -S
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -V -x ts_ZA -S
 %langpack -l uk -n Ukrainian -F -H -Y -M -O -S
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %langpack -l ur -n Urdu -F -H -O -X -S
 %endif
 %langpack -l ve -n Venda -F -H -o ve_ZA -S
@@ -1004,7 +1004,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %patch8 -p1 -b .libwpd08-1.patch
 %patch9 -p1 -R -b .libreoffice-libwpd08-2.patch
 %patch10 -p1 -R -b .wpsimport
@@ -1029,7 +1029,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .do-not-let-gcc-use-registers-we-are-setting-ourselve.patch
 %patch29 -p1 -b .wrong-types-used-here-breaks-64bit-bigendian.patch
 %patch30 -p1 -b .rhbz-805743-a11y-call-doShow-after-we-have-.patch
-%if %{defined rhel} && 0%{?rhel} >= 7 || %{defined fedora} && 0%{?fedora} >= 18
+%if 0%{?rhel} && 0%{?rhel} >= 7 || %{defined fedora} && 0%{?fedora} >= 18
 %patch31 -p1 -b .fdo-49849-implement-Unicode-6.1-hebrew-line.patch
 %endif
 %patch32 -p1 -b .use-ure-instead-of-ure-link.patch
@@ -1076,7 +1076,7 @@ if [ $SMP_MFLAGS -lt 2 ]; then SMP_MFLAGS=2; fi
 NDMAKES=`dc -e "$SMP_MFLAGS v p"`
 NBUILDS=`dc -e "$SMP_MFLAGS $NDMAKES / p"`
 
-%if %{undefined rhel}
+%if 0%{?fedora}
 # KDE bits
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
@@ -1094,7 +1094,7 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if %{defined rhel}
+%if 0%{?rhel}
 %if 0%{?rhel} < 7
 %define distrooptions --disable-graphite --without-system-mythes \
     --without-system-mdds --without-junit --without-system-mysql-cppconn
@@ -1137,7 +1137,7 @@ cp %{SOURCE11} ext_sources
 cp %{SOURCE12} ext_sources
 cp %{SOURCE13} ext_sources
 cp %{SOURCE14} ext_sources
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 cp %{SOURCE15} ext_sources
 cp %{SOURCE16} ext_sources
 cp %{SOURCE17} ext_sources
@@ -1382,7 +1382,7 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/sandbox.jar
 rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/root?.dat
 
 #remove if we do not build with kde support
-%if %{defined rhel}
+%if 0%{?rhel}
 rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/kde-open-url
 %endif
 
@@ -1696,7 +1696,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libpllo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/libqstart_gtklo.so
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %{basisinstdir}/program/libraptor.so.1
 %{basisinstdir}/program/librasqal.so.1
 %{basisinstdir}/program/librdf.so.0
@@ -1736,7 +1736,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libvbahelperlo.so
 %{baseinstdir}/program/libvclplug_genlo.so
 %{baseinstdir}/program/libvclplug_gtklo.so
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libwpgimportlo.so
 %endif
 %{baseinstdir}/program/libxmlfalo.so
@@ -1845,7 +1845,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
-%if %{defined rhel} && 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 %{baseinstdir}/share/fingerprint
 %endif
 %{baseinstdir}/share/gallery
@@ -1987,7 +1987,7 @@ done
 %{baseinstdir}/help/en/sdatabase.*
 %dir %{baseinstdir}/program
 %dir %{baseinstdir}/program/classes
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
@@ -2143,7 +2143,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
-%if %{undefined rhel} || 0%{?rhel} >= 7
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libmsworkslo.so
 %endif
 %{baseinstdir}/program/libooxmllo.so
@@ -2297,7 +2297,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/script-provider-for-python
 %{baseinstdir}/share/registry/pyuno.xcd
 
-%if %{undefined rhel}
+%if 0%{?fedora}
 %files kde
 %defattr(-,root,root,-)
 %dir %{baseinstdir}

@@ -1,0 +1,43 @@
+From d56ad9d8bd27f795dd3f5d9eedaaea4d30a08832 Mon Sep 17 00:00:00 2001
+From: Miklos Vajna <vmiklos@suse.cz>
+Date: Tue, 6 Nov 2012 10:53:10 +0100
+Subject: [PATCH] fdo#48442 fix default hori/vert frame anchor during RTF
+ import
+
+We used to send nothing when we got nothing, but this is not correct:
+\pvmrg and \phmrg is the default in RTF, but not in Writer.
+
+Conflicts:
+	sw/qa/extras/rtfimport/rtfimport.cxx
+
+Change-Id: I9f69e282e68f0828c8b5ba98657cad1dd0715eb3
+---
+ writerfilter/source/rtftok/rtfdocumentimpl.cxx | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index 79991eb..85401c2 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -3898,12 +3898,14 @@ RTFSprms RTFFrame::getSprms()
+                     pValue.reset(new RTFValue(nVertPadding));
+                 break;
+             case NS_ooxml::LN_CT_FramePr_hAnchor:
+-                if ( nHoriAnchor != 0 )
+-                    pValue.reset(new RTFValue(nHoriAnchor));
++                if ( nHoriAnchor == 0 )
++                    nHoriAnchor = NS_ooxml::LN_Value_wordprocessingml_ST_HAnchor_margin;
++                pValue.reset(new RTFValue(nHoriAnchor));
+                 break;
+             case NS_ooxml::LN_CT_FramePr_vAnchor:
+-                if ( nVertAnchor != 0 )
+-                    pValue.reset(new RTFValue(nVertAnchor));
++                if ( nVertAnchor == 0 )
++                    nVertAnchor = NS_ooxml::LN_Value_wordprocessingml_ST_VAnchor_margin;
++                pValue.reset(new RTFValue(nVertAnchor));
+                 break;
+             case NS_ooxml::LN_CT_FramePr_xAlign:
+                 pValue.reset(new RTFValue(nHoriAlign));
+-- 
+1.8.0
+

@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -171,6 +171,7 @@ Patch53: 0001-kill-this-hard-coded-sheet-limit-for-xlsx-import-rhb.patch
 Patch54: 0001-Resolves-fdo-56009-fdo-54695-Calculate-positions-of-.patch
 Patch55: 0001-Enable-NPP_Initialize-Shutdown-again.patch
 Patch56: 0001-Do-not-move-nCurUndoAction-0.patch
+Patch57: 0001-fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1057,6 +1058,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch54 -p1 -b .fdo-56009-fdo-54695-Calculate-positions-of-.patch
 %patch55 -p1 -b .Enable-NPP_Initialize-Shutdown-again.patch
 %patch56 -p1 -b .Do-not-move-nCurUndoAction-0.patch
+%patch57 -p1 -b .fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2343,6 +2345,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 21 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-8-UNBUILT
+- Resolves: rhbz#810739 Incorrect displaying attached rtf document
+
 * Thu Dec 06 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7
 - Resolves: rendering documents in browser plug-in
 - Resolves: rhbz#882240 end of undo stack crash

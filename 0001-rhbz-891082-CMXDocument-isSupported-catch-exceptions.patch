@@ -1,0 +1,81 @@
+From bdec160f1b746a18e4f91553786b914ac1bd889c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 4 Jan 2013 23:44:38 +0100
+Subject: [PATCH] rhbz#891082: CMXDocument::isSupported: catch exceptions
+
+(cherry picked from commit 374f7465729c98f2cc8af72f876a8eab01d192a6)
+
+Conflicts:
+	libcdr/UnpackedTarball_cdr.mk
+
+Change-Id: I715975dfa93d736cb537076feab4afe6b75c162a
+---
+ libcdr/libcdr-issupported-exception.patch.1 | 42 +++++++++++++++++++++++++++++
+ libcdr/makefile.mk                          |  2 ++
+ 2 files changed, 44 insertions(+)
+ create mode 100644 libcdr/libcdr-issupported-exception.patch.1
+
+diff --git a/libcdr/libcdr-issupported-exception.patch.1 b/libcdr/libcdr-issupported-exception.patch.1
+new file mode 100644
+index 0000000..4196c46
+--- /dev/null
++++ b/libcdr/libcdr-issupported-exception.patch.1
+@@ -0,0 +1,42 @@
++rhbz#891082: CMXDocument::isSupported: catch exceptions
++
++--- misc/libcdr-0.0.9/src/lib/CMXDocument.cpp
+++++ misc/build/libcdr-0.0.9/src/lib/CMXDocument.cpp
++@@ -46,20 +46,24 @@
++ */
++ bool libcdr::CMXDocument::isSupported(WPXInputStream *input)
++ {
++-  input->seek(0, WPX_SEEK_SET);
++-  unsigned riff = readU32(input);
++-  if (riff != FOURCC_RIFF && riff != FOURCC_RIFX)
++-    return false;
++-  input->seek(4, WPX_SEEK_CUR);
++-  char signature_c = (char)readU8(input);
++-  if (signature_c != 'C' && signature_c != 'c')
++-    return false;
++-  char signature_d = (char)readU8(input);
++-  if (signature_d != 'M' && signature_d != 'm')
++-    return false;
++-  char signature_r = (char)readU8(input);
++-  if (signature_r != 'X' && signature_r != 'x')
+++  try {
+++    input->seek(0, WPX_SEEK_SET);
+++    unsigned riff = readU32(input);
+++    if (riff != FOURCC_RIFF && riff != FOURCC_RIFX)
+++      return false;
+++    input->seek(4, WPX_SEEK_CUR);
+++    char signature_c = (char)readU8(input);
+++    if (signature_c != 'C' && signature_c != 'c')
+++      return false;
+++    char signature_d = (char)readU8(input);
+++    if (signature_d != 'M' && signature_d != 'm')
+++      return false;
+++    char signature_r = (char)readU8(input);
+++    if (signature_r != 'X' && signature_r != 'x')
+++      return false;
+++  } catch (...) {
++     return false;
+++  }
++   return true;
++ }
++ 
+diff --git a/libcdr/makefile.mk b/libcdr/makefile.mk
+index 0a8df79..2ede985 100755
+--- a/libcdr/makefile.mk
++++ b/libcdr/makefile.mk
+@@ -62,6 +62,8 @@ INCPRE+=$(SOLARVER)$/$(INPATH)$/inc$/lcms2
+ TARFILE_NAME=libcdr-0.0.9
+ TARFILE_MD5=3c0037fb07dea2f0bbae8386fa7c6a9a
+ 
++PATCH_FILES=libcdr-issupported-exception.patch.1
++
+ BUILD_ACTION=dmake $(MFLAGS) $(CALLMACROS)
+ BUILD_DIR=src$/lib
+ 
+-- 
+1.7.11.7
+

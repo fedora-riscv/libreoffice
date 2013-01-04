@@ -249,6 +249,7 @@ Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
 Patch29: libreoffice-rhel6gcj.patch
 Patch30: libreoffice-rhel6poppler.patch
 Patch31: libreoffice-rhel6langs.patch
+Patch32: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -992,6 +993,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .rhel6gcj.patch
 %patch30 -p1 -b .rhel6poppler.patch
 %patch31 -p1 -b .rhel6langs.patch
+%patch32 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 
 # TODO: check this
@@ -2260,6 +2262,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 29 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-2-UNBUILT
+- Resolves: rhbz#891082 catch libcdr exceptions
+
 * Thu Nov 29 2012 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-1
 - 3.6.4 rc3
 

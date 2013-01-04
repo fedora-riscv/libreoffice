@@ -172,6 +172,8 @@ Patch54: 0001-Resolves-fdo-56009-fdo-54695-Calculate-positions-of-.patch
 Patch55: 0001-Enable-NPP_Initialize-Shutdown-again.patch
 Patch56: 0001-Do-not-move-nCurUndoAction-0.patch
 Patch57: 0001-fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
+Patch58: 0002-Resolves-fdo-53909-STG_FREE-sector-locations-rejecte.patch
+Patch59: 0003-Resolves-fdo-57532-restrict-page-sanity-check-to-non.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1059,6 +1061,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch55 -p1 -b .Enable-NPP_Initialize-Shutdown-again.patch
 %patch56 -p1 -b .Do-not-move-nCurUndoAction-0.patch
 %patch57 -p1 -b .fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
+%patch58 -p1 -b .Resolves-fdo-53909-STG_FREE-sector-locations-rejecte.patch
+%patch59 -p1 -b .Resolves-fdo-57532-restrict-page-sanity-check-to-non.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2347,6 +2351,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Dec 21 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-8-UNBUILT
 - Resolves: rhbz#810739 Incorrect displaying attached rtf document
+- Resolves: rhbz#876606 regressions in MSO binary import filters
 
 * Thu Dec 06 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7
 - Resolves: rendering documents in browser plug-in

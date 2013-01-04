@@ -174,6 +174,7 @@ Patch56: 0001-Do-not-move-nCurUndoAction-0.patch
 Patch57: 0001-fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
 Patch58: 0002-Resolves-fdo-53909-STG_FREE-sector-locations-rejecte.patch
 Patch59: 0003-Resolves-fdo-57532-restrict-page-sanity-check-to-non.patch
+Patch60: 0001-rhbz-890080-crash-in-SwXTextDocument-getRendererCoun.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1063,6 +1064,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch57 -p1 -b .fdo-48442-fix-default-hori-vert-frame-anchor-during-.patch
 %patch58 -p1 -b .Resolves-fdo-53909-STG_FREE-sector-locations-rejecte.patch
 %patch59 -p1 -b .Resolves-fdo-57532-restrict-page-sanity-check-to-non.patch
+%patch60 -p1 -b .rhbz-890080-crash-in-SwXTextDocument-getRendererCoun.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2352,6 +2354,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Dec 21 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-8-UNBUILT
 - Resolves: rhbz#810739 Incorrect displaying attached rtf document
 - Resolves: rhbz#876606 regressions in MSO binary import filters
+- Resolves: rhbz#890080 crash in SwXTextDocument::getRendererCount
 
 * Thu Dec 06 2012 Stephan Bergmann <sbergman@redhat.com> - 1:3.5.7.2-7
 - Resolves: rendering documents in browser plug-in

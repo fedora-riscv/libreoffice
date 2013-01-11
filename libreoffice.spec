@@ -1758,10 +1758,7 @@ done
 
 
 %files base
-%dir %{baseinstdir}
 %{baseinstdir}/help/en/sdatabase.*
-%dir %{baseinstdir}/program
-%dir %{baseinstdir}/program/classes
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
@@ -1772,7 +1769,6 @@ done
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so
 %{baseinstdir}/program/librptxmllo.so
-%dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/abpen-US.res
 %{baseinstdir}/program/resource/cnren-US.res
 %{baseinstdir}/program/resource/dbpen-US.res
@@ -1815,10 +1811,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/nlpsolver
 
 %files ogltrans
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/OGLTrans.uno.so
-%dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 
@@ -1837,9 +1830,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc solver/unxlng*/bin/ure/LICENSE
 
 %files calc
-%dir %{baseinstdir}
 %{baseinstdir}/help/en/scalc.*
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -1851,7 +1842,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libscfiltlo.so
 %{baseinstdir}/program/libscuilo.so
 %{baseinstdir}/program/libsolverlo.so
-%dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/analysisen-US.res
 %{baseinstdir}/program/resource/dateen-US.res
 %{baseinstdir}/program/resource/foren-US.res
@@ -1873,8 +1863,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files draw
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/help/en/sdraw.*
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
@@ -1889,16 +1877,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files emailmerge
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/mailmerge.py*
 %{baseinstdir}/program/msgbox.py*
 %{baseinstdir}/program/officehelper.py*
 
 %files writer
-%dir %{baseinstdir}
 %{baseinstdir}/help/en/swriter.*
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -1908,7 +1892,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libwpftwriterlo.so
 %{baseinstdir}/program/libwriterfilterlo.so
 %{baseinstdir}/program/vbaswobj.uno.so
-%dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/t602filteren-US.res
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
@@ -1923,9 +1906,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files impress
-%dir %{baseinstdir}
 %{baseinstdir}/help/en/simpress.*
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/PresenterScreen.uno.so
@@ -1945,12 +1926,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files math
-%dir %{baseinstdir}
 %{baseinstdir}/help/en/smath.*
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
-%dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/smen-US.res
 %{baseinstdir}/share/registry/math.xcd
 %{baseinstdir}/program/smath
@@ -1964,28 +1942,19 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files graphicfilter
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
-%dir %{baseinstdir}
-%dir %{baseinstdir}/share/xslt
 %{baseinstdir}/share/xslt/docbook
-%dir %{baseinstdir}/share/xslt/export
 %{baseinstdir}/share/xslt/export/uof
 %{baseinstdir}/share/xslt/export/xhtml
-%dir %{baseinstdir}/share/xslt/import
 %{baseinstdir}/share/xslt/import/uof
 %{baseinstdir}/share/registry/xsltfilter.xcd
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files javafilter
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
-%dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/aportisdoc.jar
 %{baseinstdir}/program/classes/pexcel.jar
 %{baseinstdir}/program/classes/pocketword.jar
@@ -2005,7 +1974,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files ure
 %doc solver/unxlng*/bin/ure/LICENSE
-%dir %{baseinstdir}
 %{ureinstdir}
 
 %files sdk
@@ -2019,14 +1987,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{sdkinstdir}/examples/
 
 %files headless
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libbasebmplo.so
 %{baseinstdir}/program/libvclplug_svplo.so
 
 %files pyuno
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/libpyuno.so
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/pythonloader.uno.so
@@ -2035,7 +1999,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/pyuno.so
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
-%dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/python
 %{python3_sitearch}/uno.py*
 %{python3_sitearch}/unohelper.py*
@@ -2045,8 +2008,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora}
 %files kde
-%dir %{baseinstdir}
-%dir %{baseinstdir}/program
 %{baseinstdir}/program/kde4be1.uno.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif

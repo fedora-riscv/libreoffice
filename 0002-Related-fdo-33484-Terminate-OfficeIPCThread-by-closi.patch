@@ -1,0 +1,163 @@
+From 5b29409ae1ec8c75296a257dfc02b6acb296a527 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 13 Dec 2012 15:41:10 +0100
+Subject: [PATCH 2/2] Related fdo#33484: Terminate OfficeIPCThread by closing
+ the accepting pipe
+
+... (and setting mbDowning to indicate an error returned from accept() is due to
+termination) instead of setting up an extra pipe connection to send an
+"InternalIPC::TerminateThread" message (which allegedly caused deadlocks, see
+<https://gerrit.libreoffice.org/#/c/1311/> "Change Idf933915: office ipc: use
+timeout pipe feature when connecting to self").
+
+Change-Id: Id302ca13112fc409685e7665b38f1030704a0ccf
+(cherry picked from commit 4ce2602befd59e69264d8e4ced8730b40c2b947c)
+
+Conflicts:
+	desktop/source/app/officeipcthread.cxx
+	desktop/source/app/officeipcthread.hxx
+(cherry picked from commit 6527b8a135c20e223a6fcf7c49835205a99ff02a)
+---
+ desktop/source/app/officeipcthread.cxx | 54 +++++++++++++++-------------------
+ desktop/source/app/officeipcthread.hxx |  1 -
+ 2 files changed, 23 insertions(+), 32 deletions(-)
+
+diff --git a/desktop/source/app/officeipcthread.cxx b/desktop/source/app/officeipcthread.cxx
+index 452a3b5..1d37ee0 100644
+--- a/desktop/source/app/officeipcthread.cxx
++++ b/desktop/source/app/officeipcthread.cxx
+@@ -60,8 +60,6 @@ using ::rtl::OString;
+ using ::rtl::OUString;
+ using ::rtl::OUStringBuffer;
+ 
+-const char  *OfficeIPCThread::sc_aTerminationSequence = "InternalIPC::TerminateThread";
+-const int OfficeIPCThread::sc_nTSeqLength = 28;
+ const char  *OfficeIPCThread::sc_aShowSequence = "-tofront";
+ const int OfficeIPCThread::sc_nShSeqLength = 5;
+ const char  *OfficeIPCThread::sc_aConfirmationSequence = "InternalIPC::ProcessingDone";
+@@ -436,8 +434,6 @@ OfficeIPCThread::Status OfficeIPCThread::EnableOfficeIPCThread()
+ 
+     rtl::Reference< OfficeIPCThread > pThread(new OfficeIPCThread);
+ 
+-    pThread->maPipeIdent = OUString( "SingleOfficeIPC_"  );
+-
+     // The name of the named pipe is created with the hashcode of the user installation directory (without /user). We have to retrieve
+     // this information from a unotools implementation.
+     ::utl::Bootstrap::PathStatus aLocateResult = ::utl::Bootstrap::locateUserInstallation( aUserInstallPath );
+@@ -494,19 +490,19 @@ OfficeIPCThread::Status OfficeIPCThread::EnableOfficeIPCThread()
+     if ( aUserInstallPathHashCode.isEmpty() )
+         return IPC_STATUS_BOOTSTRAP_ERROR; // Something completely broken, we cannot create a valid hash code!
+ 
+-    pThread->maPipeIdent = pThread->maPipeIdent + aUserInstallPathHashCode;
++    OUString aPipeIdent( "SingleOfficeIPC_" + aUserInstallPathHashCode );
+ 
+     PipeMode nPipeMode = PIPEMODE_DONTKNOW;
+     do
+     {
+         osl::Security &rSecurity = Security::get();
+         // Try to create pipe
+-        if ( pThread->maPipe.create( pThread->maPipeIdent.getStr(), osl_Pipe_CREATE, rSecurity ))
++        if ( pThread->maPipe.create( aPipeIdent.getStr(), osl_Pipe_CREATE, rSecurity ))
+         {
+             // Pipe created
+             nPipeMode = PIPEMODE_CREATED;
+         }
+-        else if( pThread->maPipe.create( pThread->maPipeIdent.getStr(), osl_Pipe_OPEN, rSecurity )) // Creation not successfull, now we try to connect
++        else if( pThread->maPipe.create( aPipeIdent.getStr(), osl_Pipe_OPEN, rSecurity )) // Creation not successfull, now we try to connect
+         {
+             osl::StreamPipe aStreamPipe(pThread->maPipe.getHandle());
+             char pReceiveBuffer[sc_nCSASeqLength + 1];
+@@ -610,18 +606,8 @@ void OfficeIPCThread::DisableOfficeIPCThread()
+             pGlobalOfficeIPCThread);
+         pGlobalOfficeIPCThread.clear();
+ 
+-        // send thread a termination message
+-        // this is done so the subsequent join will not hang
+-        // because the thread hangs in accept of pipe
+-        osl::StreamPipe aPipe ( pOfficeIPCThread->maPipeIdent, osl_Pipe_OPEN, Security::get() );
+-        if (aPipe.is())
+-        {
+-            aPipe.send( sc_aTerminationSequence, sc_nTSeqLength+1 ); // also send 0-byte
+-
+-            // close the pipe so that the streampipe on the other
+-            // side produces EOF
+-            aPipe.close();
+-        }
++        pOfficeIPCThread->mbDowning = true;
++        pOfficeIPCThread->maPipe.close();
+ 
+         // release mutex to avoid deadlocks
+         aMutex.clear();
+@@ -686,22 +672,23 @@ void OfficeIPCThread::execute()
+             // down during wait
+             osl::ClearableMutexGuard aGuard( GetMutex() );
+ 
+-            if (!mbDowning)
++            if ( mbDowning )
+             {
+-                // notify client we're ready to process its args
+-                int nBytes = 0;
+-                int nResult = 0;
+-                while (
+-                    (nResult = maStreamPipe.send(sc_aSendArgumentsSequence+nBytes, sc_nCSASeqLength-nBytes))>0 &&
+-                    ((nBytes += nResult) < sc_nCSASeqLength) ) ;
++                break;
+             }
++
++            // notify client we're ready to process its args
++            int nBytes = 0;
++            int nResult;
++            while (
++                (nResult = maStreamPipe.send(sc_aSendArgumentsSequence+nBytes, sc_nCSASeqLength-nBytes))>0 &&
++                ((nBytes += nResult) < sc_nCSASeqLength) ) ;
+             maStreamPipe.write("\0", 1);
+ 
+             // test byte by byte
+             const int nBufSz = 2048;
+             char pBuf[nBufSz];
+-            int nBytes = 0;
+-            int nResult = 0;
++            nBytes = 0;
+             rtl::OStringBuffer aBuf;
+             // read into pBuf until '\0' is read or read-error
+             while ((nResult=maStreamPipe.recv( pBuf+nBytes, nBufSz-nBytes))>0) {
+@@ -719,9 +706,6 @@ void OfficeIPCThread::execute()
+             if (aArguments.isEmpty())
+                 continue;
+ 
+-            // is this a termination message ? if so, terminate
+-            if (aArguments.equalsL(sc_aTerminationSequence, sc_nTSeqLength) || mbDowning)
+-                return;
+             std::auto_ptr< CommandLineArgs > aCmdLineArgs;
+             try
+             {
+@@ -938,6 +922,14 @@ void OfficeIPCThread::execute()
+         }
+         else
+         {
++            {
++                osl::MutexGuard aGuard( GetMutex() );
++                if ( mbDowning )
++                {
++                    break;
++                }
++            }
++
+ #if (OSL_DEBUG_LEVEL > 1) || defined DBG_UTIL
+             fprintf( stderr, "Error on accept: %d\n", (int)nError );
+ #endif
+diff --git a/desktop/source/app/officeipcthread.hxx b/desktop/source/app/officeipcthread.hxx
+index ba40b57..09e56da 100644
+--- a/desktop/source/app/officeipcthread.hxx
++++ b/desktop/source/app/officeipcthread.hxx
+@@ -82,7 +82,6 @@ class OfficeIPCThread : public salhelper::Thread
+ 
+     osl::Pipe                   maPipe;
+     osl::StreamPipe             maStreamPipe;
+-    rtl::OUString               maPipeIdent;
+     bool                        mbDowning;
+     bool                        mbRequestsEnabled;
+     int                         mnPendingRequests;
+-- 
+1.7.11.7
+

@@ -2357,7 +2357,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Dec 21 2012 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-8-UNBUILT
+* Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.5.7.2-8
 - Resolves: rhbz#810739 Incorrect displaying attached rtf document
 - Resolves: rhbz#876606 regressions in MSO binary import filters
 - Resolves: rhbz#890080 crash in SwXTextDocument::getRendererCount

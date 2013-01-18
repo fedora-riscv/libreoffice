@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -253,6 +253,7 @@ Patch32: libreoffice-rhel6poppler.patch
 Patch33: libreoffice-rhel6langs.patch
 Patch34: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
+Patch35: 0001-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -999,6 +1000,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .rhel6langs.patch
 %patch34 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
+%patch35 -p1 -b .Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2266,6 +2268,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-3-UNBUILT
+- Resolves: fdo#58730 ODF fo:margin 100% bug
+
 * Sat Jan 05 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-2
 - Resolves: rhbz#891082 catch libcdr exceptions
 - Resolves: rhbz#885156 lockup when opening file over SMB

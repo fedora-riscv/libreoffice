@@ -2268,7 +2268,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-3-UNBUILT
+* Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-3
 - Resolves: fdo#58730 ODF fo:margin 100% bug
 
 * Sat Jan 05 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-2

@@ -1,0 +1,37 @@
+From 2f8f6ef3f8772aad5e7589daffbe91fd4cf9f961 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Mon, 14 Jan 2013 17:27:26 +0100
+Subject: [PATCH 1/2] fdo#59366: Document Conversion wizard: enable
+ "StarOffice" again:
+
+The createBF_MigrateFilterIfPossible function does not actually return
+its intended return value, so the dialog never shows the "StarOffice"
+button.
+
+(regression from f3e40273b699910108007faf8a7991fe0498ad97)
+
+Change-Id: I8a72a4e16b23ffda01caf3207127de628afc4036
+Reviewed-on: https://gerrit.libreoffice.org/1677
+Reviewed-by: Noel Power <noel.power@suse.com>
+Tested-by: Noel Power <noel.power@suse.com>
+(cherry picked from commit 959ce73b266d3639ff1ced9cb980adf5fe643ad5)
+---
+ wizards/source/importwizard/Main.xba | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/wizards/source/importwizard/Main.xba b/wizards/source/importwizard/Main.xba
+index 7385c6b..fdea2f9 100644
+--- a/wizards/source/importwizard/Main.xba
++++ b/wizards/source/importwizard/Main.xba
+@@ -190,7 +190,7 @@ Function createBF_MigrateFilterIfPossible()
+ Dim oService
+     On Error Goto RTError
+     oService = createUnoService(&quot;com.sun.star.comp.office.BF_MigrateFilter&quot;)
+-    getBinFilterCompIfItExists = oService
++    createBF_MigrateFilterIfPossible = oService
+     Exit Function
+ RTError:
+     createBF_MigrateFilterIfPossible = Nothing
+-- 
+1.7.11.7
+

@@ -1,0 +1,104 @@
+From 1f04cd4415c88d3bcb27b118fa3121fe58de87db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Jan 2013 12:41:11 +0000
+Subject: [PATCH 2/2] Resolves: fdo#58730 workaround [UL|LR]Space 100% problem
+
+If all paragraph margins are 100% on import, ignore that as being the implicit
+default. That avoids explicit 100% being set onto the awesome [UL|LR]Space
+which takes a relative propsize of 100% as a flag that its value field is
+absolute and so rejected by SwTxtFmtColl::Modify as a candidate for getting its
+true value initialized relative to its parent, so it ends up as an absolute 0
+
+Always elide the property on export because writing individual
+margin-foos provides better backward compatibility with older versions
+anyway.
+
+Trigged by 3c5facfce42a0dbe362d6b9fa5ac374fd76f51a1
+
+Change-Id: I55f6ceeae287b7d8e99befa4bd3cc06738a21299
+(cherry picked from commit 23c099a0236062724430efb986251637095c8d4f)
+
+Signed-off-by: Michael Stahl <mstahl@redhat.com>
+(cherry picked from commit abb84c2cce54a903ef846cbfe297b2bbc62ff260)
+---
+ xmloff/source/text/txtexppr.cxx |  8 ++++++++
+ xmloff/source/text/txtimppr.cxx | 23 ++++++++++++++++++++++-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/xmloff/source/text/txtexppr.cxx b/xmloff/source/text/txtexppr.cxx
+index 48c2e64..17991ec 100644
+--- a/xmloff/source/text/txtexppr.cxx
++++ b/xmloff/source/text/txtexppr.cxx
+@@ -467,6 +467,8 @@ void XMLTextExportPropertySetMapper::ContextFilter(
+     XMLPropertyState* pClip11State = NULL;
+     XMLPropertyState* pClipState = NULL;
+ 
++    // filter fo:margin
++    XMLPropertyState* pAllParaMarginRel = NULL;
+     XMLPropertyState* pAllParaMargin = NULL;
+     XMLPropertyState* pAllMargin = NULL;
+ 
+@@ -584,6 +586,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
+         case CTF_NUMBERINGSTYLENAME:    pListStyleName = propertie; break;
+         case CTF_TEXT_CLIP11:           pClip11State = propertie; break;
+         case CTF_TEXT_CLIP:             pClipState = propertie; break;
++        case CTF_PARAMARGINALL_REL:     pAllParaMarginRel = propertie; break;
+         case CTF_PARAMARGINALL:         pAllParaMargin = propertie; break;
+         case CTF_MARGINALL:             pAllMargin = propertie; break;
+         }
+@@ -637,6 +640,11 @@ void XMLTextExportPropertySetMapper::ContextFilter(
+     lcl_checkMultiProperty(pParaBottomMarginState, pParaBottomMarginRelState);
+     lcl_checkMultiProperty(pParaFirstLineState, pParaFirstLineRelState);
+ 
++    if (pAllParaMarginRel)
++    {   // because older OOo/LO versions can't read fo:margin:
++        pAllParaMarginRel->mnIndex = -1; // just export individual attributes...
++        pAllParaMarginRel->maValue.clear();
++    }
+     if (pAllParaMargin)
+     {
+         pAllParaMargin->mnIndex = -1; // just export individual attributes...
+diff --git a/xmloff/source/text/txtimppr.cxx b/xmloff/source/text/txtimppr.cxx
+index 5c63fcb..c403794 100644
+--- a/xmloff/source/text/txtimppr.cxx
++++ b/xmloff/source/text/txtimppr.cxx
+@@ -266,6 +266,26 @@ void XMLTextImportPropertyMapper::FontDefaultsCheck(
+     }
+ }
+ 
++//fdo#58730 The [UL|LR]Space class has a deficiency where "100%" also serves as
++//a flag that the value is an absolute value so we can't truly handle an
++//up/lower space property which wants to specify its 200% upper but 100% lower
++//of its parent (try typing 100% vs 200% into the edit style dialog and revisit
++//your style). So on xml load that ends up meaning 200%, 0 lower. This is a
++//crock.
++//
++//On import clear 100% all-margins relative sizes.
++static bool
++isNotDefaultRelSize(const XMLPropertyState* pRelState, const UniReference<XMLPropertySetMapper>& rPrMap)
++{
++    if (rPrMap->GetEntryContextId(pRelState->mnIndex) == CTF_PARAMARGINALL_REL)
++    {
++        sal_Int32 nTemp = 0;
++        pRelState->maValue >>= nTemp;
++        return nTemp != 100;
++    }
++    return true;
++}
++
+ void XMLTextImportPropertyMapper::finished(
+             ::std::vector< XMLPropertyState >& rProperties,
+             sal_Int32 /*nStartIndex*/, sal_Int32 /*nEndIndex*/ ) const
+@@ -434,7 +454,8 @@ void XMLTextImportPropertyMapper::finished(
+ 
+     for (sal_uInt16 i = 0; i < 4; i++)
+     {
+-        if (pAllParaMargin && !pParaMargins[i])
++        if (pAllParaMargin && !pParaMargins[i]
++            && isNotDefaultRelSize(pAllParaMargin, getPropertySetMapper()))
+         {
+ #if OSL_DEBUG_LEVEL > 0
+             sal_Int16 nTmp = getPropertySetMapper()->GetEntryContextId(
+-- 
+1.7.11.7
+

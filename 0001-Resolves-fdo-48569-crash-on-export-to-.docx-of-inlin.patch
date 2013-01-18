@@ -1,0 +1,90 @@
+From a010c4eaea6d6c45621a11d035f76266b0a5147c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 11 Oct 2012 12:20:07 +0100
+Subject: [PATCH] Resolves: fdo#48569 crash on export to .docx of inline
+ anchored frame
+
+we're currently deferring to the end of the text node to export
+the contents of frames. If its anchored as character then the
+sw::Frame (which is allocated on stack) has gone out of scope
+so this pointer points to junk. Copy it instead.
+
+Sill need to export frames property at some stage.
+
+Change-Id: Ib9f8c6857ce1afe6acba84986b692139e44a7aad
+(cherry picked from commit 60a93729c95d31edab50a905236faa9e38a81556)
+
+Signed-off-by: Eike Rathke <erack@redhat.com>
+---
+ sw/source/filter/ww8/docxattributeoutput.cxx | 16 ++++++++++------
+ sw/source/filter/ww8/docxattributeoutput.hxx |  2 +-
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/sw/source/filter/ww8/docxattributeoutput.cxx b/sw/source/filter/ww8/docxattributeoutput.cxx
+index 179c2f6..7149e49 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx
+@@ -311,7 +311,10 @@ void DocxAttributeOutput::EndParagraph( ww8::WW8TableNodeInfoInner::Pointer_t pT
+     // Write the anchored frame if any
+     if ( m_pParentFrame )
+     {
+-        const SwFrmFmt& rFrmFmt = m_pParentFrame->GetFrmFmt( );
++        sw::Frame *pParentFrame = m_pParentFrame;
++        m_pParentFrame = NULL;
++
++        const SwFrmFmt& rFrmFmt = pParentFrame->GetFrmFmt( );
+         const SwNodeIndex* pNodeIndex = rFrmFmt.GetCntnt().GetCntntIdx();
+ 
+         sal_uLong nStt = pNodeIndex ? pNodeIndex->GetIndex()+1                  : 0;
+@@ -319,12 +322,13 @@ void DocxAttributeOutput::EndParagraph( ww8::WW8TableNodeInfoInner::Pointer_t pT
+ 
+         m_rExport.SaveData( nStt, nEnd );
+ 
+-        m_rExport.mpParentFrame = m_pParentFrame;
+-        m_pParentFrame = NULL;
++        m_rExport.mpParentFrame = pParentFrame;
+ 
+         m_rExport.WriteText( );
+ 
+         m_rExport.RestoreData();
++
++        delete pParentFrame;
+     }
+ }
+ 
+@@ -2396,8 +2400,8 @@ void DocxAttributeOutput::OutputFlyFrame_Impl( const sw::Frame &rFrame, const Po
+             break;
+         case sw::Frame::eTxtBox:
+             {
+-                // The frame output is postponed at the end of the anchor paragraph
+-                m_pParentFrame = &rFrame;
++                // The frame output is postponed to the end of the anchor paragraph
++                m_pParentFrame = new sw::Frame(rFrame);
+             }
+             break;
+         case sw::Frame::eOle:
+@@ -4455,7 +4459,7 @@ DocxAttributeOutput::~DocxAttributeOutput()
+     delete m_pEndnotesList, m_pEndnotesList = NULL;
+ 
+     delete m_pTableWrt, m_pTableWrt = NULL;
+-    m_pParentFrame = NULL;
++    delete m_pParentFrame;
+ }
+ 
+ DocxExport& DocxAttributeOutput::GetExport()
+diff --git a/sw/source/filter/ww8/docxattributeoutput.hxx b/sw/source/filter/ww8/docxattributeoutput.hxx
+index 4caf047..0d176e1 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.hxx
++++ b/sw/source/filter/ww8/docxattributeoutput.hxx
+@@ -587,7 +587,7 @@ private:
+     // beginning of the next paragraph
+     DocxColBreakStatus m_nColBreakStatus;
+ 
+-    const sw::Frame *m_pParentFrame;
++    sw::Frame *m_pParentFrame;
+     // close of hyperlink needed
+     bool m_closeHyperlinkInThisRun;
+     bool m_closeHyperlinkInPreviousRun;
+-- 
+1.7.11.7
+

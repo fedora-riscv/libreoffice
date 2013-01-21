@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1456,7 +1456,8 @@ pushd sysui/output/usr/share/
 rm -rf icons/gnome applications application-registry
 
 #relocate the rest of them
-for icon in `find icons -type f`; do
+# rhbz#901346 512x512 icons are not used by anything
+for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
     mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
     cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@office$ICONVERSION@office@ | sed -e s@office$PRODUCTVERSION@office@`
 done
@@ -2268,6 +2269,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jan 21 2013 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-4-UNBUILT
+- Resolves: rhbz#901346 do not install 512x512 icons
+
 * Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-3
 - Resolves: fdo#58730 ODF fo:margin 100% bug
 

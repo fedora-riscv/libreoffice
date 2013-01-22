@@ -254,6 +254,7 @@ Patch33: libreoffice-rhel6langs.patch
 Patch34: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 Patch35: 0001-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
+Patch36: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1001,6 +1002,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 %patch35 -p1 -b .Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
+%patch36 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2269,8 +2271,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jan 21 2013 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-4-UNBUILT
+* Tue Jan 22 2013 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-4
 - Resolves: rhbz#901346 do not install 512x512 icons
+- Resolves: rhbz#760765 Impress doesn't copy custom styles from one file
+  to another
 
 * Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.6.4.3-3
 - Resolves: fdo#58730 ODF fo:margin 100% bug

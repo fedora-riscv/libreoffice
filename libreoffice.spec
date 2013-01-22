@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?dist}
+Release:        9%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -178,6 +178,7 @@ Patch60: 0001-rhbz-890080-crash-in-SwXTextDocument-getRendererCoun.patch
 Patch61: 0001-fdo-59366-Document-Conversion-wizard-enable-StarOffi.patch
 Patch62: 0002-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
 Patch63: 0001-Resolves-fdo-48569-crash-on-export-to-.docx-of-inlin.patch
+Patch64: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1071,6 +1072,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch61 -p1 -b .fdo-59366-Document-Conversion-wizard-enable-StarOffi.patch
 %patch62 -p1 -b .fdo-58730-workaround-UL-LR-Space-100-proble.patch
 %patch63 -p1 -b .fdo-48569-crash-on-export-to-.docx-of-inlin.patch
+%patch64 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2357,6 +2359,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 22 2013 David Tardon <dtardon@redhat.com> - 1:3.5.7.2-9
+- Resolves: rhbz#760765 Impress doesn't copy custom styles from one file
+  to another
+
 * Fri Jan 18 2013 Michael Stahl <mstahl@redhat.com> - 1:3.5.7.2-8
 - Resolves: rhbz#810739 Incorrect displaying attached rtf document
 - Resolves: rhbz#876606 regressions in MSO binary import filters

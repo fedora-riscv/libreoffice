@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -231,6 +231,7 @@ Patch10: libreoffice-rhel6poppler.patch
 Patch11: libreoffice-rhel6langs.patch
 %endif
 Patch12: 0001-temporarily-disable-failing-test.patch
+Patch13: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -958,6 +959,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .rhel6langs.patch
 %endif
 %patch12 -p1 -b .temporarily-disable-failing-test.patch
+%patch13 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2013,6 +2015,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 22 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.1-3
+- Resolves: rhbz#760765 Impress doesn't copy custom styles from one file
+  to another
+
 * Mon Jan 21 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.1-2
 - Resolves: rhbz#901346 do not install 512x512 icons
 

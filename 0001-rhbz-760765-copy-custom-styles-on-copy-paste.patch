@@ -1,0 +1,198 @@
+From 24578b804007d8c3201e5ed32b8485e1725c33c1 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 17 Jan 2013 15:01:32 +0100
+Subject: [PATCH] rhbz#760765 copy custom styles on copy & paste
+
+Change-Id: Icaacf3bc1a02a017692432aec36aba06d3f5dde5
+---
+ sd/inc/stlpool.hxx          |  3 +++
+ sd/source/core/drawdoc3.cxx | 49 ++++++++++++++++++++++++++++++++++++++++++---
+ sd/source/core/stlpool.cxx  | 18 +++++++++++++++++
+ sd/source/core/stlsheet.cxx | 16 +++++++++------
+ 4 files changed, 77 insertions(+), 9 deletions(-)
+
+diff --git a/sd/inc/stlpool.hxx b/sd/inc/stlpool.hxx
+index 9e76c2a..4833dd8 100644
+--- a/sd/inc/stlpool.hxx
++++ b/sd/inc/stlpool.hxx
+@@ -80,6 +80,8 @@ public:
+     void                CopyGraphicSheets(SdStyleSheetPool& rSourcePool);
+     void                CopyCellSheets(SdStyleSheetPool& rSourcePool);
+     void                CopyTableStyles(SdStyleSheetPool& rSourcePool);
++    void                CopyGraphicSheets(SdStyleSheetPool& rSourcePool, SdStyleSheetVector& rCreatedSheets);
++    void                CopyCellSheets(SdStyleSheetPool& rSourcePool, SdStyleSheetVector& rCreatedSheets);
+ 
+     void                CreatePseudosIfNecessary();
+     void                UpdateStdNames();
+@@ -121,6 +123,7 @@ public:
+     virtual void SAL_CALL release (void) throw ();
+ protected:
+     void CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily eFamily );
++    void CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily eFamily, SdStyleSheetVector& rCreatedSheets );
+ 
+     virtual SfxStyleSheetBase* Create(const String& rName, SfxStyleFamily eFamily, sal_uInt16 nMask);
+     virtual SfxStyleSheetBase* Create(const SdStyleSheet& rStyle);
+diff --git a/sd/source/core/drawdoc3.cxx b/sd/source/core/drawdoc3.cxx
+index e7ac380..b18c254 100644
+--- a/sd/source/core/drawdoc3.cxx
++++ b/sd/source/core/drawdoc3.cxx
+@@ -357,6 +357,26 @@ sal_Bool SdDrawDocument::InsertBookmark(
+     return bOK;
+ }
+ 
++namespace
++{
++
++void
++lcl_removeUnusedStyles(SfxStyleSheetBasePool* const pStyleSheetPool, SdStyleSheetVector& rStyles)
++{
++    SdStyleSheetVector aUsedStyles;
++    aUsedStyles.reserve(rStyles.size());
++    for (SdStyleSheetVector::const_iterator aIt(rStyles.begin()), aLast(rStyles.end()); aIt != aLast; ++aIt)
++    {
++        if ((*aIt)->IsUsed())
++            aUsedStyles.push_back(*aIt);
++        else
++            pStyleSheetPool->Remove((*aIt).get());
++    }
++    rStyles = aUsedStyles;
++}
++
++}
++
+ sal_Bool SdDrawDocument::InsertBookmarkAsPage(
+     const std::vector<rtl::OUString> &rBookmarkList,
+     std::vector<rtl::OUString> *pExchangeList,            // Liste der zu verwendenen Namen
+@@ -484,8 +504,8 @@ sal_Bool SdDrawDocument::InsertBookmarkAsPage(
+     /**************************************************************************
+     * Die tatsaechlich benoetigten Vorlagen kopieren
+     **************************************************************************/
+-    SdStyleSheetPool* pBookmarkStyleSheetPool =
+-    (SdStyleSheetPool*) pBookmarkDoc->GetStyleSheetPool();
++    SdStyleSheetPool* pBookmarkStyleSheetPool = dynamic_cast<SdStyleSheetPool*>(pBookmarkDoc->GetStyleSheetPool());
++    SdStyleSheetPool* pStyleSheetPool = dynamic_cast<SdStyleSheetPool*>(GetStyleSheetPool());
+ 
+     // Wenn Vorlagen kopiert werden muessen, dann muessen auch die
+     // MasterPages kopiert werden!
+@@ -498,7 +518,7 @@ sal_Bool SdDrawDocument::InsertBookmarkAsPage(
+         SdStyleSheetVector aCreatedStyles;
+         String layoutName = *pIter;
+ 
+-        ((SdStyleSheetPool*)GetStyleSheetPool())->CopyLayoutSheets(layoutName, *pBookmarkStyleSheetPool,aCreatedStyles);
++        pStyleSheetPool->CopyLayoutSheets(layoutName, *pBookmarkStyleSheetPool,aCreatedStyles);
+ 
+         if(!aCreatedStyles.empty())
+         {
+@@ -510,6 +530,18 @@ sal_Bool SdDrawDocument::InsertBookmarkAsPage(
+         }
+     }
+ 
++    // Copy styles. This unconditionally copies all styles, even those
++    // that are not used in any of the inserted pages. The unused styles
++    // are then removed at the end of the function, where we also create
++    // undo records for the inserted styles.
++    SdStyleSheetVector aNewGraphicStyles;
++    pStyleSheetPool->CopyGraphicSheets(*pBookmarkStyleSheetPool, aNewGraphicStyles);
++    SdStyleSheetVector aNewCellStyles;
++    pStyleSheetPool->CopyCellSheets(*pBookmarkStyleSheetPool, aNewCellStyles);
++
++    // TODO handle undo of table styles too
++    pStyleSheetPool->CopyTableStyles(*pBookmarkStyleSheetPool);
++
+     /**************************************************************************
+     * Dokument einfuegen
+     **************************************************************************/
+@@ -910,6 +942,17 @@ sal_Bool SdDrawDocument::InsertBookmarkAsPage(
+     // Make absolutely sure no double masterpages are there
+     RemoveUnnecessaryMasterPages(NULL, sal_True, sal_True);
+ 
++    // remove copied styles not used on any inserted page and create
++    // undo records
++    // WARNING: SdMoveStyleSheetsUndoAction clears the passed list of
++    // styles, so it cannot be used after this point
++    lcl_removeUnusedStyles(GetStyleSheetPool(), aNewGraphicStyles);
++    if (!aNewGraphicStyles.empty() && pUndoMgr)
++        pUndoMgr->AddUndoAction(new SdMoveStyleSheetsUndoAction(this, aNewGraphicStyles, sal_True));
++    lcl_removeUnusedStyles(GetStyleSheetPool(), aNewCellStyles);
++    if (!aNewCellStyles.empty() && pUndoMgr)
++        pUndoMgr->AddUndoAction(new SdMoveStyleSheetsUndoAction(this, aNewCellStyles, sal_True));
++
+     if( bUndo )
+         EndUndo();
+     pUndoMgr->LeaveListAction();
+diff --git a/sd/source/core/stlpool.cxx b/sd/source/core/stlpool.cxx
+index 078a64d..cfe6c82 100644
+--- a/sd/source/core/stlpool.cxx
++++ b/sd/source/core/stlpool.cxx
+@@ -582,8 +582,24 @@ void SdStyleSheetPool::CopyTableStyles(SdStyleSheetPool& rSourcePool)
+     }
+ }
+ 
++void SdStyleSheetPool::CopyGraphicSheets(SdStyleSheetPool& rSourcePool, SdStyleSheetVector& rCreatedSheets)
++{
++    CopySheets( rSourcePool, SD_STYLE_FAMILY_GRAPHICS, rCreatedSheets );
++}
++
++void SdStyleSheetPool::CopyCellSheets(SdStyleSheetPool& rSourcePool, SdStyleSheetVector& rCreatedSheets)
++{
++    CopySheets( rSourcePool, SD_STYLE_FAMILY_CELL, rCreatedSheets );
++}
++
+ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily eFamily )
+ {
++    SdStyleSheetVector aTmpSheets;
++    CopySheets(rSourcePool, eFamily, aTmpSheets);
++}
++
++void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily eFamily, SdStyleSheetVector& rCreatedSheets)
++{
+     String aHelpFile;
+ 
+     sal_uInt32 nCount = rSourcePool.aStyles.size();
+@@ -610,6 +626,8 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
+ 
+                 xNewSheet->SetHelpId( aHelpFile, xSheet->GetHelpId( aHelpFile ) );
+                 xNewSheet->GetItemSet().Put( xSheet->GetItemSet() );
++
++                rCreatedSheets.push_back( SdStyleSheetRef( static_cast< SdStyleSheet* >( xNewSheet.get() ) ) );
+             }
+         }
+     }
+diff --git a/sd/source/core/stlsheet.cxx b/sd/source/core/stlsheet.cxx
+index ecd84d7..f013739 100644
+--- a/sd/source/core/stlsheet.cxx
++++ b/sd/source/core/stlsheet.cxx
+@@ -35,6 +35,7 @@
+ #include <svl/smplhint.hxx>
+ #include <svl/itemset.hxx>
+ 
++#include <svx/sdr/properties/attributeproperties.hxx>
+ #include <svx/xflbmtit.hxx>
+ #include <svx/xflbstit.hxx>
+ #include <editeng/bulitem.hxx>
+@@ -349,13 +350,16 @@ bool SdStyleSheet::IsUsed() const
+                 continue;
+ 
+             // NULL-Pointer ist im Listener-Array erlaubt
+-            if (pListener && pListener->ISA(SdrAttrObj))
++            if (pListener)
+             {
+-                bResult = ((SdrAttrObj*)pListener)->IsInserted();
+-            }
+-            else if (pListener && pListener->ISA(SfxStyleSheet))
+-            {
+-                bResult = ((SfxStyleSheet*)pListener)->IsUsed();
++                if (pListener->ISA(sdr::properties::AttributeProperties))
++                {
++                    bResult = true;
++                }
++                else if (pListener->ISA(SfxStyleSheet))
++                {
++                    bResult = ((SfxStyleSheet*)pListener)->IsUsed();
++                }
+             }
+             if (bResult)
+                 break;
+-- 
+1.8.0.2
+

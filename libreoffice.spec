@@ -7,8 +7,12 @@
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
+%define libo_python3 %{nil}
+%define libo_python_sitearch %{python_sitearch}
 %endif
 %if 0%{?fedora}
+%define libo_python3 1
+%define libo_python_sitearch %{python3_sitearch}
 %define vendoroption --with-vendor="The Fedora Project"
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
@@ -170,10 +174,10 @@ BuildRequires: poppler-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: python-devel
-%else
+%if 0%{libo_python3}
 BuildRequires: python3-devel >= 3.3.0
+%else
+BuildRequires: python-devel
 %endif
 BuildRequires: redland-devel
 BuildRequires: sane-backends-devel
@@ -279,11 +283,13 @@ Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Requires: python
-Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
-%else
+%if 0%{libo_python3}
 Requires: python3
+%else
+Requires: python
+%endif
+%if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
 %endif
 
 %description pyuno
@@ -1012,6 +1018,14 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes
 %endif
 
+%if 0%{libo_python3}
+%{nil}
+%else
+export PYTHON=%{_bindir}/python
+export PYTHON_CFLAGS=`pkg-config --cflags python`
+export PYTHON_LIBS=`pkg-config --libs python`
+%endif
+
 aclocal -I m4
 autoconf
 # avoid running autogen.sh on make
@@ -1170,8 +1184,8 @@ find $RPM_BUILD_ROOT/%{baseinstdir} -exec chmod +w {} \;
 find $RPM_BUILD_ROOT/%{baseinstdir} -type d -exec chmod 0755 {} \;
 
 # move python bits into site-packages
-mkdir -p $RPM_BUILD_ROOT/%{python3_sitearch}
-pushd $RPM_BUILD_ROOT/%{python3_sitearch}
+mkdir -p $RPM_BUILD_ROOT/%{libo_python_sitearch}
+pushd $RPM_BUILD_ROOT/%{libo_python_sitearch}
 echo "import sys, os" > uno.py
 echo "sys.path.append('%{baseinstdir}/program')" >> uno.py
 echo "os.putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%{baseinstdir}/program/fundamentalrc')" >> uno.py
@@ -2002,10 +2016,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
 %{baseinstdir}/share/Scripts/python
-%{python3_sitearch}/uno.py*
-%{python3_sitearch}/unohelper.py*
-%{python3_sitearch}/__pycache__/uno.cpython-*
-%{python3_sitearch}/__pycache__/unohelper.cpython-*
+%{libo_python_sitearch}/uno.py*
+%{libo_python_sitearch}/unohelper.py*
+%if 0%{libo_python3}
+%{libo_python_sitearch}/__pycache__/uno.cpython-*
+%{libo_python_sitearch}/__pycache__/unohelper.cpython-*
+%endif
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %if 0%{?fedora}

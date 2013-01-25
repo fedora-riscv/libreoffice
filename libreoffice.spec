@@ -1018,9 +1018,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes
 %endif
 
-%if 0%{libo_python3}
-%{nil}
-%else
+%if ! 0%{libo_python3}
 export PYTHON=%{_bindir}/python
 export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`

@@ -1031,7 +1031,7 @@ touch autogen.lastrun
 %configure \
  %vendoroption %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
  --with-build-version="%{version}-%{release}" --with-unix-wrapper=%{name} \
- --disable-epm --disable-mathmldtd \
+ --enable-release-build --disable-epm --disable-mathmldtd \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \

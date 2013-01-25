@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.4
+%define libo_version 3.6.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -17,8 +17,8 @@
 %define _default_patch_flags -s -l
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 
 # use rpmbuild --without binfilter (or mock --without binfilter) to get
 # a faster build without old binary filters
@@ -43,8 +43,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -224,37 +224,33 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-Patch8:  0001-Resolves-rhbz-838368-view-ignored-while-view-accepte.patch
-Patch9:  0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-Patch10: 0001-Resolves-rhbz-846775-Clipboard-must-be-disposed-befo.patch
-Patch11: 0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
-Patch12: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
-Patch13: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
-Patch14: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-Patch15: 0003-make-avmedia-build-with-gstreamer-0.10.patch
-Patch16: 0004-tweak-old-school-gstreamer-link-line.patch
-Patch17: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-Patch18: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
-Patch19: 0007-gstreamer-fix-leaking-pads.patch
-Patch20: 0001-convert-java-XSL-transformer-into-extension.patch
-Patch21: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
-Patch22: 0003-drop-saxon-based-XSLT-transformer.patch
-Patch23: 0004-remove-all-traces-of-saxon.patch
-Patch24: 0001-do-not-strip-install-set.patch
-Patch25: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
-Patch26: 0001-bigendian-utext-mixup-triggering-regression-test-fai.patch
-Patch27: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
-Patch28: 0001-split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
-Patch29: 0001-startup-more-reliable-startup-of-multiple-instances.patch
-Patch30: 0002-Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
+Patch8:  0001-Resolves-rhbz-836937-insanely-slow-with-Zemberek-ins.patch
+Patch9:  0001-Resolves-rhbz-842292-crash-in-calling-callback-whose.patch
+Patch10: 0001-Resolves-rhbz-855541-XIOError-handler-multithread-wo.patch
+Patch11: 0001-tentative-initial-attempt-at-re-work-for-new-playbin.patch
+Patch12: 0002-gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
+Patch13: 0003-make-avmedia-build-with-gstreamer-0.10.patch
+Patch14: 0004-tweak-old-school-gstreamer-link-line.patch
+Patch15: 0005-Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
+Patch16: 0006-gstreamer-various-fixes-for-1.0-and-cleanups.patch
+Patch17: 0007-gstreamer-fix-leaking-pads.patch
+Patch18: 0001-convert-java-XSL-transformer-into-extension.patch
+Patch19: 0002-rework-selection-of-transformer-for-an-XSLT-filter.patch
+Patch20: 0003-drop-saxon-based-XSLT-transformer.patch
+Patch21: 0004-remove-all-traces-of-saxon.patch
+Patch22: 0001-do-not-strip-install-set.patch
+Patch23: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
+Patch24: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
+Patch25: 0001-startup-more-reliable-startup-of-multiple-instances.patch
+Patch26: 0002-Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
+Patch27: 0001-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
+Patch28: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-Patch31: libreoffice-rhel6gcj.patch
-Patch32: libreoffice-rhel6poppler.patch
-Patch33: libreoffice-rhel6langs.patch
-Patch34: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
+Patch29: libreoffice-rhel6gcj.patch
+Patch30: libreoffice-rhel6poppler.patch
+Patch31: libreoffice-rhel6langs.patch
+Patch32: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
-Patch35: 0001-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
-Patch36: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -972,37 +968,33 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 %patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch8  -p1 -b .rhbz838368-view-ignored-while-view-accepte.patch
-%patch9  -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
-%patch10 -p1 -b .rhbz-846775-Clipboard-must-be-disposed-befo.patch
-%patch11 -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
-%patch12 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
-%patch13 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
-%patch14 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
-%patch15 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
-%patch16 -p1 -b .tweak-old-school-gstreamer-link-line.patch
-%patch17 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
-%patch18 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
-%patch19 -p1 -b .gstreamer-fix-leaking-pads.patch
-%patch20 -p1 -b .convert-java-XSL-transformer-into-extension.patch
-%patch21 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
-%patch22 -p1 -b .drop-saxon-based-XSLT-transformer.patch
-%patch23 -p1 -b .remove-all-traces-of-saxon.patch
-%patch24 -p1 -b .do-not-strip-install-set.patch
-%patch25 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
-%patch26 -p1 -b .bigendian-utext-mixup-triggering-regression-test-fai.patch
-%patch27 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
-%patch28 -p1 -b .split-qnametostr-up-to-try-and-make-.o-s-small-enoug.patch
-%patch29 -p1 -b .startup-more-reliable-startup-of-multiple-instances.patch
-%patch30 -p1 -b .Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
+%patch8  -p1 -b .rhbz-836937-insanely-slow-with-Zemberek-ins.patch
+%patch9  -p1 -b .rhbz-842292-crash-in-calling-callback-whose.patch
+%patch10 -p1 -b .rhbz-855541-XIOError-handler-multithread-wo.patch
+%patch11 -p1 -b .tentative-initial-attempt-at-re-work-for-new-playbin.patch
+%patch12 -p1 -b .gstreamer-make-gstreamer-1.0-and-0.10-dual-compile.patch
+%patch13 -p1 -b .make-avmedia-build-with-gstreamer-0.10.patch
+%patch14 -p1 -b .tweak-old-school-gstreamer-link-line.patch
+%patch15 -p1 -b .Don-t-fail-configure-with-older-gstreamer-plugins-ba.patch
+%patch16 -p1 -b .gstreamer-various-fixes-for-1.0-and-cleanups.patch
+%patch17 -p1 -b .gstreamer-fix-leaking-pads.patch
+%patch18 -p1 -b .convert-java-XSL-transformer-into-extension.patch
+%patch19 -p1 -b .rework-selection-of-transformer-for-an-XSLT-filter.patch
+%patch20 -p1 -b .drop-saxon-based-XSLT-transformer.patch
+%patch21 -p1 -b .remove-all-traces-of-saxon.patch
+%patch22 -p1 -b .do-not-strip-install-set.patch
+%patch23 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
+%patch24 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
+%patch25 -p1 -b .startup-more-reliable-startup-of-multiple-instances.patch
+%patch26 -p1 -b .Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
+%patch27 -p1 -b .Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
+%patch28 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-%patch31 -p1 -b .rhel6gcj.patch
-%patch32 -p1 -b .rhel6poppler.patch
-%patch33 -p1 -b .rhel6langs.patch
-%patch34 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
+%patch29 -p1 -b .rhel6gcj.patch
+%patch30 -p1 -b .rhel6poppler.patch
+%patch31 -p1 -b .rhel6langs.patch
+%patch32 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
-%patch35 -p1 -b .Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
-%patch36 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2271,6 +2263,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 25 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-1
+- 3.6.5 rc2
+
 * Tue Jan 22 2013 David Tardon <dtardon@redhat.com> - 1:3.6.4.3-4
 - Resolves: rhbz#901346 do not install 512x512 icons
 - Resolves: rhbz#760765 Impress doesn't copy custom styles from one file

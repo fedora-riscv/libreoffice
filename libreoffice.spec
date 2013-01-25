@@ -872,7 +872,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H
 %langpack -l sv -n Swedish -F -H -Y -M -A -T
-%langpack -l ta -n Tamil -F -H -Y -s ctl -T
+%langpack -l ta -n Tamil -F -H -Y -s ctl
 %langpack -l te -n Telugu -F -H -Y
 %langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
 %langpack -l tn -n Tswana -F -H

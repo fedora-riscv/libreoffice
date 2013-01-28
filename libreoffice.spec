@@ -2018,6 +2018,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %endif
+%{baseinstdir}/share/registry/librelogo.xcd
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %if 0%{?fedora}

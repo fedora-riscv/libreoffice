@@ -1616,8 +1616,6 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_tango.zip
-# TODO what's this? How it differs from images_tango.zip?
-%{baseinstdir}/share/config/images_tango_testing.zip
 %{baseinstdir}/share/config/psetup.xpm
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg

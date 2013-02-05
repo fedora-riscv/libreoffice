@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -251,6 +251,7 @@ Patch30: libreoffice-rhel6poppler.patch
 Patch31: libreoffice-rhel6langs.patch
 Patch32: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
+Patch33: 0001-these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .rhel6langs.patch
 %patch32 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
+%patch33 -p1 -b .these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2263,6 +2265,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 05 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-2
+- Resolves: rhbz#907112 presentation mode does not inhibit screen saver
+
 * Fri Jan 25 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-1
 - 3.6.5 rc2
 

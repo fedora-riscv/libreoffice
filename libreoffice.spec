@@ -1111,7 +1111,7 @@ for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
   rm -rf $langpack
 done
 %endif
-export WITH_LANG="en-US"
+export WITH_LANG_LIST="en-US"
 dmake sdkoo
 mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 cd ../../

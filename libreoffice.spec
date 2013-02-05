@@ -252,6 +252,7 @@ Patch31: libreoffice-rhel6langs.patch
 Patch32: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 Patch33: 0001-these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
+Patch34: 0001-fdo-59426-Don-t-try-to-repair-package-during-flat-de.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -997,6 +998,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch32 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
 %patch33 -p1 -b .these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
+%patch34 -p1 -b .fdo59426-Don-t-try-to-repair-package-during-flat-de.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2267,6 +2269,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Feb 05 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-2
 - Resolves: rhbz#907112 presentation mode does not inhibit screen saver
+- Resolves: rhbz#862181 a .xlsx named as a .xls will fail to open
 
 * Fri Jan 25 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-1
 - 3.6.5 rc2

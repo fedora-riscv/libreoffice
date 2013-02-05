@@ -727,14 +727,15 @@ This package provides gdb pretty printers for package %{name}.
 #      not add any .xcd into the package (the file does not exist for at
 #      least one CTL-using locale, si)
 # T    has help files
+# Xx:  has autotext definitions
 # Yy:  hyphen dependency
 #
 # Example:
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
 # autocorr-cs, mythes-cs-CZ and suitable font:
 # %%langpack -l cs -n Czech -H -A -m cs-CZ
-#  b de g  jk   o q  tuvwx z BCD  G IJK  NOPQR  UVWX Z0123456789
-%define langpack(Aa:c:EFf:Hh:iL:l:Mm:n:p:r:S:s:TYy:) \
+#  b de g  jk   o q  tuvw  z BCD  G IJK  NOPQR  UVW  Z0123456789
+%define langpack(Aa:c:EFf:Hh:iL:l:Mm:n:p:r:S:s:TXx:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define pkgname langpack-%{lang} \
@@ -758,7 +759,9 @@ Provides additional %{langname} translations and resources for %{project}. \
 %files %{pkgname} \
 %{!-E: \
 %define _langpack_lang %{-L:%{-L*}}%{!-L:%{-l*}} \
+%define autotextdir %{baseinstdir}/share/autotext \
 %{expand:%%_langpack_common %{_langpack_lang}} \
+%{-x:%{autotextdir}/%{-x*}}%{!-x:%{-X:%{autotextdir}/%{_langpack_lang}}} \
 %{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
 %{-T: \
@@ -804,19 +807,19 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l af -n Afrikaans -F -H -Y -A
 %langpack -l ar -n Arabic -F -H -s ctl
 %langpack -l as -n Assamese -F -H -Y
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -T
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X
 %langpack -l bn -n Bengali -F -H -Y -T
 %langpack -l ca -n Catalan -F -H -Y -M -T
-%langpack -l cs -n Czech -F -H -Y -M -A -T
+%langpack -l cs -n Czech -F -H -Y -M -A -T -X
 %langpack -l cy -n Welsh -F -H -Y
-%langpack -l da -n Danish -F -H -Y -M -A -T
-%langpack -l de -n German -F -H -Y -M -A -T
+%langpack -l da -n Danish -F -H -Y -M -A -T -X
+%langpack -l de -n German -F -H -Y -M -A -T -X
 %langpack -l dz -n Dzongkha -F -s ctl -T
 %langpack -l el -n Greek -F -H -Y -M -T
 %langpack -l en -n English -F -H -Y -M -A -E
-%langpack -l es -n Spanish -F -H -Y -M -A -T
+%langpack -l es -n Spanish -F -H -Y -M -A -T -X
 %langpack -l et -n Estonian -F -H -Y -T
-%langpack -l eu -n Basque -F -H -Y -A -T
+%langpack -l eu -n Basque -F -H -Y -A -T -X
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif
@@ -825,18 +828,18 @@ Rules for auto-correcting common %{langname} typing errors. \
 %else
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T
 %endif
-%langpack -l fr -n French -F -H -Y -M -A -T
+%langpack -l fr -n French -F -H -Y -M -A -T -X
 %langpack -l ga -n Irish -F -H -Y -M -A
 %langpack -l gl -n Galician -F -H -Y -T
 %langpack -l gu -n Gujarati -F -H -Y -s ctl
 %langpack -l he -n Hebrew -F -H -s ctl
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T
 %langpack -l hr -n Croatian -F -H -Y -A
-%langpack -l hu -n Hungarian -F -H -Y -M -A -T
-%langpack -l it -n Italian -F -H -Y -M -A -T
-%langpack -l ja -n Japanese -F -A -s cjk -T
+%langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
+%langpack -l it -n Italian -F -H -Y -M -A -T -X
+%langpack -l ja -n Japanese -F -A -s cjk -T -X
 %langpack -l kn -n Kannada -F -H -Y
-%langpack -l ko -n Korean -F -H -A -s cjk -T -c korea
+%langpack -l ko -n Korean -F -H -A -s cjk -T -c korea -X
 %langpack -l lt -n Lithuanian -F -H -Y -A
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M
@@ -848,7 +851,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ml -n Malayalam -F -H -Y
 %langpack -l mr -n Marathi -F -H -Y
 %langpack -l nb -n Bokmal -F -H -Y -M -T
-%langpack -l nl -n Dutch -F -H -Y -M -A -T
+%langpack -l nl -n Dutch -F -H -Y -M -A -T -X
 %langpack -l nn -n Nynorsk -F -H -Y -M -T
 %define langpack_lang Southern Ndebele
 %langpack -l nr -n %{langpack_lang} -F -H
@@ -856,28 +859,28 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l nso -n %{langpack_lang} -F -H
 %langpack -l or -n Oriya -F -H -Y -s ctl
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN
-%langpack -l pl -n Polish -F -H -Y -M -A -T
+%langpack -l pl -n Polish -F -H -Y -M -A -T -X
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -F -H -Y -M -T
-%langpack -l ru -n Russian -F -H -Y -M -A -T
+%langpack -l ru -n Russian -F -H -Y -M -A -T -X
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S ctl -T
 %endif
-%langpack -l sk -n Slovak -F -H -Y -M -A -T
-%langpack -l sl -n Slovenian -F -H -Y -M -A -T
+%langpack -l sk -n Slovak -F -H -Y -M -A -T -X
+%langpack -l sl -n Slovenian -F -H -Y -M -A -T -X
 #rhbz#452379 clump serbian translations together
 %langpack -l sr -n Serbian -F -H -Y -A -i sh
 %langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H
-%langpack -l sv -n Swedish -F -H -Y -M -A -T
+%langpack -l sv -n Swedish -F -H -Y -M -A -T -X
 %langpack -l ta -n Tamil -F -H -Y -s ctl
 %langpack -l te -n Telugu -F -H -Y
 %langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
 %langpack -l tn -n Tswana -F -H
-%langpack -l tr -n Turkish -F -A -T
+%langpack -l tr -n Turkish -F -A -T -X
 %langpack -l ts -n Tsonga -F -H
 %langpack -l uk -n Ukrainian -F -H -Y -M -T
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -886,9 +889,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H
 %langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW
 %langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
@@ -1608,7 +1611,8 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java
-%{baseinstdir}/share/autotext
+%dir %{baseinstdir}/share/autotext
+%{baseinstdir}/share/autotext/en-US
 %{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images.zip

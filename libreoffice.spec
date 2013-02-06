@@ -1057,7 +1057,7 @@ touch autogen.lastrun
 if ! make VERBOSE=true; then
     # TODO Do we still need this? I think parallel build is reliable
     # enough these days...
-    make GMAKE_OPTIONS=-rj1
+    make VERBOSE=true PARALLELISM=1
 fi
 
 #generate the icons and mime type stuff

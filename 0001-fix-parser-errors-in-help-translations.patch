@@ -1,0 +1,495 @@
+From 6ee465836d1fee4b4fbe714bde3b804cdda1b4ff Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 6 Feb 2013 11:23:17 +0100
+Subject: [PATCH] fix parser errors in help translations
+
+Change-Id: I9f5b3e637e36cadc397eacd9b60edac78e849fac
+---
+ source/ast/helpcontent2/source/text/shared/guide.po    | 2 +-
+ source/bg/helpcontent2/source/text/scalc/01.po         | 2 +-
+ source/bg/helpcontent2/source/text/swriter/01.po       | 2 +-
+ source/da/helpcontent2/source/text/scalc/00.po         | 2 +-
+ source/da/helpcontent2/source/text/scalc/01.po         | 4 ++--
+ source/da/helpcontent2/source/text/shared/01.po        | 2 +-
+ source/da/helpcontent2/source/text/swriter/01.po       | 2 +-
+ source/el/helpcontent2/source/text/sbasic/shared.po    | 2 +-
+ source/eo/helpcontent2/source/text/simpress/guide.po   | 2 +-
+ source/es/helpcontent2/source/text/sbasic/shared.po    | 2 +-
+ source/es/helpcontent2/source/text/sbasic/shared/02.po | 2 +-
+ source/es/helpcontent2/source/text/swriter/guide.po    | 2 +-
+ source/et/helpcontent2/source/text/sbasic/shared.po    | 2 +-
+ source/fi/helpcontent2/source/text/scalc/01.po         | 4 ++--
+ source/fr/helpcontent2/source/text/scalc/01.po         | 2 +-
+ source/hu/helpcontent2/source/text/shared.po           | 2 +-
+ source/id/helpcontent2/source/text/simpress/01.po      | 2 +-
+ source/nl/helpcontent2/source/text/scalc/01.po         | 4 ++--
+ source/nl/helpcontent2/source/text/shared.po           | 2 +-
+ source/nl/helpcontent2/source/text/shared/01.po        | 4 ++--
+ source/nl/helpcontent2/source/text/shared/guide.po     | 2 +-
+ source/nl/helpcontent2/source/text/shared/optionen.po  | 6 +++---
+ source/nl/helpcontent2/source/text/swriter/01.po       | 2 +-
+ source/nn/helpcontent2/source/text/sbasic/shared/02.po | 2 +-
+ source/nn/helpcontent2/source/text/scalc/01.po         | 2 +-
+ source/nn/helpcontent2/source/text/shared/optionen.po  | 2 +-
+ source/sv/helpcontent2/source/text/sbasic/shared/02.po | 2 +-
+ source/sv/helpcontent2/source/text/scalc/01.po         | 2 +-
+ source/sv/helpcontent2/source/text/shared/00.po        | 2 +-
+ source/tr/helpcontent2/source/text/swriter/01.po       | 4 ++--
+ 30 files changed, 37 insertions(+), 37 deletions(-)
+
+diff --git a/translations/source/ast/helpcontent2/source/text/shared/guide.po b/translations/source/ast/helpcontent2/source/text/shared/guide.po
+index 0351fc2..2b3d200 100644
+--- a/translations/source/ast/helpcontent2/source/text/shared/guide.po
++++ b/translations/source/ast/helpcontent2/source/text/shared/guide.po
+@@ -20810,7 +20810,7 @@ msgctxt ""
+ "par_id3155450\n"
+ "help.text"
+ msgid "<image id=\"img_id3152349\" src=\"cmd/sc_save.png\" width=\"0.222inch\" height=\"0.222inch\"><alt id=\"alt_id3152349\">This icon is for tips on how to use the program more effectively.</alt></image>"
+-msgstr "<image id=\"img_id3152349\" src=\"cmd/sc_save.png\" width=\"0.222inch\" height=\"0.222inch\">Esti iconu amuesa conseyos sobre cómo usar el programa de forma más eficaz.</alt></image>"
++msgstr "<image id=\"img_id3152349\" src=\"cmd/sc_save.png\" width=\"0.222inch\" height=\"0.222inch\"><alt id=\"alt_id3152349\">Esti iconu amuesa conseyos sobre cómo usar el programa de forma más eficaz.</alt></image>"
+ 
+ #: doc_save.xhp
+ msgctxt ""
+diff --git a/translations/source/bg/helpcontent2/source/text/scalc/01.po b/translations/source/bg/helpcontent2/source/text/scalc/01.po
+index 85b78c7..33e19c3 100644
+--- a/translations/source/bg/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/bg/helpcontent2/source/text/scalc/01.po
+@@ -241,7 +241,7 @@ msgctxt ""
+ "par_id9838862\n"
+ "help.text"
+ msgid "You can also press <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+Page Up and <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+Page Down keys to scroll through the pages."
+-msgstr "За превъртане през страниците можете да използвате също клавишите <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+Page Up и <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline>+Page Down."
++msgstr "За превъртане през страниците можете да използвате също клавишите <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+Page Up и <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+Page Down."
+ 
+ #: 01120000.xhp
+ msgctxt ""
+diff --git a/translations/source/bg/helpcontent2/source/text/swriter/01.po b/translations/source/bg/helpcontent2/source/text/swriter/01.po
+index 001abc2..a29c75c 100644
+--- a/translations/source/bg/helpcontent2/source/text/swriter/01.po
++++ b/translations/source/bg/helpcontent2/source/text/swriter/01.po
+@@ -11705,7 +11705,7 @@ msgctxt ""
+ "25\n"
+ "help.text"
+ msgid "<ahelp hid=\"modules/swriter/ui/linenumbering/linesspin\">Enter the number of lines to leave between the separators.</ahelp>"
+-msgstr "<ahelp hid=\"modules/swriter/ui/linenumbering/linesspin\">Въведете броя редове, който да се оставят между разделителите."
++msgstr "<ahelp hid=\"modules/swriter/ui/linenumbering/linesspin\">Въведете броя редове, който да се оставят между разделителите.</ahelp>"
+ 
+ #: 06180000.xhp
+ msgctxt ""
+diff --git a/translations/source/da/helpcontent2/source/text/scalc/00.po b/translations/source/da/helpcontent2/source/text/scalc/00.po
+index 66d0e4b..f9c5ff1 100644
+--- a/translations/source/da/helpcontent2/source/text/scalc/00.po
++++ b/translations/source/da/helpcontent2/source/text/scalc/00.po
+@@ -330,7 +330,7 @@ msgctxt ""
+ "27\n"
+ "help.text"
+ msgid "<variable id=\"datengueltigeingabe\">Choose <emph>Data - Validity - Input Help</emph> tab</variable>"
+-msgstr "<variable id=\"datengueltigeingabe\">Vælg <emph>Data - Validitet- Indtastningshjælp</emph</variable>"
++msgstr "<variable id=\"datengueltigeingabe\">Vælg <emph>Data - Validitet- Indtastningshjælp</emph></variable>"
+ 
+ #: 00000412.xhp
+ msgctxt ""
+diff --git a/translations/source/da/helpcontent2/source/text/scalc/01.po b/translations/source/da/helpcontent2/source/text/scalc/01.po
+index 62b0267..b8cf12b 100644
+--- a/translations/source/da/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/da/helpcontent2/source/text/scalc/01.po
+@@ -49642,7 +49642,7 @@ msgctxt ""
+ "12\n"
+ "help.text"
+ msgid "Sorts the selection from the lowest value to the highest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Sorterer markeringen fra den laveste værdi til den højeste værdi. Du kan definere sorteringsreglerne i Data - Sorter - Indstillinger.</ahelp> Du definerer standarden i <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Indstillinger</caseinline><defaultinline>Funktioner - Indstillinger</defaultinline></switchinline> - Sprogindstillinger - Sprog."
++msgstr "Sorterer markeringen fra den laveste værdi til den højeste værdi. Du kan definere sorteringsreglerne i Data - Sorter - Indstillinger. Du definerer standarden i <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Indstillinger</caseinline><defaultinline>Funktioner - Indstillinger</defaultinline></switchinline> - Sprogindstillinger - Sprog."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+@@ -49660,7 +49660,7 @@ msgctxt ""
+ "14\n"
+ "help.text"
+ msgid "Sorts the selection from the highest value to the lowest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Sorterer markeringen fra den højeste værdi til den laveste værdi. Du kan definere sorteringsreglerne i Data - Sorter - Indstillinger.</ahelp> Du definerer standarden i <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Indstillinger</caseinline><defaultinline>Funktioner - Indstillinger</defaultinline></switchinline> - Sprogindstillinger - Sprog."
++msgstr "Sorterer markeringen fra den højeste værdi til den laveste værdi. Du kan definere sorteringsreglerne i Data - Sorter - Indstillinger. Du definerer standarden i <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Indstillinger</caseinline><defaultinline>Funktioner - Indstillinger</defaultinline></switchinline> - Sprogindstillinger - Sprog."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+diff --git a/translations/source/da/helpcontent2/source/text/shared/01.po b/translations/source/da/helpcontent2/source/text/shared/01.po
+index 4de9a41..afb3685 100644
+--- a/translations/source/da/helpcontent2/source/text/shared/01.po
++++ b/translations/source/da/helpcontent2/source/text/shared/01.po
+@@ -19117,7 +19117,7 @@ msgctxt ""
+ "26\n"
+ "help.text"
+ msgid "<ahelp hid=\"filter/ui/xmlfiltersettings/save\">Displays a <emph>Save as </emph>dialog to save the selected file as an XSLT filter package (*.jar).</ahelp>"
+-msgstr "<ahelp hid=\"filter/ui/xmlfiltersettings/save\"Viser en <emph>Gem som</emph>-dialog til at gemme den valgte fil som en XSLT-filterpakke (*.jar).</ahelp>"
++msgstr "<ahelp hid=\"filter/ui/xmlfiltersettings/save\">Viser en <emph>Gem som</emph>-dialog til at gemme den valgte fil som en XSLT-filterpakke (*.jar).</ahelp>"
+ 
+ #: 06150000.xhp
+ msgctxt ""
+diff --git a/translations/source/da/helpcontent2/source/text/swriter/01.po b/translations/source/da/helpcontent2/source/text/swriter/01.po
+index 18fda00..8dc4e8a 100644
+--- a/translations/source/da/helpcontent2/source/text/swriter/01.po
++++ b/translations/source/da/helpcontent2/source/text/swriter/01.po
+@@ -11767,7 +11767,7 @@ msgctxt ""
+ "32\n"
+ "help.text"
+ msgid "<ahelp hid=\"modules/swriter/ui/linenumbering/linesintextframes\">Adds line numbers to text in text frames. The numbering restarts in each text frame, and is excluded from the line count in the main text area of the document.</ahelp> In <link href=\"text/swriter/02/03210000.xhp\" name=\"linked frames\">linked frames</link>, the numbering is not restarted."
+-msgstr "Tilføjer linjetal til tekst i tekstrammer. Nummereringen starter forfra i hver tekstramme og medregnes ikke i linjetællingen i dokumentets hovedtekst.</ahelp> I <link href=\"text/swriter/02/03210000.xhp\" name=\"linked frames\">kædede rammer</link> startes nummereringen ikke forfra."
++msgstr "<ahelp hid=\"modules/swriter/ui/linenumbering/linesintextframes\">Tilføjer linjetal til tekst i tekstrammer. Nummereringen starter forfra i hver tekstramme og medregnes ikke i linjetællingen i dokumentets hovedtekst.</ahelp> I <link href=\"text/swriter/02/03210000.xhp\" name=\"linked frames\">kædede rammer</link> startes nummereringen ikke forfra."
+ 
+ #: 06180000.xhp
+ msgctxt ""
+diff --git a/translations/source/el/helpcontent2/source/text/sbasic/shared.po b/translations/source/el/helpcontent2/source/text/sbasic/shared.po
+index e919e7a..8c1e164 100644
+--- a/translations/source/el/helpcontent2/source/text/sbasic/shared.po
++++ b/translations/source/el/helpcontent2/source/text/sbasic/shared.po
+@@ -18460,7 +18460,7 @@ msgctxt ""
+ "1\n"
+ "help.text"
+ msgid "<link href=\"text/sbasic/shared/main0601.xhp\" name=\"$[officename] Basic Help\">%PRODUCTNAME Basic Help</link>"
+-msgstr "<link href=\"text/sbasic/shared/main0601.xhp\" name=\"Βοήθεια για το \"$[officename] Basic\">Βοήθεια για το %PRODUCTNAME Basic</link>"
++msgstr "<link href=\"text/sbasic/shared/main0601.xhp\" name=\"Βοήθεια για το $[officename] Basic\">Βοήθεια για το %PRODUCTNAME Basic</link>"
+ 
+ #: main0601.xhp
+ msgctxt ""
+diff --git a/translations/source/eo/helpcontent2/source/text/simpress/guide.po b/translations/source/eo/helpcontent2/source/text/simpress/guide.po
+index 23f69e8..cc0ace5 100644
+--- a/translations/source/eo/helpcontent2/source/text/simpress/guide.po
++++ b/translations/source/eo/helpcontent2/source/text/simpress/guide.po
+@@ -439,7 +439,7 @@ msgctxt ""
+ "100\n"
+ "help.text"
+ msgid "You can preview your animation by using the controls to the left of the <emph>Image Number </emph>box."
+-msgstr "Vi povas antaŭvidi vian animacion uzante la regilojn maldekstre de la kadro <emph>Numero de bildo<emph>."
++msgstr "Vi povas antaŭvidi vian animacion uzante la regilojn maldekstre de la kadro <emph>Numero de bildo</emph>."
+ 
+ #: animated_gif_create.xhp
+ msgctxt ""
+diff --git a/translations/source/es/helpcontent2/source/text/sbasic/shared.po b/translations/source/es/helpcontent2/source/text/sbasic/shared.po
+index f967fdb..5346e78 100644
+--- a/translations/source/es/helpcontent2/source/text/sbasic/shared.po
++++ b/translations/source/es/helpcontent2/source/text/sbasic/shared.po
+@@ -12901,7 +12901,7 @@ msgctxt ""
+ "1\n"
+ "help.text"
+ msgid "<variable id=\"01050000\"><link href=\"text/sbasic/shared/01050000.xhp\" name=\"$[officename] Basic IDE\">$[officename] Basic IDE</link></variable>"
+-msgstr "<link href=\"text/sbasic/shared/01050000.xhp\" name=\"$[officename] Basic IDE\">EID de $[officename] Basic</link></variable>"
++msgstr "<variable id=\"01050000\"><link href=\"text/sbasic/shared/01050000.xhp\" name=\"$[officename] Basic IDE\">EID de $[officename] Basic</link></variable>"
+ 
+ #: 01050000.xhp
+ msgctxt ""
+diff --git a/translations/source/es/helpcontent2/source/text/sbasic/shared/02.po b/translations/source/es/helpcontent2/source/text/sbasic/shared/02.po
+index 6d7967b..77819d9 100644
+--- a/translations/source/es/helpcontent2/source/text/sbasic/shared/02.po
++++ b/translations/source/es/helpcontent2/source/text/sbasic/shared/02.po
+@@ -1356,7 +1356,7 @@ msgctxt ""
+ "57\n"
+ "help.text"
+ msgid "<ahelp hid=\".uno:TestMode\">Starts test mode. Click the dialog closer icon to end test mode.</ahelp>"
+-msgstr "<ahelp hid=\".uno:TestMode\">Inicia el modo de pruebas. Haga clic en el icono de cerrar en el diálogo para finalizar el modo de pruebas."
++msgstr "<ahelp hid=\".uno:TestMode\">Inicia el modo de pruebas. Haga clic en el icono de cerrar en el diálogo para finalizar el modo de pruebas.</ahelp>"
+ 
+ #: 20000000.xhp
+ msgctxt ""
+diff --git a/translations/source/es/helpcontent2/source/text/swriter/guide.po b/translations/source/es/helpcontent2/source/text/swriter/guide.po
+index c6dca65..965188c 100644
+--- a/translations/source/es/helpcontent2/source/text/swriter/guide.po
++++ b/translations/source/es/helpcontent2/source/text/swriter/guide.po
+@@ -18346,7 +18346,7 @@ msgctxt ""
+ "16\n"
+ "help.text"
+ msgid "In the <item type=\"menuitem\">Section</item> list, click the section you want to modify. You can press <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+A to select all sections in the list, and you can Shift+click or <switchinline select=\"sys\"><caseinline select=\"MAC\">Command</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+click to select some sections."
+-msgstr "En la lista <item type=\"menuitem\">Sección</item>, haga clic en la sección que quiere modificar. Puede presionar <switchinline select=\"sys\"><caseinline select=\"MAC\">Comando</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+A para seleccionar todas las secciones en la lista, y puede hacer clic mientras presiona Mayús o presionar <switchinline select=\"sys\"><caseinline select=\"MAC\">Comando<defaultinline>Ctrl</defaultinline></switchinline>+clic para seleccionar algunas secciones."
++msgstr "En la lista <item type=\"menuitem\">Sección</item>, haga clic en la sección que quiere modificar. Puede presionar <switchinline select=\"sys\"><caseinline select=\"MAC\">Comando</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+A para seleccionar todas las secciones en la lista, y puede hacer clic mientras presiona Mayús o presionar <switchinline select=\"sys\"><caseinline select=\"MAC\">Comando</caseinline><defaultinline>Ctrl</defaultinline></switchinline>+clic para seleccionar algunas secciones."
+ 
+ #: section_edit.xhp
+ msgctxt ""
+diff --git a/translations/source/et/helpcontent2/source/text/sbasic/shared.po b/translations/source/et/helpcontent2/source/text/sbasic/shared.po
+index adb546c..433d6b8 100644
+--- a/translations/source/et/helpcontent2/source/text/sbasic/shared.po
++++ b/translations/source/et/helpcontent2/source/text/sbasic/shared.po
+@@ -1400,7 +1400,7 @@ msgctxt ""
+ "par_idN10ED8\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Specifies the sequence of the selected items, where \"0\" corresponds to the first item. To select more than one item, Multiselection must be enabled.</ahelp>"
+-msgstr "<ahelp hid=\".\">Määrab valitud elementide järjekorra, kusjuures esimest tähistab \"0\". Rohkem kui ühe elemendi valimiseks peab olema lubatud mitmene valik."
++msgstr "<ahelp hid=\".\">Määrab valitud elementide järjekorra, kusjuures esimest tähistab \"0\". Rohkem kui ühe elemendi valimiseks peab olema lubatud mitmene valik.</ahelp>"
+ 
+ #: 01170101.xhp
+ msgctxt ""
+diff --git a/translations/source/fi/helpcontent2/source/text/scalc/01.po b/translations/source/fi/helpcontent2/source/text/scalc/01.po
+index 9f9f686..e7a012b 100644
+--- a/translations/source/fi/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/fi/helpcontent2/source/text/scalc/01.po
+@@ -49649,7 +49649,7 @@ msgctxt ""
+ "12\n"
+ "help.text"
+ msgid "Sorts the selection from the lowest value to the highest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Järjestetään valittua aluetta pienimmästä suurimpaan arvoon. Lajittelusäännöt määrätään Tiedot - Lajittele - Asetukset -välilehdellä.</ahelp> Oletukset asetetaan valinnassa: <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Asetukset</caseinline><defaultinline>Työkalut - Asetukset</defaultinline></switchinline> - Kieliasetukset - Kielet."
++msgstr "Järjestetään valittua aluetta pienimmästä suurimpaan arvoon. Lajittelusäännöt määrätään Tiedot - Lajittele - Asetukset -välilehdellä. Oletukset asetetaan valinnassa: <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Asetukset</caseinline><defaultinline>Työkalut - Asetukset</defaultinline></switchinline> - Kieliasetukset - Kielet."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+@@ -49667,7 +49667,7 @@ msgctxt ""
+ "14\n"
+ "help.text"
+ msgid "Sorts the selection from the highest value to the lowest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Järjestetään valittua aluetta suurimmasta pienimpään. Lajittelusäännöt määrätään Tiedot - Lajittele - Asetukset -välilehdellä.</ahelp> Oletusarvot asetetaan valinnassa: <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Asetukset</caseinline><defaultinline>Työkalut - Asetukset</defaultinline></switchinline> - Kieliasetukset - Kielet."
++msgstr "Järjestetään valittua aluetta suurimmasta pienimpään. Lajittelusäännöt määrätään Tiedot - Lajittele - Asetukset -välilehdellä. Oletusarvot asetetaan valinnassa: <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Asetukset</caseinline><defaultinline>Työkalut - Asetukset</defaultinline></switchinline> - Kieliasetukset - Kielet."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+diff --git a/translations/source/fr/helpcontent2/source/text/scalc/01.po b/translations/source/fr/helpcontent2/source/text/scalc/01.po
+index 80fcff7..0e6b150 100644
+--- a/translations/source/fr/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/fr/helpcontent2/source/text/scalc/01.po
+@@ -39130,7 +39130,7 @@ msgctxt ""
+ "bm_id3148912\n"
+ "help.text"
+ msgid "<bookmark_value>calculating;linear depreciations</bookmark_value><bookmark_value>depreciations;linear</bookmark_value><bookmark_value>linear depreciations</bookmark_value><bookmark_value>straight-line depreciations</bookmark_value><bookmark_value>SLN function</bookmark_value>"
+-msgstr "<bookmark_value>Calcul;amortissements linéaires</bookmark_value><bookmark_value>Amortissements;linéaires</bookmark_value><bookmark_value>Amortissements linéaires</bookmark_value><bookmark_value>Amortissement en ligne droite</bookmark_value<bookmark_value>AMORLIN, fonction</bookmark_value>"
++msgstr "<bookmark_value>Calcul;amortissements linéaires</bookmark_value><bookmark_value>Amortissements;linéaires</bookmark_value><bookmark_value>Amortissements linéaires</bookmark_value><bookmark_value>Amortissement en ligne droite</bookmark_value><bookmark_value>AMORLIN, fonction</bookmark_value>"
+ 
+ #: 04060119.xhp
+ msgctxt ""
+diff --git a/translations/source/hu/helpcontent2/source/text/shared.po b/translations/source/hu/helpcontent2/source/text/shared.po
+index 435bae2..f374172 100644
+--- a/translations/source/hu/helpcontent2/source/text/shared.po
++++ b/translations/source/hu/helpcontent2/source/text/shared.po
+@@ -1342,7 +1342,7 @@ msgctxt ""
+ "par_id2783898\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Enable an Internet connection for %PRODUCTNAME. If you need a Proxy, check the %PRODUCTNAME Proxy settings in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Internet. Then choose Check for Updates to check for the availability of a newer version of your office suite.</ahelp>"
+-msgstr "<ahelp hid=\".\">Engedélyezze az internetkapcsolatot a %PRODUCTNAME-hoz. Ha proxyt használ, akkor ellenőrizze a %PRODUCTNAME proxybeállításait a <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Beállítások</caseinline><defaultinline>Eszközök - Beállítások</defaultinline></switchinline> - Internet alatt. Ezután nyomja meg az Ellenőrzés gombot az irodai programcsomag újabb verziójának kereséséhez."
++msgstr "<ahelp hid=\".\">Engedélyezze az internetkapcsolatot a %PRODUCTNAME-hoz. Ha proxyt használ, akkor ellenőrizze a %PRODUCTNAME proxybeállításait a <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Beállítások</caseinline><defaultinline>Eszközök - Beállítások</defaultinline></switchinline> - Internet alatt. Ezután nyomja meg az Ellenőrzés gombot az irodai programcsomag újabb verziójának kereséséhez.</ahelp>"
+ 
+ #: main0108.xhp
+ msgctxt ""
+diff --git a/translations/source/id/helpcontent2/source/text/simpress/01.po b/translations/source/id/helpcontent2/source/text/simpress/01.po
+index 87a2bf0..b53579e 100644
+--- a/translations/source/id/helpcontent2/source/text/simpress/01.po
++++ b/translations/source/id/helpcontent2/source/text/simpress/01.po
+@@ -6086,7 +6086,7 @@ msgctxt ""
+ "2\n"
+ "help.text"
+ msgid "<ahelp hid=\".uno:Break\">Breaks apart lines joined with the <emph>Connect</emph> command.</ahelp>"
+-msgstr "<ahelp hid=\".uno:Break\">Penggal garis-garis yang digabung dengan perintah <emph>Sambung</emph></emph>.</ahelp>"
++msgstr "<ahelp hid=\".uno:Break\">Penggal garis-garis yang digabung dengan perintah <emph>Sambung</emph>.</ahelp>"
+ 
+ #: 13170000.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/scalc/01.po b/translations/source/nl/helpcontent2/source/text/scalc/01.po
+index 90e3022..d23282c 100644
+--- a/translations/source/nl/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/nl/helpcontent2/source/text/scalc/01.po
+@@ -49642,7 +49642,7 @@ msgctxt ""
+ "12\n"
+ "help.text"
+ msgid "Sorts the selection from the lowest value to the highest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Sorteert de selectie van de laagste waarde naar de hoogste waarde. U kunt de sorteerregels opgeven met Gegevens - Sorteren - Opties.</ahelp> U definieert de standaardwaarde in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Voorkeuren</caseinline><defaultinline>Extra - Opties</defaultinline></switchinline> - Taalinstellingen - Talen."
++msgstr "Sorteert de selectie van de laagste waarde naar de hoogste waarde. U kunt de sorteerregels opgeven met Gegevens - Sorteren - Opties. U definieert de standaardwaarde in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Voorkeuren</caseinline><defaultinline>Extra - Opties</defaultinline></switchinline> - Taalinstellingen - Talen."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+@@ -49660,7 +49660,7 @@ msgctxt ""
+ "14\n"
+ "help.text"
+ msgid "Sorts the selection from the highest value to the lowest value. You can define the sort rules on Data - Sort - Options. You define the default on <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Language settings - Languages."
+-msgstr "Sorteert de selectie van de hoogste waarde naar de laagste waarde. U kunt de sorteerregels opgeven met Gegevens - Sorteren - Opties.</ahelp> U definieert de standaardwaarde in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Voorkeuren</caseinline><defaultinline>Extra - Opties</defaultinline></switchinline> - Taalinstellingen - Talen."
++msgstr "Sorteert de selectie van de hoogste waarde naar de laagste waarde. U kunt de sorteerregels opgeven met Gegevens - Sorteren - Opties. U definieert de standaardwaarde in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Voorkeuren</caseinline><defaultinline>Extra - Opties</defaultinline></switchinline> - Taalinstellingen - Talen."
+ 
+ #: 12030100.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/shared.po b/translations/source/nl/helpcontent2/source/text/shared.po
+index a632fbb..f17f789 100644
+--- a/translations/source/nl/helpcontent2/source/text/shared.po
++++ b/translations/source/nl/helpcontent2/source/text/shared.po
+@@ -1342,7 +1342,7 @@ msgctxt ""
+ "par_id2783898\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Enable an Internet connection for %PRODUCTNAME. If you need a Proxy, check the %PRODUCTNAME Proxy settings in <switchinline select=\"sys\"><caseinline select=\"MAC\">%PRODUCTNAME - Preferences</caseinline><defaultinline>Tools - Options</defaultinline></switchinline> - Internet. Then choose Check for Updates to check for the availability of a newer version of your office suite.</ahelp>"
+-msgstr "<ahelp hid=\".\">Inschakelen van een internetverbinding voor% PRODUCTNAME. Als u een Proxy-server nodig heeft, controleer dan de% PRODUCTNAME Proxy instellingen in <switchinline select=\"sys\"> <caseinline select=\"MAC\">% PRODUCTNAME - Instellingen </ caseinline> <defaultinline> Extra - Opties </ defaultinline> </ switchinline > - Internet. Kies dan Zoeken naar Updates om te controleren op de beschikbaarheid van een nieuwere versie van uw Office-pakket.</ Ahelp>"
++msgstr "<ahelp hid=\".\">Inschakelen van een internetverbinding voor% PRODUCTNAME. Als u een Proxy-server nodig heeft, controleer dan de% PRODUCTNAME Proxy instellingen in <switchinline select=\"sys\"> <caseinline select=\"MAC\">% PRODUCTNAME - Instellingen </caseinline> <defaultinline> Extra - Opties </defaultinline></switchinline> - Internet. Kies dan Zoeken naar Updates om te controleren op de beschikbaarheid van een nieuwere versie van uw Office-pakket.</ahelp>"
+ 
+ #: main0108.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/shared/01.po b/translations/source/nl/helpcontent2/source/text/shared/01.po
+index 7a4fd6d..b3dd4b4 100644
+--- a/translations/source/nl/helpcontent2/source/text/shared/01.po
++++ b/translations/source/nl/helpcontent2/source/text/shared/01.po
+@@ -10109,7 +10109,7 @@ msgctxt ""
+ "par_id3154583\n"
+ "help.text"
+ msgid "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_EDGE_STYLE\">Select the shape to be used at the corners of the line. In case of a small angle between lines, a mitered shape is replaced with a beveled shape.</ahelp>"
+-msgstr "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_EDGE_STYLE\"> Kies de vorm die moet worden gebruikt op de hoeken van een lijn. Bij een kleine hoek tussen lijnen, wordt een verstekhoeken vervangen door een afgeschuinde vorm. </ Ahelp>"
++msgstr "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_EDGE_STYLE\"> Kies de vorm die moet worden gebruikt op de hoeken van een lijn. Bij een kleine hoek tussen lijnen, wordt een verstekhoeken vervangen door een afgeschuinde vorm. </ahelp>"
+ 
+ #: 05200100.xhp
+ msgctxt ""
+@@ -10125,7 +10125,7 @@ msgctxt ""
+ "par_id3154586\n"
+ "help.text"
+ msgid "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_CAP_STYLE\">Select the style of the line end caps. The caps are added to inner dashes as well.</ahelp>"
+-msgstr "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_CAP_STYLE\">Kies de stijl van de eindkappen van een lijn . De kappen worden ook toegevoegd aan de binnenstreepjes.</ Ahelp>"
++msgstr "<ahelp hid=\"SVX:LISTBOX:RID_SVXPAGE_LINE:LB_CAP_STYLE\">Kies de stijl van de eindkappen van een lijn . De kappen worden ook toegevoegd aan de binnenstreepjes.</ahelp>"
+ 
+ #: 03150100.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/shared/guide.po b/translations/source/nl/helpcontent2/source/text/shared/guide.po
+index 97031d7..dcc483d 100644
+--- a/translations/source/nl/helpcontent2/source/text/shared/guide.po
++++ b/translations/source/nl/helpcontent2/source/text/shared/guide.po
+@@ -17468,7 +17468,7 @@ msgctxt ""
+ "par_id3153885\n"
+ "help.text"
+ msgid "Using these commands in conjunction with the <emph>Accept Change</emph> and <emph>Reject Change</emph> commands allows navigating, accepting and rejecting changes without invoking the <emph>Edit - Changes - Accept or Reject</emph> dialog."
+-msgstr "Met behulp van deze opdrachten in combinatie met de <emph> Wijziging Accepteren </ emph> en <emph> Wijziging Negeren </ emph> opdrachten kunt u navigeren, accepteren en afwijzen van veranderingen zonder gebruikmaking van het  dialoogvenster<emph> Bewerken - Wijzigingen - Accepteren of Annuleren</ emph >."
++msgstr "Met behulp van deze opdrachten in combinatie met de <emph> Wijziging Accepteren </emph> en <emph> Wijziging Negeren </emph> opdrachten kunt u navigeren, accepteren en afwijzen van veranderingen zonder gebruikmaking van het  dialoogvenster<emph> Bewerken - Wijzigingen - Accepteren of Annuleren</emph>."
+ 
+ #: contextmenu.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/shared/optionen.po b/translations/source/nl/helpcontent2/source/text/shared/optionen.po
+index 58a504a..7829a06 100644
+--- a/translations/source/nl/helpcontent2/source/text/shared/optionen.po
++++ b/translations/source/nl/helpcontent2/source/text/shared/optionen.po
+@@ -5982,7 +5982,7 @@ msgctxt ""
+ "27\n"
+ "help.text"
+ msgid "<ahelp hid=\"SD:CHECKBOX:TP_OPTIONS_MISC:CBX_ENABLE_SDREMOTE\">Specifies that you want to enable Bluetooth remote control while Impress is running.</ahelp> Unmark<emph> Enable remote control</emph> to disable remote controlling."
+-msgstr "<ahelp hid=\"SD:CHECKBOX:TP_OPTIONS_MISC:CBX_ENABLE_SDREMOTE\"> Hiermee schakelt u een Bluetooth-afstandsbediening in terwijl Impress draait. </ ahelp> Markering emph> Afstandsbediening inschakelen </ emph>uitvinken om het op afstand bedienen uit te schakelen ."
++msgstr "<ahelp hid=\"SD:CHECKBOX:TP_OPTIONS_MISC:CBX_ENABLE_SDREMOTE\"> Hiermee schakelt u een Bluetooth-afstandsbediening in terwijl Impress draait. </ahelp> Markering <emph> Afstandsbediening inschakelen </emph>uitvinken om het op afstand bedienen uit te schakelen ."
+ 
+ #: 01070500.xhp
+ msgctxt ""
+@@ -9943,7 +9943,7 @@ msgctxt ""
+ "par_id3145121\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Specifies the date acceptance patterns for the current locale. Calc spreadsheet and Writer table cell input needs to match locale dependent date acceptance patterns before it is recognized as a valid date.</ahelp> Default locale dependent date acceptance patterns are generated build time, but it is possible to add more or modify them in this edit box."
+-msgstr "<ahelp hid=\".\"> Geeft de datum aanvaardingspatronen voor de huidige taalinstellingen. Calc-werkblad en Writer-tabelcel invoer moet overeenkomen met taalafhankelijke datum aanvaardingspatronen voordat deze wordt herkend als een geldige datum. </ Ahelp> Standaard taalafhankelijke datum aanvaardingspatronen worden gegenereerd, maar het is mogelijk om er meer toe te voegen of aan te passen in dit invoervak."
++msgstr "<ahelp hid=\".\"> Geeft de datum aanvaardingspatronen voor de huidige taalinstellingen. Calc-werkblad en Writer-tabelcel invoer moet overeenkomen met taalafhankelijke datum aanvaardingspatronen voordat deze wordt herkend als een geldige datum. </ahelp> Standaard taalafhankelijke datum aanvaardingspatronen worden gegenereerd, maar het is mogelijk om er meer toe te voegen of aan te passen in dit invoervak."
+ 
+ #: 01140000.xhp
+ msgctxt ""
+@@ -9959,7 +9959,7 @@ msgctxt ""
+ "par_id3157939\n"
+ "help.text"
+ msgid "Syntax: <emph>Y</emph> means year, <emph>M</emph> means month, and <emph>D</emph> means day, regardless of localizaton."
+-msgstr "Syntaxis: <emph> Y </ emph> betekent jaar <emph> M </ emph> betekent maand en <emph> D </ emph> betekent dag, ongeacht de taalinstelling."
++msgstr "Syntaxis: <emph> Y </emph> betekent jaar <emph> M </emph> betekent maand en <emph> D </emph> betekent dag, ongeacht de taalinstelling."
+ 
+ #: 01140000.xhp
+ msgctxt ""
+diff --git a/translations/source/nl/helpcontent2/source/text/swriter/01.po b/translations/source/nl/helpcontent2/source/text/swriter/01.po
+index 4e4a4fe..0ee077d 100644
+--- a/translations/source/nl/helpcontent2/source/text/swriter/01.po
++++ b/translations/source/nl/helpcontent2/source/text/swriter/01.po
+@@ -18460,7 +18460,7 @@ msgctxt ""
+ "par_idN10561\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Creates mail merge documents that you can send as an e-mail message or an e-mail attachment.</ahelp>"
+-msgstr "<ahelp hid=\".\"> Maakt mailmerge documenten die u kunt verzenden als een e-mailbericht of een e-mailbijlage. </ ahelp>"
++msgstr "<ahelp hid=\".\">Maakt mailmerge documenten die u kunt verzenden als een e-mailbericht of een e-mailbijlage.</ahelp>"
+ 
+ #: mailmerge02.xhp
+ msgctxt ""
+diff --git a/translations/source/nn/helpcontent2/source/text/sbasic/shared/02.po b/translations/source/nn/helpcontent2/source/text/sbasic/shared/02.po
+index 69837bc..243703c 100644
+--- a/translations/source/nn/helpcontent2/source/text/sbasic/shared/02.po
++++ b/translations/source/nn/helpcontent2/source/text/sbasic/shared/02.po
+@@ -1404,7 +1404,7 @@ msgctxt ""
+ "par_id9961851\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Adds a tree control that can show a hierarchical list. You can populate the list by your program, using API calls (XtreeControl).</ahelp>"
+-msgstr "<ahelp hid=\".\">Legg til ein trekontroll som kan vise hierarkiske lister. Du kan fylle ut lista frå programmet ditt ved å bruke API-oppkall (XtreeControl)."
++msgstr "<ahelp hid=\".\">Legg til ein trekontroll som kan vise hierarkiske lister. Du kan fylle ut lista frå programmet ditt ved å bruke API-oppkall (XtreeControl).</ahelp>"
+ 
+ #: 11010000.xhp
+ msgctxt ""
+diff --git a/translations/source/nn/helpcontent2/source/text/scalc/01.po b/translations/source/nn/helpcontent2/source/text/scalc/01.po
+index b320235..5e010b8 100644
+--- a/translations/source/nn/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/nn/helpcontent2/source/text/scalc/01.po
+@@ -11911,7 +11911,7 @@ msgctxt ""
+ "27\n"
+ "help.text"
+ msgid "The cells for the 1st and 2nd quarters each contain a sum formula for the three cells to their left. If you apply the <emph>AutoOutline</emph> command, the table is grouped into two quarters."
+-msgstr "Kvar av cellene for 1. og 2. kvartal inneheld summen av dei tre cellene til venstre for desse. Dersom du bruker <emph>Autodisposisjon<emph> vil tabellen bli gruppert til to kvartal."
++msgstr "Kvar av cellene for 1. og 2. kvartal inneheld summen av dei tre cellene til venstre for desse. Dersom du bruker <emph>Autodisposisjon</emph> vil tabellen bli gruppert til to kvartal."
+ 
+ #: 12080500.xhp
+ msgctxt ""
+diff --git a/translations/source/nn/helpcontent2/source/text/shared/optionen.po b/translations/source/nn/helpcontent2/source/text/shared/optionen.po
+index 3c084eb..19a668e 100644
+--- a/translations/source/nn/helpcontent2/source/text/shared/optionen.po
++++ b/translations/source/nn/helpcontent2/source/text/shared/optionen.po
+@@ -13661,7 +13661,7 @@ msgctxt ""
+ "30\n"
+ "help.text"
+ msgid "<switchinline select=\"appl\"><caseinline select=\"IMPRESS\"><variable id=\"rastertext\">It is also possible to toggle the visibility of the grid with the <emph>Grid - Display Grid</emph> command in the context menu of the page. You can also select the <emph>Grid - Grid to Front</emph> submenu of this context menu to display the grid in front of objects.</variable></caseinline></switchinline>"
+-msgstr "<switchinline select=\"appl\"><caseinline select=\"IMPRESS\"><variable id=\"rastertext\">Det er også råd å slå visinga av rutenettet av og på ved hjelp av kommandoen <emph>Rutenett → Vis rutenett</emph> i lokalmenyen for sida. Frå den same lokalmenyen kan du også velje å leggje rutenette framføre objektet med kommandoen <emph>Rutenett → Rutenett fremst.</variable></caseinline></switchinline>"
++msgstr "<switchinline select=\"appl\"><caseinline select=\"IMPRESS\"><variable id=\"rastertext\">Det er også råd å slå visinga av rutenettet av og på ved hjelp av kommandoen <emph>Rutenett → Vis rutenett</emph> i lokalmenyen for sida. Frå den same lokalmenyen kan du også velje å leggje rutenette framføre objektet med kommandoen <emph>Rutenett → Rutenett fremst</emph>.</variable></caseinline></switchinline>"
+ 
+ #: 01050100.xhp
+ msgctxt ""
+diff --git a/translations/source/sv/helpcontent2/source/text/sbasic/shared/02.po b/translations/source/sv/helpcontent2/source/text/sbasic/shared/02.po
+index 47e369c..369f693 100644
+--- a/translations/source/sv/helpcontent2/source/text/sbasic/shared/02.po
++++ b/translations/source/sv/helpcontent2/source/text/sbasic/shared/02.po
+@@ -1473,7 +1473,7 @@ msgctxt ""
+ "2\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Calls an \"Open\" dialog to import a BASIC dialog file.</ahelp>"
+-msgstr "<ahelp hid=\".\">Anropar en \"Öppna\"-dialog för att importera en BASIC-dialogfil."
++msgstr "<ahelp hid=\".\">Anropar en \"Öppna\"-dialog för att importera en BASIC-dialogfil.</ahelp>"
+ 
+ #: 11180000.xhp
+ msgctxt ""
+diff --git a/translations/source/sv/helpcontent2/source/text/scalc/01.po b/translations/source/sv/helpcontent2/source/text/scalc/01.po
+index e7d9034..80d3233 100644
+--- a/translations/source/sv/helpcontent2/source/text/scalc/01.po
++++ b/translations/source/sv/helpcontent2/source/text/scalc/01.po
+@@ -23991,7 +23991,7 @@ msgctxt ""
+ "2\n"
+ "help.text"
+ msgid "<ahelp hid=\".\">Combines the selected cells into a single cell or splits merged cells. Aligns cell content centered.</ahelp>"
+-msgstr "<ahelp hid=\".\">Slår samman de markerade cellerna till en enda cell eller delar sammanfogade celler. Centrerar cellinnehållet."
++msgstr "<ahelp hid=\".\">Slår samman de markerade cellerna till en enda cell eller delar sammanfogade celler. Centrerar cellinnehållet.</ahelp>"
+ 
+ #: 05060000.xhp
+ msgctxt ""
+diff --git a/translations/source/sv/helpcontent2/source/text/shared/00.po b/translations/source/sv/helpcontent2/source/text/shared/00.po
+index 295e948..181d8bc 100644
+--- a/translations/source/sv/helpcontent2/source/text/shared/00.po
++++ b/translations/source/sv/helpcontent2/source/text/shared/00.po
+@@ -563,7 +563,7 @@ msgctxt ""
+ "par_id355152953\n"
+ "help.text"
+ msgid "<ahelp hid=\".\" visibility=\"hidden\">Sets the quality for the export. Choose from a low quality with minimal file size, up to a high quality and big file size</ahelp>"
+-msgstr "Anger exportkvalitén. En lägre kvalité ger mindre filstorlek men sämre bildkvalité, en högre kvalité ger bättre bildkvalité men större filstorlek.</ahelp>"
++msgstr "<ahelp hid=\".\" visibility=\"hidden\">Anger exportkvalitén. En lägre kvalité ger mindre filstorlek men sämre bildkvalité, en högre kvalité ger bättre bildkvalité men större filstorlek.</ahelp>"
+ 
+ #: 00000200.xhp
+ msgctxt ""
+diff --git a/translations/source/tr/helpcontent2/source/text/swriter/01.po b/translations/source/tr/helpcontent2/source/text/swriter/01.po
+index 698b871..96ebdc3 100644
+--- a/translations/source/tr/helpcontent2/source/text/swriter/01.po
++++ b/translations/source/tr/helpcontent2/source/text/swriter/01.po
+@@ -26502,7 +26502,7 @@ msgctxt ""
+ "17\n"
+ "help.text"
+ msgid "<variable id=\"bearbeitenautomatisch\"><ahelp hid=\"modules/swriter/ui/insertfootnote/automatic\">Automatically assigns consecutive numbers to the footnotes or endnotes that you insert.</ahelp> To change the settings for automatic numbering, choose <link href=\"text/swriter/01/06080000.xhp\" name=\"Tools - Footnotes\"><emph>Tools - Footnotes/Endnotes</emph></link>. </variable>"
+-msgstr "<variable id=\"bearbeitenautomatisch\"><ahelp hid=\"modules/swriter/ui/insertfootnote/automatic\">Eklediğiniz dipnot ve sonnotlara ardışıl numaraları otomatik olarak ekler.</ahelp> Otomatik numaralandırma için ayarı değiştirmek için, <link href=\"text/swriter/01/06080000.xhp\" name=\"Tools - Footnotes\">Araçlar - Dipnotlar/Sonnotlar</emph></link>'ı seçin.</variable>"
++msgstr "<variable id=\"bearbeitenautomatisch\"><ahelp hid=\"modules/swriter/ui/insertfootnote/automatic\">Eklediğiniz dipnot ve sonnotlara ardışıl numaraları otomatik olarak ekler.</ahelp> Otomatik numaralandırma için ayarı değiştirmek için, <link href=\"text/swriter/01/06080000.xhp\" name=\"Tools - Footnotes\"><emph>Araçlar - Dipnotlar/Sonnotlar</emph></link>'ı seçin.</variable>"
+ 
+ #: 04030000.xhp
+ msgctxt ""
+@@ -27820,7 +27820,7 @@ msgctxt ""
+ "30\n"
+ "help.text"
+ msgid "<ahelp hid=\"SW:METRICFIELD:TP_FRM_STD:ED_AT_HORZ_POS\">Enter the amount of space to leave between the left edge of the selected object and the reference point that you select in the <emph>To</emph> box.</ahelp> This option is only available if you select \"From Left\" in the <emph>Horizontal</emph> box."
+-msgstr "<ahelp hid=\"SW:METRICFIELD:TP_FRM_STD:ED_AT_HORZ_POS\">Seçili nesnenin sol kenarı ile <emph>Kime</emph> kutusundaki kaynak nokta arasındaki boşluk miktarını girin.</ahelp> Bu seçenek sadece <emph>Yatay<emph> kutudan \"Soldan\"'ı seçerseniz kullanılabilir."
++msgstr "<ahelp hid=\"SW:METRICFIELD:TP_FRM_STD:ED_AT_HORZ_POS\">Seçili nesnenin sol kenarı ile <emph>Kime</emph> kutusundaki kaynak nokta arasındaki boşluk miktarını girin.</ahelp> Bu seçenek sadece <emph>Yatay</emph> kutudan \"Soldan\"'ı seçerseniz kullanılabilir."
+ 
+ #: 05060100.xhp
+ msgctxt ""
+-- 
+1.8.1
+

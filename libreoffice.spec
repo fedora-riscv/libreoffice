@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -237,6 +237,7 @@ Patch11: libreoffice-rhel6langs.patch
 %endif
 Patch12: 0001-temporarily-disable-failing-test.patch
 Patch13: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
+Patch14: 0001-fix-parser-errors-in-help-translations.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -970,6 +971,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch12 -p1 -b .temporarily-disable-failing-test.patch
 %patch13 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
+%patch14 -p1 -b .fix-parser-errors-in-help-translations.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2032,6 +2034,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-2
+- fix parsing errors in translated help
+
 * Fri Feb 01 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-1
 - 4.0.0 rc3
 

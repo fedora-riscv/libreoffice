@@ -377,7 +377,7 @@ diff --git a/connectivity/source/drivers/evoab2/NResultSet.cxx b/connectivity/so
 index b5f4640..26690b1 100644
 --- a/connectivity/source/drivers/evoab2/NResultSet.cxx
 +++ b/connectivity/source/drivers/evoab2/NResultSet.cxx
-@@ -87,109 +87,17 @@ sal_Bool SAL_CALL OEvoabResultSet::supportsService( const ::rtl::OUString& _rSer
+@@ -96,110 +96,6 @@
      return pSupported != pEnd;
  }
  
@@ -421,29 +421,23 @@ index b5f4640..26690b1 100644
 -
 -static ESource *
 -findSource( const char *name )
-+struct ComparisonData
- {
+-{
 -    ESourceList *pSourceList = NULL;
-+    const SortDescriptor&   rSortOrder;
-+    IntlWrapper             aIntlWrapper;
- 
+-
 -    g_return_val_if_fail (name != NULL, NULL);
 -
 -    if (!e_book_get_addressbooks (&pSourceList, NULL))
 -        pSourceList = NULL;
 -
 -    for ( GSList *g = e_source_list_peek_groups (pSourceList); g; g = g->next)
-+    ComparisonData( const SortDescriptor& _rSortOrder, const Reference< XComponentContext >& _rxContext )
-+        :rSortOrder( _rSortOrder )
-+        ,aIntlWrapper( _rxContext, SvtSysLocale().GetLanguageTag() )
-     {
+-    {
 -        for (GSList *s = e_source_group_peek_sources (E_SOURCE_GROUP (g->data)); s; s = s->next)
 -        {
 -            ESource *pSource = E_SOURCE (s->data);
 -            if (!strcmp (e_source_peek_name (pSource), name))
 -                return pSource;
 -        }
-     }
+-    }
 -    return NULL;
 -}
 -
@@ -490,11 +484,11 @@ index b5f4640..26690b1 100644
 -        aName = e_source_get_property( e_book_get_source( pBook ), "user" );
 -    return aName;
 -}
-+};
- 
+-
  static ::rtl::OUString
  valueToOUString( GValue& _rValue )
-@@ -209,29 +117,6 @@ valueToBool( GValue& _rValue )
+ {
+@@ -218,29 +114,6 @@
      return bResult;
  }
  
@@ -524,7 +518,7 @@ index b5f4640..26690b1 100644
  static int
  whichAddress(int value)
  {
-@@ -368,6 +253,7 @@ handleSplitAddress( EContact *pContact,GValue *pStackValue, int value )
+@@ -377,6 +250,7 @@
  
      return false;
  }
@@ -532,38 +526,14 @@ index b5f4640..26690b1 100644
  static bool
  getValue( EContact* pContact, sal_Int32 nColumnNum, GType nType, GValue* pStackValue, bool& _out_rWasNull )
  {
-@@ -420,21 +306,6 @@ getValue( EContact* pContact, sal_Int32 nColumnNum, GType nType, GValue* pStackV
-     return true;
- }
- 
--namespace
--{
--    struct ComparisonData
--    {
--        const SortDescriptor&   rSortOrder;
--        IntlWrapper             aIntlWrapper;
--
--        ComparisonData( const SortDescriptor& _rSortOrder, const Reference< XComponentContext >& _rxContext )
--            :rSortOrder( _rSortOrder )
--            ,aIntlWrapper( _rxContext, SvtSysLocale().GetLanguageTag() )
--        {
--        }
--    };
--}
--
- extern "C"
- int CompareContacts( gconstpointer _lhs, gconstpointer _rhs, gpointer _userData )
- {
-@@ -493,13 +364,278 @@ int CompareContacts( gconstpointer _lhs, gconstpointer _rhs, gpointer _userData
+@@ -502,13 +376,278 @@
      return 0;
  }
  
 -static GList*
 -sortContacts( GList* _pContactList, const ComparisonData& _rCompData )
 +OString OEvoabVersionHelper::getUserName( EBook *pBook )
- {
--    OSL_ENSURE( !_rCompData.rSortOrder.empty(), "sortContacts: no need to call this without any sort order!" );
--    ENSURE_OR_THROW( _rCompData.aIntlWrapper.getCaseCollator(), "no collator for comparing strings" );
++{
 +    OString aName;
 +    if( isLDAP( pBook ) )
 +        aName = e_source_get_property( e_book_get_source( pBook ), "binddn" );
@@ -573,7 +543,9 @@ index b5f4640..26690b1 100644
 +}
 +
 +class OEvoabVersion36Helper : public OEvoabVersionHelper
-+{
+ {
+-    OSL_ENSURE( !_rCompData.rSortOrder.empty(), "sortContacts: no need to call this without any sort order!" );
+-    ENSURE_OR_THROW( _rCompData.aIntlWrapper.getCaseCollator(), "no collator for comparing strings" );
 +private:
 +    GSList   *m_pContacts;
 +public:
@@ -596,8 +568,7 @@ index b5f4640..26690b1 100644
 +        for (GList* liter = pSources; liter; liter = liter->next)
 +        {
 +            ESource *pSource = E_SOURCE (liter->data);
- 
--    return g_list_sort_with_data( _pContactList, &CompareContacts, const_cast< gpointer >( static_cast< gconstpointer >( &_rCompData ) ) );
++
 +            if (strcmp(abname, e_source_get_display_name( pSource )) == 0)
 +            {
 +                id = e_source_get_uid( pSource );
@@ -627,7 +598,8 @@ index b5f4640..26690b1 100644
 +        ESource *pSource = e_client_get_source ((EClient *) pBook);
 +        return isSourceBackend(pSource, backendname);
 +    }
-+
+ 
+-    return g_list_sort_with_data( _pContactList, &CompareContacts, const_cast< gpointer >( static_cast< gconstpointer >( &_rCompData ) ) );
 +    virtual bool isLDAP( EBook *pBook )
 +    {
 +        return isBookBackend(pBook, "ldap");
@@ -838,7 +810,7 @@ index b5f4640..26690b1 100644
  }
  
  // -------------------------------------------------------------------------
-@@ -507,17 +643,16 @@ void OEvoabResultSet::construct( const QueryData& _rData )
+@@ -516,17 +655,16 @@
  {
      ENSURE_OR_THROW( _rData.getQuery(), "internal error: no EBookQuery" );
  
@@ -859,7 +831,7 @@ index b5f4640..26690b1 100644
              {
                  SQLError aErrorFactory( m_pConnection->getDriver().getMSFactory() );
                  SQLException aAsException = aErrorFactory.getSQLException( ErrorCondition::DATA_CANNOT_SELECT_UNFILTERED, *this );
-@@ -541,16 +676,16 @@ void OEvoabResultSet::construct( const QueryData& _rData )
+@@ -550,16 +688,16 @@
      if ( bExecuteQuery )
      {
          rtl::OString aPassword = m_pConnection->getPassword();
@@ -870,7 +842,7 @@ index b5f4640..26690b1 100644
 -        if ( m_pContacts && !_rData.aSortOrder.empty() )
 +        if ( m_pVersionHelper->hasContacts() && !_rData.aSortOrder.empty() )
          {
-             ComparisonData aCompData( _rData.aSortOrder, comphelper::getComponentContext(getConnection()->getDriver().getMSFactory()) );
+             ComparisonData aCompData( _rData.aSortOrder, getConnection()->getDriver().getMSFactory() );
 -            m_pContacts = sortContacts( m_pContacts, aCompData );
 +            m_pVersionHelper->sortContacts( aCompData );
          }
@@ -880,7 +852,7 @@ index b5f4640..26690b1 100644
      OSL_TRACE( "Query return %d records", m_nLength );
      m_nIndex = -1;
  
-@@ -567,10 +702,10 @@ void OEvoabResultSet::disposing(void)
+@@ -576,10 +714,10 @@
      ::comphelper::OPropertyContainer::disposing();
  
      ::osl::MutexGuard aGuard(m_aMutex);

@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -67,19 +67,23 @@ Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %if 0%{?rhel} && 0%{?rhel} < 7
 Source11:       %{external_url}/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
-Source12:       %{external_url}/e1e255dc43dbcbb34cb19e8a0eba90ae-mythes-1.2.2.tar.gz
+Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
 Source14:       %{external_url}/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
 Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
-Source16:       %{external_url}/6097739c841f671cb21332b9cc593ae7-libexttextcat-3.3.1.tar.bz2
-Source17:       %{external_url}/3c0037fb07dea2f0bbae8386fa7c6a9a-libcdr-0.0.9.tar.bz2
+Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
+Source17:       %{external_url}/libcdr-0.0.9.tar.bz2
 Source18:       %{external_url}/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source19:       %{external_url}/c01351d7db2b205de755d58769288224-libwpd-0.9.4.tar.bz2
+Source19:       %{external_url}/e7f84e3199dfee9122949448cab3823f-libwpd-0.9.6.tar.bz2
 Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/94e7f271e38c976462558b4278590178-libvisio-0.0.19.tar.bz2
-Source24:       %{external_url}/327348d67c979c88c2dec59a23a17d85-lcms2-2.3.tar.gz
+Source23:       %{external_url}/libvisio-0.0.24.tar.bz2
+Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
+Source25:       %{external_url}/libmspub-0.0.3.tar.bz2
+Source26:       %{external_url}/8755aac23317494a9028569374dc87b2-liborcus_0.3.0.tar.bz2
+Source27:       %{external_url}/54e578c91b1b68e69c72be22adcb2195-liblangtag-0.4.0.tar.bz2
+Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
 %endif
 
 # build tools
@@ -103,8 +107,8 @@ BuildRequires: zip
 # libs / headers
 BuildRequires: GConf2-devel
 BuildRequires: bluez-libs-devel
-BuildRequires: boost-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
+BuildRequires: boost-devel
 BuildRequires: clucene-core-devel
 %endif
 BuildRequires: cppunit-devel
@@ -142,15 +146,17 @@ BuildRequires: libexttextcat-devel
 %endif
 BuildRequires: libicu-devel
 BuildRequires: libidn-devel
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
 BuildRequires: liborcus-devel >= 0.3.0
-%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
 BuildRequires: libwpg-devel
 BuildRequires: libwps-devel
+%else
+BuildRequires: libjpeg-devel
 %endif
 BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
@@ -192,9 +198,11 @@ BuildRequires: ant-apache-regexp
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: jakarta-commons-codec
 BuildRequires: jakarta-commons-lang
+BuildRequires: apache-tomcat-apis
 %else
 BuildRequires: apache-commons-codec
 BuildRequires: apache-commons-lang
+BuildRequires: tomcat-servlet-3.0-api
 %endif
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -206,7 +214,6 @@ BuildRequires: java-devel
 BuildRequires: junit
 %endif
 BuildRequires: pentaho-reporting-flow-engine
-BuildRequires: tomcat-servlet-3.0-api
 
 # fonts needed for unit tests
 BuildRequires: liberation-mono-fonts >= 1.0
@@ -234,11 +241,17 @@ Patch8: 0001-disable-failing-check.patch
 Patch9: libreoffice-rhel6gcj.patch
 Patch10: libreoffice-rhel6poppler.patch
 Patch11: libreoffice-rhel6langs.patch
+Patch12: 0001-Require-icu-4.6-or-later-with-system-icu.patch
+Patch13: libreoffice-rhel6limits.patch
+Patch14: libreoffice-rhel6glib.patch
 %endif
-Patch12: 0001-temporarily-disable-failing-test.patch
-Patch13: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
-Patch14: 0001-fix-parser-errors-in-help-translations.patch
-Patch15: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
+Patch15: 0001-temporarily-disable-failing-test.patch
+Patch16: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
+Patch17: 0001-fix-parser-errors-in-help-translations.patch
+Patch18: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
+Patch19: 0001-make-evolution-3.6-work-with-address-book.patch
+Patch20: 0001-Resolves-fdo-60132-Error-reading-file-after-insertin.patch
+Patch21: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -969,11 +982,17 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch9 -p1 -b .rhel6gcj.patch
 %patch10 -p1 -b .rhel6poppler.patch
 %patch11 -p1 -b .rhel6langs.patch
+%patch12 -p1 -R -b .Require-icu-4.6-or-later-with-system-icu.patch
+%patch13 -p1 -b .rhel6limits.patch
+%patch14 -p1 -b .rhel6glib.patch
 %endif
-%patch12 -p1 -b .temporarily-disable-failing-test.patch
-%patch13 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
-%patch14 -p1 -b .fix-parser-errors-in-help-translations.patch
-%patch15 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
+%patch15 -p1 -b .temporarily-disable-failing-test.patch
+%patch16 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
+%patch17 -p1 -b .fix-parser-errors-in-help-translations.patch
+%patch18 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
+%patch19 -p1 -b .make-evolution-3.6-work-with-address-book.patch
+%patch20 -p1 -b .fdo-60132-Error-reading-file-after-insertin.patch
+%patch21 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1018,12 +1037,12 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system
 %else
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system
+%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
 %endif
 %else
-%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes
+%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
 %endif
 
 %if ! 0%{libo_python3}
@@ -1046,7 +1065,6 @@ touch autogen.lastrun
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-scripting-beanshell --enable-scripting-javascript \
  --with-system-jars --with-vba-package-format="builtin" \
- --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar \
  --with-system-libs --with-system-headers --with-system-mozilla \
  --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
@@ -2037,6 +2055,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-5-UNBUILT
+- make evolution 3.6 work with address book
+
 * Fri Feb 15 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.0.3-4
 - Resolves: fdo#60491 missing libemboleobj.so
 - Resolves: rhbz#908674 crash on start

@@ -1,0 +1,30 @@
+From 165a53f3a7f08e65055e08ecd4cfc068c5d353b8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 8 Feb 2013 11:45:18 +0000
+Subject: [PATCH] Resolves: fdo#60132 Error reading file after inserting
+ comment
+
+Change-Id: Ib2b388c78c8f44a626267c2f8d3975b46ead3bd5
+---
+ xmloff/source/text/txtfldi.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/xmloff/source/text/txtfldi.cxx b/xmloff/source/text/txtfldi.cxx
+index 4b7dc53..d97281a 100644
+--- a/xmloff/source/text/txtfldi.cxx
++++ b/xmloff/source/text/txtfldi.cxx
+@@ -3782,6 +3782,11 @@ void XMLAnnotationImportContext::PrepareField(
+         while (xFields->hasMoreElements())
+         {
+             uno::Reference<beans::XPropertySet> xCurrField(xFields->nextElement(), uno::UNO_QUERY);
++            uno::Reference<beans::XPropertySetInfo> xPropsInfo(xCurrField->getPropertySetInfo());
++
++            if (!xPropsInfo->hasPropertyByName(sPropertyName))
++                continue;
++
+             OUString aFieldName;
+             xCurrField->getPropertyValue(sPropertyName) >>= aFieldName;
+             if (aFieldName == aName)
+-- 
+1.8.1
+

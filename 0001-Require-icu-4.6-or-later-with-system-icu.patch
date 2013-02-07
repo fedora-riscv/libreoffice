@@ -1,0 +1,138 @@
+From 343a92f18cb4069acca547d455fcbd9ce42815e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tom=C3=A1=C5=A1=20Chv=C3=A1tal?= <tchvatal@suse.cz>
+Date: Thu, 20 Dec 2012 15:35:29 +0100
+Subject: [PATCH] Require icu 4.6 or later with system icu
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I8c0da25a000e10d65479665a61be054fdb2486a5
+Reviewed-on: https://gerrit.libreoffice.org/1453
+Reviewed-by: David Tardon <dtardon@redhat.com>
+Tested-by: Tomáš Chvátal <tchvatal@suse.cz>
+---
+ config_host.mk.in                      |  1 -
+ configure.ac                           | 11 ++---------
+ i18npool/CustomTarget_breakiterator.mk |  2 +-
+ 3 files changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/config_host.mk.in b/config_host.mk.in
+index 4bab5d6..6ffd0fe 100644
+--- a/config_host.mk.in
++++ b/config_host.mk.in
+@@ -247,7 +247,6 @@ export ICECREAM_RUN=@ICECREAM_RUN@
+ export ICU_MAJOR=@ICU_MAJOR@
+ export ICU_MICRO=@ICU_MICRO@
+ export ICU_MINOR=@ICU_MINOR@
+-export ICU_RECLASSIFIED_CLOSE_PARENTHESIS=@ICU_RECLASSIFIED_CLOSE_PARENTHESIS@
+ export ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER=@ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER@
+ export ICU_RECLASSIFIED_HEBREW_LETTER=@ICU_RECLASSIFIED_HEBREW_LETTER@
+ export ICU_RECLASSIFIED_PREPEND_SET_EMPTY=@ICU_RECLASSIFIED_PREPEND_SET_EMPTY@
+diff --git a/configure.ac b/configure.ac
+index 064a2e9..b028e39 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8109,7 +8109,6 @@ SYSTEM_GENCMN=
+ ICU_MAJOR=49
+ ICU_MINOR=1
+ ICU_MICRO=1
+-ICU_RECLASSIFIED_CLOSE_PARENTHESIS="YES"
+ ICU_RECLASSIFIED_PREPEND_SET_EMPTY="YES"
+ ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER="YES"
+ ICU_RECLASSIFIED_HEBREW_LETTER="YES"
+@@ -8134,10 +8133,10 @@ if test "$with_system_icu" = "yes"; then
+     ICU_MINOR=`echo $ICU_VERSION | cut -d"." -f2`
+     ICU_MICRO=`echo $ICU_VERSION | cut -d"." -f3`
+ 
+-    if test "$ICU_MAJOR" -ge "4"; then
++    if test "$ICU_MAJOR" -ge "49" -o \( "$ICU_MAJOR" = "4" -a "$ICU_MINOR" -ge "6" \); then
+         AC_MSG_RESULT([OK, $ICU_VERSION])
+     else
+-        AC_MSG_ERROR([not suitable, only >= 4.0 supported currently])
++        AC_MSG_ERROR([not suitable, only >= 4.6 supported currently])
+     fi
+ 
+     if test "$cross_compiling" = "yes" -a \( "$with_system_icu_for_build" = "yes" -o "$with_system_icu_for_build" = "force" \); then
+@@ -8172,11 +8171,6 @@ You can use --with-system-icu-for-build=force to use it anyway.])
+         if test -z "$SYSTEM_GENCMN"; then
+             AC_MSG_ERROR([\'gencmn\' not found in \$PATH, install the icu development tool \'gencmn\'])
+         fi
+-        if test "$ICU_MAJOR" -ge "49" -o \( "$ICU_MAJOR" = "4" -a "$ICU_MINOR" -ge "4" \); then
+-            ICU_RECLASSIFIED_CLOSE_PARENTHESIS="YES"
+-        else
+-            ICU_RECLASSIFIED_CLOSE_PARENTHESIS="NO"
+-        fi
+         if test "$ICU_MAJOR" -ge "49"; then
+             ICU_RECLASSIFIED_PREPEND_SET_EMPTY="YES"
+         else
+@@ -8203,7 +8197,6 @@ AC_SUBST(SYSTEM_GENCMN)
+ AC_SUBST(ICU_MAJOR)
+ AC_SUBST(ICU_MINOR)
+ AC_SUBST(ICU_MICRO)
+-AC_SUBST(ICU_RECLASSIFIED_CLOSE_PARENTHESIS)
+ AC_SUBST([ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER])
+ AC_SUBST([ICU_RECLASSIFIED_HEBREW_LETTER])
+ AC_SUBST(ICU_RECLASSIFIED_PREPEND_SET_EMPTY)
+diff --git a/i18npool/CustomTarget_breakiterator.mk b/i18npool/CustomTarget_breakiterator.mk
+index f7df926..f12b94c 100644
+--- a/i18npool/CustomTarget_breakiterator.mk
++++ b/i18npool/CustomTarget_breakiterator.mk
+@@ -121,7 +121,7 @@ $(i18npool_BIDIR)/%.brk : $(i18npool_BIDIR)/%.txt $(i18npool_GENBRKTARGET)
+ $(i18npool_BIDIR)/%.txt : \
+ 	$(SRCDIR)/i18npool/source/breakiterator/data/%.txt | $(i18npool_BIDIR)/.dir
+ 	sed -e ': dummy' \
+-		$(if $(filter YES,$(ICU_RECLASSIFIED_CLOSE_PARENTHESIS)),-e "s#\[:LineBreak =  Close_Punctuation:\]#\[& \[:LineBreak = Close_Parenthesis:\]\]#") \
++		-e "s#\[:LineBreak =  Close_Punctuation:\]#\[& \[:LineBreak = Close_Parenthesis:\]\]#" \
+ 		$(if $(filter-out YES,$(ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER)),\
+ 			-e '/\[:LineBreak =  Conditional_Japanese_Starter:\]/d' \
+ 			-e 's# $$CJ##' \
+--- libreoffice-4.0.0.3/i18nutil/source/utility/unicode.cxx
++++ libreoffice-4.0.0.3/i18nutil/source/utility/unicode.cxx
+@@ -494,6 +494,12 @@
+         case USCRIPT_UNKNOWN:
+             sRet = "und";
+             break;
++        case USCRIPT_NABATAEAN: //no language with an assigned code yet
++            sRet = "mis";
++            break;
++        case USCRIPT_PALMYRENE: //no language with an assigned code yet
++            sRet = "mis";
++            break;
+         case USCRIPT_ARABIC:
+             sRet = "ar";
+             break;
+@@ -736,6 +742,9 @@
+         case USCRIPT_LINEAR_A:
+             sRet = "ecr";
+             break;
++        case USCRIPT_MANDAIC:
++            sRet = "mic";
++            break;
+         case USCRIPT_MAYAN_HIEROGLYPHS:
+             sRet = "myn";
+             break;
+@@ -853,16 +862,6 @@
+         case USCRIPT_TAI_VIET:
+             sRet = "blt";
+             break;
+-#if (U_ICU_VERSION_MAJOR_NUM > 4) || (U_ICU_VERSION_MAJOR_NUM == 4 && U_ICU_VERSION_MINOR_NUM >= 4)
+-        case USCRIPT_NABATAEAN: //no language with an assigned code yet
+-            sRet = "mis";
+-            break;
+-        case USCRIPT_PALMYRENE: //no language with an assigned code yet
+-            sRet = "mis";
+-            break;
+-        case USCRIPT_MANDAIC:
+-            sRet = "mic";
+-            break;
+         case USCRIPT_BAMUM:
+             sRet = "bax";
+             break;
+@@ -908,7 +907,6 @@
+         case USCRIPT_WARANG_CITI:
+             sRet = "hoc";
+             break;
+-#endif
+ #if (U_ICU_VERSION_MAJOR_NUM > 4) || (U_ICU_VERSION_MAJOR_NUM == 4 && U_ICU_VERSION_MINOR_NUM >= 8)
+         case USCRIPT_AFAKA:
+             sRet = "djk";

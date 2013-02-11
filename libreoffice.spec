@@ -1584,6 +1584,7 @@ rm -rf $RPM_BUILD_ROOT
 %{baseinstdir}/program/libdrawinglayerlo.so
 %{baseinstdir}/program/libeditenglo.so
 %{baseinstdir}/program/libembobj.so
+%{baseinstdir}/program/libemboleobj.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
 %{baseinstdir}/program/libegilo.so
@@ -2273,6 +2274,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Feb 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-4.UNBUILT
 - make evolution 3.6 work with address book
+- Resolves: fdo#60491 missing libemboleobj.so
 
 * Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-3
 - Resolves: rhbz#889342 crash when opening odp file

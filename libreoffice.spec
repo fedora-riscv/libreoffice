@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1431,6 +1431,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libdrawinglayerlo.so
 %{baseinstdir}/program/libeditenglo.so
 %{baseinstdir}/program/libembobj.so
+%{baseinstdir}/program/libemboleobj.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
 %{baseinstdir}/program/libegilo.so
@@ -2034,6 +2035,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-4.UNBUILT
+- Resolves: fdo#60491 missing libemboleobj.so
+
 * Sat Feb 09 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> - 1:4.0.0.3-3
 - Rebuild for Boost-1.53.0
 

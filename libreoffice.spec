@@ -255,6 +255,7 @@ Patch33: 0001-these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
 Patch34: 0001-fdo-59426-Don-t-try-to-repair-package-during-flat-de.patch
 Patch35: 0001-valgrind-use-after-free.patch
 Patch36: 0001-make-evolution-3.6-work-with-address-book.patch
+Patch37: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1003,6 +1004,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .fdo59426-Don-t-try-to-repair-package-during-flat-de.patch
 %patch35 -p1 -b .valgrind-use-after-free.patch
 %patch36 -p1 -b .make-evolution-3.6-work-with-address-book.patch
+%patch37 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2275,6 +2277,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu Feb 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-4.UNBUILT
 - make evolution 3.6 work with address book
 - Resolves: fdo#60491 missing libemboleobj.so
+- Resolves: rhbz#908674 potential memory corruption
 
 * Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-3
 - Resolves: rhbz#889342 crash when opening odp file

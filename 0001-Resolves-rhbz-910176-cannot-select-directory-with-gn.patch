@@ -1,0 +1,69 @@
+From 914de32b27c7fe164b21f9247275ee3117c0864b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 15 Feb 2013 13:41:11 +0000
+Subject: [PATCH] Resolves: rhbz#910176 cannot select directory with gnome
+ folder picker
+
+<< gtk documentation
+gtk_file_chooser_get_current_folder_uri ()
+
+Gets the current folder of chooser as an URI.
+
+Note that this is the folder that the file chooser is currently displaying ...
+which is not the same as the currently-selected folder if the chooser is in
+GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER mode ... to get the currently-selected
+folder in that mode, use gtk_file_chooser_get_uri() as the usual way to get the
+selection.
+>>
+
+<< offapi documentation
+XFolderPicker
+
+getDisplayDirectory:
+    Returns the root directory that the FolderPicker is showing.
+getDirectory
+    Returns the selected directory
+>>
+
+so  getDisplayDirectory <-> gtk_file_chooser_get_current_folder_uri
+and getDirectory <-> gtk_file_chooser_get_uri
+
+Change-Id: Iaa5ab16a250cd59fe5e8bd02149298eef6d1dec2
+---
+ vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx b/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
+index 4da4b1e..6cd0531 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
+@@ -96,7 +96,7 @@ rtl::OUString SAL_CALL SalGtkFolderPicker::getDisplayDirectory() throw( uno::Run
+ 
+     gchar* pCurrentFolder =
+         gtk_file_chooser_get_current_folder_uri( GTK_FILE_CHOOSER( m_pDialog ) );
+-    ::rtl::OUString aCurrentFolderName = uritounicode(pCurrentFolder);
++    OUString aCurrentFolderName = uritounicode(pCurrentFolder);
+     g_free( pCurrentFolder );
+ 
+     return aCurrentFolderName;
+@@ -104,7 +104,16 @@ rtl::OUString SAL_CALL SalGtkFolderPicker::getDisplayDirectory() throw( uno::Run
+ 
+ rtl::OUString SAL_CALL SalGtkFolderPicker::getDirectory() throw( uno::RuntimeException )
+ {
+-    return getDisplayDirectory();
++    SolarMutexGuard g;
++
++    OSL_ASSERT( m_pDialog != NULL );
++
++    gchar* pSelectedFolder =
++        gtk_file_chooser_get_uri( GTK_FILE_CHOOSER( m_pDialog ) );
++    OUString aSelectedFolderName = uritounicode(pSelectedFolder);
++    g_free( pSelectedFolder );
++
++    return aSelectedFolderName;
+ }
+ 
+ void SAL_CALL SalGtkFolderPicker::setDescription( const rtl::OUString& rDescription )
+-- 
+1.8.1.2
+

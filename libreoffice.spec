@@ -238,6 +238,7 @@ Patch11: libreoffice-rhel6langs.patch
 Patch12: 0001-temporarily-disable-failing-test.patch
 Patch13: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 Patch14: 0001-fix-parser-errors-in-help-translations.patch
+Patch15: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -972,6 +973,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p1 -b .temporarily-disable-failing-test.patch
 %patch13 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 %patch14 -p1 -b .fix-parser-errors-in-help-translations.patch
+%patch15 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2035,8 +2037,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-4.UNBUILT
+* Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-4
 - Resolves: fdo#60491 missing libemboleobj.so
+- Resolves: rhbz#908674 crash on start
 
 * Sat Feb 09 2013 Denis Arnaud <denis.arnaud_fedora@m4x.org> - 1:4.0.0.3-3
 - Rebuild for Boost-1.53.0

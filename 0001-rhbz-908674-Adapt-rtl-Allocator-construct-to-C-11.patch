@@ -1,0 +1,164 @@
+From d5e77fcf7f525e6de83495876e2a1aa1fb133d96 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 14 Feb 2013 15:21:46 +0100
+Subject: [PATCH] rhbz#908674: Adapt rtl::Allocator::construct to C++11
+
+...otherwise, at least with some --with-system-boost versions and C++11
+compilers, like with Fedora's boost-1.50.0-4.fc18.x86_64 and
+gcc-c++-4.7.2-8.fc18.x86_64, using this to copy-construct an instance of
+boost::unordered::detail::ptr_node<std::pair<rtl::OUString,Bootstrap_Impl*>> in
+the call to p_bootstrap_map->insert(...) in rtl_bootstrap_args_open
+(sal/rtl/source/bootstrap.cxx) would memcopy the ptr_node and fail to call
+rtl_uString_acquire, leading to memory corruption later on when
+rtl_uString_release is called one time too often.
+
+It is not entirely clear to me whether this is a shortcoming of the given Boost
+version, but this patch solves the problem and brings rtl::Allocator::construct
+in line with the (changed) Allocator requirements of C++11 anyway.
+
+The problem potentially lurks with every use of rtl::Allocator, but only showed
+now begining with LO 4.0 where e5111574fd904b38a3980ca4ea3d21cfcb22dea6 "Revert
+'sb140: sb140: #i116981# clean up memory upon exit'" re-introduced code into
+rtl_bootstrap_args_open that inserts into a boost::unordered_map that uses
+rtl::Allocator.
+
+(cherry picked from commit c91d353872b7d4e1a39192bff1444b46cab6e5eb)
+Conflicts:
+	config_host/config_global.h.in
+...solved by resorting to the old -DHAVE_CXX11_PERFECT_FORWARDING logic spread
+across various solenv/.../*.mk instead.
+
+Change-Id: I3be22f59a8eb49d31458480c27f3ce15803c7fd4
+---
+ config_host.mk.in                      |  1 +
+ configure.ac                           | 26 ++++++++++++++++++++++++++
+ sal/inc/rtl/allocator.hxx              |  8 ++++++++
+ solenv/gbuild/platform/com_GCC_defs.mk |  6 ++++++
+ solenv/gbuild/platform/com_MSC_defs.mk |  6 ++++++
+ solenv/inc/settings.mk                 |  4 ++++
+ 6 files changed, 51 insertions(+)
+
+diff --git a/config_host.mk.in b/config_host.mk.in
+index 73aecf8..0af569c 100644
+--- a/config_host.mk.in
++++ b/config_host.mk.in
+@@ -217,6 +217,7 @@ export GUIBASE_FOR_BUILD=@GUIBASE_FOR_BUILD@
+ export GUI_FOR_BUILD=@GUI_FOR_BUILD@
+ export HARDLINKDELIVER=@HARDLINKDELIVER@
+ export HAVE_CXX0X=@HAVE_CXX0X@
++export HAVE_CXX11_PERFECT_FORWARDING=@HAVE_CXX11_PERFECT_FORWARDING@
+ export HAVE_GCC_AVX=@HAVE_GCC_AVX@
+ export HAVE_GCC_BUILTIN_ATOMIC=@HAVE_GCC_BUILTIN_ATOMIC@
+ export HAVE_GCC_GGDB2=@HAVE_GCC_GGDB2@
+diff --git a/configure.ac b/configure.ac
+index ce85229..703bb13 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -5464,6 +5464,32 @@ AC_SUBST(HAVE_GCC_AVX)
+ AC_SUBST(HAVE_GCC_BUILTIN_ATOMIC)
+ 
+ dnl ===================================================================
++dnl Check for C++11 perfect forwarding support
++dnl ===================================================================
++HAVE_CXX11_PERFECT_FORWARDING=
++AC_MSG_CHECKING([whether $CXX supports C++11 perfect forwarding])
++save_CXXFLAGS=$CXXFLAGS
++if test "$HAVE_CXX0X" = TRUE; then
++    CXXFLAGS="$CXXFLAGS -std=gnu++0x"
++fi
++AC_LANG_PUSH([C++])
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++        #include <utility>
++        template<typename T, typename... Args> T * f(Args &&... v) {
++            return new T(std::forward<Args>(v)...);
++        }
++    ]], [[
++        f<int>(0);
++    ]])], [perfect_forwarding=yes], [perfect_forwarding=no])
++AC_LANG_POP([C++])
++CXXFLAGS=$save_CXXFLAGS
++AC_MSG_RESULT([$perfect_forwarding])
++if test "$perfect_forwarding" = yes; then
++    HAVE_CXX11_PERFECT_FORWARDING=TRUE
++fi
++AC_SUBST([HAVE_CXX11_PERFECT_FORWARDING])
++
++dnl ===================================================================
+ dnl system stl sanity tests
+ dnl ===================================================================
+ HAVE_GCC_VISIBILITY_BROKEN=
+diff --git a/sal/inc/rtl/allocator.hxx b/sal/inc/rtl/allocator.hxx
+index 4900d97..979c743 100644
+--- a/sal/inc/rtl/allocator.hxx
++++ b/sal/inc/rtl/allocator.hxx
+@@ -125,10 +125,18 @@ public:
+     }
+ 
+     //-----------------------------------------
++#if defined HAVE_CXX11_PERFECT_FORWARDING
++    template< typename... Args >
++    void construct (pointer p, Args &&... value)
++    {
++        new ((void*)p)T(std::forward< Args >(value)...);
++    }
++#else
+     void construct (pointer p, const T& value)
+     {
+         new ((void*)p)T(value);
+     }
++#endif
+ 
+     //-----------------------------------------
+     void destroy (pointer p)
+diff --git a/solenv/gbuild/platform/com_GCC_defs.mk b/solenv/gbuild/platform/com_GCC_defs.mk
+index 437cdd3..1f50a97 100644
+--- a/solenv/gbuild/platform/com_GCC_defs.mk
++++ b/solenv/gbuild/platform/com_GCC_defs.mk
+@@ -58,6 +58,12 @@ gb_COMPILERDEFS := \
+ 	-D$(COM) \
+ 	-DCPPU_ENV=$(gb_CPPU_ENV) \
+ 
++ifeq ($(HAVE_CXX11_PERFECT_FORWARDING),TRUE)
++gb_COMPILERDEFS += \
++    -DHAVE_CXX11_PERFECT_FORWARDING \
++
++endif
++
+ ifeq ($(HAVE_GCC_BUILTIN_ATOMIC),TRUE)
+ gb_COMPILERDEFS += \
+     -DHAVE_GCC_BUILTIN_ATOMIC \
+diff --git a/solenv/gbuild/platform/com_MSC_defs.mk b/solenv/gbuild/platform/com_MSC_defs.mk
+index a81b5df..626274b 100644
+--- a/solenv/gbuild/platform/com_MSC_defs.mk
++++ b/solenv/gbuild/platform/com_MSC_defs.mk
+@@ -60,6 +60,12 @@ gb_COMPILERDEFS := \
+ 	-DCPPU_ENV=$(gb_CPPU_ENV) \
+ 	-DM1500 \
+ 
++ifeq ($(HAVE_CXX11_PERFECT_FORWARDING),TRUE)
++gb_COMPILERDEFS += \
++    -DHAVE_CXX11_PERFECT_FORWARDING \
++
++endif
++
+ gb_RCDEFS := \
+ 	 -DWINVER=0x0400 \
+ 	 -DWIN32 \
+diff --git a/solenv/inc/settings.mk b/solenv/inc/settings.mk
+index dbb513d..c1b6a78 100644
+--- a/solenv/inc/settings.mk
++++ b/solenv/inc/settings.mk
+@@ -813,6 +813,10 @@ CDEFS+=$(CDEFS_PRESET)
+ CDEFS+=-DTIMELOG
+ .ENDIF
+ 
++.IF "$(HAVE_CXX11_PERFECT_FORWARDING)" == "TRUE"
++CDEFS += -DHAVE_CXX11_PERFECT_FORWARDING
++.ENDIF
++
+ CDEFSCXX=
+ CDEFSOBJ=
+ #CDEFSMT=-DMULTITHREAD
+-- 
+1.8.1.2
+

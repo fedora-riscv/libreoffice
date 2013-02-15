@@ -2037,7 +2037,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Feb 06 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-4
+* Fri Feb 15 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.0.3-4
 - Resolves: fdo#60491 missing libemboleobj.so
 - Resolves: rhbz#908674 crash on start
 

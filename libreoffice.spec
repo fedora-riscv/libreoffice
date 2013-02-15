@@ -1048,7 +1048,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --disable-ext-mysql-connector --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
 %else
 %define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
 %endif
@@ -1563,8 +1563,10 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
 %{baseinstdir}/program/libxstor.so
+%if 0%{?fedora} || 0%{?rhel} >= 7
 # TODO how useful this is in Fedora?
 %{baseinstdir}/program/losessioninstall.uno.so
+%endif
 %{baseinstdir}/program/migrationoo2.uno.so
 %{baseinstdir}/program/migrationoo3.uno.so
 %{baseinstdir}/program/msforms.uno.so
@@ -1668,6 +1670,9 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
 %{baseinstdir}/share/gallery
+%if 0%{?rhel} && 0%{?rhel} < 7
+%{baseinstdir}/share/liblangtag
+%endif
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver

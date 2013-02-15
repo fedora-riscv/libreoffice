@@ -118,7 +118,7 @@ index 84701e1..608b1f9 100644
 -    }
 -    * aApiMap[ i ].ref_value = aMethod;
 +        SymbolFunc aMethod = (SymbolFunc)osl_getFunctionSymbol
-+            (aModule, OUString::createFromAscii ( pMap[ i ].sym_name ).pData);
++            (aModule, rtl::OUString::createFromAscii ( pMap[ i ].sym_name ).pData);
 +        if( !aMethod )
 +        {
 +            fprintf( stderr, "Warning: missing symbol '%s' in '%s'\n",
@@ -307,12 +307,12 @@ index d0198e5..a83de24 100644
              ODatabaseMetaDataResultSet::ORow aRow(3);
              aRow.reserve(6);
 -            aRow.push_back(new ORowSetValueDecorator(aName));
-+            OUString aHumanName = OStringToOUString( e_source_get_display_name( pSource ),
++            rtl::OUString aHumanName = rtl::OStringToOUString( e_source_get_display_name( pSource ),
 +                                                          RTL_TEXTENCODING_UTF8 );
 +            aRow.push_back(new ORowSetValueDecorator(aHumanName)); //tablename
              aRow.push_back(new ORowSetValueDecorator(aTable));
 -            aRow.push_back(ODatabaseMetaDataResultSet::getEmptyValue());
-+            OUString aUID = OStringToOUString( e_source_get_uid( pSource ),
++            rtl::OUString aUID = rtl::OStringToOUString( e_source_get_uid( pSource ),
 +                                                          RTL_TEXTENCODING_UTF8 );
 +            aRow.push_back(new ORowSetValueDecorator(aUID)); //comment
 +            //I'd prefer to swap the comment and the human name and
@@ -532,9 +532,9 @@ index b5f4640..26690b1 100644
  
 -static GList*
 -sortContacts( GList* _pContactList, const ComparisonData& _rCompData )
-+OString OEvoabVersionHelper::getUserName( EBook *pBook )
++rtl::OString OEvoabVersionHelper::getUserName( EBook *pBook )
 +{
-+    OString aName;
++    rtl::OString aName;
 +    if( isLDAP( pBook ) )
 +        aName = e_source_get_property( e_book_get_source( pBook ), "binddn" );
 +    else
@@ -616,7 +616,7 @@ index b5f4640..26690b1 100644
 +        m_pContacts = NULL;
 +    }
 +
-+    virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, OString &/*rPassword*/)
++    virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, rtl::OString &/*rPassword*/)
 +    {
 +        freeContacts();
 +        char *sexp = e_book_query_to_string( pQuery );
@@ -723,7 +723,7 @@ index b5f4640..26690b1 100644
 +        m_pContacts = NULL;
 +    }
 +
-+    virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, OString &rPassword)
++    virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, rtl::OString &rPassword)
 +    {
 +        freeContacts();
 +
@@ -815,7 +815,7 @@ index b5f4640..26690b1 100644
      ENSURE_OR_THROW( _rData.getQuery(), "internal error: no EBookQuery" );
  
 -    EBook *pBook = openBook(::rtl::OUStringToOString(_rData.sTable, RTL_TEXTENCODING_UTF8).getStr());
-+    EBook *pBook = m_pVersionHelper->openBook(OUStringToOString(_rData.sTable, RTL_TEXTENCODING_UTF8).getStr());
++    EBook *pBook = m_pVersionHelper->openBook(rtl::OUStringToOString(_rData.sTable, RTL_TEXTENCODING_UTF8).getStr());
      if ( !pBook )
          m_pConnection->throwGenericSQLException( STR_CANNOT_OPEN_BOOK, *this );
  
@@ -880,7 +880,7 @@ index fd049fd..c3d7ab4 100644
 +        {
 +        public:
 +            virtual EBook* openBook(const char *abname) = 0;
-+            virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, OString &rPassword) = 0;
++            virtual bool executeQuery (EBook* pBook, EBookQuery* pQuery, rtl::OString &rPassword) = 0;
 +            virtual void freeContacts() = 0;
 +            virtual bool isLDAP( EBook *pBook ) = 0;
 +            virtual bool isLocal( EBook *pBook ) = 0;
@@ -888,7 +888,7 @@ index fd049fd..c3d7ab4 100644
 +            virtual sal_Int32 getNumContacts() = 0;
 +            virtual bool hasContacts() = 0;
 +            virtual void sortContacts( const ComparisonData& _rCompData ) = 0;
-+            OString getUserName( EBook *pBook );
++            rtl::OString getUserName( EBook *pBook );
 +            virtual ~OEvoabVersionHelper() {}
 +        };
 +

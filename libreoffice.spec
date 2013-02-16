@@ -253,6 +253,7 @@ Patch19: 0001-make-evolution-3.6-work-with-address-book.patch
 Patch20: 0001-Resolves-fdo-60132-Error-reading-file-after-insertin.patch
 Patch21: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
 Patch22: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
+Patch23: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .fdo-60132-Error-reading-file-after-insertin.patch
 %patch21 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
 %patch22 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
+%patch23 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2060,6 +2062,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Feb 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-5
 - make evolution 3.6 work with address book
 - Resolves: rhbz#910176 cannot select directory with gtk folder picker
+- fixes for building against Boost 1.53.0
 
 * Fri Feb 15 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.0.3-4
 - Resolves: fdo#60491 missing libemboleobj.so

@@ -1,0 +1,59 @@
+From 92e7811ee757db41dc0b428aa1fe1f3ba3797bac Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Sat, 9 Feb 2013 22:39:42 +0100
+Subject: [PATCH] fdo#60491: scp2: always package emboleobj library on non-WNT
+ platforms
+
+(regression from 09cd5c460704ddd99669a61ae335bfb2ce357140, which defined
+ DISABLE_ATL on all platforms in configure)
+
+(cherry picked from commit ca8ac449e3524f895de1e94a3c5d511591031b40)
+
+Conflicts:
+	postprocess/Rdb_services.mk
+
+Change-Id: If2373386102373cb49e8cd0c6bf807da2f805dda
+Reviewed-on: https://gerrit.libreoffice.org/2095
+Reviewed-by: Tor Lillqvist <tml@iki.fi>
+Tested-by: Tor Lillqvist <tml@iki.fi>
+---
+ postprocess/packcomponents/makefile.mk | 4 ++--
+ scp2/source/ooo/file_library_ooo.scp   | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/postprocess/packcomponents/makefile.mk b/postprocess/packcomponents/makefile.mk
+index fa3231c..a37ba73 100644
+--- a/postprocess/packcomponents/makefile.mk
++++ b/postprocess/packcomponents/makefile.mk
+@@ -224,12 +224,12 @@ my_components += \
+ 
+ .ENDIF
+ 
+-.IF "$(DISABLE_ATL)" == ""
+ .IF "$(OS)" == "WNT"
++.IF "$(DISABLE_ATL)" == ""
+ my_components += component/embeddedobj/source/msole/emboleobj.windows
++.ENDIF
+ .ELSE
+ my_components += component/embeddedobj/source/msole/emboleobj
+-.ENDIF
+ .END
+ 
+ .IF "$(DISABLE_NEON)" != "TRUE"
+diff --git a/scp2/source/ooo/file_library_ooo.scp b/scp2/source/ooo/file_library_ooo.scp
+index 642cd81..6dd5e29 100644
+--- a/scp2/source/ooo/file_library_ooo.scp
++++ b/scp2/source/ooo/file_library_ooo.scp
+@@ -394,7 +394,8 @@ STD_LIB_FILE(gid_File_Lib_Drawinglayer,drawinglayer)
+ 
+ SPECIAL_LIB_FILE(gid_File_Lib_Embobj,embobj)
+ 
+-#ifndef DISABLE_ATL
++/* fdo#60491 always need emboleobj library on non-WNT platforms */
++#if !defined(WNT) || !defined(DISABLE_ATL)
+ SPECIAL_LIB_FILE(gid_File_Lib_Emboleobj,emboleobj)
+ #endif
+ 
+-- 
+1.8.1.2
+

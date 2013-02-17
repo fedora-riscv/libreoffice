@@ -254,6 +254,7 @@ Patch20: 0001-Resolves-fdo-60132-Error-reading-file-after-insertin.patch
 Patch21: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
 Patch22: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
 Patch23: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
+Patch24: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -997,6 +998,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
 %patch22 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
 %patch23 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
+%patch24 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

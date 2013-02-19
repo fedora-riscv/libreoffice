@@ -207,9 +207,11 @@ BuildRequires: tomcat-servlet-3.0-api
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
+BuildRequires: java-devel >= 1:1.6.0
+%else
+BuildRequires: java-devel
 %endif
 BuildRequires: jakarta-commons-httpclient
-BuildRequires: java-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: junit
 %endif

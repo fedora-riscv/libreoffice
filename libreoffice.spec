@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -258,6 +258,7 @@ Patch36: 0001-make-evolution-3.6-work-with-address-book.patch
 Patch37: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 Patch38: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
 Patch39: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+Patch40: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1009,6 +1010,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch37 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 %patch38 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
 %patch39 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+%patch40 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2280,6 +2282,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Feb 19 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-5-UNBUILT
 - Resolves: rhbz#895196 sc filter float a11y parent of itself
+- do not access vector elements beyond size, rhbz#847519 related
 
 * Fri Feb 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-4
 - make evolution 3.6 work with address book

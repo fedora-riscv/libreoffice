@@ -36,7 +36,7 @@
 %if 0%{?rhel} && 0%{?rhel} < 7
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja kk ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %endif
 %define with_lang --with-lang="%{langpack_langs}"
 %else
@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -857,6 +857,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
 %langpack -l it -n Italian -F -H -Y -M -A -T -X
 %langpack -l ja -n Japanese -F -A -s cjk -T -X
+%if 0%{?fedora} || 0%{?rhel} >= 7
+%langpack -l kk -n Kazakh -F -H
+%endif
 %langpack -l kn -n Kannada -F -H -Y
 %langpack -l ko -n Korean -F -H -A -s cjk -T -c korea -X
 %langpack -l lt -n Lithuanian -F -H -Y -A
@@ -2063,6 +2066,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 19 2013 David Tardon <dtardon@redhat.com> - 1:4.0.0.3-6
+- Resolves: rhbz#911896 add Kazakh localization
+
 * Fri Feb 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-5
 - make evolution 3.6 work with address book
 - Resolves: rhbz#910176 cannot select directory with gtk folder picker

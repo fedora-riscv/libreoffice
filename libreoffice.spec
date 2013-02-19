@@ -207,7 +207,11 @@ BuildRequires: tomcat-servlet-3.0-api
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
+%ifarch %{ix86} x86_64 s390 s390x
 BuildRequires: java-devel >= 1:1.6.0
+%else
+BuildRequires: java-devel
+%endif
 %else
 BuildRequires: java-devel
 %endif

@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -263,6 +263,7 @@ Patch23: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
 Patch24: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 Patch25: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch26: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+Patch27: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1012,6 +1013,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 %patch25 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 %patch26 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+%patch27 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2079,6 +2081,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 20 2013 Eike Rathke <erack@redhat.com> - 1:4.0.0.3-8-UNBUILT
+- do not access vector elements beyond size, rhbz#847519 related
+
 * Tue Feb 19 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-7
 - Resolves: rhbz#895196 sc filter float a11y parent of itself
 

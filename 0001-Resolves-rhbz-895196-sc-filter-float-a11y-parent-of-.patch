@@ -64,15 +64,15 @@ diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
 index 6767fde..7ddb6b1 100644
 --- a/vcl/source/window/window.cxx
 +++ b/vcl/source/window/window.cxx
-@@ -48,6 +48,7 @@
+@@ -55,6 +55,7 @@
  #include "vcl/unowrap.hxx"
  #include "vcl/gdimtf.hxx"
  #include "vcl/pdfextoutdevdata.hxx"
 +#include "vcl/popupmenuwindow.hxx"
  #include "vcl/lazydelete.hxx"
- #include "vcl/virdev.hxx"
  
-@@ -8601,10 +8602,15 @@ Window* Window::GetAccessibleParentWindow() const
+ // declare system types in sysdata.hxx
+@@ -8548,10 +8549,15 @@
              pWorkWin = pWorkWin->mpWindowImpl->mpNext;
          pParent = pWorkWin;
      }
@@ -91,6 +91,3 @@ index 6767fde..7ddb6b1 100644
      {
          pParent = mpWindowImpl->mpBorderWindow;
      }
--- 
-1.8.1.2
-

@@ -264,6 +264,7 @@ Patch24: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 Patch25: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch26: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 Patch27: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+Patch28: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1014,6 +1015,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 %patch26 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 %patch27 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+%patch28 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2083,6 +2085,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Feb 20 2013 Eike Rathke <erack@redhat.com> - 1:4.0.0.3-8-UNBUILT
 - do not access vector elements beyond size, rhbz#847519 related
+- Resolves: rhbz#742780 let make OPT_FLAGS=... override SDK flags
 
 * Tue Feb 19 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-7
 - Resolves: rhbz#895196 sc filter float a11y parent of itself

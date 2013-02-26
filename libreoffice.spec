@@ -259,6 +259,7 @@ Patch37: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 Patch38: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
 Patch39: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 Patch40: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+Patch41: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1011,6 +1012,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch38 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
 %patch39 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 %patch40 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+%patch41 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2280,9 +2282,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Feb 19 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-5-UNBUILT
+* Tue Feb 26 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-5
 - Resolves: rhbz#895196 sc filter float a11y parent of itself
 - do not access vector elements beyond size, rhbz#847519 related
+- Resolves: rhbz#907933 crash on removing second last para
 
 * Fri Feb 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-4
 - make evolution 3.6 work with address book

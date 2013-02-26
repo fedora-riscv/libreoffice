@@ -207,14 +207,8 @@ BuildRequires: tomcat-servlet-3.0-api
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
-%ifarch %{ix86} x86_64 s390 s390x
-BuildRequires: java-devel >= 1:1.6.0
-%else
-BuildRequires: java-devel
 %endif
-%else
 BuildRequires: java-devel
-%endif
 BuildRequires: jakarta-commons-httpclient
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: junit
@@ -265,6 +259,7 @@ Patch25: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch26: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 Patch27: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 Patch28: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
+Patch29: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1016,6 +1011,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 %patch27 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 %patch28 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
+%patch29 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2083,9 +2079,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Feb 20 2013 Eike Rathke <erack@redhat.com> - 1:4.0.0.3-8-UNBUILT
+* Tue Feb 26 2013 Eike Rathke <erack@redhat.com> - 1:4.0.0.3-8
 - do not access vector elements beyond size, rhbz#847519 related
 - Resolves: rhbz#742780 let make OPT_FLAGS=... override SDK flags
+- Resolves: rhbz#907933 crash on removing second last para
 
 * Tue Feb 19 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.0.3-7
 - Resolves: rhbz#895196 sc filter float a11y parent of itself

@@ -260,6 +260,7 @@ Patch38: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
 Patch39: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 Patch40: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 Patch41: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
+Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1013,6 +1014,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch39 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 %patch40 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 %patch41 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
+%patch42 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

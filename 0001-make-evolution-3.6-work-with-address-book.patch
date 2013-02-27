@@ -526,14 +526,46 @@ index b5f4640..26690b1 100644
  static bool
  getValue( EContact* pContact, sal_Int32 nColumnNum, GType nType, GValue* pStackValue, bool& _out_rWasNull )
  {
-@@ -502,13 +376,278 @@
+@@ -429,20 +303,17 @@
+     return true;
+ }
+ 
+-namespace
++struct ComparisonData
+ {
+-    struct ComparisonData
+-    {
+-        const SortDescriptor&   rSortOrder;
+-        IntlWrapper             aIntlWrapper;
++    const SortDescriptor&   rSortOrder;
++    IntlWrapper             aIntlWrapper;
+ 
+-        ComparisonData( const SortDescriptor& _rSortOrder, const Reference< XMultiServiceFactory >& _rxFactory )
+-            :rSortOrder( _rSortOrder )
+-            ,aIntlWrapper( _rxFactory, SvtSysLocale().GetLocaleData().getLocale() )
+-        {
+-        }
+-    };
+-}
++    ComparisonData( const SortDescriptor& _rSortOrder, const Reference< XMultiServiceFactory >& _rxFactory )
++        :rSortOrder( _rSortOrder )
++        ,aIntlWrapper( _rxFactory, SvtSysLocale().GetLocaleData().getLocale() )
++    {
++    }
++};
+ 
+ extern "C"
+ int CompareContacts( gconstpointer _lhs, gconstpointer _rhs, gpointer _userData )
+@@ -502,13 +373,278 @@
      return 0;
  }
  
 -static GList*
 -sortContacts( GList* _pContactList, const ComparisonData& _rCompData )
 +rtl::OString OEvoabVersionHelper::getUserName( EBook *pBook )
-+{
+ {
+-    OSL_ENSURE( !_rCompData.rSortOrder.empty(), "sortContacts: no need to call this without any sort order!" );
+-    ENSURE_OR_THROW( _rCompData.aIntlWrapper.getCaseCollator(), "no collator for comparing strings" );
 +    rtl::OString aName;
 +    if( isLDAP( pBook ) )
 +        aName = e_source_get_property( e_book_get_source( pBook ), "binddn" );
@@ -543,9 +575,7 @@ index b5f4640..26690b1 100644
 +}
 +
 +class OEvoabVersion36Helper : public OEvoabVersionHelper
- {
--    OSL_ENSURE( !_rCompData.rSortOrder.empty(), "sortContacts: no need to call this without any sort order!" );
--    ENSURE_OR_THROW( _rCompData.aIntlWrapper.getCaseCollator(), "no collator for comparing strings" );
++{
 +private:
 +    GSList   *m_pContacts;
 +public:
@@ -810,7 +840,7 @@ index b5f4640..26690b1 100644
  }
  
  // -------------------------------------------------------------------------
-@@ -516,17 +655,16 @@
+@@ -516,17 +652,16 @@
  {
      ENSURE_OR_THROW( _rData.getQuery(), "internal error: no EBookQuery" );
  
@@ -831,7 +861,7 @@ index b5f4640..26690b1 100644
              {
                  SQLError aErrorFactory( m_pConnection->getDriver().getMSFactory() );
                  SQLException aAsException = aErrorFactory.getSQLException( ErrorCondition::DATA_CANNOT_SELECT_UNFILTERED, *this );
-@@ -550,16 +688,16 @@
+@@ -550,16 +685,16 @@
      if ( bExecuteQuery )
      {
          rtl::OString aPassword = m_pConnection->getPassword();
@@ -852,7 +882,7 @@ index b5f4640..26690b1 100644
      OSL_TRACE( "Query return %d records", m_nLength );
      m_nIndex = -1;
  
-@@ -576,10 +714,10 @@
+@@ -576,10 +711,10 @@
      ::comphelper::OPropertyContainer::disposing();
  
      ::osl::MutexGuard aGuard(m_aMutex);

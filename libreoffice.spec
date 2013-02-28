@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.0.0
+%define libo_version 4.0.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -46,8 +46,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -246,20 +246,13 @@ Patch13: libreoffice-rhel6limits.patch
 Patch14: libreoffice-rhel6glib.patch
 %endif
 Patch15: 0001-temporarily-disable-failing-test.patch
-Patch16: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
-Patch17: 0001-fix-parser-errors-in-help-translations.patch
-Patch18: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 Patch19: 0001-make-evolution-3.6-work-with-address-book.patch
-Patch20: 0001-Resolves-fdo-60132-Error-reading-file-after-insertin.patch
 Patch21: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
-Patch22: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
 Patch23: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
 Patch24: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-Patch25: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch26: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 Patch27: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 Patch28: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
-Patch29: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -998,20 +991,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .rhel6glib.patch
 %endif
 %patch15 -p1 -b .temporarily-disable-failing-test.patch
-%patch16 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
-%patch17 -p1 -b .fix-parser-errors-in-help-translations.patch
-%patch18 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
 %patch19 -p1 -b .make-evolution-3.6-work-with-address-book.patch
-%patch20 -p1 -b .fdo-60132-Error-reading-file-after-insertin.patch
 %patch21 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
-%patch22 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
 %patch23 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
 %patch24 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-%patch25 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 %patch26 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
 %patch27 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 %patch28 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
-%patch29 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2079,6 +2065,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 28 2013 David Tardon <dtardon@redhat.com> - 1:4.0.1.2-1
+- 4.0.1 rc2
+
 * Tue Feb 26 2013 Eike Rathke <erack@redhat.com> - 1:4.0.0.3-8
 - do not access vector elements beyond size, rhbz#847519 related
 - Resolves: rhbz#742780 let make OPT_FLAGS=... override SDK flags

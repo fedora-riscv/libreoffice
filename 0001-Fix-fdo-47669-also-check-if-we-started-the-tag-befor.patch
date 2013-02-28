@@ -1,0 +1,40 @@
+From d401dcc51cec798c8c19febcc25c4325ddafa178 Mon Sep 17 00:00:00 2001
+From: Korrawit Pruegsanusak <detective.conan.1412@gmail.com>
+Date: Fri, 12 Oct 2012 21:09:42 +0700
+Subject: [PATCH] Fix fdo#47669: also check if we started the tag before ending
+ it
+
+The problem is we created imbalance end tag </w:hyperlink> which shouldn't
+be there. So, place a check before inserting end tag should help.
+
+Inspired by (read: copied from) c1c2688912e769dfd7654e11e87dae380a8ce1eb ;)
+
+(cherry picked from commit 3b042335208cb2c995f4860bf8ba3bd1e2f2e859)
+
+Change-Id: Ic933f6da44c788cba48bb2fe6fa29658985310b6
+
+Signed-off-by: Petr Mladek <pmladek@suse.cz>
+---
+ sw/source/filter/ww8/docxattributeoutput.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/filter/ww8/docxattributeoutput.cxx b/sw/source/filter/ww8/docxattributeoutput.cxx
+index 7149e49..78ee6cf 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx
+@@ -550,7 +550,11 @@ void DocxAttributeOutput::EndRun()
+ 
+     if ( m_closeHyperlinkInPreviousRun )
+     {
+-        m_pSerializer->endElementNS( XML_w, XML_hyperlink );
++        if ( m_startedHyperlink )
++        {
++            m_pSerializer->endElementNS( XML_w, XML_hyperlink );
++            m_startedHyperlink = false;
++        }
+         m_closeHyperlinkInPreviousRun = false;
+     }
+ 
+-- 
+1.8.1
+

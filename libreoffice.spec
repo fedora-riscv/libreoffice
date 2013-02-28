@@ -246,13 +246,13 @@ Patch13: libreoffice-rhel6limits.patch
 Patch14: libreoffice-rhel6glib.patch
 %endif
 Patch15: 0001-temporarily-disable-failing-test.patch
-Patch19: 0001-make-evolution-3.6-work-with-address-book.patch
-Patch21: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
-Patch23: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
-Patch24: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-Patch26: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
-Patch27: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
-Patch28: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
+Patch16: 0001-make-evolution-3.6-work-with-address-book.patch
+Patch17: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
+Patch18: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
+Patch19: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
+Patch20: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+Patch21: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+Patch22: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -991,13 +991,13 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .rhel6glib.patch
 %endif
 %patch15 -p1 -b .temporarily-disable-failing-test.patch
-%patch19 -p1 -b .make-evolution-3.6-work-with-address-book.patch
-%patch21 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
-%patch23 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
-%patch24 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-%patch26 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
-%patch27 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
-%patch28 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
+%patch16 -p1 -b .make-evolution-3.6-work-with-address-book.patch
+%patch17 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
+%patch18 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
+%patch19 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
+%patch20 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+%patch21 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
+%patch22 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

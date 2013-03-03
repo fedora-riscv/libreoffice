@@ -835,7 +835,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l en -n English -F -H -Y -M -A -E
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
 %langpack -l et -n Estonian -F -H -Y -T
-%langpack -l eu -n Basque -F -H -Y -A -T -X
+%langpack -l eu -n Basque -F -H -Y -A -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif

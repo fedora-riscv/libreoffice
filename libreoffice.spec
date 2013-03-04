@@ -287,6 +287,7 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
+Obsoletes: autocorr-eu < 1:4.0.1.2
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
 Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
@@ -835,7 +836,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l en -n English -F -H -Y -M -A -E
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
 %langpack -l et -n Estonian -F -H -Y -T
-%langpack -l eu -n Basque -F -H -Y -A -T
+%langpack -l eu -n Basque -F -H -Y -T
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif
@@ -926,7 +927,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l da -n Danish
 %autocorr -l de -n German
 %autocorr -l es -n Spanish
-%autocorr -l eu -n Basque -L
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French

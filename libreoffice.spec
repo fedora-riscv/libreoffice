@@ -263,7 +263,7 @@ Patch41: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
-Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patc
+Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}

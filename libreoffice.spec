@@ -262,6 +262,8 @@ Patch40: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 Patch41: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
+Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
+Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patc
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1017,6 +1019,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch41 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
 %patch42 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 %patch43 -p1 -b .odf-export-arcangleto-commands-in-enhanced-path-use-.patch
+%patch44 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
+%patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patc
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2286,8 +2290,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 28 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-6-UNBUILT
+* Thu Mar 07 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-6
 - Resolves: rhbz#906386 impress conversion from pptx to odp breaks some shapes
+- Related: rhbz#902884 check for NULL GetSelectedMasterPage
+- Resolves: fdo#56031 RSID attr changes drop content changes
 
 * Tue Feb 26 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-5
 - Resolves: rhbz#895196 sc filter float a11y parent of itself

@@ -255,6 +255,7 @@ Patch21: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
 Patch22: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 Patch23: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch24: 0001-Resolves-fdo-61241-force-area-page-to-size-itself-fo.patch
+Patch25: 0001-Resolves-fdo-61656-use-order-and-orientation-combobo.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1002,6 +1003,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 %patch23 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch24 -p1 -b .fdo-61241-force-area-page-to-size-itself-fo.patch
+%patch25 -p1 -b .fdo-61656-use-order-and-orientation-combobo.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2072,6 +2074,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu Mar 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.1.2-2
 - Related: rhbz#902884 check for NULL GetSelectedMasterPage
 - Resolves: fdo#61241 force area page to size itself
+- Resolves: fdo#61656 use order and orientation combobox
 
 * Thu Feb 28 2013 David Tardon <dtardon@redhat.com> - 1:4.0.1.2-1
 - 4.0.1 rc2

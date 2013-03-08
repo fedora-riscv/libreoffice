@@ -72,7 +72,7 @@ Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.t
 Source14:       %{external_url}/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
 Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
 Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
-Source17:       %{external_url}/libcdr-0.0.9.tar.bz2
+Source17:       %{external_url}/libcdr-0.0.10.tar.bz2
 Source18:       %{external_url}/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
 Source19:       %{external_url}/e7f84e3199dfee9122949448cab3823f-libwpd-0.9.6.tar.bz2
 Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2

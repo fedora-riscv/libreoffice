@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -264,6 +264,7 @@ Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
+Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patc
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1021,6 +1022,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch43 -p1 -b .odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 %patch44 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patc
+%patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patc
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2290,6 +2292,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-7-UNBUILT
+- Resolves: rhbz#920697 presentation not always full screen
+
 * Thu Mar 07 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-6
 - Resolves: rhbz#906386 impress conversion from pptx to odp breaks some shapes
 - Related: rhbz#902884 check for NULL GetSelectedMasterPage

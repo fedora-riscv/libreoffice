@@ -47,7 +47,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -257,6 +257,7 @@ Patch23: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch24: 0001-Resolves-fdo-61241-force-area-page-to-size-itself-fo.patch
 Patch25: 0001-Resolves-fdo-61656-use-order-and-orientation-combobo.patch
 Patch26: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
+Patch27: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1006,6 +1007,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .fdo-61241-force-area-page-to-size-itself-fo.patch
 %patch25 -p1 -b .fdo-61656-use-order-and-orientation-combobo.patch
 %patch26 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patch
+%patch27 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2073,6 +2075,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.1.2-3
+- Resolves: rhbz#920697 presentation not always full-screen
+
 * Thu Mar 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.1.2-2
 - Related: rhbz#902884 check for NULL GetSelectedMasterPage
 - Resolves: fdo#61241 force area page to size itself

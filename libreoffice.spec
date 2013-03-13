@@ -264,7 +264,7 @@ Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
-Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patc
+Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
@@ -1022,8 +1022,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch42 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
 %patch43 -p1 -b .odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 %patch44 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
-%patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patc
-%patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patc
+%patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patch
+%patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 
 # TODO: check this

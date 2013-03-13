@@ -265,6 +265,7 @@ Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
 Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
 Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patc
+Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1023,6 +1024,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch44 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patc
 %patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patc
+%patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2292,8 +2294,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-7-UNBUILT
+* Tue Mar 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-7
 - Resolves: rhbz#920697 presentation not always full screen
+- Resolves: rhbz#895690 failure saving to gvfs mounts
 
 * Thu Mar 07 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-6
 - Resolves: rhbz#906386 impress conversion from pptx to odp breaks some shapes

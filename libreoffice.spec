@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -250,6 +250,7 @@ Patch20: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch23: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
+Patch24: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1001,6 +1002,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch23 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
+%patch24 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2073,6 +2075,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.2.1-2
+- Resolves: rhbz#906137 slide show inverts outputs
+
 * Fri Mar 15 2013 David Tardon <dtardon@redhat.com> - 1:4.0.2.1-1
 - 4.0.2 rc1
 - Resolves: rhbz#921716 Build Breton language pack

@@ -1,0 +1,64 @@
+From ff252b6e2b7d4f5399dafffcea745486745bdeaf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 15 Mar 2013 10:38:06 +0000
+Subject: [PATCH] Resolves: rhbz#906137 slide show inverts outputs
+
+we go to some effort to determine the right value of ret
+and then throw it away and return 0
+
+regression since 4a7e3482912c90b73d6e12c82bcd9ce31975e3f1
+
+Change-Id: I652cfbe44fdab6560c1c8dc8fe25d6211b5357cb
+(cherry picked from commit 67aae198f80195e77bd62e7675a372312075b126)
+---
+ vcl/unx/gtk/app/gtksys.cxx | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/vcl/unx/gtk/app/gtksys.cxx b/vcl/unx/gtk/app/gtksys.cxx
+index b7996c1..48bc239 100644
+--- a/vcl/unx/gtk/app/gtksys.cxx
++++ b/vcl/unx/gtk/app/gtksys.cxx
+@@ -18,7 +18,6 @@
+  */
+ 
+ #include <string.h>
+-#include <gmodule.h>
+ #include <gtk/gtk.h>
+ #include <unx/gtk/gtkinst.hxx>
+ #include <unx/gtk/gtksys.hxx>
+@@ -179,14 +178,14 @@ namespace {
+ static int _fallback_get_primary_monitor (GdkScreen *pScreen)
+ {
+     // Use monitor name as primacy heuristic
+-    int ret = -1;
+     int max = gdk_screen_get_n_monitors (pScreen);
+-    for (int i = 0; i < max && ret < 0; i++)
++    for (int i = 0; i < max; ++i)
+     {
+         char *name = gdk_screen_get_monitor_plug_name (pScreen, i);
+-        if (name && !g_ascii_strncasecmp (name, "LVDS", 4))
+-            ret = i;
++        bool bLaptop = (name && !g_ascii_strncasecmp (name, "LVDS", 4));
+         g_free (name);
++        if (bLaptop)
++            return i;
+     }
+     return 0;
+ }
+@@ -201,11 +200,8 @@ static int _get_primary_monitor (GdkScreen *pScreen)
+     // Perhaps we have a newer gtk+ with this symbol:
+     if (!get_fn)
+     {
+-        GModule *module = g_module_open (NULL, (GModuleFlags) 0);
+-        if (!g_module_symbol (module, "gdk_screen_get_primary_monitor",
+-                              (gpointer *)&get_fn))
+-            get_fn = NULL;
+-        g_module_close (module);
++        get_fn = (int(*)(GdkScreen*))osl_getAsciiFunctionSymbol(NULL,
++            "gdk_screen_get_primary_monitor");
+     }
+ #if GTK_CHECK_VERSION(2,14,0)
+     if (!get_fn)
+-- 
+1.8.1.2
+

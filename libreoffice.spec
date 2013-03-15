@@ -749,7 +749,7 @@ This package provides gdb pretty printers for package %{name}.
 # autocorr-cs, mythes-cs-CZ and suitable font:
 # %%langpack -l cs -n Czech -H -A -m cs-CZ
 #  b de g  jk   o q  tuvw  z BCD  G IJK  NOPQR  UVW  Z0123456789
-%define langpack(Aa:c:EFf:Hh:iL:l:Mm:n:p:r:S:s:TXx:Yy:) \
+%define langpack(Aa:c:EFf:Hh:i:L:l:Mm:n:p:r:S:s:TXx:Yy:) \
 %define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define _langpack_lang %{-L:%{-L*}}%{!-L:%{lang}} \

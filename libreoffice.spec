@@ -36,7 +36,7 @@
 %if 0%{?rhel} && 0%{?rhel} < 7
 %define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fi fr ga gl gu he hi hr hu it ja ko kn lt mai ml mr ms nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh sk sl sr ss st sv ta te th tn tr ts uk ur ve xh zh-CN zh-TW zu
 %else
-%define langpack_langs en-US af ar as bg bn ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja kk ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
+%define langpack_langs en-US af ar as bg bn br ca cs cy da de dz el es et eu fa fi fr ga gl gu he hi hr hu it ja kk ko kn lt lv mai ml mr nb nl nn nr nso or pa-IN pl pt pt-BR ro ru sh si sk sl sr ss st sv ta te th tn tr ts uk ve xh zh-CN zh-TW zu
 %endif
 %define with_lang --with-lang="%{langpack_langs}"
 %else
@@ -827,6 +827,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l as -n Assamese -F -H -Y
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X
 %langpack -l bn -n Bengali -F -H -Y -T
+%if 0%{?fedora} || 0%{?rhel} >= 7
+%langpack -l br -n Breton -F -H
+%endif
 %langpack -l ca -n Catalan -F -H -Y -M -T
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X
 %langpack -l cy -n Welsh -F -H -Y
@@ -2069,6 +2072,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Mar 15 2013 David Tardon <dtardon@redhat.com> - 1:4.0.2.1-1
 - 4.0.2 rc1
+- Resolves: rhbz#921716 Build Breton language pack
 
 * Wed Mar 13 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.1.2-4
 - Resolves: rhbz#895690 failure saving to gvfs mounts

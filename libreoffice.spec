@@ -266,7 +266,7 @@ Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
 Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
-Patch48: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patc
+Patch48: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1026,7 +1026,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patch
 %patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
-%patch48 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patc
+%patch48 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

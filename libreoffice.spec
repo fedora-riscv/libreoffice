@@ -829,7 +829,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l br -n Breton -F -H
 %endif
-%langpack -l ca -n Catalan -F -H -Y -M -T
+%langpack -l ca -n Catalan -F -H -Y -M -A -T
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X
 %langpack -l cy -n Welsh -F -H -Y
 %langpack -l da -n Danish -F -H -Y -M -A -T -X
@@ -926,6 +926,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %autocorr -l af -n Afrikaans
 %autocorr -l bg -n Bulgarian
+%autocorr -l ca -n Catalan
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
 %autocorr -l de -n German

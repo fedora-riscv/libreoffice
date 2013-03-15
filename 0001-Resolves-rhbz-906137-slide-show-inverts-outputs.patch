@@ -18,15 +18,15 @@ diff --git a/vcl/unx/gtk/app/gtksys.cxx b/vcl/unx/gtk/app/gtksys.cxx
 index b7996c1..48bc239 100644
 --- a/vcl/unx/gtk/app/gtksys.cxx
 +++ b/vcl/unx/gtk/app/gtksys.cxx
-@@ -18,7 +18,6 @@
+@@ -28,7 +28,6 @@
+  * instead of those above.
   */
- 
  #include <string.h>
 -#include <gmodule.h>
  #include <gtk/gtk.h>
  #include <unx/gtk/gtkinst.hxx>
  #include <unx/gtk/gtksys.hxx>
-@@ -179,14 +178,14 @@ namespace {
+@@ -190,14 +189,14 @@
  static int _fallback_get_primary_monitor (GdkScreen *pScreen)
  {
      // Use monitor name as primacy heuristic
@@ -45,7 +45,7 @@ index b7996c1..48bc239 100644
      }
      return 0;
  }
-@@ -201,11 +200,8 @@ static int _get_primary_monitor (GdkScreen *pScreen)
+@@ -212,11 +211,8 @@
      // Perhaps we have a newer gtk+ with this symbol:
      if (!get_fn)
      {
@@ -59,6 +59,3 @@ index b7996c1..48bc239 100644
      }
  #if GTK_CHECK_VERSION(2,14,0)
      if (!get_fn)
--- 
-1.8.1.2
-

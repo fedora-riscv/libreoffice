@@ -926,7 +926,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %autocorr -l af -n Afrikaans
 %autocorr -l bg -n Bulgarian
-%autocorr -l ca -n Catalan
+%autocorr -l ca -n Catalan -L
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
 %autocorr -l de -n German

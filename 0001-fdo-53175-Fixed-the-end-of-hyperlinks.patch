@@ -1,0 +1,90 @@
+From c1c2688912e769dfd7654e11e87dae380a8ce1eb Mon Sep 17 00:00:00 2001
+Message-Id: <c1c2688912e769dfd7654e11e87dae380a8ce1eb.1363995596.git.erack@redhat.com>
+From: =?UTF-8?q?C=C3=A9dric=20Bosdonnat?= <cedric.bosdonnat@free.fr>
+Date: Tue, 21 Aug 2012 07:02:46 +0200
+Subject: [PATCH] fdo#53175: Fixed the end of hyperlinks
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+This fixes the end of hyperlinks appearing after field ends (while the
+start of hyperlink is after field start too).
+
+Change-Id: If21b8973baaca183e0103e3a70ed98b99aa59392
+---
+ sw/source/filter/ww8/docxattributeoutput.cxx | 17 ++++++++++++-----
+ sw/source/filter/ww8/docxattributeoutput.hxx |  1 +
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fdo-53175-Fixed-the-end-of-hyperlinks.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fdo-53175-Fixed-the-end-of-hyperlinks.patch"
+
+diff -up a/sw/source/filter/ww8/docxattributeoutput.cxx.fix b/sw/source/filter/ww8/docxattributeoutput.cxx
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx.fix	2013-03-23 01:10:56.636749166 +0100
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx	2013-03-23 01:12:08.570112503 +0100
+@@ -577,6 +577,7 @@ void DocxAttributeOutput::EndRun()
+ 
+         m_pSerializer->startElementNS( XML_w, XML_hyperlink, xAttrList );
+         m_pHyperlinkAttrList = NULL;
++        m_startedHyperlink = true;
+     }
+ 
+     DoWriteBookmarks( );
+@@ -592,16 +593,21 @@ void DocxAttributeOutput::EndRun()
+ 
+     WritePostponedMath();
+ 
++    if ( m_closeHyperlinkInThisRun )
++    {
++        if ( m_startedHyperlink )
++        {
++            m_pSerializer->endElementNS( XML_w, XML_hyperlink );
++            m_startedHyperlink = false;
++        }
++        m_closeHyperlinkInThisRun = false;
++    }
++
+     while ( m_Fields.begin() != m_Fields.end() )
+     {
+         EndField_Impl( m_Fields.front( ) );
+         m_Fields.erase( m_Fields.begin( ) );
+     }
+-    if ( m_closeHyperlinkInThisRun )
+-    {
+-        m_pSerializer->endElementNS( XML_w, XML_hyperlink );
+-        m_closeHyperlinkInThisRun = false;
+-    }
+ 
+     // if there is some redlining in the document, output it
+     EndRedline();
+@@ -4364,6 +4370,7 @@ DocxAttributeOutput::DocxAttributeOutput
+       m_pParentFrame( NULL ),
+       m_closeHyperlinkInThisRun( false ),
+       m_closeHyperlinkInPreviousRun( false ),
++      m_startedHyperlink( false ),
+       m_postponedGraphic( NULL ),
+       m_postponedMath( NULL ),
+       m_postitFieldsMaxId( 0 )
+diff -up a/sw/source/filter/ww8/docxattributeoutput.hxx.fix b/sw/source/filter/ww8/docxattributeoutput.hxx
+--- a/sw/source/filter/ww8/docxattributeoutput.hxx.fix	2013-03-23 01:10:56.637749171 +0100
++++ b/sw/source/filter/ww8/docxattributeoutput.hxx	2013-03-23 01:12:08.572112512 +0100
+@@ -590,6 +590,7 @@ private:
+     // close of hyperlink needed
+     bool m_closeHyperlinkInThisRun;
+     bool m_closeHyperlinkInPreviousRun;
++    bool m_startedHyperlink;
+ 
+     struct PostponedGraphic
+     {
+
+--------------erAck-patch-parts--
+
+

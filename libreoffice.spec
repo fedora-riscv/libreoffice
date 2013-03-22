@@ -179,8 +179,9 @@ Patch61: 0001-fdo-59366-Document-Conversion-wizard-enable-StarOffi.patch
 Patch62: 0002-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
 Patch63: 0001-Resolves-fdo-48569-crash-on-export-to-.docx-of-inlin.patch
 Patch64: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
-Patch65: 0001-Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
-Patch66: 0001-fixed-a-possible-crasher-in-basic-runtime.patch
+Patch65: 0001-fdo-53175-Fixed-the-end-of-hyperlinks.patch
+Patch66: 0001-Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
+Patch67: 0001-fixed-a-possible-crasher-in-basic-runtime.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1075,8 +1076,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch62 -p1 -b .fdo-58730-workaround-UL-LR-Space-100-proble.patch
 %patch63 -p1 -b .fdo-48569-crash-on-export-to-.docx-of-inlin.patch
 %patch64 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
-%patch65 -p1 -b .Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
-%patch66 -p1 -b .fixed-a-possible-crasher-in-basic-runtime.patch
+%patch65 -p1 -b .fdo-53175-Fixed-the-end-of-hyperlinks.patch
+%patch66 -p1 -b .Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
+%patch67 -p1 -b .fixed-a-possible-crasher-in-basic-runtime.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -267,6 +267,7 @@ Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
 Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 Patch48: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patch
+Patch49: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1027,6 +1028,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 %patch48 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patch
+%patch49 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2296,6 +2298,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Mar 28 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-9
+- Resolves: rhbz#876742 manipulation with larger tables in impress is
+  very slow
+
 * Fri Mar 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-8
 - Resolves: rhbz#906137 slide show inverts outputs
 

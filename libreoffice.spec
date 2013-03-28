@@ -268,6 +268,7 @@ Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 Patch48: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patch
 Patch49: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+Patch50: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1029,6 +1030,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
 %patch48 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patch
 %patch49 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+%patch50 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2301,6 +2303,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu Mar 28 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-9
 - Resolves: rhbz#876742 manipulation with larger tables in impress is
   very slow
+- Resolves: fdo#62617 displaying of object groups having subobjects on
+  different layers is broken
 
 * Fri Mar 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.5.2-8
 - Resolves: rhbz#906137 slide show inverts outputs

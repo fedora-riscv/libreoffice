@@ -249,6 +249,7 @@ Patch19: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 Patch20: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
+Patch23: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1001,6 +1002,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 %patch21 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
+%patch23 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2075,6 +2077,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Mar 28 2013 David Tardon <dtardon@redhat.com> - 1:4.0.2.2-1
 - 4.0.2 rc2
+- Resolves: rhbz#876742 manipulation with larger tables in impress is
+  very slow
 
 * Fri Mar 15 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.2.1-2
 - Resolves: rhbz#906137 slide show inverts outputs

@@ -1332,8 +1332,6 @@ for app in base calc draw impress math writer; do
 done
 # rhbz#156677# / rhbz#186515#
 echo "NoDisplay=true" >> startcenter.desktop
-# rhbz#491159 temporarily remove NoDisplay=true from qstart.desktop
-sed -i -e "/NoDisplay=true/d" qstart.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
 for app in base calc draw impress javafilter math startcenter writer xsltfilter; do

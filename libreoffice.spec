@@ -1312,6 +1312,9 @@ ln -s %{baseinstdir}/program/soffice soffice
 ln -s libreoffice openoffice.org
 popd
 
+# TO-DO, remember to remove the "echo" lines
+# and removal of printeradmin.desktop 
+# for LibreOffice 4.1 where this is upstreamed
 pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/xdg/
 chmod u+w *.desktop
 rm -rf printeradmin.desktop

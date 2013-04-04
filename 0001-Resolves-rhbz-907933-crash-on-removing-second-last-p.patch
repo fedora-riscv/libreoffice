@@ -1,0 +1,66 @@
+From 15d8b51bf82610c663f80fe552a1c0315e137ad3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 5 Feb 2013 17:33:49 +0000
+Subject: [PATCH] Resolves: rhbz#907933 crash on removing second last para in
+ cell...
+
+if (basically) the last para is on next page
+
+Change-Id: Iaff610ea94a829e73bfb8c694a27e0e9b4f6e295
+Reviewed-on: https://gerrit.libreoffice.org/2012
+Tested-by: Michael Stahl <mstahl@redhat.com>
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+---
+ sw/source/core/inc/tabfrm.hxx    |  2 ++
+ sw/source/core/layout/tabfrm.cxx | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/sw/source/core/inc/tabfrm.hxx b/sw/source/core/inc/tabfrm.hxx
+index 464fc9c..1041385 100644
+--- a/sw/source/core/inc/tabfrm.hxx
++++ b/sw/source/core/inc/tabfrm.hxx
+@@ -151,6 +151,8 @@ public:
+     //
+     sal_Bool HasFollowFlowLine() const { return bHasFollowFlowLine; }
+     void SetFollowFlowLine( sal_Bool bNew ) { bHasFollowFlowLine = bNew; }
++    //return the SwTabFrm (if any) that this SwTabFrm is a follow flow line for
++    SwTabFrm* GetFollowFlowLineFor();
+ 
+     sal_Bool IsRebuildLastLine() const { return bIsRebuildLastLine; }
+     void SetRebuildLastLine( sal_Bool bNew ) { bIsRebuildLastLine = bNew; }
+diff --git a/sw/source/core/layout/tabfrm.cxx b/sw/source/core/layout/tabfrm.cxx
+index 27ad754..fb23128 100644
+--- a/sw/source/core/layout/tabfrm.cxx
++++ b/sw/source/core/layout/tabfrm.cxx
+@@ -132,8 +132,28 @@ extern const SwTable   *pRowCacheLastTable;
+ extern const SwTabFrm  *pRowCacheLastTabFrm;
+ extern const SwFrm     *pRowCacheLastCellFrm;
+ 
++//return the SwTabFrm (if any) that this SwTabFrm is a follow flow line for
++SwTabFrm* SwTabFrm::GetFollowFlowLineFor()
++{
++    SwFlowFrm *pPrec = GetPrecede();
++    if (pPrec && pPrec->GetFrm()->IsTabFrm())
++    {
++        SwTabFrm *pPrevTabFrm = (SwTabFrm*)pPrec;
++        assert(this == pPrevTabFrm->GetFollow());
++        if (pPrevTabFrm->HasFollowFlowLine() && pPrevTabFrm->GetFollow() == this)
++            return pPrevTabFrm;
++    }
++    return NULL;
++}
++
+ SwTabFrm::~SwTabFrm()
+ {
++    //rhbz#907933, we are a follow flow line for something and have been
++    //deleted, remove ourself as a follow flowline
++    SwTabFrm* pFlowFrameFor = GetFollowFlowLineFor();
++    if (pFlowFrameFor)
++        pFlowFrameFor->RemoveFollowFlowLine();
++
+     // There is some terrible code in fetab.cxx, that
+     // makes use of these global pointers. Obviously
+     // this code did not consider that a TabFrm can be
+-- 
+1.8.1.2
+

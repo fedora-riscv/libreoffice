@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.5
+%define libo_version 3.6.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -241,34 +241,21 @@ Patch21: 0004-remove-all-traces-of-saxon.patch
 Patch22: 0001-do-not-strip-install-set.patch
 Patch23: 0001-Resolves-fdo-56198-collect-scrollbar-click-preferenc.patch
 Patch24: 0001-fiddle-system-db-test-to-link-on-RHEL-6.patch
-Patch25: 0001-startup-more-reliable-startup-of-multiple-instances.patch
-Patch26: 0002-Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
-Patch27: 0001-Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
-Patch28: 0001-rhbz-760765-copy-custom-styles-on-copy-paste.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-Patch29: libreoffice-rhel6gcj.patch
-Patch30: libreoffice-rhel6poppler.patch
-Patch31: libreoffice-rhel6langs.patch
-Patch32: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
+Patch25: libreoffice-rhel6gcj.patch
+Patch26: libreoffice-rhel6poppler.patch
+Patch27: libreoffice-rhel6langs.patch
+Patch28: 0001-rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
-Patch33: 0001-these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
-Patch34: 0001-fdo-59426-Don-t-try-to-repair-package-during-flat-de.patch
-Patch35: 0001-valgrind-use-after-free.patch
-Patch36: 0001-make-evolution-3.6-work-with-address-book.patch
-Patch37: 0001-rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
-Patch38: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
-Patch39: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
-Patch40: 0001-do-not-access-vector-elements-beyond-size-rhbz-84751.patch
-Patch41: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
-Patch42: 0001-fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
-Patch43: 0001-odf-export-arcangleto-commands-in-enhanced-path-use-.patch
-Patch44: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
-Patch45: 0001-Resolves-fdo-56031-RSID-attr-changes-drop-content-ch.patch
-Patch46: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
-Patch47: 0001-rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
-Patch48: 0001-Resolves-rhbz-906137-slide-show-inverts-outputs.patch
-Patch49: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-Patch50: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
+Patch29: 0001-fdo-59426-Don-t-try-to-repair-package-during-flat-de.patch
+Patch30: 0001-make-evolution-3.6-work-with-address-book.patch
+Patch31: 0001-Resolves-rhbz-910176-cannot-select-directory-with-gn.patch
+Patch32: 0001-Resolves-rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+Patch33: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
+Patch34: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
+Patch35: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
+Patch36: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+Patch37: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1003,34 +990,21 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .do-not-strip-install-set.patch
 %patch23 -p1 -b .fdo-56198-collect-scrollbar-click-preferenc.patch
 %patch24 -p1 -b .fiddle-system-db-test-to-link-on-RHEL-6.patch
-%patch25 -p1 -b .startup-more-reliable-startup-of-multiple-instances.patch
-%patch26 -p1 -b .Related-fdo-33484-Terminate-OfficeIPCThread-by-closi.patch
-%patch27 -p1 -b .Resolves-fdo-58730-workaround-UL-LR-Space-100-proble.patch
-%patch28 -p1 -b .rhbz-760765-copy-custom-styles-on-copy-paste.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-%patch29 -p1 -b .rhel6gcj.patch
-%patch30 -p1 -b .rhel6poppler.patch
-%patch31 -p1 -b .rhel6langs.patch
-%patch32 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
+%patch25 -p1 -b .rhel6gcj.patch
+%patch26 -p1 -b .rhel6poppler.patch
+%patch27 -p1 -b .rhel6langs.patch
+%patch28 -p1 -b .rhbz-891082-CMXDocument-isSupported-catch-exceptions.patch
 %endif
-%patch33 -p1 -b .these-ENABLE_FOOs-are-set-to-TRUE-not-YES.patch
-%patch34 -p1 -b .fdo59426-Don-t-try-to-repair-package-during-flat-de.patch
-%patch35 -p1 -b .valgrind-use-after-free.patch
-%patch36 -p1 -b .make-evolution-3.6-work-with-address-book.patch
-%patch37 -p1 -b .rhbz-908674-Adapt-rtl-Allocator-construct-to-C-11.patch
-%patch38 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
-%patch39 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
-%patch40 -p1 -b .do-not-access-vector-elements-beyond-size-rhbz-84751.patch
-%patch41 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
-%patch42 -p1 -b .fdo-60491-scp2-always-package-emboleobj-library-on-n.patch
-%patch43 -p1 -b .odf-export-arcangleto-commands-in-enhanced-path-use-.patch
-%patch44 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
-%patch45 -p1 -b .fdo-56031-RSID-attr-changes-drop-content-ch.patch
-%patch46 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
-%patch47 -p1 -b .rhbz-895690-Make-GIO-UCP-less-brittle-so-saving-docs.patch
-%patch48 -p1 -b .rhbz-906137-slide-show-inverts-outputs.patch
-%patch49 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-%patch50 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
+%patch29 -p1 -b .fdo59426-Don-t-try-to-repair-package-during-flat-de.patch
+%patch30 -p1 -b .make-evolution-3.6-work-with-address-book.patch
+%patch31 -p1 -b .rhbz-910176-cannot-select-directory-with-gn.patch
+%patch32 -p1 -b .rhbz-895196-sc-filter-float-a11y-parent-of-.patch
+%patch33 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
+%patch34 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
+%patch35 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
+%patch36 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+%patch37 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2300,6 +2274,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 04 2013 David Tardon <dtardon@redhat.com> - 1:3.6.6.2-1
+- 3.6.6 rc2
+
 * Thu Mar 28 2013 David Tardon <dtardon@redhat.com> - 1:3.6.5.2-9
 - Resolves: rhbz#876742 manipulation with larger tables in impress is
   very slow

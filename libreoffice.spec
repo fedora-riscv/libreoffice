@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -270,6 +270,8 @@ Summary: Core modules for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+# rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
+Requires: java >= 1:1.6
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
@@ -2076,6 +2078,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 05 2013 Kalev Lember <kalevlember@gmail.com> - 1:4.0.2.2-2
+- Resolves: rhbz#949106 libreoffice drags in both openjdk 1.7.0 and 1.8.0
+
 * Thu Mar 28 2013 David Tardon <dtardon@redhat.com> - 1:4.0.2.2-1
 - 4.0.2 rc2
 - Resolves: rhbz#876742 manipulation with larger tables in impress is

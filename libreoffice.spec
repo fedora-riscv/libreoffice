@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -250,6 +250,7 @@ Patch20: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch23: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+Patch24: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1005,6 +1006,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch23 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
+%patch24 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2078,6 +2080,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Apr 08 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.2.2-3
+- Resolves: rhbz#949238 div by zero on pagedown in 0 width panel
+
 * Fri Apr 05 2013 Kalev Lember <kalevlember@gmail.com> - 1:4.0.2.2-2
 - Resolves: rhbz#949106 libreoffice drags in both openjdk 1.7.0 and 1.8.0
 

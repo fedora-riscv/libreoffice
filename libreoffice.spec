@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -257,6 +257,7 @@ Patch35: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch36: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 Patch37: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
 Patch38: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
+Patch39: 0001-valgrind-uninitialized-value.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1007,6 +1008,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch36 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 %patch37 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
 %patch38 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
+%patch39 -p1 -b .valgrind-uninitialized-value.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2276,6 +2278,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-3
+- Related: rhbz#924515 uninitialized variable in editengine
+
 * Mon Apr 08 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-2
 - Resolves: rhbz#949238 div by zero on pagedown in 0 width task pane
 

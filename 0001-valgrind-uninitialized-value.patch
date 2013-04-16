@@ -1,0 +1,25 @@
+From 7093b2418d036b47ed706464956f330cfb89707a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 6 Jun 2012 16:23:36 +0100
+Subject: [PATCH] valgrind: uninitialized value
+
+Change-Id: I405733a77a721f3d5562782e654a1942fe3b073e
+---
+ editeng/source/editeng/impedit2.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/editeng/source/editeng/impedit2.cxx b/editeng/source/editeng/impedit2.cxx
+index 246ad29..be1e766 100644
+--- a/editeng/source/editeng/impedit2.cxx
++++ b/editeng/source/editeng/impedit2.cxx
+@@ -99,6 +99,7 @@ ImpEditEngine::ImpEditEngine( EditEngine* pEE, SfxItemPool* pItemPool ) :
+     bAddExtLeading(false),
+     bIsFormatting(false),
+     bFormatted(false),
++    bInSelection(false),
+     bIsInUndo(false),
+     bUpdate(true),
+     bUndoEnabled(true),
+-- 
+1.8.1.2
+

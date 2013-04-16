@@ -258,6 +258,7 @@ Patch36: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 Patch37: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
 Patch38: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 Patch39: 0001-valgrind-uninitialized-value.patch
+Patch40: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1009,6 +1010,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch37 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
 %patch38 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 %patch39 -p1 -b .valgrind-uninitialized-value.patch
+%patch40 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2280,6 +2282,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-3
 - Related: rhbz#924515 uninitialized variable in editengine
+- Resolves: rhbz#927223 syntax highlighting crash
 
 * Mon Apr 08 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-2
 - Resolves: rhbz#949238 div by zero on pagedown in 0 width task pane

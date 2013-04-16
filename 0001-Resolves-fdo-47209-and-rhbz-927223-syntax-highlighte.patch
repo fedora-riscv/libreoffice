@@ -1,0 +1,31 @@
+From 02917cb57e2c2e9fcab2db8f72960023f3e4edaf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 16 Apr 2013 13:40:04 +0100
+Subject: [PATCH] Resolves: fdo#47209 and rhbz#927223 syntax highlighter crash
+
+when trying to parse empty lines looking for the matching
+bracket
+
+Change-Id: I3961a3d0e804d136de286e21934c6ba5ab0496cf
+---
+ svtools/source/edit/editsyntaxhighlighter.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/svtools/source/edit/editsyntaxhighlighter.cxx b/svtools/source/edit/editsyntaxhighlighter.cxx
+index 62a7a25..3f1cd8d 100644
+--- a/svtools/source/edit/editsyntaxhighlighter.cxx
++++ b/svtools/source/edit/editsyntaxhighlighter.cxx
+@@ -89,6 +89,10 @@ void MultiLineEditSyntaxHighlight::DoBracketHilight(sal_uInt16 aKey)
+                 continue;
+ 
+             String aLine( GetTextEngine()->GetText( aPara ) );
++
++            if (aLine.Len() == 0)
++                continue;
++
+             for (sal_uInt16 i = ((unsigned long)aPara==nStartPara) ? aStartPos-1 : (sal_uInt16)(aLine.Len()-1); i>0; --i)
+             {
+                 if (aLine.GetChar(i)==aChar)
+-- 
+1.8.1.2
+

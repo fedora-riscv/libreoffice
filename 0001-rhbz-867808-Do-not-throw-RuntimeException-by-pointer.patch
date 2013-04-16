@@ -1,0 +1,221 @@
+From f2d801284657b496d0a9498a4db825dbceaafa8c Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 16 Apr 2013 13:52:02 +0200
+Subject: [PATCH] rhbz#867808 Do not throw RuntimeException by pointer
+
+(cherry picked from commit e46564a0a6a74da90785a1b910d33e2b5bfdcfd9, plus
+63b4633cf7b0da9eba63e752cec72cb10ed9d93e "Related: rhbz#867808 if one person
+threw by pointer..." and 336353a87e6003e685aab87ea74a158546e1f297 "Related
+rhbz#867808: More apparently bogus 'throw new ...' in C++ code")
+Conflicts:
+	bridges/test/java_uno/nativethreadpool/testnativethreadpoolclient.cxx
+	bridges/test/java_uno/nativethreadpool/testnativethreadpoolserver.cxx
+	sdext/source/presenter/PresenterController.cxx
+	stoc/source/registry_tdprovider/functiondescription.cxx
+	stoc/source/registry_tdprovider/methoddescription.cxx
+	toolkit/source/awt/vclxwindow1.cxx
+
+Change-Id: I22b7d3d642e7ee0488d6b726a331d328065bbee7
+---
+ .../nativethreadpool/testnativethreadpoolclient.cxx        |  4 ++--
+ .../nativethreadpool/testnativethreadpoolserver.cxx        |  2 +-
+ .../source/transliteration/transliteration_Numeric.cxx     |  6 +++---
+ sdext/source/presenter/PresenterController.cxx             |  2 +-
+ stoc/source/registry_tdprovider/functiondescription.cxx    |  4 ++--
+ stoc/source/registry_tdprovider/methoddescription.cxx      |  2 +-
+ testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx     |  6 +++---
+ toolkit/source/awt/stylesettings.cxx                       |  2 +-
+ toolkit/source/awt/vclxwindow1.cxx                         | 14 ++++++--------
+ 9 files changed, 20 insertions(+), 22 deletions(-)
+
+diff --git a/bridges/test/java_uno/nativethreadpool/testnativethreadpoolclient.cxx b/bridges/test/java_uno/nativethreadpool/testnativethreadpoolclient.cxx
+index df0991c..b7a5ff3 100644
+--- a/bridges/test/java_uno/nativethreadpool/testnativethreadpoolclient.cxx
++++ b/bridges/test/java_uno/nativethreadpool/testnativethreadpoolclient.cxx
+@@ -74,7 +74,7 @@ sal_Int32 Client::run(css::uno::Sequence< rtl::OUString > const &)
+     css::uno::Reference< css::lang::XMultiComponentFactory > factory(
+         context->getServiceManager());
+     if (!factory.is()) {
+-        throw new css::uno::RuntimeException(
++        throw css::uno::RuntimeException(
+             rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "no component context service manager" )),
+             static_cast< cppu::OWeakObject * >(this));
+     }
+@@ -94,7 +94,7 @@ sal_Int32 Client::run(css::uno::Sequence< rtl::OUString > const &)
+     }
+     relay->start(this);
+     if (!data.setData(reinterpret_cast< void * >(12345))) {
+-        throw new css::uno::RuntimeException(
++        throw css::uno::RuntimeException(
+             rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "osl::ThreadData::setData failed" )),
+             static_cast< cppu::OWeakObject * >(this));
+     }
+diff --git a/bridges/test/java_uno/nativethreadpool/testnativethreadpoolserver.cxx b/bridges/test/java_uno/nativethreadpool/testnativethreadpoolserver.cxx
+index 607a054..3952ce9 100644
+--- a/bridges/test/java_uno/nativethreadpool/testnativethreadpoolserver.cxx
++++ b/bridges/test/java_uno/nativethreadpool/testnativethreadpoolserver.cxx
+@@ -63,7 +63,7 @@ sal_Int32 Server::get() throw (css::uno::RuntimeException) {
+     css::uno::Reference< css::lang::XMultiComponentFactory > factory(
+         context->getServiceManager());
+     if (!factory.is()) {
+-        throw new css::uno::RuntimeException(
++        throw css::uno::RuntimeException(
+             rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "no component context service manager" )),
+             static_cast< cppu::OWeakObject * >(this));
+     }
+diff --git a/i18npool/source/transliteration/transliteration_Numeric.cxx b/i18npool/source/transliteration/transliteration_Numeric.cxx
+index eec4236..de24368 100644
+--- a/i18npool/source/transliteration/transliteration_Numeric.cxx
++++ b/i18npool/source/transliteration/transliteration_Numeric.cxx
+@@ -38,21 +38,21 @@ OUString SAL_CALL
+ transliteration_Numeric::folding( const OUString& /*inStr*/, sal_Int32 /*startPos*/, sal_Int32 /*nCount*/, Sequence< sal_Int32 >& /*offset*/ )
+         throw(RuntimeException)
+ {
+-        throw (new RuntimeException());
++        throw RuntimeException();
+ }
+ 
+ sal_Bool SAL_CALL
+ transliteration_Numeric::equals( const OUString& /*str1*/, sal_Int32 /*pos1*/, sal_Int32 /*nCount1*/, sal_Int32& /*nMatch1*/, const OUString& /*str2*/, sal_Int32 /*pos2*/, sal_Int32 /*nCount2*/, sal_Int32& /*nMatch2*/ )
+         throw(RuntimeException)
+ {
+-        throw (new RuntimeException());
++        throw RuntimeException();
+ }
+ 
+ Sequence< OUString > SAL_CALL
+ transliteration_Numeric::transliterateRange( const OUString& /*str1*/, const OUString& /*str2*/ )
+         throw(RuntimeException)
+ {
+-        throw (new RuntimeException());
++        throw RuntimeException();
+ }
+ 
+ 
+diff --git a/sdext/source/presenter/PresenterController.cxx b/sdext/source/presenter/PresenterController.cxx
+index 14820da..44b5bea 100644
+--- a/sdext/source/presenter/PresenterController.cxx
++++ b/sdext/source/presenter/PresenterController.cxx
+@@ -119,7 +119,7 @@ PresenterController::PresenterController (
+     OSL_ASSERT(mxController.is());
+ 
+     if ( ! mxSlideShowController.is())
+-        throw new lang::IllegalArgumentException(
++        throw lang::IllegalArgumentException(
+             A2S("missing slide show controller"),
+             static_cast<XWeak*>(this),
+             2);
+diff --git a/stoc/source/registry_tdprovider/functiondescription.cxx b/stoc/source/registry_tdprovider/functiondescription.cxx
+index 8840451..3cb9635 100644
+--- a/stoc/source/registry_tdprovider/functiondescription.cxx
++++ b/stoc/source/registry_tdprovider/functiondescription.cxx
+@@ -71,7 +71,7 @@ FunctionDescription::getExceptions() const {
+         try {
+             any = m_manager->getByHierarchicalName(name);
+         } catch (const css::container::NoSuchElementException & e) {
+-            throw new css::uno::RuntimeException(
++            throw css::uno::RuntimeException(
+                 (rtl::OUString(
+                     RTL_CONSTASCII_USTRINGPARAM(
+                         "com.sun.star.container.NoSuchElementException: "))
+@@ -81,7 +81,7 @@ FunctionDescription::getExceptions() const {
+         if (!(any >>= exceptions[i])
+             || exceptions[i]->getTypeClass() != css::uno::TypeClass_EXCEPTION)
+         {
+-            throw new css::uno::RuntimeException(
++            throw css::uno::RuntimeException(
+                 (rtl::OUString(
+                     RTL_CONSTASCII_USTRINGPARAM("not an exception type: "))
+                  + name),
+diff --git a/stoc/source/registry_tdprovider/methoddescription.cxx b/stoc/source/registry_tdprovider/methoddescription.cxx
+index fd2d6c3..f018d1f 100644
+--- a/stoc/source/registry_tdprovider/methoddescription.cxx
++++ b/stoc/source/registry_tdprovider/methoddescription.cxx
+@@ -90,7 +90,7 @@ css::uno::Reference< css::reflection::XTypeDescription > Parameter::getType()
+             m_manager->getByHierarchicalName(m_typeName),
+             css::uno::UNO_QUERY_THROW);
+     } catch (const css::container::NoSuchElementException & e) {
+-        throw new css::uno::RuntimeException(
++        throw css::uno::RuntimeException(
+             (rtl::OUString(
+                 RTL_CONSTASCII_USTRINGPARAM(
+                     "com.sun.star.container.NoSuchElementException: "))
+diff --git a/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx b/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
+index c2e7bda..7d08eab 100644
+--- a/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
++++ b/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
+@@ -799,7 +799,7 @@ static bool raiseException(XBridgeTest* xLBT )
+        bRet = performQueryForUnknownType( xLBT ) && bRet;
+         if (! bRet)
+         {
+-            throw new unoidl::com::sun::star::uno::RuntimeException(
++            throw unoidl::com::sun::star::uno::RuntimeException(
+                 new String("error: test failed!"), 0);
+         }
+     }
+@@ -819,7 +819,7 @@ static bool raiseException(XBridgeTest* xLBT )
+         {
+             if (args->Length < 1)
+             {
+-                throw new RuntimeException(
++                throw RuntimeException(
+                     "missing argument for bridgetest!", this );
+             }
+             Object* test_obj =
+@@ -846,7 +846,7 @@ static bool raiseException(XBridgeTest* xLBT )
+             s->Append(exc->GetType()->Name);
+             s->Append(S"\n Message: ");
+             s->Append(exc->Message);
+-            throw new unoidl::com::sun::star::uno::RuntimeException(
++            throw unoidl::com::sun::star::uno::RuntimeException(
+                 s->ToString(), 0);
+         }
+     }
+diff --git a/toolkit/source/awt/stylesettings.cxx b/toolkit/source/awt/stylesettings.cxx
+index 97d5e29..fc0fbaa 100644
+--- a/toolkit/source/awt/stylesettings.cxx
++++ b/toolkit/source/awt/stylesettings.cxx
+@@ -116,7 +116,7 @@ namespace toolkit
+     {
+         Window* pWindow = i_rOwningWindow.GetWindow();
+         if ( !pWindow )
+-            throw new RuntimeException();
++            throw RuntimeException();
+         pWindow->AddEventListener( LINK( m_pData.get(), WindowStyleSettings_Data, OnWindowEvent ) );
+     }
+ 
+diff --git a/toolkit/source/awt/vclxwindow1.cxx b/toolkit/source/awt/vclxwindow1.cxx
+index f38a95c..77af1b2 100644
+--- a/toolkit/source/awt/vclxwindow1.cxx
++++ b/toolkit/source/awt/vclxwindow1.cxx
+@@ -46,10 +46,9 @@ void VCLXWindow::SetSystemParent_Impl( const com::sun::star::uno::Any& rHandle )
+     Window *pWindow = GetWindow();
+     if ( pWindow->GetType() != WINDOW_WORKWINDOW )
+     {
+-        ::com::sun::star::uno::Exception *pException =
+-            new ::com::sun::star::uno::RuntimeException;
+-        pException->Message = ::rtl::OUString("not a work window");
+-        throw pException;
++        com::sun::star::uno::Exception aException;
++        aException.Message = ::rtl::OUString("not a work window");
++        throw aException;
+     }
+ 
+     // use sal_Int64 here to accomodate all int types
+@@ -77,10 +76,9 @@ void VCLXWindow::SetSystemParent_Impl( const com::sun::star::uno::Any& rHandle )
+     }
+     if( bThrow )
+     {
+-        ::com::sun::star::uno::Exception *pException =
+-            new ::com::sun::star::uno::RuntimeException;
+-        pException->Message = ::rtl::OUString("incorrect window handle type");
+-        throw pException;
++        com::sun::star::uno::Exception aException;
++        aException.Message = ::rtl::OUString("incorrect window handle type");
++        throw aException;
+     }
+     // create system parent data
+     SystemParentData aSysParentData;
+-- 
+1.8.1.4
+

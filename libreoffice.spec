@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -252,6 +252,7 @@ Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch23: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 Patch24: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 Patch25: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
+Patch26: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1009,6 +1010,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
 %patch24 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 %patch25 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
+%patch26 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2082,6 +2084,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 16 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.2.2-5-UNBUILT
+- Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++
+
 * Tue Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.2.2-4
 - Resolves: rhbz#927223 syntax highlighting crash
 

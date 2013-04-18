@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.0.2
+%define libo_version 4.0.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -249,10 +249,8 @@ Patch19: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
 Patch20: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
-Patch23: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-Patch24: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
-Patch25: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-Patch26: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
+Patch23: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
+Patch24: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1007,10 +1005,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
 %patch21 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
-%patch23 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-%patch24 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
-%patch25 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-%patch26 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
+%patch23 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
+%patch24 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2084,7 +2080,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Apr 16 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.2.2-5-UNBUILT
+* Thu Apr 18 2013 David Tardon <dtardon@redhat.com> - 1:4.0.3.1-1
+- 4.0.3 rc1
 - Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++
 
 * Tue Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.0.2.2-4

@@ -1,0 +1,58 @@
+From ddd2de79573ab9eee065c21a5657c8a065a05d57 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 22 Apr 2013 16:21:57 +0200
+Subject: [PATCH] rhbz#954991 Avoid static data (causing trouble at exit)
+
+(cherry picked from commit aa1aedb2a0ef97cb6110f18a1de86abc8dbcd304)
+Conflicts:
+	vcl/inc/unx/salinst.h
+	vcl/unx/generic/dtrans/X11_service.cxx
+
+Change-Id: Ifc8275276811ba24b62f93096e7cb98a5dbf658c
+---
+ vcl/inc/unx/salinst.h                  | 10 ++++++++++
+ vcl/unx/generic/dtrans/X11_service.cxx |  2 --
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/inc/unx/salinst.h b/vcl/inc/unx/salinst.h
+index 83ba4b8..ea997d6 100644
+--- a/vcl/inc/unx/salinst.h
++++ b/vcl/inc/unx/salinst.h
+@@ -27,11 +27,21 @@
+ #include <vcl/solarmutex.hxx>
+ #include "generic/geninst.h"
+ 
++#include <tools/prex.h>
++#include <X11/Xlib.h>
++#include <tools/postx.h>
++
++namespace com { namespace sun { namespace star { namespace datatransfer {
++    namespace clipboard { class XClipboard; }
++} } } }
+ 
+ // -=-= SalInstanceData =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ class SalXLib;
+ class VCLPLUG_GEN_PUBLIC X11SalInstance : public SalGenericInstance
+ {
++private:
++    boost::unordered_map< OUString, boost::unordered_map< Atom, com::sun::star::uno::Reference< com::sun::star::datatransfer::clipboard::XClipboard > >, OUStringHash > m_aInstances;
++
+ protected:
+     SalXLib *mpXLib;
+ public:
+diff --git a/vcl/unx/generic/dtrans/X11_service.cxx b/vcl/unx/generic/dtrans/X11_service.cxx
+index dc2ff17..5d4ac5e 100644
+--- a/vcl/unx/generic/dtrans/X11_service.cxx
++++ b/vcl/unx/generic/dtrans/X11_service.cxx
+@@ -62,8 +62,6 @@ Sequence< OUString > SAL_CALL x11::Xdnd_dropTarget_getSupportedServiceNames()
+ 
+ css::uno::Reference< XInterface > X11SalInstance::CreateClipboard( const Sequence< Any >& arguments )
+ {
+-    static boost::unordered_map< OUString, ::boost::unordered_map< Atom, Reference< XClipboard > >, ::rtl::OUStringHash > m_aInstances;
+-
+     OUString aDisplayName;
+     Atom nSelection;
+ 
+-- 
+1.8.1.4
+

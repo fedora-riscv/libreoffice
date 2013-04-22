@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -251,6 +251,7 @@ Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch23: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 Patch24: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
+Patch25: 0001-rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1007,6 +1008,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch23 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 %patch24 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
+%patch25 -p1 -b .rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2080,6 +2082,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Apr 22 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.3.1-2
+- Resolves: rhbz#954991 Avoid static data (causing trouble at exit)
+
 * Thu Apr 18 2013 David Tardon <dtardon@redhat.com> - 1:4.0.3.1-1
 - 4.0.3 rc1
 - Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++

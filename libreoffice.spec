@@ -261,6 +261,7 @@ Patch39: 0001-valgrind-uninitialized-value.patch
 Patch40: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 Patch41: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 Patch42: 0001-rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
+Patch43: 0001-resolved-rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1015,6 +1016,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch40 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
 %patch41 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
 %patch42 -p1 -b .rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
+%patch43 -p1 -b .rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2284,9 +2286,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Apr 22 2013 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.6.2-4-UNBUILT
+* Tue Apr 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.6.2-4
 - Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++
 - Resolves: rhbz#954991 Avoid static data (causing trouble at exit)
+- Resolves: rhbz#919020 Basic CDbl() and CSng() scan localized number
 
 * Tue Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-3
 - Related: rhbz#924515 uninitialized variable in editengine

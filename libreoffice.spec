@@ -2288,11 +2288,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Apr 23 2013 Eike Rathke <erack@redhat.com> - 1:3.6.6.2-4
-- Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++
-- Resolves: rhbz#954991 Avoid static data (causing trouble at exit)
+* Tue Apr 23 2013 Eike Rathke <erack@redhat.com> - 1:3.6.6.2-5
 - Resolves: rhbz#919020 Basic CDbl() and CSng() scan localized number
 - Resolves: rhbz#918544 do not attempt to access non-existing format
+
+* Mon Apr 22 2013 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.6.2-4
+- Resolves: rhbz#867808 do not throw UNO exceptions by pointer in C++
+- Resolves: rhbz#954991 Avoid static data (causing trouble at exit)
 
 * Tue Apr 16 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-3
 - Related: rhbz#924515 uninitialized variable in editengine

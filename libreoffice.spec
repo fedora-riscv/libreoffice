@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -2082,6 +2082,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 30 2013 David Tardon <dtardon@redhat.com> - 1:4.0.3.2-1
+- 4.0.3 rc2
+
 * Mon Apr 22 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.3.1-2
 - Resolves: rhbz#954991 Avoid static data (causing trouble at exit)
 

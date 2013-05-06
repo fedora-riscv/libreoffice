@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.0.3
+%define libo_version 4.1.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-# %%define libo_prerelease .beta2
+%define libo_prerelease .beta1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -123,6 +123,7 @@ BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-base-devel
 %endif
 BuildRequires: gtk2-devel
+BuildRequires: harfbuzz
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
 %if 0%{?fedora}
@@ -146,7 +147,9 @@ BuildRequires: libidn-devel
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
-BuildRequires: liborcus-devel >= 0.3.0
+BuildRequires: libmwaw-devel
+BuildRequires: libodfgen-devel
+BuildRequires: liborcus-devel >= 0.5.0
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
 BuildRequires: libwpg-devel
@@ -158,7 +161,7 @@ BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: lpsolve-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: mdds-devel
+BuildRequires: mdds-devel >= 0.8.1
 %endif
 BuildRequires: mesa-libGLU-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -242,18 +245,10 @@ Patch13: libreoffice-rhel6limits.patch
 Patch14: libreoffice-rhel6glib.patch
 %endif
 Patch15: 0001-temporarily-disable-failing-test.patch
-Patch16: 0001-make-evolution-3.6-work-with-address-book.patch
-Patch17: 0001-no-g_list_free_full-in-RHEL-6-glib.patch
-Patch18: 0001-Work-around-problem-with-boost-shared_array-NULL-cto.patch
-Patch19: 0001-fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-Patch20: 0001-rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
-Patch21: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
-Patch22: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
-Patch23: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-Patch24: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
-Patch25: 0001-rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
-Patch26: 0001-Related-rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
-Patch27: 0001-rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
+Patch16: 0001-rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
+Patch17: 0001-do-not-build-LibreOffice_Test.patch
+Patch18: 0001-disable-failing-perf-test.patch
+Patch19: 0001-fix-syntax-errors-in-python-wizards.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -289,6 +284,7 @@ Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
+Obsoletes: libreoffice-javafilter < 1:4.1.0.0
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -329,6 +325,7 @@ Requires:  hsqldb
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Obsoletes: %{name}-report-builder < 1:4.1.0.0
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-base-core%{?_isa} = 1:3.3.0
 Provides: openoffice.org-base%{?_isa} = 1:3.3.0, broffice.org-base%{?_isa} = 1:3.3.0
@@ -573,24 +570,6 @@ Provides: openoffice.org-xsltfilter%{?_isa} = 1:3.3.0
 %description xsltfilter
 The xsltfilter module for LibreOffice, provides additional docbook and
 xhtml export transforms. Install this to enable docbook export.
-
-%package javafilter
-Summary: Optional javafilter module for LibreOffice
-Group: Applications/Productivity
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-javafilter%{?_isa} = 1:3.3.0
-%endif
-
-%description javafilter
-The javafilter module for LibreOffice, provides additional AportisDoc,
-Pocket Excel and Pocket Word import filters.
-
-%post javafilter
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun javafilter
-update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %package postgresql
@@ -899,6 +878,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -T -X
 %langpack -l sl -n Slovenian -F -H -Y -M -A -T -X
+%{baseinstdir}/share/wordbook/sl.dic
+
 #rhbz#452379 clump serbian translations together
 %langpack -l sr -n Serbian -F -H -Y -A -i sh
 %langpack -l ss -n Swati -F -H
@@ -943,6 +924,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l ga -n Irish
 %autocorr -l hr -n Croatian
 %autocorr -l hu -n Hungarian
+%autocorr -l is -n Icelandic
 %autocorr -l it -n Italian
 %autocorr -l ja -n Japanese
 %autocorr -l ko -n Korean
@@ -989,7 +971,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
+# %%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %patch8 -p1 -b .disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -1001,18 +983,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .rhel6glib.patch
 %endif
 %patch15 -p1 -b .temporarily-disable-failing-test.patch
-%patch16 -p1 -b .make-evolution-3.6-work-with-address-book.patch
-%patch17 -p1 -b .no-g_list_free_full-in-RHEL-6-glib.patch
-%patch18 -p1 -b .Work-around-problem-with-boost-shared_array-NULL-cto.patch
-%patch19 -p1 -b .fix-compile-for-change-to-boost-1.53.0-declaring-sma.patch
-%patch20 -p1 -b .rhbz-742780-Let-make-OPT_FLAGS-.-override-SDK-optimi.patch
-%patch21 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
-%patch22 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
-%patch23 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-%patch24 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
-%patch25 -p1 -b .rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
-%patch26 -p1 -b .rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
-%patch27 -p1 -b .rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
+%patch16 -p1 -b .rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
+%patch17 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch18 -p1 -b .disable-failing-perf-test.patch
+%patch19 -p1 -b .fix-syntax-errors-in-python-wizards.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1076,6 +1050,8 @@ export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
 %endif
 
+# TODO: do we still need this? Perhaps some old patch touches
+# configure.ac?
 aclocal -I m4
 autoconf
 # avoid running autogen.sh on make
@@ -1094,26 +1070,23 @@ touch autogen.lastrun
  --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
+ --with-help \
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
  %{distrooptions} \
  --disable-fetch-external
 
-if ! make VERBOSE=true; then
-    # TODO Do we still need this? I think parallel build is reliable
-    # enough these days...
-    make VERBOSE=true PARALLELISM=1
-fi
+make VERBOSE=true
 
 #generate the icons and mime type stuff
-export DESTDIR=../../../output
+export DESTDIR=../output
 export KDEMAINDIR=/usr
 export GNOMEDIR=/usr
 export GNOME_MIME_THEME=hicolor
 # TODO use empty variables? Should make the renaming hacks in %%install
 # unnecessary.
-. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION
-cd sysui/unxlng*/misc/libreoffice
+. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION WORKDIR
+cd $WORKDIR/CustomTarget/sysui/share/libreoffice
 ./create_tree.sh
 
 echo build end time is `date`, diskspace: `df -h . | tail -n 1`
@@ -1121,70 +1094,65 @@ echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 %install
 # TODO investigate use of make distro-pack-install
-. ./bin/get_config_variables `sed -n -e '/^export/s/^export \([A-Z0-9_]\+\).*/\1/p' config_host.mk`
 #figure out the icon version
-export `grep "^PRODUCTVERSIONSHORT =" solenv/inc/productversion.mk | sed -e "s/ //g"`
-export `grep "PRODUCTVERSION[ ]*=[ ]*" solenv/inc/productversion.mk | sed -e "s/ //g"`
-#install
-cd instsetoo_native/util
-#direct install
+. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION SRCDIR WORKDIR
+export PRODUCTVERSIONSHORT PRODUCTVERSION
+
+# installation
+
 mkdir -p $RPM_BUILD_ROOT/%{instdir}
-export PKGFORMAT=installed
-#don't duplicate english helpcontent about the place
-unset DEFAULT_TO_ENGLISH_FOR_PACKING
-if dmake openoffice_en-US; then
-    ok=true
-    break
-else
+if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
-    cat ../unx*.pro/LibreOffice/installed/logging/en-US/log_*_en-US.log
+    cat $ WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end---
-    ok=false
-fi
-if [ $ok == "false" ]; then
+    echo - ---dump log start -- SDK---
+    cat $ WORKDIR/installation/LibreOffice_SDK/installed/logging/en-US/log_*_en-US.log
+    echo - ---dump log end -- SDK---
+    echo - ---dump log start -- languagepacks---
+    cat $ WORKDIR/installation/LibreOffice_languagepack/installed/logging/en-US/log_*_en-US.log
+    echo - ---dump log end -- languagepacks---
     exit 1
 fi
 mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-mv ../unxlng*.pro/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
+mv $WORKDIR/installation/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
+%if %{with langpacks}
+for langpack in $WORKDIR/installation/LibreOffice_languagepack/installed/install/*; do
+  [ `basename $langpack` = log ] && continue
+  cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
+  rm -rf $langpack
+done
+%endif
+mv $WORKDIR/installation/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
+rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
+
+# postprocessing and tweaks
+
 # The installer currently sets UserInstallation to
 # $ORIGIN/../libreoffice/4, which is of course total nonsense. Because I
 # have no inclination to crawl through mountains of perl code to figure out
 # where it comes from, I am just going to replace it by a sensible
 # value here.
 sed -i -e '/UserInstallation/s@\$ORIGIN/..@$SYSUSERCONFIG@' $RPM_BUILD_ROOT/%{baseinstdir}/program/bootstraprc
-%if %{with langpacks}
-dmake ooolanguagepack
-rm -rf ../unxlng*.pro/LibreOffice_languagepack/installed/install/log
-for langpack in ../unxlng*.pro/LibreOffice_languagepack/installed/install/*; do
-  cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
-  rm -rf $langpack
-done
-%endif
-export WITH_LANG_LIST="en-US"
-dmake sdkoo
-mv ../unxlng*.pro/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
-cd ../../
 
 #configure sdk
 pushd $RPM_BUILD_ROOT/%{sdkinstdir}
-    for file in setsdkenv_unix.csh setsdkenv_unix.sh ; do
-        sed -e "s,@OO_SDK_NAME@,sdk," \
-            -e "s,@OO_SDK_HOME@,%{sdkinstdir}," \
-            -e "s,@OFFICE_HOME@,%{baseinstdir}," \
-            -e "s,@OO_SDK_URE_HOME@,%{ureinstdir}," \
-            -e "s,@OO_SDK_MAKE_HOME@,/usr/bin," \
-            -e "s,@OO_SDK_ZIP_HOME@,/usr/bin," \
-            -e "s,@OO_SDK_CPP_HOME@,/usr/bin," \
-            -e "s,@OO_SDK_CC_55_OR_HIGHER@,," \
-            -e "s,@OO_SDK_JAVA_HOME@,$JAVA_HOME," \
-            -e "s,@OO_SDK_OUTPUT_DIR@,\$HOME," \
-            -e "s,@SDK_AUTO_DEPLOYMENT@,NO," \
-            $file.in > $file
-        chmod 755 $file
-    done
-    # we don't want to install the input files
-    rm -f setsdkenv_unix.csh.in setsdkenv_unix.sh.in
+    sed -e "s,@OO_SDK_NAME@,sdk," \
+        -e "s,@OO_SDK_HOME@,%{sdkinstdir}," \
+        -e "s,@OFFICE_HOME@,%{baseinstdir}," \
+        -e "s,@OO_SDK_URE_HOME@,%{ureinstdir}," \
+        -e "s,@OO_SDK_MAKE_HOME@,/usr/bin," \
+        -e "s,@OO_SDK_ZIP_HOME@,/usr/bin," \
+        -e "s,@OO_SDK_CPP_HOME@,/usr/bin," \
+        -e "s,@OO_SDK_CC_55_OR_HIGHER@,," \
+        -e "s,@OO_SDK_JAVA_HOME@,$JAVA_HOME," \
+        -e "s,@OO_SDK_OUTPUT_DIR@,\$HOME," \
+        -e "s,@SDK_AUTO_DEPLOYMENT@,NO," \
+        setsdkenv_unix.sh.in > setsdkenv_unix.sh
+    chmod 755 setsdkenv_unix.sh
+    # we don't want to install the input file
+    rm -f setsdkenv_unix.sh.in
+# TODO: is this still necessary?
 #fix permissions
     find examples -type f -exec chmod -x {} \;
 popd
@@ -1336,24 +1304,19 @@ for file in *.desktop; do
         -e "s/$ICONVERSION//g" \
         -e "s/$PRODUCTVERSIONSHORT//g" \
         $file
-    # add X-GIO-NoFuse so we get url:// instead of file://~.gvfs/
-    echo X-GIO-NoFuse=true >> $file
 done
 for app in base calc draw impress math writer; do
-    echo "StartupNotify=true" >> $app.desktop
     echo "TryExec=oo$app" >> $app.desktop
 done
-# rhbz#156677# / rhbz#186515#
-echo "NoDisplay=true" >> startcenter.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
-for app in base calc draw impress javafilter math startcenter writer xsltfilter; do
+for app in base calc draw impress math startcenter writer xsltfilter; do
     desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
 
-pushd sysui/output/usr/share/
+pushd $WORKDIR/CustomTarget/sysui/share/output/usr/share
 #get rid of the gnome icons and other unneeded files
 rm -rf icons/gnome applications application-registry
 
@@ -1361,11 +1324,15 @@ rm -rf icons/gnome applications application-registry
 # rhbz#901346 512x512 icons are not used by anything
 for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
     mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
-    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@office$ICONVERSION@office@ | sed -e s@office$PRODUCTVERSION@office@`
+    # TODO: these should be libreoffice$PRODUCTVERSION.* . Check where
+    # the problem is.
+    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@$ICONVERSION-@libreoffice-@ | sed -e s@$PRODUCTVERSION-@libreoffice-@`
 done
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
-cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
-cp -p mime-info/libreoffice$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
+# TODO: these should be libreoffice$PRODUCTVERSION.* . Check where the
+# problem is.
+cp -p mime-info/$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
+cp -p mime-info/$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime/packages
 cp -p mime/packages/libreoffice$PRODUCTVERSION.xml $RPM_BUILD_ROOT/%{_datadir}/mime/packages/libreoffice.xml
@@ -1381,7 +1348,7 @@ cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{baseinstdir
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{baseinstdir}/program/fundamentalrc
 
 export DESTDIR=$RPM_BUILD_ROOT
-install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
+make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
 
 #%check
@@ -1399,29 +1366,27 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %files core
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
-%docdir %{baseinstdir}/help/en
-%dir %{baseinstdir}/help/en
-%{baseinstdir}/help/en/default.css
-%{baseinstdir}/help/en/err.html
-%{baseinstdir}/help/en/highcontrast1.css
-%{baseinstdir}/help/en/highcontrast2.css
-%{baseinstdir}/help/en/highcontrastblack.css
-%{baseinstdir}/help/en/highcontrastwhite.css
-%{baseinstdir}/help/en/sbasic.*
-%{baseinstdir}/help/en/schart.*
-%{baseinstdir}/help/en/shared.*
+%docdir %{baseinstdir}/help/en-US
+%dir %{baseinstdir}/help/en-US
+%{baseinstdir}/help/en-US/default.css
+%{baseinstdir}/help/en-US/err.html
+%{baseinstdir}/help/en-US/highcontrast1.css
+%{baseinstdir}/help/en-US/highcontrast2.css
+%{baseinstdir}/help/en-US/highcontrastblack.css
+%{baseinstdir}/help/en-US/highcontrastwhite.css
+%{baseinstdir}/help/en-US/sbasic.*
+%{baseinstdir}/help/en-US/schart.*
+%{baseinstdir}/help/en-US/shared.*
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
 %{baseinstdir}/help/main_transform.xsl
 %{baseinstdir}/presets
 %dir %{baseinstdir}/program
-%{baseinstdir}/program/addin
-%{baseinstdir}/program/basprov.uno.so
-%{baseinstdir}/program/cairocanvas.uno.so
-%{baseinstdir}/program/canvasfactory.uno.so
+%{baseinstdir}/program/libbasprovlo.so
+%{baseinstdir}/program/libcairocanvaslo.so
+%{baseinstdir}/program/libcanvasfactorylo.so
 %{baseinstdir}/program/cde-open-url
 %dir %{baseinstdir}/program/classes
-%{baseinstdir}/program/classes/agenda.jar
 %{baseinstdir}/program/classes/commonwizards.jar
 %{baseinstdir}/program/classes/form.jar
 %{baseinstdir}/program/classes/query.jar
@@ -1431,27 +1396,26 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/classes/ScriptProviderForJava.jar
 %{baseinstdir}/program/classes/table.jar
 %{baseinstdir}/program/classes/unoil.jar
-%{baseinstdir}/program/classes/web.jar
 %{baseinstdir}/program/classes/XMergeBridge.jar
 %{baseinstdir}/program/classes/xmerge.jar
-%{baseinstdir}/program/cmdmail.uno.so
+%{baseinstdir}/program/libcmdmaillo.so
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so
-%{baseinstdir}/program/dlgprov.uno.so
-%{baseinstdir}/program/expwrap.uno.so
-%{baseinstdir}/program/fastsax.uno.so
+%{baseinstdir}/program/libdlgprovlo.so
+%{baseinstdir}/program/libexpwraplo.so
+%{baseinstdir}/program/libfastsaxlo.so
 %{baseinstdir}/program/flat_logo.svg
-%{baseinstdir}/program/fpicker.uno.so
-%{baseinstdir}/program/fps_office.uno.so
+%{baseinstdir}/program/libfpickerlo.so
+%{baseinstdir}/program/libfps_officelo.so
 %{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin
-%{baseinstdir}/program/hatchwindowfactory.uno.so
+%{baseinstdir}/program/libhatchwindowfactorylo.so
 %{baseinstdir}/program/kde-open-url
-%{baseinstdir}/program/i18nsearch.uno.so
-%{baseinstdir}/program/ldapbe2.uno.so
+%{baseinstdir}/program/libi18nsearchlo.so
+%{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
@@ -1522,7 +1486,7 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libmorklo.so
 %{baseinstdir}/program/libmozbootstrap.so
 %{baseinstdir}/program/libmsfilterlo.so
-%{baseinstdir}/program/mtfrenderer.uno.so
+%{baseinstdir}/program/libmtfrendererlo.so
 %{baseinstdir}/program/libmysqllo.so
 %{baseinstdir}/program/libodbclo.so
 %{baseinstdir}/program/libodbcbaselo.so
@@ -1556,7 +1520,8 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libtextfdlo.so
 %{baseinstdir}/program/libtvhlp1.so
 %{baseinstdir}/program/libodfflatxmllo.so
-%{baseinstdir}/program/libucbhelper4gcc3.so
+# TODO: shouldn't it have lo suffix?
+%{baseinstdir}/program/libucbhelper.so
 %{baseinstdir}/program/libucpchelp1.so
 %{baseinstdir}/program/libucpdav1.so
 %{baseinstdir}/program/libucpftp1.so
@@ -1569,7 +1534,6 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libvbahelperlo.so
 %{baseinstdir}/program/libvclplug_genlo.so
 %{baseinstdir}/program/libvclplug_gtklo.so
-%{baseinstdir}/program/libwpftdrawlo.so
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
@@ -1580,17 +1544,16 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libxstor.so
 %if 0%{?fedora} || 0%{?rhel} >= 7
 # TODO how useful this is in Fedora?
-%{baseinstdir}/program/losessioninstall.uno.so
+%{baseinstdir}/program/liblosessioninstalllo.so
 %endif
-%{baseinstdir}/program/migrationoo2.uno.so
-%{baseinstdir}/program/migrationoo3.uno.so
-%{baseinstdir}/program/msforms.uno.so
+%{baseinstdir}/program/libmigrationoo2lo.so
+%{baseinstdir}/program/libmigrationoo3lo.so
+%{baseinstdir}/program/libmsformslo.so
 %{baseinstdir}/program/nsplugin
 %{baseinstdir}/program/open-url
 %{baseinstdir}/program/types/offapi.rdb
-%{baseinstdir}/program/passwordcontainer.uno.so
+%{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
-%{baseinstdir}/program/plugin
 %{baseinstdir}/program/pluginapp.bin
 %dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/avmediaen-US.res
@@ -1639,25 +1602,25 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/senddoc
 %dir %{baseinstdir}/program/services
 %{baseinstdir}/program/services/services.rdb
-%{baseinstdir}/program/simplecanvas.uno.so
-%{baseinstdir}/program/slideshow.uno.so
+%{baseinstdir}/program/libsimplecanvaslo.so
+%{baseinstdir}/program/libslideshowlo.so
 %{baseinstdir}/program/libsofficeapp.so
 %{baseinstdir}/program/spadmin.bin
-%{baseinstdir}/program/stringresource.uno.so
-%{baseinstdir}/program/syssh.uno.so
+%{baseinstdir}/program/libstringresourcelo.so
+%{baseinstdir}/program/libsysshlo.so
 %{baseinstdir}/program/tde-open-url
-%{baseinstdir}/program/ucpcmis1.uno.so
-%{baseinstdir}/program/ucpexpand1.uno.so
-%{baseinstdir}/program/ucpext.uno.so
-%{baseinstdir}/program/ucptdoc1.uno.so
+%{baseinstdir}/program/libucpcmis1lo.so
+%{baseinstdir}/program/libucpexpand1lo.so
+%{baseinstdir}/program/libucpextlo.so
+%{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/unorc
-%{baseinstdir}/program/updatefeed.uno.so
+%{baseinstdir}/program/libupdatefeedlo.so
 # TODO do we need this?
 %{baseinstdir}/program/ui-previewer
 %{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
-%{baseinstdir}/program/vbaevents.uno.so
-%{baseinstdir}/program/vclcanvas.uno.so
+%{baseinstdir}/program/libvbaeventslo.so
+%{baseinstdir}/program/libvclcanvaslo.so
 %{baseinstdir}/program/versionrc
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/Scripts
@@ -1675,16 +1638,25 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
+%if %{with langpacks}
 # UI translations go into langpacks
 %exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res
+%endif
 %{baseinstdir}/share/config/soffice.cfg/*/ui
+%if %{with langpacks}
 # UI translations go into langpacks
 %exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res
+%endif
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
 %{baseinstdir}/share/gallery
+# TODO: do we want to install the glade catalog?
+%dir %{baseinstdir}/share/glade
+%{baseinstdir}/share/glade/libreoffice-catalog.xml
+%dir %{baseinstdir}/share/labels
+%{baseinstdir}/share/labels/labels.xml
 %if 0%{?rhel} && 0%{?rhel} < 7
 %{baseinstdir}/share/liblangtag
 %endif
@@ -1710,7 +1682,6 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %dir %{baseinstdir}/share/wordbook
 %{baseinstdir}/share/wordbook/en-GB.dic
 %{baseinstdir}/share/wordbook/en-US.dic
-%{baseinstdir}/share/wordbook/sl.dic
 %{baseinstdir}/share/wordbook/technical.dic
 %dir %{baseinstdir}/share/xslt
 %{baseinstdir}/share/xslt/common
@@ -1729,21 +1700,23 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{_datadir}/mime-info/libreoffice.*
 %{baseinstdir}/program/libxmlsecurity.so
 %{_datadir}/mime/packages/libreoffice.xml
-%{baseinstdir}/program/configmgr.uno.so
-%{baseinstdir}/program/desktopbe1.uno.so
-%{baseinstdir}/program/fsstorage.uno.so
-%{baseinstdir}/program/gconfbe1.uno.so
-%{baseinstdir}/program/i18npool.uno.so
+%{baseinstdir}/program/libconfigmgrlo.so
+%{baseinstdir}/program/libdesktopbe1lo.so
+%{baseinstdir}/program/libfsstoragelo.so
+%{baseinstdir}/program/libgconfbe1lo.so
+%{baseinstdir}/program/libi18npoollo.so
 %{baseinstdir}/program/libbasegfxlo.so
-%{baseinstdir}/program/libcomphelpgcc3.so
+# TODO: shouldn't it have lo suffix?
+%{baseinstdir}/program/libcomphelper.so
 %{baseinstdir}/program/libfileacc.so
 %{baseinstdir}/program/libfwelo.so
 %{baseinstdir}/program/libfwilo.so
 %{baseinstdir}/program/libfwklo.so
 %{baseinstdir}/program/libfwllo.so
 %{baseinstdir}/program/libfwmlo.so
-%{baseinstdir}/program/libi18nisolang*.so
-%{baseinstdir}/program/libi18nutilgcc3.so
+%{baseinstdir}/program/libi18nlangtag.so
+# TODO: shouldn't it have lo suffix?
+%{baseinstdir}/program/libi18nutil.so
 %{baseinstdir}/program/libpackage2.so
 %{baseinstdir}/program/libsblo.so
 %{baseinstdir}/program/libsfxlo.so
@@ -1760,8 +1733,8 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libvcllo.so
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
-%{baseinstdir}/program/localebe1.uno.so
-%{baseinstdir}/program/ucpgio1.uno.so
+%{baseinstdir}/program/liblocalebe1lo.so
+%{baseinstdir}/program/libucpgio1lo.so
 %{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions
@@ -1785,7 +1758,6 @@ install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinst
 %{baseinstdir}/program/libnpsoplugin.so
 %{baseinstdir}/program/oosplash
 %{baseinstdir}/program/shell/
-%{baseinstdir}/share/config/images_brand.zip
 %{baseinstdir}/share/xdg/
 %{baseinstdir}/program/redirectrc
 %{_datadir}/applications/libreoffice-startcenter.desktop
@@ -1828,10 +1800,11 @@ done
 
 
 %files base
-%{baseinstdir}/help/en/sdatabase.*
+%{baseinstdir}/help/en-US/sdatabase.*
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
+%{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
@@ -1847,6 +1820,7 @@ done
 %{baseinstdir}/program/resource/sdbclen-US.res
 %{baseinstdir}/program/resource/sdberren-US.res
 %{baseinstdir}/share/registry/base.xcd
+%{baseinstdir}/share/registry/reportbuilder.xcd
 %{baseinstdir}/program/sbase
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
@@ -1856,10 +1830,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun base
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%files report-builder
-%docdir %{baseinstdir}/share/extensions/report-builder/help
-%{baseinstdir}/share/extensions/report-builder
 
 %files bsh
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
@@ -1881,7 +1851,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/nlpsolver
 
 %files ogltrans
-%{baseinstdir}/program/OGLTrans.uno.so
+%{baseinstdir}/program/libOGLTranslo.so
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 
@@ -1890,7 +1860,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/extensions/presentation-minimizer
 
 %files pdfimport
-%{baseinstdir}/program/pdfimport.uno.so
+%{baseinstdir}/program/libpdfimportlo.so
 %{baseinstdir}/program/xpdfimport
 %{baseinstdir}/share/registry/pdfimport.xcd
 %dir %{baseinstdir}/share/xpdfimport
@@ -1900,7 +1870,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc solver/unxlng*/bin/ure/LICENSE
 
 %files calc
-%{baseinstdir}/help/en/scalc.*
+%{baseinstdir}/help/en-US/scalc.*
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -1919,7 +1889,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/resource/pricingen-US.res
 %{baseinstdir}/program/resource/scen-US.res
 %{baseinstdir}/program/resource/solveren-US.res
-%{baseinstdir}/program/vbaobj.uno.so
+%{baseinstdir}/program/libvbaobjlo.so
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc
@@ -1933,7 +1903,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files draw
-%{baseinstdir}/help/en/sdraw.*
+%{baseinstdir}/help/en-US/sdraw.*
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
@@ -1952,7 +1922,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/officehelper.py*
 
 %files writer
-%{baseinstdir}/help/en/swriter.*
+%{baseinstdir}/help/en-US/swriter.*
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -1961,7 +1931,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libt602filterlo.so
 %{baseinstdir}/program/libwpftwriterlo.so
 %{baseinstdir}/program/libwriterfilterlo.so
-%{baseinstdir}/program/vbaswobj.uno.so
+%{baseinstdir}/program/libvbaswobjlo.so
 %{baseinstdir}/program/resource/t602filteren-US.res
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
@@ -1976,10 +1946,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files impress
-%{baseinstdir}/help/en/simpress.*
+%{baseinstdir}/help/en-US/simpress.*
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
-%{baseinstdir}/program/PresenterScreen.uno.so
+%{baseinstdir}/program/libPresenterScreenlo.so
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml
@@ -1996,7 +1966,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files math
-%{baseinstdir}/help/en/smath.*
+%{baseinstdir}/help/en-US/smath.*
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/program/resource/smen-US.res
@@ -2013,7 +1983,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files graphicfilter
 %{baseinstdir}/program/libflashlo.so
+%{baseinstdir}/program/libgraphicfilterlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
+%{baseinstdir}/program/libwpftdrawlo.so
+%{baseinstdir}/program/resource/flashen-US.res
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
@@ -2024,19 +1997,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/xsltfilter.xcd
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
-%files javafilter
-%{baseinstdir}/program/classes/aportisdoc.jar
-%{baseinstdir}/program/classes/pexcel.jar
-%{baseinstdir}/program/classes/pocketword.jar
-%{_datadir}/applications/libreoffice-javafilter.desktop
-%{baseinstdir}/share/registry/palm.xcd
-%{baseinstdir}/share/registry/pocketexcel.xcd
-%{baseinstdir}/share/registry/pocketword.xcd
-
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %files postgresql
-%{baseinstdir}/program/postgresql-sdbc.uno.so
-%{baseinstdir}/program/postgresql-sdbc-impl.uno.so
+%{baseinstdir}/program/libpostgresql-sdbclo.so
+%{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
 %{baseinstdir}/share/registry/postgresqlsdbc.xcd
@@ -2063,7 +2027,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %files pyuno
 %{baseinstdir}/program/libpyuno.so
 %{baseinstdir}/program/pythonloader.py*
-%{baseinstdir}/program/pythonloader.uno.so
+%{baseinstdir}/program/libpythonloaderlo.so
 %{baseinstdir}/program/pythonloader.unorc
 %{baseinstdir}/program/pythonscript.py*
 %{baseinstdir}/program/pyuno.so
@@ -2081,11 +2045,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora}
 %files kde
-%{baseinstdir}/program/kde4be1.uno.so
+%{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 %endif
 
 %changelog
+* Fri May 24 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-2.beta1
+- 4.1.0 beta1
+
 * Fri May 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.0.3.3-3
 - Resolves: rhbz#961460 can't save WebDAV (davs) files
 

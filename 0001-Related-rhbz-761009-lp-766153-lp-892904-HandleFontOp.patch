@@ -1,0 +1,104 @@
+From 3d6424a752902bba513102834966868f609d91e6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 18 Apr 2013 13:13:43 +0100
+Subject: [PATCH] Related: rhbz#761009 lp#766153 lp#892904 HandleFontOptions
+ crash
+
+The mpServerFont member of a ImplServerFontEntry must not be deleted while the
+ImplServerFontEntry still exists
+
+see also 39cbce553da1834f78b77f48b2f1be9578d6cc05 for another reason a crash in
+the same place can happen.  Its impossible from traces in crashes before
+39cbce553da1834f78b77f48b2f1be9578d6cc05 was fixed to distinguish those crashes
+from this crash.
+
+This crash is a regression due to 7a416820ab5e03f8b988656e0f6a592cb1e81d07
+where we went from modifying pServerFont in X11SalGraphics::setFont directly to
+modifying it/a-different-one indirectly via ImplServerFontEntry
+
+The various font caches and font thing lifecycles of LibreOffice are somewhat
+confusing.
+
+This crash had eluded me for years, to reproduce:
+insert->special chars->select a font with loads of glyphs, i.e. "AR PL UKai CN"
+click on the first row of glyphs and hold down page-down until you hit the
+bottom, then page-up until you hit the top. Pre patch it won't survive the
+whole down+up (and valgrind will moan quite a bit)
+
+Change-Id: Ifde0cb375f487c556b04a640d77765a7dc2f0913
+---
+ vcl/generic/glyphs/glyphcache.cxx | 13 +++++++++++++
+ vcl/inc/generic/glyphcache.hxx    |  3 ++-
+ vcl/unx/generic/gdi/salgdi3.cxx   |  8 ++++----
+ 3 files changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/vcl/generic/glyphs/glyphcache.cxx b/vcl/generic/glyphs/glyphcache.cxx
+index fa3659a..a6849ec 100644
+--- a/vcl/generic/glyphs/glyphcache.cxx
++++ b/vcl/generic/glyphs/glyphcache.cxx
+@@ -411,9 +411,22 @@ ImplServerFontEntry::ImplServerFontEntry( FontSelectPattern& rFSD )
+ 
+ // -----------------------------------------------------------------------
+ 
++void ImplServerFontEntry::SetServerFont(ServerFont* p)
++{
++    if (p == mpServerFont)
++        return;
++    if (mpServerFont)
++        mpServerFont->Release();
++    mpServerFont = p;
++    if (mpServerFont)
++        mpServerFont->AddRef();
++}
++
+ ImplServerFontEntry::~ImplServerFontEntry()
+ {
+     // TODO: remove the ServerFont here instead of in the GlyphCache
++    if (mpServerFont)
++        mpServerFont->Release();
+ }
+ 
+ // =======================================================================
+diff --git a/vcl/inc/generic/glyphcache.hxx b/vcl/inc/generic/glyphcache.hxx
+index 24cda3c..d9f8378 100644
+--- a/vcl/inc/generic/glyphcache.hxx
++++ b/vcl/inc/generic/glyphcache.hxx
+@@ -225,6 +225,7 @@ public:
+ private:
+     friend class GlyphCache;
+     friend class ServerFontLayout;
++    friend class ImplServerFontEntry;
+     friend class X11SalGraphics;
+ 
+     void                        AddRef() const      { ++mnRefCount; }
+@@ -302,7 +303,7 @@ private:
+ public:
+                    ImplServerFontEntry( FontSelectPattern& );
+     virtual        ~ImplServerFontEntry();
+-    void           SetServerFont( ServerFont* p) { mpServerFont = p; }
++    void           SetServerFont(ServerFont* p);
+     void           HandleFontOptions();
+ };
+ 
+diff --git a/vcl/unx/generic/gdi/salgdi3.cxx b/vcl/unx/generic/gdi/salgdi3.cxx
+index 30a1e3b..ba6628a 100644
+--- a/vcl/unx/generic/gdi/salgdi3.cxx
++++ b/vcl/unx/generic/gdi/salgdi3.cxx
+@@ -194,10 +194,10 @@ bool X11SalGraphics::setFont( const FontSelectPattern *pEntry, int nFallbackLeve
+ 
+         // apply font specific-hint settings if needed
+         // TODO: also disable it for reference devices
+-    if( !bPrinter_ )
+-    {
+-        ImplServerFontEntry* pSFE = static_cast<ImplServerFontEntry*>( pEntry->mpFontEntry );
+-        pSFE->HandleFontOptions();
++        if( !bPrinter_ )
++        {
++            ImplServerFontEntry* pSFE = static_cast<ImplServerFontEntry*>( pEntry->mpFontEntry );
++            pSFE->HandleFontOptions();
+         }
+ 
+         return true;
+-- 
+1.8.1.2
+

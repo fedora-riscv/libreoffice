@@ -34,22 +34,21 @@ diff --git a/vcl/unx/gtk/window/gtkframe.cxx b/vcl/unx/gtk/window/gtkframe.cxx
 index 03f8c59..eb87e74 100644
 --- a/vcl/unx/gtk/window/gtkframe.cxx
 +++ b/vcl/unx/gtk/window/gtkframe.cxx
-@@ -4223,13 +4223,9 @@ uno::Reference<accessibility::XAccessibleEditableText>
+@@ -4041,12 +4041,9 @@
      return uno::Reference< accessibility::XAccessibleEditableText >();
  }
  
--static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText()
-+static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText(Window *pFocusWin)
+-uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText()
++uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText(Window *pFocusWin)
  {
      uno::Reference<accessibility::XAccessibleEditableText> xText;
 -    Window* pFocusWin = ImplGetSVData()->maWinData.mpFocusWin;
 -    if (!pFocusWin)
 -        return xText;
--
+ 
      try
      {
-         uno::Reference< accessibility::XAccessible > xAccessible( pFocusWin->GetAccessible( true ) );
-@@ -4238,36 +4234,39 @@ static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText()
+@@ -4056,36 +4053,39 @@
      }
      catch(const uno::Exception& e)
      {
@@ -101,7 +100,7 @@ index 03f8c59..eb87e74 100644
      if (xText.is())
      {
          sal_uInt32 nPosition = xText->getCaretPosition();
-@@ -4282,10 +4282,10 @@ gboolean GtkSalFrame::IMHandler::signalIMDeleteSurrounding( GtkIMContext*, gint
+@@ -4100,10 +4100,10 @@
              nDeleteEnd = xText->getCharacterCount();
  
          xText->deleteText(nDeletePos, nDeleteEnd);
@@ -114,6 +113,3 @@ index 03f8c59..eb87e74 100644
  }
  
  Size GtkSalDisplay::GetScreenSize( int nDisplayScreen )
--- 
-1.8.1.2
-

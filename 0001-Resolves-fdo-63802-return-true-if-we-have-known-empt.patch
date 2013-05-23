@@ -1,0 +1,119 @@
+From 6264733282ff93d8bbb561f67b880424f31a1f7d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 25 Apr 2013 14:04:56 +0100
+Subject: [PATCH] Resolves: fdo#63802 return true if we have known empty
+ context
+
+i.e. false for "we can't provide context", and true for
+"we can provide context, even if there isn't any"
+
+Still looks to me that there's a bug in the si-phonetic-dynamic
+im (or something in the stack) that assumes that returning
+false once means it will always return false and give up
+for ever
+
+fix indent while I'm at it
+
+also let si-phonetic-dynamic survive libreoffice losing focus and regain it
+cycle and still use surrounding text. It should be safe to report that we can
+provide surrounding text but there isn't any during the time window when there
+is no focus window, because the focus in event was received but it hasn't
+arrived yet because that happens on a postuserevent.
+
+(cherry picked from commit 21fb092398fb21256b0e546e7f38c5e6de4654f2)
+
+Change-Id: I0481c42208953f2a0618aaed7b0d9e9f3e7bda07
+Reviewed-on: https://gerrit.libreoffice.org/3608
+Reviewed-by: Miklos Vajna <vmiklos@suse.cz>
+Tested-by: Miklos Vajna <vmiklos@suse.cz>
+---
+ vcl/unx/gtk/window/gtkframe.cxx | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/vcl/unx/gtk/window/gtkframe.cxx b/vcl/unx/gtk/window/gtkframe.cxx
+index 03f8c59..eb87e74 100644
+--- a/vcl/unx/gtk/window/gtkframe.cxx
++++ b/vcl/unx/gtk/window/gtkframe.cxx
+@@ -4223,13 +4223,9 @@ uno::Reference<accessibility::XAccessibleEditableText>
+     return uno::Reference< accessibility::XAccessibleEditableText >();
+ }
+ 
+-static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText()
++static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText(Window *pFocusWin)
+ {
+     uno::Reference<accessibility::XAccessibleEditableText> xText;
+-    Window* pFocusWin = ImplGetSVData()->maWinData.mpFocusWin;
+-    if (!pFocusWin)
+-        return xText;
+-
+     try
+     {
+         uno::Reference< accessibility::XAccessible > xAccessible( pFocusWin->GetAccessible( true ) );
+@@ -4238,36 +4234,39 @@ static uno::Reference<accessibility::XAccessibleEditableText> lcl_GetxText()
+     }
+     catch(const uno::Exception& e)
+     {
+-        g_warning( "Exception in getting input method surrounding text" );
+     }
+     return xText;
+ }
+ 
+ gboolean GtkSalFrame::IMHandler::signalIMRetrieveSurrounding( GtkIMContext* pContext, gpointer /*im_handler*/ )
+ {
+-    uno::Reference<accessibility::XAccessibleEditableText> xText = lcl_GetxText();
++    Window *pFocusWin = Application::GetFocusWindow();
++    if (!pFocusWin)
++        return true;
+ 
++    uno::Reference<accessibility::XAccessibleEditableText> xText = lcl_GetxText(pFocusWin);
+     if (xText.is())
+     {
+         sal_uInt32 nPosition = xText->getCaretPosition();
+-        rtl::OUString sAllText = xText->getText();
+-        if (sAllText.isEmpty())
+-            return sal_False;
+-    rtl::OString sUTF = rtl::OUStringToOString(sAllText, RTL_TEXTENCODING_UTF8);
+-    rtl::OUString sCursorText(sAllText.copy(0, nPosition));
+-    gtk_im_context_set_surrounding(pContext, sUTF.getStr(), sUTF.getLength(),
+-        rtl::OUStringToOString(sCursorText, RTL_TEXTENCODING_UTF8).getLength());
+-    return sal_True;
++        OUString sAllText = xText->getText();
++        OString sUTF = OUStringToOString(sAllText, RTL_TEXTENCODING_UTF8);
++        OUString sCursorText(sAllText.copy(0, nPosition));
++        gtk_im_context_set_surrounding(pContext, sUTF.getStr(), sUTF.getLength(),
++            OUStringToOString(sCursorText, RTL_TEXTENCODING_UTF8).getLength());
++        return true;
+     }
+ 
+-    return sal_False;
++    return false;
+ }
+ 
+ gboolean GtkSalFrame::IMHandler::signalIMDeleteSurrounding( GtkIMContext*, gint offset, gint nchars,
+     gpointer /*im_handler*/ )
+ {
+-    uno::Reference<accessibility::XAccessibleEditableText> xText = lcl_GetxText();
++    Window *pFocusWin = Application::GetFocusWindow();
++    if (!pFocusWin)
++        return true;
+ 
++    uno::Reference<accessibility::XAccessibleEditableText> xText = lcl_GetxText(pFocusWin);
+     if (xText.is())
+     {
+         sal_uInt32 nPosition = xText->getCaretPosition();
+@@ -4282,10 +4282,10 @@ gboolean GtkSalFrame::IMHandler::signalIMDeleteSurrounding( GtkIMContext*, gint
+             nDeleteEnd = xText->getCharacterCount();
+ 
+         xText->deleteText(nDeletePos, nDeleteEnd);
+-        return sal_True;
++        return true;
+     }
+ 
+-    return sal_False;
++    return false;
+ }
+ 
+ Size GtkSalDisplay::GetScreenSize( int nDisplayScreen )
+-- 
+1.8.1.2
+

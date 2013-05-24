@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -265,6 +265,7 @@ Patch43: 0001-resolved-rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
 Patch44: 0001-resolved-rhbz-918544-do-not-attempt-to-access-non-ex.patch
 Patch45: 0001-Related-rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
 Patch46: 0001-Resolves-fdo-63802-return-true-if-we-have-known-empt.patch
+Patch47: 0001-rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1023,6 +1024,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch44 -p1 -b .rhbz-918544-do-not-attempt-to-access-non-ex.patch
 %patch45 -p1 -b .rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
 %patch46 -p1 -b .fdo-63802-return-true-if-we-have-known-empt.patch
+%patch47 -p1 -b .rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2292,6 +2294,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri May 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.6.2-8
+- Resolves: rhbz#961460 can't save WebDAV (davs) files
+
 * Thu May 23 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.6.2-7
 - Resolves: rhbz#890474 some IMs take a ret of false to mean "no
   support for surrounding text" rather than "no surrounding text

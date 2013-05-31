@@ -1,0 +1,29 @@
+From 30adf73871cacede1ade5615acc54288b07cd0be Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 31 May 2013 12:29:43 +0100
+Subject: [PATCH] autosize the frame direction listbox
+
+Change-Id: I440ca0255a6079c28b2314b12511c6c41d6a05f5
+(cherry picked from commit c799a1e5522971405fa45d3df7ebf259229df63e)
+---
+ svx/source/dialog/frmdirlbox.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/svx/source/dialog/frmdirlbox.cxx b/svx/source/dialog/frmdirlbox.cxx
+index 7de9437..ad1697d 100644
+--- a/svx/source/dialog/frmdirlbox.cxx
++++ b/svx/source/dialog/frmdirlbox.cxx
+@@ -56,7 +56,9 @@ FrameDirectionListBox::~FrameDirectionListBox()
+ 
+ extern "C" SAL_DLLPUBLIC_EXPORT Window* SAL_CALL makeFrameDirectionListBox(Window *pParent, VclBuilder::stringmap &)
+ {
+-    return new FrameDirectionListBox(pParent, WB_LEFT|WB_DROPDOWN|WB_VCENTER|WB_3DLOOK|WB_TABSTOP);
++    FrameDirectionListBox* pListBox = new FrameDirectionListBox(pParent, WB_LEFT|WB_DROPDOWN|WB_VCENTER|WB_3DLOOK|WB_TABSTOP);
++    pListBox->EnableAutoSize(true);
++    return pListBox;
+ }
+ 
+ 
+-- 
+1.8.1.4
+

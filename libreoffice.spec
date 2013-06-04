@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -252,6 +252,7 @@ Patch19: 0001-fix-syntax-errors-in-python-wizards.patch
 Patch20: 0001-don-t-run-autogen.sh-if-building-from-tarballs.patch
 Patch21: 0001-autosize-the-frame-direction-listbox.patch
 Patch22: 0001-setting-max-line-count-should-allow-extra-values-to-.patch
+Patch23: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -993,6 +994,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .don-t-run-autogen.sh-if-building-from-tarballs.patch
 %patch21 -p1 -b .autosize-the-frame-direction-listbox.patch
 %patch22 -p1 -b .setting-max-line-count-should-allow-extra-values-to-.patch
+%patch23 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2056,6 +2058,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jun 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.0-5.beta1
+- Resolves: rhbz#968892 block entire grapheme together for glyph fallback
+
 * Fri May 31 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.0-4.beta1
 - Resolves: rhbz#968976 fix dropdown list autosizing
 

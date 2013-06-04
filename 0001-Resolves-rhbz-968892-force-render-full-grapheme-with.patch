@@ -112,7 +112,7 @@ diff --git a/vcl/inc/generic/glyphcache.hxx b/vcl/inc/generic/glyphcache.hxx
 index a7363f9..d6cdee1 100644
 --- a/vcl/inc/generic/glyphcache.hxx
 +++ b/vcl/inc/generic/glyphcache.hxx
-@@ -37,6 +37,7 @@ class ImplFontOptions;
+@@ -37,6 +37,7 @@
  #include <boost/unordered_map.hpp>
  #include <boost/unordered_set.hpp>
  #include <boost/shared_ptr.hpp>
@@ -120,7 +120,7 @@ index a7363f9..d6cdee1 100644
  
  namespace basegfx { class B2DPolyPolygon; }
  
-@@ -311,6 +312,7 @@ class VCL_DLLPUBLIC ServerFontLayout : public GenericSalLayout
+@@ -311,6 +312,7 @@
  {
  private:
      ServerFont&     mrServerFont;
@@ -128,16 +128,12 @@ index a7363f9..d6cdee1 100644
  
      // enforce proper copy semantic
      SAL_DLLPRIVATE  ServerFontLayout( const ServerFontLayout& );
-@@ -323,6 +325,9 @@ public:
-     virtual bool    LayoutText( ImplLayoutArgs& );
+@@ -324,6 +326,8 @@
      virtual void    AdjustLayout( ImplLayoutArgs& );
+     virtual void    ApplyDXArray( ImplLayoutArgs& );
      virtual void    DrawText( SalGraphics& ) const;
 +    void            setNeedFallback(ImplLayoutArgs& rArgs, sal_Int32 nIndex,
 +                        bool bRightToLeft);
-+
      ServerFont&     GetServerFont() const   { return mrServerFont; }
  };
  
--- 
-1.8.1.4
-

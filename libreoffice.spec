@@ -253,6 +253,7 @@ Patch20: 0001-don-t-run-autogen.sh-if-building-from-tarballs.patch
 Patch21: 0001-autosize-the-frame-direction-listbox.patch
 Patch22: 0001-setting-max-line-count-should-allow-extra-values-to-.patch
 Patch23: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch24: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .autosize-the-frame-direction-listbox.patch
 %patch22 -p1 -b .setting-max-line-count-should-allow-extra-values-to-.patch
 %patch23 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch24 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2060,6 +2062,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Jun 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.0-5.beta1
 - Resolves: rhbz#968892 block entire grapheme together for glyph fallback
+- Related: rhbz#968892 discard impossible languages for glyph fallback
 
 * Fri May 31 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.0-4.beta1
 - Resolves: rhbz#968976 fix dropdown list autosizing

@@ -123,7 +123,7 @@ BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-base-devel
 %endif
 BuildRequires: gtk2-devel
-BuildRequires: harfbuzz
+BuildRequires: harfbuzz-devel
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
 %if 0%{?fedora}

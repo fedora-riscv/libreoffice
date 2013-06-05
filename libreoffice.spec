@@ -1324,15 +1324,11 @@ rm -rf icons/gnome applications application-registry
 # rhbz#901346 512x512 icons are not used by anything
 for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
     mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
-    # TODO: these should be libreoffice$PRODUCTVERSION.* . Check where
-    # the problem is.
-    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@$ICONVERSION-@libreoffice-@ | sed -e s@$PRODUCTVERSION-@libreoffice-@`
+    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
 done
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
-# TODO: these should be libreoffice$PRODUCTVERSION.* . Check where the
-# problem is.
-cp -p mime-info/$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
-cp -p mime-info/$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
+cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
+cp -p mime-info/libreoffice$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime/packages
 cp -p mime/packages/libreoffice$PRODUCTVERSION.xml $RPM_BUILD_ROOT/%{_datadir}/mime/packages/libreoffice.xml

@@ -1074,7 +1074,7 @@ touch autogen.lastrun
  %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
  --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
  %{distrooptions} \
- --disable-fetch-external
+ --disable-fetch-external --disable-ccache
 
 make VERBOSE=true
 

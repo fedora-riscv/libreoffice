@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -245,16 +245,10 @@ Patch13: libreoffice-rhel6limits.patch
 Patch14: libreoffice-rhel6glib.patch
 %endif
 Patch15: 0001-temporarily-disable-failing-test.patch
-Patch16: 0001-rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
-Patch17: 0001-do-not-build-LibreOffice_Test.patch
-Patch18: 0001-disable-failing-perf-test.patch
-Patch19: 0001-fix-syntax-errors-in-python-wizards.patch
-Patch20: 0001-don-t-run-autogen.sh-if-building-from-tarballs.patch
-Patch21: 0001-autosize-the-frame-direction-listbox.patch
-Patch22: 0001-setting-max-line-count-should-allow-extra-values-to-.patch
-Patch23: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch24: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch25: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch16: 0001-do-not-build-LibreOffice_Test.patch
+Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -989,16 +983,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .rhel6glib.patch
 %endif
 %patch15 -p1 -b .temporarily-disable-failing-test.patch
-%patch16 -p1 -b .rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
-%patch17 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch18 -p1 -b .disable-failing-perf-test.patch
-%patch19 -p1 -b .fix-syntax-errors-in-python-wizards.patch
-%patch20 -p1 -b .don-t-run-autogen.sh-if-building-from-tarballs.patch
-%patch21 -p1 -b .autosize-the-frame-direction-listbox.patch
-%patch22 -p1 -b .setting-max-line-count-should-allow-extra-values-to-.patch
-%patch23 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
-%patch24 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch25 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch16 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch17 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2062,6 +2050,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jun 05 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-7.beta1
+- 4.1.0 beta2
+
 * Wed Jun 05 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.0-6.beta1
 - Related: rhbz#968892 discard impossible languages for Oriya script
 

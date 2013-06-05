@@ -128,9 +128,8 @@ index a7363f9..d6cdee1 100644
  
      // enforce proper copy semantic
      SAL_DLLPRIVATE  ServerFontLayout( const ServerFontLayout& );
-@@ -324,6 +326,8 @@
+@@ -324,5 +326,7 @@
      virtual void    AdjustLayout( ImplLayoutArgs& );
-     virtual void    ApplyDXArray( ImplLayoutArgs& );
      virtual void    DrawText( SalGraphics& ) const;
 +    void            setNeedFallback(ImplLayoutArgs& rArgs, sal_Int32 nIndex,
 +                        bool bRightToLeft);

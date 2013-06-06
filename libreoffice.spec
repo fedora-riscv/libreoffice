@@ -1056,24 +1056,40 @@ autoconf
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
- %vendoroption %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
- --with-build-version="%{version}-%{release}" \
- --enable-release-build --disable-epm \
- --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
- --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
- --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
- --enable-ext-wiki-publisher \
- --enable-scripting-beanshell --enable-scripting-javascript \
- --with-system-jars \
- --with-system-libs --with-system-headers \
- --without-system-npapi-headers --with-system-dicts \
- --with-external-dict-dir=/usr/share/myspell \
- --without-myspell-dicts --without-fonts --without-ppds --without-afms \
- --with-help \
+ %vendoroption \
+ %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
  %{?with_lang} \
+ --disable-ccache \
+ --disable-epm \
+ --disable-fetch-external \
+ --disable-gnome-vfs \
+ --enable-dbus \
+ --enable-evolution2 \
+ --enable-ext-nlpsolver \
+ --enable-ext-presenter-minimizer \
+ --enable-ext-wiki-publisher \
+ --enable-gio \
+ --enable-lockdown \
+ --enable-opengl \
+ --enable-release-build \
+ --enable-scripting-beanshell \
+ --enable-scripting-javascript \
+ --enable-symbols \
+ --enable-vba \
+ --with-build-version="%{version}-%{release}" \
+ --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \
- %{distrooptions} \
- --disable-fetch-external --disable-ccache
+ --with-help \
+ --with-system-dicts \
+ --with-system-headers \
+ --with-system-jars \
+ --with-system-libs \
+ --without-afms \
+ --without-fonts \
+ --without-myspell-dicts \
+ --without-ppds \
+ --without-system-npapi-headers \
+ %{distrooptions}
 
 make VERBOSE=true
 

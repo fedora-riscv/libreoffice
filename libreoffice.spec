@@ -1060,7 +1060,6 @@ touch autogen.lastrun
  %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
  %{?with_lang} \
  --disable-ccache \
- --disable-epm \
  --disable-fetch-external \
  --disable-gnome-vfs \
  --enable-dbus \
@@ -1068,9 +1067,7 @@ touch autogen.lastrun
  --enable-ext-nlpsolver \
  --enable-ext-presenter-minimizer \
  --enable-ext-wiki-publisher \
- --enable-gio \
  --enable-lockdown \
- --enable-opengl \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
@@ -1086,7 +1083,6 @@ touch autogen.lastrun
  --with-system-libs \
  --without-afms \
  --without-fonts \
- --without-myspell-dicts \
  --without-ppds \
  --without-system-npapi-headers \
  %{distrooptions}

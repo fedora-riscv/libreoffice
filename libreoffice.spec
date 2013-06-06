@@ -113,7 +113,6 @@ BuildRequires: evolution-data-server-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: freetype-devel
-BuildRequires: gecko-devel
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
 BuildRequires: gstreamer-plugins-base-devel
@@ -1066,7 +1065,7 @@ touch autogen.lastrun
  --enable-ext-wiki-publisher --enable-ext-report-builder \
  --enable-scripting-beanshell --enable-scripting-javascript \
  --with-system-jars --with-vba-package-format="builtin" \
- --with-system-libs --with-system-headers --with-system-mozilla \
+ --with-system-libs --with-system-headers \
  --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \

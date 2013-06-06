@@ -1078,8 +1078,6 @@ touch autogen.lastrun
  --with-external-tar="$EXTSRCDIR" \
  --with-help \
  --with-system-dicts \
- --with-system-headers \
- --with-system-jars \
  --with-system-libs \
  --without-afms \
  --without-fonts \

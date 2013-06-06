@@ -109,6 +109,7 @@ BuildRequires: clucene-core-devel
 %endif
 BuildRequires: cppunit-devel
 BuildRequires: cups-devel
+BuildRequires: dbus-glib-devel
 BuildRequires: evolution-data-server-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel

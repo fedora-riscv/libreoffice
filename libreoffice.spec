@@ -1057,21 +1057,21 @@ autoconf
 touch autogen.lastrun
 %configure \
  %vendoroption %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
- --with-build-version="%{version}-%{release}" --with-unix-wrapper=%{name} \
- --enable-release-build --disable-epm --disable-mathmldtd \
+ --with-build-version="%{version}-%{release}" \
+ --enable-release-build --disable-epm \
  --disable-gnome-vfs --enable-gio --enable-symbols --enable-lockdown \
  --enable-evolution2 --enable-dbus --enable-opengl --enable-vba \
  --enable-ext-presenter-minimizer --enable-ext-nlpsolver \
- --enable-ext-wiki-publisher --enable-ext-report-builder \
+ --enable-ext-wiki-publisher \
  --enable-scripting-beanshell --enable-scripting-javascript \
- --with-system-jars --with-vba-package-format="builtin" \
+ --with-system-jars \
  --with-system-libs --with-system-headers \
  --without-system-npapi-headers --with-system-dicts \
  --with-external-dict-dir=/usr/share/myspell \
  --without-myspell-dicts --without-fonts --without-ppds --without-afms \
  --with-help \
- %{?with_lang} --with-poor-help-localizations="$POORHELPS" \
- --with-external-tar="$EXTSRCDIR" --with-java-target-version=1.5 \
+ %{?with_lang} \
+ --with-external-tar="$EXTSRCDIR" \
  %{distrooptions} \
  --disable-fetch-external --disable-ccache
 

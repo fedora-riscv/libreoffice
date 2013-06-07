@@ -1,0 +1,45 @@
+From c20f79d8dabf1e7035ecad09dc46486412c1b332 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 7 Jun 2013 10:40:54 +0200
+Subject: [PATCH] simplify check for harfbuzz
+
+We check for it in both branches of the if, right? So why do not drop it
+entirely?
+
+(cherry picked from commit 36edf2e6fff430beeb35882b408ceb01453a9e18)
+
+Signed-off-by: David Tardon <dtardon@redhat.com>
+
+Conflicts:
+	configure.ac
+
+Change-Id: I715bfb55c02c5425bbb4874b97aca9d2872acced
+---
+ configure.ac | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 6462857..8c7999d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8393,14 +8393,10 @@ AC_MSG_CHECKING([whether to enable HarfBuzz support])
+ if test "$_os" != "WINNT" -a "$_os" != "Darwin"; then
+     AC_MSG_RESULT([yes])
+     ENABLE_HARFBUZZ="TRUE"
+-    if test "$with_system_harfbuzz" = "yes"; then
+-	if $PKG_CONFIG --atleast-version 0.9.18 harfbuzz; then
+-		libo_CHECK_SYSTEM_MODULE([harfbuzz],[HARFBUZZ],[harfbuzz-icu >= 0.9.18])
+-    	else
+-    		libo_CHECK_SYSTEM_MODULE([harfbuzz],[HARFBUZZ],[harfbuzz >= 0.9.10])
+-        fi
++    if $PKG_CONFIG --atleast-version 0.9.18 harfbuzz; then
++        libo_CHECK_SYSTEM_MODULE([harfbuzz],[HARFBUZZ],[harfbuzz-icu >= 0.9.18])
+     else
+-    	libo_CHECK_SYSTEM_MODULE([harfbuzz],[HARFBUZZ],[harfbuzz >= 0.9.10])
++        libo_CHECK_SYSTEM_MODULE([harfbuzz],[HARFBUZZ],[harfbuzz >= 0.9.10])
+     fi
+ else
+     AC_MSG_RESULT([no])
+-- 
+1.8.2.1
+

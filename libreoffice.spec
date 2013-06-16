@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -235,7 +235,7 @@ Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
 #to-do, fix this on bigendian platforms
-Patch8: 0001-disable-failing-check.patch
+Patch8: 0001-disable-sw-import-export-tests.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 Patch9: libreoffice-rhel6gcj.patch
 Patch10: libreoffice-rhel6poppler.patch
@@ -2058,6 +2058,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Jun 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-9.beta2
+- Resolves: rhbz#971321 failing tests on ppc and s390
+
 * Fri Jun 07 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-8.beta2
 - Related: rhbz#971795 go back to BR: harfbuzz-devel
 

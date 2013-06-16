@@ -250,6 +250,8 @@ Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch20: 0001-simplify-check-for-harfbuzz.patch
+Patch21: 0001-fdo-65132-compute-font-height-correctly.patch
+Patch22: 0002-Revert-Revert-Fix-fdo-64972-strikethrough-displays-t.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -989,6 +991,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch20 -p1 -b .simplify-check-for-harfbuzz.patch
+%patch21 -p1 -b .fdo-65132-compute-font-height-correctly.patch
+%patch22 -p1 -b .Revert-Revert-Fix-fdo-64972-strikethrough-displays-t.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2060,6 +2064,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Sun Jun 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-9.beta2
 - Resolves: rhbz#971321 failing tests on ppc and s390
+- Resolves: rhbz#974062 incorrect rendering of text in outline blocks in
+  Impress
 
 * Fri Jun 07 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-8.beta2
 - Related: rhbz#971795 go back to BR: harfbuzz-devel

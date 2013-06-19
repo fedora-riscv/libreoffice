@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -1059,7 +1059,7 @@ autoconf
 touch autogen.lastrun
 %configure \
  %vendoroption \
- %{?_smp_flags:--with-parallelism=%{_smp_flags}} \
+ %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  %{?with_lang} \
  --disable-ccache \
  --disable-fetch-external \
@@ -2057,6 +2057,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jun 19 2013 Dennis Gilmore <dennis@ausil.us> - 1:4.1.0.1-2
+- fix _smp_mflags macro useage
+
 * Wed Jun 19 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.1-1
 - 4.1.0 rc1
 - Related: rhbz#971321 failing tests on ppc and s390

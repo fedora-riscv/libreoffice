@@ -234,8 +234,6 @@ Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
 Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
 Patch7:  libreoffice-installfix.patch
-#to-do, fix this on bigendian platforms
-Patch8: 0001-disable-sw-import-export-tests.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 Patch9: libreoffice-rhel6gcj.patch
 Patch10: libreoffice-rhel6poppler.patch
@@ -250,6 +248,7 @@ Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch20: 0001-buildfix.patch
+Patch21: 0001-fix-rtf-import-on-big-endian.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -974,7 +973,6 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
 # %%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
-%patch8 -p1 -b .disable-failing-check.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 %patch9 -p1 -b .rhel6gcj.patch
 %patch10 -p1 -b .rhel6poppler.patch
@@ -989,6 +987,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch20 -p1 -b .buildfix.patch
+%patch21 -p1 -b .fix-rtf-import-on-big-endian.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2060,6 +2059,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Jun 19 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.1-1
 - 4.1.0 rc1
+- Related: rhbz#971321 failing tests on ppc and s390
 
 * Sun Jun 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.0-9.beta2
 - Resolves: rhbz#971321 failing tests on ppc and s390

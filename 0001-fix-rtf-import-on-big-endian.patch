@@ -1,0 +1,114 @@
+From d2dff59c034a65421dee67c86c1b1585d56f29d1 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 19 Jun 2013 12:38:43 +0200
+Subject: [PATCH] fix rtf import on big endian
+
+(cherry picked from commit fa2363344cbf85af17a80c4757b226ab43391af6)
+
+Change-Id: Ia9f589752176849f7f6700483e933767e509edf3
+Signed-off-by: David Tardon <dtardon@redhat.com>
+---
+ writerfilter/source/rtftok/rtffly.hxx | 42 +++++++++++++----------------------
+ 1 file changed, 15 insertions(+), 27 deletions(-)
+
+diff --git a/writerfilter/source/rtftok/rtffly.hxx b/writerfilter/source/rtftok/rtffly.hxx
+index ab68cfc..d07a8ac 100644
+--- a/writerfilter/source/rtftok/rtffly.hxx
++++ b/writerfilter/source/rtftok/rtffly.hxx
+@@ -17,18 +17,18 @@ namespace writerfilter {
+         {
+             public:
+                 RTFVertOrient(sal_uInt16 nValue)
++                    : nVal(nValue)
+                 {
+-                    Value.nVal = nValue;
+                 }
+ 
+                 sal_uInt16 GetOrient() const
+                 {
+-                    return Value.Flags.nOrient;
++                    return OSL_LONIBBLE(OSL_LOBYTE(nVal));
+                 }
+ 
+                 sal_uInt16 GetRelation() const
+                 {
+-                    return Value.Flags.nRelOrient;
++                    return OSL_HINIBBLE(OSL_LOBYTE(nVal));
+                 }
+ 
+                 sal_Int32 GetAlign() const
+@@ -71,19 +71,11 @@ namespace writerfilter {
+ 
+                 sal_uInt16 GetValue() const
+                 {
+-                    return Value.nVal;
++                    return nVal;
+                 }
+ 
+             private:
+-                union
+-                {
+-                    struct
+-                    {
+-                        sal_uInt16 nOrient : 4;
+-                        sal_uInt16 nRelOrient : 4;
+-                    } Flags;
+-                    sal_uInt16 nVal;
+-                } Value;
++                sal_uInt16 nVal;
+         };
+ 
+         /// Stores the horizontal orientation properties of an RTF fly frame.
+@@ -91,18 +83,23 @@ namespace writerfilter {
+         {
+             public:
+                 RTFHoriOrient(sal_uInt16 nValue)
++                    : nVal(nValue)
+                 {
+-                    Value.nVal = nValue;
+                 }
+ 
+                 sal_uInt16 GetOrient() const
+                 {
+-                    return Value.Flags.nOrient;
++                    return OSL_LONIBBLE(OSL_LOBYTE(nVal));
+                 }
+ 
+                 sal_uInt16 GetRelation() const
+                 {
+-                    return Value.Flags.nRelOrient;
++                    return OSL_LONIBBLE(OSL_HIBYTE(nVal));
++                }
++
++                sal_uInt16 GetRelAnchor() const
++                {
++                    return OSL_HINIBBLE(OSL_LOBYTE(nVal));
+                 }
+ 
+                 sal_Int32 GetAlign() const
+@@ -151,20 +148,11 @@ namespace writerfilter {
+ 
+                 sal_uInt16 GetValue() const
+                 {
+-                    return Value.nVal;
++                    return nVal;
+                 }
+ 
+             private:
+-                union
+-                {
+-                    struct
+-                    {
+-                        sal_uInt16 nOrient : 4;
+-                        sal_uInt16 nRelAnchor : 4;
+-                        sal_uInt16 nRelOrient : 4;
+-                    } Flags;
+-                    sal_uInt16 nVal;
+-                } Value;
++                sal_uInt16 nVal;
+         };
+     } // namespace rtftok
+ } // namespace writerfilter
+-- 
+1.8.2.1
+

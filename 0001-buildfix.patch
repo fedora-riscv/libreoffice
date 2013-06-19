@@ -1,0 +1,23 @@
+From 46c683c740acf324164f188a97abea28fe3c1bf9 Mon Sep 17 00:00:00 2001
+From: Andras Timar <atimar@suse.com>
+Date: Tue, 18 Jun 2013 16:54:58 +0200
+Subject: [PATCH] buildfix
+
+Change-Id: I3816b95baba54568d00f7afca8eff0a1882f8886
+---
+ source/kk/dbaccess/source/ui/misc.po | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/kk/dbaccess/source/ui/misc.po b/source/kk/dbaccess/source/ui/misc.po
+index c5d8118..a42baf0 100644
+--- a/translations/source/kk/dbaccess/source/ui/misc.po
++++ b/translations/source/kk/dbaccess/source/ui/misc.po
+@@ -417,4 +417,4 @@ msgctxt ""
+ "RID_STR_EXTENSION_NOT_PRESENT\n"
+ "string.text"
+ msgid "The report, \"$file$\", requires the Oracle Report Builder feature."
+-msgstr "\\\"$file$\\\" есептемесі Oracle Report Builder мүмкіндігін талап етеді."
++msgstr "\"$file$\" есептемесі Oracle Report Builder мүмкіндігін талап етеді."
+-- 
+1.8.2.1
+

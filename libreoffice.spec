@@ -249,6 +249,7 @@ Patch16: 0001-do-not-build-LibreOffice_Test.patch
 Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch20: 0001-buildfix.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -987,6 +988,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
 %patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch20 -p1 -b .buildfix.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

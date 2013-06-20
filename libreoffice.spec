@@ -1812,6 +1812,7 @@ done
 %{baseinstdir}/program/classes/hsqldb.jar
 %endif
 %{baseinstdir}/program/classes/reportbuilder.jar
+%{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so

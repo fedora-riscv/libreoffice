@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -641,6 +641,15 @@ Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
 A plug-in for LibreOffice that enables it to function without an X server. 
 It implements the -headless command line option and allows LibreOffice to be
 used as a backend server for e.g. document conversion.
+
+%package glade
+Summary: Support for creating LibreOffice dialogs in glade
+Group: Development/Libraries
+Requires: glade3-libgladeui
+
+%description glade
+%{name}-glade contains a catalog of LibreOffice-specific widgets for
+glade.
 
 %if 0%{?fedora}
 %package kde
@@ -1356,6 +1365,10 @@ cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{baseinstdir
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{baseinstdir}/program/fundamentalrc
 
+# move glade catalog to system glade dir
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
+mv $RPM_BUILD_ROOT/%{baseinstdir}/share/glade/libreoffice-catalog.xml $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
+
 export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
@@ -1661,9 +1674,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
 %{baseinstdir}/share/gallery
-# TODO: do we want to install the glade catalog?
-%dir %{baseinstdir}/share/glade
-%{baseinstdir}/share/glade/libreoffice-catalog.xml
 %dir %{baseinstdir}/share/labels
 %{baseinstdir}/share/labels/labels.xml
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -2053,6 +2063,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/librelogo.xcd
 %{baseinstdir}/share/registry/pyuno.xcd
 
+%files glade
+%{_datadir}/glade3/catalogs/libreoffice-catalog.xml
+
 %if 0%{?fedora}
 %files kde
 %{baseinstdir}/program/libkde4be1lo.so
@@ -2060,6 +2073,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 24 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.1-4
+- put glade catalog into an extra packgae
+
 * Sun Jun 23 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.1-3
 - Resolves: rhbz#976304 gallery elements may not insert
 

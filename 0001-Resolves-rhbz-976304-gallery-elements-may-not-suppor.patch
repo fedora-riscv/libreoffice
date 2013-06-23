@@ -1,0 +1,48 @@
+From 517fc70fb19dd2afb72890aaf7ccee5d422b7aa4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 23 Jun 2013 20:46:07 +0100
+Subject: [PATCH] Resolves: rhbz#976304 gallery elements may not support
+ document.Settings
+
+so the createInstance throws, so the element doesn't get inserted into
+the documents.
+
+regression since f0cd6fe9075cd0aa00162474784ad804a07ed138
+
+Change-Id: Ie6cef7a4f0d5ac8a34d41139c3439fc04e9c7f20
+---
+ xmloff/source/draw/sdxmlexp.cxx | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/xmloff/source/draw/sdxmlexp.cxx b/xmloff/source/draw/sdxmlexp.cxx
+index 6e86da3..c9149b9 100644
+--- a/xmloff/source/draw/sdxmlexp.cxx
++++ b/xmloff/source/draw/sdxmlexp.cxx
+@@ -2915,15 +2915,16 @@ XMLFontAutoStylePool* SdXMLExport::CreateFontAutoStylePool()
+         Reference< lang::XMultiServiceFactory > xFac( GetModel(), UNO_QUERY );
+         if( xFac.is() )
+         {
+-            Reference<beans::XPropertySet> const xProps( xFac->createInstance(
+-                         "com.sun.star.document.Settings"), UNO_QUERY );
+-            if (xProps.is())
++            try
+             {
+-                try // clipboard document doesn't have shell so throws here
+-                {
+-                    xProps->getPropertyValue("EmbedFonts") >>= bEmbedFonts;
+-                }
+-                catch (uno::Exception const&) { }
++                Reference<beans::XPropertySet> const xProps( xFac->createInstance(
++                             "com.sun.star.document.Settings"), UNO_QUERY_THROW );
++                xProps->getPropertyValue("EmbedFonts") >>= bEmbedFonts;
++            }
++            catch (...)
++            {
++                // clipboard document doesn't have shell so throws from getPropertyValue
++                // gallery elements may not support com.sun.star.document.Settings so throws from createInstance
+             }
+         }
+     }
+-- 
+1.8.2.1
+

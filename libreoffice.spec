@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.documentfoundation.org/develop
@@ -249,6 +249,7 @@ Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch20: 0001-buildfix.patch
 Patch21: 0001-fix-rtf-import-on-big-endian.patch
+Patch22: 0001-Resolves-rhbz-976304-gallery-elements-may-not-suppor.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -988,6 +989,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch20 -p1 -b .buildfix.patch
 %patch21 -p1 -b .fix-rtf-import-on-big-endian.patch
+%patch22 -p1 -b .rhbz-976304-gallery-elements-may-not-suppor.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2058,6 +2060,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Jun 23 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.1-3
+- Resolves: rhbz#976304 gallery elements may not insert
+
 * Wed Jun 19 2013 Dennis Gilmore <dennis@ausil.us> - 1:4.1.0.1-2
 - fix _smp_mflags macro useage
 

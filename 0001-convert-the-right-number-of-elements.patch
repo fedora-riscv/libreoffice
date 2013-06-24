@@ -1,0 +1,26 @@
+From e3a8e4f221fca5f67f4d6caf17f3bec39b13e3d5 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 24 Jun 2013 13:31:27 +0200
+Subject: [PATCH] convert the right number of elements
+
+Change-Id: I375d03ad880d348be64a04613e612e19bf2f4e1c
+---
+ include/oox/helper/binaryoutputstream.hxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/oox/helper/binaryoutputstream.hxx b/include/oox/helper/binaryoutputstream.hxx
+index 0882821..56d8065 100644
+--- a/include/oox/helper/binaryoutputstream.hxx
++++ b/include/oox/helper/binaryoutputstream.hxx
+@@ -84,7 +84,7 @@ template< typename Type >
+ void BinaryOutputStream::writeArray( Type* opnArray, sal_Int32 nElemCount )
+ {
+     sal_Int32 nWriteSize = getLimitedValue< sal_Int32, sal_Int32 >( nElemCount, 0, SAL_MAX_INT32 / sizeof( Type ) ) * sizeof( Type );
+-    ByteOrderConverter::convertLittleEndianArray( opnArray, static_cast< size_t >( nWriteSize ) );
++    ByteOrderConverter::convertLittleEndianArray( opnArray, static_cast< size_t >( nElemCount ) );
+     writeMemory( opnArray, nWriteSize, sizeof( Type ) );
+ }
+ 
+-- 
+1.8.2.1
+

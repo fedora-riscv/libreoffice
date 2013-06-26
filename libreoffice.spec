@@ -38,7 +38,7 @@ Version:        %{libo_version}.2
 Release:        12%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
-URL:            http://www.documentfoundation.org/develop
+URL:            http://www.libreoffice.org/default/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0:        %{source_url}/libreoffice-core-%{version}.tar.xz

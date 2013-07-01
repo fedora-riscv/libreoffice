@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -251,6 +251,7 @@ Patch20: 0001-buildfix.patch
 Patch21: 0001-fix-rtf-import-on-big-endian.patch
 Patch22: 0001-Resolves-rhbz-976304-gallery-elements-may-not-suppor.patch
 Patch23: 0001-convert-the-right-number-of-elements.patch
+Patch24: 0001-Resolves-rhbz-979758-crash-on-Diagrammen-in-LibreOff.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1001,6 +1002,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .fix-rtf-import-on-big-endian.patch
 %patch22 -p1 -b .rhbz-976304-gallery-elements-may-not-suppor.patch
 %patch23 -p1 -b .convert-the-right-number-of-elements.patch
+%patch24 -p1 -b .rhbz-979758-crash-on-Diagrammen-in-LibreOff.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2075,6 +2077,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 01 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.1-8
+- Resolves: rhbz#979758 crash on Diagrammen in LibreOffice help page
+
 * Thu Jun 27 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.1-7
 - bump revision
 

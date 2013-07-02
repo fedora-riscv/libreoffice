@@ -58,10 +58,11 @@ Source6:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zi
 Source7:        %{external_url}/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
 Source8:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+%if 0%{?fedora} || 0%{?rhel} >= 7
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%if 0%{?rhel} && 0%{?rhel} < 7
+%else
 Source11:       %{external_url}/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz

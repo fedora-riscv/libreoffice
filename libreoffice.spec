@@ -580,6 +580,8 @@ xhtml export transforms. Install this to enable docbook export.
 Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: postgresql-libs
 
 %description postgresql
@@ -1545,6 +1547,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libsvgiolo.so
 %{baseinstdir}/program/libsvxlo.so
 %{baseinstdir}/program/libsvxcorelo.so
+%{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswlo.so
 %{baseinstdir}/program/libtextconv_dict.so
 %{baseinstdir}/program/libtextconversiondlgslo.so
@@ -1955,7 +1958,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
-%{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswuilo.so
 %{baseinstdir}/program/libt602filterlo.so
 %{baseinstdir}/program/libwpftwriterlo.so

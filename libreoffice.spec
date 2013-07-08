@@ -880,7 +880,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
-%langpack -l ro -n Romanian -F -H -Y -M
+%langpack -l ro -n Romanian -A -F -H -Y -M
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S ctl -T
@@ -943,6 +943,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l nl -n Dutch
 %autocorr -l pl -n Polish
 %autocorr -l pt -n Portuguese
+%autocorr -l ro -n Romanian
 %autocorr -l ru -n Russian
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian

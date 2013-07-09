@@ -1311,6 +1311,11 @@ pushd $RPM_BUILD_ROOT/%{_bindir}
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat
 ln -s libreoffice openoffice.org
+%if 0%{?rhel} && 0%{?rhel} < 7
+# rhbz#833512 provide a /usr/bin/openoffice.org-1.9, etc. for backwards compat
+ln -s libreoffice openoffice.org-2.0
+ln -s libreoffice openoffice.org-1.9
+%endif
 popd
 
 # TO-DO, remember to remove the "echo" lines
@@ -1785,6 +1790,10 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 #launchers
 %{_bindir}/libreoffice
 %{_bindir}/openoffice.org
+%if 0%{?rhel} && 0%{?rhel} < 7
+%{_bindir}/openoffice.org-1.9
+%{_bindir}/openoffice.org-2.0
+%endif
 %{_bindir}/soffice
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc

@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -247,6 +247,7 @@ Patch16: 0001-do-not-build-LibreOffice_Test.patch
 Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch20: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -996,6 +997,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
 %patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch20 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2083,6 +2085,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.2-2
+- Resolves: rhbz#980387 Exporting a odg to jpg or tiff generates error
+
 * Thu Jul 04 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.2-1
 - 4.1.0 rc2
 

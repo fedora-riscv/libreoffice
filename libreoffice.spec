@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 3.6.6
+%define libo_version 3.6.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -255,18 +255,9 @@ Patch33: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 Patch34: 0001-Related-rhbz-902884-check-for-GetSelectedMasterPage-.patch
 Patch35: 0001-Resolves-rhbz-920697-i110881-rhbz-623191-presentatio.patch
 Patch36: 0001-rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-Patch37: 0001-fdo-62617-display-groups-on-multiple-layers-correctl.patch
-Patch38: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
-Patch39: 0001-valgrind-uninitialized-value.patch
-Patch40: 0001-Resolves-fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-Patch41: 0001-rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
-Patch42: 0001-rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
-Patch43: 0001-resolved-rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
-Patch44: 0001-resolved-rhbz-918544-do-not-attempt-to-access-non-ex.patch
-Patch45: 0001-Related-rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
-Patch46: 0001-Resolves-fdo-63802-return-true-if-we-have-known-empt.patch
-Patch47: 0001-rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
-Patch48: 0001-rhbz-908819-Don-t-call-code-in-UNO-object-ctor-that-.patch
+Patch37: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
+Patch38: 0001-Related-rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
+Patch39: 0001-Resolves-fdo-63802-return-true-if-we-have-known-empt.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1015,18 +1006,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .rhbz-902884-check-for-GetSelectedMasterPage-.patch
 %patch35 -p1 -b .rhbz-920697-i110881-rhbz-623191-presentatio.patch
 %patch36 -p1 -b .rhbz-876742-speed-up-table-manipulation-in-Impress.patch
-%patch37 -p1 -b .fdo-62617-display-groups-on-multiple-layers-correctl.patch
-%patch38 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
-%patch39 -p1 -b .valgrind-uninitialized-value.patch
-%patch40 -p1 -b .fdo-47209-and-rhbz-927223-syntax-highlighte.patch
-%patch41 -p1 -b .rhbz-867808-Do-not-throw-RuntimeException-by-pointer.patch
-%patch42 -p1 -b .rhbz-954991-Avoid-static-data-causing-trouble-at-exi.patch
-%patch43 -p1 -b .rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
-%patch44 -p1 -b .rhbz-918544-do-not-attempt-to-access-non-ex.patch
-%patch45 -p1 -b .rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
-%patch46 -p1 -b .fdo-63802-return-true-if-we-have-known-empt.patch
-%patch47 -p1 -b .rhbz-961460-Don-t-needlessly-pass-URLs-through-INetU.patch
-%patch48 -p1 -b .rhbz-908819-Don-t-call-code-in-UNO-object-ctor-that-.patch
+%patch37 -p1 -b .rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
+%patch38 -p1 -b .rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
+%patch39 -p1 -b .fdo-63802-return-true-if-we-have-known-empt.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2296,6 +2278,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:3.6.7.2-1
+- 3.6.7 rc2
+
 * Thu Jun 06 2013 Stephan Bergmann <sbergman@redhat.com> - 1:3.6.6.2-9
 - Related: rhbz#908819 crash on start
 

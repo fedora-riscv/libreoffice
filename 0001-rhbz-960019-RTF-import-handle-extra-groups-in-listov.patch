@@ -1,0 +1,70 @@
+From 411db9b6972392fd1eb7adda20c3ce0a95f39558 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 10 Jul 2013 12:41:57 +0200
+Subject: [PATCH] rhbz#960019 : RTF import: handle extra groups in listoverride
+ entry
+
+This crashed because for a single listoverride entry 2 SPRMs were sent
+to the domain-mapper, and the second one was empty.
+
+Conflicts:
+	sw/qa/extras/rtfimport/rtfimport.cxx
+	writerfilter/source/rtftok/rtfdocumentimpl.cxx
+
+Change-Id: Ic41ffd8bd4edcff065f49ecef3464efedd909d63
+(cherry picked from commit b3944f124ab3dc87332796a46387f837ad29e8d5)
+Reviewed-on: https://gerrit.libreoffice.org/4801
+Reviewed-by: Miklos Vajna <vmiklos@suse.cz>
+Tested-by: Miklos Vajna <vmiklos@suse.cz>
+---
+ .../qa/cppunittests/rtftok/data/pass/rhbz960019.rtf        | 12 ++++++++++++
+ writerfilter/source/rtftok/rtfdocumentimpl.cxx             | 14 ++++++++++++--
+ 2 files changed, 24 insertions(+), 2 deletions(-)
+ create mode 100644 writerfilter/qa/cppunittests/rtftok/data/pass/rhbz960019.rtf
+
+diff --git a/writerfilter/qa/cppunittests/rtftok/data/pass/rhbz960019.rtf b/writerfilter/qa/cppunittests/rtftok/data/pass/rhbz960019.rtf
+new file mode 100644
+index 0000000..869aa33
+--- /dev/null
++++ b/writerfilter/qa/cppunittests/rtftok/data/pass/rhbz960019.rtf
+@@ -0,0 +1,12 @@
++{\rtf1
++{\*\listtable
++{\list\listtemplateid-723955400\listsimple{\listlevel\leveljc\levelfollow0\levelspace0\levelindent0\levelstartat1{\leveltext\'03\'00. ;}{\levelnumbers\'01;}\f0 }{\listname ;}\listid-1155484576}
++}
++{\*\listoverridetable
++{\*\listoverride{\listid-1155484576\listoverridecount0\ls1}}
++}
++\pard\plain \pvpg\phpg\posx1143\posy4743\absw9615\absh-2922\dfrmtxtx72\dfrmtxty72\nowrap
++Hello\par
++\pard\plain\par
++}
++
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index e62c0eb..97c4d0c 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -3685,8 +3685,18 @@ int RTFDocumentImpl::popState()
+     // list override table
+     else if (aState.nDestinationState == DESTINATION_LISTOVERRIDEENTRY)
+     {
+-        RTFValue::Pointer_t pValue(new RTFValue(aState.aTableAttributes, aState.aTableSprms));
+-        m_aListTableSprms.set(NS_ooxml::LN_CT_Numbering_num, pValue, false);
++        if (m_aStates.top().nDestinationState == DESTINATION_LISTOVERRIDEENTRY)
++        {   // copy properties upwards so upper popState inserts it
++            m_aStates.top().aTableAttributes = aState.aTableAttributes;
++            m_aStates.top().aTableSprms = aState.aTableSprms;
++        }
++        else
++        {
++            RTFValue::Pointer_t pValue(new RTFValue(
++                        aState.aTableAttributes, aState.aTableSprms));
++            m_aListTableSprms.set(NS_ooxml::LN_CT_Numbering_num,
++                    pValue, false);
++        }
+     }
+     else if (aState.nDestinationState == DESTINATION_LEVELTEXT)
+     {
+-- 
+1.8.1.4
+

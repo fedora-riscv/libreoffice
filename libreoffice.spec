@@ -2280,7 +2280,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:3.6.7.2-2-UNBUILT
+* Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:3.6.7.2-2
 - Resolves: rhbz#960019: RTF import: handle extra groups in listoverride entry
 
 * Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:3.6.7.2-1

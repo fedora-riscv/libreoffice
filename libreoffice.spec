@@ -103,7 +103,13 @@ BuildRequires: zip
 
 # libs / headers
 BuildRequires: GConf2-devel
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: bluez-libs-devel
+%else
+%ifnarch s390 s390x
+BuildRequires: bluez-libs-devel
+%endif
+%endif
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: boost-devel
 BuildRequires: clucene-core-devel

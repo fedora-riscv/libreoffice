@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -317,6 +317,7 @@ to be written in python.
 %package base
 Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
+Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
@@ -328,27 +329,12 @@ Obsoletes: %{name}-report-builder < 1:4.1.0.0
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-base-core%{?_isa} = 1:3.3.0
 Provides: openoffice.org-base%{?_isa} = 1:3.3.0, broffice.org-base%{?_isa} = 1:3.3.0
+Provides: openoffice.org-report-builder%{?_isa} = 1:3.3.0
 %endif
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
 databases through a GUI.
-
-%package report-builder
-Summary: Create database reports from LibreOffice
-Group: Applications/Productivity
-Requires: pentaho-reporting-flow-engine
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-base = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-report-builder%{?_isa} = 1:3.3.0
-%endif
-
-%description report-builder
-Creates database reports from LibreOffice databases. The report builder can
-define group and page headers as well as group, page footers and calculation
-fields to accomplish complex database reports.
 
 %package bsh
 Summary: BeanShell support for LibreOffice
@@ -2085,6 +2071,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 12 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.2-3
+- Resolves: rhbz#983809 libreoffice-base misses deps on needed java packages
+
 * Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.2-2
 - Resolves: rhbz#980387 Exporting a odg to jpg or tiff generates error
 

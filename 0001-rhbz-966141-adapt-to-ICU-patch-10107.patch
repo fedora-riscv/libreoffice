@@ -1,0 +1,114 @@
+From 32f342d08ef257499c632b298f9900b71f729375 Mon Sep 17 00:00:00 2001
+Message-Id: <32f342d08ef257499c632b298f9900b71f729375.1374082878.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 3 May 2013 00:19:59 +0200
+Subject: [PATCH] adapt to ICU patch
+ https://ssl.icu-project.org/trac/ticket/10107
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+implemented IcuFontFromServerFont::getFontTable(LETag,size_t&)
+
+so that ICU versions trying to call
+LEFontInstance::getFontTable(LETag,size_t&) actually call it instead of
+IcuFontFromServerFont::getFontTable(LETag)
+
+See http://site.icu-project.org/download/51#TOC-Known-Issues
+"NOTE: Applications must implement LEFontInstance::getFontTable(LETag,
+size_t &length)  in their LEFontInstance subclasses, so that ICU can
+properly bounds-check font tables."
+
+See also https://ssl.icu-project.org/trac/ticket/10107
+
+do not call LayoutEngine::reset()
+
+Calling reset() disposes everything the LayoutEngine knows in its
+current state. While this may have prevented some obscure crash during
+exit in the past (call was added 2003-03-27), it definitely leads to a
+crash if the updated LayoutEngine "patch"
+http://download.icu-project.org/files/icu4c/51.1/icu-51-layout-fix-10107.tgz
+is applied as that sets fGlyphStorage=NULL (it doesn't delete
+LEGlyphStorage though and thus may leak, but that patch is in the wild
+now) and a later call to mpIcuLE->layoutChars() tries to access
+fGlyphStorage->...() if mpIcuLE is reused.
+
+Note: The Fedora F17 update
+https://admin.fedoraproject.org/updates/icu-4.8.1.1-6.fc17 has a patch
+to not set fGlyphStorage=NULL thus prevents this leak and crash, keeping
+this change here anyway for completeness though in case other releases
+where this package is to be deployed do not have that.
+
+Change-Id: I566d4d210243c5e016c897ede5eb5f94bc165d8a
+---
+ vcl/generic/glyphs/gcach_layout.cxx | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-adapt-to-ICU-patch-https-ssl.icu-project.org-trac-ti.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-adapt-to-ICU-patch-https-ssl.icu-project.org-trac-ti.patch"
+
+diff --git a/vcl/generic/glyphs/gcach_layout.cxx b/vcl/generic/glyphs/gcach_layout.cxx
+index 5f92f48..b68bec3 100644
+--- a/vcl/generic/glyphs/gcach_layout.cxx
++++ b/vcl/generic/glyphs/gcach_layout.cxx
+@@ -198,6 +198,7 @@ public:
+                             : mrServerFont( rFont )
+                             {}
+ 
++    virtual const void*     getFontTable(LETag tableTag, size_t &length) const;
+     virtual const void*     getFontTable(LETag tableTag) const;
+     virtual le_int32        getUnitsPerEM() const;
+     virtual float           getXPixelsPerEm() const;
+@@ -218,7 +219,7 @@ public:
+ 
+ // -----------------------------------------------------------------------
+ 
+-const void* IcuFontFromServerFont::getFontTable( LETag nICUTableTag ) const
++const void* IcuFontFromServerFont::getFontTable( LETag nICUTableTag, size_t & rLength ) const
+ {
+     char pTagName[5];
+     pTagName[0] = (char)(nICUTableTag >> 24);
+@@ -227,8 +228,9 @@ const void* IcuFontFromServerFont::getFontTable( LETag nICUTableTag ) const
+     pTagName[3] = (char)(nICUTableTag);
+     pTagName[4] = 0;
+ 
+-    sal_uLong nLength;
++    sal_uLong nLength = 0;
+     const unsigned char* pBuffer = mrServerFont.GetTable( pTagName, &nLength );
++    rLength = static_cast<size_t>(nLength);
+ #ifdef VERBOSE_DEBUG
+     fprintf(stderr,"IcuGetTable(\"%s\") => %p\n", pTagName, pBuffer);
+     int mnHeight = mrServerFont.GetFontSelData().mnHeight;
+@@ -238,6 +240,12 @@ const void* IcuFontFromServerFont::getFontTable( LETag nICUTableTag ) const
+     return (const void*)pBuffer;
+ }
+ 
++const void* IcuFontFromServerFont::getFontTable( LETag nICUTableTag ) const
++{
++    size_t nLength = 0;
++    return getFontTable( nICUTableTag, nLength);
++}
++
+ // -----------------------------------------------------------------------
+ 
+ le_int32 IcuFontFromServerFont::getUnitsPerEM() const
+@@ -471,7 +479,6 @@ bool IcuLayoutEngine::operator()( ServerFontLayout& rLayout, ImplLayoutArgs& rAr
+         mpIcuLE->getGlyphs( pIcuGlyphs, rcIcu );
+         mpIcuLE->getCharIndices( pCharIndices, rcIcu );
+         mpIcuLE->getGlyphPositions( &pGlyphPositions->fX, rcIcu );
+-        mpIcuLE->reset(); // TODO: get rid of this, PROBLEM: crash at exit when removed
+         if( LE_FAILURE(rcIcu) )
+             return false;
+ 
+
+--------------erAck-patch-parts--
+
+

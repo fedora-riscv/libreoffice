@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?dist}
+Release:        13%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -183,6 +183,7 @@ Patch65: 0001-fdo-53175-Fixed-the-end-of-hyperlinks.patch
 Patch66: 0001-Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
 Patch67: 0001-Resolves-rhbz-907933-crash-on-removing-second-last-p.patch
 Patch68: 0001-resolved-rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
+Patch69: 0001-rhbz-966141-adapt-to-ICU-patch-10107.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1081,6 +1082,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch66 -p1 -b .Fix-fdo-47669-also-check-if-we-started-the-tag-befor.patch
 %patch67 -p1 -b .rhbz-907933-crash-on-removing-second-last-p.patch
 %patch68 -p1 -b .rhbz-919020-Basic-CDbl-and-CSng-scan-locali.patch
+%patch69 -p1 -b .rhbz-966141-adapt-to-ICU-patch-10107.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2367,6 +2369,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 17 2013 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-13
+- Related: rhbz#966141 adapt to ICU patch 10107
+
 * Mon Apr 22 2013 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-12
 - Resolves: rhbz#919020 Basic CDbl() and CSng() scan localized number
 

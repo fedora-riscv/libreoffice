@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2081,6 +2081,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 18 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.3-1
+- 4.1.0 rc3
+
 * Thu Jul 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.2-5
 - silence scary gcc warning
 - fdo#66924 switching to master view is broken

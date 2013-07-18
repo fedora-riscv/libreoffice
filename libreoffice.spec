@@ -255,6 +255,7 @@ Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch20: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
 Patch21: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
+Patch22: 0001-Resolves-fdo-66924-switching-to-master-view-is-broke.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -992,6 +993,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch20 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
 %patch21 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
+%patch22 -p1 -b .fdo-66924-switching-to-master-view-is-broke.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2081,6 +2083,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Jul 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.2-5
 - silence scary gcc warning
+- fdo#66924 switching to master view is broken
 
 * Tue Jul 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.2-4
 - bump release

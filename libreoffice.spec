@@ -847,9 +847,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l fa -n Farsi -A -H -Y -s ctl
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l fi -n Finnish -F -A -T -o fi_FI
+%langpack -l fi -n Finnish -F -A -T -o fi_FI -V -w fi_FI
 %else
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI -V -w fi_FI
 %endif
 %langpack -l fr -n French -F -H -Y -M -A -T -X -O -W
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -w ga_IE
@@ -912,7 +912,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -V -w ts_ZA
 %langpack -l uk -n Ukrainian -F -H -Y -M -T -O
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ur -n Urdu -F -H
+%langpack -l ur -n Urdu -F -H -O -W
 %endif
 %langpack -l ve -n Venda -F -H -o ve_ZA
 %langpack -l xh -n Xhosa -F -H -o xh_ZA

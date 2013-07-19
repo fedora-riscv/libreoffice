@@ -238,24 +238,23 @@ Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 Patch3:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
 Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
-Patch6:  openoffice.org-3.1.1.ooo105784.vcl.sniffscriptforsubs.patch
-Patch7:  libreoffice-installfix.patch
+Patch6:  libreoffice-installfix.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-Patch9: libreoffice-rhel6gcj.patch
-Patch10: libreoffice-rhel6poppler.patch
-Patch11: libreoffice-rhel6langs.patch
-Patch12: 0001-Require-icu-4.6-or-later-with-system-icu.patch
-Patch13: libreoffice-rhel6limits.patch
-Patch14: libreoffice-rhel6glib.patch
+Patch7: libreoffice-rhel6gcj.patch
+Patch8: libreoffice-rhel6poppler.patch
+Patch9: libreoffice-rhel6langs.patch
+Patch10: 0001-Require-icu-4.6-or-later-with-system-icu.patch
+Patch11: libreoffice-rhel6limits.patch
+Patch12: libreoffice-rhel6glib.patch
 %endif
-Patch15: 0001-temporarily-disable-failing-test.patch
-Patch16: 0001-do-not-build-LibreOffice_Test.patch
-Patch17: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch18: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch19: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch20: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
-Patch21: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-Patch22: 0001-Resolves-fdo-66924-switching-to-master-view-is-broke.patch
+Patch13: 0001-temporarily-disable-failing-test.patch
+Patch14: 0001-do-not-build-LibreOffice_Test.patch
+Patch15: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch18: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
+Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
+Patch20: 0001-Resolves-fdo-66924-switching-to-master-view-is-broke.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -991,24 +990,23 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
-%patch7  -p1 -b .libreoffice-installfix.patch
+%patch6  -p1 -b .libreoffice-installfix.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
-%patch9 -p1 -b .rhel6gcj.patch
-%patch10 -p1 -b .rhel6poppler.patch
-%patch11 -p1 -b .rhel6langs.patch
-%patch12 -p1 -R -b .Require-icu-4.6-or-later-with-system-icu.patch
-%patch13 -p1 -b .rhel6limits.patch
-%patch14 -p1 -b .rhel6glib.patch
+%patch7 -p1 -b .rhel6gcj.patch
+%patch8 -p1 -b .rhel6poppler.patch
+%patch9 -p1 -b .rhel6langs.patch
+%patch10 -p1 -R -b .Require-icu-4.6-or-later-with-system-icu.patch
+%patch11 -p1 -b .rhel6limits.patch
+%patch12 -p1 -b .rhel6glib.patch
 %endif
-%patch15 -p1 -b .temporarily-disable-failing-test.patch
-%patch16 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch17 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
-%patch18 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch19 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch20 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
-%patch21 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-%patch22 -p1 -b .fdo-66924-switching-to-master-view-is-broke.patch
+%patch13 -p1 -b .temporarily-disable-failing-test.patch
+%patch14 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch15 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch16 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch18 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
+%patch19 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
+%patch20 -p1 -b .fdo-66924-switching-to-master-view-is-broke.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

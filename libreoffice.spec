@@ -254,6 +254,7 @@ Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch18: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
 Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
 Patch20: 0001-Resolves-fdo-66924-switching-to-master-view-is-broke.patch
+Patch21: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1006,6 +1007,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
 %patch19 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
 %patch20 -p1 -b .fdo-66924-switching-to-master-view-is-broke.patch
+%patch21 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2094,6 +2096,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Jul 18 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.3-1
 - 4.1.0 rc3
+- Resolves: fdo#48835 GNOME3 app menu
 
 * Thu Jul 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.2-5
 - silence scary gcc warning

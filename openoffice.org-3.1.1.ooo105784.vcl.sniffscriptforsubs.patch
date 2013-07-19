@@ -1,18 +1,18 @@
-From bda1b906c7bee734dfc7242b60b7b1510886aee0 Mon Sep 17 00:00:00 2001
+From 387b9d3293ef8582c400c670574a80ebb3aec4fd Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 1 Dec 2011 14:18:09 +0100
 Subject: [PATCH] #i105784# vcl: improve selection of fallback font by
  supplying language hint when none exists
 
 ---
- vcl/generic/fontmanager/fontconfig.cxx | 141 +++++++++++++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
+ vcl/generic/fontmanager/fontconfig.cxx | 143 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 141 insertions(+), 2 deletions(-)
 
 diff --git a/vcl/generic/fontmanager/fontconfig.cxx b/vcl/generic/fontmanager/fontconfig.cxx
-index 8270585..82ac6bc 100644
+index a305095..028b269 100644
 --- a/vcl/generic/fontmanager/fontconfig.cxx
 +++ b/vcl/generic/fontmanager/fontconfig.cxx
-@@ -91,6 +91,9 @@ using namespace psp;
+@@ -90,6 +90,9 @@ using namespace psp;
  
  #include "sal/alloca.h"
  
@@ -22,7 +22,7 @@ index 8270585..82ac6bc 100644
  #include <utility>
  #include <algorithm>
  
-@@ -911,6 +914,138 @@ IMPL_LINK_NOARG(PrintFontManager, autoInstallFontLangSupport)
+@@ -969,6 +972,138 @@ IMPL_LINK_NOARG(PrintFontManager, autoInstallFontLangSupport)
      return 0;
  }
  
@@ -158,34 +158,44 @@ index 8270585..82ac6bc 100644
 +    return NULL;
 +}
 +
- bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& rMissingCodes )
+ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissingCodes )
  {
      bool bRet = false;
-@@ -929,6 +1064,7 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
+@@ -987,6 +1122,7 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
  
-     const LanguageTag aLangTag(rPattern.meLanguage);
-     const rtl::OString aLangAttrib = mapToFontConfigLangTag(aLangTag);
+     LanguageTag aLangTag(rPattern.meLanguage);
+     OString aLangAttrib = mapToFontConfigLangTag(aLangTag);
 +    const FcChar8* pLangAttribUtf8 = (const FcChar8*)aLangAttrib.getStr();
-     if (!aLangAttrib.isEmpty())
-         FcPatternAddString(pPattern, FC_LANG, (FcChar8*)aLangAttrib.getStr());
  
-@@ -941,11 +1077,16 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, rtl::OUString& r
-            // also handle unicode surrogates
-            const sal_uInt32 nCode = rMissingCodes.iterateCodePoints( &nStrIndex );
-            FcCharSetAddChar( unicodes, nCode );
+     // Add required Unicode characters, if any
+     if ( !rMissingCodes.isEmpty() )
+@@ -997,6 +1133,8 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+             // also handle unicode surrogates
+             const sal_uInt32 nCode = rMissingCodes.iterateCodePoints( &nStrIndex );
+             FcCharSetAddChar( unicodes, nCode );
 +           if (!pLangAttribUtf8)
 +               pLangAttribUtf8 = (const FcChar8*)pick_sample_language(nCode);
-        }
-        FcPatternAddCharSet(pPattern, FC_CHARSET, unicodes);
-        FcCharSetDestroy(unicodes);
+             //#i105784#/rhbz#527719  improve selection of fallback font
+             if (aLangAttrib.isEmpty())
+             {
+@@ -1006,14 +1144,15 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+             {
+                 aLangTag = getExemplerLangTagForCodePoint(nCode);
+                 aLangAttrib = mapToFontConfigLangTag(aLangTag);
++                pLangAttribUtf8 = (const FcChar8*)aLangAttrib.getStr();
+             }
+         }
+         FcPatternAddCharSet(pPattern, FC_CHARSET, unicodes);
+         FcCharSetDestroy(unicodes);
      }
  
+-    if (!aLangAttrib.isEmpty())
+-        FcPatternAddString(pPattern, FC_LANG, (FcChar8*)aLangAttrib.getStr());
 +    if( pLangAttribUtf8 )
 +        FcPatternAddString( pPattern, FC_LANG, pLangAttribUtf8 );
-+
-     addtopattern(pPattern, rPattern.meItalic, rPattern.meWeight,
-         rPattern.meWidthType, rPattern.mePitch);
  
+     addtopattern(pPattern, rPattern.GetSlant(), rPattern.GetWeight(),
+         rPattern.GetWidthType(), rPattern.GetPitch());
 -- 
-1.8.0
+1.8.3.1
 

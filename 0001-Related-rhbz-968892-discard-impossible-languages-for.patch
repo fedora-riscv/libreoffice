@@ -63,9 +63,9 @@ index 1b36980..ff471fa 100644
 +            //and autodetect something useful
 +            if (!aLangAttrib.isEmpty() && isImpossibleCodePointForLang(aLangTag, nCode))
 +                aLangAttrib = OString();
+            if (!pLangAttribUtf8)
+                pLangAttribUtf8 = (const FcChar8*)pick_sample_language(nCode);
              //#i105784#/rhbz#527719  improve selection of fallback font
-             if (aLangAttrib.isEmpty())
-             {
 -- 
 1.8.1.4
 

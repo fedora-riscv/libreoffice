@@ -990,7 +990,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
 %patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
 %patch5  -p1 -b .ooo101274.opening-a-directory.patch
-# %%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
+%patch6  -p1 -b .ooo105784.vcl.sniffscriptforsubs.patch
 %patch7  -p1 -b .libreoffice-installfix.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 %patch9 -p1 -b .rhel6gcj.patch

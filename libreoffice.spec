@@ -639,11 +639,12 @@ used as a backend server for e.g. document conversion.
 %package glade
 Summary: Support for creating LibreOffice dialogs in glade
 Group: Development/Libraries
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: glade3-libgladeui
 
 %description glade
 %{name}-glade contains a catalog of LibreOffice-specific widgets for
-glade.
+glade and ui-previewer tool to check the visual appearance of dialogs.
 
 %if 0%{?fedora}
 %package kde
@@ -1656,8 +1657,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/unorc
 %{baseinstdir}/program/libupdatefeedlo.so
-# TODO do we need this?
-%{baseinstdir}/program/ui-previewer
 %{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
 %{baseinstdir}/program/libvbaeventslo.so
@@ -2086,6 +2085,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %files glade
+%{baseinstdir}/program/ui-previewer
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
 %if 0%{?fedora}

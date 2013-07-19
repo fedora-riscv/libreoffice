@@ -13,7 +13,7 @@ diff --git a/vcl/generic/fontmanager/fontconfig.cxx b/vcl/generic/fontmanager/fo
 index 1b36980..ff471fa 100644
 --- a/vcl/generic/fontmanager/fontconfig.cxx
 +++ b/vcl/generic/fontmanager/fontconfig.cxx
-@@ -847,6 +847,41 @@ namespace
+@@ -847,6 +847,41 @@
  #endif
      }
  
@@ -55,7 +55,7 @@ index 1b36980..ff471fa 100644
      LanguageTag getExemplerLangTagForCodePoint(sal_uInt32 currentChar)
      {
          int32_t script = u_getIntPropertyValue(currentChar, UCHAR_SCRIPT);
-@@ -954,6 +989,10 @@ bool PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+@@ -954,6 +989,10 @@
              // also handle unicode surrogates
              const sal_uInt32 nCode = rMissingCodes.iterateCodePoints( &nStrIndex );
              FcCharSetAddChar( unicodes, nCode );
@@ -66,6 +66,3 @@ index 1b36980..ff471fa 100644
              //#i105784#/rhbz#527719  improve selection of fallback font
              if (aLangAttrib.isEmpty())
              {
--- 
-1.8.1.4
-

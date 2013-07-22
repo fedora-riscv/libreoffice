@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2280,6 +2280,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 22 2013 Eike Rathke <erack@redhat.com> - 1:3.6.7.2-3
+- force rebuild with icu-49.1.1-10.fc18
+
 * Thu Jul 11 2013 David Tardon <dtardon@redhat.com> - 1:3.6.7.2-2
 - Resolves: rhbz#960019: RTF import: handle extra groups in listoverride entry
 

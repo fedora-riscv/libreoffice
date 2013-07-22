@@ -35,7 +35,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        13%{?dist}
+Release:        14%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2369,6 +2369,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 22 2013 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-14
+- force rebuild with icu-4.8.1.1-7.fc17
+
 * Wed Jul 17 2013 Eike Rathke <erack@redhat.com> - 1:3.5.7.2-13
 - Related: rhbz#966141 adapt to ICU patch 10107
 

@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.4
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -253,8 +253,9 @@ Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch18: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
 Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-Patch20: 0001-Resolves-fdo-66924-switching-to-master-view-is-broke.patch
-Patch21: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch20: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch21: 0001-move-static-bitmap-into-a-svapp-member.patch
+Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1006,8 +1007,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch18 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
 %patch19 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-%patch20 -p1 -b .fdo-66924-switching-to-master-view-is-broke.patch
-%patch21 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch20 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch21 -p1 -b .move-static-bitmap-into-a-svapp-member.patch
+%patch22 -p1 -b .resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2094,6 +2096,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 24 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.4-1
+- 4.1.0 rc4
+
 * Mon Jul 22 2013 Eike Rathke <erack@redhat.com> - 1:4.1.0.3-2
 - force rebuild with icu-50.1.2-7
 

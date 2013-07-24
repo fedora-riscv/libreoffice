@@ -1,0 +1,183 @@
+From 2331a7a2a748a94546c702a80e8916f548e30176 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Jun 2013 10:01:10 +0100
+Subject: [PATCH] move static bitmap into a svapp member
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+so it won't crash on exit when its dtor uses stuff destroyed by deinitvcl
+already.
+
+also fix comparisons, i.e. presumably
+aLastColorTopLeft == aLastColorTopLeft etc
+should have been aLastColorTopLeft == aColorTopLeft
+
+Change-Id: I1f3dc47504c5add113b3a8bcadf010ca3b9f4c31
+(cherry picked from commit a3694b1b32cb0677019962a5908fe775c83ed5a6)
+Reviewed-on: https://gerrit.libreoffice.org/5048
+Reviewed-by: Miklos Vajna <vmiklos@suse.cz>
+Reviewed-by: Fridrich Strba <fridrich@documentfoundation.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ vcl/inc/svdata.hxx          | 22 ++++++++++++++++++++++
+ vcl/source/app/svdata.cxx   |  9 +++++++++
+ vcl/source/app/svmain.cxx   |  3 +++
+ vcl/source/gdi/bitmapex.cxx | 42 ++++++++++++++++++------------------------
+ 4 files changed, 52 insertions(+), 24 deletions(-)
+
+diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
+index 86b0d7a9..a929165 100644
+--- a/vcl/inc/svdata.hxx
++++ b/vcl/inc/svdata.hxx
+@@ -284,6 +284,26 @@ struct ImplSVNWFData
+     bool                    mbDDListBoxNoTextArea:1;
+ };
+ 
++struct BlendFrameCache
++{
++    Size m_aLastSize;
++    sal_uInt8 m_nLastAlpha;
++    Color m_aLastColorTopLeft;
++    Color m_aLastColorTopRight;
++    Color m_aLastColorBottomRight;
++    Color m_aLastColorBottomLeft;
++    BitmapEx m_aLastResult;
++
++    BlendFrameCache()
++        : m_aLastSize(0, 0)
++        , m_nLastAlpha(0)
++        , m_aLastColorTopLeft(COL_BLACK)
++        , m_aLastColorTopRight(COL_BLACK)
++        , m_aLastColorBottomRight(COL_BLACK)
++        , m_aLastColorBottomLeft(COL_BLACK)
++    {
++    }
++};
+ 
+ struct ImplSVData
+ {
+@@ -312,6 +332,7 @@ struct ImplSVData
+     UnoWrapperBase*         mpUnoWrapper;
+     Window*                 mpIntroWindow;      // the splash screen
+     DockingManager*         mpDockingManager;
++    BlendFrameCache*        mpBlendFrameCache;
+     sal_Bool                mbIsTestTool;
+ 
+     oslThreadIdentifier                     mnMainThreadId;
+@@ -330,6 +351,7 @@ Window*     ImplGetDefaultWindow();
+ VCL_PLUGIN_PUBLIC ResMgr*     ImplGetResMgr();
+ VCL_PLUGIN_PUBLIC ResId VclResId( sal_Int32 nId ); // throws std::bad_alloc if no res mgr
+ DockingManager*     ImplGetDockingManager();
++BlendFrameCache*    ImplGetBlendFrameCache();
+ void        ImplWindowAutoMnemonic( Window* pWindow );
+ 
+ void        ImplUpdateSystemProcessWindow();
+diff --git a/vcl/source/app/svdata.cxx b/vcl/source/app/svdata.cxx
+index feec982..2a7bc93 100644
+--- a/vcl/source/app/svdata.cxx
++++ b/vcl/source/app/svdata.cxx
+@@ -256,6 +256,15 @@ DockingManager* ImplGetDockingManager()
+     return pSVData->mpDockingManager;
+ }
+ 
++BlendFrameCache* ImplGetBlendFrameCache()
++{
++    ImplSVData* pSVData = ImplGetSVData();
++    if ( !pSVData->mpBlendFrameCache)
++        pSVData->mpBlendFrameCache= new BlendFrameCache();
++
++    return pSVData->mpBlendFrameCache;
++}
++
+ class AccessBridgeCurrentContext: public cppu::WeakImplHelper1< com::sun::star::uno::XCurrentContext >
+ {
+ public:
+diff --git a/vcl/source/app/svmain.cxx b/vcl/source/app/svmain.cxx
+index 21a351b..9104be9 100644
+--- a/vcl/source/app/svmain.cxx
++++ b/vcl/source/app/svmain.cxx
+@@ -540,6 +540,9 @@ void DeInitVCL()
+     if ( pSVData->maAppData.mpFirstEventHook )
+         ImplFreeEventHookData();
+ 
++    if (pSVData->mpBlendFrameCache)
++        delete pSVData->mpBlendFrameCache, pSVData->mpBlendFrameCache = NULL;
++
+     ImplDeletePrnQueueList();
+     delete pSVData->maGDIData.mpScreenFontList;
+     pSVData->maGDIData.mpScreenFontList = NULL;
+diff --git a/vcl/source/gdi/bitmapex.cxx b/vcl/source/gdi/bitmapex.cxx
+index 1266043..094b7c7 100644
+--- a/vcl/source/gdi/bitmapex.cxx
++++ b/vcl/source/gdi/bitmapex.cxx
+@@ -959,31 +959,25 @@ BitmapEx VCL_DLLPUBLIC createBlendFrame(
+     Color aColorBottomRight,
+     Color aColorBottomLeft)
+ {
+-    static Size aLastSize(0, 0);
+-    static sal_uInt8 nLastAlpha(0);
+-    static Color aLastColorTopLeft(COL_BLACK);
+-    static Color aLastColorTopRight(COL_BLACK);
+-    static Color aLastColorBottomRight(COL_BLACK);
+-    static Color aLastColorBottomLeft(COL_BLACK);
+-    static BitmapEx aLastResult;
+-
+-    if(aLastSize == rSize
+-        && nLastAlpha == nAlpha
+-        && aLastColorTopLeft == aLastColorTopLeft
+-        && aLastColorTopRight == aLastColorTopRight
+-        && aLastColorBottomRight == aLastColorBottomRight
+-        && aLastColorBottomLeft == aLastColorBottomLeft)
++    BlendFrameCache* pBlendFrameCache = ImplGetBlendFrameCache();
++
++    if(pBlendFrameCache->m_aLastSize == rSize
++        && pBlendFrameCache->m_nLastAlpha == nAlpha
++        && pBlendFrameCache->m_aLastColorTopLeft == aColorTopLeft
++        && pBlendFrameCache->m_aLastColorTopRight == aColorTopRight
++        && pBlendFrameCache->m_aLastColorBottomRight == aColorBottomRight
++        && pBlendFrameCache->m_aLastColorBottomLeft == aColorBottomLeft)
+     {
+-        return aLastResult;
++        return pBlendFrameCache->m_aLastResult;
+     }
+ 
+-    aLastSize = rSize;
+-    nLastAlpha = nAlpha;
+-    aLastColorTopLeft = aLastColorTopLeft;
+-    aLastColorTopRight = aLastColorTopRight;
+-    aLastColorBottomRight = aLastColorBottomRight;
+-    aLastColorBottomLeft = aLastColorBottomLeft;
+-    aLastResult.Clear();
++    pBlendFrameCache->m_aLastSize = rSize;
++    pBlendFrameCache->m_nLastAlpha = nAlpha;
++    pBlendFrameCache->m_aLastColorTopLeft = aColorTopLeft;
++    pBlendFrameCache->m_aLastColorTopRight = aColorTopRight;
++    pBlendFrameCache->m_aLastColorBottomRight = aColorBottomRight;
++    pBlendFrameCache->m_aLastColorBottomLeft = aColorBottomLeft;
++    pBlendFrameCache->m_aLastResult.Clear();
+ 
+     const long nW(rSize.Width());
+     const long nH(rSize.Height());
+@@ -1055,7 +1049,7 @@ BitmapEx VCL_DLLPUBLIC createBlendFrame(
+             aContent.ReleaseAccess(pContent);
+             aAlpha.ReleaseAccess(pAlpha);
+ 
+-            aLastResult = BitmapEx(aContent, aAlpha);
++            pBlendFrameCache->m_aLastResult = BitmapEx(aContent, aAlpha);
+         }
+         else
+         {
+@@ -1071,7 +1065,7 @@ BitmapEx VCL_DLLPUBLIC createBlendFrame(
+         }
+     }
+ 
+-    return aLastResult;
++    return pBlendFrameCache->m_aLastResult;
+ }
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+-- 
+1.8.3.1
+

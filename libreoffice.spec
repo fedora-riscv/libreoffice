@@ -277,14 +277,14 @@ Summary: Core modules for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-# rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
-Requires: java >= 1:1.6
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en
 %else
+# rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
+Requires: java >= 1:1.6
 Requires: hunspell-en-US
 %endif
 Requires(pre):    gtk2 >= 2.9.4

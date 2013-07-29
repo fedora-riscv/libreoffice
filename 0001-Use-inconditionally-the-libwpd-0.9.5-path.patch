@@ -1,0 +1,50 @@
+From 32afec7662fed6eea0714a8bf23e9f040672cb5a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fridrich=20=C5=A0trba?= <fridrich.strba@bluewin.ch>
+Date: Thu, 25 Jul 2013 15:43:58 +0200
+Subject: [PATCH] Use inconditionally the libwpd >= 0.9.5 path
+
+Since libwpd does not output the version number anymore
+
+Change-Id: I1bc3f7081552795fc2ed33f033a093fa5b40fda8
+(cherry picked from commit 93d0e38ccc06060f20073a9461c53f471a1b9c03)
+Reviewed-on: https://gerrit.libreoffice.org/5102
+Reviewed-by: David Tardon <dtardon@redhat.com>
+Tested-by: David Tardon <dtardon@redhat.com>
+---
+ configure.ac                                | 2 +-
+ writerperfect/source/common/WPXSvStream.cxx | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index b4ce4a2..03d2ef8 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7221,7 +7221,7 @@ libo_CHECK_SYSTEM_MODULE([libcmis],[CMIS],[libcmis-0.3 >= 0.3.1])
+ dnl ===================================================================
+ dnl Check for system libwpd
+ dnl ===================================================================
+-libo_CHECK_SYSTEM_MODULE([libwpd],[WPD],[libwpd-0.9 libwpd-stream-0.9],["-I${WORKDIR}/UnpackedTarball/libwpd/inc"],["-L${OUTDIR}/lib -lwpdlib"])
++libo_CHECK_SYSTEM_MODULE([libwpd],[WPD],[libwpd-0.9 >= 0.9.5 libwpd-stream-0.9 >= 0.9.5],["-I${WORKDIR}/UnpackedTarball/libwpd/inc"],["-L${OUTDIR}/lib -lwpdlib"])
+ 
+ dnl ===================================================================
+ dnl Check for system lcms2
+diff --git a/writerperfect/source/common/WPXSvStream.cxx b/writerperfect/source/common/WPXSvStream.cxx
+index a79ac6c..e0c8d8c 100644
+--- a/writerperfect/source/common/WPXSvStream.cxx
++++ b/writerperfect/source/common/WPXSvStream.cxx
+@@ -134,12 +134,8 @@ int WPXSvInputStreamImpl::seek(long offset, WPX_SEEK_TYPE seekType)
+     sal_Int64 tmpOffset = offset;
+     if (seekType == WPX_SEEK_CUR)
+         tmpOffset += tmpPosition;
+-#if defined(LIBWPD_STREAM_VERSION_MAJOR) && defined(LIBWPD_STREAM_VERSION_MINOR) && defined(LIBWPD_STREAM_VERSION_REVISION) \
+-    && (LIBWPD_STREAM_VERSION_MAJOR > 0 || (LIBWPD_STREAM_VERSION_MAJOR == 0 && (LIBWPD_STREAM_VERSION_MINOR > 9 \
+-    || (LIBWPD_STREAM_VERSION_MINOR == 9 && LIBWPD_STREAM_VERSION_REVISION >= 5))))
+     if (seekType == WPX_SEEK_END)
+         tmpOffset += mnLength;
+-#endif
+ 
+     int retVal = 0;
+     if (tmpOffset < 0)
+-- 
+1.8.3.1
+

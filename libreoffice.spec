@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -260,6 +260,7 @@ Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
 Patch23: 0001-Use-inconditionally-the-libwpd-0.9.5-path.patch
 Patch24: 0001-sanitize-system-clucene-includes.patch
 Patch25: 0001-Resolves-rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
+Patch26: 0001-rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1017,6 +1018,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .Use-inconditionally-the-libwpd-0.9.5-path.patch
 %patch24 -p1 -b .sanitize-system-clucene-includes.patch
 %patch25 -p1 -b .rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
+%patch26 -p1 -b .rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2103,6 +2105,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jul 30 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.0.4-5-UNBUILT
+- Resolves: rhbz#989246 Honor user's JavaDriverClass override in mysql driver
+
 * Tue Jul 30 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.4-4
 - Resolves: rhbz#989686 Fix crash with stripping whitespace from toc entries
 

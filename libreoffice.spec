@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -256,6 +256,8 @@ Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
 Patch20: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch21: 0001-move-static-bitmap-into-a-svapp-member.patch
 Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
+Patch23: 0001-Use-inconditionally-the-libwpd-0.9.5-path.patch
+Patch24: 0001-sanitize-system-clucene-includes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1010,6 +1012,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch21 -p1 -b .move-static-bitmap-into-a-svapp-member.patch
 %patch22 -p1 -b .resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
+%patch23 -p1 -b .Use-inconditionally-the-libwpd-0.9.5-path.patch
+%patch24 -p1 -b .sanitize-system-clucene-includes.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2096,6 +2100,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 29 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.4-3
+- make libwpd-based filters work correctly with newest libwpd
+
+* Sun Jul 28 2013 Petr Machata <pmachata@redhat.com> - 1:4.1.0.4-2
+- Rebuild for boost 1.54.0
+
 * Wed Jul 24 2013 David Tardon <dtardon@redhat.com> - 1:4.1.0.4-1
 - 4.1.0 rc4
 

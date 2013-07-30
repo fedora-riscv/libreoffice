@@ -258,6 +258,7 @@ Patch20: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch21: 0001-move-static-bitmap-into-a-svapp-member.patch
 Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
 Patch23: 0001-Use-inconditionally-the-libwpd-0.9.5-path.patch
+Patch24: 0001-sanitize-system-clucene-includes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1013,6 +1014,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .move-static-bitmap-into-a-svapp-member.patch
 %patch22 -p1 -b .resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
 %patch23 -p1 -b .Use-inconditionally-the-libwpd-0.9.5-path.patch
+%patch24 -p1 -b .sanitize-system-clucene-includes.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

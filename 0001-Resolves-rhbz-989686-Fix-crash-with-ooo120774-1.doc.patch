@@ -1,0 +1,33 @@
+From e90e00cb76bc16a562b34a56d5e74e974ca4c270 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fridrich=20=C5=A0trba?= <fridrich.strba@bluewin.ch>
+Date: Fri, 31 May 2013 12:27:49 +0200
+Subject: [PATCH] Resolves: rhbz#989686 Fix crash with ooo120774-1.doc
+
+Do not try to remove line breaks from empty string
+
+Reviewed-on: https://gerrit.libreoffice.org/4114
+Reviewed-by: Fridrich Strba <fridrich@documentfoundation.org>
+Tested-by: Fridrich Strba <fridrich@documentfoundation.org>
+(cherry picked from commit 2cb9aaf44dc589af79d62d7b1136b5d65e9f47d4)
+
+Change-Id: Ieb12c541d42944aac813cee10ce479207b1c674b
+---
+ sw/source/core/doc/doctxm.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sw/source/core/doc/doctxm.cxx b/sw/source/core/doc/doctxm.cxx
+index 2029d9f..6498585 100644
+--- a/sw/source/core/doc/doctxm.cxx
++++ b/sw/source/core/doc/doctxm.cxx
+@@ -1536,6 +1536,8 @@ static String lcl_GetNumString( const SwTOXSortTabBase& rBase, bool bUsePrefix,
+ /// to a single space, and trailing space removed.
+ String lcl_RemoveLineBreaks( String sRet )
+ {
++    if (!sRet.Len())
++        return sRet;
+     xub_StrLen nOffset = 0;
+     sRet.SearchAndReplaceAll('\n', ' ');
+     for (xub_StrLen i = 1; i < sRet.Len(); i++)
+-- 
+1.8.3.1
+

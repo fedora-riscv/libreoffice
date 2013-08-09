@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.0
+%define libo_version 4.1.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.4
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -252,17 +252,8 @@ Patch14: 0001-do-not-build-LibreOffice_Test.patch
 Patch15: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch18: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
-Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-Patch20: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch21: 0001-move-static-bitmap-into-a-svapp-member.patch
-Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
-Patch23: 0001-Use-inconditionally-the-libwpd-0.9.5-path.patch
-Patch24: 0001-sanitize-system-clucene-includes.patch
-Patch25: 0001-Resolves-rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
-Patch26: 0001-rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
-Patch27: 0001-fdo-67045-fix-several-nasty-screen-selection-issues-.patch
-Patch28: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
+Patch18: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch19: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1012,17 +1003,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
 %patch16 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch18 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
-%patch19 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-%patch20 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch21 -p1 -b .move-static-bitmap-into-a-svapp-member.patch
-%patch22 -p1 -b .resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
-%patch23 -p1 -b .Use-inconditionally-the-libwpd-0.9.5-path.patch
-%patch24 -p1 -b .sanitize-system-clucene-includes.patch
-%patch25 -p1 -b .rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
-%patch26 -p1 -b .rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
-%patch27 -p1 -b .fdo-67045-fix-several-nasty-screen-selection-issues-.patch
-%patch28 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
+%patch18 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch19 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2109,6 +2091,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 09 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.1-1
+- 4.1.1 rc1
+
 * Fri Aug 09 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.4-6
 - Resolves: fdo#67743 user autocorr file not written
 

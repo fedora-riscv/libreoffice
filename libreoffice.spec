@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -261,6 +261,7 @@ Patch24: 0001-sanitize-system-clucene-includes.patch
 Patch25: 0001-Resolves-rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
 Patch26: 0001-rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
 Patch27: 0001-fdo-67045-fix-several-nasty-screen-selection-issues-.patch
+Patch28: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1020,6 +1021,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch25 -p1 -b .rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
 %patch26 -p1 -b .rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
 %patch27 -p1 -b .fdo-67045-fix-several-nasty-screen-selection-issues-.patch
+%patch28 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2106,6 +2108,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 09 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.4-6
+- Resolves: fdo#67743 user autocorr file not written
+
 * Tue Jul 30 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.0.4-5
 - Resolves: rhbz#989246 Honor user's JavaDriverClass override in mysql driver
 - Resolves: fdo#67045 fix several nasty screen selection issues

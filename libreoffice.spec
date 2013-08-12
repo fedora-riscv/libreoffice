@@ -81,6 +81,7 @@ Source25:       %{external_url}/libmspub-0.0.5.tar.bz2
 Source26:       %{external_url}/8755aac23317494a9028569374dc87b2-liborcus_0.3.0.tar.bz2
 Source27:       %{external_url}/54e578c91b1b68e69c72be22adcb2195-liblangtag-0.4.0.tar.bz2
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
+Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
 %endif
 
 # build tools
@@ -128,9 +129,9 @@ BuildRequires: gstreamer-plugins-base-devel
 BuildRequires: graphite2-devel
 BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-base-devel
+BuildRequires: harfbuzz-devel
 %endif
 BuildRequires: gtk2-devel
-BuildRequires: harfbuzz-devel
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
 %if 0%{?fedora}

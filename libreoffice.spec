@@ -254,6 +254,7 @@ Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch18: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch19: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
+Patch20: 0001-only-use-the-SSPI-support-with-internal-neon.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1005,6 +1006,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch18 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch19 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
+%patch20 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

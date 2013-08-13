@@ -244,18 +244,17 @@ Patch6:  libreoffice-installfix.patch
 Patch7: libreoffice-rhel6gcj.patch
 Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
-Patch10: 0001-Require-icu-4.6-or-later-with-system-icu.patch
-Patch11: libreoffice-rhel6limits.patch
-Patch12: libreoffice-rhel6glib.patch
+Patch10: libreoffice-rhel6limits.patch
+Patch11: libreoffice-rhel6glib.patch
 %endif
-Patch13: 0001-temporarily-disable-failing-test.patch
-Patch14: 0001-do-not-build-LibreOffice_Test.patch
-Patch15: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch18: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch19: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
-Patch20: 0001-only-use-the-SSPI-support-with-internal-neon.patch
+Patch12: 0001-temporarily-disable-failing-test.patch
+Patch13: 0001-do-not-build-LibreOffice_Test.patch
+Patch14: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch15: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch16: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch17: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch18: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
+Patch19: 0001-only-use-the-SSPI-support-with-internal-neon.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -996,18 +995,17 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch7 -p1 -b .rhel6gcj.patch
 %patch8 -p1 -b .rhel6poppler.patch
 %patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -R -b .Require-icu-4.6-or-later-with-system-icu.patch
-%patch11 -p1 -b .rhel6limits.patch
-%patch12 -p1 -b .rhel6glib.patch
+%patch10 -p1 -b .rhel6limits.patch
+%patch11 -p1 -b .rhel6glib.patch
 %endif
-%patch13 -p1 -b .temporarily-disable-failing-test.patch
-%patch14 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch15 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch12 -p1 -b .temporarily-disable-failing-test.patch
+%patch13 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch14 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch16 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch18 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch19 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
-%patch20 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
+%patch17 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch18 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
+%patch19 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

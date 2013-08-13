@@ -1,6 +1,6 @@
 --- a/configure.ac	2011-11-10 13:22:02.062474990 +0000
 +++ b/configure.ac	2011-11-10 13:22:35.072472880 +0000
-@@ -9546,16 +9546,6 @@
+@@ -9659,16 +9659,6 @@ if test "$_os" != Android -a "$_os" != iOS -a "$ENABLE_PDFIMPORT" != FALSE; then
        AC_MSG_RESULT([external])
        SYSTEM_POPPLER=YES
        PKG_CHECK_MODULES( POPPLER, poppler >= 0.8.0 )
@@ -14,7 +14,7 @@
 -      CXXFLAGS=$save_CXXFLAGS
 -      CPPFLAGS=$save_CPPFLAGS
 -      AC_LANG_POP([C++])
-       libo_MINGW_CHECK_DLL([POPPLER], [libpoppler])
+       libo_MINGW_CHECK_DLL([libpoppler])
    else
        AC_MSG_RESULT([internal])
 --- a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx	2011-11-10 13:22:11.949473646 +0000

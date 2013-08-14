@@ -78,11 +78,12 @@ Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.
 Source23:       %{external_url}/libvisio-0.0.26.tar.bz2
 Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
 Source25:       %{external_url}/libmspub-0.0.5.tar.bz2
-Source26:       %{external_url}/8755aac23317494a9028569374dc87b2-liborcus_0.3.0.tar.bz2
+Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
 Source27:       %{external_url}/54e578c91b1b68e69c72be22adcb2195-liblangtag-0.4.0.tar.bz2
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
 Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
 Source30:       %{external_url}/8473296c671b6e3dd8197f4145e0854b-libodfgen-0.0.2.tar.bz2
+Source31:       %{external_url}/libmwaw-0.1.10.tar.bz2
 %endif
 
 # build tools
@@ -1052,7 +1053,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif

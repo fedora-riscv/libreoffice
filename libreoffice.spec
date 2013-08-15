@@ -1070,8 +1070,13 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if ! 0%{libo_python3}
 export PYTHON=%{_bindir}/python
+%if 0%{?fedora} || 0%{?rhel} >= 7
 export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
+%else
+export PYTHON_CFLAGS=`python-config --cflags python`
+export PYTHON_LIBS=`python-config --libs python`
+%endif
 %endif
 
 # TODO: do we still need this? Perhaps some old patch touches

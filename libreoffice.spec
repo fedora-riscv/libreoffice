@@ -71,7 +71,7 @@ Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.t
 Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
 Source17:       %{external_url}/libcdr-0.0.12.tar.bz2
 Source18:       %{external_url}/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source19:       %{external_url}/e7f84e3199dfee9122949448cab3823f-libwpd-0.9.6.tar.bz2
+Source19:       %{external_url}/972afb8fdf02d9e7517e258b7fa7f0eb-libwpd-0.9.8.tar.bz2
 Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz

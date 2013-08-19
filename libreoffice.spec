@@ -77,7 +77,7 @@ Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.t
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source23:       %{external_url}/libvisio-0.0.26.tar.bz2
 Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
-Source25:       %{external_url}/libmspub-0.0.5.tar.bz2
+Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
 Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
 Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2

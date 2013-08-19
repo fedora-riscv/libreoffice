@@ -75,7 +75,7 @@ Source19:       %{external_url}/972afb8fdf02d9e7517e258b7fa7f0eb-libwpd-0.9.8.ta
 Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/libvisio-0.0.26.tar.bz2
+Source23:       %{external_url}/libvisio-0.0.30.tar.bz2
 Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
 Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
 Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2

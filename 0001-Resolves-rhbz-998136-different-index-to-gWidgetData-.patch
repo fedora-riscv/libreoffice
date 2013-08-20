@@ -1,0 +1,29 @@
+From 0aa3a73c9463f4d1e8918383b21131352635fe75 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 20 Aug 2013 14:25:22 +0100
+Subject: [PATCH] Resolves: rhbz#998136 different index to gWidgetData vs
+ NWEnsureGTKNotebook
+
+Change-Id: Ib3ebbfda09cd05477b65c1d81ac77e977b2a11e5
+---
+ vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+index c88bc6f..e3bff2a 100644
+--- a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+@@ -1607,8 +1607,8 @@ static Rectangle NWGetTabItemRect( SalX11Screen nScreen, Rectangle aAreaRect )
+     w = aAreaRect.GetWidth();
+     h = aAreaRect.GetHeight();
+ 
+-    gint xthickness = gWidgetData[0].gNotebookWidget->style->xthickness;
+-    gint ythickness = gWidgetData[0].gNotebookWidget->style->ythickness;
++    gint xthickness = gWidgetData[nScreen].gNotebookWidget->style->xthickness;
++    gint ythickness = gWidgetData[nScreen].gNotebookWidget->style->ythickness;
+ 
+     x -= xthickness;
+     y -= ythickness;
+-- 
+1.8.3.1
+

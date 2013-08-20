@@ -259,6 +259,7 @@ Patch18: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
 Patch19: 0001-only-use-the-SSPI-support-with-internal-neon.patch
 Patch20: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 Patch21: 0001-Resolves-rhbz-998136-different-index-to-gWidgetData-.patch
+Patch22: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1012,6 +1013,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
 %patch20 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 %patch21 -p1 -b .rhbz-998136-different-index-to-gWidgetData-.patch
+%patch22 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2106,6 +2108,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Aug 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.1-3-UNBUILT
 - Related: rhbz#895690 Always try to do a mount when opening a file via GIO
 - Resolves: rhbz#998136 wrong index to gWidgetData
+- Resolves: rhbz#998046 store last size/position of the base windows
 
 * Mon Aug 19 2013 Marek Kasik <mkasik@redhat.com> - 1:4.1.1.1-2
 - Rebuild (poppler-0.24.0)

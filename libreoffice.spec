@@ -65,9 +65,9 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %else
 Source11:       %{external_url}/08c85a6d6d793daee14e10e22eefdc4b-mdds_0.8.1.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
-Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
-Source14:       %{external_url}/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
-Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
+Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
+Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
 Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
 Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
 Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2

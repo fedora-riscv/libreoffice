@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -257,6 +257,7 @@ Patch16: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch17: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch18: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
 Patch19: 0001-only-use-the-SSPI-support-with-internal-neon.patch
+Patch20: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1008,6 +1009,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch17 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch18 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
 %patch19 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
+%patch20 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2099,6 +2101,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Aug 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.1-3-UNBUILT
+- Related: rhbz#895690 Always try to do a mount when opening a file via GIO
+
 * Mon Aug 19 2013 Marek Kasik <mkasik@redhat.com> - 1:4.1.1.1-2
 - Rebuild (poppler-0.24.0)
 

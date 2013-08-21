@@ -1067,7 +1067,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
 %endif
 %else
-%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
+%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1093,7 +1093,6 @@ autoconf
 touch autogen.lastrun
 %configure \
  %vendoroption \
- %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  %{?with_lang} \
  --disable-ccache \
  --disable-fetch-external \

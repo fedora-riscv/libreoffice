@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -249,18 +249,15 @@ Patch9: libreoffice-rhel6langs.patch
 Patch10: libreoffice-rhel6limits.patch
 Patch11: libreoffice-rhel6glib.patch
 %endif
-Patch12: 0001-temporarily-disable-failing-test.patch
-Patch13: 0001-do-not-build-LibreOffice_Test.patch
-Patch14: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch15: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch16: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch17: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch18: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
-Patch19: 0001-only-use-the-SSPI-support-with-internal-neon.patch
-Patch20: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
-Patch21: 0001-Resolves-rhbz-998136-different-index-to-gWidgetData-.patch
-Patch22: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
-Patch23: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
+Patch12: 0001-do-not-build-LibreOffice_Test.patch
+Patch13: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch17: 0001-only-use-the-SSPI-support-with-internal-neon.patch
+Patch18: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
+Patch19: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
+Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1004,18 +1001,15 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhel6limits.patch
 %patch11 -p1 -b .rhel6glib.patch
 %endif
-%patch12 -p1 -b .temporarily-disable-failing-test.patch
-%patch13 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch14 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch12 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch13 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch14 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch16 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch17 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch18 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
-%patch19 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
-%patch20 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
-%patch21 -p1 -b .rhbz-998136-different-index-to-gWidgetData-.patch
-%patch22 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
-%patch23 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
+%patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch17 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
+%patch18 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
+%patch19 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
+%patch20 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2106,7 +2100,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Aug 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.1-3-UNBUILT
+* Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.1-1
+- 4.1.1 rc2
 - Related: rhbz#895690 Always try to do a mount when opening a file via GIO
 - Resolves: rhbz#998136 wrong index to gWidgetData
 - Resolves: rhbz#998046 store last size/position of the base windows

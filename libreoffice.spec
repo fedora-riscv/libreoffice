@@ -260,6 +260,7 @@ Patch19: 0001-only-use-the-SSPI-support-with-internal-neon.patch
 Patch20: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 Patch21: 0001-Resolves-rhbz-998136-different-index-to-gWidgetData-.patch
 Patch22: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
+Patch23: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1014,6 +1015,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 %patch21 -p1 -b .rhbz-998136-different-index-to-gWidgetData-.patch
 %patch22 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
+%patch23 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

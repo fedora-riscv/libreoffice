@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -258,6 +258,7 @@ Patch17: 0001-only-use-the-SSPI-support-with-internal-neon.patch
 Patch18: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 Patch19: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
 Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
+Patch21: 0001-rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1010,6 +1011,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 %patch19 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
 %patch20 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
+%patch21 -p1 -b .rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2100,6 +2102,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.2-2-UNBUILT
+- Resolves: rhbz#1000150, Do not call exit upon XIOError
+
 * Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.2-1
 - 4.1.1 rc2
 - Related: rhbz#895690 Always try to do a mount when opening a file via GIO

@@ -2100,7 +2100,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.1-1
+* Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.2-1
 - 4.1.1 rc2
 - Related: rhbz#895690 Always try to do a mount when opening a file via GIO
 - Resolves: rhbz#998136 wrong index to gWidgetData

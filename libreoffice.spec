@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.0
+%define libo_version 4.1.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.4
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -62,24 +62,27 @@ Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #backwards compatability.
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %else
-Source11:       %{external_url}/9f9e15966b5624834157fe3d748312bc-mdds_0.6.1.tar.bz2
+Source11:       %{external_url}/08c85a6d6d793daee14e10e22eefdc4b-mdds_0.8.1.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
-Source13:       %{external_url}/ca66e26082cab8bb817185a116db809b-redland-1.0.8.tar.gz
-Source14:       %{external_url}/284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
-Source15:       %{external_url}/fca8706f2c4619e2fa3f8f42f8fc1e9d-rasqal-0.9.16.tar.gz
+Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
+Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
+Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
 Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
-Source17:       %{external_url}/libcdr-0.0.12.tar.bz2
-Source18:       %{external_url}/9d283e02441d8cebdcd1e5d9df227d67-libwpg-0.2.1.tar.bz2
-Source19:       %{external_url}/e7f84e3199dfee9122949448cab3823f-libwpd-0.9.6.tar.bz2
-Source20:       %{external_url}/d197bd6211669a2fa4ca648faf04bcb1-libwps-0.2.7.tar.bz2
+Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
+Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
+Source19:       %{external_url}/972afb8fdf02d9e7517e258b7fa7f0eb-libwpd-0.9.8.tar.bz2
+Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/libvisio-0.0.26.tar.bz2
+Source23:       %{external_url}/libvisio-0.0.30.tar.bz2
 Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
-Source25:       %{external_url}/libmspub-0.0.5.tar.bz2
-Source26:       %{external_url}/8755aac23317494a9028569374dc87b2-liborcus_0.3.0.tar.bz2
-Source27:       %{external_url}/54e578c91b1b68e69c72be22adcb2195-liblangtag-0.4.0.tar.bz2
+Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
+Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
+Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
+Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
+Source30:       %{external_url}/8473296c671b6e3dd8197f4145e0854b-libodfgen-0.0.2.tar.bz2
+Source31:       %{external_url}/libmwaw-0.1.10.tar.bz2
 %endif
 
 # build tools
@@ -127,9 +130,9 @@ BuildRequires: gstreamer-plugins-base-devel
 BuildRequires: graphite2-devel
 BuildRequires: gstreamer1-devel
 BuildRequires: gstreamer1-plugins-base-devel
+BuildRequires: harfbuzz-devel
 %endif
 BuildRequires: gtk2-devel
-BuildRequires: harfbuzz-devel
 BuildRequires: hunspell-devel
 BuildRequires: hyphen-devel
 %if 0%{?fedora}
@@ -242,26 +245,18 @@ Patch6:  libreoffice-installfix.patch
 Patch7: libreoffice-rhel6gcj.patch
 Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
-Patch10: 0001-Require-icu-4.6-or-later-with-system-icu.patch
-Patch11: libreoffice-rhel6limits.patch
-Patch12: libreoffice-rhel6glib.patch
+Patch10: libreoffice-rhel6limits.patch
+Patch11: libreoffice-rhel6glib.patch
 %endif
-Patch13: 0001-temporarily-disable-failing-test.patch
-Patch14: 0001-do-not-build-LibreOffice_Test.patch
-Patch15: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch16: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch17: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch18: 0001-rhbz-980387-fix-filter-selection-from-file-ext.patch
-Patch19: 0001-WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-Patch20: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch21: 0001-move-static-bitmap-into-a-svapp-member.patch
-Patch22: 0001-resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
-Patch23: 0001-Use-inconditionally-the-libwpd-0.9.5-path.patch
-Patch24: 0001-sanitize-system-clucene-includes.patch
-Patch25: 0001-Resolves-rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
-Patch26: 0001-rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
-Patch27: 0001-fdo-67045-fix-several-nasty-screen-selection-issues-.patch
-Patch28: 0001-Resolves-fdo-67743-user-autocorr-file-not-written.patch
+Patch12: 0001-do-not-build-LibreOffice_Test.patch
+Patch13: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
+Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
+Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch17: 0001-only-use-the-SSPI-support-with-internal-neon.patch
+Patch18: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
+Patch19: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
+Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1002,26 +997,18 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch7 -p1 -b .rhel6gcj.patch
 %patch8 -p1 -b .rhel6poppler.patch
 %patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -R -b .Require-icu-4.6-or-later-with-system-icu.patch
-%patch11 -p1 -b .rhel6limits.patch
-%patch12 -p1 -b .rhel6glib.patch
+%patch10 -p1 -b .rhel6limits.patch
+%patch11 -p1 -b .rhel6glib.patch
 %endif
-%patch13 -p1 -b .temporarily-disable-failing-test.patch
-%patch14 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch15 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
-%patch16 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch17 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch18 -p1 -b .rhbz-980387-fix-filter-selection-from-file-ext.patch
-%patch19 -p1 -b .WaE-assuming-signed-overflow-does-not-occur-when-ass.patch
-%patch20 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch21 -p1 -b .move-static-bitmap-into-a-svapp-member.patch
-%patch22 -p1 -b .resolved-fdo-67094-handle-text-s-in-text-p-and-text-.patch
-%patch23 -p1 -b .Use-inconditionally-the-libwpd-0.9.5-path.patch
-%patch24 -p1 -b .sanitize-system-clucene-includes.patch
-%patch25 -p1 -b .rhbz-989686-Fix-crash-with-ooo120774-1.doc.patch
-%patch26 -p1 -b .rhbz-989246-Honor-user-s-JavaDriverClass-override-in.patch
-%patch27 -p1 -b .fdo-67045-fix-several-nasty-screen-selection-issues-.patch
-%patch28 -p1 -b .fdo-67743-user-autocorr-file-not-written.patch
+%patch12 -p1 -b .do-not-build-LibreOffice_Test.patch
+%patch13 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
+%patch14 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
+%patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch17 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
+%patch18 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
+%patch19 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
+%patch20 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1067,7 +1054,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
@@ -1075,7 +1062,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
 %endif
 %else
-%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
+%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1084,8 +1071,13 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if ! 0%{libo_python3}
 export PYTHON=%{_bindir}/python
+%if 0%{?fedora} || 0%{?rhel} >= 7
 export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
+%else
+export PYTHON_CFLAGS=`python-config --cflags python`
+export PYTHON_LIBS=`python-config --libs python`
+%endif
 %endif
 
 # TODO: do we still need this? Perhaps some old patch touches
@@ -1096,7 +1088,6 @@ autoconf
 touch autogen.lastrun
 %configure \
  %vendoroption \
- %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  %{?with_lang} \
  --disable-ccache \
  --disable-fetch-external \
@@ -2108,6 +2099,18 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.1-1
+- 4.1.1 rc2
+- Related: rhbz#895690 Always try to do a mount when opening a file via GIO
+- Resolves: rhbz#998136 wrong index to gWidgetData
+- Resolves: rhbz#998046 store last size/position of the base windows
+
+* Mon Aug 19 2013 Marek Kasik <mkasik@redhat.com> - 1:4.1.1.1-2
+- Rebuild (poppler-0.24.0)
+
+* Fri Aug 09 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.1-1
+- 4.1.1 rc1
+
 * Fri Aug 09 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.0.4-6
 - Resolves: fdo#67743 user autocorr file not written
 

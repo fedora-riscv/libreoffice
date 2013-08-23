@@ -8,15 +8,13 @@
  #ifdef SYSTEM_HSQLDB
      ValueList1 = HSQLDB_JAR;
  #endif
---- a/odk/pack/gendocu/makefile.mk
-+++ b/odk/pack/gendocu/makefile.mk
-@@ -60,9 +60,6 @@
-         $(JAVA_SRC_DIR)$/com$/sun$/star$/beans$/OfficeWindow.java
+--- a/odk/CustomTarget_javadoc.mk
++++ b/odk/CustomTarget_javadoc.mk
+@@ -40,7 +40,6 @@ $(call gb_CustomTarget_get_workdir,odk/docs/java/ref)/javadoc_log.txt : $(call g
+ 		-linkoffline ../../common/reg $(SRCDIR)/odk/pack/gendocu/uno \
+ 		-linkoffline http://java.sun.com/j2se/1.5/docs/api $(SRCDIR)/odk/pack/gendocu/java \
+ 		$(odk_JAVAPACKAGES) \
+-		$(if $(JAVADOCISGJDOC),,-notimestamp) \
+ 		> $@
  
- JAVADOCPARAMS= -use -splitindex -windowtitle "Java UNO Runtime Reference" -header $(JAVADOCREFNAME) -d $(DESTDIRGENJAVAREF) -sourcepath $(JAVA_SRC_DIR) -classpath $(SOLARBINDIR)$/ridl.jar -linkoffline ../../common/ref ./uno -linkoffline http://java.sun.com/j2se/1.5/docs/api ./java $(JAVA_PACKAGES)
--.IF "$(JAVADOCISGJDOC)" != "yes"
--JAVADOCPARAMS+= -notimestamp
--.ENDIF
- 
- JAVADOCLOG = $(MISC)$/javadoc_log.txt
- 
+ # vim: set noet sw=4 ts=4:

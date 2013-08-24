@@ -2101,7 +2101,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Aug 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.2-2-UNBUILT
+* Fri Aug 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.2-2
 - Resolves: rhbz#1000150, Do not call exit upon XIOError
 
 * Thu Aug 22 2013 David Tardon <dtardon@redhat.com> - 1:4.1.1.2-1

@@ -1708,7 +1708,9 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/share/registry/gnome.xcd
+%endif
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
 %{baseinstdir}/share/registry/oo-ad-ldap.xcd.sample
@@ -1778,7 +1780,9 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/liblocalebe1lo.so
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libucpgio1lo.so
+%endif
 %{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions
@@ -1816,8 +1820,8 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc
 %if 0%{?rhel} && 0%{?rhel} < 7
-%{baseinstdir}/program/libraptor-lo.so.1
-%{baseinstdir}/program/librasqal-lo.so.1
+%{baseinstdir}/program/libraptor2-lo.so.0
+%{baseinstdir}/program/librasqal-lo.so.3
 %{baseinstdir}/program/librdf-lo.so.0
 %{baseinstdir}/program/libclucene.so
 %{baseinstdir}/program/liblcms2.so.2

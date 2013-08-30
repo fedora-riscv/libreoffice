@@ -36,3 +36,17 @@
  
  namespace pdfi
  {
+--- a/sdext/Module_sdext.mk
++++ b/sdext/Module_sdext.mk
+@@ -32,11 +32,6 @@ $(eval $(call gb_Module_add_targets,sdext,\
+     StaticLibrary_pdfimport_s \
+ ))
+ 
+-$(eval $(call gb_Module_add_check_targets,sdext,\
+-    CppunitTest_pdfimport \
+-    Executable_pdf2xml \
+-    Executable_pdfunzip \
+-))
+ endif
+ 
+ # vim:set noet sw=4 ts=4:

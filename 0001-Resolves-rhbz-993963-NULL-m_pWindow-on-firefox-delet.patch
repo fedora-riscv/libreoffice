@@ -1,0 +1,27 @@
+From 4a4ed52e57b540167c3ca45e6e762b9e21e874de Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 3 Sep 2013 12:24:34 +0100
+Subject: [PATCH] Resolves: rhbz#993963 NULL m_pWindow on firefox deleted
+ plugin
+
+Change-Id: Idb12b12e4313668bf3390a97551c688ee0dcde67
+---
+ vcl/unx/gtk/window/gtksalframe.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index 7c4ddfb..44d894d 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -2842,7 +2842,7 @@ void GtkSalFrame::SetParent( SalFrame* pNewParent )
+ 
+ void GtkSalFrame::createNewWindow( XLIB_Window aNewParent, bool bXEmbed, SalX11Screen nXScreen )
+ {
+-    bool bWasVisible = IS_WIDGET_MAPPED(m_pWindow);
++    bool bWasVisible = m_pWindow ? IS_WIDGET_MAPPED(m_pWindow) : false;
+     if( bWasVisible )
+         Show( sal_False );
+ 
+-- 
+1.8.3.1
+

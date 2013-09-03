@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -70,7 +70,7 @@ Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.t
 Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
 Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
 Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
-Source19:       %{external_url}/972afb8fdf02d9e7517e258b7fa7f0eb-libwpd-0.9.8.tar.bz2
+Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
 Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
@@ -258,6 +258,7 @@ Patch18: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
 Patch19: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
 Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 Patch21: 0001-rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
+Patch22: 0001-Resolves-rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1011,6 +1012,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch19 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
 %patch20 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
 %patch21 -p1 -b .rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
+%patch22 -p1 -b .rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1707,7 +1709,9 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/share/registry/gnome.xcd
+%endif
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
 %{baseinstdir}/share/registry/oo-ad-ldap.xcd.sample
@@ -1777,7 +1781,9 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/liblocalebe1lo.so
+%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libucpgio1lo.so
+%endif
 %{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions
@@ -1815,8 +1821,8 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc
 %if 0%{?rhel} && 0%{?rhel} < 7
-%{baseinstdir}/program/libraptor-lo.so.1
-%{baseinstdir}/program/librasqal-lo.so.1
+%{baseinstdir}/program/libraptor2-lo.so.0
+%{baseinstdir}/program/librasqal-lo.so.3
 %{baseinstdir}/program/librdf-lo.so.0
 %{baseinstdir}/program/libclucene.so
 %{baseinstdir}/program/liblcms2.so.2
@@ -2101,6 +2107,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Sep 03 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-3
+- Resolves: rhbz#993963 NULL m_pWindow on firefox close plugin window
+
 * Fri Aug 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.2-2
 - Resolves: rhbz#1000150, Do not call exit upon XIOError
 

@@ -256,6 +256,7 @@ Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 Patch18: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1006,6 +1007,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch17 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
 %patch18 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+%patch19 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2096,6 +2098,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Sep 13 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.1-3.UNBUILT
+- add select sheet menu to calc prev/next area
+
 * Thu Sep 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.1-2
 - Resolves: rhbz#1006850 crash in SwCommentRuler
 

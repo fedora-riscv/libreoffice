@@ -2109,6 +2109,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+# TODO: add this to 4.1.2.1+
+# - Resolves: rhbz#1008248 Writer Chinese Conversion crash
 * Thu Sep 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-4
 - Resolves: rhbz#1006850 crash in SwCommentRuler
 

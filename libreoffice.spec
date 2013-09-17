@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -260,6 +260,8 @@ Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 Patch21: 0001-rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
 Patch22: 0001-Resolves-rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
 Patch23: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+Patch24: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
+Patch25: 0001-fdo-68319-sw-fix-Chinese-Conversion.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1015,6 +1017,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch21 -p1 -b .rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
 %patch22 -p1 -b .rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
 %patch23 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+%patch24 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
+%patch25 -p1 -b .fdo-68319-sw-fix-Chinese-Conversion.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2109,12 +2113,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-# TODO: add this to 4.1.2.1+
-# - Resolves: rhbz#1008248 Writer Chinese Conversion crash
+* Tue Sep 17 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-5
+- Resolves: rhbz#988104 crash in certain pptx
+- Resolves: rhbz#1008248 Writer Chinese Conversion crash
+
 * Thu Sep 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-4
 - Resolves: rhbz#1006850 crash in SwCommentRuler
 
- Tue Sep 03 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-3
+* Tue Sep 03 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-3
 - Resolves: rhbz#993963 NULL m_pWindow on firefox close plugin window
 
 * Fri Aug 23 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.1.2-2

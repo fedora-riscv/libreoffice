@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.1
+%define libo_version 4.1.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -74,7 +74,7 @@ Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.ta
 Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
 Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
 Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/libvisio-0.0.30.tar.bz2
+Source23:       %{external_url}/libvisio-0.0.31.tar.bz2
 Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
 Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
 Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
@@ -253,15 +253,10 @@ Patch13: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
 Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch17: 0001-only-use-the-SSPI-support-with-internal-neon.patch
-Patch18: 0001-Always-try-to-mount-in-gio-Content-getGFileInfo.patch
-Patch19: 0001-Resolves-rhbz-998046-store-last-size-position-of-the.patch
-Patch20: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
-Patch21: 0001-rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
-Patch22: 0001-Resolves-rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
-Patch23: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
-Patch24: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
-Patch25: 0001-fdo-68319-sw-fix-Chinese-Conversion.patch
+Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
+Patch18: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+Patch20: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1010,15 +1005,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch14 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch17 -p1 -b .only-use-the-SSPI-support-with-internal-neon.patch
-%patch18 -p1 -b .Always-try-to-mount-in-gio-Content-getGFileInfo.patch
-%patch19 -p1 -b .rhbz-998046-store-last-size-position-of-the.patch
-%patch20 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch21 -p1 -b .rhbz-1000150-Do-not-call-exit-upon-XIOError.patch
-%patch22 -p1 -b .rhbz-993963-NULL-m_pWindow-on-firefox-delet.patch
-%patch23 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
-%patch24 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
-%patch25 -p1 -b .fdo-68319-sw-fix-Chinese-Conversion.patch
+%patch17 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
+%patch18 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
+%patch19 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+%patch20 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1029,10 +1019,6 @@ rm -rf translations/source/{gu,he,hr}/helpcontent2
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 %endif
-
-# disable failing test
-# FIXME something to do with python3?
-sed -i -e /sw_macros_test/d -e /sw_subsequent_.\*port/d sw/Module_sw.mk
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2113,6 +2099,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Sep 20 2013 David Tardon <dtardon@redhat.com> - 1:4.1.2.2-1
+- 4.1.2 rc2
+
 * Tue Sep 17 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.1.2-5
 - Resolves: rhbz#988104 crash in certain pptx
 - Resolves: rhbz#1008248 Writer Chinese Conversion crash

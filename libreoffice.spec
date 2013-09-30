@@ -41,7 +41,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.3
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
@@ -2099,6 +2099,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Sep 30 2013 David Tardon <dtardon@redhat.com> - 1:4.1.2.3-1
+- 4.1.2 rc3
+
 * Fri Sep 20 2013 David Tardon <dtardon@redhat.com> - 1:4.1.2.2-1
 - 4.1.2 rc2
 

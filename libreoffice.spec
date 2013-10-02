@@ -44,7 +44,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -259,6 +259,7 @@ Patch37: 0001-Resolves-rhbz-949238-div-by-zero-on-pagedown-in-0-wi.patch
 Patch38: 0001-Related-rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
 Patch39: 0001-Resolves-fdo-63802-return-true-if-we-have-known-empt.patch
 Patch40: 0001-rhbz-960019-RTF-import-handle-extra-groups-in-listov.patch
+Patch41: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %define instdir %{_libdir}
@@ -1011,6 +1012,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch38 -p1 -b .rhbz-761009-lp-766153-lp-892904-HandleFontOp.patch
 %patch39 -p1 -b .fdo-63802-return-true-if-we-have-known-empt.patch
 %patch40 -p1 -b .rhbz-960019-RTF-import-handle-extra-groups-in-listov.patch
+%patch41 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2280,6 +2282,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Oct 02 2013 Caolán McNamara <caolanm@redhat.com> - 1:3.6.7.2-4
+- Resolves: rhbz#1013844 encrypted OOo 1.0 docs do not open
+
 * Mon Jul 22 2013 Eike Rathke <erack@redhat.com> - 1:3.6.7.2-3
 - force rebuild with icu-49.1.1-10.fc18
 

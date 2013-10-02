@@ -260,6 +260,7 @@ Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
 Patch20: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
 Patch21: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
 Patch22: 0001-rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
+Patch23: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1014,6 +1015,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch20 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
 %patch21 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
 %patch22 -p1 -b .rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
+%patch23 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2104,9 +2106,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Oct 01 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-2-UNBUILT
+* Wed Oct 02 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-2
 - Resolves: rhbz#1013480 crash in EditLineList::operator[]
 - Resolves: rhbz#1014010 crash on start up
+- Resolves: rhbz#1013844 encrypted OOo 1.0 files don't reopen
 
 * Mon Sep 30 2013 David Tardon <dtardon@redhat.com> - 1:4.1.2.3-1
 - 4.1.2 rc3

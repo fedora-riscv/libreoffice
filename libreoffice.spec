@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -257,6 +257,9 @@ Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
 Patch18: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
 Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
 Patch20: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
+Patch21: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
+Patch22: 0001-rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
+Patch23: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1009,6 +1012,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch18 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
 %patch19 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
 %patch20 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
+%patch21 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
+%patch22 -p1 -b .rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
+%patch23 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2099,6 +2105,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Oct 02 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-2
+- Resolves: rhbz#1013480 crash in EditLineList::operator[]
+- Resolves: rhbz#1014010 crash on start up
+- Resolves: rhbz#1013844 encrypted OOo 1.0 files don't reopen
+
 * Mon Sep 30 2013 David Tardon <dtardon@redhat.com> - 1:4.1.2.3-1
 - 4.1.2 rc3
 

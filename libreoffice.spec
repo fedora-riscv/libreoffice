@@ -261,6 +261,7 @@ Patch21: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
 Patch22: 0001-rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
 Patch23: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 Patch24: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
+Patch25: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1017,6 +1018,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
 %patch23 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 %patch24 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
+%patch25 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2109,6 +2111,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-3
 - Resolves: rhbz#1015281 crash on clicking custom animation
+- Resolves: rhbz#996162 crash with no bullet font
 
 * Wed Oct 02 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-2
 - Resolves: rhbz#1013480 crash in EditLineList::operator[]

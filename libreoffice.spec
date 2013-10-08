@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -262,6 +262,9 @@ Patch22: 0001-rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
 Patch23: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 Patch24: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
 Patch25: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
+Patch26: 0001-rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
+Patch27: 0001-rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
+Patch28: 0001-fdo-69384-fix-impress-writer-copy-paste.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1019,6 +1022,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
 %patch24 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
 %patch25 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
+%patch26 -p1 -b .rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
+%patch27 -p1 -b .rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
+%patch28 -p1 -b .fdo-69384-fix-impress-writer-copy-paste.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2109,6 +2115,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-4.UNBUILT
+- Resolves: rhbz#1001768: fix various a11y deadlocks and crashes
+- Resolves: rhbz#1016022 fix cut from impress and paste to writer
+
 * Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-3
 - Resolves: rhbz#1015281 crash on clicking custom animation
 - Resolves: rhbz#996162 crash with no bullet font

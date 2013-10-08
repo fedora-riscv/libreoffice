@@ -265,6 +265,7 @@ Patch25: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
 Patch26: 0001-rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
 Patch27: 0001-rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
 Patch28: 0001-fdo-69384-fix-impress-writer-copy-paste.patch
+Patch29: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1025,6 +1026,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
 %patch27 -p1 -b .rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
 %patch28 -p1 -b .fdo-69384-fix-impress-writer-copy-paste.patch
+%patch29 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2118,6 +2120,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-4.UNBUILT
 - Resolves: rhbz#1001768: fix various a11y deadlocks and crashes
 - Resolves: rhbz#1016022 fix cut from impress and paste to writer
+- Resolves: rhbz#1003179 fix AUTOFMT related crashes in Writer Undo
 
 * Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-3
 - Resolves: rhbz#1015281 crash on clicking custom animation

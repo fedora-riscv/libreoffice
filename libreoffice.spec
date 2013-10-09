@@ -267,6 +267,7 @@ Patch26: 0001-rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
 Patch27: 0001-rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
 Patch28: 0001-fdo-69384-fix-impress-writer-copy-paste.patch
 Patch29: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+Patch30: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1028,6 +1029,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
 %patch28 -p1 -b .fdo-69384-fix-impress-writer-copy-paste.patch
 %patch29 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+%patch30 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

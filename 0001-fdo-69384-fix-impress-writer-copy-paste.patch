@@ -51,24 +51,21 @@ diff --git a/sw/qa/extras/rtfimport/rtfimport.cxx b/sw/qa/extras/rtfimport/rtfim
 index 8508909..e79d282 100644
 --- a/sw/qa/extras/rtfimport/rtfimport.cxx
 +++ b/sw/qa/extras/rtfimport/rtfimport.cxx
-@@ -159,6 +159,7 @@ public:
+@@ -159,5 +159,6 @@ public:
      void testFdo44715();
      void testFdo68076();
-     void testFdo68291();
 +    void testFdo69384();
  
      CPPUNIT_TEST_SUITE(Test);
  #if !defined(MACOSX) && !defined(WNT)
-@@ -302,6 +303,7 @@ void Test::run()
+@@ -302,5 +303,6 @@ void Test::run()
          {"fdo44715.rtf", &Test::testFdo44715},
          {"fdo68076.rtf", &Test::testFdo68076},
-         {"fdo68291.odt", &Test::testFdo68291},
 +        {"hello.rtf", &Test::testFdo69384},
      };
      header();
      for (unsigned int i = 0; i < SAL_N_ELEMENTS(aMethods); ++i)
-@@ -1464,6 +1466,18 @@ void Test::testFdo68291()
-     CPPUNIT_ASSERT_EQUAL(OUString(), getProperty<OUString>(getParagraph(1), "PageDescName"));
+@@ -1464,5 +1466,17 @@ void Test::testFdo68291()
  }
  
 +void Test::testFdo69384()

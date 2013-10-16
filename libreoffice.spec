@@ -255,12 +255,12 @@ Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
-Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-Patch21: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
-Patch24: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
-Patch25: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
-Patch29: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-Patch30: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+Patch18: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+Patch19: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
+Patch20: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
+Patch21: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
+Patch22: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1010,12 +1010,12 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch17 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch19 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-%patch21 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
-%patch24 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
-%patch25 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
-%patch29 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-%patch30 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+%patch18 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+%patch19 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
+%patch20 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
+%patch21 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
+%patch22 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+%patch23 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

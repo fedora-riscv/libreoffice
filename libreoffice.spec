@@ -1673,6 +1673,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libvbaeventslo.so
 %{baseinstdir}/program/libvclcanvaslo.so
 %{baseinstdir}/program/versionrc
+%{baseinstdir}/program/xid-fullscreen-on-all-monitors
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java

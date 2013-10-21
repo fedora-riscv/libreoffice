@@ -262,6 +262,7 @@ Patch21: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
 Patch22: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
 Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 Patch24: 0001-Related-rhbz-1020712-wrong-default-font-shown-in-edi.patch
+Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1018,6 +1019,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch22 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
 %patch23 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 %patch24 -p1 -b .rhbz-1020712-wrong-default-font-shown-in-edi.patch
+%patch25 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2110,6 +2112,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Oct 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.1-2
 - Resolves: rhbz#1020712 wrong default CTL font shown in editengine
+- Resolves: rhbz#919070 display -1 means span all screens
 
 * Wed Oct 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.1-1
 - 4.1.3 rc1

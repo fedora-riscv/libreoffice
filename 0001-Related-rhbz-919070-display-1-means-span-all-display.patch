@@ -165,15 +165,6 @@ index fef8407..4a3d01c 100644
  #include <vcl/floatwin.hxx>
  #include <vcl/svapp.hxx>
  #include <vcl/window.hxx>
-@@ -83,6 +86,8 @@
- #define GSM_DBUS_INTERFACE      "org.gnome.SessionManager"
- #endif
- 
-+#include <config_folders.h>
-+
- // make compile on gtk older than 2.10
- #if GTK_MINOR_VERSION < 10
- #define GDK_SUPER_MASK      (1 << 26)
 @@ -814,6 +819,7 @@ void GtkSalFrame::InitCommon()
      m_pCurrentCursor    = NULL;
      m_nKeyModifiers     = 0;
@@ -341,7 +332,7 @@ index fef8407..4a3d01c 100644
 +        GdkWindow* gdkwin = gtk_widget_get_window(pThis->m_pWindow);
 +        if (gdkwin)
 +        {
-+            OUString sProgramURL( "$BRAND_BASE_DIR/" LIBO_LIBEXEC_FOLDER "/xid-fullscreen-on-all-monitors");
++            OUString sProgramURL( "$BRAND_BASE_DIR/program/xid-fullscreen-on-all-monitors");
 +            rtl::Bootstrap::expandMacros(sProgramURL);
 +            OUString sProgram;
 +            if (osl::FileBase::getSystemPathFromFileURL(sProgramURL, sProgram) == osl::File::E_None)

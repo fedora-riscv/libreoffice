@@ -2113,7 +2113,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2
+* Thu Oct 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2-UNBUILT
 - Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
 
 * Wed Oct 23 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-1

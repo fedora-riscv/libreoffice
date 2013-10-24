@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -263,6 +263,7 @@ Patch22: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
 Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 Patch24: 0001-Related-rhbz-1020712-wrong-default-font-shown-in-edi.patch
 Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
+Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1020,6 +1021,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch23 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 %patch24 -p1 -b .rhbz-1020712-wrong-default-font-shown-in-edi.patch
 %patch25 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
+%patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2111,6 +2113,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Oct 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2
+- Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
+
 * Wed Oct 23 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-1
 - 4.1.3 rc2
 - Resolves: rhbz#1022094 libreoffice-4.1.3.1-1 was built without

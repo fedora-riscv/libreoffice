@@ -264,6 +264,7 @@ Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
 Patch24: 0001-Related-rhbz-1020712-wrong-default-font-shown-in-edi.patch
 Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
 Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
+Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1022,6 +1023,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch24 -p1 -b .rhbz-1020712-wrong-default-font-shown-in-edi.patch
 %patch25 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
 %patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
+%patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2113,8 +2115,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 24 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2-UNBUILT
+* Tue Oct 29 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2-UNBUILT
 - Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
+- Resolves: rhbz#1021915 force menubar menus to be up/down only
 
 * Wed Oct 23 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-1
 - 4.1.3 rc2

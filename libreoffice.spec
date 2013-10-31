@@ -266,6 +266,7 @@ Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
 Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
+Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1026,6 +1027,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 %patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 %patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
+%patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2121,6 +2123,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
 - Resolves: rhbz#1021915 force menubar menus to be up/down only
 - Resolves: rhbz#1025201 Incorrect rendering of Devanagari short i
+- Resolves: fdo#56209 reviving FilterFormulaParser
 
 * Wed Oct 23 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-1
 - 4.1.3 rc2

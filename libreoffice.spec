@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.2
+%define libo_version 4.1.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -254,19 +254,17 @@ Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
 Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
 Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
-Patch18: 0001-Resolves-rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
-Patch19: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-Patch20: 0001-Avoid-crash-when-a-comment-contains-data-but-no-text.patch
-Patch21: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
-Patch22: 0001-rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
-Patch23: 0001-Resolves-rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
-Patch24: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
-Patch25: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
-Patch26: 0001-rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
-Patch27: 0001-rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
-Patch28: 0001-fdo-69384-fix-impress-writer-copy-paste.patch
-Patch29: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-Patch30: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+Patch18: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+Patch19: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
+Patch20: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
+Patch21: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
+Patch22: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+Patch24: 0001-Related-rhbz-1020712-wrong-default-font-shown-in-edi.patch
+Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
+Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
+Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
+Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1016,19 +1014,17 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
 %patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
 %patch17 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch18 -p1 -b .rhbz-1006850-crash-in-SwCommentRuler-GetCom.patch
-%patch19 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-%patch20 -p1 -b .Avoid-crash-when-a-comment-contains-data-but-no-text.patch
-%patch21 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
-%patch22 -p1 -b .rhbz-1014010-Missing-dependencies-in-isBootstrapType.patch
-%patch23 -p1 -b .rhbz-1013844-fdo-47482-encrypted-OOo-1.0-do.patch
-%patch24 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
-%patch25 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
-%patch26 -p1 -b .rhbz-1001768-avoid-deadlock-in-OAccessibleContextHel.patch
-%patch27 -p1 -b .rhbz-1001768-AtkListener-disposing-delay-notificatio.patch
-%patch28 -p1 -b .fdo-69384-fix-impress-writer-copy-paste.patch
-%patch29 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-%patch30 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+%patch18 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+%patch19 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
+%patch20 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
+%patch21 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
+%patch22 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
+%patch23 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
+%patch24 -p1 -b .rhbz-1020712-wrong-default-font-shown-in-edi.patch
+%patch25 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
+%patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
+%patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
+%patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1682,6 +1678,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libvbaeventslo.so
 %{baseinstdir}/program/libvclcanvaslo.so
 %{baseinstdir}/program/versionrc
+%{baseinstdir}/program/xid-fullscreen-on-all-monitors
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java
@@ -2119,7 +2116,25 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-4.UNBUILT
+* Thu Oct 31 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2
+- Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
+- Resolves: rhbz#1021915 force menubar menus to be up/down only
+- Resolves: rhbz#1025201 Incorrect rendering of Devanagari short i
+
+* Wed Oct 23 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-1
+- 4.1.3 rc2
+- Resolves: rhbz#1022094 libreoffice-4.1.3.1-1 was built without
+  langpacks
+
+* Mon Oct 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.1-2
+- Resolves: rhbz#1020712 wrong default CTL font shown in editengine
+- Resolves: rhbz#919070 display -1 means span all screens
+
+
+* Wed Oct 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.1-1
+- 4.1.3 rc1
+
+* Mon Oct 07 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.2.3-4
 - Resolves: rhbz#1001768: fix various a11y deadlocks and crashes
 - Resolves: rhbz#1016022 fix cut from impress and paste to writer
 - Resolves: rhbz#1003179 fix AUTOFMT related crashes in Writer Undo

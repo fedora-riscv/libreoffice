@@ -59,7 +59,7 @@ diff --git a/vcl/source/window/menu.cxx b/vcl/source/window/menu.cxx
 index f567ba3..6083554 100644
 --- a/vcl/source/window/menu.cxx
 +++ b/vcl/source/window/menu.cxx
-@@ -3562,7 +3562,6 @@ sal_uInt16 PopupMenu::Execute( Window* pExecWindow, const Rectangle& rRect, sal_
+@@ -3581,7 +3581,6 @@
  {
      ENSURE_OR_RETURN( pExecWindow, "PopupMenu::Execute: need a non-NULL window!", 0 );
  
@@ -67,7 +67,7 @@ index f567ba3..6083554 100644
      sal_uLong nPopupModeFlags = 0;
      if ( nFlags & POPUPMENU_EXECUTE_DOWN )
          nPopupModeFlags = FLOATWIN_POPUPMODE_DOWN;
-@@ -3578,6 +3577,9 @@ sal_uInt16 PopupMenu::Execute( Window* pExecWindow, const Rectangle& rRect, sal_
+@@ -3597,6 +3596,9 @@
      if (nFlags & POPUPMENU_NOMOUSEUPCLOSE )                      // allow popup menus to stay open on mouse button up
          nPopupModeFlags |= FLOATWIN_POPUPMODE_NOMOUSEUPCLOSE;    // useful if the menu was opened on mousebutton down (eg toolbox configuration)
  
@@ -77,7 +77,7 @@ index f567ba3..6083554 100644
      return ImplExecute( pExecWindow, rRect, nPopupModeFlags, 0, sal_False );
  }
  
-@@ -3681,17 +3683,37 @@ sal_uInt16 PopupMenu::ImplExecute( Window* pW, const Rectangle& rRect, sal_uLong
+@@ -3700,17 +3702,37 @@
  
      Size aSz = ImplCalcSize( pWin );
  
@@ -89,10 +89,10 @@ index f567ba3..6083554 100644
          if( ! pDeskW )
              pDeskW = pWindow;
          Point aDesktopTL( pDeskW->OutputToAbsoluteScreenPixel( aRect.TopLeft() ) );
--        nMaxHeight = Application::GetScreenPosSizePixel(
+-        nMaxHeight = Application::GetWorkAreaPosSizePixel(
 -            Application::GetBestScreen( Rectangle( aDesktopTL, aRect.GetSize() ) )
 -            ).GetHeight();
-+        aDesktopRect = Application::GetScreenPosSizePixel(
++        aDesktopRect = Application::GetWorkAreaPosSizePixel(
 +            Application::GetBestScreen( Rectangle( aDesktopTL, aRect.GetSize() ) ));
      }
 +
@@ -119,7 +119,7 @@ index f567ba3..6083554 100644
      if ( pStartedFrom && pStartedFrom->bIsMenuBar )
          nMaxHeight -= pW->GetSizePixel().Height();
      sal_Int32 nLeft, nTop, nRight, nBottom;
-@@ -5326,7 +5348,7 @@ void MenuBarWindow::ImplCreatePopup( sal_Bool bPreSelectFirst )
+@@ -5345,7 +5367,7 @@
              // #99071# do not grab the focus, otherwise it will be restored to the menubar
              // when the frame is reactivated later
              //GrabFocus();
@@ -128,6 +128,3 @@ index f567ba3..6083554 100644
              if ( pActivePopup )
              {
                  // does not have a window, if aborted before or if there are no entries
--- 
-1.8.3.1
-

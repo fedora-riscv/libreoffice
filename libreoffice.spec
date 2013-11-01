@@ -83,7 +83,7 @@ Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
 Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
 Source30:       %{external_url}/8473296c671b6e3dd8197f4145e0854b-libodfgen-0.0.2.tar.bz2
-Source31:       %{external_url}/libmwaw-0.1.10.tar.bz2
+Source31:       %{external_url}/libmwaw-0.1.11.tar.bz2
 %endif
 
 # build tools

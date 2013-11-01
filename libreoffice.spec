@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -265,6 +265,7 @@ Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
 Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
+Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -287,6 +288,9 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
+%if 0%{?fedora} || 0%{?rhel} >= 7
+Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
+%endif
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en
@@ -1025,6 +1029,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 %patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 %patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
+%patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2116,6 +2121,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Oct 31 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-3
+- Resolves: fdo#56209 reviving FilterFormulaParser
+
 * Thu Oct 31 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-2
 - Resolves: fdo#67725 unoidl::AggregatingCursor must wrap modules for aggregation
 - Resolves: rhbz#1021915 force menubar menus to be up/down only

@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -83,7 +83,7 @@ Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
 Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
 Source30:       %{external_url}/8473296c671b6e3dd8197f4145e0854b-libodfgen-0.0.2.tar.bz2
-Source31:       %{external_url}/libmwaw-0.1.11.tar.bz2
+Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 %endif
 
 # build tools
@@ -157,7 +157,7 @@ BuildRequires: libidn-devel
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
-BuildRequires: libmwaw-devel
+BuildRequires: libmwaw-devel >= 0.2.0
 BuildRequires: libodfgen-devel
 BuildRequires: liborcus-devel >= 0.5.0
 BuildRequires: libvisio-devel
@@ -267,6 +267,7 @@ Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
 Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
+Patch30: 0001-update-libmwaw-to-0.2.0.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1031,6 +1032,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 %patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 %patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
+%patch30 -p1 -b .update-libmwaw-to-0.2.0.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1098,8 +1100,6 @@ export PYTHON_LIBS=`python-config --libs python`
 %endif
 %endif
 
-# TODO: do we still need this? Perhaps some old patch touches
-# configure.ac?
 aclocal -I m4
 autoconf
 # avoid running autogen.sh on make
@@ -2122,6 +2122,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Nov 03 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-4
+- adapt for libmwaw 0.2
+
 * Thu Oct 31 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-3
 - Resolves: fdo#56209 reviving FilterFormulaParser
 

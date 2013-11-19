@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -268,6 +268,7 @@ Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
 Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
 Patch30: 0001-update-libmwaw-to-0.2.0.patch
+Patch31: 0001-rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1033,6 +1034,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 %patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
 %patch30 -p1 -b .update-libmwaw-to-0.2.0.patch
+%patch31 -p1 -b .rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2122,6 +2124,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 19 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5-UNBUILT
+- Resolves: rhbz#1031989 Accept --pt in addition to deprecated -pt
+
 * Sun Nov 03 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-4
 - adapt for libmwaw 0.2
 

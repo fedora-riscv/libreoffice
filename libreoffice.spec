@@ -268,6 +268,7 @@ Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
 Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
 Patch30: 0001-update-libmwaw-to-0.2.0.patch
 Patch31: 0001-rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
+Patch32: 0001-Related-rhbz-1014990-valgrind-reports-uninitialized-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1034,6 +1035,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
 %patch30 -p1 -b .update-libmwaw-to-0.2.0.patch
 %patch31 -p1 -b .rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
+%patch32 -p1 -b .rhbz-1014990-valgrind-reports-uninitialized-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2123,8 +2125,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Nov 19 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5-UNBUILT
+* Wed Nov 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5
 - Resolves: rhbz#1031989 Accept --pt in addition to deprecated -pt
+- Related: rhbz#1014990 valgrind reports uninitialized variables
 
 * Sun Nov 03 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-4
 - adapt for libmwaw 0.2

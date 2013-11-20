@@ -1,0 +1,380 @@
+From 78e2af8d7141015372995a3583242998c977e829 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 18 Nov 2013 11:29:47 +0100
+Subject: [PATCH] enable more formats supported by libmwaw
+
+Change-Id: I60d5ff673843236436af12f86f40916b7d266cd3
+---
+ filter/Configuration_filter.mk                     |  6 ++++
+ .../config/fragments/filters/Beagle_Works.xcu      |  4 +--
+ .../config/fragments/filters/Great_Works.xcu       |  4 +--
+ filter/source/config/fragments/filters/MacDoc.xcu  |  2 +-
+ .../source/config/fragments/filters/Mac_Acta.xcu   | 29 +++++++++++++++++
+ .../source/config/fragments/filters/Mac_More.xcu   | 29 +++++++++++++++++
+ .../config/fragments/types/writer_Beagle_Works.xcu |  6 ++--
+ .../config/fragments/types/writer_Great_Works.xcu  |  6 ++--
+ .../config/fragments/types/writer_Mac_Acta.xcu     | 29 +++++++++++++++++
+ .../config/fragments/types/writer_Mac_More.xcu     | 29 +++++++++++++++++
+ writerperfect/source/writer/MWAWImportFilter.cxx   | 37 ++++++++++++++++++++--
+ 11 files changed, 167 insertions(+), 14 deletions(-)
+ create mode 100644 filter/source/config/fragments/filters/Mac_Acta.xcu
+ create mode 100644 filter/source/config/fragments/filters/Mac_More.xcu
+ create mode 100644 filter/source/config/fragments/types/writer_Mac_Acta.xcu
+ create mode 100644 filter/source/config/fragments/types/writer_Mac_More.xcu
+
+diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
+index bace597..347d00c 100644
+--- a/filter/Configuration_filter.mk
++++ b/filter/Configuration_filter.mk
+@@ -328,8 +328,11 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu,filter
+ 	writer_eDoc_Document \
+ 	writer_FullWrite_Professional \
+ 	writer_Great_Works \
++	writer_HanMac_Word_J \
+ 	writer_HanMac_Word_K \
+ 	writer_LightWayText \
++	writer_Mac_Acta \
++	writer_Mac_More \
+ 	writer_Mac_Word \
+ 	writer_Mac_Works \
+ 	writer_MacDoc \
+@@ -384,8 +387,11 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,fi
+ 	eDoc_Document \
+ 	FullWrite_Professional \
+ 	Great_Works \
++	HanMac_Word_J \
+ 	HanMac_Word_K \
+ 	LightWayText \
++	Mac_Acta \
++	Mac_More \
+ 	Mac_Word \
+ 	Mac_Works \
+ 	MacDoc \
+diff --git a/filter/source/config/fragments/filters/Beagle_Works.xcu b/filter/source/config/fragments/filters/Beagle_Works.xcu
+index f1cab85..e2f9d4c 100644
+--- a/filter/source/config/fragments/filters/Beagle_Works.xcu
++++ b/filter/source/config/fragments/filters/Beagle_Works.xcu
+@@ -7,7 +7,7 @@
+  *
+ -->
+ 
+-<node oor:name="Beagle Works" oor:op="replace">
++<node oor:name="Beagle_Works" oor:op="replace">
+     <prop oor:name="Flags">
+         <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
+     </prop>
+@@ -15,7 +15,7 @@
+         <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
+     </prop>
+     <prop oor:name="UIName">
+-        <value xml:lang="x-default">Beagle Works Document</value>
++        <value xml:lang="x-default">BeagleWorks/WordPerfect Works v1 Document</value>
+     </prop>
+     <prop oor:name="FileFormatVersion">
+         <value>0</value>
+diff --git a/filter/source/config/fragments/filters/Great_Works.xcu b/filter/source/config/fragments/filters/Great_Works.xcu
+index 6090504..0e5aeb3 100644
+--- a/filter/source/config/fragments/filters/Great_Works.xcu
++++ b/filter/source/config/fragments/filters/Great_Works.xcu
+@@ -7,7 +7,7 @@
+  *
+ -->
+ 
+-<node oor:name="Great Works" oor:op="replace">
++<node oor:name="Great_Works" oor:op="replace">
+     <prop oor:name="Flags">
+         <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
+     </prop>
+@@ -15,7 +15,7 @@
+         <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
+     </prop>
+     <prop oor:name="UIName">
+-        <value xml:lang="x-default">Great Works Document</value>
++        <value xml:lang="x-default">GreatWorks Document</value>
+     </prop>
+     <prop oor:name="FileFormatVersion">
+         <value>0</value>
+diff --git a/filter/source/config/fragments/filters/MacDoc.xcu b/filter/source/config/fragments/filters/MacDoc.xcu
+index 70ce7d2..2692709 100644
+--- a/filter/source/config/fragments/filters/MacDoc.xcu
++++ b/filter/source/config/fragments/filters/MacDoc.xcu
+@@ -15,7 +15,7 @@
+         <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
+     </prop>
+     <prop oor:name="UIName">
+-        <value xml:lang="x-default">MacDoc Document</value>
++        <value xml:lang="x-default">MacDoc v1 Document</value>
+     </prop>
+     <prop oor:name="FileFormatVersion">
+         <value>0</value>
+diff --git a/filter/source/config/fragments/filters/Mac_Acta.xcu b/filter/source/config/fragments/filters/Mac_Acta.xcu
+new file mode 100644
+index 0000000..c60349a
+--- /dev/null
++++ b/filter/source/config/fragments/filters/Mac_Acta.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="Mac_Acta" oor:op="replace">
++    <prop oor:name="Flags">
++        <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
++    </prop>
++    <prop oor:name="FilterService">
++        <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value xml:lang="x-default">Acta Mac Classic Document</value>
++    </prop>
++    <prop oor:name="FileFormatVersion">
++        <value>0</value>
++    </prop>
++    <prop oor:name="Type">
++        <value>writer_Mac_Acta</value>
++    </prop>
++    <prop oor:name="DocumentService">
++        <value>com.sun.star.text.TextDocument</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/filters/Mac_More.xcu b/filter/source/config/fragments/filters/Mac_More.xcu
+new file mode 100644
+index 0000000..c2485f6
+--- /dev/null
++++ b/filter/source/config/fragments/filters/Mac_More.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="Mac_More" oor:op="replace">
++    <prop oor:name="Flags">
++        <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
++    </prop>
++    <prop oor:name="FilterService">
++        <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value xml:lang="x-default">More Mac v2-3 Document</value>
++    </prop>
++    <prop oor:name="FileFormatVersion">
++        <value>0</value>
++    </prop>
++    <prop oor:name="Type">
++        <value>writer_Mac_More</value>
++    </prop>
++    <prop oor:name="DocumentService">
++        <value>com.sun.star.text.TextDocument</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/types/writer_Beagle_Works.xcu b/filter/source/config/fragments/types/writer_Beagle_Works.xcu
+index efe015d..5eb45c1 100644
+--- a/filter/source/config/fragments/types/writer_Beagle_Works.xcu
++++ b/filter/source/config/fragments/types/writer_Beagle_Works.xcu
+@@ -12,7 +12,7 @@
+         <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
+     </prop>
+     <prop oor:name="Extensions">
+-        <value>hqx zip</value>
++        <value>dummy</value>
+     </prop>
+     <prop oor:name="MediaType">
+         <value></value>
+@@ -21,9 +21,9 @@
+         <value>true</value>
+     </prop>
+     <prop oor:name="PreferredFilter">
+-        <value>Beagle Works</value>
++        <value>Beagle_Works</value>
+     </prop>
+     <prop oor:name="UIName">
+-        <value>Beagle Works</value>
++        <value>BeagleWorks/WordPerfect Works Document</value>
+     </prop>
+ </node>
+diff --git a/filter/source/config/fragments/types/writer_Great_Works.xcu b/filter/source/config/fragments/types/writer_Great_Works.xcu
+index ff3fda0..6c448f3 100644
+--- a/filter/source/config/fragments/types/writer_Great_Works.xcu
++++ b/filter/source/config/fragments/types/writer_Great_Works.xcu
+@@ -12,7 +12,7 @@
+         <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
+     </prop>
+     <prop oor:name="Extensions">
+-        <value>hqx zip</value>
++        <value>dummy</value>
+     </prop>
+     <prop oor:name="MediaType">
+         <value></value>
+@@ -21,9 +21,9 @@
+         <value>true</value>
+     </prop>
+     <prop oor:name="PreferredFilter">
+-        <value>Great Works</value>
++        <value>Great_Works</value>
+     </prop>
+     <prop oor:name="UIName">
+-        <value>Great Works</value>
++        <value>GreatWorks Document</value>
+     </prop>
+ </node>
+diff --git a/filter/source/config/fragments/types/writer_Mac_Acta.xcu b/filter/source/config/fragments/types/writer_Mac_Acta.xcu
+new file mode 100644
+index 0000000..478add2
+--- /dev/null
++++ b/filter/source/config/fragments/types/writer_Mac_Acta.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="writer_Mac_Acta" oor:op="replace">
++    <prop oor:name="DetectService">
++        <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
++    </prop>
++    <prop oor:name="Extensions">
++        <value>dummy</value>
++    </prop>
++    <prop oor:name="MediaType">
++        <value></value>
++    </prop>
++    <prop oor:name="Preferred">
++        <value>true</value>
++    </prop>
++    <prop oor:name="PreferredFilter">
++        <value>Mac_Acta</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value>Acta Mac v1-2 Document</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/types/writer_Mac_More.xcu b/filter/source/config/fragments/types/writer_Mac_More.xcu
+new file mode 100644
+index 0000000..66047d5
+--- /dev/null
++++ b/filter/source/config/fragments/types/writer_Mac_More.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="writer_Mac_More" oor:op="replace">
++    <prop oor:name="DetectService">
++        <value>com.sun.star.comp.Writer.MWAWImportFilter</value>
++    </prop>
++    <prop oor:name="Extensions">
++        <value>dummy</value>
++    </prop>
++    <prop oor:name="MediaType">
++        <value></value>
++    </prop>
++    <prop oor:name="Preferred">
++        <value>true</value>
++    </prop>
++    <prop oor:name="PreferredFilter">
++        <value>Mac_More</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value>More Mac v2-3 Document</value>
++    </prop>
++</node>
+diff --git a/writerperfect/source/writer/MWAWImportFilter.cxx b/writerperfect/source/writer/MWAWImportFilter.cxx
+index 7cfe4ab..452f3a6 100644
+--- a/writerperfect/source/writer/MWAWImportFilter.cxx
++++ b/writerperfect/source/writer/MWAWImportFilter.cxx
+@@ -152,6 +152,10 @@ throw( com::sun::star::uno::RuntimeException )
+             switch (docType)
+             {
+             case MWAWDocument::MWAW_T_ACTA:
++                sTypeName = "writer_Mac_Acta";
++                break;
++            case MWAWDocument::MWAW_T_BEAGLEWORKS:
++                sTypeName = "writer_Beagle_Works";
+                 break;
+             case MWAWDocument::MWAW_T_CLARISWORKS:
+                 sTypeName = "writer_ClarisWorks";
+@@ -162,18 +166,24 @@ throw( com::sun::star::uno::RuntimeException )
+             case MWAWDocument::MWAW_T_EDOC:
+                 sTypeName = "writer_eDoc_Document";
+                 break;
++            case MWAWDocument::MWAW_T_GREATWORKS:
++                sTypeName = "writer_Great_Works";
++                break;
+             case MWAWDocument::MWAW_T_FULLWRITE:
+                 sTypeName = "writer_FullWrite_Professional";
+                 break;
+-            case MWAWDocument::MWAW_T_HANMACWORDK:
+-                sTypeName = "writer_HanMac_Word_K";
+-                break;
+             case MWAWDocument::MWAW_T_HANMACWORDJ:
+                 sTypeName = "writer_HanMac_Word_J";
+                 break;
++            case MWAWDocument::MWAW_T_HANMACWORDK:
++                sTypeName = "writer_HanMac_Word_K";
++                break;
+             case MWAWDocument::MWAW_T_LIGHTWAYTEXT:
+                 sTypeName = "writer_LightWayText";
+                 break;
++            case MWAWDocument::MWAW_T_MACDOC:
++                sTypeName = "writer_MacDoc";
++                break;
+             case MWAWDocument::MWAW_T_MARINERWRITE:
+                 sTypeName = "writer_Mariner_Write";
+                 break;
+@@ -192,6 +202,9 @@ throw( com::sun::star::uno::RuntimeException )
+             case MWAWDocument::MWAW_T_MICROSOFTWORKS:
+                 sTypeName = "writer_Mac_Works";
+                 break;
++            case MWAWDocument::MWAW_T_MORE:
++                sTypeName = "writer_Mac_More";
++                break;
+             case MWAWDocument::MWAW_T_NISUSWRITER:
+                 sTypeName = "writer_Nisus_Writer";
+                 break;
+@@ -210,6 +223,24 @@ throw( com::sun::star::uno::RuntimeException )
+             case MWAWDocument::MWAW_T_ZWRITE:
+                 sTypeName = "writer_ZWrite";
+                 break;
++
++            case MWAWDocument::MWAW_T_FRAMEMAKER:
++            case MWAWDocument::MWAW_T_MACDRAW:
++            case MWAWDocument::MWAW_T_MACPAINT:
++            case MWAWDocument::MWAW_T_PAGEMAKER:
++            case MWAWDocument::MWAW_T_READYSETGO:
++            case MWAWDocument::MWAW_T_RAGTIME:
++            case MWAWDocument::MWAW_T_XPRESS:
++            case MWAWDocument::MWAW_T_RESERVED1:
++            case MWAWDocument::MWAW_T_RESERVED2:
++            case MWAWDocument::MWAW_T_RESERVED3:
++            case MWAWDocument::MWAW_T_RESERVED4:
++            case MWAWDocument::MWAW_T_RESERVED5:
++            case MWAWDocument::MWAW_T_RESERVED6:
++            case MWAWDocument::MWAW_T_RESERVED7:
++            case MWAWDocument::MWAW_T_RESERVED8:
++            case MWAWDocument::MWAW_T_RESERVED9:
++            case MWAWDocument::MWAW_T_UNKNOWN:
+             default:
+                 break;
+             }
+-- 
+1.8.4.2
+

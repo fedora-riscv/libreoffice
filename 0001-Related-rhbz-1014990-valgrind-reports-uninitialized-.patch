@@ -1,0 +1,209 @@
+From 82bce2c10fe5718a3a51125ce0c284c13315d00d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 15 Nov 2013 17:06:21 +0000
+Subject: [PATCH] Related: rhbz#1014990 valgrind reports uninitialized variable
+
+(cherry picked from commit f3660062ce8a2c65d483b83c2800d9b958d12f08)
+
+Conflicts:
+	sd/source/filter/eppt/epptbase.hxx
+
+Change-Id: Ibaa2ed0ee2f1f3f00bceec91ccced968e4913e47
+
+Related: rhbz#1014990 valgrind reports uninitialized another variable
+
+Change-Id: I77f082ea145b0f20daa93c3ee04067ecb6c3b108
+(cherry picked from commit b7069ad07dc651f5326cd3a671588d8c1ecf2534)
+
+Related: rhbz#1014990 valgrind reports yet another uninitialized variable
+
+Change-Id: Idf15ee825a34aa7788c422475aa6cea8ff802581
+(cherry picked from commit e0840f70565062b712e544f952640ee35cfb6a27)
+
+Related: rhbz#1014990 valgrind reports yet another unint variable
+
+Change-Id: Idf6a0a1e12fffee6c090add41247723f1d9cf576
+(cherry picked from commit b211b8b2e14bd961a7b32033468a94cbff52b5c4)
+Reviewed-on: https://gerrit.libreoffice.org/6712
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+Tested-by: Michael Stahl <mstahl@redhat.com>
+---
+ sd/source/filter/eppt/epptbase.hxx        |  3 +++
+ sd/source/filter/eppt/pptx-stylesheet.cxx |  4 +--
+ sd/source/filter/eppt/pptx-text.cxx       | 41 +++++++++++++++++++++++--------
+ sd/source/filter/eppt/text.hxx            | 28 +++++++++++++--------
+ vcl/source/filter/wmf/emfwr.cxx           | 19 ++++++--------
+ 5 files changed, 62 insertions(+), 33 deletions(-)
+
+diff --git a/sd/source/filter/eppt/epptbase.hxx b/sd/source/filter/eppt/epptbase.hxx
+index f84360d..2566b98 100644
+--- a/sd/source/filter/eppt/epptbase.hxx
++++ b/sd/source/filter/eppt/epptbase.hxx
+@@ -157,6 +157,9 @@ struct FontCollectionEntry
+ 
+         FontCollectionEntry( const String& rName ) :
+                             Scaling ( 1.0 ),
++                            Family  ( 0 ),
++                            Pitch   ( 0 ),
++                            CharSet ( 0 ),
+                             Original( rName )
+                             {
+                                 ImplInit( rName );
+diff --git a/sd/source/filter/eppt/pptx-stylesheet.cxx b/sd/source/filter/eppt/pptx-stylesheet.cxx
+index d9fd8fd..24e98f1 100644
+--- a/sd/source/filter/eppt/pptx-stylesheet.cxx
++++ b/sd/source/filter/eppt/pptx-stylesheet.cxx
+@@ -286,8 +286,8 @@ void PPTExParaSheet::SetStyleSheet( const ::com::sun::star::uno::Reference< ::co
+ 
+     if ( !nLevel )
+     {
+-        if ( ( aParagraphObj.meBullet ==  ::com::sun::star::beans::PropertyState_DIRECT_VALUE )
+-                    && aParagraphObj.bExtendedParameters )
++        if (aParagraphObj.bExtendedParameters &&
++             aParagraphObj.meBullet == ::com::sun::star::beans::PropertyState_DIRECT_VALUE)
+         {
+             for ( sal_Int16 i = 0; i < 5; i++ )
+             {
+diff --git a/sd/source/filter/eppt/pptx-text.cxx b/sd/source/filter/eppt/pptx-text.cxx
+index adadc44..cc0c769 100644
+--- a/sd/source/filter/eppt/pptx-text.cxx
++++ b/sd/source/filter/eppt/pptx-text.cxx
+@@ -628,10 +628,21 @@ PortionObj& PortionObj::operator=( const PortionObj& rPortionObj )
+     return *this;
+ }
+ 
+-ParagraphObj::ParagraphObj( const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet > & rXPropSet,
+-                PPTExBulletProvider& rProv ) :
+-    maMapModeSrc        ( MAP_100TH_MM ),
+-    maMapModeDest       ( MAP_INCH, Point(), Fraction( 1, 576 ), Fraction( 1, 576 ) )
++ParagraphObj::ParagraphObj(const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet > & rXPropSet,
++    PPTExBulletProvider& rProv)
++    : maMapModeSrc(MAP_100TH_MM)
++    , maMapModeDest(MAP_INCH, Point(), Fraction( 1, 576 ), Fraction( 1, 576 ))
++    , mnTextSize(0)
++    , mbFirstParagraph(false)
++    , mbLastParagraph(false)
++    , mnTextAdjust(0)
++    , mnLineSpacing(0)
++    , mbFixedLineSpacing(false)
++    , mnLineSpacingTop(0)
++    , mnLineSpacingBottom(0)
++    , mbForbiddenRules(false)
++    , mbParagraphPunctation(false)
++    , mnBiDi(0)
+ {
+     mXPropSet = rXPropSet;
+ 
+@@ -644,12 +655,22 @@ ParagraphObj::ParagraphObj( const ::com::sun::star::uno::Reference< ::com::sun::
+     ImplGetParagraphValues( rProv, sal_False );
+ }
+ 
+-    ParagraphObj::ParagraphObj( ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextContent > & rXTextContent,
+-                    ParaFlags aParaFlags, FontCollection& rFontCollection, PPTExBulletProvider& rProv ) :
+-    maMapModeSrc        ( MAP_100TH_MM ),
+-    maMapModeDest       ( MAP_INCH, Point(), Fraction( 1, 576 ), Fraction( 1, 576 ) ),
+-    mbFirstParagraph    ( aParaFlags.bFirstParagraph ),
+-    mbLastParagraph     ( aParaFlags.bLastParagraph )
++ParagraphObj::ParagraphObj(::com::sun::star::uno::Reference< ::com::sun::star::text::XTextContent > & rXTextContent,
++    ParaFlags aParaFlags, FontCollection& rFontCollection, PPTExBulletProvider& rProv )
++    : maMapModeSrc(MAP_100TH_MM)
++    , maMapModeDest(MAP_INCH, Point(), Fraction( 1, 576 ), Fraction( 1, 576 ))
++    , mnTextSize(0)
++    , mbIsBullet(false)
++    , mbFirstParagraph( aParaFlags.bFirstParagraph )
++    , mbLastParagraph( aParaFlags.bLastParagraph )
++    , mnTextAdjust(0)
++    , mnLineSpacing(0)
++    , mbFixedLineSpacing(false)
++    , mnLineSpacingTop(0)
++    , mnLineSpacingBottom(0)
++    , mbForbiddenRules(false)
++    , mbParagraphPunctation(false)
++    , mnBiDi(0)
+ {
+     bExtendedParameters = sal_False;
+ 
+diff --git a/sd/source/filter/eppt/text.hxx b/sd/source/filter/eppt/text.hxx
+index 06bc4e0..c60ae43 100644
+--- a/sd/source/filter/eppt/text.hxx
++++ b/sd/source/filter/eppt/text.hxx
+@@ -26,6 +26,7 @@
+ #include <rtl/textenc.h>
+ #include <com/sun/star/awt/FontDescriptor.hpp>
+ #include <com/sun/star/lang/Locale.hpp>
++#include <editeng/svxenum.hxx>
+ 
+ #include <boost/shared_ptr.hpp>
+ 
+@@ -62,17 +63,24 @@ struct SOParagraph
+     sal_Bool                bNumberingIsNumber;
+ 
+     SOParagraph()
++        : bExtendedParameters(false)
++        , nParaFlags(0)
++        , nBulletFlags(0)
++        , nNumberingType(SVX_NUM_NUMBER_NONE)
++        , nHorzAdjust(0)
++        , nBulletColor(0)
++        , nBulletOfs(0)
++        , nStartWith(0)
++        , nTextOfs(0)
++        , nBulletRealSize(0)
++        , nDepth(0)
++        , cBulletId(0)
++        , bExtendedBulletsUsed(false)
++        , nBulletId(0xffff)
++        , nMappedNumType(0)
++        , bNumberingIsNumber(true)
+     {
+-        nDepth = 0;
+-        bExtendedParameters = sal_False;
+-        nParaFlags = 0;
+-        nBulletFlags = 0;
+-        nBulletOfs = 0;
+-        nTextOfs = 0;
+-        bExtendedBulletsUsed = sal_False;
+-        nBulletId = 0xffff;
+-        bNumberingIsNumber = sal_True;
+-    };
++    }
+ };
+ 
+ class PropStateValue : public PropValue
+diff --git a/vcl/source/filter/wmf/emfwr.cxx b/vcl/source/filter/wmf/emfwr.cxx
+index e4e3e51..841aa98 100644
+--- a/vcl/source/filter/wmf/emfwr.cxx
++++ b/vcl/source/filter/wmf/emfwr.cxx
+@@ -282,21 +282,18 @@ sal_Bool EMFWriter::WriteEMF( const GDIMetaFile& rMtf, FilterConfigItem* pFilter
+ {
+     const sal_uLong nHeaderPos = m_rStm.Tell();
+ 
+-    mpHandlesUsed = new sal_Bool[ MAXHANDLES ];
+-    memset( mpHandlesUsed, 0, MAXHANDLES * sizeof( sal_Bool ) );
+-    mnHorTextAlign = mnHandleCount = mnLastPercent = mnRecordPos = mnRecordCount = 0;
+-    mnRecordPlusPos = 0;
+-    mnLineHandle = mnFillHandle = mnTextHandle = HANDLE_INVALID;
+-    mbRecordOpen = sal_False;
+-    mbRecordPlusOpen = false;
+-
+-
+     maVDev.EnableOutput( sal_False );
+     maVDev.SetMapMode( rMtf.GetPrefMapMode() );
+-    mpFilterConfigItem = pFilterConfigItem;
+-
+     // don't work with pixel as destination map mode -> higher resolution preferrable
+     maDestMapMode.SetMapUnit( MAP_100TH_MM );
++    mpFilterConfigItem = pFilterConfigItem;
++    mpHandlesUsed = new sal_Bool[ MAXHANDLES ];
++    memset( mpHandlesUsed, 0, MAXHANDLES * sizeof( sal_Bool ) );
++    mnHandleCount = mnLastPercent = mnRecordCount = mnRecordPos = mnRecordPlusPos = 0;
++    mbRecordOpen = mbRecordPlusOpen = false;
++    mbLineChanged = mbFillChanged = mbTextChanged = false;
++    mnLineHandle = mnFillHandle = mnTextHandle = HANDLE_INVALID;
++    mnHorTextAlign = 0;
+ 
+     const Size aMtfSizePix( maVDev.LogicToPixel( rMtf.GetPrefSize(), rMtf.GetPrefMapMode() ) );
+     const Size aMtfSizeLog( maVDev.LogicToLogic( rMtf.GetPrefSize(), rMtf.GetPrefMapMode(), MAP_100TH_MM ) );
+-- 
+1.8.3.1
+

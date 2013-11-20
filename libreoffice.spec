@@ -270,6 +270,8 @@ Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
 Patch30: 0001-update-libmwaw-to-0.2.0.patch
 Patch31: 0001-rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
 Patch32: 0001-Related-rhbz-1014990-valgrind-reports-uninitialized-.patch
+Patch33: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
+Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1037,6 +1039,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch30 -p1 -b .update-libmwaw-to-0.2.0.patch
 %patch31 -p1 -b .rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
 %patch32 -p1 -b .rhbz-1014990-valgrind-reports-uninitialized-.patch
+%patch33 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
+%patch34 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

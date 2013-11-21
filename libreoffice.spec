@@ -809,7 +809,7 @@ BuildArch: noarch \
 Rules for auto-correcting common %{langname} typing errors. \
 \
 %files -n %{pkgname} \
-%doc instdir/unxlng*/LICENSE \
+%doc instdir/LICENSE \
 %dir %{_datadir}/autocorr \
 %{-L:%{_datadir}/autocorr/acor_%{lang}.dat} \
 %{!-L:%{_datadir}/autocorr/acor_%{lang}-*.dat} \
@@ -1888,7 +1888,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/xpdfimport/xpdfimport_err.pdf
 
 %_font_pkg -n %{fontname} opens___.ttf
-%doc instdir/unxlng*/LICENSE
+%doc instdir/LICENSE
 
 %files calc
 %{baseinstdir}/help/en-US/scalc.*
@@ -2032,7 +2032,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files ure
-%doc instdir/unxlng*/LICENSE
+%doc instdir/LICENSE
 %{ureinstdir}
 
 %files sdk

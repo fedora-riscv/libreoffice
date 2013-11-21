@@ -272,6 +272,7 @@ Patch32: 0001-Related-rhbz-1014990-valgrind-reports-uninitialized-.patch
 Patch33: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
 Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
 Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
+Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1042,6 +1043,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch33 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
 %patch34 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
 %patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
+%patch36 -p1 -b .fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2133,6 +2135,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-5
 - Resolves: rhbz#1008102 Revert transpose data in rows ranges
+- Resolves: rhbz#1031174 suspicious input handler crashes
 
 * Wed Nov 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5
 - Resolves: rhbz#1031989 Accept --pt in addition to deprecated -pt

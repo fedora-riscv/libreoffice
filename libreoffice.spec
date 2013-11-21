@@ -163,6 +163,7 @@ BuildRequires: libe-book-devel
 BuildRequires: libetonyek-devel
 BuildRequires: libfreehand-devel
 BuildRequires: libmwaw-devel >= 0.2.0
+BuildRequires: libodfgen-devel
 BuildRequires: mdds-devel >= 0.8.1
 %endif
 BuildRequires: libcurl-devel
@@ -175,7 +176,6 @@ BuildRequires: libidn-devel
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
-BuildRequires: libodfgen-devel
 BuildRequires: liborcus-devel >= 0.5.0
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
@@ -1041,7 +1041,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird
+%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen
 %endif
 %else
 %define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}

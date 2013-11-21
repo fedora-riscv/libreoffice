@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -272,6 +272,7 @@ Patch31: 0001-rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
 Patch32: 0001-Related-rhbz-1014990-valgrind-reports-uninitialized-.patch
 Patch33: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
 Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
+Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1041,6 +1042,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch32 -p1 -b .rhbz-1014990-valgrind-reports-uninitialized-.patch
 %patch33 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
 %patch34 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
+%patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2130,6 +2132,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-5
+- Resolves: rhbz#1008102 Revert transpose data in rows ranges
+
 * Wed Nov 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5
 - Resolves: rhbz#1031989 Accept --pt in addition to deprecated -pt
 - Related: rhbz#1014990 valgrind reports uninitialized variables

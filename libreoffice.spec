@@ -129,8 +129,10 @@ BuildRequires: cups-devel
 BuildRequires: dbus-glib-devel
 BuildRequires: evolution-data-server-devel
 BuildRequires: expat-devel
+%if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
+%endif
 BuildRequires: fontpackages-devel
 BuildRequires: freetype-devel
 %if 0%{?rhel} && 0%{?rhel} < 7

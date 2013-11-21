@@ -90,6 +90,7 @@ Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
+Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 %endif
 
 # build tools
@@ -1033,12 +1034,12 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-system-libetonyek --without-system-libfreehand --without-system-libebook
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook
+%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird
 %endif
 %else
 %define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}

@@ -2014,7 +2014,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libgraphicfilterlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
 %{baseinstdir}/program/libwpftdrawlo.so
-%{baseinstdir}/program/resource/flashen-US.res
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter

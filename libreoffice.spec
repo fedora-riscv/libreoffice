@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -274,6 +274,7 @@ Patch33: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
 Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
 Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
+Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1045,6 +1046,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch34 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
 %patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 %patch36 -p1 -b .fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
+%patch37 -p1 -b .fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2134,7 +2136,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-5
+* Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7.unbuilt
+- Resolves: rhbz#958300 fix GTK non Latin keyboard layout shortcuts
+
+* Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-6
 - Resolves: rhbz#1008102 Revert transpose data in rows ranges
 - Resolves: rhbz#1031174 suspicious input handler crashes
 

@@ -79,7 +79,7 @@ diff --git a/vcl/unx/kde4/KDEXLib.cxx b/vcl/unx/kde4/KDEXLib.cxx
 index 8e0eb67..67d7a4d 100644
 --- a/vcl/unx/kde4/KDEXLib.cxx
 +++ b/vcl/unx/kde4/KDEXLib.cxx
-@@ -225,9 +225,6 @@ void KDEXLib::setupEventLoop()
+@@ -212,9 +212,6 @@
          eventLoopType = GlibEventLoop;
          old_gpoll = g_main_context_get_poll_func( NULL );
          g_main_context_set_poll_func( NULL, gpoll_wrapper );
@@ -89,7 +89,7 @@ index 8e0eb67..67d7a4d 100644
          return;
      }
  #endif
-@@ -244,9 +241,6 @@ void KDEXLib::setupEventLoop()
+@@ -231,9 +228,6 @@
          eventLoopType = QtUnixEventLoop;
          QInternal::callFunction( QInternal::GetUnixSelectFunction, reinterpret_cast< void** >( &qt_select ));
          QInternal::callFunction( QInternal::SetUnixSelectFunction, reinterpret_cast< void** >( lo_select ));
@@ -99,7 +99,7 @@ index 8e0eb67..67d7a4d 100644
          return;
      }
  #endif
-@@ -300,6 +294,9 @@ void KDEXLib::socketNotifierActivated( int fd )
+@@ -287,6 +281,9 @@
  
  void KDEXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
  {
@@ -109,11 +109,8 @@ index 8e0eb67..67d7a4d 100644
      if( eventLoopType == LibreOfficeEventLoop )
      {
          if( qApp->thread() == QThread::currentThread())
-@@ -310,13 +307,24 @@ void KDEXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
-         }
-         return SalXLib::Yield( bWait, bHandleAllCurrentEvents );
+@@ -299,11 +296,21 @@
      }
-+
      // if we are the main thread (which is where the event processing is done),
      // good, just do it
 -    if( qApp->thread() == QThread::currentThread())
@@ -135,9 +132,6 @@ index 8e0eb67..67d7a4d 100644
 +
 +        // if this deadlocks, event processing needs to go into a separate
 +        // thread or some other solution needs to be found
-         Q_EMIT processYieldSignal( bWait, bHandleAllCurrentEvents );
+         emit processYieldSignal( bWait, bHandleAllCurrentEvents );
      }
  }
--- 
-1.8.3.1
-

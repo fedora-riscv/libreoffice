@@ -275,6 +275,7 @@ Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
 Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
+Patch38: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1047,6 +1048,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 %patch36 -p1 -b .fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 %patch37 -p1 -b .fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
+%patch38 -p1 -b .0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2136,8 +2138,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7.unbuilt
+* Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7
 - Resolves: rhbz#958300 fix GTK non Latin keyboard layout shortcuts
+- Resolves: rhbz#977068 fix qt/kde crash
 
 * Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-6
 - Resolves: rhbz#1008102 Revert transpose data in rows ranges

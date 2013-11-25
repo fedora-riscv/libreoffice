@@ -276,6 +276,7 @@ Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 Patch38: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
 Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.pat
+Patch40: 0001-rhbz-1030009-Remove-global-XModel-ref.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1050,6 +1051,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch37 -p1 -b .fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 %patch38 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
 %patch39 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
+%patch40 -p1 -b .rhbz-1030009-Remove-global-XModel-ref.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2140,7 +2142,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Mon Nov 25 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-8-UNBUILT
-  Related: rhbz#1032774 bodge around reported NULL
+- Related: rhbz#1032774 bodge around reported NULL
+- Resolves: rhbz#1030009 SwXTextDocument crash at exit
 
 * Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7
 - Resolves: rhbz#958300 fix GTK non Latin keyboard layout shortcuts

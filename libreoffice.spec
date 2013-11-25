@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -276,6 +276,7 @@ Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 Patch38: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
+Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.pat
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1048,7 +1049,8 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 %patch36 -p1 -b .fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 %patch37 -p1 -b .fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
-%patch38 -p1 -b .0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
+%patch38 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
+%patch39 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2138,6 +2140,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Nov 25 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-8-UNBUILT
+  Related: rhbz#1032774 bodge around reported NULL
+
 * Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7
 - Resolves: rhbz#958300 fix GTK non Latin keyboard layout shortcuts
 - Resolves: rhbz#977068 fix qt/kde crash

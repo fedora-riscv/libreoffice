@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -261,6 +261,7 @@ Patch9: libreoffice-rhel6langs.patch
 Patch10: libreoffice-rhel6limits.patch
 Patch11: libreoffice-rhel6glib.patch
 %endif
+Patch12: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhel6limits.patch
 %patch11 -p1 -b .rhel6glib.patch
 %endif
+%patch12 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2082,6 +2084,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Nov 25 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
+- Related: rhbz#1032774 bodge around reported NULL
+
 * Thu Nov 21 2013 David Tardon <dtardon@redhat.com> - 1:4.2.0.0-1.beta1
 - switch to 4.2.0
 

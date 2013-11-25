@@ -258,10 +258,9 @@ Patch6:  libreoffice-installfix.patch
 Patch7: libreoffice-rhel6gcj.patch
 Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
-Patch10: libreoffice-rhel6limits.patch
-Patch11: libreoffice-rhel6glib.patch
+Patch10: libreoffice-rhel6glib.patch
 %endif
-Patch12: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -993,10 +992,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch7 -p1 -b .rhel6gcj.patch
 %patch8 -p1 -b .rhel6poppler.patch
 %patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -b .rhel6limits.patch
-%patch11 -p1 -b .rhel6glib.patch
+%patch10 -p1 -b .rhel6glib.patch
 %endif
-%patch12 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
+%patch11 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

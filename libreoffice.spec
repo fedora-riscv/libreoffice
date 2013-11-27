@@ -261,6 +261,7 @@ Patch9: libreoffice-rhel6langs.patch
 Patch10: libreoffice-rhel6glib.patch
 %endif
 Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -995,6 +996,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch10 -p1 -b .rhel6glib.patch
 %endif
 %patch11 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
+%patch12 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2082,8 +2084,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 25 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
+* Wed Nov 27 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
 - Related: rhbz#1032774 bodge around reported NULL
+- Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
 
 * Thu Nov 21 2013 David Tardon <dtardon@redhat.com> - 1:4.2.0.0-1.beta1
 - switch to 4.2.0

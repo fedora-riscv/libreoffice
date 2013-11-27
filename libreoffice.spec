@@ -276,7 +276,7 @@ Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
 Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
 Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
 Patch38: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.pat
+Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch40: 0001-rhbz-1030009-Remove-global-XModel-ref.patch
 Patch41: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 

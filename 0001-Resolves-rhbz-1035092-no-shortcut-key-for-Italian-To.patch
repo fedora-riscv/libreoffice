@@ -11,8 +11,8 @@ Change-Id: I2f8867e7d4b9c7884d1d3af4f34a93fa5da08b47
 
 diff --git a/source/it/officecfg/registry/data/org/openoffice/Office/UI.po b/source/it/officecfg/registry/data/org/openoffice/Office/UI.po
 index ea1ff2f..97dc332 100644
---- a/source/it/officecfg/registry/data/org/openoffice/Office/UI.po
-+++ b/source/it/officecfg/registry/data/org/openoffice/Office/UI.po
+--- a/translations/source/it/officecfg/registry/data/org/openoffice/Office/UI.po
++++ b/translations/source/it/officecfg/registry/data/org/openoffice/Office/UI.po
 @@ -18673,7 +18673,7 @@ msgctxt ""
  "Label\n"
  "value.text"

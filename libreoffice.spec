@@ -194,7 +194,6 @@ BuildRequires: mythes-devel
 BuildRequires: neon-devel
 BuildRequires: nss-devel
 BuildRequires: openldap-devel
-BuildRequires: openssl-devel
 BuildRequires: pam-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: poppler-cpp-devel
@@ -2087,6 +2086,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Wed Nov 27 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
 - Related: rhbz#1032774 bodge around reported NULL
 - Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
+- openssl no longer required to build
 
 * Thu Nov 21 2013 David Tardon <dtardon@redhat.com> - 1:4.2.0.0-1.beta1
 - switch to 4.2.0

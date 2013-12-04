@@ -280,6 +280,7 @@ Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch40: 0001-rhbz-1030009-Remove-global-XModel-ref.patch
 Patch41: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch42: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+Patch43: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1057,6 +1058,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch40 -p1 -b .rhbz-1030009-Remove-global-XModel-ref.patch
 %patch41 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 %patch42 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+%patch43 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2148,6 +2150,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-10
 - Resolves: rhbz#912529 Kerkis SmallCaps shown instead of Kerkis Regular
+- Resolves: rhbz#1038189 refresh printer list when print dialog launched
 
 * Tue Dec 03 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-9
 - rhbz#1000893 do not pull in unneeded packages

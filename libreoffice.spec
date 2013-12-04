@@ -261,6 +261,7 @@ Patch10: libreoffice-rhel6glib.patch
 %endif
 Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -996,6 +997,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %patch11 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
 %patch12 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+%patch13 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2083,9 +2085,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Nov 27 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
+* Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
 - Related: rhbz#1032774 bodge around reported NULL
 - Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
+- Resolves: rhbz#912529 Kerkis SmallCaps shown instead of Kerkis Regular
 - openssl no longer required to build
 
 * Thu Nov 21 2013 David Tardon <dtardon@redhat.com> - 1:4.2.0.0-1.beta1

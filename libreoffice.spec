@@ -6,7 +6,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -2087,7 +2087,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta1-UNBUILT
+* Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta2
+- update to 4.2.0 beta2
 - Related: rhbz#1032774 bodge around reported NULL
 - Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
 - Resolves: rhbz#912529 Kerkis SmallCaps shown instead of Kerkis Regular

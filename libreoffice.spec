@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -882,7 +882,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA
 %define langpack_lang Northern Sotho
 %langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -w nso_ZA
-%langpack -l or -n Oriya -F -H -Y -s ctl -o or_IN -w or_IN
+%langpack -l or -n Odia -F -H -Y -s ctl -o or_IN -w or_IN
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -O -v pa_IN -w pa_IN
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X -o pl_PL -V -w pl_PL
 %define langpack_lang Brazilian Portuguese
@@ -2087,6 +2087,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 11 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-3.beta2
+- Resolves: rhbz#1040291 Change language name from "Oriya" to "Odia"
+
 * Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta2
 - update to 4.2.0 beta2
 - Related: rhbz#1032774 bodge around reported NULL

@@ -637,6 +637,7 @@ used as a backend server for e.g. document conversion.
 %package glade
 Summary: Support for creating LibreOffice dialogs in glade
 Group: Development/Libraries
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: glade3-libgladeui
 

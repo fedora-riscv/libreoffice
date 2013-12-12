@@ -1,0 +1,1970 @@
+From 91f595dc81ac82dcaf58e9ac31816d1514a3827d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 12 Dec 2013 17:05:34 +0000
+Subject: [PATCH] Related: rhbz#1039517 ml short-cut keys are unavailable
+
+Change-Id: I0c348e05ac7b5f4a986f0f9a8c581a5951a79551
+---
+ .../registry/data/org/openoffice/Office/UI.po      | 434 ++++++++++-----------
+ 1 file changed, 217 insertions(+), 217 deletions(-)
+
+diff --git a/source/ml/officecfg/registry/data/org/openoffice/Office/UI.po b/source/ml/officecfg/registry/data/org/openoffice/Office/UI.po
+index d4a310a..943f2ac 100644
+--- a/translations/source/ml/officecfg/registry/data/org/openoffice/Office/UI.po
++++ b/translations/source/ml/officecfg/registry/data/org/openoffice/Office/UI.po
+@@ -302,7 +302,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Formula..."
+-msgstr "സൂത്ര~വാക്യം..."
++msgstr "സൂത്രവാക്യം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -347,7 +347,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Clear ~Direct Formatting"
+-msgstr "~നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
++msgstr "നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -410,7 +410,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Freeze"
+-msgstr "~ഫ്രീസ് ചെയ്യുക"
++msgstr "ഫ്രീസ് ചെയ്യുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -482,7 +482,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "A~utoRefresh"
+-msgstr "~സ്വയമായി പുതുക്കുക"
++msgstr "സ്വയമായി പുതുക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -509,7 +509,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Protect Records..."
+-msgstr "~റിക്കോര്‍ഡുകള്‍ സംരക്ഷിക്കുക..."
++msgstr "റിക്കോര്‍ഡുകള്‍ സംരക്ഷിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -572,7 +572,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Select..."
+-msgstr "~തെരഞ്ഞെടുക്കുക..."
++msgstr "തെരഞ്ഞെടുക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -581,7 +581,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Sheet ~Events..."
+-msgstr "ഷീറ്റിനുള്ള ~ഇവന്റുകള്‍..."
++msgstr "ഷീറ്റിനുള്ള ഇവന്റുകള്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -815,7 +815,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Te~xt to Columns..."
+-msgstr "Te~xt to Columns..."
++msgstr "Text to Columns..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -842,7 +842,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Create Pivot Table..."
+-msgstr "പിവോട്ട് ടേബിള്‍ ~തയ്യാറാക്കുക..."
++msgstr "പിവോട്ട് ടേബിള്‍ തയ്യാറാക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -851,7 +851,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Create..."
+-msgstr "~തയ്യാറാക്കുക..."
++msgstr "തയ്യാറാക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -896,7 +896,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Sol~ver..."
+-msgstr "സോള്‍~വര്‍..."
++msgstr "സോള്‍വര്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1004,7 +1004,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "C~onditional Formatting"
+-msgstr "~കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്"
++msgstr "കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1166,7 +1166,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Define Print Area"
+-msgstr "പ്രിന്റ് സ്ഥലം ~നിര്‍വചിക്കുക"
++msgstr "പ്രിന്റ് സ്ഥലം നിര്‍വചിക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1175,7 +1175,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Define"
+-msgstr "~നിര്‍വചിക്കുക"
++msgstr "നിര്‍വചിക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1202,7 +1202,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Edit Print Area..."
+-msgstr "~ചിട്ടപ്പെടുത്തുക..."
++msgstr "ചിട്ടപ്പെടുത്തുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1211,7 +1211,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Edit..."
+-msgstr "~ചിട്ടപ്പെടുത്തുക..."
++msgstr "ചിട്ടപ്പെടുത്തുക (~E)..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1283,7 +1283,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Down"
+-msgstr "~താഴോട്ട്"
++msgstr "താഴോട്ട്"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1319,7 +1319,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Up"
+-msgstr "~മുകളിലേക്ക്"
++msgstr "മുകളിലേക്ക്"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1346,7 +1346,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Fill ~Sheets..."
+-msgstr "~ഷീറ്റ്..."
++msgstr "ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1355,7 +1355,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Sheets..."
+-msgstr "~ഷീറ്റുകള്‍..."
++msgstr "ഷീറ്റുകള്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1373,7 +1373,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "S~eries..."
+-msgstr "~സീരീസ്..."
++msgstr "സീരീസ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1562,7 +1562,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "Sho~w..."
+-msgstr "കാ~ണിക്കുക..."
++msgstr "കാണിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1580,7 +1580,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Labels..."
+-msgstr "~ലേബലുകള്‍..."
++msgstr "ലേബലുകള്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1616,7 +1616,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Comm~ent"
+-msgstr "അഭിപ്രാ~യം"
++msgstr "അഭിപ്രായം"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1814,7 +1814,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert ~Row Break"
+-msgstr "~Row Break"
++msgstr "Row Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1823,7 +1823,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Row Break"
+-msgstr "~Row Break"
++msgstr "Row Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1841,7 +1841,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Add"
+-msgstr "~ചേര്‍ക്കുക"
++msgstr "ചേര്‍ക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1850,7 +1850,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert ~Column Break"
+-msgstr "~Column Break"
++msgstr "Column Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1859,7 +1859,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Column Break"
+-msgstr "~Column Break"
++msgstr "Column Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1877,7 +1877,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Remove ~Row Break"
+-msgstr "~Row Break"
++msgstr "Row Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1886,7 +1886,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Row Break"
+-msgstr "~Row Break"
++msgstr "Row Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1904,7 +1904,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Remove ~Column Break"
+-msgstr "~Column Break നീക്കം ചെയ്യുക"
++msgstr "Column Break നീക്കം ചെയ്യുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1913,7 +1913,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Column Break"
+-msgstr "~Column Break"
++msgstr "Column Break"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1940,7 +1940,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Cells..."
+-msgstr "~സെല്ലുകള്‍..."
++msgstr "സെല്ലുകള്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1985,7 +1985,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert ~Sheet..."
+-msgstr "~ഷീറ്റ്..."
++msgstr "ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -1994,7 +1994,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Sheet..."
+-msgstr "~ഷീറ്റ്..."
++msgstr "ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2012,7 +2012,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "Shee~t From File..."
+-msgstr "ഫയലില്‍ നിന്നുമുള്ള ~ഷീറ്റ്..."
++msgstr "ഫയലില്‍ നിന്നുമുള്ള ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2021,7 +2021,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Define Name..."
+-msgstr "പേരു് ~നിര്‍വചിക്കുക..."
++msgstr "പേരു് നിര്‍വചിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2030,7 +2030,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Define..."
+-msgstr "~നിര്‍വചിക്കുക..."
++msgstr "നിര്‍വചിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2039,7 +2039,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Manage Names..."
+-msgstr "പേരുകള്‍ കൈ~കാര്യം ചെയ്യുക..."
++msgstr "പേരുകള്‍ കൈകാര്യം ചെയ്യുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2048,7 +2048,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Manage..."
+-msgstr "കൈ~കാര്യം ചെയ്യുക..."
++msgstr "കൈകാര്യം ചെയ്യുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2066,7 +2066,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Insert..."
+-msgstr "~ചേര്‍ക്കുക..."
++msgstr "ചേര്‍ക്കുക (~I)..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2084,7 +2084,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Create..."
+-msgstr "~തയ്യാറാക്കുക..."
++msgstr "തയ്യാറാക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2129,7 +2129,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "Ce~lls..."
+-msgstr "~സെല്ലുകള്‍..."
++msgstr "സെല്ലുകള്‍..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2147,7 +2147,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Height..."
+-msgstr "~ഉയരം..."
++msgstr "ഉയരം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2165,7 +2165,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Optimal Height..."
+-msgstr "~ആവശ്യമായ പൊക്കം..."
++msgstr "ആവശ്യമായ പൊക്കം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2183,7 +2183,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "H~ide"
+-msgstr "അദൃ~ശ്യമാക്കുക"
++msgstr "അദൃശ്യമാക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2219,7 +2219,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Width..."
+-msgstr "~വീതി..."
++msgstr "വീതി..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2237,7 +2237,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Optimal Width..."
+-msgstr "~സാധ്യമായ വീതി..."
++msgstr "സാധ്യമായ വീതി..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2255,7 +2255,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Hide"
+-msgstr "~അദൃശ്യമാക്കുക"
++msgstr "അദൃശ്യമാക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2291,7 +2291,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Hide"
+-msgstr "~അദൃശ്യമാക്കുക"
++msgstr "അദൃശ്യമാക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2309,7 +2309,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Show..."
+-msgstr "~കാണിക്കുക..."
++msgstr "കാണിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2408,7 +2408,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Protect ~Sheet..."
+-msgstr "~ഷീറ്റ്..."
++msgstr "ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2417,7 +2417,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Sheet..."
+-msgstr "~ഷീറ്റ്..."
++msgstr "ഷീറ്റ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2426,7 +2426,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Protect ~Document..."
+-msgstr "~രേഖ സംരക്ഷിക്കുക..."
++msgstr "രേഖ സംരക്ഷിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2435,7 +2435,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Document..."
+-msgstr "~രേഖ..."
++msgstr "രേഖ..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2462,7 +2462,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Refresh Pivot Table"
+-msgstr "പിവോട്ട് ടേബിള്‍ ~പുതുക്കുക"
++msgstr "പിവോട്ട് ടേബിള്‍ പുതുക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2471,7 +2471,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Refresh"
+-msgstr "~പുതുക്കുക"
++msgstr "പുതുക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2480,7 +2480,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Delete Pivot Table"
+-msgstr "പിവോട്ട് ടേബിള്‍ ~വെട്ടി നീക്കുക"
++msgstr "പിവോട്ട് ടേബിള്‍ വെട്ടി നീക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2525,7 +2525,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Define Range..."
+-msgstr "പരിധി ~നിര്‍വചിക്കുക..."
++msgstr "പരിധി നിര്‍വചിക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2543,7 +2543,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "Select ~Range..."
+-msgstr "~പരിധി തിരഞ്ഞെടുക്കുക..."
++msgstr "പരിധി തിരഞ്ഞെടുക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2579,7 +2579,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~XML Source..."
+-msgstr "~എക്സ്എംഎല്‍ ശ്രോതസ്സ്..."
++msgstr "എക്സ്എംഎല്‍ ശ്രോതസ്സ്..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2633,7 +2633,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "F~orm..."
+-msgstr "~ഫോം..."
++msgstr "ഫോം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2705,7 +2705,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Rename Sheet..."
+-msgstr "ഷീറ്റിന്റെ ~പേരു് മാറ്റുക..."
++msgstr "ഷീറ്റിന്റെ പേരു് മാറ്റുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2714,7 +2714,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Rename..."
+-msgstr "~പേര് മാറ്റുക..."
++msgstr "പേര് മാറ്റുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2732,7 +2732,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Tab Color..."
+-msgstr "~റ്റാബിന്റെ നിറം..."
++msgstr "റ്റാബിന്റെ നിറം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2741,7 +2741,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Tab Color..."
+-msgstr "~റ്റാബിന്റെ നിറം..."
++msgstr "റ്റാബിന്റെ നിറം..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -2768,7 +2768,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Move/Copy..."
+-msgstr "~നീക്കുക/പകര്‍ത്തുക..."
++msgstr "നീക്കുക/പകര്‍ത്തുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3047,7 +3047,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "To ~Cell"
+-msgstr "~സെല്ലിലേക്ക് "
++msgstr "സെല്ലിലേക്ക് "
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3056,7 +3056,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~Microsoft Excel..."
+-msgstr "~Microsoft Excel ആയി ഈമെയില്‍ അയയ്ക്കുക"
++msgstr "Microsoft Excel ആയി ഈമെയില്‍ അയയ്ക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3065,7 +3065,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~OpenDocument Spreadsheet..."
+-msgstr "~OpenDocument Spreadsheet ആയി ഈമെയില്‍ അയയ്ക്കുക"
++msgstr "OpenDocument Spreadsheet ആയി ഈമെയില്‍ അയയ്ക്കുക"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3074,7 +3074,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "S~hare Document..."
+-msgstr "രേഖ ~പങ്കിടുക..."
++msgstr "രേഖ പങ്കിടുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3119,7 +3119,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Open..."
+-msgstr "~തുറക്കുക..."
++msgstr "തുറക്കുക..."
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3146,7 +3146,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Data"
+-msgstr "ഡേറ്റാ"
++msgstr "ഡേറ്റാ (~D)"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3191,7 +3191,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Pivot Table"
+-msgstr "~പിവോട്ട് ടേബിള്‍"
++msgstr "പിവോട്ട് ടേബിള്‍"
+ 
+ #: CalcCommands.xcu
+ msgctxt ""
+@@ -3740,7 +3740,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Titles..."
+-msgstr "~തലക്കെട്ടുകള്‍..."
++msgstr "തലക്കെട്ടുകള്‍..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3749,7 +3749,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Legend..."
+-msgstr "~ലെജന്റ്..."
++msgstr "ലെജന്റ്..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3785,7 +3785,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Tre~nd Lines..."
+-msgstr "ട്രെന്‍ഡ് ~ലൈനുകള്‍..."
++msgstr "ട്രെന്‍ഡ് ലൈനുകള്‍..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3794,7 +3794,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Mean ~Value Lines"
+-msgstr "മീന്‍ ~വാല്യൂ ലൈനുകള്‍"
++msgstr "മീന്‍ വാല്യൂ ലൈനുകള്‍"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3803,7 +3803,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "X Error ~Bars..."
+-msgstr "എക്സ് പിശക് ~ബാറുകള്‍..."
++msgstr "എക്സ് പിശക് ബാറുകള്‍..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3812,7 +3812,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Y Error ~Bars..."
+-msgstr "Y പിശക് ~ബാറുകള്‍..."
++msgstr "Y പിശക് ബാറുകള്‍..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3830,7 +3830,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Legend..."
+-msgstr "~ലെജന്റ്..."
++msgstr "ലെജന്റ്..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3875,7 +3875,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Data Ranges..."
+-msgstr "~ഡേറ്റാ പരിധികള്‍"
++msgstr "ഡേറ്റാ പരിധികള്‍"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3902,7 +3902,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Bring ~Forward"
+-msgstr "~മുമ്പോട്ട് കൊണ്ടുവരിക"
++msgstr "മുമ്പോട്ട് കൊണ്ടുവരിക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3938,7 +3938,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~X Axis Title..."
+-msgstr "ശീര്ഷകം (~X അക്ഷധ്രുവം)..."
++msgstr "ശീര്ഷകം (X അക്ഷധ്രുവം)..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3956,7 +3956,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Z Axis Title..."
+-msgstr "ശീര്ഷകം  (~Zഅക്ഷധ്രുവം)..."
++msgstr "ശീര്ഷകം  (Zഅക്ഷധ്രുവം)..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3965,7 +3965,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "S~econdary X Axis Title..."
+-msgstr "സെ~ക്കന്‍ഡറി X ആക്സിസ് തലക്കെട്ട്..."
++msgstr "സെക്കന്‍ഡറി X ആക്സിസ് തലക്കെട്ട്..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3974,7 +3974,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Se~condary Y Axis Title..."
+-msgstr "സെ~ക്കന്‍ഡറി Y ആക്സിസ് തലക്കെട്ട്..."
++msgstr "സെക്കന്‍ഡറി Y ആക്സിസ് തലക്കെട്ട്..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -3992,7 +3992,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~X Axis..."
+-msgstr "~X  അക്ഷധ്രുവം"
++msgstr "X  അക്ഷധ്രുവം"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4280,7 +4280,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert Tre~nd Line..."
+-msgstr "ട്രെന്‍~ഡ് ലൈന്‍ ചേര്‍ക്കുക..."
++msgstr "ട്രെന്‍ഡ് ലൈന്‍ ചേര്‍ക്കുക..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4289,7 +4289,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete Tre~nd Line"
+-msgstr "~ട്രെന്‍ഡ് വരി വെട്ടി നീക്കുക"
++msgstr "ട്രെന്‍ഡ് വരി വെട്ടി നീക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4307,7 +4307,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert Trend Line ~Equation"
+-msgstr "ട്രെന്‍ഡ് ലൈന്‍ ~ഇക്വേഷന്‍ ചേര്‍ക്കുക"
++msgstr "ട്രെന്‍ഡ് ലൈന്‍ ഇക്വേഷന്‍ ചേര്‍ക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4343,7 +4343,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete Trend Line ~Equation"
+-msgstr "ട്രെന്‍ഡ് ലൈന്‍ ~ഇക്വേഷന്‍ വെട്ടി നീക്കുക"
++msgstr "ട്രെന്‍ഡ് ലൈന്‍ ഇക്വേഷന്‍ വെട്ടി നീക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4361,7 +4361,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert Mean ~Value Line"
+-msgstr "മീന്‍ ~വാല്യൂ ലൈന്‍ ചേര്‍ക്കുക"
++msgstr "മീന്‍ വാല്യൂ ലൈന്‍ ചേര്‍ക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4370,7 +4370,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete Mean ~Value Line"
+-msgstr "മീന്‍ ~വാല്യൂ ലൈന്‍ വെട്ടി നീക്കുക"
++msgstr "മീന്‍ വാല്യൂ ലൈന്‍ വെട്ടി നീക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4388,7 +4388,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert X Error ~Bars..."
+-msgstr "എക്സ് പിശകിനുള്ള ~ബാറുകള്‍ ചേര്‍ക്കുക..."
++msgstr "എക്സ് പിശകിനുള്ള ബാറുകള്‍ ചേര്‍ക്കുക..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4397,7 +4397,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete X Error ~Bars"
+-msgstr "എക്സ് പിശകിനുള്ള ~ബാറുകള്‍ വെട്ടി നീക്കുക"
++msgstr "എക്സ് പിശകിനുള്ള ബാറുകള്‍ വെട്ടി നീക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4415,7 +4415,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Insert Y Error ~Bars..."
+-msgstr "Y പിശകിനുള്ള ~ബാറുകള്‍ ചേര്‍ക്കുക..."
++msgstr "Y പിശകിനുള്ള ബാറുകള്‍ ചേര്‍ക്കുക..."
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -4424,7 +4424,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete Y Error ~Bars"
+-msgstr "Y പിശകിനുള്ള ~ബാറുകള്‍ വെട്ടി നീക്കുക"
++msgstr "Y പിശകിനുള്ള ബാറുകള്‍ വെട്ടി നീക്കുക"
+ 
+ #: ChartCommands.xcu
+ msgctxt ""
+@@ -5603,7 +5603,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Mail Merge..."
+-msgstr "~മെയില്‍ മേര്‍ജ്..."
++msgstr "മെയില്‍ മേര്‍ജ്..."
+ 
+ #: DbuCommands.xcu
+ msgctxt ""
+@@ -5765,7 +5765,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Start from ~first Slide"
+-msgstr "~ആദ്യത്തെ സ്ലൈഡില്‍ നിന്നും ആരംഭിയ്ക്കുക"
++msgstr "ആദ്യത്തെ സ്ലൈഡില്‍ നിന്നും ആരംഭിയ്ക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -5774,7 +5774,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Start from c~urrent Slide"
+-msgstr "നി~ലവിലുള്ള സ്ലൈഡില്‍ നിന്നും ആരംഭിയ്ക്കുക"
++msgstr "നിലവിലുള്ള സ്ലൈഡില്‍ നിന്നും ആരംഭിയ്ക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -5783,7 +5783,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Impress R~emote"
+-msgstr "ഇംപ്രസ്സ് ~റിമോട്ട്"
++msgstr "ഇംപ്രസ്സ് റിമോട്ട്"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -5819,7 +5819,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Sho~w Slide"
+-msgstr "സ്ലൈഡ് ~കാണിക്കുക"
++msgstr "സ്ലൈഡ് കാണിക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6116,7 +6116,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Display Snap Lines"
+-msgstr "സ്നാപ്പ് വരികള്‍ ~കാണിയ്ക്കുക"
++msgstr "സ്നാപ്പ് വരികള്‍ കാണിയ്ക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6125,7 +6125,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Snap Lines to ~Front"
+-msgstr "~മുമ്പിലേക്കു് വരികള്‍ സ്നാപ്പ് ചെയ്യുക"
++msgstr "മുമ്പിലേക്കു് വരികള്‍ സ്നാപ്പ് ചെയ്യുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6197,7 +6197,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Hyphenation"
+-msgstr "~ഹൈഫനേഷന്"
++msgstr "ഹൈഫനേഷന്"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6215,7 +6215,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Duplicate ~Slide"
+-msgstr "ഡ്യൂപ്ലിക്കേറ്റ് സ്ലൈ~ഡ്"
++msgstr "ഡ്യൂപ്ലിക്കേറ്റ് സ്ലൈഡ്"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6620,7 +6620,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~File..."
+-msgstr "~ഫയല്‍..."
++msgstr "ഫയല് (~F)..."
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6692,7 +6692,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Bring ~Forward"
+-msgstr "~മുമ്പോട്ട് കൊണ്ടുവരിക"
++msgstr "മുമ്പോട്ട് കൊണ്ടുവരിക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6764,7 +6764,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Layer..."
+-msgstr "~ലേയര്‍..."
++msgstr "ലേയര്‍..."
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -6782,7 +6782,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Layer..."
+-msgstr "~ലേയര്‍..."
++msgstr "ലേയര്‍..."
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7403,7 +7403,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Snap to Snap Lines"
+-msgstr "സ്നാപ്പ് വരികളിലേക്കു് ~സ്നാപ്പ് ചെയ്യുക"
++msgstr "സ്നാപ്പ് വരികളിലേക്കു് സ്നാപ്പ് ചെയ്യുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7655,7 +7655,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~Microsoft PowerPoint Presentation..."
+-msgstr "~Microsoft PowerPoint Presentation ആയി ഈമെയില്‍ അയയ്ക്കുക"
++msgstr "Microsoft PowerPoint Presentation ആയി ഈമെയില്‍ അയയ്ക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7664,7 +7664,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~OpenDocument Presentation..."
+-msgstr "~OpenDocument Presentation ആയി ഈമെയില്‍ അയയ്ക്കുക"
++msgstr "OpenDocument Presentation ആയി ഈമെയില്‍ അയയ്ക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7673,7 +7673,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Modify"
+-msgstr "പരിഷ്കരിക്കുക"
++msgstr "പരിഷ്കരിക്കുക (~M)"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7691,7 +7691,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Flip"
+-msgstr "~ഫ്ലിപ്പ് ചെയ്യുക"
++msgstr "ഫ്ലിപ്പ് ചെയ്യുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7727,7 +7727,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Convert"
+-msgstr "~വേര്‍തിരിക്കുക"
++msgstr "വേര്‍തിരിക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7754,7 +7754,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Slide Show"
+-msgstr "സ്ലൈഡ് ഷോ"
++msgstr "സ്ലൈഡ് ഷോ (~S)"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7790,7 +7790,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Snap Lines"
+-msgstr "~സ്നാപ്പ് വരികള്‍"
++msgstr "സ്നാപ്പ് വരികള്‍"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -7997,7 +7997,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Rows..."
+-msgstr "~നിരകള്‍..."
++msgstr "നിരകള്‍..."
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -8015,7 +8015,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Columns..."
+-msgstr "~വരികള്‍..."
++msgstr "വരികള്‍..."
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -8168,7 +8168,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Comme~nt"
+-msgstr "അഭിപ്രാ~യം"
++msgstr "അഭിപ്രായം"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -8177,7 +8177,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Comme~nts"
+-msgstr "അഭിപ്രാ~യങ്ങള്‍"
++msgstr "അഭിപ്രായങ്ങള്‍"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -8186,7 +8186,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Delete Comment"
+-msgstr "അഭിപ്രായം ~വെട്ടി നീക്കുക"
++msgstr "അഭിപ്രായം വെട്ടി നീക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -8195,7 +8195,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Delete ~All Comments"
+-msgstr "~എല്ലാ അഭിപ്രായങ്ങളും വെട്ടി നീക്കുക"
++msgstr "എല്ലാ അഭിപ്രായങ്ങളും വെട്ടി നീക്കുക"
+ 
+ #: DrawImpressCommands.xcu
+ msgctxt ""
+@@ -13433,7 +13433,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Zoom..."
+-msgstr "~Zoom..."
++msgstr "Zoom..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -13631,7 +13631,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "%PRODUCTNAME ~Help"
+-msgstr "%PRODUCTNAME ~സഹായം"
++msgstr "%PRODUCTNAME സഹായം (~H)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -13703,7 +13703,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Find..."
+-msgstr "~കണ്ടുപിടിയ്ക്കുക..."
++msgstr "കണ്ടുപിടിയ്ക്കുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -13721,7 +13721,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Extended Tips"
+-msgstr "~Extended Tips"
++msgstr "Extended Tips"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -13739,7 +13739,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Tips"
+-msgstr "~Tips"
++msgstr "Tips"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14207,7 +14207,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Open..."
+-msgstr "~തുറക്കുക..."
++msgstr "തുറക്കുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14380,7 +14380,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Comme~nt"
+-msgstr "അഭിപ്രാ~യം"
++msgstr "അഭിപ്രായം"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14569,7 +14569,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Sentence case"
+-msgstr "~വാചകത്തിന്റെ കേസ്"
++msgstr "വാചകത്തിന്റെ കേസ്"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14587,7 +14587,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~UPPERCASE"
+-msgstr "~അപ്പര്‍കേസ്"
++msgstr "അപ്പര്‍കേസ്"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14596,7 +14596,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Capitalize Every Word"
+-msgstr "എല്ലാ വാക്കും ~കാപ്പിറ്റലാക്കുക"
++msgstr "എല്ലാ വാക്കും കാപ്പിറ്റലാക്കുക"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14605,7 +14605,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~tOGGLE cASE"
+-msgstr "കേസ് ~മാറ്റുക"
++msgstr "കേസ് മാറ്റുക"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -14632,7 +14632,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~File..."
+-msgstr "~ഫയല്‍..."
++msgstr "ഫയല് (~F)..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15163,7 +15163,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Page Width"
+-msgstr "~താള്‍ വീതി"
++msgstr "താള്‍ വീതി"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15280,7 +15280,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Formula..."
+-msgstr "സൂത്ര~വാക്യം..."
++msgstr "സൂത്രവാക്യം..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15316,7 +15316,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~XML Filter Settings..."
+-msgstr "~XML ഫില്ട്ടര് സജ്ജീകരണങ്ങള്..."
++msgstr "XML ഫില്ട്ടര് സജ്ജീകരണങ്ങള്..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15478,7 +15478,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Edit..."
+-msgstr "~ചിട്ടപ്പെടുത്തുക..."
++msgstr "ചിട്ടപ്പെടുത്തുക (~E)..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15667,7 +15667,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Recheck Document..."
+-msgstr "വിവരണക്കുറിപ്പു് ~വീണ്ടും പരിശോധിക്കുക..."
++msgstr "വിവരണക്കുറിപ്പു് വീണ്ടും പരിശോധിക്കുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15676,7 +15676,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Spelling and Grammar..."
+-msgstr "~അക്ഷരത്തെറ്റും വ്യാകരണവും..."
++msgstr "അക്ഷരത്തെറ്റും വ്യാകരണവും..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -15937,7 +15937,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Hyperlink"
+-msgstr "~ഹൈപ്പര്‍ലിങ്ക്"
++msgstr "ഹൈപ്പര്‍ലിങ്ക്"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -16225,7 +16225,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Color ~Replacer"
+-msgstr "റീപ്ലെയി~സറിന്റെ നിറം"
++msgstr "റീപ്ലെയിസറിന്റെ നിറം"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -16918,7 +16918,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Default Formatting"
+-msgstr "~സ്വതവേയുള്ള ഫോര്‍മാറ്റിങ്"
++msgstr "സ്വതവേയുള്ള ഫോര്‍മാറ്റിങ്"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -17161,7 +17161,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as P~DF..."
+-msgstr "P~DF ആയി ഈമെയില്‍ ചെയ്യുക..."
++msgstr "PDF ആയി ഈമെയില്‍ ചെയ്യുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -17179,7 +17179,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Export as P~DF..."
+-msgstr " P~DFആയി കയറ്റുമതി ചെയ്യുക..."
++msgstr " PDFആയി കയറ്റുമതി ചെയ്യുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -17197,7 +17197,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Export Directly as PDF"
+-msgstr "P~DFആയി നേരിട്ട് കയറ്റുമതി ചെയ്യുക..."
++msgstr "PDFആയി നേരിട്ട് കയറ്റുമതി ചെയ്യുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -17413,7 +17413,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "%PRODUCTNAME ~Basic..."
+-msgstr "%PRODUCTNAME ~ബെയ്സിക്..."
++msgstr "%PRODUCTNAME ബെയ്സിക്..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -17458,7 +17458,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Find & Rep~lace..."
+-msgstr "കണ്ടുപിടിച്ചു് മാറ്റു~ക..."
++msgstr "കണ്ടുപിടിച്ചു് മാറ്റുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18529,7 +18529,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Digital Signatu~res..."
+-msgstr "ഡിജിറ്റല്‍ ~ഒപ്പുകള്‍..."
++msgstr "ഡിജിറ്റല്‍ ഒപ്പുകള്‍..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18673,7 +18673,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Help"
+-msgstr "സഹായം"
++msgstr "സഹായം (~H)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18682,7 +18682,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~File"
+-msgstr "~ഫയല്‍"
++msgstr "ഫയല് (~F)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18700,7 +18700,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Shapes"
+-msgstr "~രൂപങ്ങള്‍"
++msgstr "രൂപങ്ങള്‍"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18736,7 +18736,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "F~ormat"
+-msgstr "രൂപരേഖ"
++msgstr "രൂപരേഖ (~o)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18745,7 +18745,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Object"
+-msgstr "~ഒബ്ജക്ട്"
++msgstr "ഒബ്ജക്ട്"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18754,7 +18754,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Edit"
+-msgstr "എഡിറ്റു ചെയ്യുക"
++msgstr "എഡിറ്റു ചെയ്യുക (~E)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18763,7 +18763,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Insert"
+-msgstr "ഉള്പ്പെടുത്തുക"
++msgstr "ഉള്പ്പെടുത്തുക (~I)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18799,7 +18799,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Window"
+-msgstr "വിന്ഡോ"
++msgstr "വിന്ഡോ (~W)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18817,7 +18817,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Tools"
+-msgstr "~ഉപകരണങ്ങള്‍"
++msgstr "ഉപകരണങ്ങള് (~T)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18844,7 +18844,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~View"
+-msgstr "ദൃശ്യം"
++msgstr "ദൃശ്യം (~V)"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18907,7 +18907,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Flip"
+-msgstr "~ഫ്ലിപ്പ് ചെയ്യുക"
++msgstr "ഫ്ലിപ്പ് ചെയ്യുക"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18916,7 +18916,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Ro~tate"
+-msgstr "~കറക്കുക"
++msgstr "കറക്കുക"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18943,7 +18943,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Mo~vie and Sound..."
+-msgstr "~ചലച്ചിത്രവും ശബ്ദവും..."
++msgstr "ചലച്ചിത്രവും ശബ്ദവും..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18970,7 +18970,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Non-br~eaking hyphen"
+-msgstr "Non-br~eaking hyphen"
++msgstr "Non-breaking hyphen"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18979,7 +18979,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Optional hyphen"
+-msgstr "~ഓപ്ഷനല്‍ ഹൈഫന്‍"
++msgstr "ഓപ്ഷനല്‍ ഹൈഫന്‍"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18988,7 +18988,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Non-breaking space"
+-msgstr "~Non-breaking space"
++msgstr "Non-breaking space"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -18997,7 +18997,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "No-~width optional break"
+-msgstr "No-~width optional break"
++msgstr "No-width optional break"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19006,7 +19006,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "No-width no ~break"
+-msgstr "No-width no ~break"
++msgstr "No-width no break"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19015,7 +19015,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Left-to-right mark"
+-msgstr "~ഇടത്തു് നിന്നും വലത്തോട്ടുള്ള അടയാളം"
++msgstr "ഇടത്തു് നിന്നും വലത്തോട്ടുള്ള അടയാളം"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19024,7 +19024,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Right-to-left mark"
+-msgstr "~വലത്തു് നിന്നും ഇടത്തോട്ടുള്ള അടയാളം"
++msgstr "വലത്തു് നിന്നും ഇടത്തോട്ടുള്ള അടയാളം"
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19105,7 +19105,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~Microsoft Format..."
+-msgstr "~മൈക്രോസോഫ്ട് ശൈലിയില്‍ ഈമെയില്‍ അയയ്ക്കുക..."
++msgstr "മൈക്രോസോഫ്ട് ശൈലിയില്‍ ഈമെയില്‍ അയയ്ക്കുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19114,7 +19114,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~OpenDocument Format..."
+-msgstr "~ഓപ്പണ്‍ഡോക്യുമെന്റ് ശൈലിയില്‍ ഈമെയില്‍ അയയ്ക്കുക..."
++msgstr "ഓപ്പണ്‍ഡോക്യുമെന്റ് ശൈലിയില്‍ ഈമെയില്‍ അയയ്ക്കുക..."
+ 
+ #: GenericCommands.xcu
+ msgctxt ""
+@@ -19906,7 +19906,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Sorting and Grouping"
+-msgstr "ക്രമീ~കരണവും ഗ്രൂപ്പിങ്ങും"
++msgstr "ക്രമീകരണവും ഗ്രൂപ്പിങ്ങും"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19915,7 +19915,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Add Field"
+-msgstr "ഫീള്‍ഡ് ചേര്‍ക്കു~ക"
++msgstr "ഫീള്‍ഡ് ചേര്‍ക്കുക"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19924,7 +19924,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Conditional Formatting..."
+-msgstr "~കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്..."
++msgstr "കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്..."
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19933,7 +19933,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Page Settings"
+-msgstr "~കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്..."
++msgstr "കണ്ടീഷനല്‍ ഫോര്‍മാറ്റിങ്..."
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19951,7 +19951,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Clear Direct Formatting"
+-msgstr "~നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
++msgstr "നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19960,7 +19960,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Page Numbers..."
+-msgstr "~താളിന്റെ നംബറുകള്‍..."
++msgstr "താളിന്റെ നംബറുകള്‍..."
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19969,7 +19969,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Date and Time..."
+-msgstr "തീ~യതിയും സമയവും..."
++msgstr "തീയതിയും സമയവും..."
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19978,7 +19978,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Select Report"
+-msgstr "റിപ്പോര്‍ട്ട് ~തെരഞ്ഞെടുക്കുക"
++msgstr "റിപ്പോര്‍ട്ട് തെരഞ്ഞെടുക്കുക"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -19987,7 +19987,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Subreport in New Window..."
+-msgstr "~ഉപറിപോര്‍ട്ട് പുതിയ ജാലകത്തില്‍..."
++msgstr "ഉപറിപോര്‍ട്ട് പുതിയ ജാലകത്തില്‍..."
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -20014,7 +20014,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Column Header/Footer"
+-msgstr "~നിരയ്ക്കുള്ള തലക്കെട്ട്/അടിക്കുറിപ്പു്"
++msgstr "നിരയ്ക്കുള്ള തലക്കെട്ട്/അടിക്കുറിപ്പു്"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -20131,7 +20131,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Select Objects in Section"
+-msgstr "ഭാഗത്തുള്ള വസ്തുക്കള്‍ ~തെരഞ്ഞെടുക്കുക"
++msgstr "ഭാഗത്തുള്ള വസ്തുക്കള്‍ തെരഞ്ഞെടുക്കുക"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -20374,7 +20374,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Snap Lines"
+-msgstr "~സ്നാപ്പ് വരികള്‍"
++msgstr "സ്നാപ്പ് വരികള്‍"
+ 
+ #: ReportCommands.xcu
+ msgctxt ""
+@@ -20779,7 +20779,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "%PRODUCTNAME ~Help"
+-msgstr "%PRODUCTNAME ~സഹായം"
++msgstr "%PRODUCTNAME സഹായം"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20797,7 +20797,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Open..."
+-msgstr "~തുറക്കുക..."
++msgstr "തുറക്കുക..."
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20896,7 +20896,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Edit"
+-msgstr "എഡിറ്റു ചെയ്യുക"
++msgstr "എഡിറ്റു ചെയ്യുക (~E)"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20905,7 +20905,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Help"
+-msgstr "സഹായം"
++msgstr "സഹായം (~H)"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20923,7 +20923,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~File"
+-msgstr "~ഫയല്‍"
++msgstr "ഫയല് (~F)"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20932,7 +20932,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Tools"
+-msgstr "~ഉപകരണങ്ങള്‍"
++msgstr "ഉപകരണങ്ങള് (~T)"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20941,7 +20941,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~View"
+-msgstr "ദൃശ്യം"
++msgstr "ദൃശ്യം (~V)"
+ 
+ #: StartModuleCommands.xcu
+ msgctxt ""
+@@ -20950,7 +20950,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Window"
+-msgstr "വിന്ഡോ"
++msgstr "വിന്ഡോ (~W)"
+ 
+ #: StartModuleWindowState.xcu
+ msgctxt ""
+@@ -21193,7 +21193,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Protect Records..."
+-msgstr "~റിക്കോര്‍ഡുകള്‍ സംരക്ഷിക്കുക..."
++msgstr "റിക്കോര്‍ഡുകള്‍ സംരക്ഷിക്കുക..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21220,7 +21220,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Next Change"
+-msgstr "~അടുത്ത മാറ്റം"
++msgstr "അടുത്ത മാറ്റം"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21229,7 +21229,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Pr~evious Change"
+-msgstr "~മുമ്പുള്ള മാറ്റം"
++msgstr "മുമ്പുള്ള മാറ്റം"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21445,7 +21445,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Footnote/Endnote~..."
+-msgstr "അടിക്കുറിപ്പു്~..."
++msgstr "അടിക്കുറിപ്പു്..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21499,7 +21499,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Comme~nt"
+-msgstr "അഭിപ്രാ~യം"
++msgstr "അഭിപ്രായം"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21607,7 +21607,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Mail Merge..."
+-msgstr "~മെയില്‍ മേര്‍ജ്..."
++msgstr "മെയില്‍ മേര്‍ജ്..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -21643,7 +21643,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Formula..."
+-msgstr "സൂത്ര~വാക്യം..."
++msgstr "സൂത്രവാക്യം..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -22039,7 +22039,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Rotate 90° ~Left"
+-msgstr "~ഇടത്തേക്കു് 90° കറക്കുക"
++msgstr "ഇടത്തേക്കു് 90° കറക്കുക"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -22048,7 +22048,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Rotate 90° ~Right"
+-msgstr "~വലത്തേക്കു് 90° കറക്കുക"
++msgstr "വലത്തേക്കു് 90° കറക്കുക"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -22336,7 +22336,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Clear ~Direct Formatting"
+-msgstr "~നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
++msgstr "നേരിട്ടുള്ള ഫോര്‍മാറ്റിങ് വെടിപ്പാക്കുക"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -22534,7 +22534,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Rows..."
+-msgstr "~നിരകള്‍..."
++msgstr "നിരകള്‍..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -22552,7 +22552,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Columns..."
+-msgstr "~വരികള്‍..."
++msgstr "വരികള്‍..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -23317,7 +23317,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "Footnote/Endnote~..."
+-msgstr "അടിക്കുറിപ്പു്~..."
++msgstr "അടിക്കുറിപ്പു്..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24001,7 +24001,7 @@ msgctxt ""
+ "ContextLabel\n"
+ "value.text"
+ msgid "~Edit..."
+-msgstr "~ചിട്ടപ്പെടുത്തുക..."
++msgstr "ചിട്ടപ്പെടുത്തുക (~E)..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24289,7 +24289,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~Microsoft Word..."
+-msgstr "~Microsoft Word ആയി ഈമെയില്‍ അയയ്ക്കുക..."
++msgstr "Microsoft Word ആയി ഈമെയില്‍ അയയ്ക്കുക..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24298,7 +24298,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "E-mail as ~OpenDocument Text..."
+-msgstr "~OpenDocument വാചകമായി ഈമെയില്‍ അയയ്ക്കുക..."
++msgstr "OpenDocument വാചകമായി ഈമെയില്‍ അയയ്ക്കുക..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24307,7 +24307,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Standard"
+-msgstr "~നിലവാരമുള്ള"
++msgstr "നിലവാരമുള്ള"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24316,7 +24316,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Block Area"
+-msgstr "~Block Area"
++msgstr "Block Area"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24325,7 +24325,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Open..."
+-msgstr "~തുറക്കുക..."
++msgstr "തുറക്കുക..."
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24334,7 +24334,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "T~able"
+-msgstr "പട്ടിക"
++msgstr "പട്ടിക (~a)"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24343,7 +24343,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Insert"
+-msgstr "ഉള്പ്പെടുത്തുക"
++msgstr "ഉള്പ്പെടുത്തുക (~I)"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+@@ -24379,7 +24379,7 @@ msgctxt ""
+ "Label\n"
+ "value.text"
+ msgid "~Convert"
+-msgstr "~വേര്‍തിരിക്കുക"
++msgstr "വേര്‍തിരിക്കുക"
+ 
+ #: WriterCommands.xcu
+ msgctxt ""
+-- 
+1.8.3.1
+

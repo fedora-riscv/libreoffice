@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        13%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -283,6 +283,7 @@ Patch42: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch43: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch44: 0001-Related-i123048-Corrected-connector-layout-after-rel.patch
 Patch45: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
+Patch46: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1063,6 +1064,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch43 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
 %patch44 -p1 -b .i123048-Corrected-connector-layout-after-rel.patch
 %patch45 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
+%patch46 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2152,6 +2154,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Dec 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-13-unbuilt
+- Related: rhbz#1039517 Malayalam short-cut keys are unavailable
+
 * Thu Dec 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-12
 - make dragging and dropping slides stop crashing
 

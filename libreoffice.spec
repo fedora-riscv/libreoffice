@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.3
+%define libo_version 4.1.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        13%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -249,40 +249,22 @@ Patch10: libreoffice-rhel6limits.patch
 Patch11: libreoffice-rhel6glib.patch
 %endif
 Patch12: 0001-do-not-build-LibreOffice_Test.patch
-Patch13: 0001-Resolves-rhbz-968892-force-render-full-grapheme-with.patch
-Patch14: 0001-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch15: 0002-Related-rhbz-968892-discard-impossible-languages-for.patch
-Patch16: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch17: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
-Patch18: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-Patch19: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
-Patch20: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
-Patch21: 0001-Resolves-rhbz-996162-apparent-NULL-bullet-font.patch
-Patch22: 0001-fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-Patch23: 0001-WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
-Patch24: 0001-Related-rhbz-1020712-wrong-default-font-shown-in-edi.patch
-Patch25: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
-Patch26: 0001-fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
-Patch27: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
-Patch28: 0001-fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
-Patch29: 0001-resolved-fdo-56209-reviving-FilterFormulaParser.patch
-Patch30: 0001-update-libmwaw-to-0.2.0.patch
-Patch31: 0001-rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
-Patch32: 0001-Related-rhbz-1014990-valgrind-reports-uninitialized-.patch
-Patch33: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
-Patch34: 0001-enable-more-formats-supported-by-libmwaw.patch
-Patch35: 0001-Revert-transpose-data-in-rows-ranges-for-internal-da.patch
-Patch36: 0001-fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
-Patch37: 0001-Related-fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
-Patch38: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-Patch39: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
-Patch40: 0001-rhbz-1030009-Remove-global-XModel-ref.patch
-Patch41: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-Patch42: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch43: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
-Patch44: 0001-Related-i123048-Corrected-connector-layout-after-rel.patch
-Patch45: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
-Patch46: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
+Patch13: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
+Patch14: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
+Patch15: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+Patch16: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
+Patch17: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
+Patch18: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
+Patch19: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
+Patch20: 0001-update-libmwaw-to-0.2.0.patch
+Patch21: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
+Patch22: 0001-enable-more-formats-supported-by-libmwaw.patch
+Patch23: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
+Patch24: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch25: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+Patch26: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
+Patch27: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
+Patch28: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1031,40 +1013,22 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch11 -p1 -b .rhel6glib.patch
 %endif
 %patch12 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch13 -p1 -b .rhbz-968892-force-render-full-grapheme-with.patch
-%patch14 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch15 -p1 -b .rhbz-968892-discard-impossible-languages-for.patch
-%patch16 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch17 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch18 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-%patch19 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
-%patch20 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
-%patch21 -p1 -b .rhbz-996162-apparent-NULL-bullet-font.patch
-%patch22 -p1 -b .fdo-70201-sw-eliminate-no-extent-RSID-only-AUTOFMT-h.patch
-%patch23 -p1 -b .WaE-Wstrict-overflow-assuming-signed-overflow-does-n.patch
-%patch24 -p1 -b .rhbz-1020712-wrong-default-font-shown-in-edi.patch
-%patch25 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
-%patch26 -p1 -b .fdo-67725-unoidl-AggregatingCursor-must-wrap-modules.patch
-%patch27 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
-%patch28 -p1 -b .fdo-70968-Incorrect-rendering-of-Devanagari-short-i-.patch
-%patch29 -p1 -b .resolved-fdo-56209-reviving-FilterFormulaParser.patch
-%patch30 -p1 -b .update-libmwaw-to-0.2.0.patch
-%patch31 -p1 -b .rhbz-1031989-Accept-pt-in-addition-to-deprecated-pt.patch
-%patch32 -p1 -b .rhbz-1014990-valgrind-reports-uninitialized-.patch
-%patch33 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
-%patch34 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
-%patch35 -p1 -b .Revert-transpose-data-in-rows-ranges-for-internal-da.patch
-%patch36 -p1 -b .fdo-69971-formula-dialog-crash-when-Paint-restores-E.patch
-%patch37 -p1 -b .fdo-41169-fix-GTK-non-Latin-keyboard-layout-.patch
-%patch38 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-%patch39 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
-%patch40 -p1 -b .rhbz-1030009-Remove-global-XModel-ref.patch
-%patch41 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-%patch42 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-%patch43 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
-%patch44 -p1 -b .i123048-Corrected-connector-layout-after-rel.patch
-%patch45 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
-%patch46 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
+%patch13 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
+%patch14 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
+%patch15 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
+%patch16 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
+%patch17 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
+%patch18 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
+%patch19 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
+%patch20 -p1 -b .update-libmwaw-to-0.2.0.patch
+%patch21 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
+%patch22 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
+%patch23 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
+%patch24 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
+%patch25 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+%patch26 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
+%patch27 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
+%patch28 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2154,7 +2118,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Dec 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-13-unbuilt
+* Mon Dec 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-1
+- update to 4.1.4
 - Related: rhbz#1039517 Malayalam short-cut keys are unavailable
 
 * Thu Dec 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-12

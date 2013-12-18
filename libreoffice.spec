@@ -20,7 +20,7 @@
 # don't worry about whitespace for now
 %define _default_patch_flags -s -l
 # make it easier to download sources from pre-release site
-# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+# http://dev-builds.libreoffice.org/pre-releases/src
 %define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2118,6 +2118,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-2
+- Resolves: rhbz#1040708 rebuild against new libstdc++ to fix std::nth_element
+
 * Mon Dec 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-1
 - update to 4.1.4
 - Related: rhbz#1039517 Malayalam short-cut keys are unavailable

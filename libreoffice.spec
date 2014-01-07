@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2118,6 +2118,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-3
+- Resolves: rhbz#1047017 All the selected toolbars became unselected
+  coming out from the full screen option
+
 * Wed Dec 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-2
 - Resolves: rhbz#1040708 rebuild against new libstdc++ to fix std::nth_element
 

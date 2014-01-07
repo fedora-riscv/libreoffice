@@ -6,7 +6,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+# %%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        0%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2088,6 +2088,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.1-1
+- 4.2.0 rc1
+
 * Wed Dec 11 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-3.beta2
 - Resolves: rhbz#1040291 Change language name from "Oriya" to "Odia"
 

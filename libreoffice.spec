@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -265,6 +265,7 @@ Patch25: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch26: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch27: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
 Patch28: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
+Patch29: 0001-n-839727-Crash-fix.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1029,6 +1030,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch26 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
 %patch27 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
 %patch28 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
+%patch29 -p1 -b .n839727-Crash-fix.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2118,6 +2120,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jan 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-4-UNBUILT
+- Resolves: rhbz#1038176 fix crash in loading certain charts
+
 * Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-3
 - Resolves: rhbz#1047017 All the selected toolbars became unselected
   coming out from the full screen option

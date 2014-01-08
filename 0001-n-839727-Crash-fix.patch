@@ -1,0 +1,26 @@
+From e5f24e0c7c8f4799223c19359f4228f0b1a71461 Mon Sep 17 00:00:00 2001
+From: Muthu Subramanian <sumuthu@collabora.com>
+Date: Tue, 22 Oct 2013 15:13:41 +0530
+Subject: [PATCH] n#839727: Crash fix.
+
+---
+ oox/source/drawingml/chart/seriesconverter.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/oox/source/drawingml/chart/seriesconverter.cxx b/oox/source/drawingml/chart/seriesconverter.cxx
+index cc05567..1b56fef 100644
+--- a/oox/source/drawingml/chart/seriesconverter.cxx
++++ b/oox/source/drawingml/chart/seriesconverter.cxx
+@@ -660,7 +660,8 @@ Reference< XDataSeries > SeriesConverter::createDataSeries( const TypeGroupConve
+         {
+             // Use number format code from Value series
+             DataSourceModel* pValues = mrModel.maSources.get( SeriesModel::VALUES ).get();
+-            xLabels->maNumberFormat.maFormatCode = pValues->mxDataSeq->maFormatCode;
++            if( pValues )
++                xLabels->maNumberFormat.maFormatCode = pValues->mxDataSeq->maFormatCode;
+         }
+         DataLabelsConverter aLabelsConv( *this, *xLabels );
+         aLabelsConv.convertFromModel( xDataSeries, rTypeGroup );
+-- 
+1.8.4.2
+

@@ -646,6 +646,7 @@ Requires: glade3-libgladeui
 glade and ui-previewer tool to check the visual appearance of dialogs.
 
 %if 0%{?fedora}
+
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -653,6 +654,16 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+
+%package appdata
+Summary: AppData support for LibreOffice
+Group:   Applications/Productivity
+License: CC0
+BuildArch: noarch
+
+%description appdata
+%{name}-appdata contains the AppData definition file for LibreOffice.
+
 %endif
 
 %if 0%{?_enable_debug_packages}
@@ -1377,6 +1388,10 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
 mv $RPM_BUILD_ROOT/%{baseinstdir}/share/glade/libreoffice-catalog.xml $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
 
+# rhbz#1049543 install appdata
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/appdata
+cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/appdata
+
 export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
@@ -2082,14 +2097,22 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
 %if 0%{?fedora}
+
 %files kde
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
+
+%files appdata
+%doc instdir/LICENSE
+%dir %{_datadir}/appdata
+%{_datadir}/appdata/*.appdata.xml
+
 %endif
 
 %changelog
 * Thu Jan 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.2-1
 - update to 4.2.0 rc2
+- Resolves: rhbz#1049543 Include AppData files in packages
 
 * Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.1-1
 - 4.2.0 rc1

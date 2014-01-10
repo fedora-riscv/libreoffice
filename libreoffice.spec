@@ -1079,8 +1079,11 @@ export PYTHON_LIBS=`python-config --libs python`
 %endif
 %endif
 
+%if 0%{?rhel} && 0%{?rhel} < 7
 aclocal -I m4
 autoconf
+%endif
+
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \

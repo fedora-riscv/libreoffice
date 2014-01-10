@@ -702,8 +702,8 @@ This package provides gdb pretty printers for package %{name}.
 
 %define _langpack_common() \
 %{baseinstdir}/program/resource/*%{1}.res  \
-%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1} \
-%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1} \
+%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1}.zip \
+%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1}.zip \
 %{baseinstdir}/share/template/%{1} \
 %{baseinstdir}/share/registry/Langpack-%{1}.xcd \
 %{baseinstdir}/share/registry/res/registry_%{1}.xcd \
@@ -1788,10 +1788,10 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/bootstraprc
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
-%doc %{baseinstdir}/CREDITS.odt
+%doc %{baseinstdir}/CREDITS.fodt
 %doc %{baseinstdir}/LICENSE
 %doc %{baseinstdir}/LICENSE.html
-%doc %{baseinstdir}/LICENSE.odt
+%doc %{baseinstdir}/LICENSE.fodt
 %doc %{baseinstdir}/NOTICE
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice

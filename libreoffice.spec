@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -263,6 +263,7 @@ Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
+Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1012,6 +1013,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch12 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 %patch13 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 %patch14 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
+%patch15 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2113,6 +2115,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jan 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.2-2
+- Related :rhbz#1047871 conditional formatting doesn't fit on screen
+
 * Thu Jan 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.2-1
 - update to 4.2.0 rc2
 - Resolves: rhbz#1049543 Include AppData files in packages

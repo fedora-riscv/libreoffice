@@ -266,6 +266,7 @@ Patch26: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch27: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
 Patch28: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 Patch29: 0001-n-839727-Crash-fix.patch
+Patch30: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1031,6 +1032,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
 %patch28 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 %patch29 -p1 -b .n839727-Crash-fix.patch
+%patch30 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2120,8 +2122,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jan 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-4-UNBUILT
+* Mon Jan 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-4
 - Resolves: rhbz#1038176 fix crash in loading certain charts
+- Related: rhbz#1047871 conditional formatting doesn't fix on screen
 
 * Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-3
 - Resolves: rhbz#1047017 All the selected toolbars became unselected

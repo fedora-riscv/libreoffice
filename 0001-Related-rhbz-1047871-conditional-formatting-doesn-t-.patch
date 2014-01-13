@@ -1,0 +1,87 @@
+From e42d03fa6ccd4b0d24e1560163326990ce2e560d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 13 Jan 2014 13:34:16 +0000
+Subject: [PATCH] Related: rhbz#1047871 conditional formatting doesn't fit on
+ screen
+
+Change-Id: I886030c056fe802279f9e16c6f85736b0c4587c6
+---
+ sc/source/ui/src/condformatdlg.src | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/sc/source/ui/src/condformatdlg.src b/sc/source/ui/src/condformatdlg.src
+index 0594c5b..4d476a0 100644
+--- a/sc/source/ui/src/condformatdlg.src
++++ b/sc/source/ui/src/condformatdlg.src
+@@ -14,32 +14,32 @@ ModalDialog RID_SCDLG_CONDFORMAT
+     HelpID = "sc:ModalDialog:RID_SCDLG_CONDFORMAT";
+     OutputSize = TRUE;
+     Hide = TRUE;
+-    Size = MAP_APPFONT ( 300, 300 );
++    Size = MAP_APPFONT ( 300, 265 );
+     Text [ en-US ] = "Conditional Formatting for";
+     Moveable = TRUE;
+     Closeable = TRUE;
+     OkButton BTN_OK
+     {
+-        Pos = MAP_APPFONT ( 190, 280 );
++        Pos = MAP_APPFONT ( 190, 245 );
+         Size = MAP_APPFONT ( 50, 14 );
+         TabStop = TRUE;
+     };
+     CancelButton BTN_CANCEL
+     {
+-        Pos = MAP_APPFONT ( 245, 280 );
++        Pos = MAP_APPFONT ( 245, 245 );
+         Size = MAP_APPFONT ( 50, 14 );
+         TabStop = TRUE;
+     };
+     PushButton BTN_ADD
+     {
+-        Pos = MAP_APPFONT( 5, 245 );
++        Pos = MAP_APPFONT( 5, 210 );
+         Size = MAP_APPFONT( 50, 14 );
+         Text [ en-US ] = "Add";
+         TabStop = TRUE;
+     };
+     PushButton BTN_REMOVE
+     {
+-        Pos = MAP_APPFONT( 60, 245 );
++        Pos = MAP_APPFONT( 60, 210 );
+         Size = MAP_APPFONT( 50, 14 );
+         Text [ en-US ] = "Remove";
+         TabStop = TRUE;
+@@ -47,26 +47,26 @@ ModalDialog RID_SCDLG_CONDFORMAT
+     Control CTRL_LIST
+     {
+         Pos = MAP_APPFONT( 5, 20 );
+-        Size = MAP_APPFONT( 290, 220 );
++        Size = MAP_APPFONT( 290, 185 );
+         DialogControl = TRUE;
+         Border = TRUE;
+     };
+     FixedText FT_RANGE
+     {
+-        Pos = MAP_APPFONT( 5, 262 );
++        Pos = MAP_APPFONT( 5, 227 );
+         Size = MAP_APPFONT( 50, 16 );
+         Text [ en-US ] = "Range:";
+     };
+     Edit ED_RANGE
+     {
+-        Pos = MAP_APPFONT( 60, 262 );
++        Pos = MAP_APPFONT( 60, 227 );
+         Size = MAP_APPFONT( 182, 14 );
+         Border = TRUE;
+         TabStop = TRUE;
+     };
+     ImageButton RB_RANGE
+     {
+-        Pos = MAP_APPFONT( 245, 262 );
++        Pos = MAP_APPFONT( 245, 227 );
+         Size = MAP_APPFONT( 14, 14 );
+         Border = TRUE;
+         TabStop = TRUE;
+-- 
+1.8.4.2
+

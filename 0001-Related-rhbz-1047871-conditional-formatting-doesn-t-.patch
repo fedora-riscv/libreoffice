@@ -13,8 +13,8 @@ diff --git a/sc/source/ui/src/condformatdlg.src b/sc/source/ui/src/condformatdlg
 index 0594c5b..4d476a0 100644
 --- a/sc/source/ui/src/condformatdlg.src
 +++ b/sc/source/ui/src/condformatdlg.src
-@@ -14,32 +14,32 @@ ModalDialog RID_SCDLG_CONDFORMAT
-     HelpID = "sc:ModalDialog:RID_SCDLG_CONDFORMAT";
+@@ -13,32 +13,32 @@
+ {
      OutputSize = TRUE;
      Hide = TRUE;
 -    Size = MAP_APPFONT ( 300, 300 );
@@ -51,7 +51,7 @@ index 0594c5b..4d476a0 100644
          Size = MAP_APPFONT( 50, 14 );
          Text [ en-US ] = "Remove";
          TabStop = TRUE;
-@@ -47,26 +47,26 @@ ModalDialog RID_SCDLG_CONDFORMAT
+@@ -46,26 +46,26 @@
      Control CTRL_LIST
      {
          Pos = MAP_APPFONT( 5, 20 );
@@ -82,6 +82,3 @@ index 0594c5b..4d476a0 100644
          Size = MAP_APPFONT( 14, 14 );
          Border = TRUE;
          TabStop = TRUE;
--- 
-1.8.4.2
-

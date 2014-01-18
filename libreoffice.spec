@@ -2116,7 +2116,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Mon Jan 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.2-2
-- Related :rhbz#1047871 conditional formatting doesn't fit on screen
+- Related: rhbz#1047871 conditional formatting doesn't fit on screen
 
 * Thu Jan 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.2-1
 - update to 4.2.0 rc2

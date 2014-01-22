@@ -1,6 +1,3 @@
-# temporarily disable debuginfo compression because this box cannot
-# handle the memory load .-)
-%define _find_debuginfo_dwz_opts %{nil}
 # download path contains version without the last (fourth) digit
 %define libo_version 4.2.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually

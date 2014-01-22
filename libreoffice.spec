@@ -156,7 +156,7 @@ BuildRequires: libXt-devel
 BuildRequires: libcdr-devel
 %endif
 %if 0%{?fedora}
-BuildRequires: libabw
+BuildRequires: libabw-devel
 BuildRequires: libcmis-devel >= 0.3.0
 BuildRequires: libe-book-devel
 BuildRequires: libetonyek-devel

@@ -1058,10 +1058,10 @@ export CXXFLAGS=$ARCH_FLAGS
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
-%else
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen
+%else # rhel7
+%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
-%else
+%else # fedora
 %define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 

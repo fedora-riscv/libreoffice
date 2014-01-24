@@ -1070,7 +1070,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else # rhel7
-%define distrooptions --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
 %define distrooptions --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}

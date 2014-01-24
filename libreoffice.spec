@@ -62,7 +62,10 @@ Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%else
+%endif
+
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
 Source11:       %{external_url}/8c853024fbcff39113d9285250dafc66-mdds_0.9.1.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
@@ -82,6 +85,7 @@ Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.
 Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source28:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
 Source29:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+%endif
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2

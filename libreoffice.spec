@@ -66,8 +66,9 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel}
+Source11:       %{external_url}/01a380acfec23bf617117ce98e318f3d-mdds_0.10.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds
 %if 0%{?rhel} < 7
-Source11:       %{external_url}/8c853024fbcff39113d9285250dafc66-mdds_0.9.1.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -85,7 +86,7 @@ Source25:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.
 Source26:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
 Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2

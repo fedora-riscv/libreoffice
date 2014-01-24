@@ -168,6 +168,7 @@ BuildRequires: libcdr-devel
 BuildRequires: libabw-devel
 BuildRequires: libcmis-devel >= 0.3.0
 BuildRequires: libe-book-devel
+BuildRequires: libeot-devel
 BuildRequires: libetonyek-devel
 BuildRequires: libfreehand-devel
 BuildRequires: libmwaw-devel >= 0.2.0

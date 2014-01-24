@@ -77,17 +77,17 @@ Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
 Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
 Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
 Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
-Source21:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/libvisio-0.0.31.tar.bz2
-Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
-Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
-Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
-Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source28:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
-Source29:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+Source21:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source22:       %{external_url}/libvisio-0.0.31.tar.bz2
+Source23:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
+Source24:       %{external_url}/libmspub-0.0.6.tar.bz2
+Source25:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
+Source26:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
+Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
+Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
+Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2
@@ -97,7 +97,7 @@ Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 Source36:       %{external_url}/libabw-0.0.1.tar.bz2
 Source37:       %{external_url}/libatomic_ops-7_2d.zip
 Source38:       %{external_url}/libeot-0.01.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
 %endif
 
 # build tools

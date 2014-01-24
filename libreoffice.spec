@@ -1103,6 +1103,7 @@ touch autogen.lastrun
  %{?with_lang} \
  --disable-fetch-external \
  --disable-gnome-vfs \
+ --disable-openssl \
  --enable-dbus \
  --enable-eot \
  --enable-evolution2 \

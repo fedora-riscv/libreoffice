@@ -62,6 +62,7 @@ Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+%global bundling_options --without-system-hsqldb
 %endif
 
 %if 0%{?rhel}
@@ -85,6 +86,7 @@ Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.
 Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source28:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
 Source29:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
@@ -93,6 +95,7 @@ Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
 Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 Source36:       %{external_url}/libabw-0.0.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw
 %endif
 
 # build tools
@@ -1058,15 +1061,16 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-doxygen
+%define distrooptions --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen
+
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else # rhel7
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libodfgen %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
-%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1117,6 +1121,7 @@ touch autogen.lastrun
  --without-ppds \
  --without-system-npapi-headers \
  %{distrooptions} \
+ %{?bundling_options} \
  %{?archoptions}
 
 make VERBOSE=true

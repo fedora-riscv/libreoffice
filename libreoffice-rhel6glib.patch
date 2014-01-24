@@ -20,12 +20,12 @@ index d0de1d8..526fea3 100644
 --- a/Repository.mk
 +++ b/Repository.mk
 @@ -229,7 +229,6 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,GNOME, \
-     $(if $(ENABLE_GTK3),vclplug_gtk3) \
-     $(if $(ENABLE_GCONF),gconfbe1) \
-     $(if $(ENABLE_SYSTRAY_GTK),qstart_gtk) \
--    $(if $(ENABLE_GIO),losessioninstall) \
-     $(if $(ENABLE_GIO),ucpgio1) \
-     $(if $(ENABLE_GNOMEVFS),ucpgvfs1) \
+ 	$(if $(ENABLE_GTK3),vclplug_gtk3) \
+ 	$(if $(ENABLE_GCONF),gconfbe1) \
+ 	$(if $(ENABLE_SYSTRAY_GTK),qstart_gtk) \
+-	$(if $(ENABLE_GIO),losessioninstall) \
+ 	$(if $(ENABLE_GIO),ucpgio1) \
+ 	$(if $(ENABLE_GNOMEVFS),ucpgvfs1) \
  ))
 diff --git a/postprocess/Rdb_services.mk b/postprocess/Rdb_services.mk
 index 936aac2..7d26eb4 100644

@@ -1054,7 +1054,7 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird
+%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-doxygen
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif

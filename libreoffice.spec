@@ -95,7 +95,9 @@ Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
 Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 Source36:       %{external_url}/libabw-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw
+Source37:       %{external_url}/libatomic_ops-7_2d.zip
+Source38:       %{external_url}/libeot-0.01.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
 %endif
 
 # build tools

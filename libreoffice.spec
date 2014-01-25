@@ -1883,7 +1883,7 @@ done
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
 %if 0%{?rhel}
-%{baseinstdir}/program/libbfembed.so.*
+%{baseinstdir}/program/libfbembed.so.*
 %endif
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so

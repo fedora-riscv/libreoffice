@@ -1027,6 +1027,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch15 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
 %patch16 -p1 -b .Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 
+# fdo#72987 firebird unit test fails on big endian platforms
+sed -i -e /firebird_test/d dbaccess/Module_dbaccess.mk
+
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
 # strings with spattering of translated strings

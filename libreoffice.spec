@@ -1412,9 +1412,11 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
 mv $RPM_BUILD_ROOT/%{baseinstdir}/share/glade/libreoffice-catalog.xml $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
 
+%if 0%{?fedora}
 # rhbz#1049543 install appdata
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/appdata
 cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/appdata
+%endif
 
 export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"

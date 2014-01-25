@@ -1882,6 +1882,9 @@ done
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
+%if 0%{?rhel}
+%{baseinstdir}/program/classes/libbfembed.so.*
+%endif
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so

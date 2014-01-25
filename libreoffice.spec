@@ -274,6 +274,7 @@ Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
+Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1024,6 +1025,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch13 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 %patch14 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
 %patch15 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
+%patch16 -p1 -b .Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2133,6 +2135,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Jan 24 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.3-3
 - enable EOT support
+- fix PPC build
 
 * Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.3-2
 - stop showing math and startcenter in menu (again)

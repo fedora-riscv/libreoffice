@@ -1071,7 +1071,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # make segfaults on parallel build
-%define distrooptions --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+%define distrooptions --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth

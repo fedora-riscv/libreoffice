@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -656,6 +656,17 @@ Requires: glade3-libgladeui
 %description glade
 %{name}-glade contains a catalog of LibreOffice-specific widgets for
 glade and ui-previewer tool to check the visual appearance of dialogs.
+
+%package librelogo
+Summary: LibreLogo scripting language
+Group: Applications/Productivity
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+
+%description librelogo
+Enables LibreLogo scripting in Writer. LibreLogo is a Logo-like
+programming language with interactive vectorgraphics for education and
+DTP.
 
 %if 0%{?fedora}
 
@@ -2115,14 +2126,18 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
 %{baseinstdir}/share/Scripts/python
+%exclude %{baseinstdir}/share/Scripts/python/LibreLogo
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %if 0%{libo_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %endif
-%{baseinstdir}/share/registry/librelogo.xcd
 %{baseinstdir}/share/registry/pyuno.xcd
+
+%files librelogo
+%{baseinstdir}/share/registry/librelogo.xcd
+%{baseinstdir}/share/Scripts/python/LibreLogo
 
 %files glade
 %{baseinstdir}/program/ui-previewer
@@ -2142,6 +2157,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-2
+- split LibreLogo into a separate subpackage
+
 * Tue Jan 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-1
 - update to 4.2.0 rc4
 

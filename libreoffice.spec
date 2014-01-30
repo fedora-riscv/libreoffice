@@ -290,6 +290,24 @@ user interface and feature set similar to other office suites.  Sophisticated
 and flexible, LibreOffice also works transparently with a variety of file
 formats, including Microsoft Office File Formats.
 
+%package filters
+Summary: All import / export filters
+Group: Applications/Productivity
+Requires: %{name}-base = %{epoch}:%{version}-%{release}
+Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-draw = %{epoch}:%{version}-%{release}
+Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
+Requires: %{name}-impress = %{epoch}:%{version}-%{release}
+Requires: %{name}-math = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-xsltfilter = %{epoch}:%{version}-%{release}
+
+%description
+Metapackage to pull in all subpackages that contain import or export
+filters.
+
 %package core
 Summary: Core modules for LibreOffice
 Group: Applications/Productivity
@@ -1447,6 +1465,8 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 
 %files
 
+%files filters
+
 %files core
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
@@ -2158,6 +2178,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-2
 - split LibreLogo into a separate subpackage
+- create a metapackage depending on all subpackages containing filters,
+  for use of packages like unoconv
 
 * Tue Jan 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-1
 - update to 4.2.0 rc4

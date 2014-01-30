@@ -322,7 +322,6 @@ Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 %if 0%{libo_python3}
 Requires: python3
 %else
@@ -661,6 +660,17 @@ Requires: glade3-libgladeui
 %description glade
 %{name}-glade contains a catalog of LibreOffice-specific widgets for
 glade and ui-previewer tool to check the visual appearance of dialogs.
+
+%package librelogo
+Summary: LibreLogo scripting language
+Group: Applications/Productivity
+Requires: %{name}-writer = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+
+%description librelogo
+Enables LibreLogo scripting in Writer. LibreLogo is a Logo-like
+programming language with interactive vectorgraphics for education and
+DTP.
 
 %if 0%{?fedora}
 %package kde
@@ -2104,14 +2114,18 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
 %{baseinstdir}/share/Scripts/python
+%exclude %{baseinstdir}/share/Scripts/python/LibreLogo
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %if 0%{libo_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %endif
-%{baseinstdir}/share/registry/librelogo.xcd
 %{baseinstdir}/share/registry/pyuno.xcd
+
+%files librelogo
+%{baseinstdir}/share/registry/librelogo.xcd
+%{baseinstdir}/share/Scripts/python/LibreLogo
 
 %files glade
 %{baseinstdir}/program/ui-previewer
@@ -2124,6 +2138,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-6
+- split LibreLogo into a separate subpackage
+
 * Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-5
 - Related: rhbz#1047017 actually apply the patch
 

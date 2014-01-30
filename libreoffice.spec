@@ -304,7 +304,7 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter = %{epoch}:%{version}-%{release}
 
-%description
+%description filters
 Metapackage to pull in all subpackages that contain import or export
 filters.
 

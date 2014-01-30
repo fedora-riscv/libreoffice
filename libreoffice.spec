@@ -329,7 +329,6 @@ Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 %if 0%{libo_python3}
 Requires: python3
 %else

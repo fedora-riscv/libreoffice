@@ -112,6 +112,7 @@ BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
+BuildRequires: git
 BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: make
@@ -1027,6 +1028,13 @@ done \
 %prep
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
+
+# set up git repo
+git init
+git config gc.auto 0 # disable auto packing
+git add -A
+git commit -q -a -m %{name}-%{version}
+
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1036,27 +1044,14 @@ rm -rf git-hooks */git-hooks
  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-%patch1  -p1
-%patch2  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .libreoffice-installfix.patch
-%if 0%{?rhel} && 0%{?rhel} < 7
-%patch7 -p1 -b .rhel6gcj.patch
-%patch8 -p1 -b .rhel6poppler.patch
-%patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -b .rhel6glib.patch
-%endif
-%patch11 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.patch
-%patch12 -p1 -b .rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-%patch13 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-%patch14 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
-%patch15 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
-%patch16 -p1 -b .Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
+git commit -q -a -m 'add Red Hat colors to palette'
+
+# apply patches
+git am %{patches}
 
 # fdo#72987 firebird unit test fails on big endian platforms
 sed -i -e /firebird_test/d dbaccess/Module_dbaccess.mk
+git commit -q -a -m 'disable firebird unit test'
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1067,6 +1062,8 @@ rm -rf translations/source/{gu,he,hr}/helpcontent2
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 %endif
+
+git commit -q -a -m 'fix translations'
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

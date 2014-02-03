@@ -96,6 +96,7 @@ BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
+BuildRequires: git
 BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: make
@@ -1026,6 +1027,15 @@ done \
 %prep
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
+
+# set up git repo
+git init
+git config user.name rpmbuild
+git config user.email rpmbuild@fedoraproject.org
+git config gc.auto 0 # disable auto packing
+git add -A
+git commit -q -a -m %{name}-%{version}
+
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1035,44 +1045,10 @@ rm -rf git-hooks */git-hooks
  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-%patch1  -p1
-%patch2  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .libreoffice-installfix.patch
-%if 0%{?rhel} && 0%{?rhel} < 7
-%patch7 -p1 -b .rhel6gcj.patch
-%patch8 -p1 -b .rhel6poppler.patch
-%patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -b .rhel6limits.patch
-%patch11 -p1 -b .rhel6glib.patch
-%endif
-%patch12 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch13 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch14 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch15 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-%patch16 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
-%patch17 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
-%patch18 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
-%patch19 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
-%patch20 -p1 -b .update-libmwaw-to-0.2.0.patch
-%patch21 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
-%patch22 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
-%patch23 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-%patch24 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
-%patch25 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-%patch26 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
-%patch27 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
-%patch28 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
-%patch29 -p1 -b .Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
-%patch30 -p1 -b .Resolves-rhbz-1010995-div-by-0-on-some-bizarre-corne.patch
-%patch31 -p1 -b .rhbz-1065807-rework-i66157-for-multiple-writ.patch
-%patch32 -p1 -b .rhbz-1065807-use-xdg-Templates-for-default-.patch
-%patch33 -p1 -b .explictly-list-common-lang-independant-template-dir.patch
-%patch34 -p1 -b .rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-%patch35 -p1 -b .KDE-don-t-throw-on-TemplatePathVariable.patch
-%patch36 -p1 -b .rhbz-1007697-Update-on-a-Window-triggering-.patch
+git commit -q -a -m 'add Red Hat colors to palette'
+
+# apply patches
+git am %{patches}
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1083,6 +1059,8 @@ rm -rf translations/source/{gu,he,hr}/helpcontent2
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 %endif
+
+git commit -q -a -m 'fix translations'
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

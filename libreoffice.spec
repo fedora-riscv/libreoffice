@@ -268,6 +268,7 @@ Patch28: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 Patch29: 0001-n-839727-Crash-fix.patch
 Patch30: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch31: 0001-fdo-66864-Return-from-full-screen-should-restore-too.patch
+Patch32: 0001-Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1063,6 +1064,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch29 -p1 -b .n839727-Crash-fix.patch
 %patch30 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
 %patch31 -p1 -b .fdo-66864-Return-from-full-screen-should-restore-too.patch
+%patch32 -p1 -b .Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2162,6 +2164,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - split LibreLogo into a separate subpackage
 - create a metapackage depending on all subpackages containing filters,
   for use of packages like unoconv
+- Resolves: rhbz#1050162 don't draw to NULL window
 
 * Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-5
 - Related: rhbz#1047017 actually apply the patch

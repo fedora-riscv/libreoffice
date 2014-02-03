@@ -1,0 +1,36 @@
+From 3cb4aa944afe335da373b3e0bafea5360cb8d665 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 8 Jan 2014 21:01:48 +0000
+Subject: [PATCH] Resolves: rhbz#1050162 don't draw to NULL window
+
+Change-Id: Ia84e3ae05f2d3eacfb48136ce920173b46783bc7
+---
+ vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+index 14f6d7a..4c00db5 100644
+--- a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+@@ -782,7 +782,6 @@ sal_Bool GtkSalGraphics::drawNativeControl(    ControlType nType,
+                             const ImplControlValue& aValue,
+                             const OUString& rCaption )
+ {
+-    sal_Bool            returnVal = sal_False;
+     // get a GC with current clipping region set
+     GetFontGC();
+ 
+@@ -839,5 +838,10 @@ sal_Bool GtkSalGraphics::drawNativeControl(    ControlType nType,
+     }
+ 
++    assert(gdkDrawable); //rhbz#1050162
++    if (gdkDrawable == 0)
++        return false;
++
++    sal_Bool            returnVal = sal_False;
+     if ( (nType==CTRL_PUSHBUTTON) && (nPart==PART_ENTIRE_CONTROL) )
+     {
+         returnVal = NWPaintGTKButton( gdkDrawable, nType, nPart, aCtrlRect, aClip, nState, aValue, rCaption );
+-- 
+1.8.4.2
+

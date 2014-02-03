@@ -1032,6 +1032,8 @@ rm -rf git-hooks */git-hooks
 
 # set up git repo
 git init
+git config user.name rpmbuild
+git config user.email rpmbuild@fedoraproject.org
 git config gc.auto 0 # disable auto packing
 git add -A
 git commit -q -a -m %{name}-%{version}

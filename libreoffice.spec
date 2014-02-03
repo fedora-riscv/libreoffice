@@ -276,6 +276,7 @@ Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
+Patch17: 0001-disable-firebird-unit-test.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1048,10 +1049,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 
 # apply patches
 git am %{patches}
-
-# fdo#72987 firebird unit test fails on big endian platforms
-sed -i -e /firebird_test/d dbaccess/Module_dbaccess.mk
-git commit -q -a -m 'disable firebird unit test'
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english

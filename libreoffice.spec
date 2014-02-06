@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -2172,6 +2172,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 06 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-3
+- Resolves: rhbz#1017379 libreoffice impress imports animated motion paths
+  incorrectly from powerpoint
+
 * Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-2
 - split LibreLogo into a separate subpackage
 - create a metapackage depending on all subpackages containing filters,

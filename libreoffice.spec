@@ -277,6 +277,7 @@ Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 Patch17: 0001-disable-firebird-unit-test.patch
+Patch18: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

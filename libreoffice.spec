@@ -278,6 +278,7 @@ Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 Patch17: 0001-disable-firebird-unit-test.patch
 Patch18: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
+Patch19: 0001-fdo-33852-do-not-remove-too-much-from-the-path.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2176,6 +2177,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu Feb 06 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-3
 - Resolves: rhbz#1017379 libreoffice impress imports animated motion paths
   incorrectly from powerpoint
+- Resolves: fdo#33852 Custom animation (Motionpath Left) isn't being
+  imported correctly from .ppt
 
 * Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-2
 - split LibreLogo into a separate subpackage

@@ -1,0 +1,29 @@
+From eba6a6789c8832f961ac7054588ed84d04b65480 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 6 Feb 2014 15:16:27 +0100
+Subject: [PATCH] fdo#33852 do not remove too much from the path
+
+Change-Id: I1cf89f300530e761df5a287097d05f95d8af2017
+---
+ sd/source/filter/ppt/pptinanimations.cxx | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/sd/source/filter/ppt/pptinanimations.cxx b/sd/source/filter/ppt/pptinanimations.cxx
+index b6c767f..d761e2b 100644
+--- a/sd/source/filter/ppt/pptinanimations.cxx
++++ b/sd/source/filter/ppt/pptinanimations.cxx
+@@ -2128,7 +2128,10 @@ void AnimationImporter::importAnimateMotionContainer( const Atom* pAtom, const R
+                     OUString aStr;
+                     if ( aPath >>= aStr )
+                     {
+-                        aStr = aStr.replace( 'E', ' ' );
++                        // E can appear inside a number, so we only check for its presence at the end
++                        aStr = aStr.trim();
++                        if (aStr.endsWith("E"))
++                            aStr = aStr.copy(0, aStr.getLength() - 1);
+                         aStr = aStr.trim();
+                         aPath <<= aStr;
+                         xMotion->setPath( aPath );
+-- 
+1.8.4.2
+

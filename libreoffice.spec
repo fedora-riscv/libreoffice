@@ -270,6 +270,7 @@ Patch30: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch31: 0001-fdo-66864-Return-from-full-screen-should-restore-too.patch
 Patch32: 0001-Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
 Patch33: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
+Patch34: 0001-fdo-33852-do-not-remove-too-much-from-the-path.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1067,6 +1068,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .fdo-66864-Return-from-full-screen-should-restore-too.patch
 %patch32 -p1 -b .Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
 %patch33 -p1 -b .rhbz-1017379-do-not-remove-too-much-from-the-path.patch
+%patch34 -p1 -b .fdo-33852-do-not-remove-too-much-from-the-path.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2169,6 +2171,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1050162 don't draw to NULL window
 - Resolves: rhbz#1017379 libreoffice impress imports animated motion paths
   incorrectly from powerpoint
+- Resolves: fdo#33852 Custom animation (Motionpath Left) isn't being
+  imported correctly from .ppt
 
 * Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-5
 - Related: rhbz#1047017 actually apply the patch

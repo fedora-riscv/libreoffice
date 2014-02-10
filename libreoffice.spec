@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.4
+%define libo_version 4.2.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+# %%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.4
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -61,28 +61,43 @@ Source9:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%else
-Source11:       %{external_url}/08c85a6d6d793daee14e10e22eefdc4b-mdds_0.8.1.tar.bz2
+%global bundling_options --without-system-hsqldb
+%endif
+
+%if 0%{?rhel}
+Source11:       %{external_url}/01a380acfec23bf617117ce98e318f3d-mdds_0.10.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds
+%if 0%{?rhel} < 7
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
 Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
-Source16:       %{external_url}/dc3d21a3921931096d6e80f6701f6763-libexttextcat-3.4.0.tar.bz2
+Source16:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
 Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
 Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
 Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
 Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
-Source21:       %{external_url}/b2371dc7cf4811c9d32146eec913d296-libcmis-0.3.0.tar.gz
-Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source23:       %{external_url}/libvisio-0.0.31.tar.bz2
-Source24:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
-Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
-Source26:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
-Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source28:       %{external_url}/f02578f5218f217a9f20e9c30e119c6a-boost_1_44_0.tar.bz2
-Source29:       %{external_url}/c48827713e93539dc7285f9e86ffbdc5-harfbuzz-0.9.17.tar.bz2
-Source30:       %{external_url}/8473296c671b6e3dd8197f4145e0854b-libodfgen-0.0.2.tar.bz2
+Source21:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source22:       %{external_url}/libvisio-0.0.31.tar.bz2
+Source23:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
+Source24:       %{external_url}/libmspub-0.0.6.tar.bz2
+Source25:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
+Source26:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
+Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
+Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+%endif
+Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
+Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2
+Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
+Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
+Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
+Source36:       %{external_url}/libabw-0.0.1.tar.bz2
+Source37:       %{external_url}/libatomic_ops-7_2d.zip
+Source38:       %{external_url}/libeot-0.01.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
 %endif
 
 # build tools
@@ -96,6 +111,7 @@ BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
+BuildRequires: git
 BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: make
@@ -121,6 +137,10 @@ BuildRequires: cups-devel
 BuildRequires: dbus-glib-devel
 BuildRequires: evolution-data-server-devel
 BuildRequires: expat-devel
+%if 0%{?fedora}
+BuildRequires: firebird-devel
+BuildRequires: firebird-libfbembed
+%endif
 BuildRequires: fontpackages-devel
 BuildRequires: freetype-devel
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -144,7 +164,17 @@ BuildRequires: libXinerama-devel
 BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
+%endif
+%if 0%{?fedora}
+BuildRequires: libabw-devel
 BuildRequires: libcmis-devel >= 0.3.0
+BuildRequires: libe-book-devel
+BuildRequires: libeot-devel
+BuildRequires: libetonyek-devel
+BuildRequires: libfreehand-devel
+BuildRequires: libmwaw-devel >= 0.2.0
+BuildRequires: libodfgen-devel
+BuildRequires: mdds-devel >= 0.8.1
 %endif
 BuildRequires: libcurl-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -156,8 +186,6 @@ BuildRequires: libidn-devel
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: liblangtag-devel >= 0.4.0
 BuildRequires: libmspub-devel
-BuildRequires: libmwaw-devel >= 0.2.0
-BuildRequires: libodfgen-devel
 BuildRequires: liborcus-devel >= 0.5.0
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
@@ -169,9 +197,6 @@ BuildRequires: libjpeg-devel
 BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: lpsolve-devel
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: mdds-devel >= 0.8.1
-%endif
 BuildRequires: mesa-libGLU-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: mythes-devel
@@ -179,7 +204,6 @@ BuildRequires: mythes-devel
 BuildRequires: neon-devel
 BuildRequires: nss-devel
 BuildRequires: openldap-devel
-BuildRequires: openssl-devel
 BuildRequires: pam-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: poppler-cpp-devel
@@ -205,11 +229,9 @@ BuildRequires: ant-apache-regexp
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: jakarta-commons-codec
 BuildRequires: jakarta-commons-lang
-BuildRequires: apache-tomcat-apis
 %else
 BuildRequires: apache-commons-codec
 BuildRequires: apache-commons-lang
-BuildRequires: tomcat-servlet-3.0-api
 %endif
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -245,32 +267,17 @@ Patch6:  libreoffice-installfix.patch
 Patch7: libreoffice-rhel6gcj.patch
 Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
-Patch10: libreoffice-rhel6limits.patch
-Patch11: libreoffice-rhel6glib.patch
+Patch10: libreoffice-rhel6glib.patch
 %endif
-Patch12: 0001-do-not-build-LibreOffice_Test.patch
-Patch13: 0001-Resolves-fdo-48835-application-menu-for-LibreOffice.patch
-Patch14: 0001-Make-charmap.cxx-compile-with-icu-4.4.patch
-Patch15: 0001-select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-Patch16: 0001-Resolves-rhbz-1013480-crash-in-EditLineList-operator.patch
-Patch17: 0001-Resolves-rhbz-1015281-crash-on-clicking-custom-anima.patch
-Patch18: 0001-Related-rhbz-919070-display-1-means-span-all-display.patch
-Patch19: 0001-Resolves-rhbz-1021915-force-menubar-menus-to-be-up-d.patch
-Patch20: 0001-update-libmwaw-to-0.2.0.patch
-Patch21: 0001-add-config.-for-formats-newly-supported-by-libmwaw.patch
-Patch22: 0001-enable-more-formats-supported-by-libmwaw.patch
-Patch23: 0001-Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-Patch24: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
-Patch25: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch26: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
-Patch27: 0001-make-dragging-and-dropping-slides-stop-crashing.patch
-Patch28: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
-Patch29: 0001-n-839727-Crash-fix.patch
-Patch30: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
-Patch31: 0001-fdo-66864-Return-from-full-screen-should-restore-too.patch
-Patch32: 0001-Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
-Patch33: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
-Patch34: 0001-fdo-33852-do-not-remove-too-much-from-the-path.patch
+Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
+Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
+Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
+Patch17: 0001-disable-firebird-unit-test.patch
+Patch18: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
+Patch19: 0001-fdo-33852-do-not-remove-too-much-from-the-path.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -449,21 +456,6 @@ Provides: openoffice.org-ogltrans%{?_isa} = 1:3.3.0
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
 Requires good quality 3D support for your graphics card for best experience.
 
-%package presentation-minimizer
-Summary: Shrink LibreOffice presentations
-Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-impress = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-presentation-minimizer%{?_isa} = 1:3.3.0
-%endif
-
-%description presentation-minimizer
-The Presentation Minimizer is used to reduce the file size of the current
-presentation. Images will be compressed, and data that is no longer needed will
-be removed.
-
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
@@ -550,11 +542,14 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
+Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-impress-core%{?_isa} = 1:3.3.0
 Provides: openoffice.org-impress%{?_isa} = 1:3.3.0, broffice.org-impress%{?_isa} = 1:3.3.0
+Provides: openoffice.org-presentation-minimizer%{?_isa} = 1:3.3.0
 Provides: openoffice.org-presenter-screen%{?_isa} = 1:3.3.0
 %endif
 
@@ -694,6 +689,7 @@ programming language with interactive vectorgraphics for education and
 DTP.
 
 %if 0%{?fedora}
+
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Group:   Applications/Productivity
@@ -701,6 +697,16 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+
+%package appdata
+Summary: AppData support for LibreOffice
+Group:   Applications/Productivity
+License: CC0
+BuildArch: noarch
+
+%description appdata
+%{name}-appdata contains the AppData definition file for LibreOffice.
+
 %endif
 
 %if 0%{?_enable_debug_packages}
@@ -739,8 +745,8 @@ This package provides gdb pretty printers for package %{name}.
 
 %define _langpack_common() \
 %{baseinstdir}/program/resource/*%{1}.res  \
-%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1} \
-%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1} \
+%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1}.zip \
+%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1}.zip \
 %{baseinstdir}/share/template/%{1} \
 %{baseinstdir}/share/registry/Langpack-%{1}.xcd \
 %{baseinstdir}/share/registry/res/registry_%{1}.xcd \
@@ -863,7 +869,7 @@ BuildArch: noarch \
 Rules for auto-correcting common %{langname} typing errors. \
 \
 %files -n %{pkgname} \
-%doc solver/unxlng*/bin/ure/LICENSE \
+%doc instdir/LICENSE \
 %dir %{_datadir}/autocorr \
 %{-L:%{_datadir}/autocorr/acor_%{lang}.dat} \
 %{!-L:%{_datadir}/autocorr/acor_%{lang}-*.dat} \
@@ -931,7 +937,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA
 %define langpack_lang Northern Sotho
 %langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA -w nso_ZA
-%langpack -l or -n Oriya -F -H -Y -s ctl -o or_IN -w or_IN
+%langpack -l or -n Odia -F -H -Y -s ctl -o or_IN -w or_IN
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -O -v pa_IN -w pa_IN
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X -o pl_PL -V -w pl_PL
 %define langpack_lang Brazilian Portuguese
@@ -947,7 +953,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sh -O -v sr_CS -w sr_CS
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -O -v sr_CS -w sr_CS
 %langpack -l ss -n Swati -F -H -o ss_ZA
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA
@@ -1005,7 +1011,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
 #rhbz#452379 clump serbian autocorrections together
-%autocorr -l sr -n Serbian -i sh
+%autocorr -l sr -n Serbian -i sr-Latn
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese
@@ -1024,6 +1030,15 @@ done \
 %prep
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
+
+# set up git repo
+git init
+git config user.name rpmbuild
+git config user.email rpmbuild@fedoraproject.org
+git config gc.auto 0 # disable auto packing
+git add -A
+git commit -q -a -m %{name}-%{version}
+
 #Customize Palette to remove Sun colours and add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1033,42 +1048,10 @@ rm -rf git-hooks */git-hooks
  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-%patch1  -p1
-%patch2  -p1 -b .ooo86080.unopkg.bodge.patch
-%patch3  -p1 -b .ooo88341.sc.verticalboxes.patch
-%patch4  -p1 -b .oooXXXXX.solenv.allowmissing.patch
-%patch5  -p1 -b .ooo101274.opening-a-directory.patch
-%patch6  -p1 -b .libreoffice-installfix.patch
-%if 0%{?rhel} && 0%{?rhel} < 7
-%patch7 -p1 -b .rhel6gcj.patch
-%patch8 -p1 -b .rhel6poppler.patch
-%patch9 -p1 -b .rhel6langs.patch
-%patch10 -p1 -b .rhel6limits.patch
-%patch11 -p1 -b .rhel6glib.patch
-%endif
-%patch12 -p1 -b .do-not-build-LibreOffice_Test.patch
-%patch13 -p1 -b .fdo-48835-application-menu-for-LibreOffice.patch
-%patch14 -p1 -b .Make-charmap.cxx-compile-with-icu-4.4.patch
-%patch15 -p1 -b .select-sheet-menu-as-a-right-click-popup-to-the-prev.patch
-%patch16 -p1 -b .rhbz-1013480-crash-in-EditLineList-operator.patch
-%patch17 -p1 -b .rhbz-1015281-crash-on-clicking-custom-anima.patch
-%patch18 -p1 -b .rhbz-919070-display-1-means-span-all-display.patch
-%patch19 -p1 -b .rhbz-1021915-force-menubar-menus-to-be-up-d.patch
-%patch20 -p1 -b .update-libmwaw-to-0.2.0.patch
-%patch21 -p1 -b .add-config.-for-formats-newly-supported-by-libmwaw.patch
-%patch22 -p1 -b .enable-more-formats-supported-by-libmwaw.patch
-%patch23 -p1 -b .Rewrite-Qt4-based-nested-yield-mutex-locking.patch
-%patch24 -p1 -b .rhbz-1032774-bodge-around-reported-NULL-valu.pat
-%patch25 -p1 -b .rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-%patch26 -p1 -b .rhbz-1038189-refresh-printer-list-when-prin.patch
-%patch27 -p1 -b .make-dragging-and-dropping-slides-stop-crashing.patch
-%patch28 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
-%patch29 -p1 -b .n839727-Crash-fix.patch
-%patch30 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
-%patch31 -p1 -b .fdo-66864-Return-from-full-screen-should-restore-too.patch
-%patch32 -p1 -b .Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
-%patch33 -p1 -b .rhbz-1017379-do-not-remove-too-much-from-the-path.patch
-%patch34 -p1 -b .fdo-33852-do-not-remove-too-much-from-the-path.patch
+git commit -q -a -m 'add Red Hat colors to palette'
+
+# apply patches
+git am %{patches}
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -1079,6 +1062,8 @@ rm -rf translations/source/{gu,he,hr}/helpcontent2
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 %endif
+
+git commit -q -a -m 'fix translations'
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -1100,7 +1085,7 @@ export PATH=$QT4DIR/bin:$PATH
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
         case "$i" in
-                -pipe|-Wall|-g|-fexceptions) continue;;
+                -pipe|-Wall|-Werror*|-g|-fexceptions) continue;;
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
@@ -1110,15 +1095,17 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
-%define distrooptions --disable-graphite --without-system-mythes --without-system-mdds --without-junit --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwps --without-system-libwpd --without-system-libwpg --without-system-libcmis --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-libodfgen --without-system-libmwaw --without-system-harfbuzz --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --with-servlet-api-jar=/usr/share/java/apache-tomcat-apis/tomcat-servlet2.5-api.jar --enable-python=system --with-system-hsqldb
+# make segfaults on parallel build
+%define distrooptions --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
-%else
-%define distrooptions --without-system-hsqldb --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar
+%else # rhel7
+%define distrooptions --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
-%else
-%define distrooptions --without-system-hsqldb --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-servlet-api-jar=/usr/share/java/tomcat-servlet-api.jar %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%else # fedora
+%define distrooptions --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1136,20 +1123,23 @@ export PYTHON_LIBS=`python-config --libs python`
 %endif
 %endif
 
+%if 0%{?rhel} && 0%{?rhel} < 7
 aclocal -I m4
 autoconf
+%endif
+
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
- --disable-ccache \
  --disable-fetch-external \
  --disable-gnome-vfs \
+ --disable-openssl \
  --enable-dbus \
+ --enable-eot \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
- --enable-ext-presenter-minimizer \
  --enable-ext-wiki-publisher \
  --enable-lockdown \
  --enable-release-build \
@@ -1168,7 +1158,8 @@ touch autogen.lastrun
  --without-ppds \
  --without-system-npapi-headers \
  %{distrooptions} \
- %{archoptions}
+ %{?bundling_options} \
+ %{?archoptions}
 
 make VERBOSE=true
 
@@ -1405,11 +1396,14 @@ for file in *.desktop; do
         $file
 done
 for app in base calc draw impress math writer; do
-    echo "TryExec=oo$app" >> $app.desktop
+    echo "X-TryExec=oo$app" >> $app.desktop
 done
+# rhbz#156677 / rhbz#186515 do not show math and startcenter
+sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop
 # relocate the .desktop and icon files
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
 for app in base calc draw impress math startcenter writer xsltfilter; do
+    sed -i -e 's/\${UNIXBASISROOTNAME}/%{name}/' $app.desktop
     desktop-file-validate $app.desktop
     cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
 done
@@ -1445,6 +1439,12 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 # move glade catalog to system glade dir
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
 mv $RPM_BUILD_ROOT/%{baseinstdir}/share/glade/libreoffice-catalog.xml $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
+
+%if 0%{?fedora}
+# rhbz#1049543 install appdata
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/appdata
+cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/appdata
+%endif
 
 export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
@@ -1486,7 +1486,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libbasprovlo.so
 %{baseinstdir}/program/libcairocanvaslo.so
 %{baseinstdir}/program/libcanvasfactorylo.so
-%{baseinstdir}/program/cde-open-url
 %dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/commonwizards.jar
 %{baseinstdir}/program/classes/form.jar
@@ -1506,7 +1505,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libexpwraplo.so
 %{baseinstdir}/program/libfastsaxlo.so
 %{baseinstdir}/program/flat_logo.svg
-%{baseinstdir}/program/libfpickerlo.so
 %{baseinstdir}/program/libfps_officelo.so
 %{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
@@ -1555,6 +1553,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/liberalo.so
 %{baseinstdir}/program/libetilo.so
 %{baseinstdir}/program/libexplo.so
+%{baseinstdir}/program/libfirebird_sdbclo.so
 %{baseinstdir}/program/libicdlo.so
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libidxlo.so
@@ -1585,12 +1584,13 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/liblocaledata_others.so
 %{baseinstdir}/program/libmcnttype.so
 %{baseinstdir}/program/libmorklo.so
-%{baseinstdir}/program/libmozbootstrap.so
+%{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/libmtfrendererlo.so
 %{baseinstdir}/program/libmysqllo.so
 %{baseinstdir}/program/libodbclo.so
 %{baseinstdir}/program/libodbcbaselo.so
+%{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
 %{baseinstdir}/program/libooxlo.so
 %{baseinstdir}/program/libpcrlo.so
@@ -1693,7 +1693,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/resource/svxen-US.res
 %{baseinstdir}/program/resource/swen-US.res
 %{baseinstdir}/program/resource/textconversiondlgsen-US.res
-%{baseinstdir}/program/resource/tken-US.res
 %{baseinstdir}/program/resource/tplen-US.res
 %{baseinstdir}/program/resource/uuien-US.res
 %{baseinstdir}/program/resource/upden-US.res
@@ -1710,7 +1709,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/spadmin.bin
 %{baseinstdir}/program/libstringresourcelo.so
 %{baseinstdir}/program/libsysshlo.so
-%{baseinstdir}/program/tde-open-url
 %{baseinstdir}/program/libucpcmis1lo.so
 %{baseinstdir}/program/libucpexpand1lo.so
 %{baseinstdir}/program/libucpextlo.so
@@ -1734,6 +1732,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/share/config/images_crystal.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
+%{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_tango.zip
 %{baseinstdir}/share/config/psetup.xpm
 %{baseinstdir}/share/config/psetupl.xpm
@@ -1808,7 +1807,6 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/libbasegfxlo.so
 # TODO: shouldn't it have lo suffix?
 %{baseinstdir}/program/libcomphelper.so
-%{baseinstdir}/program/libfileacc.so
 %{baseinstdir}/program/libfwelo.so
 %{baseinstdir}/program/libfwilo.so
 %{baseinstdir}/program/libfwklo.so
@@ -1846,10 +1844,10 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 %{baseinstdir}/program/bootstraprc
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
-%doc %{baseinstdir}/CREDITS.odt
+%doc %{baseinstdir}/CREDITS.fodt
 %doc %{baseinstdir}/LICENSE
 %doc %{baseinstdir}/LICENSE.html
-%doc %{baseinstdir}/LICENSE.odt
+%doc %{baseinstdir}/LICENSE.fodt
 %doc %{baseinstdir}/NOTICE
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice
@@ -1914,6 +1912,9 @@ done
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
+%if 0%{?rhel}
+%{baseinstdir}/program/libfbembed.so.*
+%endif
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
@@ -1962,10 +1963,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 
-%files presentation-minimizer
-%docdir %{baseinstdir}/share/extensions/presentation-minimizer/help
-%{baseinstdir}/share/extensions/presentation-minimizer
-
 %files pdfimport
 %{baseinstdir}/program/libpdfimportlo.so
 %{baseinstdir}/program/xpdfimport
@@ -1974,7 +1971,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/xpdfimport/xpdfimport_err.pdf
 
 %_font_pkg -n %{fontname} opens___.ttf
-%doc solver/unxlng*/bin/ure/LICENSE
+%doc instdir/LICENSE
 
 %files calc
 %{baseinstdir}/help/en-US/scalc.*
@@ -1987,6 +1984,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so
 %{baseinstdir}/program/libscfiltlo.so
+%{baseinstdir}/program/libscopencllo.so
 %{baseinstdir}/program/libscuilo.so
 %{baseinstdir}/program/libsolverlo.so
 %{baseinstdir}/program/resource/analysisen-US.res
@@ -2055,9 +2053,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en-US/simpress.*
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
+%{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
+%{baseinstdir}/program/libwpftimpresslo.so
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
+%{baseinstdir}/share/config/soffice.cfg/simpress/layoutlist.xml
+%{baseinstdir}/share/config/soffice.cfg/simpress/objectlist.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml
 %{baseinstdir}/share/registry/impress.xcd
 %{baseinstdir}/program/pagein-impress
@@ -2092,7 +2094,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libgraphicfilterlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
 %{baseinstdir}/program/libwpftdrawlo.so
-%{baseinstdir}/program/resource/flashen-US.res
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
@@ -2113,7 +2114,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files ure
-%doc solver/unxlng*/bin/ure/LICENSE
+%doc instdir/LICENSE
 %{ureinstdir}
 
 %files sdk
@@ -2137,6 +2138,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/pythonloader.unorc
 %{baseinstdir}/program/pythonscript.py*
 %{baseinstdir}/program/pyuno.so
+%{baseinstdir}/program/services/pyuno.rdb
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
 %{baseinstdir}/share/Scripts/python
@@ -2158,65 +2160,66 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
 %if 0%{?fedora}
+
 %files kde
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
+
+%files appdata
+%doc instdir/LICENSE
+%dir %{_datadir}/appdata
+%{_datadir}/appdata/*.appdata.xml
+
 %endif
 
 %changelog
-* Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-6
-- split LibreLogo into a separate subpackage
-- create a metapackage depending on all subpackages containing filters,
-  for use of packages like unoconv
-- Resolves: rhbz#1050162 don't draw to NULL window
+* Thu Feb 06 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-3
 - Resolves: rhbz#1017379 libreoffice impress imports animated motion paths
   incorrectly from powerpoint
 - Resolves: fdo#33852 Custom animation (Motionpath Left) isn't being
   imported correctly from .ppt
 
-* Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-5
-- Related: rhbz#1047017 actually apply the patch
+* Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-2
+- split LibreLogo into a separate subpackage
+- create a metapackage depending on all subpackages containing filters,
+  for use of packages like unoconv
 
-* Mon Jan 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-4
-- Resolves: rhbz#1038176 fix crash in loading certain charts
-- Related: rhbz#1047871 conditional formatting doesn't fix on screen
+* Tue Jan 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-1
+- update to 4.2.0 rc4
 
-* Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-3
-- Resolves: rhbz#1047017 All the selected toolbars became unselected
-  coming out from the full screen option
+* Fri Jan 24 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.3-3
+- enable EOT support
+- fix PPC build
 
-* Wed Dec 18 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.4.2-2
-- Resolves: rhbz#1040708 rebuild against new libstdc++ to fix std::nth_element
+* Thu Jan 23 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.3-2
+- stop showing math and startcenter in menu (again)
 
-* Mon Dec 16 2013 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-1
-- update to 4.1.4
-- Related: rhbz#1039517 Malayalam short-cut keys are unavailable
+* Wed Jan 22 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.3-1
+- update to 4.2.0 rc3
 
-* Thu Dec 12 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-12
-- make dragging and dropping slides stop crashing
+* Mon Jan 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.2-2
+- Related: rhbz#1047871 conditional formatting doesn't fit on screen
 
-* Tue Dec 10 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-11
-- Resolves: rhbz#1039902 Corrected connector layout after reload
+* Thu Jan 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.2-1
+- update to 4.2.0 rc2
+- Resolves: rhbz#1049543 Include AppData files in packages
 
-* Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-10
+* Tue Jan 07 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.1-1
+- 4.2.0 rc1
+
+* Wed Dec 11 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-3.beta2
+- Resolves: rhbz#1040291 Change language name from "Oriya" to "Odia"
+
+* Wed Dec 04 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.2.0.0-2.beta2
+- update to 4.2.0 beta2
+- Related: rhbz#1032774 bodge around reported NULL
+- Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
 - Resolves: rhbz#912529 Kerkis SmallCaps shown instead of Kerkis Regular
 - Resolves: rhbz#1038189 refresh printer list when print dialog launched
+- openssl no longer required to build
 
-* Tue Dec 03 2013 David Tardon <dtardon@redhat.com> - 1:4.1.3.2-9
-- rhbz#1000893 do not pull in unneeded packages
-
-* Wed Nov 27 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-8
-- Related: rhbz#1032774 bodge around reported NULL
-- Resolves: rhbz#1030009 SwXTextDocument crash at exit
-- Resolves: rhbz#1035092 no shortcut key for Italian 'Tools' menu
-
-* Fri Nov 22 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-7
-- Resolves: rhbz#958300 fix GTK non Latin keyboard layout shortcuts
-- Resolves: rhbz#977068 fix qt/kde crash
-
-* Thu Nov 21 2013 Caolán McNamara <caolanm@redhat.com> - 1:4.1.3.2-6
-- Resolves: rhbz#1008102 Revert transpose data in rows ranges
-- Resolves: rhbz#1031174 suspicious input handler crashes
+* Thu Nov 21 2013 David Tardon <dtardon@redhat.com> - 1:4.2.0.0-1.beta1
+- switch to 4.2.0
 
 * Wed Nov 20 2013 Stephan Bergmann <sbergman@redhat.com> - 1:4.1.3.2-5
 - Resolves: rhbz#1031989 Accept --pt in addition to deprecated -pt

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.0
+%define libo_version 4.2.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.4
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -277,8 +277,6 @@ Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
 Patch17: 0001-disable-firebird-unit-test.patch
-Patch18: 0001-rhbz-1017379-do-not-remove-too-much-from-the-path.patch
-Patch19: 0001-fdo-33852-do-not-remove-too-much-from-the-path.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2174,6 +2172,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 13 2014 David Tardon <dtardon@redhat.com> - 1:4.2.1.1-1
+- update to 4.2.1 rc1
+
 * Thu Feb 13 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-4
 - rebuild for new ICU
 

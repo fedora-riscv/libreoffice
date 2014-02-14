@@ -274,9 +274,7 @@ Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
-Patch15: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
-Patch16: 0001-Use-sal_Int32-to-satisfy-oox-helper-helper.hxx-s-con.patch
-Patch17: 0001-disable-firebird-unit-test.patch
+Patch15: 0001-disable-firebird-unit-test.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

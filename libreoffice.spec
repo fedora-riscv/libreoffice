@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -266,6 +266,7 @@ Patch26: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch27: 0001-Related-rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 Patch28: 0001-Related-rhbz-1047871-conditional-formatting-doesn-t-.patch
 Patch29: 0001-Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
+Patch30: 0001-Resolves-rhbz-1010995-div-by-0-on-some-bizarre-corne.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1059,6 +1060,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch27 -p1 -b .rhbz-1039517-ml-short-cut-keys-are-unavailab.patch
 %patch28 -p1 -b .rhbz-1047871-conditional-formatting-doesn-t-.patch
 %patch29 -p1 -b .Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
+%patch30 -p1 -b .Resolves-rhbz-1010995-div-by-0-on-some-bizarre-corne.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2154,6 +2156,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 18 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-2
+- Resolves: rhbz#1065925 [abrt] libreoffice-core: Divide(): soffice.bin killed
+  by SIGFPE
+
 * Tue Feb 11 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-1
 - new upstream release 4.1.5
 

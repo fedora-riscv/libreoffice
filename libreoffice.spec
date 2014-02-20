@@ -276,6 +276,7 @@ Patch35: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch36: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
 Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch38: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
+Patch39: 0001-never-run-autogen.sh.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

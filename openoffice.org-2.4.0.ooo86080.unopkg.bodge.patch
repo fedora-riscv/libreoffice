@@ -18,7 +18,7 @@ index d16d226..aefc918 100755
 +isnotuser=0
 +for arg in $@
 +do
-+if [ "$arg" = "--shared" -o "$arg" = "--bundled" ]; then 
++if [ "$arg" = "--shared" -o "$arg" = "--bundled" ]; then
 +    isnotuser=1
 +fi
 +done

@@ -172,9 +172,9 @@ BuildRequires: libe-book-devel
 BuildRequires: libeot-devel
 BuildRequires: libetonyek-devel
 BuildRequires: libfreehand-devel
-BuildRequires: libmwaw-devel >= 0.2.0
+BuildRequires: libmwaw-devel
 BuildRequires: libodfgen-devel
-BuildRequires: mdds-devel >= 0.8.1
+BuildRequires: mdds-devel
 %endif
 BuildRequires: libcurl-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -184,9 +184,9 @@ BuildRequires: libicu-devel
 BuildRequires: libidn-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: liblangtag-devel >= 0.4.0
+BuildRequires: liblangtag-devel
 BuildRequires: libmspub-devel
-BuildRequires: liborcus-devel >= 0.5.0
+BuildRequires: liborcus-devel
 BuildRequires: libvisio-devel
 BuildRequires: libwpd-devel
 BuildRequires: libwpg-devel
@@ -213,7 +213,7 @@ BuildRequires: poppler-devel
 BuildRequires: postgresql-devel
 %endif
 %if 0%{libo_python3}
-BuildRequires: python3-devel >= 3.3.0
+BuildRequires: python3-devel
 %else
 BuildRequires: python-devel
 %endif
@@ -245,9 +245,9 @@ BuildRequires: junit
 BuildRequires: pentaho-reporting-flow-engine
 
 # fonts needed for unit tests
-BuildRequires: liberation-mono-fonts >= 1.0
-BuildRequires: liberation-sans-fonts >= 1.0
-BuildRequires: liberation-serif-fonts >= 1.0
+BuildRequires: liberation-mono-fonts
+BuildRequires: liberation-sans-fonts
+BuildRequires: liberation-serif-fonts
 
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}

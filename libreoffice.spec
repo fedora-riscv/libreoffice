@@ -275,6 +275,7 @@ Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-disable-firebird-unit-test.patch
+Patch16: 0001-never-run-autogen.sh.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

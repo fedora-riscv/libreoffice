@@ -1,6 +1,20 @@
---- a/configure.ac	2011-11-10 13:22:02.062474990 +0000
-+++ b/configure.ac	2011-11-10 13:22:35.072472880 +0000
-@@ -9659,16 +9659,6 @@ if test "$_os" != Android -a "$_os" != iOS -a "$ENABLE_PDFIMPORT" != FALSE; then
+From b80670a266c8d138d11a3b62577afd18d17ee6bd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Feb 2014 11:36:38 +0000
+Subject: [PATCH] poppler fixes
+
+Change-Id: Iaad3d6ba494a00e7581c5d7a35ec3ec5f57134dc
+---
+ configure.ac                                          | 10 ----------
+ sdext/Module_sdext.mk                                 |  5 -----
+ sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx |  4 +++-
+ 3 files changed, 3 insertions(+), 16 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index b8def00..5c34e29 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10425,16 +10425,6 @@ if test $_os != Android -a $_os != iOS -a \( -z "$enable_pdfimport" -o "$enable_
          AC_MSG_RESULT([external])
          SYSTEM_POPPLER=YES
          PKG_CHECK_MODULES( POPPLER, poppler >= 0.8.0 )
@@ -17,22 +31,11 @@
          libo_MINGW_CHECK_DLL([libpoppler])
          POPPLER_CFLAGS=$(printf '%s' "$POPPLER_CFLAGS" | sed -e "s/-I/${ISYSTEM?}/g")
      else
---- a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx	2011-11-10 13:22:11.949473646 +0000
-+++ b/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx	2011-11-10 13:23:24.889473889 +0000
-@@ -64,7 +64,9 @@
- class GfxPath;
- class GfxFont;
- class PDFDoc;
--#include <cpp/poppler-version.h>
-+#define POPPLER_VERSION_MAJOR 0
-+#define POPPLER_VERSION_MINOR 12
-+#define POPPLER_VERSION_MICRO 4
- #define POPPLER_CHECK_VERSION(major,minor,micro) \
-   (POPPLER_VERSION_MAJOR > (major) || \
-    (POPPLER_VERSION_MAJOR == (major) && POPPLER_VERSION_MINOR > (minor)) || \
+diff --git a/sdext/Module_sdext.mk b/sdext/Module_sdext.mk
+index 5299cd8..94baf45 100644
 --- a/sdext/Module_sdext.mk
 +++ b/sdext/Module_sdext.mk
-@@ -32,11 +32,6 @@ $(eval $(call gb_Module_add_targets,sdext,\
+@@ -26,11 +26,6 @@ $(eval $(call gb_Module_add_targets,sdext,\
      StaticLibrary_pdfimport_s \
  ))
  
@@ -44,3 +47,21 @@
  endif
  
  # vim:set noet sw=4 ts=4:
+diff --git a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx b/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx
+index f7e4a98..d1218578 100644
+--- a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx
++++ b/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx
+@@ -58,7 +58,9 @@
+ class GfxPath;
+ class GfxFont;
+ class PDFDoc;
+-#include <cpp/poppler-version.h>
++#define POPPLER_VERSION_MAJOR 0
++#define POPPLER_VERSION_MINOR 12
++#define POPPLER_VERSION_MICRO 4
+ #define POPPLER_CHECK_VERSION(major,minor,micro) \
+   (POPPLER_VERSION_MAJOR > (major) || \
+    (POPPLER_VERSION_MAJOR == (major) && POPPLER_VERSION_MINOR > (minor)) || \
+-- 
+1.8.5.3
+

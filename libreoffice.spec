@@ -2173,7 +2173,21 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 06 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-3
+* Thu Feb 20 2014 David Tardon <dtardon@redhat.com> - 1:4.2.0.4-3
+- rebase to 4.2.0
+
+* Tue Feb 18 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-2
+- Resolves: rhbz#1065925 [abrt] libreoffice-core: Divide(): soffice.bin killed
+  by SIGFPE
+
+* Tue Feb 11 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-1
+- new upstream release 4.1.5
+
+* Thu Jan 30 2014 David Tardon <dtardon@redhat.com> - 1:4.1.4.2-6
+- split LibreLogo into a separate subpackage
+- create a metapackage depending on all subpackages containing filters,
+  for use of packages like unoconv
+- Resolves: rhbz#1050162 don't draw to NULL window
 - Resolves: rhbz#1017379 libreoffice impress imports animated motion paths
   incorrectly from powerpoint
 - Resolves: fdo#33852 Custom animation (Motionpath Left) isn't being

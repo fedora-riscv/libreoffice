@@ -1,8 +1,8 @@
-From bbf82f684060980d267733ee589d263d6b25340c Mon Sep 17 00:00:00 2001
+From 6805be76c930312d18e732f4572b6c2611cc8e0f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 24 Feb 2014 15:27:36 +0000
-Subject: [PATCH] Related: rhbz#1065807 rework #i66157# for multiple writable
- template dirs
+Subject: [PATCH 2/4] Related: rhbz#1065807 rework #i66157# for multiple
+ writable template dirs
 
 if there are multiple user-level template dirs then we should be able to
 remove/rename content in all of them, not just the default writable target.
@@ -22,18 +22,18 @@ Change-Id: I56afe991d4297ba692e914ae95ea02d68553f60a
  1 file changed, 66 insertions(+), 14 deletions(-)
 
 diff --git a/sfx2/source/doc/doctemplates.cxx b/sfx2/source/doc/doctemplates.cxx
-index 574232a..47b8fed 100644
+index ff07ef3..4cf76c4 100644
 --- a/sfx2/source/doc/doctemplates.cxx
 +++ b/sfx2/source/doc/doctemplates.cxx
-@@ -67,6 +67,7 @@
- #include <com/sun/star/beans/PropertyValue.hpp>
- #include <com/sun/star/uno/RuntimeException.hpp>
- #include <com/sun/star/uno/XComponentContext.hpp>
-+#include <com/sun/star/util/thePathSettings.hpp>
+@@ -54,6 +54,7 @@
+ #include <com/sun/star/ucb/XContentAccess.hpp>
+ #include <com/sun/star/frame/ModuleManager.hpp>
+ #include <com/sun/star/uno/Exception.hpp>
++#include <com/sun/star/util/PathSettings.hpp>
  
- #include <rtl/ref.hxx>
  #include <svtools/templatefoldercache.hxx>
-@@ -187,6 +188,7 @@ class SfxDocTplService_Impl
+ #include <unotools/configmgr.hxx>
+@@ -180,6 +181,7 @@ class SfxDocTplService_Impl
  
      ::osl::Mutex                maMutex;
      Sequence< OUString >        maTemplateDirs;
@@ -41,7 +41,7 @@ index 574232a..47b8fed 100644
      OUString                    maRootURL;
      NameList_Impl               maNames;
      Locale                      maLocale;
-@@ -271,8 +273,16 @@ class SfxDocTplService_Impl
+@@ -264,8 +266,16 @@ class SfxDocTplService_Impl
  
      void                        updateData( DocTemplates_EntryData_Impl *pData );
  
@@ -59,7 +59,7 @@ index 574232a..47b8fed 100644
                                  ~SfxDocTplService_Impl();
  
      sal_Bool                    init() { if ( !mbIsInitialized ) init_Impl(); return mbIsInitialized; }
-@@ -552,7 +562,7 @@ void SfxDocTplService_Impl::getDirList()
+@@ -545,7 +555,7 @@ void SfxDocTplService_Impl::getDirList()
      // TODO/LATER: let use service, register listener
      INetURLObject   aURL;
      OUString    aDirs = SvtPathOptions().GetTemplatePath();
@@ -68,7 +68,7 @@ index 574232a..47b8fed 100644
  
      maTemplateDirs = Sequence< OUString >( nCount );
  
-@@ -560,7 +570,7 @@ void SfxDocTplService_Impl::getDirList()
+@@ -553,7 +563,7 @@ void SfxDocTplService_Impl::getDirList()
      const OUString aPrefix(
          "vnd.sun.star.expand:"  );
  
@@ -77,12 +77,12 @@ index 574232a..47b8fed 100644
      {
          aURL.SetSmartProtocol( INET_PROT_FILE );
          aURL.SetURL( aDirs.getToken( i, C_DELIM ) );
-@@ -578,6 +588,23 @@ void SfxDocTplService_Impl::getDirList()
+@@ -571,6 +581,23 @@ void SfxDocTplService_Impl::getDirList()
  
      aValue <<= maTemplateDirs;
  
 +    css::uno::Reference< css::util::XPathSettings > xPathSettings =
-+        css::util::thePathSettings::get(mxContext);
++        css::util::PathSettings::create( xContext );
 +
 +    // load internal paths
 +    OUString sProp( "Template_internal" );
@@ -101,7 +101,7 @@ index 574232a..47b8fed 100644
      // Store the template dir list
      setProperty( maRootContent, aPropName, aValue );
  }
-@@ -1538,13 +1565,16 @@ sal_Bool SfxDocTplService_Impl::removeGroup( const OUString& rGroupName )
+@@ -1547,13 +1574,16 @@ sal_Bool SfxDocTplService_Impl::removeGroup( const OUString& rGroupName )
  
          if ( !maTemplateDirs.getLength() )
              return sal_False;
@@ -122,7 +122,7 @@ index 574232a..47b8fed 100644
              return sal_False;
  
          // now get the content of the Group
-@@ -1652,14 +1682,14 @@ sal_Bool SfxDocTplService_Impl::renameGroup( const OUString& rOldName,
+@@ -1661,14 +1691,14 @@ sal_Bool SfxDocTplService_Impl::renameGroup( const OUString& rOldName,
  
      if ( !maTemplateDirs.getLength() )
          return sal_False;
@@ -141,7 +141,7 @@ index 574232a..47b8fed 100644
  
      // check that the group can be renamed ( all the contents must be in target location )
      sal_Bool bCanBeRenamed = sal_False;
-@@ -1761,7 +1791,7 @@ sal_Bool SfxDocTplService_Impl::storeTemplate( const OUString& rGroupName,
+@@ -1770,7 +1800,7 @@ sal_Bool SfxDocTplService_Impl::storeTemplate( const OUString& rGroupName,
              aValue >>= aTemplateToRemoveTargetURL;
  
          if ( aGroupTargetURL.isEmpty() || !maTemplateDirs.getLength()
@@ -150,9 +150,9 @@ index 574232a..47b8fed 100644
              return sal_False; // it is not allowed to remove the template
      }
  
-@@ -2050,6 +2080,29 @@ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
-     return sal_False;
- }
+@@ -2032,6 +2062,29 @@ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
+     catch ( Exception& )
+     { return sal_False; }
  
 +bool SfxDocTplService_Impl::isInternalTemplateDir(const OUString& rURL) const
 +{
@@ -178,9 +178,9 @@ index 574232a..47b8fed 100644
 +    return OUString();
 +}
  
- sal_Bool SfxDocTplService_Impl::removeTemplate( const OUString& rGroupName,
-                                                 const OUString& rTemplateName )
-@@ -2091,8 +2144,7 @@ sal_Bool SfxDocTplService_Impl::removeTemplate( const OUString& rGroupName,
+     // either the document has title and it is the same as requested, or we have to set it
+     sal_Bool bCorrectTitle = ( bDocHasTitle && aTitle.equals( rTemplateName ) );
+@@ -2101,8 +2154,7 @@ sal_Bool SfxDocTplService_Impl::removeTemplate( const OUString& rGroupName,
      // delete the target template
      if ( !aTargetURL.isEmpty() )
      {

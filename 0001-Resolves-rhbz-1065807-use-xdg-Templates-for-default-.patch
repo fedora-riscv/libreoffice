@@ -1,25 +1,25 @@
-From 838b77f5f3d6d8fd98891e99a23ff78a6a357cb2 Mon Sep 17 00:00:00 2001
+From c309eed705edd358ba2db8b26d711d0f8ae41dca Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 24 Feb 2014 11:38:13 +0000
-Subject: [PATCH] Resolves: rhbz#1065807 use xdg ~/Templates for default
+Subject: [PATCH 3/4] Resolves: rhbz#1065807 use xdg ~/Templates for default
  Template location
 
 (if it exists)
 
 Change-Id: I98fc9fd54d1f56c8bed24ce4d2ebf53756ded2cc
 ---
- framework/source/services/pathsettings.cxx         |  6 +++
+ framework/source/services/pathsettings.cxx         |  6 ++++
  .../registry/data/org/openoffice/Office/Paths.xcu  | 13 +++++++
  shell/source/backends/desktopbe/desktopbackend.cxx | 21 ++++++++---
- shell/source/backends/gconfbe/gconfaccess.cxx      | 43 +++++++++++++++-------
+ shell/source/backends/gconfbe/gconfaccess.cxx      | 41 ++++++++++++++++------
  shell/source/backends/gconfbe/gconfaccess.hxx      |  1 +
- 5 files changed, 66 insertions(+), 18 deletions(-)
+ 5 files changed, 66 insertions(+), 16 deletions(-)
 
 diff --git a/framework/source/services/pathsettings.cxx b/framework/source/services/pathsettings.cxx
-index 90d61d2..105c5a6 100644
+index 15fb3c0..bdb2949 100644
 --- a/framework/source/services/pathsettings.cxx
 +++ b/framework/source/services/pathsettings.cxx
-@@ -644,6 +644,12 @@ PathSettings::PathInfo PathSettings::impl_readNewFormat(const OUString& sPath)
+@@ -280,6 +280,12 @@ PathSettings::PathInfo PathSettings::impl_readNewFormat(const OUString& sPath)
      // read the writeable path
      xPath->getByName(CFGPROP_WRITEPATH) >>= aPathVal.sWritePath;
  
@@ -59,10 +59,10 @@ index 4b5ec7d..2ef605e 100644
      </node>
      <node oor:name="UIConfig" oor:op="fuse" oor:mandatory="true">
 diff --git a/shell/source/backends/desktopbe/desktopbackend.cxx b/shell/source/backends/desktopbe/desktopbackend.cxx
-index 8233bff..0acf337 100644
+index 3e8e8c1..52d8358 100644
 --- a/shell/source/backends/desktopbe/desktopbackend.cxx
 +++ b/shell/source/backends/desktopbe/desktopbackend.cxx
-@@ -153,11 +153,22 @@ css::uno::Any Default::getPropertyValue(OUString const & PropertyName)
+@@ -154,11 +154,22 @@ css::uno::Any Default::getPropertyValue(OUString const & PropertyName)
          css::beans::UnknownPropertyException, css::lang::WrappedTargetException,
          css::uno::RuntimeException)
  {
@@ -91,7 +91,7 @@ index 8233bff..0acf337 100644
          return css::uno::makeAny(css::beans::Optional< css::uno::Any >());
      }
 diff --git a/shell/source/backends/gconfbe/gconfaccess.cxx b/shell/source/backends/gconfbe/gconfaccess.cxx
-index 8cf9f4b..1bdad66 100644
+index de8eb29..0d407d6 100644
 --- a/shell/source/backends/gconfbe/gconfaccess.cxx
 +++ b/shell/source/backends/gconfbe/gconfaccess.cxx
 @@ -23,6 +23,7 @@
@@ -102,7 +102,7 @@ index 8cf9f4b..1bdad66 100644
  #include "osl/file.hxx"
  #include "osl/security.hxx"
  #include "osl/thread.h"
-@@ -189,19 +190,10 @@ static OUString xdg_user_dir_lookup (const char *type)
+@@ -189,15 +190,8 @@ static OUString xdg_user_dir_lookup (const char *type)
          if( osl::FileBase::E_None == aDocumentsDir.open() )
              return aDocumentsDirURL;
      }
@@ -119,12 +119,8 @@ index 8cf9f4b..1bdad66 100644
 +    return aHomeDirURL + "/" + OUString::createFromAscii(type);
  }
  
--
--
- uno::Any makeAnyOfGconfValue( GConfValue *pGconfValue )
- {
-     switch( pGconfValue->type )
-@@ -317,11 +309,18 @@ uno::Any translateToOOo( const ConfigurationValue &rValue, GConfValue *pGconfVal
+ //------------------------------------------------------------------------------
+@@ -317,11 +311,18 @@ uno::Any translateToOOo( const ConfigurationValue &rValue, GConfValue *pGconfVal
  
          case SETTING_WORK_DIRECTORY:
          {
@@ -144,7 +140,7 @@ index 8cf9f4b..1bdad66 100644
          case SETTING_USER_GIVENNAME:
          {
              OUString aCompleteName( OStringToOUString(
-@@ -392,7 +391,7 @@ sal_Bool SAL_CALL isDependencySatisfied( GConfClient* pClient, const Configurati
+@@ -392,7 +393,7 @@ sal_Bool SAL_CALL isDependencySatisfied( GConfClient* pClient, const Configurati
  
          case SETTING_WORK_DIRECTORY:
          {
@@ -153,7 +149,7 @@ index 8cf9f4b..1bdad66 100644
              osl::Directory aDocumentsDir( aDocumentsDirURL );
  
              if( osl::FileBase::E_None == aDocumentsDir.open() )
-@@ -400,6 +399,16 @@ sal_Bool SAL_CALL isDependencySatisfied( GConfClient* pClient, const Configurati
+@@ -400,6 +401,16 @@ sal_Bool SAL_CALL isDependencySatisfied( GConfClient* pClient, const Configurati
          }
              break;
  
@@ -170,7 +166,7 @@ index 8cf9f4b..1bdad66 100644
          case SETTING_USER_GIVENNAME:
          {
              OUString aCompleteName( OStringToOUString(
-@@ -563,6 +572,14 @@ ConfigurationValue const ConfigurationValues[] =
+@@ -563,6 +574,14 @@ ConfigurationValue const ConfigurationValues[] =
      },
  
      {

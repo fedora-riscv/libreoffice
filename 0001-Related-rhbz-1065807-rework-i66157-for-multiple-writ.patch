@@ -1,8 +1,8 @@
-From 6805be76c930312d18e732f4572b6c2611cc8e0f Mon Sep 17 00:00:00 2001
+From 2fc88c27a7c329753f2c58ec5ee1caa3678200ae Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 24 Feb 2014 15:27:36 +0000
-Subject: [PATCH 2/4] Related: rhbz#1065807 rework #i66157# for multiple
- writable template dirs
+Subject: [PATCH] Related: rhbz#1065807 rework #i66157# for multiple writable
+ template dirs
 
 if there are multiple user-level template dirs then we should be able to
 remove/rename content in all of them, not just the default writable target.
@@ -18,11 +18,11 @@ and allow modification of the remainder
 
 Change-Id: I56afe991d4297ba692e914ae95ea02d68553f60a
 ---
- sfx2/source/doc/doctemplates.cxx | 80 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 66 insertions(+), 14 deletions(-)
+ sfx2/source/doc/doctemplates.cxx | 82 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 67 insertions(+), 15 deletions(-)
 
 diff --git a/sfx2/source/doc/doctemplates.cxx b/sfx2/source/doc/doctemplates.cxx
-index ff07ef3..4cf76c4 100644
+index ff07ef3..fe43a40 100644
 --- a/sfx2/source/doc/doctemplates.cxx
 +++ b/sfx2/source/doc/doctemplates.cxx
 @@ -54,6 +54,7 @@
@@ -150,9 +150,9 @@ index ff07ef3..4cf76c4 100644
              return sal_False; // it is not allowed to remove the template
      }
  
-@@ -2032,6 +2062,29 @@ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
-     catch ( Exception& )
-     { return sal_False; }
+@@ -1909,6 +1939,30 @@ sal_Bool SfxDocTplService_Impl::storeTemplate( const OUString& rGroupName,
+     }
+ }
  
 +bool SfxDocTplService_Impl::isInternalTemplateDir(const OUString& rURL) const
 +{
@@ -177,9 +177,18 @@ index ff07ef3..4cf76c4 100644
 +    }
 +    return OUString();
 +}
++
+ //-----------------------------------------------------------------------------
+ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
+                                              const OUString& rTemplateName,
+@@ -2032,7 +2086,6 @@ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
+     catch ( Exception& )
+     { return sal_False; }
  
+-
      // either the document has title and it is the same as requested, or we have to set it
      sal_Bool bCorrectTitle = ( bDocHasTitle && aTitle.equals( rTemplateName ) );
+     if ( !bCorrectTitle )
 @@ -2101,8 +2154,7 @@ sal_Bool SfxDocTplService_Impl::removeTemplate( const OUString& rGroupName,
      // delete the target template
      if ( !aTargetURL.isEmpty() )

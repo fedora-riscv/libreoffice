@@ -1,7 +1,7 @@
-From 6f48d0bb2d3f3b4e4d3e46d3a5cdeaa552df1933 Mon Sep 17 00:00:00 2001
+From 783e5a2e149694974fcce79a01144c78f154bfee Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 25 Feb 2014 09:55:48 +0000
-Subject: [PATCH] explictly list common lang-independant template dir
+Subject: [PATCH 4/4] explictly list common lang-independant template dir
 
 Change-Id: I50d8efe46fc2eb3dfe615ad1f6eb7ee03cdcd29a
 ---
@@ -17,9 +17,6 @@ index 2ef605e..2a9eb5c 100644
      <node oor:name="Template" oor:op="fuse" oor:mandatory="true">
        <node oor:name="InternalPaths">
 +        <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/common" oor:op="fuse"/>
-         <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/$(vlang)" oor:op="fuse"/>
+         <node oor:name="$(insturl)/share/template/$(vlang)" oor:op="fuse"/>
        </node>
        <!--
--- 
-1.8.5.3
-

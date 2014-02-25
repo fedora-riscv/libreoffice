@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -276,6 +276,9 @@ Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
 Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
 Patch15: 0001-disable-firebird-unit-test.patch
 Patch16: 0001-never-run-autogen.sh.patch
+Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
+Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
+Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2171,6 +2174,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.1.1-2
+- Resolves: rhbz#1065807 search XDG defined "Templates" dir
+
 * Thu Feb 13 2014 David Tardon <dtardon@redhat.com> - 1:4.2.1.1-1
 - update to 4.2.1 rc1
 

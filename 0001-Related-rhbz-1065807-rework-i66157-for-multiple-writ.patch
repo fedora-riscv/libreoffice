@@ -82,7 +82,7 @@ index ff07ef3..4cf76c4 100644
      aValue <<= maTemplateDirs;
  
 +    css::uno::Reference< css::util::XPathSettings > xPathSettings =
-+        css::util::PathSettings::create( xContext );
++        css::util::PathSettings::create( mxContext );
 +
 +    // load internal paths
 +    OUString sProp( "Template_internal" );
@@ -150,9 +150,9 @@ index ff07ef3..4cf76c4 100644
              return sal_False; // it is not allowed to remove the template
      }
  
-@@ -2060,6 +2090,29 @@
-     catch ( Exception& )
-     { return sal_False; }
+@@ -1937,6 +1967,30 @@
+     }
+ }
  
 +bool SfxDocTplService_Impl::isInternalTemplateDir(const OUString& rURL) const
 +{
@@ -177,9 +177,18 @@ index ff07ef3..4cf76c4 100644
 +    }
 +    return OUString();
 +}
++
+ //-----------------------------------------------------------------------------
+ sal_Bool SfxDocTplService_Impl::addTemplate( const OUString& rGroupName,
+                                              const OUString& rTemplateName,
+@@ -2060,7 +2114,6 @@
+     catch ( Exception& )
+     { return sal_False; }
  
+-
      // either the document has title and it is the same as requested, or we have to set it
      sal_Bool bCorrectTitle = ( bDocHasTitle && aTitle.equals( rTemplateName ) );
+     if ( !bCorrectTitle )
 @@ -2129,8 +2182,7 @@
      // delete the target template
      if ( !aTargetURL.isEmpty() )

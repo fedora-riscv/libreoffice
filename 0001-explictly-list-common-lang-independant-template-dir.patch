@@ -1,0 +1,25 @@
+From 6f48d0bb2d3f3b4e4d3e46d3a5cdeaa552df1933 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 25 Feb 2014 09:55:48 +0000
+Subject: [PATCH] explictly list common lang-independant template dir
+
+Change-Id: I50d8efe46fc2eb3dfe615ad1f6eb7ee03cdcd29a
+---
+ officecfg/registry/data/org/openoffice/Office/Paths.xcu | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/officecfg/registry/data/org/openoffice/Office/Paths.xcu b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
+index 2ef605e..2a9eb5c 100644
+--- a/officecfg/registry/data/org/openoffice/Office/Paths.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
+@@ -158,6 +158,7 @@
+     </node>
+     <node oor:name="Template" oor:op="fuse" oor:mandatory="true">
+       <node oor:name="InternalPaths">
++        <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/common" oor:op="fuse"/>
+         <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/$(vlang)" oor:op="fuse"/>
+       </node>
+       <!--
+-- 
+1.8.5.3
+

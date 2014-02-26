@@ -66,7 +66,7 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel}
-Source11:       %{external_url}/01a380acfec23bf617117ce98e318f3d-mdds_0.10.1.tar.bz2
+Source11:       %{external_url}/47203e7cade74e5c385aa812f21e7932-mdds_0.10.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds
 %if 0%{?rhel} < 7
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz

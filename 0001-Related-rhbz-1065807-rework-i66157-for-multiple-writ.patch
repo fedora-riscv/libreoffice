@@ -82,7 +82,7 @@ index ff07ef3..fe43a40 100644
      aValue <<= maTemplateDirs;
  
 +    css::uno::Reference< css::util::XPathSettings > xPathSettings =
-+        css::util::PathSettings::create( xContext );
++        css::util::PathSettings::create( mxContext );
 +
 +    // load internal paths
 +    OUString sProp( "Template_internal" );

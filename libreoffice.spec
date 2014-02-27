@@ -270,6 +270,7 @@ Patch30: 0001-Resolves-rhbz-1010995-div-by-0-on-some-bizarre-corne.patch
 Patch31: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch32: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch33: 0001-explictly-list-common-lang-independant-template-dir.patch
+Patch34: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1067,6 +1068,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch31 -p1 -b .rhbz-1065807-rework-i66157-for-multiple-writ.patch
 %patch32 -p1 -b .rhbz-1065807-use-xdg-Templates-for-default-.patch
 %patch33 -p1 -b .explictly-list-common-lang-independant-template-dir.patch
+%patch34 -p1 -b .rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 
 # TODO: check this
 # these are horribly incomplete--empty translations and copied english
@@ -2164,6 +2166,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Feb 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-3-UNBUILT
 - Resolves: rhbz#1065807 search XDG defined "Templates"
+- Resolves: rhbz#1057977 do not crash when fonts are updated
 
 * Tue Feb 18 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-2
 - Resolves: rhbz#1065925 [abrt] libreoffice-core: Divide(): soffice.bin killed

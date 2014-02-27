@@ -91,11 +91,11 @@ Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2
+Source32:       %{external_url}/libetonyek-0.0.3.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
-Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
+Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
 Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
-Source36:       %{external_url}/libabw-0.0.1.tar.bz2
+Source36:       %{external_url}/libabw-0.0.2.tar.bz2
 Source37:       %{external_url}/libatomic_ops-7_2d.zip
 Source38:       %{external_url}/libeot-0.01.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot

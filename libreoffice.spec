@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -65,7 +65,7 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel}
-Source11:       %{external_url}/01a380acfec23bf617117ce98e318f3d-mdds_0.10.1.tar.bz2
+Source11:       %{external_url}/47203e7cade74e5c385aa812f21e7932-mdds_0.10.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds
 %if 0%{?rhel} < 7
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
@@ -278,6 +278,7 @@ Patch16: 0001-never-run-autogen.sh.patch
 Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
+Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2173,6 +2174,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 27 2014 David Tardon <dtardon@redhat.com> - 1:4.2.1.1-3
+- Resolves: rhbz#1057977 do not crash when fonts are updated
+
 * Tue Feb 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.1.1-2
 - Resolves: rhbz#1065807 search XDG defined "Templates" dir
 

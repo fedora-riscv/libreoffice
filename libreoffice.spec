@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -279,6 +279,7 @@ Patch16: 0001-never-run-autogen.sh.patch
 Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
+Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2174,6 +2175,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 27 2014 David Tardon <dtardon@redhat.com> - 1:4.2.1.1-3
+- Resolves: rhbz#1057977 do not crash when fonts are updated
+
 * Tue Feb 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.1.1-2
 - Resolves: rhbz#1065807 search XDG defined "Templates" dir
 

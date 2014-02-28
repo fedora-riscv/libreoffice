@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -90,11 +90,11 @@ Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source32:       %{external_url}/libetonyek-0.0.1.tar.bz2
+Source32:       %{external_url}/libetonyek-0.0.3.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
-Source34:       %{external_url}/libe-book-0.0.2.tar.bz2
+Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
 Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
-Source36:       %{external_url}/libabw-0.0.1.tar.bz2
+Source36:       %{external_url}/libabw-0.0.2.tar.bz2
 Source37:       %{external_url}/libatomic_ops-7_2d.zip
 Source38:       %{external_url}/libeot-0.01.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
@@ -280,6 +280,7 @@ Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
 Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch21: 0001-fdo-75540-setProcessServiceFactory-must-be-called-be.patch
+Patch22: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2175,6 +2176,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Feb 28 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-2
+- Related: rhbz#1065807 don't throw with no "Templates" dir under KDE
+
 * Thu Feb 27 2014 David Tardon <dtardon@redhat.com> - 1:4.2.2.1-1
 - update to 4.2.2 rc1
 

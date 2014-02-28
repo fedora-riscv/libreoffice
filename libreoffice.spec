@@ -89,7 +89,7 @@ Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source30:       %{external_url}/libodfgen-0.0.3.tar.bz2
+Source30:       %{external_url}/libodfgen-0.0.4.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source32:       %{external_url}/libetonyek-0.0.3.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2

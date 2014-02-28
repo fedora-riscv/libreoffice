@@ -1,0 +1,168 @@
+From dfd483bf9ab7fad58882fb2abff5cbf7f79a4e37 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 28 Feb 2014 16:55:03 +0000
+Subject: [PATCH] Resolves: rhbz#1007697 Update on a Window triggering delete
+ on window
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Reviewed-on: https://gerrit.libreoffice.org/8396
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 1ec2880679d88c89901ce00fe30dd78e584f6960)
+
+Conflicts:
+	svx/source/svdraw/sdrpaintwindow.cxx
+	vcl/source/window/window.cxx
+
+Change-Id: Ic6374ce45e3a3ba97217ae77e91f9143f46e277b
+---
+ svx/source/svdraw/sdrpaintwindow.cxx | 96 +++++++++++++++++++++++++++++-------
+ vcl/source/window/window.cxx         |  5 ++
+ 2 files changed, 83 insertions(+), 18 deletions(-)
+
+diff --git a/svx/source/svdraw/sdrpaintwindow.cxx b/svx/source/svdraw/sdrpaintwindow.cxx
+index 6abacc5..81dff0b 100644
+--- a/svx/source/svdraw/sdrpaintwindow.cxx
++++ b/svx/source/svdraw/sdrpaintwindow.cxx
+@@ -22,35 +22,95 @@
+ #include <svx/svdpntv.hxx>
+ #include <vcl/gdimtf.hxx>
+ #include <vcl/svapp.hxx>
++#include <set>
++#include <vector>
++
++//rhbz#1007697 do this in two loops, one to collect the candidates
++//and another to update them because updating a candidate can
++//trigger the candidate to be deleted, so asking for its
++//sibling after that is going to fail hard
++class CandidateMgr
++{
++    std::vector<Window*> m_aCandidates;
++    std::set<Window*> m_aDeletedCandidates;
++    DECL_LINK(WindowEventListener, VclSimpleEvent*);
++public:
++    void PaintTransparentChildren(Window & rWindow, Rectangle const& rPixelRect);
++    ~CandidateMgr();
++};
++
++IMPL_LINK(CandidateMgr, WindowEventListener, VclSimpleEvent*, pEvent)
++{
++    VclWindowEvent* pWinEvent = dynamic_cast< VclWindowEvent* >( pEvent );
++    if (pWinEvent)
++    {
++        Window* pWindow = pWinEvent->GetWindow();
++        if (pWinEvent->GetId() == VCLEVENT_OBJECT_DYING)
++        {
++            m_aDeletedCandidates.insert(pWindow);
++        }
++    }
+ 
++    return 0;
++}
++
++CandidateMgr::~CandidateMgr()
++{
++    for (std::vector<Window*>::iterator aI = m_aCandidates.begin();
++         aI != m_aCandidates.end(); ++aI)
++    {
++        Window* pCandidate = *aI;
++        if (m_aDeletedCandidates.find(pCandidate) != m_aDeletedCandidates.end())
++            continue;
++        pCandidate->RemoveEventListener(LINK(this, CandidateMgr, WindowEventListener));
++    }
++}
+ 
+ void PaintTransparentChildren(Window & rWindow, Rectangle const& rPixelRect)
+ {
+-    if (rWindow.IsChildTransparentModeEnabled())
++    if (!rWindow.IsChildTransparentModeEnabled())
++        return;
++
++    CandidateMgr aManager;
++    aManager.PaintTransparentChildren(rWindow, rPixelRect);
++}
++
++void CandidateMgr::PaintTransparentChildren(Window & rWindow, Rectangle const& rPixelRect)
++{
++    Window * pCandidate = rWindow.GetWindow( WINDOW_FIRSTCHILD );
++    while (pCandidate)
+     {
+-        Window * pCandidate = rWindow.GetWindow( WINDOW_FIRSTCHILD );
+-        while (pCandidate)
++        if (pCandidate->IsPaintTransparent())
+         {
+-            if (pCandidate->IsPaintTransparent())
++            const Rectangle aCandidatePosSizePixel(
++                            pCandidate->GetPosPixel(),
++                            pCandidate->GetSizePixel());
++
++            if (aCandidatePosSizePixel.IsOver(rPixelRect))
+             {
+-                const Rectangle aCandidatePosSizePixel(
+-                                pCandidate->GetPosPixel(),
+-                                pCandidate->GetSizePixel());
+-
+-                if (aCandidatePosSizePixel.IsOver(rPixelRect))
+-                {
+-                    pCandidate->Invalidate(
+-                        INVALIDATE_NOTRANSPARENT|INVALIDATE_CHILDREN );
+-                    // important: actually paint the child here!
+-                    pCandidate->Update();
+-                }
++                m_aCandidates.push_back(pCandidate);
++                pCandidate->AddEventListener(LINK(this, CandidateMgr, WindowEventListener));
+             }
+-            pCandidate = pCandidate->GetWindow( WINDOW_NEXT );
+         }
++        pCandidate = pCandidate->GetWindow( WINDOW_NEXT );
+     }
+-}
+ 
+-////////////////////////////////////////////////////////////////////////////////////////////////////
++    for (std::vector<Window*>::iterator aI = m_aCandidates.begin();
++         aI != m_aCandidates.end(); ++aI)
++    {
++        pCandidate = *aI;
++        if (m_aDeletedCandidates.find(pCandidate) != m_aDeletedCandidates.end())
++            continue;
++        //rhbz#1007697 this can cause the window itself to be
++        //deleted. So we are listening to see if that happens
++        //and if so, then skip the update
++        pCandidate->Invalidate(INVALIDATE_NOTRANSPARENT|INVALIDATE_CHILDREN);
++        // important: actually paint the child here!
++        if (m_aDeletedCandidates.find(pCandidate) != m_aDeletedCandidates.end())
++            continue;
++        pCandidate->Update();
++    }
++}
+ 
+ SdrPreRenderDevice::SdrPreRenderDevice(OutputDevice& rOriginal)
+ :   mrOutputDevice(rOriginal)
+diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
+index 1ef62c1..60a14f1 100644
+--- a/vcl/source/window/window.cxx
++++ b/vcl/source/window/window.cxx
+@@ -7561,6 +7561,8 @@ void Window::Update()
+     // if there is something to paint, trigger a Paint
+     if ( pUpdateWindow->mpWindowImpl->mnPaintFlags & (IMPL_PAINT_PAINT | IMPL_PAINT_PAINTCHILDREN) )
+     {
++        ImplDelData aDogTag(this);
++
+         // trigger an update also for system windows on top of us,
+         // otherwise holes would remain
+          Window* pUpdateOverlapWindow = ImplGetFirstOverlapWindow()->mpWindowImpl->mpFirstOverlap;
+@@ -7571,6 +7573,9 @@ void Window::Update()
+          }
+ 
+         pUpdateWindow->ImplCallPaint( NULL, pUpdateWindow->mpWindowImpl->mnPaintFlags );
++
++        if (aDogTag.IsDead())
++           return;
+         bFlush = sal_True;
+     }
+ 
+-- 
+1.8.5.3
+

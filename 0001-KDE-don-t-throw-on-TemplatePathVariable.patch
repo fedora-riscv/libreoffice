@@ -1,0 +1,51 @@
+From e44a7eefb7f632977b4c8c91ad14244372c6e04d Mon Sep 17 00:00:00 2001
+From: Maxim Monastirsky <momonasmon@gmail.com>
+Date: Wed, 26 Feb 2014 17:02:38 +0200
+Subject: [PATCH] KDE: don't throw on TemplatePathVariable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is required after commit
+838b77f5f3d6d8fd98891e99a23ff78a6a357cb2.
+
+Actual functionality is still missing.
+
+Change-Id: Ib94d8a982609de730d9c61bf7bf9886093c51f5b
+Reviewed-on: https://gerrit.libreoffice.org/8367
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ shell/source/backends/kde4be/kde4backend.cxx | 2 +-
+ shell/source/backends/kdebe/kdebackend.cxx   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/shell/source/backends/kde4be/kde4backend.cxx b/shell/source/backends/kde4be/kde4backend.cxx
+index bf12683..1d486e4 100644
+--- a/shell/source/backends/kde4be/kde4backend.cxx
++++ b/shell/source/backends/kde4be/kde4backend.cxx
+@@ -172,7 +172,7 @@ css::uno::Any Service::getPropertyValue(OUString const & PropertyName)
+      || PropertyName == "SourceViewFontName" || PropertyName == "WorkPathVariable" || PropertyName == "ooInetFTPProxyName"
+      || PropertyName == "ooInetFTPProxyPort" || PropertyName == "ooInetHTTPProxyName" || PropertyName == "ooInetHTTPProxyPort"
+      || PropertyName == "ooInetHTTPSProxyName" || PropertyName == "ooInetHTTPSProxyPort" || PropertyName == "ooInetNoProxy"
+-     || PropertyName == "ooInetProxyType" )
++     || PropertyName == "ooInetProxyType" || PropertyName == "TemplatePathVariable" )
+     {
+         return css::uno::makeAny(
+             enabled_
+diff --git a/shell/source/backends/kdebe/kdebackend.cxx b/shell/source/backends/kdebe/kdebackend.cxx
+index 8089632..08915e8 100644
+--- a/shell/source/backends/kdebe/kdebackend.cxx
++++ b/shell/source/backends/kdebe/kdebackend.cxx
+@@ -172,7 +172,7 @@ css::uno::Any Service::getPropertyValue(OUString const & PropertyName)
+       || PropertyName == "SourceViewFontName" || PropertyName == "WorkPathVariable" || PropertyName == "ooInetFTPProxyName"
+       || PropertyName == "ooInetFTPProxyPort" || PropertyName == "ooInetHTTPProxyName" || PropertyName == "ooInetHTTPProxyPort"
+       || PropertyName == "ooInetHTTPSProxyName" || PropertyName == "ooInetHTTPSProxyPort" || PropertyName == "ooInetNoProxy"
+-      || PropertyName == "ooInetProxyType" )
++      || PropertyName == "ooInetProxyType" || PropertyName == "TemplatePathVariable" )
+     {
+         return css::uno::makeAny(
+             enabled_
+-- 
+1.8.5.3
+

@@ -1,4 +1,4 @@
-From dfd483bf9ab7fad58882fb2abff5cbf7f79a4e37 Mon Sep 17 00:00:00 2001
+From 1c5b9373b8bf8d25cf33198db3abda1f47a0a4cb Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 28 Feb 2014 16:55:03 +0000
 Subject: [PATCH] Resolves: rhbz#1007697 Update on a Window triggering delete
@@ -23,7 +23,7 @@ Change-Id: Ic6374ce45e3a3ba97217ae77e91f9143f46e277b
  2 files changed, 83 insertions(+), 18 deletions(-)
 
 diff --git a/svx/source/svdraw/sdrpaintwindow.cxx b/svx/source/svdraw/sdrpaintwindow.cxx
-index 6abacc5..81dff0b 100644
+index 6ab2b40..da94126 100644
 --- a/svx/source/svdraw/sdrpaintwindow.cxx
 +++ b/svx/source/svdraw/sdrpaintwindow.cxx
 @@ -22,35 +22,95 @@
@@ -141,10 +141,10 @@ index 6abacc5..81dff0b 100644
  SdrPreRenderDevice::SdrPreRenderDevice(OutputDevice& rOriginal)
  :   mrOutputDevice(rOriginal)
 diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
-index 1ef62c1..60a14f1 100644
+index 470f912..da28672 100644
 --- a/vcl/source/window/window.cxx
 +++ b/vcl/source/window/window.cxx
-@@ -7561,6 +7561,8 @@ void Window::Update()
+@@ -7512,6 +7512,8 @@ void Window::Update()
      // if there is something to paint, trigger a Paint
      if ( pUpdateWindow->mpWindowImpl->mnPaintFlags & (IMPL_PAINT_PAINT | IMPL_PAINT_PAINTCHILDREN) )
      {
@@ -153,16 +153,16 @@ index 1ef62c1..60a14f1 100644
          // trigger an update also for system windows on top of us,
          // otherwise holes would remain
           Window* pUpdateOverlapWindow = ImplGetFirstOverlapWindow()->mpWindowImpl->mpFirstOverlap;
-@@ -7571,6 +7573,9 @@ void Window::Update()
+@@ -7522,6 +7524,9 @@ void Window::Update()
           }
  
          pUpdateWindow->ImplCallPaint( NULL, pUpdateWindow->mpWindowImpl->mnPaintFlags );
 +
 +        if (aDogTag.IsDead())
 +           return;
-         bFlush = sal_True;
      }
  
+     if ( bFlush )
 -- 
 1.8.5.3
 

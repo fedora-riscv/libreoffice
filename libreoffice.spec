@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -283,6 +283,7 @@ Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch21: 0001-fdo-75540-setProcessServiceFactory-must-be-called-be.patch
 Patch22: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch23: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
+Patch24: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2178,6 +2179,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-4
+- Related: rhbz#1065807 wizards should look in Template_internal
+
 * Fri Feb 28 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-3
 - Resolves: rhbz#1007697 Update on a Window deletes itself
 

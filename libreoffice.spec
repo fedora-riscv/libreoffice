@@ -274,6 +274,7 @@ Patch33: 0001-explictly-list-common-lang-independant-template-dir.patch
 Patch34: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch35: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch36: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
+Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2146,7 +2147,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Feb 28 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-3
+* Mon Mar 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-3
 - Resolves: rhbz#1065807 search XDG defined "Templates"
 - Resolves: rhbz#1057977 do not crash when fonts are updated
 - Resolves: rhbz#1007697 Update on a Window deletes itself

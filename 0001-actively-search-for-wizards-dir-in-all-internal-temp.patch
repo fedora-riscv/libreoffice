@@ -1,0 +1,59 @@
+From 5fa18dc21644f2a719bf39ec948a586fa8837b6a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 4 Mar 2014 13:31:41 +0000
+Subject: [PATCH] actively search for wizards dir in all internal templates
+
+Change-Id: I4ef6da4d9d1931917e0aaa6e110fd273bd917b26
+---
+ .../com/sun/star/wizards/letter/LetterWizardDialogImpl.py    |  2 +-
+ wizards/com/sun/star/wizards/ui/WizardDialog.py              | 12 ++++++++++--
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py b/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
+index 76866e7..d8598ff 100644
+--- a/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
++++ b/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
+@@ -752,7 +752,7 @@ class LetterWizardDialogImpl(LetterWizardDialog):
+             return None
+ 
+     def initializeTemplates(self, xMSF):
+-        sLetterPath = self.sTemplatePath + "/../common/wizard/letter"
++        sLetterPath = self.sTemplatePath + "/wizard/letter"
+         self.BusinessFiles = \
+             FileAccess.getFolderTitles(
+                 xMSF, "bus", sLetterPath, self.resources.dictBusinessTemplate)
+diff --git a/wizards/com/sun/star/wizards/ui/WizardDialog.py b/wizards/com/sun/star/wizards/ui/WizardDialog.py
+index 4e41fdf..e107c63 100644
+--- a/wizards/com/sun/star/wizards/ui/WizardDialog.py
++++ b/wizards/com/sun/star/wizards/ui/WizardDialog.py
+@@ -22,6 +22,7 @@ from .UnoDialog2 import UnoDialog2, Desktop, PropertyNames, UIConsts, \
+     ItemListenerProcAdapter
+ from ..common.Resource import Resource
+ from ..common.HelpIds import HelpIds
++from ..common.FileAccess import FileAccess
+ 
+ from com.sun.star.lang import NoSuchMethodException
+ from com.sun.star.frame import TerminationVetoException
+@@ -125,10 +126,17 @@ class WizardDialog(UnoDialog2):
+     def initializePaths(self):
+         xPropertySet = \
+             self.xMSF.createInstance("com.sun.star.util.PathSettings")
+-        self.sTemplatePath = \
+-            xPropertySet.getPropertyValue("Template_internal")[0]
+         self.sUserTemplatePath = \
+             xPropertySet.getPropertyValue("Template_writable")
++        myFA = FileAccess(self.xMSF)
++        aInternalPaths = xPropertySet.getPropertyValue("Template_internal")
++        self.sTemplatePath = ""
++        for path in aInternalPaths:
++            if myFA.exists(path + "/wizard", False):
++                self.sTemplatePath = path
++                break
++        if self.sTemplatePath == "":
++            raise Exception("could not find wizard templates")
+             
+     def addRoadmap(self):
+         try:
+-- 
+1.8.5.3
+

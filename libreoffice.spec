@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -275,6 +275,7 @@ Patch34: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch35: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch36: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
 Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
+Patch38: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2147,6 +2148,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 04 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-4
+- Related: rhbz#1065807 search for "wizards" in the different template dirs
+
 * Mon Mar 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-3
 - Resolves: rhbz#1065807 search XDG defined "Templates"
 - Resolves: rhbz#1057977 do not crash when fonts are updated

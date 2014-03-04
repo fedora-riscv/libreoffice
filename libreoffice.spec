@@ -284,6 +284,7 @@ Patch21: 0001-fdo-75540-setProcessServiceFactory-must-be-called-be.patch
 Patch22: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch23: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
 Patch24: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
+Patch25: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2179,6 +2180,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 04 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-5
+- Related: rhbz#1065807 wizards should find the right wizards subdir
+  of Template_internal, who knew this stuff was so fragile
+
 * Mon Mar 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-4
 - Related: rhbz#1065807 wizards should look in Template_internal
 

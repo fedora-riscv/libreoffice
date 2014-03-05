@@ -303,7 +303,6 @@ formats, including Microsoft Office File Formats.
 %package filters
 Summary: All import / export filters
 Group: Applications/Productivity
-Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}

@@ -278,6 +278,10 @@ Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch38: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 Patch39: 0001-never-run-autogen.sh.patch
 Patch40: 0001-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
+Patch41: 0001-fdo-65655-fix-for-Different_Odd_And_Even_Pages-flag-.patch
+Patch42: 0001-rhbz-1065629-RTF-import-don-t-drop-nested-cells-if-n.patch
+Patch43: 0002-rhbz-1065629-RTF-import-re-implement-nested-tables.patch
+Patch44: 0003-writerfilter-salvage-a-field-parameter-parsing-train.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2152,6 +2156,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Mar 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-6-UNBUILT
 - Resolves: rhbz#988516: DOCX import: fix context stack when importing header
+- Resolves: fdo#65655: Different_Odd_And_Even_Pages flag ignored
+- RTF import: fix nested tables
+- RTF import: import field parameters
 
 * Fri Mar 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-5
 - fix build on s390

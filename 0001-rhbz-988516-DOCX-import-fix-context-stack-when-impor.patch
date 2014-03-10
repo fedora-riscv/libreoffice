@@ -287,21 +287,21 @@ index dee45c9..9a35a3e 100644
 --- a/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
 +++ b/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
 @@ -139,6 +139,7 @@ public:
-     void testRPrChangeClosed();
-     void testFdo65090();
-     void testFdo73389();
+     void testN820509();
+     void testN820788();
+     void testN820504();
 +    void testRhbz988516();
- 
-     CPPUNIT_TEST_SUITE(Test);
- #if !defined(MACOSX) && !defined(WNT)
+     void testFdo43641();
+     void testFdo46361();
+     void testFdo65632();
 @@ -243,6 +244,7 @@ void Test::run()
-         {"rprchange_closed.docx", &Test::testRPrChangeClosed},
-         {"fdo65090.docx", &Test::testFdo65090},
-         {"fdo73389.docx", &Test::testFdo73389},
+         {"n820509.docx", &Test::testN820509},
+         {"n820788.docx", &Test::testN820788},
+         {"n820504.docx", &Test::testN820504},
 +        {"rhbz988516.docx", &Test::testRhbz988516},
-     };
-     header();
-     for (unsigned int i = 0; i < SAL_N_ELEMENTS(aMethods); ++i)
+         {"fdo43641.docx", &Test::testFdo43641},
+         {"fdo46361.docx", &Test::testFdo46361},
+         {"fdo65632.docx", &Test::testFdo65632},
 @@ -376,6 +378,18 @@ void Test::testN757890()
      CPPUNIT_ASSERT_EQUAL(text::HoriOrientation::CENTER, nValue);
  }

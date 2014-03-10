@@ -2154,7 +2154,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Mar 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-6-UNBUILT
+* Mon Mar 10 2014 Michael Stahl <mstahl@redhat.com> - 1:4.1.5.3-6
 - Resolves: rhbz#988516: DOCX import: fix context stack when importing header
 - Resolves: fdo#65655: Different_Odd_And_Even_Pages flag ignored
 - RTF import: fix nested tables

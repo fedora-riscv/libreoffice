@@ -1,0 +1,39 @@
+From 58d0ba47f82e264e9b17c0e0d37bc043126d195d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 6 Mar 2014 22:25:55 +0100
+Subject: [PATCH] rhbz#1072607: (hopefully) fix crash in SvxRuler::MouseMove()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Not sure why mpParaItem is 0 here, add a check like in every other
+SvxRuler method.
+
+(regression from 47a77d7dbc427e51421e2df8d59695834cb74980)
+
+Change-Id: Ic11a4d0c9b6ca217cd59d1d3f6789592996d2c1d
+(cherry picked from commit 958616a323b7fe6b42cd642394cd90a9cd82e7f9)
+Reviewed-on: https://gerrit.libreoffice.org/8492
+Reviewed-by: Tomaž Vajngerl <quikee@gmail.com>
+Tested-by: Tomaž Vajngerl <quikee@gmail.com>
+---
+ svx/source/dialog/svxruler.cxx | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/svx/source/dialog/svxruler.cxx b/svx/source/dialog/svxruler.cxx
+index a41d0e0..ca16c17 100644
+--- a/svx/source/dialog/svxruler.cxx
++++ b/svx/source/dialog/svxruler.cxx
+@@ -580,6 +580,9 @@ void SvxRuler::MouseMove( const MouseEvent& rMEvt )
+     {
+         case RULER_TYPE_INDENT:
+         {
++            if (!mpParaItem.get())
++                break;
++
+             long nIndex = aSelection.nAryPos + INDENT_GAP;
+ 
+             long nIndentValue = 0.0;
+-- 
+1.8.3.1
+

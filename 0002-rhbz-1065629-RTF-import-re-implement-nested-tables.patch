@@ -93,7 +93,7 @@ index dd6f198..2e0c2db 100644
 +    CPPUNIT_ASSERT_BORDER_EQUAL(fullPtSolid,
 +        getProperty<table::BorderLine2>(xCell, "BottomBorder"));
 +#endif
-+    CPPUNIT_ASSERT_EQUAL(0xCC0000, getProperty<sal_Int32>(xCell, "BackColor"));
++    CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(0xCC0000), getProperty<sal_Int32>(xCell, "BackColor"));
 +    xCell.set(xTable->getCellByName("A2"), uno::UNO_QUERY);
 +    CPPUNIT_ASSERT(xCell.is());
 +    table::BorderLine2 halfPtSolid(

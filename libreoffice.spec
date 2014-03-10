@@ -2185,7 +2185,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 04 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-6-UNBUILT
+* Mon Mar 10 2014 Michael Stahl <mstahl@redhat.com> - 1:4.2.2.1-6
 - Resolves: rhbz#988516: DOCX import: fix context stack when importing header
 - Resolves: rhbz#1072553: Fix deselection problems of template view
 - Resolves: rhbz#1072607: fix crash in SvxRuler::MouseMove()

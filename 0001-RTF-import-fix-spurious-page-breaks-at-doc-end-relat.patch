@@ -1,0 +1,357 @@
+From 153993292cc9f11fed8fcba8de45b0c46d5e0ef2 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 27 Feb 2014 23:48:59 +0100
+Subject: [PATCH] RTF import: fix spurious page breaks at doc end (related:
+ rhbz#1065629)
+
+When a document ends with \sect it's possible that a spurious page break
+is created.  In fact the spurious page break is always created by the
+RTF importer, sometimes it is deleted again by
+DomainMapper_Impl::RemoveLastParagraph() and sometimes not.
+
+It is created because on the final \sect RTFDocumentImpl::sectBreak()
+still calls startSectionGroup(), and the popState() for the \rtf1 group
+then calls sectBreak() another time.
+
+To prevent this, do not call startSectionGroup() from sectBreak() but
+instead from setNeedSect(), and ensure that it is called as soon as
+anything after \sect is read.
+
+One unit test fails because the \page is not handled properly: the
+conversion to \skbpage \sect \skbnone is not correct, because the \skb*
+keywords are an exception and affect the \sect that precedes them, not
+the following one; sending the \skbpage later unfortunately requires
+additional cleanup later.
+
+(cherry picked from commit e3f254ab8211fbab7541cde2100a35c875b0c240)
+
+RTF import: add unit test for page break in continuous section
+
+(cherry picked from commit f03218f43e8c25c2e136d364455f3cdaf95362b6)
+
+RTF import: fix paragraphs in header/footer
+
+(cherry picked from commit 74b3f4f00766d199df3b017d056cf7a00ae52988)
+
+Change-Id: I3c1a3bceb2c8b75bbecdc748170562451ce5f5c3
+Reviewed-on: https://gerrit.libreoffice.org/8439
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+Tested-by: Miklos Vajna <vmiklos@collabora.co.uk>
+---
+ .../rtfimport/data/cont-section-pagebreak.rtf      | 16 +++++
+ sw/qa/extras/rtfimport/data/footer-para.rtf        |  5 ++
+ sw/qa/extras/rtfimport/rtfimport.cxx               | 42 +++++++++++++
+ writerfilter/source/rtftok/rtfdocumentimpl.cxx     | 71 +++++++++++++++-------
+ writerfilter/source/rtftok/rtfdocumentimpl.hxx     |  3 +
+ 5 files changed, 116 insertions(+), 21 deletions(-)
+ create mode 100644 sw/qa/extras/rtfimport/data/cont-section-pagebreak.rtf
+ create mode 100644 sw/qa/extras/rtfimport/data/footer-para.rtf
+
+diff --git a/sw/qa/extras/rtfimport/data/cont-section-pagebreak.rtf b/sw/qa/extras/rtfimport/data/cont-section-pagebreak.rtf
+new file mode 100644
+index 0000000..888dc2d
+--- /dev/null
++++ b/sw/qa/extras/rtfimport/data/cont-section-pagebreak.rtf
+@@ -0,0 +1,16 @@
++{\rtf1 \ansi
++\fet0 \ftnbj \paperw11905 \paperh16837 \margt2267 \margb1133 \margl1417 \margr1417
++
++\sectd
++\sbknone
++FIRST
++\par
++\sect
++SECOND
++\par
++\page
++\sect
++THIRD
++\par
++\sect
++}
+diff --git a/sw/qa/extras/rtfimport/data/footer-para.rtf b/sw/qa/extras/rtfimport/data/footer-para.rtf
+new file mode 100644
+index 0000000..28863b2
+--- /dev/null
++++ b/sw/qa/extras/rtfimport/data/footer-para.rtf
+@@ -0,0 +1,5 @@
++{\rtf1\fbidis\ansi\ansicpg0\uc0\deff0\deflang0\deflangfe0\paperw11905\paperh16838\margl1200\margr1200\margt1200\margb1200\headery600\footery600\viewscale100\viewzk0\titlepg
++{\fonttbl{\f0\fnil Arial;}}
++{\footerf
++\pard\s0\fi0\li0\qc\ri0\sb0\sa0\itap0 \plain \f0\fs18 All Rights Reserved.\par}
++\pard\par}
+diff --git a/sw/qa/extras/rtfimport/rtfimport.cxx b/sw/qa/extras/rtfimport/rtfimport.cxx
+index 9504027..73bf749 100644
+--- a/sw/qa/extras/rtfimport/rtfimport.cxx
++++ b/sw/qa/extras/rtfimport/rtfimport.cxx
+@@ -17,6 +17,7 @@
+ #include <com/sun/star/drawing/LineStyle.hpp>
+ #include <com/sun/star/graphic/GraphicType.hpp>
+ #include <com/sun/star/lang/XServiceInfo.hpp>
++#include <com/sun/star/style/BreakType.hpp>
+ #include <com/sun/star/style/CaseMap.hpp>
+ #include <com/sun/star/style/LineSpacing.hpp>
+ #include <com/sun/star/style/LineSpacingMode.hpp>
+@@ -1413,6 +1414,47 @@ DECLARE_RTFIMPORT_TEST(testNestedTable, "rhbz1065629.rtf")
+         getProperty<table::BorderLine2>(xCell, "RightBorder"));
+     CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(0xffffffff),
+             getProperty<sal_Int32>(xCell, "BackColor"));
++
++    // \sect at the end resulted in spurious page break
++    CPPUNIT_ASSERT_EQUAL(1, getPages());
++}
++
++DECLARE_RTFIMPORT_TEST(testContSectionPageBreak, "cont-section-pagebreak.rtf")
++{
++    uno::Reference<text::XTextRange> xParaSecond = getParagraph(2);
++    CPPUNIT_ASSERT_EQUAL(OUString("SECOND"), xParaSecond->getString());
++    CPPUNIT_ASSERT_EQUAL(style::BreakType_NONE,
++            getProperty<style::BreakType>(xParaSecond, "BreakType"));
++    CPPUNIT_ASSERT_EQUAL(OUString(""),
++            getProperty<OUString>(xParaSecond, "PageDescName"));
++    // actually not sure how many paragraph there should be between
++    // SECOND and THIRD - important is that the page break is on there
++    uno::Reference<text::XTextRange> xParaNext = getParagraph(3);
++    CPPUNIT_ASSERT_EQUAL(OUString(""), xParaNext->getString());
++    CPPUNIT_ASSERT_EQUAL(OUString("Converted1"),
++            getProperty<OUString>(xParaNext, "PageDescName"));
++    uno::Reference<text::XTextRange> xParaThird = getParagraph(4);
++    CPPUNIT_ASSERT_EQUAL(OUString("THIRD"), xParaThird->getString());
++    CPPUNIT_ASSERT_EQUAL(style::BreakType_NONE,
++            getProperty<style::BreakType>(xParaThird, "BreakType"));
++    CPPUNIT_ASSERT_EQUAL(OUString(""),
++            getProperty<OUString>(xParaThird, "PageDescName"));
++
++    CPPUNIT_ASSERT_EQUAL(2, getPages());
++}
++
++DECLARE_RTFIMPORT_TEST(testFooterPara, "footer-para.rtf")
++{
++    // check that paragraph properties in footer are imported
++    uno::Reference<text::XText> xFooterText =
++        getProperty< uno::Reference<text::XText> >(
++            getStyles("PageStyles")->getByName("First Page"), "FooterText");
++    uno::Reference<text::XTextContent> xParagraph =
++        getParagraphOrTable(1, xFooterText);
++    CPPUNIT_ASSERT_EQUAL(OUString("All Rights Reserved."),
++        uno::Reference<text::XTextRange>(xParagraph, uno::UNO_QUERY)->getString());
++    CPPUNIT_ASSERT_EQUAL((sal_Int16)style::ParagraphAdjust_CENTER,
++        getProperty</*style::ParagraphAdjust*/sal_Int16>(xParagraph, "ParaAdjust"));
+ }
+ 
+ DECLARE_RTFIMPORT_TEST(testCp1000016, "hello.rtf")
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index d5e7843..0dc20b0 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -279,7 +279,8 @@ RTFDocumentImpl::RTFDocumentImpl(uno::Reference<uno::XComponentContext> const& x
+     m_aHexBuffer(),
+     m_bMathNor(false),
+     m_bIgnoreNextContSectBreak(false),
+-    m_bNeedSect(true),
++    m_nResetBreakOnSectBreak(static_cast<RTFKeyword>(-1)),
++    m_bNeedSect(false), // done by checkFirstRun
+     m_bWasInFrame(false),
+     m_bHadPicture(false),
+     m_bHadSect(false),
+@@ -392,16 +393,15 @@ void RTFDocumentImpl::checkFirstRun()
+         writerfilter::Reference<Table>::Pointer_t const pTable(new RTFReferenceTable(aSettingsTableEntries));
+         Mapper().table(NS_ooxml::LN_settings_settings, pTable);
+         // start initial paragraph
+-        if (!m_pSuperstream)
+-            Mapper().startSectionGroup();
+-        Mapper().startParagraphGroup();
++        m_bFirstRun = false;
++        assert(!m_bNeedSect);
++        setNeedSect(); // first call that succeeds
+ 
+         // set the requested default font, if there are none
+         RTFValue::Pointer_t pFont = m_aDefaultState.aCharacterSprms.find(NS_sprm::LN_CRgFtc0);
+         RTFValue::Pointer_t pCurrentFont = m_aStates.top().aCharacterSprms.find(NS_sprm::LN_CRgFtc0);
+         if (pFont && !pCurrentFont)
+             dispatchValue(RTF_F, pFont->getInt());
+-        m_bFirstRun = false;
+     }
+ }
+ 
+@@ -417,7 +417,22 @@ void RTFDocumentImpl::setNeedPar(bool bNeedPar)
+ 
+ void RTFDocumentImpl::setNeedSect(bool bNeedSect)
+ {
+-    m_bNeedSect = bNeedSect;
++    // ignore setting before checkFirstRun - every keyword calls setNeedSect!
++    if (!m_bNeedSect && bNeedSect && !m_bFirstRun)
++    {
++        if (!m_pSuperstream) // no sections in header/footer!
++        {
++            Mapper().startSectionGroup();
++        }
++        // set flag in substream too - otherwise multiple startParagraphGroup
++        m_bNeedSect = bNeedSect;
++        Mapper().startParagraphGroup();
++        setNeedPar(true);
++    }
++    else if (m_bNeedSect && !bNeedSect)
++    {
++        m_bNeedSect = bNeedSect;
++    }
+ }
+ 
+ writerfilter::Reference<Properties>::Pointer_t RTFDocumentImpl::getProperties(RTFSprms& rAttributes, RTFSprms& rSprms)
+@@ -542,6 +557,7 @@ void RTFDocumentImpl::sectBreak(bool bFinal = false)
+     {
+         dispatchFlag(RTF_PARD);
+         dispatchSymbol(RTF_PAR);
++        m_bNeedSect = bNeedSect;
+     }
+     while (!m_nHeaderFooterPositions.empty())
+     {
+@@ -572,12 +588,7 @@ void RTFDocumentImpl::sectBreak(bool bFinal = false)
+     Mapper().endParagraphGroup();
+     if (!m_pSuperstream)
+         Mapper().endSectionGroup();
+-    if (!bFinal)
+-    {
+-        Mapper().startSectionGroup();
+-        Mapper().startParagraphGroup();
+-    }
+-    m_bNeedPar = true;
++    m_bNeedPar = false;
+     m_bNeedSect = false;
+ }
+ 
+@@ -1345,8 +1356,8 @@ void RTFDocumentImpl::replayBuffer(RTFBuffer_t& rBuffer,
+ 
+ int RTFDocumentImpl::dispatchDestination(RTFKeyword nKeyword)
+ {
+-    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     setNeedSect();
++    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     RTFSkipDestination aSkip(*this);
+     switch (nKeyword)
+     {
+@@ -1867,11 +1878,11 @@ int RTFDocumentImpl::dispatchDestination(RTFKeyword nKeyword)
+ 
+ int RTFDocumentImpl::dispatchSymbol(RTFKeyword nKeyword)
+ {
++    setNeedSect();
+     if (nKeyword != RTF_HEXCHAR)
+         checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     else
+         checkUnicode(/*bUnicode =*/ true, /*bHex =*/ false);
+-    setNeedSect();
+     RTFSkipDestination aSkip(*this);
+ 
+     if (RTF_LINE == nKeyword)
+@@ -1944,7 +1955,15 @@ int RTFDocumentImpl::dispatchSymbol(RTFKeyword nKeyword)
+                 if (m_bIgnoreNextContSectBreak)
+                     m_bIgnoreNextContSectBreak = false;
+                 else
++                {
+                     sectBreak();
++                    if (m_nResetBreakOnSectBreak != -1)
++                    {   // this should run on _second_ \sect after \page
++                        dispatchSymbol(m_nResetBreakOnSectBreak); // lazy reset
++                        m_nResetBreakOnSectBreak = static_cast<RTFKeyword>(-1);
++                        m_bNeedSect = false; // dispatchSymbol set it
++                    }
++                }
+             }
+             break;
+         case RTF_NOBREAK:
+@@ -2116,19 +2135,24 @@ int RTFDocumentImpl::dispatchSymbol(RTFKeyword nKeyword)
+                 RTFValue::Pointer_t pBreak = m_aStates.top().aSectionSprms.find(NS_sprm::LN_SBkc);
+                 // Unless we're on a title page.
+                 RTFValue::Pointer_t pTitlePg = m_aStates.top().aSectionSprms.find(NS_ooxml::LN_EG_SectPrContents_titlePg);
+-                if ((pBreak.get() && !pBreak->getInt()) && !(pTitlePg.get() && pTitlePg->getInt()))
++                if (((pBreak.get() && !pBreak->getInt())
++                        || m_nResetBreakOnSectBreak == RTF_SBKNONE)
++                    && !(pTitlePg.get() && pTitlePg->getInt()))
+                 {
+                     if (m_bWasInFrame)
+                     {
+                         dispatchSymbol(RTF_PAR);
+                         m_bWasInFrame = false;
+                     }
+-                    dispatchFlag(RTF_SBKPAGE);
+                     sectBreak();
+-                    dispatchFlag(RTF_SBKNONE);
++                    // note: this will not affect the following section break
++                    // but the one just pushed
++                    dispatchFlag(RTF_SBKPAGE);
+                     if (m_bNeedPar)
+                         dispatchSymbol(RTF_PAR);
+                     m_bIgnoreNextContSectBreak = true;
++                    // arrange to clean up the syntetic RTF_SBKPAGE
++                    m_nResetBreakOnSectBreak = RTF_SBKNONE;
+                 }
+                 else
+                 {
+@@ -2162,8 +2186,8 @@ int RTFDocumentImpl::dispatchSymbol(RTFKeyword nKeyword)
+ 
+ int RTFDocumentImpl::dispatchFlag(RTFKeyword nKeyword)
+ {
+-    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     setNeedSect();
++    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     RTFSkipDestination aSkip(*this);
+     int nParam = -1;
+     int nSprm = -1;
+@@ -2295,6 +2319,10 @@ int RTFDocumentImpl::dispatchFlag(RTFKeyword nKeyword)
+     }
+     if (nParam >= 0)
+     {
++        if (m_nResetBreakOnSectBreak != -1)
++        {
++            m_nResetBreakOnSectBreak = nKeyword;
++        }
+         RTFValue::Pointer_t pValue(new RTFValue(nParam));
+         m_aStates.top().aSectionSprms.set(NS_sprm::LN_SBkc, pValue);
+         return 0;
+@@ -2902,8 +2930,8 @@ int RTFDocumentImpl::dispatchFlag(RTFKeyword nKeyword)
+ 
+ int RTFDocumentImpl::dispatchValue(RTFKeyword nKeyword, int nParam)
+ {
+-    checkUnicode(/*bUnicode =*/ nKeyword != RTF_U, /*bHex =*/ true);
+     setNeedSect();
++    checkUnicode(/*bUnicode =*/ nKeyword != RTF_U, /*bHex =*/ true);
+     RTFSkipDestination aSkip(*this);
+     int nSprm = 0;
+     RTFValue::Pointer_t pIntValue(new RTFValue(nParam));
+@@ -3869,8 +3897,8 @@ int RTFDocumentImpl::dispatchValue(RTFKeyword nKeyword, int nParam)
+ 
+ int RTFDocumentImpl::dispatchToggle(RTFKeyword nKeyword, bool bParam, int nParam)
+ {
+-    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     setNeedSect();
++    checkUnicode(/*bUnicode =*/ true, /*bHex =*/ true);
+     RTFSkipDestination aSkip(*this);
+     int nSprm = -1;
+     RTFValue::Pointer_t pBoolValue(new RTFValue(!bParam || nParam != 0));
+@@ -4721,7 +4749,8 @@ int RTFDocumentImpl::popState()
+         // not in case of other substreams, like headers.
+         if (m_bNeedCr && !(m_nStreamType == NS_rtf::LN_footnote || m_nStreamType == NS_rtf::LN_endnote))
+             dispatchSymbol(RTF_PAR);
+-        sectBreak(true);
++        if (m_bNeedSect) // may be set by dispatchSymbol above!
++            sectBreak(true);
+     }
+ 
+     m_aStates.pop();
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.hxx b/writerfilter/source/rtftok/rtfdocumentimpl.hxx
+index 932ec46..fa1f3d6 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.hxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.hxx
+@@ -524,6 +524,9 @@ namespace writerfilter {
+                 bool m_bMathNor;
+                 /// If the next continous section break should be ignored.
+                 bool m_bIgnoreNextContSectBreak;
++                /// clean up a synthetic page break, see RTF_PAGE
++                /// if inactive value is -1, otherwise the RTF_SKB* to restore
++                RTFKeyword m_nResetBreakOnSectBreak;
+                 /// If a section break is needed before the end of the doc (false right after a section break).
+                 bool m_bNeedSect;
+                 /// If aFrame.inFrame() was true in the previous state.
+-- 
+1.8.3.1
+

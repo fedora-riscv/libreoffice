@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -277,6 +277,7 @@ Patch36: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
 Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch38: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 Patch39: 0001-never-run-autogen.sh.patch
+Patch40: 0001-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2149,6 +2150,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-6-UNBUILT
+- Resolves: rhbz#988516: DOCX import: fix context stack when importing header
+
 * Fri Mar 07 2014 David Tardon <dtardon@redhat.com> - 1:4.1.5.3-5
 - fix build on s390
 

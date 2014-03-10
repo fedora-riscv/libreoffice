@@ -289,6 +289,8 @@ Patch26: 0002-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
 Patch27: 0001-fdo-74787-rhbz-1072553-Fix-deselection-problems-of-t.patch
 Patch28: 0001-rhbz-1072607-hopefully-fix-crash-in-SvxRuler-MouseMo.patch
 Patch29: 0001-rhbz-1043551-sw-avoid-division-by-0-in-Text-Grid-pai.patch
+Patch30: 0001-writerfilter-salvage-a-field-parameter-parsing-train.patch
+Patch31: 0001-RTF-import-fix-spurious-page-breaks-at-doc-end-relat.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2188,6 +2190,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1072553: Fix deselection problems of template view
 - Resolves: rhbz#1072607: fix crash in SvxRuler::MouseMove()
 - Resolves: rhbz#1043551: sw: avoid division-by-0 in Text Grid painting code
+- RTF import: import field parameters
+- RTF import: fix spurious page breaks at doc end
 
 * Tue Mar 04 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-5
 - Related: rhbz#1065807 wizards should find the right wizards subdir

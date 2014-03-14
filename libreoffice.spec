@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -291,6 +291,7 @@ Patch28: 0001-rhbz-1072607-hopefully-fix-crash-in-SvxRuler-MouseMo.patch
 Patch29: 0001-rhbz-1043551-sw-avoid-division-by-0-in-Text-Grid-pai.patch
 Patch30: 0001-writerfilter-salvage-a-field-parameter-parsing-train.patch
 Patch31: 0001-RTF-import-fix-spurious-page-breaks-at-doc-end-relat.patch
+Patch32: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2185,6 +2186,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 14 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-7
+- Related: rhbz#1076264 intermittent a11y crash in calc
+
 * Mon Mar 10 2014 Michael Stahl <mstahl@redhat.com> - 1:4.2.2.1-6
 - Resolves: rhbz#988516: DOCX import: fix context stack when importing header
 - Resolves: rhbz#1072553: Fix deselection problems of template view

@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -282,6 +282,7 @@ Patch41: 0001-fdo-65655-fix-for-Different_Odd_And_Even_Pages-flag-.patch
 Patch42: 0001-rhbz-1065629-RTF-import-don-t-drop-nested-cells-if-n.patch
 Patch43: 0002-rhbz-1065629-RTF-import-re-implement-nested-tables.patch
 Patch44: 0003-writerfilter-salvage-a-field-parameter-parsing-train.patch
+Patch45: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2154,6 +2155,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Mar 15 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-7
+- Related: rhbz#1076264 intermittent a11y crash in calc
+
 * Mon Mar 10 2014 Michael Stahl <mstahl@redhat.com> - 1:4.1.5.3-6
 - Resolves: rhbz#988516: DOCX import: fix context stack when importing header
 - Resolves: fdo#65655: Different_Odd_And_Even_Pages flag ignored

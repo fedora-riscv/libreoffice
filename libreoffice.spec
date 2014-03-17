@@ -291,6 +291,8 @@ Patch29: 0001-rhbz-1043551-sw-avoid-division-by-0-in-Text-Grid-pai.patch
 Patch30: 0001-writerfilter-salvage-a-field-parameter-parsing-train.patch
 Patch31: 0001-RTF-import-fix-spurious-page-breaks-at-doc-end-relat.patch
 Patch32: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
+Patch33: 0001-fdo-71784-Invalid-Sections-getting-added-to-the-docu.patch
+Patch34: 0001-rhbz-1075124-writerfilter-fix-tables-with-negative-l.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2185,6 +2187,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 14 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-8-UNBUILT
+- Resolves: rhbz#1074205 crash on exporting DOCX file
+- Resolves: rhbz#1075124 writerfilter: fix tables with negative left margin
+
 * Fri Mar 14 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-7
 - Related: rhbz#1076264 intermittent a11y crash in calc
 

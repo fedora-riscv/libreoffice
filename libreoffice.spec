@@ -1057,17 +1057,11 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-# TODO: check this
-# these are horribly incomplete--empty translations and copied english
-# strings with spattering of translated strings
-rm -rf translations/source/{gu,he,hr}/helpcontent2
-
 %if 0%{?rhel} && 0%{?rhel} < 7
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
-%endif
-
 git commit -q -a -m 'fix translations'
+%endif
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`

@@ -1060,6 +1060,7 @@ git am %{patches}
 %if 0%{?rhel} && 0%{?rhel} < 7
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
+git add -A
 git commit -q -a -m 'fix translations'
 %endif
 

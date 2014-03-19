@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.2
+%define libo_version 4.2.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -273,25 +273,16 @@ Patch10: libreoffice-rhel6glib.patch
 Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
-Patch15: 0001-disable-firebird-unit-test.patch
-Patch16: 0001-never-run-autogen.sh.patch
-Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
-Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
-Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-Patch21: 0001-fdo-75540-setProcessServiceFactory-must-be-called-be.patch
-Patch22: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch23: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
-Patch24: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
-Patch25: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch26: 0002-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
-Patch27: 0001-fdo-74787-rhbz-1072553-Fix-deselection-problems-of-t.patch
-Patch28: 0001-rhbz-1072607-hopefully-fix-crash-in-SvxRuler-MouseMo.patch
-Patch29: 0001-rhbz-1043551-sw-avoid-division-by-0-in-Text-Grid-pai.patch
-Patch30: 0001-writerfilter-salvage-a-field-parameter-parsing-train.patch
-Patch31: 0001-RTF-import-fix-spurious-page-breaks-at-doc-end-relat.patch
-Patch32: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
+Patch14: 0001-disable-firebird-unit-test.patch
+Patch15: 0001-never-run-autogen.sh.patch
+Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
+Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
+Patch18: 0001-explictly-list-common-lang-independant-template-dir.patch
+Patch19: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
+Patch20: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
+Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
+Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
+Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2186,6 +2177,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 17 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.1-1
+- update to 4.2.3 rc1
+
 * Fri Mar 14 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-7
 - Related: rhbz#1076264 intermittent a11y crash in calc
 

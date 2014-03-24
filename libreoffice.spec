@@ -2109,7 +2109,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
-%{baseinstdir}/share/registry/postgresqlsdbc.xcd
+%{baseinstdir}/share/registry/postgresql.xcd
 %endif
 
 %files ure

@@ -1,0 +1,26 @@
+From 88c2785c8fd4ec9ad9c4b318b91d1835cc04cd26 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 25 Mar 2014 12:12:37 +0000
+Subject: [PATCH] Resolves: rhbz#1077780 crash on loading .docx
+
+Change-Id: I92670b9c46a2c745ba47c6dcc1b4dd672942cf59
+---
+ writerfilter/source/dmapper/DomainMapper_Impl.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/writerfilter/source/dmapper/DomainMapper_Impl.cxx b/writerfilter/source/dmapper/DomainMapper_Impl.cxx
+index aa0896a..79c1847 100644
+--- a/writerfilter/source/dmapper/DomainMapper_Impl.cxx
++++ b/writerfilter/source/dmapper/DomainMapper_Impl.cxx
+@@ -636,6 +636,8 @@ void lcl_MoveBorderPropertiesToFrame(uno::Sequence<beans::PropertyValue>& rFrame
+ {
+     try
+     {
++        if (!xStartTextRange.is())   //rhbz#1077780
++            return;
+         uno::Reference<text::XTextCursor> xRangeCursor = xStartTextRange->getText()->createTextCursorByRange( xStartTextRange );
+         xRangeCursor->gotoRange( xEndTextRange, true );
+ 
+-- 
+1.8.5.3
+

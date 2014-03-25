@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -283,6 +283,7 @@ Patch20: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
+Patch24: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2172,6 +2173,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.1-2
+- Resolves: rhbz#1077780 crash on loading a specific docx
+
 * Mon Mar 17 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.1-1
 - update to 4.2.3 rc1
 

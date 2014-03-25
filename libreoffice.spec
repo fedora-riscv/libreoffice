@@ -2191,7 +2191,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Mar 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-8
 - Resolves: rhbz#1074205 crash on exporting DOCX file
 - Resolves: rhbz#1075124 writerfilter: fix tables with negative left margin
-- Resolves: rhbz#1074205 crash on loading a specific .docx
+- Resolves: rhbz#1077780 crash on loading a specific .docx
 
 * Fri Mar 14 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-7
 - Related: rhbz#1076264 intermittent a11y crash in calc

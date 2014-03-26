@@ -913,10 +913,10 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l fr -n French -F -H -Y -M -A -T -X -O -W
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -w ga_IE
 %langpack -l gl -n Galician -F -H -Y -T -o gl_ES -V -w gl_ES
-%langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -w gu_IN
-%langpack -l he -n Hebrew -F -H -s ctl -o he_IL -V -w he_IL
+%langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -w gu_IN -T
+%langpack -l he -n Hebrew -F -H -s ctl -o he_IL -V -w he_IL -T
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN -v hi-IN -w hi_IN
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR
+%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR -T
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU -V -w hu_HU
 %langpack -l it -n Italian -F -H -Y -M -A -T -X -O -W
 %langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP -V -w ja_JP

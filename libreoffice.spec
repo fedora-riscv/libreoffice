@@ -284,6 +284,8 @@ Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 Patch24: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
+Patch25: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch26: 0001-Package-GeneratedPackage-fixup.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

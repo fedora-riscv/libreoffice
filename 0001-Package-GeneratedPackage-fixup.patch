@@ -1,0 +1,26 @@
+From c17e40a9b712142c268e0f57fe2e092350d2f2c0 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 25 Feb 2014 16:03:21 +0100
+Subject: [PATCH] Package -> GeneratedPackage fixup
+
+Change-Id: Ib6e7a456b2f39c47da44552184669005d18d4fa4
+---
+ odk/CustomTarget_check.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/odk/CustomTarget_check.mk b/odk/CustomTarget_check.mk
+index 88af63a..175d44d 100644
+--- a/odk/CustomTarget_check.mk
++++ b/odk/CustomTarget_check.mk
+@@ -38,7 +38,7 @@ $(call gb_CustomTarget_get_workdir,odk/check)/checkbin : \
+ 		) \
+ 		$(call gb_Package_get_target,odk_docs) \
+ 		$(call gb_Package_get_target,odk_html) \
+-		$(if $(ENABLE_JAVA),$(call gb_Package_get_target,odk_javadoc)) \
++		$(if $(ENABLE_JAVA),$(call gb_GeneratedPackage_get_target,odk_javadoc)) \
+ 		$(call gb_Package_get_target,odk_lib) \
+ 		$(call gb_Package_get_target,odk_settings) \
+ 		$(call gb_Package_get_target,odk_settings_generated) \
+-- 
+1.9.0
+

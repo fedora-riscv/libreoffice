@@ -121,108 +121,108 @@ BuildRequires: perl(Digest::MD5)
 BuildRequires: zip
 
 # libs / headers
-BuildRequires: GConf2-devel
+BuildRequires: pkgconfig(gconf-2.0)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: bluez-libs-devel
+BuildRequires: pkgconfig(bluez)
 %else
 %ifnarch s390 s390x
-BuildRequires: bluez-libs-devel
+BuildRequires: pkgconfig(bluez)
 %endif
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: boost-devel
-BuildRequires: clucene-core-devel
+BuildRequires: pkgconfig(libclucene-core)
 %endif
-BuildRequires: cppunit-devel
+BuildRequires: pkgconfig(cppunit)
 BuildRequires: cups-devel
-BuildRequires: dbus-glib-devel
-BuildRequires: evolution-data-server-devel
-BuildRequires: expat-devel
+BuildRequires: pkgconfig(dbus-glib-1)
+BuildRequires: pkgconfig(evolution-data-server-1.2)
+BuildRequires: pkgconfig(expat)
 %if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 %endif
 BuildRequires: fontpackages-devel
-BuildRequires: freetype-devel
+BuildRequires: pkgconfig(freetype2)
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
 BuildRequires: gstreamer-plugins-base-devel
 %else
-BuildRequires: graphite2-devel
-BuildRequires: gstreamer1-devel
-BuildRequires: gstreamer1-plugins-base-devel
-BuildRequires: harfbuzz-devel
+BuildRequires: pkgconfig(graphite2)
+BuildRequires: pkgconfig(gstreamer-1.0)
+BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
+BuildRequires: pkgconfig(harfbuzz)
 %endif
-BuildRequires: gtk2-devel
-BuildRequires: hunspell-devel
+BuildRequires: pkgconfig(gtk+-2.0)
+BuildRequires: pkgconfig(hunspell)
 BuildRequires: hyphen-devel
 %if 0%{?fedora}
 BuildRequires: kdelibs4-devel
 %endif
-BuildRequires: libICE-devel
-BuildRequires: libXext-devel
-BuildRequires: libXinerama-devel
-BuildRequires: libXt-devel
+BuildRequires: pkgconfig(ice)
+BuildRequires: pkgconfig(xext)
+BuildRequires: pkgconfig(xinerama)
+BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libcdr-devel
+BuildRequires: pkgconfig(libcdr-0.0)
 %endif
 %if 0%{?fedora}
-BuildRequires: libabw-devel
-BuildRequires: libcmis-devel >= 0.3.0
-BuildRequires: libe-book-devel
-BuildRequires: libeot-devel
-BuildRequires: libetonyek-devel
-BuildRequires: libfreehand-devel
-BuildRequires: libmwaw-devel
-BuildRequires: libodfgen-devel
-BuildRequires: mdds-devel
+BuildRequires: pkgconfig(libabw-0.0)
+BuildRequires: pkgconfig(libcmis-0.4)
+BuildRequires: pkgconfig(libe-book-0.0)
+BuildRequires: pkgconfig(libeot)
+BuildRequires: pkgconfig(libetonyek-0.0)
+BuildRequires: pkgconfig(libfreehand-0.0)
+BuildRequires: pkgconfig(libmwaw-0.2)
+BuildRequires: pkgconfig(libodfgen-0.0)
+BuildRequires: pkgconfig(mdds)
 %endif
-BuildRequires: libcurl-devel
+BuildRequires: pkgconfig(libcurl)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libexttextcat-devel
+BuildRequires: pkgconfig(libexttextcat)
 %endif
 BuildRequires: libicu-devel
-BuildRequires: libidn-devel
+BuildRequires: pkgconfig(libidn)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: liblangtag-devel
-BuildRequires: libmspub-devel
-BuildRequires: liborcus-devel
-BuildRequires: libvisio-devel
-BuildRequires: libwpd-devel
-BuildRequires: libwpg-devel
-BuildRequires: libwps-devel
+BuildRequires: pkgconfig(liblangtag)
+BuildRequires: pkgconfig(libmspub-0.0)
+BuildRequires: pkgconfig(liborcus-0.6)
+BuildRequires: pkgconfig(libvisio-0.0)
+BuildRequires: pkgconfig(libwpd-0.9)
+BuildRequires: pkgconfig(libwpg-0.2)
+BuildRequires: pkgconfig(libwps-0.2)
 %else
 BuildRequires: libjpeg-devel
 %endif
-BuildRequires: libxml2-devel
-BuildRequires: libxslt-devel
+BuildRequires: pkgconfig(libxml-2.0)
+BuildRequires: pkgconfig(libxslt)
 BuildRequires: lpsolve-devel
-BuildRequires: mesa-libGLU-devel
+BuildRequires: pkgconfig(glu)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: mythes-devel
+BuildRequires: pkgconfig(mythes)
 %endif
-BuildRequires: neon-devel
-BuildRequires: nss-devel
+BuildRequires: pkgconfig(neon)
+BuildRequires: pkgconfig(nss)
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: poppler-cpp-devel
+BuildRequires: pkgconfig(poppler-cpp)
 %endif
-BuildRequires: poppler-devel
+BuildRequires: pkgconfig(poppler)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
 %if 0%{libo_python3}
-BuildRequires: python3-devel
+BuildRequires: pkgconfig(python3)
 %else
-BuildRequires: python-devel
+BuildRequires: pkgconfig(python)
 %endif
-BuildRequires: redland-devel
-BuildRequires: sane-backends-devel
+BuildRequires: pkgconfig(redland)
+BuildRequires: pkgconfig(sane-backends)
 BuildRequires: unixODBC-devel
 BuildRequires: vigra-devel
-BuildRequires: zlib-devel
+BuildRequires: pkgconfig(zlib)
 
 # java stuff
 BuildRequires: ant

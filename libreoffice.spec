@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -286,6 +286,7 @@ Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 Patch24: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
 Patch25: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
 Patch26: 0001-Package-GeneratedPackage-fixup.patch
+Patch27: 0001-rhbz-1080196-Delete-the-destination-first-then-paste.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2175,6 +2176,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 31 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.2-2
+- Resolves: rhbz#1080196 mdds/multi_type_vector_itr.hpp update_node():
+  soffice.bin killed by SIGSEGV
+
 * Wed Mar 26 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.2-1
 - update to 4.2.3 rc2
 

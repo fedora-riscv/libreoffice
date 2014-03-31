@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.2
+%define libo_version 4.2.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -120,108 +120,108 @@ BuildRequires: perl(Digest::MD5)
 BuildRequires: zip
 
 # libs / headers
-BuildRequires: GConf2-devel
+BuildRequires: pkgconfig(gconf-2.0)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: bluez-libs-devel
+BuildRequires: pkgconfig(bluez)
 %else
 %ifnarch s390 s390x
-BuildRequires: bluez-libs-devel
+BuildRequires: pkgconfig(bluez)
 %endif
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: boost-devel
-BuildRequires: clucene-core-devel
+BuildRequires: pkgconfig(libclucene-core)
 %endif
-BuildRequires: cppunit-devel
+BuildRequires: pkgconfig(cppunit)
 BuildRequires: cups-devel
-BuildRequires: dbus-glib-devel
-BuildRequires: evolution-data-server-devel
-BuildRequires: expat-devel
+BuildRequires: pkgconfig(dbus-glib-1)
+BuildRequires: pkgconfig(evolution-data-server-1.2)
+BuildRequires: pkgconfig(expat)
 %if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 %endif
 BuildRequires: fontpackages-devel
-BuildRequires: freetype-devel
+BuildRequires: pkgconfig(freetype2)
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
 BuildRequires: gstreamer-plugins-base-devel
 %else
-BuildRequires: graphite2-devel
-BuildRequires: gstreamer1-devel
-BuildRequires: gstreamer1-plugins-base-devel
-BuildRequires: harfbuzz-devel
+BuildRequires: pkgconfig(graphite2)
+BuildRequires: pkgconfig(gstreamer-1.0)
+BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
+BuildRequires: pkgconfig(harfbuzz)
 %endif
-BuildRequires: gtk2-devel
-BuildRequires: hunspell-devel
+BuildRequires: pkgconfig(gtk+-2.0)
+BuildRequires: pkgconfig(hunspell)
 BuildRequires: hyphen-devel
 %if 0%{?fedora}
 BuildRequires: kdelibs4-devel
 %endif
-BuildRequires: libICE-devel
-BuildRequires: libXext-devel
-BuildRequires: libXinerama-devel
-BuildRequires: libXt-devel
+BuildRequires: pkgconfig(ice)
+BuildRequires: pkgconfig(xext)
+BuildRequires: pkgconfig(xinerama)
+BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libcdr-devel
+BuildRequires: pkgconfig(libcdr-0.0)
 %endif
 %if 0%{?fedora}
-BuildRequires: libabw-devel
-BuildRequires: libcmis-devel >= 0.3.0
-BuildRequires: libe-book-devel
-BuildRequires: libeot-devel
-BuildRequires: libetonyek-devel
-BuildRequires: libfreehand-devel
-BuildRequires: libmwaw-devel
-BuildRequires: libodfgen-devel
-BuildRequires: mdds-devel
+BuildRequires: pkgconfig(libabw-0.0)
+BuildRequires: pkgconfig(libcmis-0.4)
+BuildRequires: pkgconfig(libe-book-0.0)
+BuildRequires: pkgconfig(libeot)
+BuildRequires: pkgconfig(libetonyek-0.0)
+BuildRequires: pkgconfig(libfreehand-0.0)
+BuildRequires: pkgconfig(libmwaw-0.2)
+BuildRequires: pkgconfig(libodfgen-0.0)
+BuildRequires: pkgconfig(mdds)
 %endif
-BuildRequires: libcurl-devel
+BuildRequires: pkgconfig(libcurl)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libexttextcat-devel
+BuildRequires: pkgconfig(libexttextcat)
 %endif
 BuildRequires: libicu-devel
-BuildRequires: libidn-devel
+BuildRequires: pkgconfig(libidn)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: liblangtag-devel
-BuildRequires: libmspub-devel
-BuildRequires: liborcus-devel
-BuildRequires: libvisio-devel
-BuildRequires: libwpd-devel
-BuildRequires: libwpg-devel
-BuildRequires: libwps-devel
+BuildRequires: pkgconfig(liblangtag)
+BuildRequires: pkgconfig(libmspub-0.0)
+BuildRequires: pkgconfig(liborcus-0.6)
+BuildRequires: pkgconfig(libvisio-0.0)
+BuildRequires: pkgconfig(libwpd-0.9)
+BuildRequires: pkgconfig(libwpg-0.2)
+BuildRequires: pkgconfig(libwps-0.2)
 %else
 BuildRequires: libjpeg-devel
 %endif
-BuildRequires: libxml2-devel
-BuildRequires: libxslt-devel
+BuildRequires: pkgconfig(libxml-2.0)
+BuildRequires: pkgconfig(libxslt)
 BuildRequires: lpsolve-devel
-BuildRequires: mesa-libGLU-devel
+BuildRequires: pkgconfig(glu)
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: mythes-devel
+BuildRequires: pkgconfig(mythes)
 %endif
-BuildRequires: neon-devel
-BuildRequires: nss-devel
+BuildRequires: pkgconfig(neon)
+BuildRequires: pkgconfig(nss)
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: poppler-cpp-devel
+BuildRequires: pkgconfig(poppler-cpp)
 %endif
-BuildRequires: poppler-devel
+BuildRequires: pkgconfig(poppler)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: postgresql-devel
 %endif
 %if 0%{libo_python3}
-BuildRequires: python3-devel
+BuildRequires: pkgconfig(python3)
 %else
-BuildRequires: python-devel
+BuildRequires: pkgconfig(python)
 %endif
-BuildRequires: redland-devel
-BuildRequires: sane-backends-devel
+BuildRequires: pkgconfig(redland)
+BuildRequires: pkgconfig(sane-backends)
 BuildRequires: unixODBC-devel
 BuildRequires: vigra-devel
-BuildRequires: zlib-devel
+BuildRequires: pkgconfig(zlib)
 
 # java stuff
 BuildRequires: ant
@@ -272,28 +272,20 @@ Patch10: libreoffice-rhel6glib.patch
 Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch14: 0001-Resolves-rhbz-1038189-refresh-printer-list-when-prin.patch
-Patch15: 0001-disable-firebird-unit-test.patch
-Patch16: 0001-never-run-autogen.sh.patch
-Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
-Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch19: 0001-explictly-list-common-lang-independant-template-dir.patch
-Patch20: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-Patch21: 0001-fdo-75540-setProcessServiceFactory-must-be-called-be.patch
-Patch22: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch23: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
-Patch24: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
-Patch25: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch26: 0002-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
-Patch27: 0001-fdo-74787-rhbz-1072553-Fix-deselection-problems-of-t.patch
-Patch28: 0001-rhbz-1072607-hopefully-fix-crash-in-SvxRuler-MouseMo.patch
-Patch29: 0001-rhbz-1043551-sw-avoid-division-by-0-in-Text-Grid-pai.patch
-Patch30: 0001-writerfilter-salvage-a-field-parameter-parsing-train.patch
-Patch31: 0001-RTF-import-fix-spurious-page-breaks-at-doc-end-relat.patch
-Patch32: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
-Patch33: 0001-fdo-71784-Invalid-Sections-getting-added-to-the-docu.patch
-Patch34: 0001-rhbz-1075124-writerfilter-fix-tables-with-negative-l.patch
-Patch35: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
+Patch14: 0001-disable-firebird-unit-test.patch
+Patch15: 0001-never-run-autogen.sh.patch
+Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
+Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
+Patch18: 0001-explictly-list-common-lang-independant-template-dir.patch
+Patch19: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
+Patch20: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
+Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
+Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
+Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
+Patch24: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
+Patch25: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch26: 0001-Package-GeneratedPackage-fixup.patch
+Patch27: 0001-rhbz-1080196-Delete-the-destination-first-then-paste.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -923,10 +915,10 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l fr -n French -F -H -Y -M -A -T -X -O -W
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -w ga_IE
 %langpack -l gl -n Galician -F -H -Y -T -o gl_ES -V -w gl_ES
-%langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -w gu_IN
-%langpack -l he -n Hebrew -F -H -s ctl -o he_IL -V -w he_IL
+%langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -w gu_IN -T
+%langpack -l he -n Hebrew -F -H -s ctl -o he_IL -V -w he_IL -T
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN -v hi-IN -w hi_IN
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR
+%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR -T
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU -V -w hu_HU
 %langpack -l it -n Italian -F -H -Y -M -A -T -X -O -W
 %langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP -V -w ja_JP
@@ -1068,17 +1060,12 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-# TODO: check this
-# these are horribly incomplete--empty translations and copied english
-# strings with spattering of translated strings
-rm -rf translations/source/{gu,he,hr}/helpcontent2
-
 %if 0%{?rhel} && 0%{?rhel} < 7
 cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
-%endif
-
+git add -A
 git commit -q -a -m 'fix translations'
+%endif
 
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
@@ -2125,7 +2112,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
-%{baseinstdir}/share/registry/postgresqlsdbc.xcd
+%{baseinstdir}/share/registry/postgresql.xcd
 %endif
 
 %files ure
@@ -2188,6 +2175,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 31 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.2-2
+- Resolves: rhbz#1080196 mdds/multi_type_vector_itr.hpp update_node():
+  soffice.bin killed by SIGSEGV
+
+* Wed Mar 26 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.2-1
+- update to 4.2.3 rc2
+
 * Tue Mar 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.2.1-8
 - Resolves: rhbz#1074205 crash on exporting DOCX file
 - Resolves: rhbz#1075124 writerfilter: fix tables with negative left margin

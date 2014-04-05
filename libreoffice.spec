@@ -146,6 +146,7 @@ BuildRequires: libXt-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libcdr-devel
 BuildRequires: libcmis-devel >= 0.3.0
+BuildRequires: pkgconfig(lcms2)
 %endif
 BuildRequires: libcurl-devel
 %if 0%{?fedora} || 0%{?rhel} >= 7

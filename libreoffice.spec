@@ -164,6 +164,7 @@ BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
+BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libcdr-0.0)
 %endif
 %if 0%{?fedora}

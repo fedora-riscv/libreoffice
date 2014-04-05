@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -163,6 +163,7 @@ BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
+BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libcdr-0.0)
 %endif
 %if 0%{?fedora}
@@ -2176,6 +2177,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Apr 05 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-1
+- update to 4.2.3 rc3
+
 * Tue Apr 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.2-3
 - Related: rhbz#1075951 abrt crash in MSWordExportBase
 

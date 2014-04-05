@@ -288,6 +288,7 @@ Patch25: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
 Patch26: 0001-Package-GeneratedPackage-fixup.patch
 Patch27: 0001-rhbz-1080196-Delete-the-destination-first-then-paste.patch
 Patch28: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
+Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

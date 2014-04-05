@@ -1,0 +1,114 @@
+From 84770f1fbfd456f70c5c48e158b268a773ca9c45 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 4 Apr 2014 13:52:01 +0100
+Subject: [PATCH] drop OnlyShowIn from .desktop files
+
+<mclasen> I see libreoffice installs desktop actions with OnlyShowIn=Unity
+<mclasen> I believe OnlyShowIn for actions was kicked out when they got merged in the spec
+<caolan>  mclasen: so drop the "OnlyShowIn" lines ?
+<mclasen> would be my recommendation
+
+Change-Id: I5d119d361be197bac3fc20c08b4e43f11f4b0c0c
+---
+ sysui/desktop/menus/base.desktop        | 1 -
+ sysui/desktop/menus/calc.desktop        | 1 -
+ sysui/desktop/menus/draw.desktop        | 1 -
+ sysui/desktop/menus/impress.desktop     | 1 -
+ sysui/desktop/menus/math.desktop        | 1 -
+ sysui/desktop/menus/startcenter.desktop | 6 ------
+ sysui/desktop/menus/writer.desktop      | 1 -
+ 7 files changed, 12 deletions(-)
+
+diff --git a/sysui/desktop/menus/base.desktop b/sysui/desktop/menus/base.desktop
+index 62626d4..26f1c6a 100755
+--- a/sysui/desktop/menus/base.desktop
++++ b/sysui/desktop/menus/base.desktop
+@@ -37,4 +37,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Database
+ Exec=${UNIXBASISROOTNAME} --base
+-OnlyShowIn=Unity;
+diff --git a/sysui/desktop/menus/calc.desktop b/sysui/desktop/menus/calc.desktop
+index e50de65..fc5e241 100755
+--- a/sysui/desktop/menus/calc.desktop
++++ b/sysui/desktop/menus/calc.desktop
+@@ -37,4 +37,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Spreadsheet
+ Exec=${UNIXBASISROOTNAME} --calc
+-OnlyShowIn=Unity;
+diff --git a/sysui/desktop/menus/draw.desktop b/sysui/desktop/menus/draw.desktop
+index a807fe0..b5d58ce 100755
+--- a/sysui/desktop/menus/draw.desktop
++++ b/sysui/desktop/menus/draw.desktop
+@@ -37,4 +37,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Drawing
+ Exec=${UNIXBASISROOTNAME} --draw
+-OnlyShowIn=Unity;
+diff --git a/sysui/desktop/menus/impress.desktop b/sysui/desktop/menus/impress.desktop
+index fda44e4..c1f6231 100755
+--- a/sysui/desktop/menus/impress.desktop
++++ b/sysui/desktop/menus/impress.desktop
+@@ -37,4 +37,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Presentation
+ Exec=${UNIXBASISROOTNAME} --impress
+-OnlyShowIn=Unity;
+diff --git a/sysui/desktop/menus/math.desktop b/sysui/desktop/menus/math.desktop
+index 57b1734..b6981f5 100755
+--- a/sysui/desktop/menus/math.desktop
++++ b/sysui/desktop/menus/math.desktop
+@@ -38,4 +38,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Formula
+ Exec=${UNIXBASISROOTNAME} --math
+-OnlyShowIn=Unity;
+diff --git a/sysui/desktop/menus/startcenter.desktop b/sysui/desktop/menus/startcenter.desktop
+index dabe887..3858c89 100755
+--- a/sysui/desktop/menus/startcenter.desktop
++++ b/sysui/desktop/menus/startcenter.desktop
+@@ -38,31 +38,25 @@ Actions=Writer;Calc;Impress;Draw;Base;Math;
+ [Desktop Action Writer]
+ Name=Text Document
+ Exec=${UNIXBASISROOTNAME} --writer
+-OnlyShowIn=Unity;
+ 
+ [Desktop Action Calc]
+ Name=Spreadsheet
+ Exec=${UNIXBASISROOTNAME} --calc
+-OnlyShowIn=Unity;
+ 
+ [Desktop Action Impress]
+ Name=Presentation
+ Exec=${UNIXBASISROOTNAME} --impress
+-OnlyShowIn=Unity;
+ 
+ [Desktop Action Draw]
+ Name=Drawing
+ Exec=${UNIXBASISROOTNAME} --draw
+-OnlyShowIn=Unity;
+ 
+ [Desktop Action Base]
+ Name=Database
+ Exec=${UNIXBASISROOTNAME} --base
+-OnlyShowIn=Unity;
+ 
+ [Desktop Action Math]
+ Name=Formula
+ Exec=${UNIXBASISROOTNAME} --math
+-OnlyShowIn=Unity;
+ 
+ ##End of actions menu
+diff --git a/sysui/desktop/menus/writer.desktop b/sysui/desktop/menus/writer.desktop
+index e59187e..c4cea12 100755
+--- a/sysui/desktop/menus/writer.desktop
++++ b/sysui/desktop/menus/writer.desktop
+@@ -37,4 +37,3 @@ Actions=NewDocument;
+ [Desktop Action NewDocument]
+ Name=New Document
+ Exec=${UNIXBASISROOTNAME} --writer
+-OnlyShowIn=Unity;
+-- 
+1.9.0
+

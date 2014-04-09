@@ -217,7 +217,7 @@ BuildRequires: postgresql-devel
 %if 0%{libo_python3}
 BuildRequires: pkgconfig(python3)
 %else
-BuildRequires: pkgconfig(python)
+BuildRequires: python-devel
 %endif
 BuildRequires: pkgconfig(redland)
 BuildRequires: pkgconfig(sane-backends)

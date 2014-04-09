@@ -137,7 +137,7 @@ BuildRequires: pkgconfig(cppunit)
 BuildRequires: cups-devel
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
-BuildRequires: pkgconfig(expat)
+BuildRequires: expat-devel
 %if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed

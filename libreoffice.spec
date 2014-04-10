@@ -297,6 +297,14 @@ Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
 
+# rhbz#1085420 do not let libreoffice packages provide internal libraries
+%if 0%{?rhel} && 0%{?rhel} < 7
+%filter_provides_in %{baseinstdir}/program
+%filter_setup
+%else
+%global __provides_exclude_from ^%{baseinstdir}/program/.*\\.so$
+%endif
+
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
 It includes the key desktop applications, such as a word processor,

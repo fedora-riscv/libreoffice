@@ -1,4 +1,4 @@
-From 71f2aff7a56cef4e133abad3c2e447c76c5ee1fe Mon Sep 17 00:00:00 2001
+From 083613eb5521f19b900a1210fbc1dafcc489dcb9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Lubo=C5=A1=20Lu=C5=88=C3=A1k?= <l.lunak@collabora.com>
 Date: Tue, 25 Mar 2014 12:20:16 +0100
 Subject: [PATCH] prevent KDE/Qt from interfering with the session manager
@@ -16,10 +16,10 @@ Change-Id: Iebe20d4cb5403e5fea8bd5d8c1f69b62d1c2907b
  2 files changed, 16 insertions(+), 9 deletions(-)
 
 diff --git a/vcl/unx/kde4/KDEXLib.cxx b/vcl/unx/kde4/KDEXLib.cxx
-index 820d39a..e4900a7 100644
+index 4a9b70b..2dfae32 100644
 --- a/vcl/unx/kde4/KDEXLib.cxx
 +++ b/vcl/unx/kde4/KDEXLib.cxx
-@@ -166,8 +166,23 @@ void KDEXLib::Init()
+@@ -175,8 +175,23 @@ void KDEXLib::Init()
  
      KCmdLineArgs::init( m_nFakeCmdLineArgs, m_pAppCmdLineArgs, kAboutData );
  
@@ -42,8 +42,8 @@ index 820d39a..e4900a7 100644
 +    }
 +
      KApplication::setQuitOnLastWindowClosed(false);
+     setupEventLoop();
  
- #if KDE_HAVE_GLIB
 diff --git a/vcl/unx/kde4/VCLKDEApplication.hxx b/vcl/unx/kde4/VCLKDEApplication.hxx
 index 412ee34..4ce0b2c 100644
 --- a/vcl/unx/kde4/VCLKDEApplication.hxx

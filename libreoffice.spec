@@ -337,9 +337,7 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
-%if 0%{?fedora} || 0%{?rhel} >= 7
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
-%endif
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en

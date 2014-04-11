@@ -1223,7 +1223,6 @@ done
 %endif
 mv $WORKDIR/installation/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 
 # postprocessing and tweaks
 
@@ -1464,15 +1463,18 @@ export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
 
-#%check
-#unset WITH_LANG
-## work around flawed accessibility check
-#export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-#%if 0%{?rhel} && 0%{?rhel} < 7
-#timeout 2h make smoketest.subsequentcheck
-#%else
-#timeout -k 2m 2h make smoketest.subsequentcheck
-#%endif
+%check
+unset WITH_LANG
+# work around flawed accessibility check
+export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
+export OOO_TEST_SOFFICE=path:$RPM_BUILD_ROOT/%{baseinstdir}/program/soffice
+%if 0%{?rhel} && 0%{?rhel} < 7
+timeout 2h make smoketest.subsequentcheck
+%else
+timeout -k 2m 2h make smoketest.subsequentcheck
+%endif
+# we don't need this anymore
+rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 
 %files
 

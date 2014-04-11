@@ -291,6 +291,7 @@ Patch27: 0001-rhbz-1080196-Delete-the-destination-first-then-paste.patch
 Patch28: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
 Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 Patch30: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
+Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2187,7 +2188,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Fri Apr 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-2
-- Related: rhbz#1081176 don't jump to cursor pos when we don't want to
+- Resolves: rhbz#1081176 don't jump to cursor pos when we don't want to
+- Related: rhbz#1085916 kde startup woes
 
 * Sat Apr 05 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-1
 - update to 4.2.3 rc3

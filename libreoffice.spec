@@ -136,7 +136,7 @@ BuildRequires: pkgconfig(cppunit)
 BuildRequires: cups-devel
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
-BuildRequires: pkgconfig(expat)
+BuildRequires: expat-devel
 %if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
@@ -216,7 +216,7 @@ BuildRequires: postgresql-devel
 %if 0%{libo_python3}
 BuildRequires: pkgconfig(python3)
 %else
-BuildRequires: pkgconfig(python)
+BuildRequires: python-devel
 %endif
 BuildRequires: pkgconfig(redland)
 BuildRequires: pkgconfig(sane-backends)
@@ -296,6 +296,14 @@ Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
 
+# rhbz#1085420 do not let libreoffice packages provide internal libraries
+%if 0%{?rhel} && 0%{?rhel} < 7
+%filter_provides_in %{baseinstdir}/program
+%filter_setup
+%else
+%global __provides_exclude_from ^%{baseinstdir}/program/.*\\.so$
+%endif
+
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
 It includes the key desktop applications, such as a word processor,
@@ -328,9 +336,7 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
-%if 0%{?fedora} || 0%{?rhel} >= 7
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
-%endif
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en

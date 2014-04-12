@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -1222,7 +1222,6 @@ done
 %endif
 mv $WORKDIR/installation/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
 chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 
 # postprocessing and tweaks
 
@@ -1463,15 +1462,18 @@ export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
 
-#%check
-#unset WITH_LANG
-## work around flawed accessibility check
-#export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-#%if 0%{?rhel} && 0%{?rhel} < 7
-#timeout 2h make smoketest.subsequentcheck
-#%else
-#timeout -k 2m 2h make smoketest.subsequentcheck
-#%endif
+%check
+unset WITH_LANG
+# work around flawed accessibility check
+export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
+export OOO_TEST_SOFFICE=path:$RPM_BUILD_ROOT/%{baseinstdir}/program/soffice
+%if 0%{?rhel} && 0%{?rhel} < 7
+timeout 2h make smoketest.subsequentcheck
+%else
+timeout -k 2m 2h make smoketest.subsequentcheck
+%endif
+# we don't need this anymore
+rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 
 %files
 
@@ -2186,6 +2188,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Apr 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-3
+- Related: rhbz#1081176 don't jump to cursor pos when we don't want to
+
 * Fri Apr 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-2
 - Resolves: rhbz#1081176 don't jump to cursor pos when we don't want to
 - Related: rhbz#1085916 kde startup woes

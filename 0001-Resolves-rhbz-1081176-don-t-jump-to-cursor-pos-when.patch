@@ -1,4 +1,4 @@
-From bd06f80114633be741e8db2d69565d191555a539 Mon Sep 17 00:00:00 2001
+From 903652fafacf5268aeac4a702d52de44a8388652 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 11 Apr 2014 14:45:39 +0100
 Subject: [PATCH] Resolves: rhbz#1081176: don't jump to cursor pos when...
@@ -11,14 +11,14 @@ old document
 Change-Id: I6e1a3c07b66ff6373345850d1449f17c1f0baa17
 (cherry picked from commit e12184393f0591b5c5d9218062cc0a4bced6d4e6)
 ---
- sw/source/core/doc/doc.cxx | 40 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+ sw/source/core/doc/doc.cxx | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
 diff --git a/sw/source/core/doc/doc.cxx b/sw/source/core/doc/doc.cxx
-index 6382d74..6b54528 100644
+index 6382d74..047b8b3 100644
 --- a/sw/source/core/doc/doc.cxx
 +++ b/sw/source/core/doc/doc.cxx
-@@ -1650,6 +1650,41 @@ void SwDoc::CalculatePagePairsForProspectPrinting(
+@@ -1650,6 +1650,40 @@ void SwDoc::CalculatePagePairsForProspectPrinting(
      // thus we are done here.
  }
  
@@ -26,7 +26,7 @@ index 6382d74..6b54528 100644
 +{
 +    class LockAllViews
 +    {
-+        std::stack<bool> m_aViewWasLocked;
++        std::vector<SwViewShell*> m_aViewWasUnLocked;
 +        SwViewShell* m_pViewShell;
 +    public:
 +        LockAllViews(SwViewShell *pViewShell)
@@ -37,22 +37,21 @@ index 6382d74..6b54528 100644
 +            SwViewShell *pSh = m_pViewShell;
 +            do
 +            {
-+                m_aViewWasLocked.push(pSh->IsViewLocked());
-+                pSh->LockView(true);
++                if (!pSh->IsViewLocked())
++                {
++                    m_aViewWasUnLocked.push_back(pSh);
++                    pSh->LockView(true);
++                }
 +                pSh = (SwViewShell*)pSh->GetNext();
 +            } while (pSh != m_pViewShell);
 +        }
 +        ~LockAllViews()
 +        {
-+            if (!m_pViewShell)
-+                return;
-+            SwViewShell *pSh = m_pViewShell;
-+            do
++            for (std::vector<SwViewShell*>::iterator aI = m_aViewWasUnLocked.begin(); aI != m_aViewWasUnLocked.end(); ++aI)
 +            {
-+                pSh->LockView(m_aViewWasLocked.top());
-+                m_aViewWasLocked.pop();
-+                pSh = (SwViewShell*)pSh->GetNext();
-+            } while (pSh != m_pViewShell);
++                SwViewShell *pSh = *aI;
++                pSh->LockView(false);
++            }
 +        }
 +    };
 +}
@@ -60,7 +59,7 @@ index 6382d74..6b54528 100644
  // returns true while there is more to do
  bool SwDoc::IncrementalDocStatCalculate(long nChars, bool bFields)
  {
-@@ -1720,7 +1755,7 @@ bool SwDoc::IncrementalDocStatCalculate(long nChars, bool bFields)
+@@ -1720,7 +1754,7 @@ bool SwDoc::IncrementalDocStatCalculate(long nChars, bool bFields)
      aStat[n++].Value <<= (sal_Int32)mpDocStat->nCharExcludingSpaces;
  
      // For e.g. autotext documents there is no pSwgInfo (#i79945)
@@ -69,7 +68,7 @@ index 6382d74..6b54528 100644
      if (pObjShell)
      {
          const uno::Reference<document::XDocumentPropertiesSupplier> xDPS(
-@@ -1730,6 +1765,9 @@ bool SwDoc::IncrementalDocStatCalculate(long nChars, bool bFields)
+@@ -1730,6 +1764,9 @@ bool SwDoc::IncrementalDocStatCalculate(long nChars, bool bFields)
          // #i96786#: do not set modified flag when updating statistics
          const bool bDocWasModified( IsModified() );
          const ModifyBlocker_Impl b(pObjShell);

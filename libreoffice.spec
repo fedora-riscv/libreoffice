@@ -292,6 +292,9 @@ Patch28: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
 Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 Patch30: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
 Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
+%if 0%{?rhel} && 0%{?rhel} == 7
+Patch32: 0001-fix-libetonyek-build.patch
+%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

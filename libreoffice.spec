@@ -302,6 +302,15 @@ Patch32: 0001-fix-libetonyek-build.patch
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
 
+# rhbz#1085420 make sure we do not provide bundled libraries
+%if %{?rhel} && 0%{?rhel} < 7
+# redland libs are already suffixed -> no need to filter them too
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\)\\.so.*$/d
+%filter_from_provides %{libo_bundled_libs_filter}
+%filter_from_requires %{libo_bundled_libs_filter}
+%filter_setup
+%endif
+
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
 It includes the key desktop applications, such as a word processor,

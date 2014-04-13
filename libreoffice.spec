@@ -303,12 +303,18 @@ Patch32: 0001-fix-libetonyek-build.patch
 %define fontname opensymbol
 
 # rhbz#1085420 make sure we do not provide bundled libraries
-%if %{?rhel} && 0%{?rhel} < 7
+%if %{?rhel}
+%if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
+%else
+%global libo_bundled_libs_filter ^libfbembed\\.so.*$
+%global __provides_exclude %{libo_bundled_libs_filter}
+%global __requires_exclude %{libo_bundled_libs_filter}
+%endif
 %endif
 
 %description

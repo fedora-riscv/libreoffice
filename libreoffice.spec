@@ -1092,10 +1092,6 @@ git commit -q -a -m 'fix translations'
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}
-#don't build localized helps which aren't translated
-POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
-#don't build localized helps which are poorly translated
-POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 

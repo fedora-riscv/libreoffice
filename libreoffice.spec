@@ -1065,6 +1065,11 @@ cp -r translations/source/en-GB translations/source/ur
 
 git commit -q -a -m 'fix translations'
 
+# Seeing .git dir makes some of the build tools change their behavior.
+# We do not want that. Note: it is still possible to use
+# git --git-dir=.git-rpm
+mv .git .git-rpm
+
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}

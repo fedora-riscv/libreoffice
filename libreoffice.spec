@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -1537,6 +1537,14 @@ mkdir -p $RPM_BUILD_ROOT/%{_datadir}/appdata
 cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/appdata
 %endif
 
+# install man pages
+install -m 0755 -d $RPM_BUILD_ROOT/%{_mandir}/man1
+install -m 0755 sysui/desktop/man/*.1 $RPM_BUILD_ROOT/%{_mandir}/man1
+for app in oobase oocalc oodraw ooffice ooimpress oomath ooviewdoc oowriter openoffice.org soffice; do
+    echo '.so man1/libreoffice.1' > $app.1
+    install -m 0755 $app.1 $RPM_BUILD_ROOT/%{_mandir}/man1
+done
+
 export DESTDIR=$RPM_BUILD_ROOT
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
@@ -1888,6 +1896,7 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/xslt/import/wordml
 %{baseinstdir}/program/liblnthlo.so
 %{_bindir}/unopkg
+%{_mandir}/man1/unopkg.1*
 #icons and mime
 %{_datadir}/icons/*/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
@@ -1973,6 +1982,11 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liblcms2.so.2
 %{baseinstdir}/share/fingerprint
 %endif
+%{_mandir}/man1/libreoffice.1*
+%{_mandir}/man1/openoffice.org.1*
+%{_mandir}/man1/soffice.1*
+%{_mandir}/man1/ooffice.1*
+%{_mandir}/man1/ooviewdoc.1*
 
 %post core
 update-mime-database %{_datadir}/mime &> /dev/null || :
@@ -2026,6 +2040,7 @@ done
 %{baseinstdir}/program/sbase
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
+%{_mandir}/man1/oobase.1*
 
 %post base
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2094,6 +2109,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/scalc
 %{_datadir}/applications/libreoffice-calc.desktop
 %{_bindir}/oocalc
+%{_mandir}/man1/oocalc.1*
 
 %post calc
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2108,6 +2124,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/sdraw
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
+%{_mandir}/man1/oodraw.1*
 
 %post draw
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2136,6 +2153,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/swriter
 %{_datadir}/applications/libreoffice-writer.desktop
 %{_bindir}/oowriter
+%{_mandir}/man1/oowriter.1*
 
 %post writer
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2160,6 +2178,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/simpress
 %{_datadir}/applications/libreoffice-impress.desktop
 %{_bindir}/ooimpress
+%{_mandir}/man1/ooimpress.1*
 
 %post impress
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2176,6 +2195,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/smath
 %{_datadir}/applications/libreoffice-math.desktop
 %{_bindir}/oomath
+%{_mandir}/man1/oomath.1*
 
 %post math
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2267,6 +2287,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-6
+- install man pages
+
 * Wed Apr 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-5
 - Resolves: fdo#36815 enable printing WYSIWYG sidewindow comments
 

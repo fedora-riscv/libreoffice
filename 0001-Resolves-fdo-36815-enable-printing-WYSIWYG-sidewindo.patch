@@ -1,0 +1,496 @@
+From fd3cf8a32c58ee1b0f9d676cfb393478cf9b1ba2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 15 Apr 2014 09:42:32 +0100
+Subject: [PATCH] Resolves: fdo#36815 enable printing WYSIWYG sidewindow
+ comments
+
+in order for that to happen the document has to be scaled down
+so that the comments outside the border of the sheet of paper
+can be brought inside the printable area
+
+Change-Id: Ifafb8eec10a4ea3ea0014097728888603e61e5a4
+---
+ sw/inc/PostItMgr.hxx                       |  3 ++
+ sw/inc/SidebarWin.hxx                      |  1 +
+ sw/inc/printdata.hxx                       |  1 +
+ sw/source/core/layout/paintfrm.cxx         |  2 +-
+ sw/source/core/view/printdata.cxx          |  7 ++--
+ sw/source/core/view/vprint.cxx             | 49 ++++++++++++++++++++++++--
+ sw/source/ui/config/optdlg.src             |  1 +
+ sw/source/ui/config/optpage.cxx            |  7 ++++
+ sw/source/ui/docvw/PostItMgr.cxx           | 16 +++++++++
+ sw/source/ui/docvw/SidebarTxtControl.cxx   | 40 ++++++++++++++++++++++
+ sw/source/ui/docvw/SidebarTxtControl.hxx   |  2 ++
+ sw/source/ui/docvw/SidebarWin.cxx          | 55 ++++++++++++++++++++++++++++++
+ sw/source/ui/inc/optpage.hxx               |  1 +
+ sw/uiconfig/swriter/ui/printoptionspage.ui | 23 +++++++++++--
+ 14 files changed, 200 insertions(+), 8 deletions(-)
+
+diff --git a/sw/inc/PostItMgr.hxx b/sw/inc/PostItMgr.hxx
+index 4c38d40..0ac0273 100644
+--- a/sw/inc/PostItMgr.hxx
++++ b/sw/inc/PostItMgr.hxx
+@@ -33,6 +33,7 @@
+ #include <SidebarWindowsTypes.hxx>
+ #include <svl/lstner.hxx>
+ 
++class OutputDevice;
+ class SwWrtShell;
+ class SwDoc;
+ class SwView;
+@@ -279,6 +280,8 @@ class SwPostItMgr: public SfxListener
+                                                 const sal_Int32 nIndex );
+             void GetAllSidebarWinForFrm( const SwFrm& rFrm,
+                                          std::vector< Window* >* pChildren );
++
++            void DrawNotesForPage(OutputDevice *pOutDev, sal_uInt32 nPage);
+ };
+ 
+ #endif
+diff --git a/sw/inc/SidebarWin.hxx b/sw/inc/SidebarWin.hxx
+index b3c4c82..5c8c527 100644
+--- a/sw/inc/SidebarWin.hxx
++++ b/sw/inc/SidebarWin.hxx
+@@ -163,6 +163,7 @@ class SwSidebarWin : public Window
+ 
+         void ChangeSidebarItem( SwSidebarItem& rSidebarItem );
+         virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > CreateAccessible();
++        virtual void    Draw(OutputDevice* pDev, const Point&, const Size&, sal_uLong);
+ 
+     protected:
+         virtual void    DataChanged( const DataChangedEvent& aEvent);
+diff --git a/sw/inc/printdata.hxx b/sw/inc/printdata.hxx
+index b688608..b2f49b7 100644
+--- a/sw/inc/printdata.hxx
++++ b/sw/inc/printdata.hxx
+@@ -307,6 +307,7 @@ public:
+ #define POSTITS_ONLY    1
+ #define POSTITS_ENDDOC  2
+ #define POSTITS_ENDPAGE 3
++#define POSTITS_INMARGINS 4
+ 
+ namespace sw {
+ 
+diff --git a/sw/source/core/layout/paintfrm.cxx b/sw/source/core/layout/paintfrm.cxx
+index 3e4ed87..2e88ef7 100644
+--- a/sw/source/core/layout/paintfrm.cxx
++++ b/sw/source/core/layout/paintfrm.cxx
+@@ -6213,7 +6213,7 @@ static void lcl_paintBitmapExToRect(OutputDevice *pOut, Point aPoint, BitmapEx&
+     SwAlignRect( aPageRect, _pViewShell );
+ 
+     const SwPostItMgr *pMgr = _pViewShell->GetPostItMgr();
+-    if (pMgr && pMgr->ShowNotes() && pMgr->HasNotes())  // do not show anything in print preview
++    if (pMgr /*&& pMgr->ShowNotes()*/ && pMgr->HasNotes())  // do not show anything in print preview
+     {
+         sal_Int32 nScrollerHeight = pMgr->GetSidebarScrollerHeight();
+         const Rectangle &aVisRect = _pViewShell->VisArea().SVRect();
+diff --git a/sw/source/core/view/printdata.cxx b/sw/source/core/view/printdata.cxx
+index 192ae5a..b2e2ef5 100644
+--- a/sw/source/core/view/printdata.cxx
++++ b/sw/source/core/view/printdata.cxx
+@@ -172,8 +172,8 @@ SwPrintUIOptions::SwPrintUIOptions(
+ {
+     ResStringArray aLocalizedStrings( SW_RES( STR_PRINTOPTUI ) );
+ 
+-    OSL_ENSURE( aLocalizedStrings.Count() >= 30, "resource incomplete" );
+-    if( aLocalizedStrings.Count() < 30 ) // bad resource ?
++    OSL_ENSURE( aLocalizedStrings.Count() >= 31, "resource incomplete" );
++    if( aLocalizedStrings.Count() < 31 ) // bad resource ?
+         return;
+ 
+     // printing HTML sources does not have any valid UI options.
+@@ -322,11 +322,12 @@ SwPrintUIOptions::SwPrintUIOptions(
+                                                            OUString(), aContentsOpt);
+     // create a list box for notes content
+     const sal_Int16 nPrintPostIts = rDefaultPrintData.GetPrintPostIts();
+-    aChoices.realloc( 4 );
++    aChoices.realloc( 5 );
+     aChoices[0] = aLocalizedStrings.GetString( 13 );
+     aChoices[1] = aLocalizedStrings.GetString( 14 );
+     aChoices[2] = aLocalizedStrings.GetString( 15 );
+     aChoices[3] = aLocalizedStrings.GetString( 16 );
++    aChoices[4] = aLocalizedStrings.GetString( 30 );
+     aHelpIds.realloc( 2 );
+     aHelpIds[0] = ".HelpID:vcl:PrintDialog:PrintAnnotationMode:FixedText";
+     aHelpIds[1] = ".HelpID:vcl:PrintDialog:PrintAnnotationMode:ListBox";
+diff --git a/sw/source/core/view/vprint.cxx b/sw/source/core/view/vprint.cxx
+index ff5ffb2..13c829b 100644
+--- a/sw/source/core/view/vprint.cxx
++++ b/sw/source/core/view/vprint.cxx
+@@ -69,6 +69,7 @@
+ #include <viscrs.hxx>
+ #include <fmtpdsc.hxx>
+ #include <globals.hrc>
++#include "PostItMgr.hxx"
+ 
+ using namespace ::com::sun::star;
+ 
+@@ -454,13 +455,33 @@ sal_Bool SwViewShell::PrintOrPDFExport(
+     // output device is now provided by a call from outside the Writer)
+     pOutDev->Push();
+ 
++    // fdo#36815 for comments in margins print to a metafile
++    // and then scale that metafile down so that the comments
++    // will fit on the real page, and replay that scaled
++    // output to the real outputdevice
++    GDIMetaFile *pOrigRecorder(NULL);
++    GDIMetaFile *pMetaFile(NULL);
++    sal_Int16 nPostItMode = rPrintData.GetPrintPostIts();
++    if (nPostItMode == POSTITS_INMARGINS)
++    {
++        //get and disable the existing recorder
++        pOrigRecorder = pOutDev->GetConnectMetaFile();
++        pOutDev->SetConnectMetaFile(NULL);
++        // turn off output to the device
++        pOutDev->EnableOutput(false);
++        // just record the rendering commands to the metafile
++        // instead
++        pMetaFile = new GDIMetaFile;
++        pMetaFile->Record(pOutDev);
++    }
++
+     // Print/PDF export for (multi-)selection has already generated a
+     // temporary document with the selected text.
+     // (see XRenderable implementation in unotxdoc.cxx)
+     // It is implemented this way because PDF export calls this Prt function
+     // once per page and we do not like to always have the temporary document
+     // to be created that often here.
+-    SwViewShell *pShell = new SwViewShell( *this, 0, pOutDev );
++    SwViewShell *pShell = new SwViewShell(*this, 0, pOutDev);
+ 
+     SdrView *pDrawView = pShell->GetDrawView();
+     if (pDrawView)
+@@ -502,13 +523,37 @@ sal_Bool SwViewShell::PrintOrPDFExport(
+ 
+         ::SetSwVisArea( pViewSh2, pStPage->Frm() );
+ 
+-        pShell->InitPrt( pOutDev );
++        pShell->InitPrt(pOutDev);
+ 
+         ::SetSwVisArea( pViewSh2, pStPage->Frm() );
+ 
+         pStPage->GetUpper()->Paint( pStPage->Frm(), &rPrintData );
+ 
+         SwPaintQueue::Repaint();
++
++        if (nPostItMode == POSTITS_INMARGINS)
++        {
++            SwPostItMgr *pPostItManager = pShell->GetPostItMgr();
++            pPostItManager->CalcRects();
++            pPostItManager->LayoutPostIts();
++            pPostItManager->DrawNotesForPage(pOutDev, nPage-1);
++
++            //Now scale the recorded page down so the notes
++            //will fit in the final page
++            pMetaFile->Stop();
++            pMetaFile->WindStart();
++            double fScale = 0.75;
++            pMetaFile->Scale( fScale, fScale );
++            pMetaFile->WindStart();
++
++            //Enable output the the device again
++            pOutDev->EnableOutput(true);
++            //Restore the original recorder
++            pOutDev->SetConnectMetaFile(pOrigRecorder);
++            //play back the scaled page
++            pMetaFile->Play(pOutDev);
++            delete pMetaFile;
++        }
+     }
+ 
+     delete pShell;
+diff --git a/sw/source/ui/config/optdlg.src b/sw/source/ui/config/optdlg.src
+index 748560a..b5ae69c 100644
+--- a/sw/source/ui/config/optdlg.src
++++ b/sw/source/ui/config/optdlg.src
+@@ -71,6 +71,7 @@ StringArray STR_PRINTOPTUI
+         < "~All pages"; >;
+         < "Pa~ges"; >;
+         < "~Selection"; >;
++        < "Place in margins"; >;
+     };
+ };
+ 
+diff --git a/sw/source/ui/config/optpage.cxx b/sw/source/ui/config/optpage.cxx
+index d7efd53..4549402 100644
+--- a/sw/source/ui/config/optpage.cxx
++++ b/sw/source/ui/config/optpage.cxx
+@@ -312,6 +312,7 @@ SwAddPrinterTabPage::SwAddPrinterTabPage(Window* pParent,
+     get(m_pOnlyRB, "only");
+     get(m_pEndRB, "end");
+     get(m_pEndPageRB, "endpage");
++    get(m_pInMarginsRB, "inmargins");
+     get(m_pPrintEmptyPagesCB, "blankpages");
+     get(m_pPaperFromSetupCB, "papertray");
+     get(m_pFaxLB, "fax");
+@@ -332,6 +333,7 @@ SwAddPrinterTabPage::SwAddPrinterTabPage(Window* pParent,
+     m_pPaperFromSetupCB->SetClickHdl( aLk );
+     m_pPrintEmptyPagesCB->SetClickHdl( aLk );
+     m_pEndPageRB->SetClickHdl( aLk );
++    m_pInMarginsRB->SetClickHdl( aLk );
+     m_pEndRB->SetClickHdl( aLk );
+     m_pOnlyRB->SetClickHdl( aLk );
+     m_pNoRB->SetClickHdl( aLk );
+@@ -398,6 +400,8 @@ sal_Bool    SwAddPrinterTabPage::FillItemSet( SfxItemSet& rCoreSet )
+                                                         POSTITS_ENDDOC;
+         if (m_pEndPageRB->IsChecked()) aAddPrinterAttr.nPrintPostIts =
+                                                         POSTITS_ENDPAGE;
++        if (m_pInMarginsRB->IsChecked()) aAddPrinterAttr.nPrintPostIts =
++                                                        POSTITS_INMARGINS;
+ 
+         OUString sFax = m_pFaxLB->GetSelectEntry();
+         aAddPrinterAttr.sFaxName = sNone == sFax ? aEmptyOUStr : sFax;
+@@ -431,6 +435,7 @@ void    SwAddPrinterTabPage::Reset( const SfxItemSet&  )
+         m_pOnlyRB->Check (pAddPrinterAttr->nPrintPostIts== POSTITS_ONLY ) ;
+         m_pEndRB->Check (pAddPrinterAttr->nPrintPostIts== POSTITS_ENDDOC ) ;
+         m_pEndPageRB->Check (pAddPrinterAttr->nPrintPostIts== POSTITS_ENDPAGE ) ;
++        m_pInMarginsRB->Check (pAddPrinterAttr->nPrintPostIts== POSTITS_INMARGINS ) ;
+         m_pFaxLB->SelectEntry( pAddPrinterAttr->sFaxName );
+     }
+     if (m_pProspectCB->IsChecked())
+@@ -440,6 +445,7 @@ void    SwAddPrinterTabPage::Reset( const SfxItemSet&  )
+         m_pOnlyRB->Enable( sal_False );
+         m_pEndRB->Enable( sal_False );
+         m_pEndPageRB->Enable( sal_False );
++        m_pInMarginsRB->Enable( sal_False );
+     }
+     else
+         m_pProspectCB_RTL->Enable( sal_False );
+@@ -461,6 +467,7 @@ IMPL_LINK_NOARG_INLINE_START(SwAddPrinterTabPage, AutoClickHdl)
+     m_pOnlyRB->Enable( !bIsProspect );
+     m_pEndRB->Enable( !bIsProspect );
+     m_pEndPageRB->Enable( !bIsProspect );
++    m_pInMarginsRB->Enable( !bIsProspect );
+     return 0;
+ }
+ IMPL_LINK_NOARG_INLINE_END(SwAddPrinterTabPage, AutoClickHdl)
+diff --git a/sw/source/ui/docvw/PostItMgr.cxx b/sw/source/ui/docvw/PostItMgr.cxx
+index 8ca06e7..e6b7cb6 100644
+--- a/sw/source/ui/docvw/PostItMgr.cxx
++++ b/sw/source/ui/docvw/PostItMgr.cxx
+@@ -807,6 +807,22 @@ bool SwPostItMgr::BorderOverPageBorder(unsigned long aPage) const
+         return false;
+ }
+ 
++void SwPostItMgr::DrawNotesForPage(OutputDevice *pOutDev, sal_uInt32 nPage)
++{
++    assert(nPage < mPages.size());
++    if (nPage >= mPages.size())
++        return;
++    for(SwSidebarItem_iterator i = mPages[nPage]->mList->begin(); i != mPages[nPage]->mList->end(); ++i)
++    {
++        SwSidebarWin* pPostIt = (*i)->pPostIt;
++        if (!pPostIt)
++            continue;
++        Point aPoint(mpEditWin->PixelToLogic(pPostIt->GetPosPixel()));
++        Size aSize(pPostIt->PixelToLogic(pPostIt->GetSizePixel()));
++        pPostIt->Draw(pOutDev, aPoint, aSize, 0);
++    }
++}
++
+ void SwPostItMgr::Scroll(const long lScroll,const unsigned long aPage)
+ {
+     OSL_ENSURE((lScroll % GetScrollSize() )==0,"SwPostItMgr::Scroll: scrolling by wrong value");
+diff --git a/sw/source/ui/docvw/SidebarTxtControl.cxx b/sw/source/ui/docvw/SidebarTxtControl.cxx
+index b1d3767..15af740 100644
+--- a/sw/source/ui/docvw/SidebarTxtControl.cxx
++++ b/sw/source/ui/docvw/SidebarTxtControl.cxx
+@@ -118,6 +118,46 @@ void SidebarTxtControl::RequestHelp(const HelpEvent &rEvt)
+     }
+ }
+ 
++void SidebarTxtControl::Draw(OutputDevice* pDev, const Point& rPt, const Size& rSz, sal_uLong)
++{
++    if ( !Application::GetSettings().GetStyleSettings().GetHighContrastMode() )
++    {
++        if ( mrSidebarWin.IsMouseOverSidebarWin() ||
++             HasFocus() )
++        {
++            pDev->DrawGradient( Rectangle( Point(0,0) + rPt, PixelToLogic(GetSizePixel()) ),
++                          Gradient( GradientStyle_LINEAR,
++                                    mrSidebarWin.ColorDark(),
++                                    mrSidebarWin.ColorDark() ) );
++        }
++        else
++        {
++            pDev->DrawGradient( Rectangle( Point(0,0) + rPt, PixelToLogic(GetSizePixel()) ),
++                          Gradient( GradientStyle_LINEAR,
++                                    mrSidebarWin.ColorLight(),
++                                    mrSidebarWin.ColorDark()));
++        }
++    }
++
++    if ( GetTextView() )
++    {
++        GetTextView()->GetOutliner()->Draw(pDev, Rectangle(rPt, rSz));
++    }
++
++    if ( mrSidebarWin.GetLayoutStatus()==SwPostItHelper::DELETED )
++    {
++        SetLineColor(mrSidebarWin.GetChangeColor());
++        pDev->DrawLine( PixelToLogic( GetPosPixel(), pDev->GetMapMode() ),
++                  PixelToLogic( GetPosPixel() +
++                                Point( GetSizePixel().Width(),
++                                       GetSizePixel().Height() ), pDev->GetMapMode() ) );
++        pDev->DrawLine( PixelToLogic( GetPosPixel() +
++                                Point( GetSizePixel().Width(),0), pDev->GetMapMode() ),
++                  PixelToLogic( GetPosPixel() +
++                                Point( 0, GetSizePixel().Height() ), pDev->GetMapMode() ) );
++    }
++}
++
+ void SidebarTxtControl::Paint( const Rectangle& rRect)
+ {
+     if ( !Application::GetSettings().GetStyleSettings().GetHighContrastMode() )
+diff --git a/sw/source/ui/docvw/SidebarTxtControl.hxx b/sw/source/ui/docvw/SidebarTxtControl.hxx
+index 37829b2..66e282f 100644
+--- a/sw/source/ui/docvw/SidebarTxtControl.hxx
++++ b/sw/source/ui/docvw/SidebarTxtControl.hxx
+@@ -66,6 +66,8 @@ class SidebarTxtControl : public Control
+         DECL_LINK( OnlineSpellCallback, SpellCallbackInfo*);
+ 
+         virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > CreateAccessible();
++        virtual void    Draw(OutputDevice* pDev, const Point&, const Size&, sal_uLong);
++
+ };
+ 
+ } } // end of namespace sw::sidebarwindows
+diff --git a/sw/source/ui/docvw/SidebarWin.cxx b/sw/source/ui/docvw/SidebarWin.cxx
+index 4cf128a..275b72e 100644
+--- a/sw/source/ui/docvw/SidebarWin.cxx
++++ b/sw/source/ui/docvw/SidebarWin.cxx
+@@ -64,10 +64,12 @@
+ #include <langhelper.hxx>
+ 
+ #include <sw_primitivetypes2d.hxx>
++#include <drawinglayer/processor2d/baseprocessor2d.hxx>
+ #include <drawinglayer/primitive2d/primitivetools2d.hxx>
+ #include <drawinglayer/primitive2d/fillgradientprimitive2d.hxx>
+ #include <drawinglayer/primitive2d/polypolygonprimitive2d.hxx>
+ #include <drawinglayer/primitive2d/polygonprimitive2d.hxx>
++#include <drawinglayer/processor2d/processorfromoutputdevice.hxx>
+ #include <drawinglayer/primitive2d/shadowprimitive2d.hxx>
+ 
+ namespace sw { namespace sidebarwindows {
+@@ -212,6 +214,59 @@ void SwSidebarWin::Paint( const Rectangle& rRect)
+     }
+ }
+ 
++void SwSidebarWin::Draw(OutputDevice* pDev, const Point& rPt, const Size& rSz, sal_uLong nInFlags)
++{
++    if (mpMetadataAuthor->IsVisible() )
++    {
++        //draw left over space
++        if ( Application::GetSettings().GetStyleSettings().GetHighContrastMode() )
++        {
++            pDev->SetFillColor(COL_BLACK);
++        }
++        else
++        {
++            pDev->SetFillColor(mColorDark);
++        }
++        pDev->SetLineColor();
++        pDev->DrawRect( Rectangle( rPt, rSz ) );
++    }
++
++    if (mpMetadataAuthor->IsVisible())
++    {
++        Font aOrigFont(mpMetadataAuthor->GetControlFont());
++        Size aSize(PixelToLogic(mpMetadataAuthor->GetSizePixel()));
++        Point aPos(PixelToLogic(mpMetadataAuthor->GetPosPixel()));
++        aPos += rPt;
++        Font aFont( mpMetadataAuthor->GetSettings().GetStyleSettings().GetFieldFont() );
++        mpMetadataAuthor->SetControlFont( aFont );
++        mpMetadataAuthor->Draw(pDev, aPos, aSize, nInFlags);
++        mpMetadataAuthor->SetControlFont( aOrigFont );
++    }
++
++    if (mpMetadataDate->IsVisible())
++    {
++        Font aOrigFont(mpMetadataDate->GetControlFont());
++        Size aSize(PixelToLogic(mpMetadataDate->GetSizePixel()));
++        Point aPos(PixelToLogic(mpMetadataDate->GetPosPixel()));
++        aPos += rPt;
++        Font aFont( mpMetadataDate->GetSettings().GetStyleSettings().GetFieldFont() );
++        mpMetadataDate->SetControlFont( aFont );
++        mpMetadataDate->Draw(pDev, aPos, aSize, nInFlags);
++        mpMetadataDate->SetControlFont( aOrigFont );
++    }
++
++    mpSidebarTxtControl->Draw(pDev, rPt, rSz, nInFlags);
++
++    const drawinglayer::primitive2d::Primitive2DSequence& rSequence = mpAnchor->getOverlayObjectPrimitive2DSequence();
++    const drawinglayer::geometry::ViewInformation2D aNewViewInfos;
++    drawinglayer::processor2d::BaseProcessor2D * pProcessor =
++        drawinglayer::processor2d::createBaseProcessor2DFromOutputDevice(
++            *pDev, aNewViewInfos );
++
++    pProcessor->process(rSequence);
++    delete pProcessor;
++}
++
+ void SwSidebarWin::SetPosSizePixelRect( long nX,
+                                         long nY,
+                                         long nWidth,
+diff --git a/sw/source/ui/inc/optpage.hxx b/sw/source/ui/inc/optpage.hxx
+index 3e196e2..fa8f6b7 100644
+--- a/sw/source/ui/inc/optpage.hxx
++++ b/sw/source/ui/inc/optpage.hxx
+@@ -104,6 +104,7 @@ class SwAddPrinterTabPage : public SfxTabPage
+     RadioButton*    m_pOnlyRB;
+     RadioButton*    m_pEndRB;
+     RadioButton*    m_pEndPageRB;
++    RadioButton*    m_pInMarginsRB;
+ 
+     CheckBox*       m_pPrintEmptyPagesCB;
+     CheckBox*       m_pPaperFromSetupCB;
+diff --git a/sw/uiconfig/swriter/ui/printoptionspage.ui b/sw/uiconfig/swriter/ui/printoptionspage.ui
+index 0bf9afe..95e5ae2 100644
+--- a/sw/uiconfig/swriter/ui/printoptionspage.ui
++++ b/sw/uiconfig/swriter/ui/printoptionspage.ui
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
++<!-- Generated with glade 3.16.1 -->
+ <interface>
+-  <!-- interface-requires gtk+ 3.0 -->
++  <requires lib="gtk+" version="3.0"/>
+   <object class="GtkBox" id="PrintOptionsPage">
+     <property name="visible">True</property>
+     <property name="can_focus">False</property>
+@@ -344,7 +345,7 @@
+                         <property name="use_underline">True</property>
+                         <property name="xalign">0</property>
+                         <property name="draw_indicator">True</property>
+-                        <property name="group">none</property>
++                        <property name="group">inmargins</property>
+                       </object>
+                       <packing>
+                         <property name="left_attach">0</property>
+@@ -353,6 +354,24 @@
+                         <property name="height">1</property>
+                       </packing>
+                     </child>
++                    <child>
++                      <object class="GtkRadioButton" id="inmargins">
++                        <property name="label" translatable="yes">In margins</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="draw_indicator">True</property>
++                        <property name="group">none</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">4</property>
++                        <property name="width">1</property>
++                        <property name="height">1</property>
++                      </packing>
++                    </child>
+                   </object>
+                 </child>
+               </object>
+-- 
+1.8.5.3
+

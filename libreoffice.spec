@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -295,6 +295,7 @@ Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 %if 0%{?rhel} && 0%{?rhel} == 7
 Patch32: 0001-fix-libetonyek-build.patch
 %endif
+Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2195,6 +2196,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-5
+- Resolves: fdo#36815 enable printing WYSIWYG sidewindow comments
+
 * Sat Apr 12 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-4
 - drop filtering of provides again
 

@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -294,12 +294,28 @@ Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 %if 0%{?rhel} && 0%{?rhel} == 7
 Patch32: 0001-fix-libetonyek-build.patch
 %endif
+Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
 %define ureinstdir %{baseinstdir}/ure
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
+
+# rhbz#1085420 make sure we do not provide bundled libraries
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+# redland libs are already suffixed -> no need to filter them too
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\)\\.so.*$/d
+%filter_from_provides %{libo_bundled_libs_filter}
+%filter_from_requires %{libo_bundled_libs_filter}
+%filter_setup
+%else
+%global libo_bundled_libs_filter ^libfbembed\\.so.*$
+%global __provides_exclude %{libo_bundled_libs_filter}
+%global __requires_exclude %{libo_bundled_libs_filter}
+%endif
+%endif
 
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
@@ -1076,10 +1092,6 @@ git commit -q -a -m 'fix translations'
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}
-#don't build localized helps which aren't translated
-POORHELPS=`ls -d translations/source/*/helpcontent2 translations/source/*|cut -f 3 -d /|sort|uniq -u|xargs`
-#don't build localized helps which are poorly translated
-POORHELPS="$POORHELPS `grep 'msgstr .Working with Documents' translations/source/*/helpcontent2/source/text/swriter/guide.po| cut -f 3 -d / | xargs`"
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 
@@ -2183,6 +2195,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-5
+- Resolves: fdo#36815 enable printing WYSIWYG sidewindow comments
+
 * Sat Apr 12 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-4
 - drop filtering of provides again
 

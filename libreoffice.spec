@@ -1539,10 +1539,10 @@ cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/
 
 # install man pages
 install -m 0755 -d $RPM_BUILD_ROOT/%{_mandir}/man1
-install -m 0755 sysui/desktop/man/*.1 $RPM_BUILD_ROOT/%{_mandir}/man1
+install -m 0644 -p sysui/desktop/man/*.1 $RPM_BUILD_ROOT/%{_mandir}/man1
 for app in oobase oocalc oodraw ooffice ooimpress oomath ooviewdoc oowriter openoffice.org soffice; do
     echo '.so man1/libreoffice.1' > $app.1
-    install -m 0755 $app.1 $RPM_BUILD_ROOT/%{_mandir}/man1
+    install -m 0644 -p $app.1 $RPM_BUILD_ROOT/%{_mandir}/man1
 done
 
 export DESTDIR=$RPM_BUILD_ROOT

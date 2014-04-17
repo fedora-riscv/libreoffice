@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -295,6 +295,8 @@ Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 Patch32: 0001-fix-libetonyek-build.patch
 %endif
 Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch34: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch35: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -364,10 +366,18 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
+Obsoletes: openoffice.org-core < 1:3.3.1
+Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
+Obsoletes: openoffice.org-javafilter < 1:3.3.1
+Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
+Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
+Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
 Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
 %endif
 
@@ -383,8 +393,10 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: python3
 %else
 Requires: python
+Obsoletes: openoffice.org-pyuno < 1:3.3.1
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-pyuno = 1:3.3.0
 Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
 %endif
 
@@ -405,9 +417,15 @@ Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-report-builder < 1:4.1.0.0
+Obsoletes: openoffice.org-base-core < 1:3.3.1
+Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
+Obsoletes: openoffice.org-report-builder < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-base-core = 1:3.3.0
 Provides: openoffice.org-base-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-base = 1:3.3.0, broffice.org-base = 1:3.3.0
 Provides: openoffice.org-base%{?_isa} = 1:3.3.0, broffice.org-base%{?_isa} = 1:3.3.0
+Provides: openoffice.org-report-builder = 1:3.3.0
 Provides: openoffice.org-report-builder%{?_isa} = 1:3.3.0
 %endif
 
@@ -420,7 +438,9 @@ Summary: BeanShell support for LibreOffice
 Group: Development/Libraries
 Requires: bsh
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-bsh < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-bsh = 1:3.3.0
 Provides: openoffice.org-bsh%{?_isa} = 1:3.3.0
 %endif
 
@@ -431,7 +451,9 @@ Support BeanShell scripts in LibreOffice.
 Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-rhino < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-rhino = 1:3.3.0
 Provides: openoffice.org-rhino%{?_isa} = 1:3.3.0
 %endif
 
@@ -451,7 +473,9 @@ Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-wiki-publisher = 1:3.3.0
 Provides: openoffice.org-wiki-publisher%{?_isa} = 1:3.3.0
 %endif
 
@@ -477,7 +501,9 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-ogltrans < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-ogltrans = 1:3.3.0
 Provides: openoffice.org-ogltrans%{?_isa} = 1:3.3.0
 %endif
 
@@ -491,7 +517,9 @@ Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-pdfimport < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-pdfimport = 1:3.3.0
 Provides: openoffice.org-pdfimport%{?_isa} = 1:3.3.0
 %endif
 
@@ -503,6 +531,8 @@ and enable basic editing of PDF documents.
 Summary: LibreOffice dingbats font
 Group: User Interface/X
 Requires: fontpackages-filesystem
+Obsoletes: openoffice.org-fonts < 1:3.3.1
+Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
 BuildArch: noarch
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-fonts = 1:3.3.0
@@ -518,8 +548,12 @@ Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-writer-core < 1:3.3.1
+Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-writer-core = 1:3.3.0
 Provides: openoffice.org-writer-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-writer = 1:3.3.0, broffice.org-writer = 1:3.3.0
 Provides: openoffice.org-writer%{?_isa} = 1:3.3.0, broffice.org-writer%{?_isa} = 1:3.3.0
 %endif
 
@@ -531,7 +565,9 @@ Summary: Email mail-merge component for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-emailmerge < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-emailmerge = 1:3.3.0
 Provides: openoffice.org-emailmerge%{?_isa} = 1:3.3.0
 %endif
 
@@ -543,8 +579,12 @@ Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-calc-core < 1:3.3.1
+Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-calc-core = 1:3.3.0
 Provides: openoffice.org-calc-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-calc = 1:3.3.0, broffice.org-calc = 1:3.3.0
 Provides: openoffice.org-calc%{?_isa} = 1:3.3.0, broffice.org-calc%{?_isa} = 1:3.3.0
 %endif
 
@@ -558,8 +598,12 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-draw-core < 1:3.3.1
+Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-draw-core = 1:3.3.0
 Provides: openoffice.org-draw-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-draw = 1:3.3.0, broffice.org-draw = 1:3.3.0
 Provides: openoffice.org-draw%{?_isa} = 1:3.3.0, broffice.org-draw%{?_isa} = 1:3.3.0
 %endif
 
@@ -573,12 +617,20 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
+Obsoletes: openoffice.org-impress-core < 1:3.3.1
+Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
+Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
+Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
 Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-impress-core = 1:3.3.0
 Provides: openoffice.org-impress-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
 Provides: openoffice.org-impress%{?_isa} = 1:3.3.0, broffice.org-impress%{?_isa} = 1:3.3.0
+Provides: openoffice.org-presentation-minimizer = 1:3.3.0
 Provides: openoffice.org-presentation-minimizer%{?_isa} = 1:3.3.0
+Provides: openoffice.org-presenter-screen = 1:3.3.0
 Provides: openoffice.org-presenter-screen%{?_isa} = 1:3.3.0
 %endif
 
@@ -590,8 +642,12 @@ Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-math-core < 1:3.3.1
+Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-math-core = 1:3.3.0
 Provides: openoffice.org-math-core%{?_isa} = 1:3.3.0
+Provides: openoffice.org-math = 1:3.3.0, broffice.org-math = 1:3.3.0
 Provides: openoffice.org-math%{?_isa} = 1:3.3.0, broffice.org-math%{?_isa} = 1:3.3.0
 %endif
 
@@ -603,7 +659,9 @@ Summary: LibreOffice Extra Graphic filters
 Group: Applications/Productivity
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-graphicfilter = 1:3.3.0
 Provides: openoffice.org-graphicfilter%{?_isa} = 1:3.3.0
 %endif
 
@@ -615,7 +673,9 @@ flash filters.
 Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-xsltfilter = 1:3.3.0
 Provides: openoffice.org-xsltfilter%{?_isa} = 1:3.3.0
 %endif
 
@@ -641,7 +701,9 @@ creation and management of PostgreSQL databases through a GUI.
 Summary: UNO Runtime Environment
 Group: Development/Libraries
 Requires: unzip, jre >= 1.5.0
+Obsoletes: openoffice.org-ure < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-ure = 1:3.3.0
 Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
 %endif
 
@@ -659,7 +721,9 @@ Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
+Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-sdk = 1:3.3.0, openoffice.org-devel = 1:3.3.0
 Provides: openoffice.org-sdk%{?_isa} = 1:3.3.0, openoffice.org-devel%{?_isa} = 1:3.3.0
 %endif
 
@@ -673,7 +737,9 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-sdk-doc = 1:3.3.0
 Provides: openoffice.org-sdk-doc%{?_isa} = 1:3.3.0
 %endif
 
@@ -686,7 +752,9 @@ Summary: LibreOffice Headless plug-in
 Group: Development/Libraries
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Obsoletes: openoffice.org-headless < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-headless = 1:3.3.0
 Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
 %endif
 
@@ -1089,6 +1157,11 @@ git add -A
 git commit -q -a -m 'fix translations'
 %endif
 
+# Seeing .git dir makes some of the build tools change their behavior.
+# We do not want that. Note: it is still possible to use
+# git --git-dir=.git-rpm
+mv .git .git-rpm
+
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}
@@ -1205,7 +1278,7 @@ export PRODUCTVERSIONSHORT PRODUCTVERSION
 
 # installation
 
-mkdir -p $RPM_BUILD_ROOT/%{instdir}
+mkdir -p %{buildroot}%{instdir}
 if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
     cat $ WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
@@ -1218,17 +1291,17 @@ if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; the
     echo - ---dump log end -- languagepacks---
     exit 1
 fi
-mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}
-mv $WORKDIR/installation/LibreOffice/installed/install/en-US/* $RPM_BUILD_ROOT/%{baseinstdir}
+mkdir -p %{buildroot}%{baseinstdir}
+mv $WORKDIR/installation/LibreOffice/installed/install/en-US/* %{buildroot}%{baseinstdir}
 %if %{with langpacks}
 for langpack in $WORKDIR/installation/LibreOffice_languagepack/installed/install/*; do
   [ `basename $langpack` = log ] && continue
-  cp -rp $langpack/* $RPM_BUILD_ROOT/%{baseinstdir}
+  cp -rp $langpack/* %{buildroot}%{baseinstdir}
   rm -rf $langpack
 done
 %endif
-mv $WORKDIR/installation/LibreOffice_SDK/installed/install/en-US/sdk $RPM_BUILD_ROOT/%{sdkinstdir}
-chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
+mv $WORKDIR/installation/LibreOffice_SDK/installed/install/en-US/sdk %{buildroot}%{sdkinstdir}
+chmod -R +w %{buildroot}%{baseinstdir}
 
 # postprocessing and tweaks
 
@@ -1237,10 +1310,10 @@ chmod -R +w $RPM_BUILD_ROOT/%{baseinstdir}
 # have no inclination to crawl through mountains of perl code to figure out
 # where it comes from, I am just going to replace it by a sensible
 # value here.
-sed -i -e '/UserInstallation/s@\$ORIGIN/..@$SYSUSERCONFIG@' $RPM_BUILD_ROOT/%{baseinstdir}/program/bootstraprc
+sed -i -e '/UserInstallation/s@\$ORIGIN/..@$SYSUSERCONFIG@' %{buildroot}%{baseinstdir}/program/bootstraprc
 
 #configure sdk
-pushd $RPM_BUILD_ROOT/%{sdkinstdir}
+pushd %{buildroot}%{sdkinstdir}
     sed -e "s,@OO_SDK_NAME@,sdk," \
         -e "s,@OO_SDK_HOME@,%{sdkinstdir}," \
         -e "s,@OFFICE_HOME@,%{baseinstdir}," \
@@ -1262,14 +1335,14 @@ pushd $RPM_BUILD_ROOT/%{sdkinstdir}
 popd
 
 #ensure a template dir for each lang
-pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/template
+pushd %{buildroot}%{baseinstdir}/share/template
 for I in %{langpack_langs}; do
     mkdir -p $I
 done
 popd
 
 #Set some aliases to canonical autocorrect language files for locales with matching languages
-pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr
+pushd %{buildroot}%{baseinstdir}/share/autocorr
 
 %make_autocorr_aliases -l en-GB en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT
 %make_autocorr_aliases -l en-US en-PH
@@ -1289,43 +1362,43 @@ rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif
 popd
 #rhbz#484055 make these shared across multiple applications
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}
-mv -f $RPM_BUILD_ROOT/%{baseinstdir}/share/autocorr $RPM_BUILD_ROOT/%{_datadir}/autocorr
-chmod 755 $RPM_BUILD_ROOT/%{_datadir}/autocorr
+mkdir -p %{buildroot}%{_datadir}
+mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
+chmod 755 %{buildroot}%{_datadir}/autocorr
 
 #remove it in case we didn't build with gcj
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/sandbox.jar
+rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
 
 #remove dummy .dat files
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/root?.dat
+rm -f %{buildroot}%{baseinstdir}/program/root?.dat
 
 #set standard permissions for rpmlint
-find $RPM_BUILD_ROOT/%{baseinstdir} -exec chmod +w {} \;
-find $RPM_BUILD_ROOT/%{baseinstdir} -type d -exec chmod 0755 {} \;
+find %{buildroot}%{baseinstdir} -exec chmod +w {} \;
+find %{buildroot}%{baseinstdir} -type d -exec chmod 0755 {} \;
 
 # move python bits into site-packages
-mkdir -p $RPM_BUILD_ROOT/%{libo_python_sitearch}
-pushd $RPM_BUILD_ROOT/%{libo_python_sitearch}
+mkdir -p %{buildroot}%{libo_python_sitearch}
+pushd %{buildroot}%{libo_python_sitearch}
 echo "import sys, os" > uno.py
 echo "sys.path.append('%{baseinstdir}/program')" >> uno.py
 echo "os.putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%{baseinstdir}/program/fundamentalrc')" >> uno.py
-cat $RPM_BUILD_ROOT/%{baseinstdir}/program/uno.py >> uno.py
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/uno.py*
-mv -f $RPM_BUILD_ROOT/%{baseinstdir}/program/unohelper.py* .
+cat %{buildroot}%{baseinstdir}/program/uno.py >> uno.py
+rm -f %{buildroot}%{baseinstdir}/program/uno.py*
+mv -f %{buildroot}%{baseinstdir}/program/unohelper.py* .
 popd
 
 # rhbz#477435 package opensymbol separately
-pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/fonts/truetype
+pushd %{buildroot}%{baseinstdir}/share/fonts/truetype
 install -d -m 0755 %{buildroot}%{_fontdir}
 install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
-rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/share/fonts
+rm -rf %{buildroot}%{baseinstdir}/share/fonts
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through
 pic=0
 executable=0
-for foo in `find $RPM_BUILD_ROOT/%{instdir} -name "*" -exec file {} \;| grep ": ELF" | cut -d: -f 1` ; do
+for foo in `find %{buildroot}%{instdir} -name "*" -exec file {} \;| grep ": ELF" | cut -d: -f 1` ; do
     chmod +wx $foo
     ls -asl $foo
     result=`readelf -d $foo | grep TEXTREL` || true
@@ -1343,51 +1416,51 @@ if [ $pic == 1 ]; then false; fi
 if [ $executable == 1 ]; then false; fi
 
 #make up some /usr/bin scripts
-mkdir -p $RPM_BUILD_ROOT/%{_bindir}
+mkdir -p %{buildroot}%{_bindir}
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/ooffice
-echo exec libreoffice \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooffice
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooffice
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooffice
+echo exec libreoffice \"\$@\" >> %{buildroot}%{_bindir}/ooffice
+chmod a+x %{buildroot}%{_bindir}/ooffice
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
-echo exec libreoffice --view \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooviewdoc
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooviewdoc
+echo exec libreoffice --view \"\$@\" >> %{buildroot}%{_bindir}/ooviewdoc
+chmod a+x %{buildroot}%{_bindir}/ooviewdoc
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oowriter
-echo exec libreoffice --writer \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oowriter
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oowriter
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/oowriter
+echo exec libreoffice --writer \"\$@\" >> %{buildroot}%{_bindir}/oowriter
+chmod a+x %{buildroot}%{_bindir}/oowriter
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oocalc
-echo exec libreoffice --calc \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oocalc
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oocalc
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/oocalc
+echo exec libreoffice --calc \"\$@\" >> %{buildroot}%{_bindir}/oocalc
+chmod a+x %{buildroot}%{_bindir}/oocalc
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/ooimpress
-echo exec libreoffice --impress \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/ooimpress
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/ooimpress
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooimpress
+echo exec libreoffice --impress \"\$@\" >> %{buildroot}%{_bindir}/ooimpress
+chmod a+x %{buildroot}%{_bindir}/ooimpress
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oodraw
-echo exec libreoffice --draw \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oodraw
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oodraw
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/oodraw
+echo exec libreoffice --draw \"\$@\" >> %{buildroot}%{_bindir}/oodraw
+chmod a+x %{buildroot}%{_bindir}/oodraw
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oomath
-echo exec libreoffice --math \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oomath
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oomath
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/oomath
+echo exec libreoffice --math \"\$@\" >> %{buildroot}%{_bindir}/oomath
+chmod a+x %{buildroot}%{_bindir}/oomath
 
-echo \#\!/bin/sh > $RPM_BUILD_ROOT/%{_bindir}/oobase
-echo exec libreoffice --base \"\$@\" >> $RPM_BUILD_ROOT/%{_bindir}/oobase
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/oobase
+echo \#\!/bin/sh > %{buildroot}%{_bindir}/oobase
+echo exec libreoffice --base \"\$@\" >> %{buildroot}%{_bindir}/oobase
+chmod a+x %{buildroot}%{_bindir}/oobase
 
-cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/unopkg
-sed -i -e "s/LAUNCHER/unopkg/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
-sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/unopkg
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/unopkg
+cp -f %{SOURCE4} %{buildroot}%{_bindir}/unopkg
+sed -i -e "s/LAUNCHER/unopkg/g" %{buildroot}%{_bindir}/unopkg
+sed -i -e "s/BRAND/libreoffice/g" %{buildroot}%{_bindir}/unopkg
+chmod a+x %{buildroot}%{_bindir}/unopkg
 
-cp -f %{SOURCE4} $RPM_BUILD_ROOT/%{_bindir}/libreoffice
-sed -i -e "s/LAUNCHER/soffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
-sed -i -e "s/BRAND/libreoffice/g" $RPM_BUILD_ROOT/%{_bindir}/libreoffice
-chmod a+x $RPM_BUILD_ROOT/%{_bindir}/libreoffice
+cp -f %{SOURCE4} %{buildroot}%{_bindir}/libreoffice
+sed -i -e "s/LAUNCHER/soffice/g" %{buildroot}%{_bindir}/libreoffice
+sed -i -e "s/BRAND/libreoffice/g" %{buildroot}%{_bindir}/libreoffice
+chmod a+x %{buildroot}%{_bindir}/libreoffice
 
-pushd $RPM_BUILD_ROOT/%{_bindir}
+pushd %{buildroot}%{_bindir}
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat
@@ -1402,7 +1475,7 @@ popd
 # TO-DO, remember to remove the "echo" lines
 # and removal of printeradmin.desktop 
 # for LibreOffice 4.1 where this is upstreamed
-pushd $RPM_BUILD_ROOT/%{baseinstdir}/share/xdg/
+pushd %{buildroot}%{baseinstdir}/share/xdg/
 chmod u+w *.desktop
 rm -rf printeradmin.desktop
 ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
@@ -1420,11 +1493,11 @@ done
 # rhbz#156677 / rhbz#186515 do not show math and startcenter
 sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop
 # relocate the .desktop and icon files
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
+mkdir -p %{buildroot}%{_datadir}/applications
 for app in base calc draw impress math startcenter writer xsltfilter; do
     sed -i -e 's/\${UNIXBASISROOTNAME}/%{name}/' $app.desktop
     desktop-file-validate $app.desktop
-    cp -p $app.desktop $RPM_BUILD_ROOT/%{_datadir}/applications/libreoffice-$app.desktop
+    cp -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
 
@@ -1435,37 +1508,45 @@ rm -rf icons/gnome applications application-registry
 #relocate the rest of them
 # rhbz#901346 512x512 icons are not used by anything
 for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
-    mkdir -p $RPM_BUILD_ROOT/%{_datadir}/`dirname $icon`
-    cp -p $icon $RPM_BUILD_ROOT/%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
+    mkdir -p %{buildroot}%{_datadir}/`dirname $icon`
+    cp -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
 done
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime-info
-cp -p mime-info/libreoffice$PRODUCTVERSION.keys $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.keys
-cp -p mime-info/libreoffice$PRODUCTVERSION.mime $RPM_BUILD_ROOT/%{_datadir}/mime-info/libreoffice.mime
+mkdir -p %{buildroot}%{_datadir}/mime-info
+cp -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
+cp -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/mime/packages
-cp -p mime/packages/libreoffice$PRODUCTVERSION.xml $RPM_BUILD_ROOT/%{_datadir}/mime/packages/libreoffice.xml
+mkdir -p %{buildroot}%{_datadir}/mime/packages
+cp -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 popd
 
-rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/readmes
-rm -rf $RPM_BUILD_ROOT/%{baseinstdir}/licenses
+rm -rf %{buildroot}%{baseinstdir}/readmes
+rm -rf %{buildroot}%{baseinstdir}/licenses
 
-mkdir -p $RPM_BUILD_ROOT/%{baseinstdir}/share/psprint/driver
-cp -p psprint_config/configuration/ppds/SGENPRT.PS $RPM_BUILD_ROOT/%{baseinstdir}/share/psprint/driver/SGENPRT.PS
+mkdir -p %{buildroot}%{baseinstdir}/share/psprint/driver
+cp -p psprint_config/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
-sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" $RPM_BUILD_ROOT/%{baseinstdir}/program/fundamentalrc
+sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" %{buildroot}%{baseinstdir}/program/fundamentalrc
 
 # move glade catalog to system glade dir
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
-mv $RPM_BUILD_ROOT/%{baseinstdir}/share/glade/libreoffice-catalog.xml $RPM_BUILD_ROOT/%{_datadir}/glade3/catalogs
+mkdir -p %{buildroot}%{_datadir}/glade3/catalogs
+mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
 %if 0%{?fedora}
 # rhbz#1049543 install appdata
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/appdata
-cp -p sysui/desktop/appstream-appdata/*.appdata.xml $RPM_BUILD_ROOT/%{_datadir}/appdata
+mkdir -p %{buildroot}%{_datadir}/appdata
+cp -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
 %endif
 
-export DESTDIR=$RPM_BUILD_ROOT
+# install man pages
+install -m 0755 -d %{buildroot}%{_mandir}/man1
+install -m 0644 -p sysui/desktop/man/*.1 %{buildroot}%{_mandir}/man1
+for app in oobase oocalc oodraw ooffice ooimpress oomath ooviewdoc oowriter openoffice.org soffice; do
+    echo '.so man1/libreoffice.1' > $app.1
+    install -m 0644 -p $app.1 %{buildroot}%{_mandir}/man1
+done
+
+export DESTDIR=%{buildroot}
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
 
@@ -1473,14 +1554,14 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-export OOO_TEST_SOFFICE=path:$RPM_BUILD_ROOT/%{baseinstdir}/program/soffice
+export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
 %if 0%{?rhel} && 0%{?rhel} < 7
 timeout 2h make smoketest.subsequentcheck
 %else
 timeout -k 2m 2h make smoketest.subsequentcheck
 %endif
 # we don't need this anymore
-rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
+rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files
 
@@ -1816,6 +1897,7 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/xslt/import/wordml
 %{baseinstdir}/program/liblnthlo.so
 %{_bindir}/unopkg
+%{_mandir}/man1/unopkg.1*
 #icons and mime
 %{_datadir}/icons/*/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
@@ -1901,6 +1983,11 @@ rm -f $RPM_BUILD_ROOT/%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liblcms2.so.2
 %{baseinstdir}/share/fingerprint
 %endif
+%{_mandir}/man1/libreoffice.1*
+%{_mandir}/man1/openoffice.org.1*
+%{_mandir}/man1/soffice.1*
+%{_mandir}/man1/ooffice.1*
+%{_mandir}/man1/ooviewdoc.1*
 
 %post core
 update-mime-database %{_datadir}/mime &> /dev/null || :
@@ -1954,6 +2041,7 @@ done
 %{baseinstdir}/program/sbase
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
+%{_mandir}/man1/oobase.1*
 
 %post base
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2022,6 +2110,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/scalc
 %{_datadir}/applications/libreoffice-calc.desktop
 %{_bindir}/oocalc
+%{_mandir}/man1/oocalc.1*
 
 %post calc
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2036,6 +2125,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/sdraw
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
+%{_mandir}/man1/oodraw.1*
 
 %post draw
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2064,6 +2154,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/swriter
 %{_datadir}/applications/libreoffice-writer.desktop
 %{_bindir}/oowriter
+%{_mandir}/man1/oowriter.1*
 
 %post writer
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2088,6 +2179,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/simpress
 %{_datadir}/applications/libreoffice-impress.desktop
 %{_bindir}/ooimpress
+%{_mandir}/man1/ooimpress.1*
 
 %post impress
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2104,6 +2196,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/smath
 %{_datadir}/applications/libreoffice-math.desktop
 %{_bindir}/oomath
+%{_mandir}/man1/oomath.1*
 
 %post math
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2195,6 +2288,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-6
+- install man pages
+- Resolves: rhbz#1086714 overlarge pixmap
+
 * Wed Apr 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-5
 - Resolves: fdo#36815 enable printing WYSIWYG sidewindow comments
 

@@ -1,0 +1,71 @@
+From f31ac2405bbd0755fb14daa6cb84d7bb7d84c492 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Apr 2014 11:56:17 +0100
+Subject: [PATCH] Resolves: rhbz#1086714 overlarge pixmap
+
+Change-Id: I015308406a43e6b039059a5e35316d59745d0a48
+---
+ canvas/source/cairo/cairo_canvasbitmap.cxx |  2 +-
+ canvas/source/cairo/cairo_xlib_cairo.cxx   |  7 ++++---
+ vcl/unx/x11/xlimits.cxx                    | 11 +++++------
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/canvas/source/cairo/cairo_canvasbitmap.cxx b/canvas/source/cairo/cairo_canvasbitmap.cxx
+index 32c9167..eae1319 100644
+--- a/canvas/source/cairo/cairo_canvasbitmap.cxx
++++ b/canvas/source/cairo/cairo_canvasbitmap.cxx
+@@ -159,7 +159,7 @@ namespace cairocanvas
+                 pPixels = cairo_image_surface_create( CAIRO_FORMAT_ARGB32,
+                                                       aSize.Width(), aSize.Height() );
+                 cairo_t *pCairo = cairo_create( pPixels );
+-                if( !pPixels || !pCairo )
++                if( !pPixels || !pCairo || cairo_status(pCairo) != CAIRO_STATUS_SUCCESS )
+                     break;
+ 
+                 // suck ourselves from the X server to this buffer so then we can fiddle with
+diff --git a/canvas/source/cairo/cairo_xlib_cairo.cxx b/canvas/source/cairo/cairo_xlib_cairo.cxx
+index f52a8e7..e5bb189 100644
+--- a/canvas/source/cairo/cairo_xlib_cairo.cxx
++++ b/canvas/source/cairo/cairo_xlib_cairo.cxx
+@@ -36,11 +36,12 @@ namespace
+     Pixmap limitXCreatePixmap(Display *display, Drawable d, unsigned int width, unsigned int height, unsigned int depth)
+     {
+         // The X protocol request CreatePixmap puts an upper bound
+-        // of 16 bit to the size.
++        // of 16 bit to the size. And in practice some drivers
++        // fall over with values close to the max.
+ 
+-        // see, e.g. moz#424333, fdo#48961
++        // see, e.g. moz#424333, fdo#48961, rhbz#1086714
+         // we've a duplicate of this in vcl :-(
+-        if (width > SAL_MAX_INT16 || height > SAL_MAX_INT16)
++        if (width > SAL_MAX_INT16-10 || height > SAL_MAX_INT16-10)
+         {
+             SAL_WARN("canvas", "overlarge pixmap: " << width << " x " << height);
+             return None;
+diff --git a/vcl/unx/x11/xlimits.cxx b/vcl/unx/x11/xlimits.cxx
+index 2d3606d..b8509cb 100644
+--- a/vcl/unx/x11/xlimits.cxx
++++ b/vcl/unx/x11/xlimits.cxx
+@@ -13,13 +13,12 @@
+ Pixmap limitXCreatePixmap(Display *display, Drawable d, unsigned int width, unsigned int height, unsigned int depth)
+ {
+     // The X protocol request CreatePixmap puts an upper bound
+-    // of 16 bit to the size. Beyond that there may be implementation
+-    // limits of the Xserver; which we should catch by a failed XCreatePixmap
+-    // call. However extra large values should be caught here since we'd run into
+-    // 16 bit truncation here without noticing.
++    // of 16 bit to the size. And in practice some drivers
++    // fall over with values close to the max.
+ 
+-    // see, e.g. moz#424333
+-    if (width > SAL_MAX_INT16 || height > SAL_MAX_INT16)
++    // see, e.g. moz#424333, fdo#48961, rhbz#1086714
++    // we've a duplicate of this in canvas :-(
++    if (width > SAL_MAX_INT16-10 || height > SAL_MAX_INT16-10)
+     {
+         SAL_WARN("vcl", "overlarge pixmap: " << width << " x " << height);
+         return None;
+-- 
+1.9.0
+

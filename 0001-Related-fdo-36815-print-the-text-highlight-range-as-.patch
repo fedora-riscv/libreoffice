@@ -1,0 +1,24 @@
+From fede08ac7d8b9d6c0abd2ba1b09fd3beb1c1b7e7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Apr 2014 08:41:07 +0100
+Subject: [PATCH] Related: fdo#36815 print the text highlight range as well
+
+Change-Id: Ic332b1968b5dc72d26bd704cce70a496ec81e0b8
+---
+ sw/source/core/layout/paintfrm.cxx         | 2 +-
+ sw/source/core/uibase/docvw/SidebarWin.cxx | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/sw/source/core/layout/paintfrm.cxx b/sw/source/core/layout/paintfrm.cxx
+index a5cbf3b..eb3133a 100644
+--- a/sw/source/core/layout/paintfrm.cxx
++++ b/sw/source/core/layout/paintfrm.cxx
+@@ -6172,7 +6172,7 @@ static void lcl_paintBitmapExToRect(OutputDevice *pOut, const Point& aPoint, con
+     SwAlignRect( aPageRect, _pViewShell );
+ 
+     const SwPostItMgr *pMgr = _pViewShell->GetPostItMgr();
+-    if (pMgr /*&& pMgr->ShowNotes()*/ && pMgr->HasNotes())  // do not show anything in print preview
++    if (pMgr && pMgr->ShowNotes() && pMgr->HasNotes())  // do not show anything in print preview
+     {
+         sal_Int32 nScrollerHeight = pMgr->GetSidebarScrollerHeight();
+         const Rectangle &aVisRect = _pViewShell->VisArea().SVRect();

@@ -296,6 +296,7 @@ Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 Patch32: 0001-fix-libetonyek-build.patch
 %endif
 Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch34: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -297,6 +297,7 @@ Patch32: 0001-fix-libetonyek-build.patch
 %endif
 Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 Patch34: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch35: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2290,6 +2291,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Apr 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-6
 - install man pages
+- Resolves: rhbz#1086714 overlarge pixmap
 
 * Wed Apr 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-5
 - Resolves: fdo#36815 enable printing WYSIWYG sidewindow comments

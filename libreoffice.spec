@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.3
+%define libo_version 4.2.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -42,8 +42,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -74,7 +74,7 @@ Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.
 Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
 Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
 Source16:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
-Source17:       %{external_url}/libcdr-0.0.14.tar.bz2
+Source17:       %{external_url}/libcdr-0.0.15.tar.bz2
 Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
 Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
 Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
@@ -91,13 +91,14 @@ Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source30:       %{external_url}/libodfgen-0.0.4.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source32:       %{external_url}/libetonyek-0.0.3.tar.bz2
+Source32:       %{external_url}/libetonyek-0.0.4.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
 Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 Source36:       %{external_url}/libabw-0.0.2.tar.bz2
 Source37:       %{external_url}/libatomic_ops-7_2d.zip
 Source38:       %{external_url}/libeot-0.01.tar.bz2
+Source39:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
 %endif
 
@@ -271,33 +272,29 @@ Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
 Patch10: libreoffice-rhel6glib.patch
 %endif
-Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
-Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch14: 0001-disable-firebird-unit-test.patch
-Patch15: 0001-never-run-autogen.sh.patch
-Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
-Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch18: 0001-explictly-list-common-lang-independant-template-dir.patch
+%if 0%{?rhel} && 0%{?rhel} == 7
+Patch11: 0001-fix-libetonyek-build.patch
+%endif
+Patch12: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch13: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch14: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+Patch15: 0001-disable-firebird-unit-test.patch
+Patch16: 0001-never-run-autogen.sh.patch
+Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
+Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch19: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch20: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
 Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch23: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
-Patch24: 0001-Resolves-rhbz-1077780-crash-on-loading-.docx.patch
-Patch25: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
-Patch26: 0001-Package-GeneratedPackage-fixup.patch
-Patch27: 0001-rhbz-1080196-Delete-the-destination-first-then-paste.patch
-Patch28: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
-Patch29: 0001-drop-OnlyShowIn-from-.desktop-files.patch
-Patch30: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
-Patch31: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
-%if 0%{?rhel} && 0%{?rhel} == 7
-Patch32: 0001-fix-libetonyek-build.patch
-%endif
-Patch33: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch34: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
-Patch35: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
+Patch23: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch24: 0001-Package-GeneratedPackage-fixup.patch
+Patch25: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
+Patch26: 0001-drop-OnlyShowIn-from-.desktop-files.patch
+Patch27: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
+Patch28: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
+Patch29: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch30: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1083,7 +1080,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %autocorr -l af -n Afrikaans
 %autocorr -l bg -n Bulgarian
-%autocorr -l ca -n Catalan -L
+%autocorr -l ca -n Catalan
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
 %autocorr -l de -n German
@@ -2289,6 +2286,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 17 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.1-1
+- update to 4.2.4 rc1
+
 * Wed Apr 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-6
 - install man pages
 - Resolves: rhbz#1086714 overlarge pixmap

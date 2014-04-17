@@ -1,7 +1,7 @@
-From c309eed705edd358ba2db8b26d711d0f8ae41dca Mon Sep 17 00:00:00 2001
+From cc9493e690c6dbe40a1da47a06acf7172a33ffa7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 24 Feb 2014 11:38:13 +0000
-Subject: [PATCH 3/4] Resolves: rhbz#1065807 use xdg ~/Templates for default
+Subject: [PATCH 1/2] Resolves: rhbz#1065807 use xdg ~/Templates for default
  Template location
 
 (if it exists)
@@ -33,11 +33,11 @@ index 15fb3c0..bdb2949 100644
      xPath->getByName(CFGPROP_ISSINGLEPATH) >>= aPathVal.bIsSinglePath;
  
 diff --git a/officecfg/registry/data/org/openoffice/Office/Paths.xcu b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
-index 4b5ec7d..2ef605e 100644
+index 05f8e0b..2a9eb5c 100644
 --- a/officecfg/registry/data/org/openoffice/Office/Paths.xcu
 +++ b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
-@@ -160,8 +160,21 @@
-       <node oor:name="InternalPaths">
+@@ -161,8 +161,21 @@
+         <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/common" oor:op="fuse"/>
          <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/template/$(vlang)" oor:op="fuse"/>
        </node>
 +      <!--
@@ -194,5 +194,5 @@ index 7f0a52a..3fcd217 100644
      SETTING_SOURCEVIEWFONT_HEIGHT,
      SETTING_USER_GIVENNAME,
 -- 
-1.8.5.3
+1.9.0
 

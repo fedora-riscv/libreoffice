@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -295,6 +295,7 @@ Patch28: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 Patch29: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 Patch30: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
+Patch32: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2286,6 +2287,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 18 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-2
+- every 2nd print job is incorrectly flagged as failed
+
 * Thu Apr 17 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.1-1
 - update to 4.2.4 rc1
 

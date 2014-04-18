@@ -296,6 +296,7 @@ Patch29: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 Patch30: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 Patch32: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
+Patch33: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2289,6 +2290,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Apr 18 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-2
 - every 2nd print job is incorrectly flagged as failed
+- Related: rhbz#1088625 PresenterPaintManager seen as NULL
 
 * Thu Apr 17 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.1-1
 - update to 4.2.4 rc1

@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -299,6 +299,7 @@ Patch32: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
 Patch33: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
 Patch34: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
 Patch35: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
+Patch36: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2290,6 +2291,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-4
+- Resolves: rhbz#1089377 crash on loading a specific rtf
+
 * Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-3
 - sometimes tables in impress don't resize when adding rows
 - Resolves: fdo#71423 crash while editing Impress tables

@@ -301,6 +301,7 @@ Patch36: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
 Patch37: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
 Patch38: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
 Patch39: 0001-fdo-75970-Let-s-do-it-in-a-straightforward-fashion.patch
+Patch40: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2296,6 +2297,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1089340 crash on search+replace + close + searchreplace
   in calc
 - Resolves: rhbz#1088625 crash in presentation console
+- Resolves: rhbz#1089377 crash on loading a specific rtf
 
 * Wed Apr 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.3.3-6
 - install man pages

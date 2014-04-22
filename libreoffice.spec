@@ -299,9 +299,8 @@ Patch34: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 Patch35: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 Patch36: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
 Patch37: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
-Patch38: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
-Patch39: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
-Patch40: 0001-fdo-75970-Let-s-do-it-in-a-straightforward-fashion.patch
+Patch38: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
+Patch39: 0001-fdo-75970-Let-s-do-it-in-a-straightforward-fashion.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

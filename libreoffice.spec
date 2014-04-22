@@ -298,6 +298,7 @@ Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 Patch32: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
 Patch33: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
 Patch34: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
+Patch35: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2291,6 +2292,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-3
 - sometimes tables in impress don't resize when adding rows
+- Resolves: fdo#71423 crash while editing Impress tables
 
 * Fri Apr 18 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-2
 - every 2nd print job is incorrectly flagged as failed

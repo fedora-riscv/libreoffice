@@ -1,0 +1,40 @@
+From 4128c63d655869e0ab7befde2c46761d8e1b273f Mon Sep 17 00:00:00 2001
+From: Thorsten Behrens <thb@documentfoundation.org>
+Date: Thu, 10 Apr 2014 19:40:54 +0200
+Subject: [PATCH] Fix fdo#71423 - crash while editing Impress tables.
+
+Band-aid fix for this nasty crasher, seems sometimes the
+family item is not found.
+
+Change-Id: I7f78d59cbf2c9595ad512fa7a78370629924cd06
+(cherry picked from commit 058cfa72dcdd91df302be45f7fc59b0d961a420b)
+Signed-off-by: Andras Timar <andras.timar@collabora.com>
+---
+ sfx2/source/dialog/templdlg.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sfx2/source/dialog/templdlg.cxx b/sfx2/source/dialog/templdlg.cxx
+index ecc4d41..cbd856f 100644
+--- a/sfx2/source/dialog/templdlg.cxx
++++ b/sfx2/source/dialog/templdlg.cxx
+@@ -1245,6 +1245,8 @@ void SfxCommonTemplateDialog_Impl::FillTreeBox()
+     if(pStyleSheetPool && nActFamily != 0xffff)
+     {
+         const SfxStyleFamilyItem *pItem = GetFamilyItem_Impl();
++        if(!pItem)
++            return;
+         pStyleSheetPool->SetSearchMask(pItem->GetFamily(), SFXSTYLEBIT_ALL_VISIBLE);
+         StyleTreeArr_Impl aArr;
+         SfxStyleSheetBase *pStyle = pStyleSheetPool->First();
+@@ -1589,7 +1591,7 @@ void SfxCommonTemplateDialog_Impl::Update_Impl()
+          // other filters for automatic
+          CheckItem( nActFamily, sal_True );
+          const SfxStyleFamilyItem *pStyleItem =  GetFamilyItem_Impl();
+-         if (  0 == pStyleItem->GetFilterList()[ nActFilter ]->nFlags
++         if ( pStyleItem && 0 == pStyleItem->GetFilterList()[ nActFilter ]->nFlags
+             && nAppFilter != pItem->GetValue())
+          {
+              nAppFilter = pItem->GetValue();
+-- 
+1.9.0
+

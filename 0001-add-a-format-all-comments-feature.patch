@@ -1,0 +1,441 @@
+From ebb728c9c01b5e86926381fa816cf69cb3eb1e37 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 22 Apr 2014 17:06:26 +0100
+Subject: [PATCH] add a 'format all comments' feature
+
+Change-Id: Ie9530f0f58b38d014beda60b9efba3ce93fe5c0e
+---
+ .../org/openoffice/Office/UI/GenericCommands.xcu   |  5 ++
+ sw/inc/PostItMgr.hxx                               |  5 ++
+ sw/inc/cmdid.h                                     |  2 +-
+ sw/inc/swcommands.h                                |  1 +
+ sw/sdi/_annotsh.sdi                                |  6 ++
+ sw/sdi/_textsh.sdi                                 |  5 ++
+ sw/sdi/swriter.sdi                                 | 24 +++++++
+ .../core/uibase/docvw/AnnotationMenuButton.cxx     |  2 +
+ sw/source/core/uibase/docvw/PostItMgr.cxx          | 77 +++++++++++++++++++++-
+ sw/source/core/uibase/docvw/SidebarWin.cxx         |  1 +
+ sw/source/core/uibase/docvw/annotation.hrc         |  1 +
+ sw/source/core/uibase/inc/annotsh.hxx              |  2 +
+ sw/source/core/uibase/shells/annotsh.cxx           | 17 +++--
+ sw/source/core/uibase/shells/textfld.cxx           | 14 +++-
+ sw/source/ui/app/mn.src                            |  6 ++
+ sw/source/ui/docvw/annotation.src                  |  5 ++
+ 16 files changed, 166 insertions(+), 7 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
+index a16b900..a2d997c 100644
+--- a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
+@@ -5298,6 +5298,11 @@
+           <value xml:lang="en-US">Delete All Comments</value>
+         </prop>
+       </node>
++      <node oor:name=".uno:FormatAllNotes" oor:op="replace">
++        <prop oor:name="Label" oor:type="xs:string">
++          <value xml:lang="en-US">Format All Comments</value>
++        </prop>
++      </node>
+       <node oor:name=".uno:DeleteAuthor" oor:op="replace">
+         <prop oor:name="Label" oor:type="xs:string">
+           <value xml:lang="en-US">Delete All Comments by This Author</value>
+diff --git a/sw/inc/PostItMgr.hxx b/sw/inc/PostItMgr.hxx
+index 0ac0273..56760fd 100644
+--- a/sw/inc/PostItMgr.hxx
++++ b/sw/inc/PostItMgr.hxx
+@@ -44,6 +44,8 @@ class SfxBroadcaster;
+ class SfxHint;
+ class SwEditWin;
+ class Color;
++class SfxItemPool;
++class SfxItemSet;
+ class SvxSearchItem;
+ class SvxLanguageItem;
+ namespace sw { namespace annotation {
+@@ -219,6 +221,9 @@ class SwPostItMgr: public SfxListener
+             void Delete(OUString aAuthor);
+             void Delete();
+ 
++            void ExecuteFormatAllDialog(SwView& rView);
++            void FormatAll(const SfxItemSet &rNewAttr);
++
+             void Hide( const OUString& rAuthor );
+             void Hide();
+             void Show();
+diff --git a/sw/inc/cmdid.h b/sw/inc/cmdid.h
+index 7d506a3..b10359a 100644
+--- a/sw/inc/cmdid.h
++++ b/sw/inc/cmdid.h
+@@ -780,7 +780,7 @@ included in c-context files, so c++ style stuff will cause problems.
+ 
+ #define FN_DELETE_COMMENT           (FN_NOTES+6)
+ #define FN_REPLY                    (FN_NOTES+7)
+-
++#define FN_FORMAT_ALL_NOTES         (FN_NOTES+8)
+ 
+ #define FN_HEADERFOOTER_EDIT        (FN_HEADERFOOTER+1)
+ #define FN_HEADERFOOTER_DELETE      (FN_HEADERFOOTER+2)
+diff --git a/sw/inc/swcommands.h b/sw/inc/swcommands.h
+index 0f5cd54..cc9bc07 100644
+--- a/sw/inc/swcommands.h
++++ b/sw/inc/swcommands.h
+@@ -116,6 +116,7 @@
+ #define CMD_FN_DELETE_COMMENT                       ".uno:DeleteComment"
+ #define CMD_FN_DELETE_NOTE_AUTHOR                   ".uno:DeleteAuthor"
+ #define CMD_FN_DELETE_ALL_NOTES                     ".uno:DeleteAllNotes"
++#define CMD_FN_FORMAT_ALL_NOTES                     ".uno:FormatAllNotes"
+ #define CMD_FN_HIDE_NOTE                            ".uno:HideNote"
+ #define CMD_FN_HIDE_NOTE_AUTHOR                     ".uno:HideAuthor"
+ #define CMD_FN_HIDE_ALL_NOTES                       ".uno:HideAllNotes"
+diff --git a/sw/sdi/_annotsh.sdi b/sw/sdi/_annotsh.sdi
+index 142d5e7..15f03ad 100644
+--- a/sw/sdi/_annotsh.sdi
++++ b/sw/sdi/_annotsh.sdi
+@@ -37,6 +37,12 @@ interface _Annotation
+         StateMethod = GetNoteState ;
+     ]
+ 
++    FN_FORMAT_ALL_NOTES
++    [
++        ExecMethod = NoteExec ;
++        StateMethod = GetNoteState ;
++    ]
++
+     FN_HIDE_NOTE
+     [
+         ExecMethod = NoteExec ;
+diff --git a/sw/sdi/_textsh.sdi b/sw/sdi/_textsh.sdi
+index 0fb5cdb..c90bfcd 100644
+--- a/sw/sdi/_textsh.sdi
++++ b/sw/sdi/_textsh.sdi
+@@ -941,6 +941,11 @@ interface BaseText
+         ExecMethod = ExecField ;
+         StateMethod = StateField;
+     ]
++    FN_FORMAT_ALL_NOTES
++    [
++        ExecMethod = ExecField ;
++        StateMethod = StateField;
++    ]
+     FN_HIDE_NOTE
+     [
+         ExecMethod = ExecField ;
+diff --git a/sw/sdi/swriter.sdi b/sw/sdi/swriter.sdi
+index f8218fe..9312844 100644
+--- a/sw/sdi/swriter.sdi
++++ b/sw/sdi/swriter.sdi
+@@ -9920,6 +9920,30 @@ SfxVoidItem DeleteAllNotes FN_DELETE_ALL_NOTES
+     GroupId = GID_EDIT;
+ ]
+ 
++SfxVoidItem FormatAllNotes FN_FORMAT_ALL_NOTES
++()
++[
++    /* flags: */
++    AutoUpdate = FALSE,
++    Cachable = Cachable,
++    FastCall = FALSE,
++    HasCoreId = FALSE,
++    HasDialog = FALSE,
++    ReadOnlyDoc = FALSE,
++    Toggle = FALSE,
++    Container = FALSE,
++    RecordAbsolute = FALSE,
++    RecordPerSet;
++    Synchron;
++
++    /* config: */
++    AccelConfig = TRUE,
++    MenuConfig = TRUE,
++    StatusBarConfig = FALSE,
++    ToolBoxConfig = TRUE,
++    GroupId = GID_EDIT;
++]
++
+ //--------------------------------------------------------------------------
+ SfxVoidItem HideNote FN_HIDE_NOTE
+ ()
+diff --git a/sw/source/ui/app/mn.src b/sw/source/ui/app/mn.src
+index eb5ee0e..94ddb2f 100644
+--- a/sw/source/ui/app/mn.src
++++ b/sw/source/ui/app/mn.src
+@@ -761,6 +761,12 @@ location: <project>/uiconfig/[swriter|sweb|sglobal]/menubar/menubar.xml
+         HelpId = CMD_FN_DELETE_ALL_NOTES ;\
+         Text [ en-US ] = "~Delete All Comments" ;\
+     };\
++    MenuItem\
++    {\
++        Identifier = FN_FORMAT_ALL_NOTES ;\
++        HelpId = CMD_FN_FORMAT_ALL_NOTES ;\
++        Text [ en-US ] = "~Format All Comments" ;\
++    };\
+     /*
+     MenuItem\
+     {\
+diff --git a/sw/source/ui/docvw/AnnotationMenuButton.cxx b/sw/source/ui/docvw/AnnotationMenuButton.cxx
+index 0bd4bf2..218daee 100644
+--- a/sw/source/ui/docvw/AnnotationMenuButton.cxx
++++ b/sw/source/ui/docvw/AnnotationMenuButton.cxx
+@@ -74,12 +74,14 @@ void AnnotationMenuButton::MouseButtonDown( const MouseEvent& rMEvt )
+         pButtonPopup->EnableItem( FN_DELETE_COMMENT, false );
+         pButtonPopup->EnableItem( FN_DELETE_NOTE_AUTHOR, false );
+         pButtonPopup->EnableItem( FN_DELETE_ALL_NOTES, false );
++        pButtonPopup->EnableItem( FN_FORMAT_ALL_NOTES, false );
+     }
+     else
+     {
+         pButtonPopup->EnableItem( FN_DELETE_COMMENT, !mrSidebarWin.IsProtected() );
+         pButtonPopup->EnableItem( FN_DELETE_NOTE_AUTHOR, true );
+         pButtonPopup->EnableItem( FN_DELETE_ALL_NOTES, true );
++        pButtonPopup->EnableItem( FN_FORMAT_ALL_NOTES, true );
+     }
+ 
+     if ( mrSidebarWin.IsProtected() )
+diff --git a/sw/source/ui/docvw/PostItMgr.cxx b/sw/source/ui/docvw/PostItMgr.cxx
+index e6b7cb6..c2b1225 100644
+--- a/sw/source/ui/docvw/PostItMgr.cxx
++++ b/sw/source/ui/docvw/PostItMgr.cxx
+@@ -34,8 +34,8 @@
+ #include <vcl/scrbar.hxx>
+ #include <vcl/outdev.hxx>
+ 
++#include <chrdlgmodes.hxx>
+ #include <viewopt.hxx>
+-
+ #include <view.hxx>
+ #include <docsh.hxx>
+ #include <wrtsh.hxx>
+@@ -67,11 +67,14 @@
+ #include <svx/svdview.hxx>
+ #include <editeng/eeitem.hxx>
+ #include <editeng/langitem.hxx>
++#include <editeng/kernitem.hxx>
+ #include <editeng/outliner.hxx>
+ 
+ #include <i18nlangtag/mslangid.hxx>
+ #include <i18nlangtag/lang.h>
+ 
++#include "annotsh.hxx"
++#include "swabstdlg.hxx"
+ #include "swevent.hxx"
+ #include "switerator.hxx"
+ 
+@@ -1227,6 +1230,78 @@ void SwPostItMgr::Delete()
+     CalcRects();
+     LayoutPostIts();
+ }
++
++void SwPostItMgr::ExecuteFormatAllDialog(SwView& rView)
++{
++    if (mvPostItFlds.empty())
++        return;
++    sw::sidebarwindows::SwSidebarWin *pOrigActiveWin = GetActiveSidebarWin();
++    sw::sidebarwindows::SwSidebarWin *pWin = pOrigActiveWin;
++    if (!pWin)
++    {
++        for (SwSidebarItem_iterator i = mvPostItFlds.begin(); i != mvPostItFlds.end(); ++i)
++        {
++            pWin = (*i)->pPostIt;
++            if (pWin)
++                break;
++        }
++    }
++    if (!pWin)
++        return;
++    SetActiveSidebarWin(pWin);
++    OutlinerView* pOLV = pWin->GetOutlinerView();
++    SfxItemSet aEditAttr(pOLV->GetAttribs());
++    SfxItemPool* pPool(SwAnnotationShell::GetAnnotationPool(rView));
++    SfxItemSet aDlgAttr(*pPool, EE_ITEMS_START, EE_ITEMS_END);
++    aDlgAttr.Put(aEditAttr);
++    SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
++    SfxAbstractTabDialog* pDlg = pFact->CreateSwCharDlg(rView.GetWindow(), rView, aDlgAttr, DLG_CHAR_ANN);
++    sal_uInt16 nRet = pDlg->Execute();
++    if (RET_OK == nRet)
++    {
++        aDlgAttr.Put(*pDlg->GetOutputItemSet());
++        FormatAll(aDlgAttr);
++    }
++    delete pDlg;
++    SetActiveSidebarWin(pOrigActiveWin);
++}
++
++void SwPostItMgr::FormatAll(const SfxItemSet &rNewAttr)
++{
++    mpWrtShell->StartAllAction();
++    SwRewriter aRewriter;
++    aRewriter.AddRule(UndoArg1, SW_RES(STR_FORMAT_ALL_NOTES) );
++    mpWrtShell->StartUndo( UNDO_INSATTR, &aRewriter );
++
++    for(SwSidebarItem_iterator i = mvPostItFlds.begin(); i != mvPostItFlds.end() ; ++i)
++    {
++        if (!(*i)->pPostIt)
++            continue;
++        OutlinerView* pOLV = (*i)->pPostIt->GetOutlinerView();
++        //save old selection
++        ESelection aOrigSel(pOLV->GetSelection());
++        //select all
++        Outliner *pOutliner = pOLV->GetOutliner();
++        if (pOutliner)
++        {
++            sal_Int32 nParaCount = pOutliner->GetParagraphCount();
++            if (nParaCount > 0)
++                pOLV->SelectRange(0, nParaCount);
++        }
++        //set new char properties
++        pOLV->SetAttribs(rNewAttr);
++        //restore old selection
++        pOLV->SetSelection(aOrigSel);
++    }
++
++    mpWrtShell->EndUndo();
++    PrepareView();
++    mpWrtShell->EndAllAction();
++    mbLayout = true;
++    CalcRects();
++    LayoutPostIts();
++}
++
+ void SwPostItMgr::Hide( const OUString& rAuthor )
+ {
+     for(SwSidebarItem_iterator i = mvPostItFlds.begin(); i != mvPostItFlds.end() ; ++i)
+diff --git a/sw/source/ui/docvw/SidebarWin.cxx b/sw/source/ui/docvw/SidebarWin.cxx
+index 275b72e..4a0d4a7 100644
+--- a/sw/source/ui/docvw/SidebarWin.cxx
++++ b/sw/source/ui/docvw/SidebarWin.cxx
+@@ -971,6 +971,7 @@ void SwSidebarWin::ExecuteCommand(sal_uInt16 nSlot)
+                 //Delete(); // do not kill the parent of our open popup menu
+                 mnEventId = Application::PostUserEvent( LINK( this, SwSidebarWin, DeleteHdl), 0 );
+             break;
++        case FN_FORMAT_ALL_NOTES:
+         case FN_DELETE_ALL_NOTES:
+         case FN_HIDE_ALL_NOTES:
+             // not possible as slot as this would require that "this" is the active postit
+diff --git a/sw/source/ui/docvw/annotation.hrc b/sw/source/ui/docvw/annotation.hrc
+index 7daf555..5fe3e49 100644
+--- a/sw/source/ui/docvw/annotation.hrc
++++ b/sw/source/ui/docvw/annotation.hrc
+@@ -32,6 +32,7 @@
+ #define STR_NOAUTHOR                    (RC_ANNOTATION_BEGIN +  6)
+ 
+ #define STR_REPLY                       (RC_ANNOTATION_BEGIN +  7)
++#define STR_FORMAT_ALL_NOTES            (RC_ANNOTATION_BEGIN +  8)
+ 
+ 
+ #define ANNOTATION_ACT_END   STR_REPLY
+diff --git a/sw/source/ui/docvw/annotation.src b/sw/source/ui/docvw/annotation.src
+index 46afad9..a45c3ca 100644
+--- a/sw/source/ui/docvw/annotation.src
++++ b/sw/source/ui/docvw/annotation.src
+@@ -35,6 +35,11 @@ String STR_DELETE_ALL_NOTES
+     Text [ en-US ] = "All Comments" ;
+ };
+ 
++String STR_FORMAT_ALL_NOTES
++{
++    Text [ en-US ] = "All Comments" ;
++};
++
+ String STR_DELETE_AUTHOR_NOTES
+ {
+     Text [ en-US ] = "Comments by " ;
+diff --git a/sw/source/ui/inc/annotsh.hxx b/sw/source/ui/inc/annotsh.hxx
+index 5872c95..09961a7 100644
+--- a/sw/source/ui/inc/annotsh.hxx
++++ b/sw/source/ui/inc/annotsh.hxx
+@@ -68,6 +68,8 @@ public:
+ 
+     virtual ::svl::IUndoManager*
+                 GetUndoManager();
++
++    static SfxItemPool* GetAnnotationPool(SwView& rV);
+ };
+ 
+ #endif
+diff --git a/sw/source/ui/shells/annotsh.cxx b/sw/source/ui/shells/annotsh.cxx
+index 1106013..c83a99d 100644
+--- a/sw/source/ui/shells/annotsh.cxx
++++ b/sw/source/ui/shells/annotsh.cxx
+@@ -145,11 +145,16 @@ SFX_IMPL_INTERFACE(SwAnnotationShell, SfxShell, SW_RES(STR_SHELLNAME_DRAW_TEXT))
+ 
+ TYPEINIT1(SwAnnotationShell,SfxShell)
+ 
++SfxItemPool* SwAnnotationShell::GetAnnotationPool(SwView& rV)
++{
++    SwWrtShell &rSh = rV.GetWrtShell();
++    return rSh.GetAttrPool().GetSecondaryPool();
++}
++
+ SwAnnotationShell::SwAnnotationShell( SwView& r )
+-: rView(r)
++    : rView(r)
+ {
+-    SwWrtShell &rSh = rView.GetWrtShell();
+-    SetPool(rSh.GetAttrPool().GetSecondaryPool());
++    SetPool(SwAnnotationShell::GetAnnotationPool(rView));
+     SfxShell::SetContextName(sfx2::sidebar::EnumContext::GetContextName(sfx2::sidebar::EnumContext::Context_Annotation));
+ }
+ 
+@@ -1087,9 +1092,12 @@ void SwAnnotationShell::NoteExec(SfxRequest &rReq)
+             pPostItMgr->GetActiveSidebarWin()->ExecuteCommand(nSlot);
+         break;
+ 
+-    case FN_DELETE_ALL_NOTES:
++        case FN_DELETE_ALL_NOTES:
+             pPostItMgr->Delete();
+             break;
++        case FN_FORMAT_ALL_NOTES:
++            pPostItMgr->ExecuteFormatAllDialog(rView);
++            break;
+         case FN_DELETE_NOTE_AUTHOR:
+         {
+             SFX_REQUEST_ARG( rReq, pItem, SfxStringItem, nSlot, sal_False);
+@@ -1124,6 +1132,7 @@ void SwAnnotationShell::GetNoteState(SfxItemSet &rSet)
+         case FN_POSTIT:
+         case FN_DELETE_NOTE_AUTHOR:
+         case FN_DELETE_ALL_NOTES:
++        case FN_FORMAT_ALL_NOTES:
+         case FN_HIDE_NOTE:
+         case FN_HIDE_NOTE_AUTHOR:
+         case FN_HIDE_ALL_NOTES:
+diff --git a/sw/source/ui/shells/textfld.cxx b/sw/source/ui/shells/textfld.cxx
+index a7050c4..7289f37 100644
+--- a/sw/source/ui/shells/textfld.cxx
++++ b/sw/source/ui/shells/textfld.cxx
+@@ -18,9 +18,13 @@
+  */
+ 
+ 
++#include <chrdlgmodes.hxx>
+ #include <crsskip.hxx>
+ #include <hintids.hxx>
+-
++#include <SidebarWin.hxx>
++#include <editeng/eeitem.hxx>
++#include <editeng/kernitem.hxx>
++#include <editeng/outliner.hxx>
+ #include <sfx2/lnkbase.hxx>
+ #include <fmtfld.hxx>
+ #include <vcl/msgbox.hxx>
+@@ -321,6 +325,13 @@ void SwTextShell::ExecField(SfxRequest &rReq)
+                 if ( GetView().GetPostItMgr() )
+                     GetView().GetPostItMgr()->Delete();
+             break;
++            case FN_FORMAT_ALL_NOTES:
++            {
++                SwPostItMgr* pPostItMgr = GetView().GetPostItMgr();
++                if (pPostItMgr)
++                    pPostItMgr->ExecuteFormatAllDialog(GetView());
++            }
++            break;
+             case FN_DELETE_NOTE_AUTHOR:
+             {
+                 SFX_REQUEST_ARG( rReq, pNoteItem, SfxStringItem, nSlot, sal_False);
+@@ -629,6 +640,7 @@ void SwTextShell::StateField( SfxItemSet &rSet )
+         case FN_DELETE_COMMENT:
+         case FN_DELETE_NOTE_AUTHOR:
+         case FN_DELETE_ALL_NOTES:
++        case FN_FORMAT_ALL_NOTES:
+         case FN_HIDE_NOTE:
+         case FN_HIDE_NOTE_AUTHOR:
+         case FN_HIDE_ALL_NOTES:

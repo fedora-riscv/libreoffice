@@ -2295,7 +2295,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-8
+* Thu Apr 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-8
 - Resolves: fdo#75622 presentations with table slow to load
 
 * Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-7

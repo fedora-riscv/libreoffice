@@ -1,4 +1,4 @@
-From 26b06662ebc3e5d664400bc95c39d6220de03136 Mon Sep 17 00:00:00 2001
+From e7aa44b38ce78573f4b232d612d2411d8ecbb479 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Lubo=C5=A1=20Lu=C5=88=C3=A1k?= <l.lunak@collabora.com>
 Date: Tue, 25 Mar 2014 11:27:51 +0100
 Subject: [PATCH] avoid repeated table layouting (fdo#75622)
@@ -15,7 +15,7 @@ Change-Id: Ia80f974d4497e5cb04612331527eb87b579ddb76
  1 file changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/svx/source/table/svdotable.cxx b/svx/source/table/svdotable.cxx
-index ffb4ed7..2b08d7e 100644
+index 9c5e64a..db2a6ad 100644
 --- a/svx/source/table/svdotable.cxx
 +++ b/svx/source/table/svdotable.cxx
 @@ -242,9 +242,19 @@ public:
@@ -30,7 +30,7 @@ index ffb4ed7..2b08d7e 100644
 +    static WritingMode lastLayoutMode;
  };
  
--
+-// -----------------------------------------------------------------------------
 +SdrTableObjImpl* SdrTableObjImpl::lastLayoutTable = NULL;
 +Rectangle SdrTableObjImpl::lastLayoutRectangle;
 +bool SdrTableObjImpl::lastLayoutFitWidth;
@@ -47,7 +47,7 @@ index ffb4ed7..2b08d7e 100644
 +        lastLayoutTable = NULL;
  }
  
- 
+ // -----------------------------------------------------------------------------
 @@ -677,8 +689,21 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
  {
      if( mpLayouter && mpTableObj->GetModel() )

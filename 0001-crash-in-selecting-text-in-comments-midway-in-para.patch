@@ -1,0 +1,32 @@
+From 29b969d29225400e9f8ace12ea2c1276541f9ead Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 24 Apr 2014 13:51:27 +0100
+Subject: [PATCH] crash in selecting text in comments midway in para
+
+(cherry picked from commit 7dca5341d799d59a81e6dac84586fa2daa02a550)
+
+Conflicts:
+	sw/source/core/uibase/shells/langhelper.cxx
+
+Change-Id: Iaab71e201fae6a03936ccc6aac040027a183209c
+---
+ sw/source/ui/shells/langhelper.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/ui/shells/langhelper.cxx b/sw/source/ui/shells/langhelper.cxx
+index d3055a2..52ca770 100644
+--- a/sw/source/ui/shells/langhelper.cxx
++++ b/sw/source/ui/shells/langhelper.cxx
+@@ -573,7 +573,8 @@ namespace SwLangHelper
+         // string for guessing language
+         OUString aText;
+ 
+-        aText = rEditEngine->GetText(aDocSelection);
++        // get the full text of the paragraph that the end of selection is in
++        aText = rEditEngine->GetText(aDocSelection.nEndPos);
+         if (!aText.isEmpty())
+         {
+             xub_StrLen nStt = 0;
+-- 
+1.9.0
+

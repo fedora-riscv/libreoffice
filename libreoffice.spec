@@ -302,6 +302,9 @@ Patch35: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
 Patch36: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 Patch37: 0001-add-a-format-all-comments-feature.patch
 Patch38: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
+Patch39: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
+Patch40: 0001-crash-in-selecting-text-in-comments-midway-in-para.patch
+Patch41: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2293,8 +2296,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Apr 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-6-UNBUILT
+* Thu Apr 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-6
 - Resolves: fdo#37130 use 10pt Default style font for comments
+- Resolves: fdo#60040 crash after undoing master page
+- vertically center printout when including comments
 
 * Wed Apr 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-5
 - add a 'format all comments' feature

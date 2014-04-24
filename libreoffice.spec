@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -302,6 +302,8 @@ Patch37: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
 Patch38: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
 Patch39: 0001-fdo-75970-Let-s-do-it-in-a-straightforward-fashion.patch
 Patch40: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
+Patch41: 0001-avoid-repeated-table-layouting-fdo-75622.patch
+Patch42: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2293,6 +2295,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-8
+- Resolves: fdo#75622 presentations with table slow to load
+
 * Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-7
 - Resolves: rhbz#1089340 crash on search+replace + close + searchreplace
   in calc

@@ -304,6 +304,7 @@ Patch39: 0001-fdo-75970-Let-s-do-it-in-a-straightforward-fashion.patch
 Patch40: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 Patch41: 0001-avoid-repeated-table-layouting-fdo-75622.patch
 Patch42: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
+Patch43: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2297,6 +2298,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Apr 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-8
 - Resolves: fdo#75622 presentations with table slow to load
+- Resolves: fdo#60040 rhbz#1090956 crash after undoing master page
 
 * Tue Apr 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-7
 - Resolves: rhbz#1089340 crash on search+replace + close + searchreplace

@@ -43,7 +43,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -305,6 +305,7 @@ Patch38: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
 Patch39: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
 Patch40: 0001-crash-in-selecting-text-in-comments-midway-in-para.patch
 Patch41: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
+Patch42: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2296,6 +2297,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-7
+- Related: rhbz#1032774 disable autoexit when switching monitors
+
 * Thu Apr 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-6
 - Resolves: fdo#37130 use 10pt Default style font for comments
 - Resolves: fdo#60040 crash after undoing master page

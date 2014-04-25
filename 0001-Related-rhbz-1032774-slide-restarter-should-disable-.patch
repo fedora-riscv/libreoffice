@@ -1,0 +1,108 @@
+From c7d2d4953e4d9825157f09345ed45b8730522f36 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 25 Apr 2014 19:27:57 +0100
+Subject: [PATCH] Related: rhbz#1032774 slide restarter should disable
+ auto-exit
+
+The scenario is a pps that exits the app when the presentation
+is complete. But using "switch screens" in the presenter
+console will stop and restart the presentation. So protect
+that "stop" against existing by disabling the autoexit
+and restoring it afterwards
+
+(cherry picked from commit b7197cfe5d207b171412760c6d72353f31947e93)
+
+Conflicts:
+	sd/source/ui/slideshow/slideshow.cxx
+
+Change-Id: Id986ad7e3cfafb8068540fb90d05443f329b554c
+---
+ sd/source/ui/inc/slideshow.hxx                |  5 ++++-
+ sd/source/ui/slideshow/SlideShowRestarter.cxx |  3 +++
+ sd/source/ui/slideshow/slideshow.cxx          | 20 +++++++++++++++-----
+ 3 files changed, 22 insertions(+), 6 deletions(-)
+
+diff --git a/sd/source/ui/inc/slideshow.hxx b/sd/source/ui/inc/slideshow.hxx
+index 6573b2b..f6567e1 100644
+--- a/sd/source/ui/inc/slideshow.hxx
++++ b/sd/source/ui/inc/slideshow.hxx
+@@ -178,6 +178,9 @@ public:
+ 
+     static sal_Int32 GetDisplay();
+ 
++    bool IsExitAfterPresenting() const;
++    void SetExitAfterPresenting(bool bExit);
++
+ private:
+     SlideShow( SdDrawDocument* pDoc );
+ 
+@@ -187,7 +190,7 @@ private:
+     void StartInPlacePresentation();
+     void StartFullscreenPresentation();
+ 
+-    void ThrowIfDisposed() throw (::com::sun::star::uno::RuntimeException);
++    void ThrowIfDisposed() const throw (css::uno::RuntimeException);
+ 
+     void CreateController( ViewShell* pViewSh, ::sd::View* pView, ::Window* pParentWindow );
+     WorkWindow *GetWorkWindow();
+diff --git a/sd/source/ui/slideshow/SlideShowRestarter.cxx b/sd/source/ui/slideshow/SlideShowRestarter.cxx
+index 822e8be..63fae11 100644
+--- a/sd/source/ui/slideshow/SlideShowRestarter.cxx
++++ b/sd/source/ui/slideshow/SlideShowRestarter.cxx
+@@ -83,7 +83,10 @@ IMPL_LINK_NOARG(SlideShowRestarter, EndPresentation)
+     {
+         if (mnDisplayCount != (sal_Int32)Application::GetScreenCount())
+         {
++            bool bIsExitAfterPresenting = mpSlideShow->IsExitAfterPresenting();
++            mpSlideShow->SetExitAfterPresenting(false);
+             mpSlideShow->end();
++            mpSlideShow->SetExitAfterPresenting(bIsExitAfterPresenting);
+ 
+             // The following piece of code should not be here because the
+             // slide show should be aware of the existence of the presenter
+diff --git a/sd/source/ui/slideshow/slideshow.cxx b/sd/source/ui/slideshow/slideshow.cxx
+index 2bab38d..20a210b 100644
+--- a/sd/source/ui/slideshow/slideshow.cxx
++++ b/sd/source/ui/slideshow/slideshow.cxx
+@@ -146,16 +146,12 @@ SlideShow::SlideShow( SdDrawDocument* pDoc )
+ {
+ }
+ 
+-// --------------------------------------------------------------------
+-
+-void SlideShow::ThrowIfDisposed() throw (RuntimeException)
++void SlideShow::ThrowIfDisposed() const throw (RuntimeException)
+ {
+     if( mpDoc == 0 )
+         throw DisposedException();
+ }
+ 
+-// --------------------------------------------------------------------
+-
+ /// used by the model to create a slideshow for it
+ rtl::Reference< SlideShow > SlideShow::Create( SdDrawDocument* pDoc )
+ {
+@@ -678,6 +674,20 @@ WorkWindow *SlideShow::GetWorkWindow()
+     return dynamic_cast<WorkWindow*>(pShell->GetViewFrame()->GetTopFrame().GetWindow().GetParent());
+ }
+ 
++bool SlideShow::IsExitAfterPresenting() const
++{
++    SolarMutexGuard aGuard;
++    ThrowIfDisposed();
++    return mpDoc->IsExitAfterPresenting();
++}
++
++void SlideShow::SetExitAfterPresenting(bool bExit)
++{
++    SolarMutexGuard aGuard;
++    ThrowIfDisposed();
++    mpDoc->SetExitAfterPresenting(bExit);
++}
++
+ void SAL_CALL SlideShow::end() throw(RuntimeException)
+ {
+     SolarMutexGuard aGuard;
+-- 
+1.9.0
+

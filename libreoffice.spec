@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -305,6 +305,7 @@ Patch40: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 Patch41: 0001-avoid-repeated-table-layouting-fdo-75622.patch
 Patch42: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
 Patch43: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
+Patch44: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2296,6 +2297,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-9
+- Related: rhbz#1032774 disable slide auto-exit when swithing monitors
+
 * Thu Apr 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.3.3-8
 - Resolves: fdo#75622 presentations with table slow to load
 - Resolves: fdo#60040 rhbz#1090956 crash after undoing master page

@@ -1,4 +1,4 @@
-From f756fb84a1629d455ccbd7af1f3975ac307fb957 Mon Sep 17 00:00:00 2001
+From 20934180ab2c5978a613668bf8df49a60ba7a686 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 24 Apr 2014 17:10:12 +0100
 Subject: [PATCH] Resolves: fdo#60040 crash after undoing master page
@@ -8,14 +8,14 @@ Subject: [PATCH] Resolves: fdo#60040 crash after undoing master page
 
 Change-Id: Ie7068ecd1655ecae169948dc1e08330dc4200bf9
 ---
- sd/source/core/drawdoc3.cxx | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sd/source/core/drawdoc3.cxx | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/sd/source/core/drawdoc3.cxx b/sd/source/core/drawdoc3.cxx
-index d423352..5621826 100644
+index 9986219..ea0b6e0 100644
 --- a/sd/source/core/drawdoc3.cxx
 +++ b/sd/source/core/drawdoc3.cxx
-@@ -1414,7 +1414,6 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
+@@ -1367,7 +1367,6 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
      SdPage& rOldNotesMaster = (SdPage&)pNotes->TRG_GetMasterPage();
      SdPage* pMaster         = NULL;
      SdPage* pNotesMaster    = NULL;
@@ -23,7 +23,7 @@ index d423352..5621826 100644
      OUString aOldPageLayoutName(pSelectedPage->GetLayoutName());
      OUString aOldLayoutName(aOldPageLayoutName);
      sal_Int32 nIndex = aOldLayoutName.indexOf( SD_LT_SEPARATOR );
-@@ -1714,7 +1713,7 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
+@@ -1664,7 +1663,7 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
          {
              for (sal_uInt16 nPage = 1; nPage < GetPageCount(); nPage++)
              {
@@ -32,7 +32,7 @@ index d423352..5621826 100644
                  OUString aTest = pPage->GetLayoutName();
                  if (aTest == aOldPageLayoutName)
                  {
-@@ -1731,20 +1730,21 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
+@@ -1681,20 +1680,21 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
  
          for (std::vector<SdPage*>::iterator pIter = aPageList.begin(); pIter != aPageList.end(); ++pIter)
          {
@@ -46,9 +46,10 @@ index d423352..5621826 100644
                      new SdPresentationLayoutUndoAction
                          (this,
 -                        ( pPage && pPage->IsMasterPage() ) ? aLayoutName : aOldLayoutName,
-+                        pPage->IsMasterPage() ? aLayoutName : aOldLayoutName,
++                        pPage ? aLayoutName : aOldLayoutName,
                          aLayoutName,
-                          eAutoLayout, eAutoLayout, false, *pIter);
+-                         eAutoLayout, eAutoLayout, sal_False, *pIter);
++                         eAutoLayout, eAutoLayout, sal_False, pPage);
                  pUndoMgr->AddUndoAction(pPLUndoAction);
              }
 -            (*pIter)->SetPresentationLayout(aLayoutName);
@@ -58,7 +59,7 @@ index d423352..5621826 100644
          }
  
          // Adapt new master pages
-@@ -1847,7 +1847,7 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
+@@ -1797,7 +1797,7 @@ void SdDrawDocument::SetMasterPage(sal_uInt16 nSdPageNum,
          {
              for (sal_uInt16 nPage = 1; nPage < GetPageCount(); nPage++)
              {

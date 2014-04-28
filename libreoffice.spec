@@ -1442,14 +1442,10 @@ for app in base calc draw impress math writer; do
     chmod a+x %{buildroot}%{_bindir}/oo$app
 done
 
-cp -f %{SOURCE4} %{buildroot}%{_bindir}/unopkg
-sed -i -e "s/LAUNCHER/unopkg/g" %{buildroot}%{_bindir}/unopkg
-sed -i -e "s/BRAND/libreoffice/g" %{buildroot}%{_bindir}/unopkg
+sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE4} > %{buildroot}%{_bindir}/unopkg
 chmod a+x %{buildroot}%{_bindir}/unopkg
 
-cp -f %{SOURCE4} %{buildroot}%{_bindir}/libreoffice
-sed -i -e "s/LAUNCHER/soffice/g" %{buildroot}%{_bindir}/libreoffice
-sed -i -e "s/BRAND/libreoffice/g" %{buildroot}%{_bindir}/libreoffice
+sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE4} > %{buildroot}%{_bindir}/libreoffice
 chmod a+x %{buildroot}%{_bindir}/libreoffice
 
 pushd %{buildroot}%{_bindir}

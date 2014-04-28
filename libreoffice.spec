@@ -306,6 +306,7 @@ Patch39: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
 Patch40: 0001-crash-in-selecting-text-in-comments-midway-in-para.patch
 Patch41: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
 Patch42: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
+Patch43: 0001-add-X-TryExec-entries-to-desktop-files.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1495,9 +1496,6 @@ for file in *.desktop; do
         -e "s/$ICONVERSION//g" \
         -e "s/$PRODUCTVERSIONSHORT//g" \
         $file
-done
-for app in base calc draw impress math writer; do
-    echo "X-TryExec=oo$app" >> $app.desktop
 done
 # rhbz#156677 / rhbz#186515 do not show math and startcenter
 sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop

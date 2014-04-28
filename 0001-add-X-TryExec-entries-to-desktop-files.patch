@@ -1,0 +1,90 @@
+From f04a62ef7e5146daefe19b04db95828198c0e1e0 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 28 Apr 2014 09:59:10 +0200
+Subject: [PATCH] add X-TryExec entries to desktop files
+
+Change-Id: Ic3626f79fa8b0b6e0d6696799445eaea8b0ab47f
+---
+ sysui/desktop/menus/base.desktop    | 1 +
+ sysui/desktop/menus/calc.desktop    | 1 +
+ sysui/desktop/menus/draw.desktop    | 1 +
+ sysui/desktop/menus/impress.desktop | 1 +
+ sysui/desktop/menus/math.desktop    | 1 +
+ sysui/desktop/menus/writer.desktop  | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/sysui/desktop/menus/base.desktop b/sysui/desktop/menus/base.desktop
+index 62626d4..69ddaea 100755
+--- a/sysui/desktop/menus/base.desktop
++++ b/sysui/desktop/menus/base.desktop
+@@ -32,6 +32,7 @@ Keywords=Data;SQL;
+ InitialPreference=5
+ StartupWMClass=libreoffice-base
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=oobase
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+diff --git a/sysui/desktop/menus/calc.desktop b/sysui/desktop/menus/calc.desktop
+index e50de65..8e9d7ea 100755
+--- a/sysui/desktop/menus/calc.desktop
++++ b/sysui/desktop/menus/calc.desktop
+@@ -32,6 +32,7 @@ Keywords=Accounting;Stats;OpenDocument Spreadsheet;Chart;Microsoft Excel;Microso
+ InitialPreference=5
+ StartupWMClass=libreoffice-calc
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=oocalc
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+diff --git a/sysui/desktop/menus/draw.desktop b/sysui/desktop/menus/draw.desktop
+index a807fe0..4f5428f 100755
+--- a/sysui/desktop/menus/draw.desktop
++++ b/sysui/desktop/menus/draw.desktop
+@@ -32,6 +32,7 @@ Keywords=Vector;Schema;Diagram;Layout;OpenDocument Graphics;Microsoft Publisher;
+ InitialPreference=5
+ StartupWMClass=libreoffice-draw
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=oodraw
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+diff --git a/sysui/desktop/menus/impress.desktop b/sysui/desktop/menus/impress.desktop
+index fda44e4..21336fe 100755
+--- a/sysui/desktop/menus/impress.desktop
++++ b/sysui/desktop/menus/impress.desktop
+@@ -32,6 +32,7 @@ Keywords=Slideshow;Slides;OpenDocument Presentation;Microsoft PowerPoint;Microso
+ InitialPreference=5
+ StartupWMClass=libreoffice-impress
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=ooimpress
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+diff --git a/sysui/desktop/menus/math.desktop b/sysui/desktop/menus/math.desktop
+index 4822166..acb7d21 100755
+--- a/sysui/desktop/menus/math.desktop
++++ b/sysui/desktop/menus/math.desktop
+@@ -33,6 +33,7 @@ Keywords=Equation;OpenDocument Formula;Formula;odf;MathML;
+ InitialPreference=5
+ StartupWMClass=libreoffice-math
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=oomath
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+diff --git a/sysui/desktop/menus/writer.desktop b/sysui/desktop/menus/writer.desktop
+index e59187e..ece25c2 100755
+--- a/sysui/desktop/menus/writer.desktop
++++ b/sysui/desktop/menus/writer.desktop
+@@ -32,6 +32,7 @@ Keywords=Text;Letter;Fax;Document;OpenDocument Text;Microsoft Word;Microsoft Wor
+ InitialPreference=5
+ StartupWMClass=libreoffice-writer
+ X-KDE-Protocols=file,http,smb,ftp,webdav
++X-TryExec=oowriter
+ 
+ Actions=NewDocument;
+ [Desktop Action NewDocument]
+-- 
+1.9.0
+

@@ -1482,12 +1482,8 @@ ln -s libreoffice openoffice.org-1.9
 %endif
 popd
 
-# TO-DO, remember to remove the "echo" lines
-# and removal of printeradmin.desktop 
-# for LibreOffice 4.1 where this is upstreamed
 pushd %{buildroot}%{baseinstdir}/share/xdg/
 chmod u+w *.desktop
-rm -rf printeradmin.desktop
 ICONVERSION=`echo $PRODUCTVERSION | sed -e 's/\.//'`
 for file in *.desktop; do
     # rhbz#156677 remove the version from Name=

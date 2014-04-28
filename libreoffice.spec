@@ -1428,27 +1428,27 @@ if [ $executable == 1 ]; then false; fi
 #make up some /usr/bin scripts
 mkdir -p %{buildroot}%{_bindir}
 
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooffice
-echo exec libreoffice \"\$@\" >> %{buildroot}%{_bindir}/ooffice
-chmod a+x %{buildroot}%{_bindir}/ooffice
+pushd %{buildroot}%{_bindir}
+echo \#\!/bin/sh > ooffice
+echo exec libreoffice \"\$@\" >> ooffice
+chmod a+x ooffice
 
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooviewdoc
-echo exec libreoffice --view \"\$@\" >> %{buildroot}%{_bindir}/ooviewdoc
-chmod a+x %{buildroot}%{_bindir}/ooviewdoc
+echo \#\!/bin/sh > ooviewdoc
+echo exec libreoffice --view \"\$@\" >> ooviewdoc
+chmod a+x ooviewdoc
 
 for app in base calc draw impress math writer; do
-    echo \#\!/bin/sh > %{buildroot}%{_bindir}/oo$app
-    echo exec libreoffice --$app \"\$@\" >> %{buildroot}%{_bindir}/oo$app
-    chmod a+x %{buildroot}%{_bindir}/oo$app
+    echo \#\!/bin/sh > oo$app
+    echo exec libreoffice --$app \"\$@\" >> oo$app
+    chmod a+x oo$app
 done
 
-sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE4} > %{buildroot}%{_bindir}/unopkg
-chmod a+x %{buildroot}%{_bindir}/unopkg
+sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE4} > unopkg
+chmod a+x unopkg
 
-sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE4} > %{buildroot}%{_bindir}/libreoffice
-chmod a+x %{buildroot}%{_bindir}/libreoffice
+sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE4} > libreoffice
+chmod a+x libreoffice
 
-pushd %{buildroot}%{_bindir}
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat

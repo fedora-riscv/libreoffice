@@ -1436,29 +1436,11 @@ echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooviewdoc
 echo exec libreoffice --view \"\$@\" >> %{buildroot}%{_bindir}/ooviewdoc
 chmod a+x %{buildroot}%{_bindir}/ooviewdoc
 
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/oowriter
-echo exec libreoffice --writer \"\$@\" >> %{buildroot}%{_bindir}/oowriter
-chmod a+x %{buildroot}%{_bindir}/oowriter
-
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/oocalc
-echo exec libreoffice --calc \"\$@\" >> %{buildroot}%{_bindir}/oocalc
-chmod a+x %{buildroot}%{_bindir}/oocalc
-
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/ooimpress
-echo exec libreoffice --impress \"\$@\" >> %{buildroot}%{_bindir}/ooimpress
-chmod a+x %{buildroot}%{_bindir}/ooimpress
-
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/oodraw
-echo exec libreoffice --draw \"\$@\" >> %{buildroot}%{_bindir}/oodraw
-chmod a+x %{buildroot}%{_bindir}/oodraw
-
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/oomath
-echo exec libreoffice --math \"\$@\" >> %{buildroot}%{_bindir}/oomath
-chmod a+x %{buildroot}%{_bindir}/oomath
-
-echo \#\!/bin/sh > %{buildroot}%{_bindir}/oobase
-echo exec libreoffice --base \"\$@\" >> %{buildroot}%{_bindir}/oobase
-chmod a+x %{buildroot}%{_bindir}/oobase
+for app in base calc draw impress math writer; do
+    echo \#\!/bin/sh > %{buildroot}%{_bindir}/oo$app
+    echo exec libreoffice --$app \"\$@\" >> %{buildroot}%{_bindir}/oo$app
+    chmod a+x %{buildroot}%{_bindir}/oo$app
+done
 
 cp -f %{SOURCE4} %{buildroot}%{_bindir}/unopkg
 sed -i -e "s/LAUNCHER/unopkg/g" %{buildroot}%{_bindir}/unopkg

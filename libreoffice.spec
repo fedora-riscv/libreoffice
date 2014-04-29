@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.1.5
+%define libo_version 4.1.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -41,8 +41,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        7%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -270,19 +270,13 @@ Patch29: 0001-Resolves-rhbz-1050162-don-t-draw-to-NULL-window.patch
 Patch30: 0001-Resolves-rhbz-1010995-div-by-0-on-some-bizarre-corne.patch
 Patch31: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch32: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch33: 0001-explictly-list-common-lang-independant-template-dir.patch
 Patch34: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch35: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch36: 0001-Resolves-rhbz-1007697-Update-on-a-Window-triggering-.patch
 Patch37: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
 Patch38: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
 Patch39: 0001-never-run-autogen.sh.patch
-Patch40: 0001-rhbz-988516-DOCX-import-fix-context-stack-when-impor.patch
-Patch41: 0001-fdo-65655-fix-for-Different_Odd_And_Even_Pages-flag-.patch
-Patch42: 0001-rhbz-1065629-RTF-import-don-t-drop-nested-cells-if-n.patch
 Patch43: 0002-rhbz-1065629-RTF-import-re-implement-nested-tables.patch
 Patch44: 0003-writerfilter-salvage-a-field-parameter-parsing-train.patch
-Patch45: 0001-Related-rhbz-1076264-intermittent-a11y-crash-in-calc.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2155,6 +2149,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 29 2014 David Tardon <dtardon@redhat.com> - 1:4.1.6.2-1
+- new upstream release
+
 * Sat Mar 15 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.5.3-7
 - Related: rhbz#1076264 intermittent a11y crash in calc
 

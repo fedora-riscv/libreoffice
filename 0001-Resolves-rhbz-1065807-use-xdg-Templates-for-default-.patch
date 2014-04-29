@@ -1,7 +1,7 @@
-From c309eed705edd358ba2db8b26d711d0f8ae41dca Mon Sep 17 00:00:00 2001
+From c4fde89d031185be6f12202fab81b7c541e9db5b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 24 Feb 2014 11:38:13 +0000
-Subject: [PATCH 3/4] Resolves: rhbz#1065807 use xdg ~/Templates for default
+Subject: [PATCH] Resolves: rhbz#1065807 use xdg ~/Templates for default
  Template location
 
 (if it exists)
@@ -16,10 +16,10 @@ Change-Id: I98fc9fd54d1f56c8bed24ce4d2ebf53756ded2cc
  5 files changed, 66 insertions(+), 16 deletions(-)
 
 diff --git a/framework/source/services/pathsettings.cxx b/framework/source/services/pathsettings.cxx
-index 15fb3c0..bdb2949 100644
+index b2e2dd0..48a60b3 100644
 --- a/framework/source/services/pathsettings.cxx
 +++ b/framework/source/services/pathsettings.cxx
-@@ -280,6 +280,12 @@ PathSettings::PathInfo PathSettings::impl_readNewFormat(const OUString& sPath)
+@@ -296,6 +296,12 @@ PathSettings::PathInfo PathSettings::impl_readNewFormat(const OUString& sPath)
      // read the writeable path
      xPath->getByName(CFGPROP_WRITEPATH) >>= aPathVal.sWritePath;
  
@@ -33,11 +33,11 @@ index 15fb3c0..bdb2949 100644
      xPath->getByName(CFGPROP_ISSINGLEPATH) >>= aPathVal.bIsSinglePath;
  
 diff --git a/officecfg/registry/data/org/openoffice/Office/Paths.xcu b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
-index 4b5ec7d..2ef605e 100644
+index 9384200..c7794ea 100644
 --- a/officecfg/registry/data/org/openoffice/Office/Paths.xcu
 +++ b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
-@@ -160,8 +160,21 @@
-       <node oor:name="InternalPaths">
+@@ -161,8 +161,21 @@
+         <node oor:name="$(insturl)/share/template/common" oor:op="fuse"/>
          <node oor:name="$(insturl)/share/template/$(vlang)" oor:op="fuse"/>
        </node>
 +      <!--
@@ -91,7 +91,7 @@ index 3e8e8c1..52d8358 100644
          return css::uno::makeAny(css::beans::Optional< css::uno::Any >());
      }
 diff --git a/shell/source/backends/gconfbe/gconfaccess.cxx b/shell/source/backends/gconfbe/gconfaccess.cxx
-index de8eb29..0d407d6 100644
+index d1b4b0d..ab0f3e3 100644
 --- a/shell/source/backends/gconfbe/gconfaccess.cxx
 +++ b/shell/source/backends/gconfbe/gconfaccess.cxx
 @@ -23,6 +23,7 @@
@@ -194,5 +194,5 @@ index 7f0a52a..3fcd217 100644
      SETTING_SOURCEVIEWFONT_HEIGHT,
      SETTING_USER_GIVENNAME,
 -- 
-1.8.5.3
+1.9.0
 

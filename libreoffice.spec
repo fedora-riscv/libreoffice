@@ -17,8 +17,6 @@
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
-# don't worry about whitespace for now
-%define _default_patch_flags -s -l
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src

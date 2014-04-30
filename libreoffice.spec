@@ -36,8 +36,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -289,18 +289,12 @@ Patch28: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 Patch29: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
 Patch30: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
-Patch32: 0001-every-even-numbered-print-job-is-reported-as-failed.patch
-Patch33: 0001-Related-rhbz-1088625-PresenterPaintManager-seen-as-N.patch
-Patch34: 0001-table-not-resizing-when-rows-columns-added-to-it.patch
-Patch35: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
-Patch36: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
-Patch37: 0001-add-a-format-all-comments-feature.patch
-Patch38: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
-Patch39: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch40: 0001-crash-in-selecting-text-in-comments-midway-in-para.patch
-Patch41: 0001-Resolves-fdo-60040-crash-after-undoing-master-page-a.patch
-Patch42: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
-Patch43: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch32: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
+Patch33: 0001-add-a-format-all-comments-feature.patch
+Patch34: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
+Patch35: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
+Patch36: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
+Patch37: 0001-add-X-TryExec-entries-to-desktop-files.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2264,6 +2258,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-1
+- update to 4.2.4 rc2
+
 * Fri Apr 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.1-7
 - Related: rhbz#1032774 disable autoexit when switching monitors
 

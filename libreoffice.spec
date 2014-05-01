@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -293,8 +293,9 @@ Patch32: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 Patch33: 0001-add-a-format-all-comments-feature.patch
 Patch34: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
 Patch35: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch36: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
-Patch37: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch36: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
+Patch37: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
+Patch38: 0001-add-X-TryExec-entries-to-desktop-files.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2258,6 +2259,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu May 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-2
+- better scaling of notes-using pages
+
 * Wed Apr 30 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-1
 - update to 4.2.4 rc2
 

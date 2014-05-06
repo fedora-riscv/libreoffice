@@ -80,7 +80,7 @@ index c9c7e42..6bc53e8 100644
 +            //Move the scaled page down to center it
 +            //the other variant of Move does not map pixels
 +            //back to the logical units correctly
-+            pMetaFile->Move(0, convertTwipToMm100(nShiftY), pOutDev->GetDPIX(), pOutDev->GetDPIY());
++            pMetaFile->Move(0, TWIP_TO_MM100(nShiftY), pOutDev->ImplGetDPIX(), pOutDev->ImplGetDPIY());
 +            pMetaFile->WindStart();
 +
 +            //play back the scaled page

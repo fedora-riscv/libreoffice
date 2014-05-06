@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -297,6 +297,7 @@ Patch36: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
 Patch37: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
 Patch38: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch39: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
+Patch40: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2260,6 +2261,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue May 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-4
+- clip over-long comments
+
 * Thu May 01 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-3
 - Resolves: fdo#78294 default null-date for document import is 1899-12-30
 

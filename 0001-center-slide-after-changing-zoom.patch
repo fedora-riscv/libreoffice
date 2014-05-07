@@ -1,0 +1,77 @@
+From b179235f702e474b115ca479b603052f422346fd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 7 May 2014 16:16:17 +0100
+Subject: [PATCH] center slide after changing zoom
+
+Change-Id: I08698b06d0485d2cd3573af665e0621b42d37349
+---
+ sd/source/ui/inc/ViewShell.hxx |  1 +
+ sd/source/ui/view/viewshe2.cxx | 27 +++++++++++++++++++++++++++
+ sd/source/ui/view/viewshel.cxx |  1 +
+ 3 files changed, 29 insertions(+)
+
+diff --git a/sd/source/ui/inc/ViewShell.hxx b/sd/source/ui/inc/ViewShell.hxx
+index ce5ea31..87edbc5 100644
+--- a/sd/source/ui/inc/ViewShell.hxx
++++ b/sd/source/ui/inc/ViewShell.hxx
+@@ -206,6 +206,7 @@ public:
+     virtual void UpdateScrollBars (void);
+     void    Scroll(long nX, long nY);
+     void    ScrollLines(long nX, long nY);
++    void    ScrollCenter();
+     virtual void    SetZoom(long nZoom);
+     virtual void    SetZoomRect(const Rectangle& rZoomRect);
+     void    InitWindows(const Point& rViewOrigin, const Size& rViewSize,
+diff --git a/sd/source/ui/view/viewshe2.cxx b/sd/source/ui/view/viewshe2.cxx
+index 5f98d68..8f91d6c 100644
+--- a/sd/source/ui/view/viewshe2.cxx
++++ b/sd/source/ui/view/viewshe2.cxx
+@@ -365,6 +365,33 @@ void ViewShell::SetZoom(long nZoom)
+     UpdateScrollBars();
+ }
+ 
++namespace
++{
++    void CenterScrollBar(ScrollBar *pBar)
++    {
++        long nVisSize = pBar->GetVisibleSize();
++        long nMin = pBar->GetRangeMin();
++        long nMax = pBar->GetRangeMax();
++        long nLen = nMax - nMin - nVisSize;
++        long nPos = nMin + nLen/2;
++        pBar->DoScroll(nPos);
++    }
++}
++
++void ViewShell::ScrollCenter()
++{
++    if (mpHorizontalScrollBar.get() != NULL)
++        CenterScrollBar(mpHorizontalScrollBar.get());
++
++    //zoom mode with no panning of the current slide, i.e. the
++    //scrollbar is in change slide mode not pan slide mode
++    if (IsPageFlipMode())
++        return;
++
++    if (mpVerticalScrollBar.get() != NULL)
++        CenterScrollBar(mpVerticalScrollBar.get());
++}
++
+ /**
+  * Set zoom rectangle for active window. Sets all split windows to the same zoom
+  * factor.
+diff --git a/sd/source/ui/view/viewshel.cxx b/sd/source/ui/view/viewshel.cxx
+index 28e272e..17bcf5f 100644
+--- a/sd/source/ui/view/viewshel.cxx
++++ b/sd/source/ui/view/viewshel.cxx
+@@ -683,6 +683,7 @@ bool ViewShell::HandleScrollCommand(const CommandEvent& rCEvt, ::sd::Window* pWi
+                             nNewZoom = std::min( (long) pWin->GetMaxZoom(), basegfx::zoomtools::zoomIn( nOldZoom ));
+ 
+                         SetZoom( nNewZoom );
++                        ScrollCenter(); //center slide after changing zoom
+                         Invalidate( SID_ATTR_ZOOM );
+                         Invalidate( SID_ATTR_ZOOMSLIDER );
+ 
+-- 
+1.9.0
+

@@ -301,6 +301,7 @@ Patch40: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
 Patch41: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
 Patch42: 0001-center-slide-after-changing-zoom.patch
 Patch43: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2267,6 +2268,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Thu May 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-6
 - center current slide after changing zoom
 - add a status bar icon to fit slide to window
+- Related: fdo#50697 reset the cache timeout on GetGraphic
 
 * Thu May 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.4.2-5
 - Resolves: rhbz#1092589 Thoroughly check whether JRE is still present

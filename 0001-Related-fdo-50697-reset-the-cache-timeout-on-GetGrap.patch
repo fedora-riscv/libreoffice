@@ -1,0 +1,63 @@
+From 62b0eaf37c08dd27244e77b8bc90c691b000ebd6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 29 Apr 2014 14:17:11 +0100
+Subject: [PATCH] Related: fdo#50697 reset the cache timeout on GetGraphic
+
+so the graphic gets swapped out Xms after the last use and not Xms after
+initial creation regardless of if it got used a moment earlier.
+
+Change-Id: I1458f307d090ecd8d8d031b545f23e78bf1bcb67
+---
+ include/svtools/grfmgr.hxx        |  2 ++
+ svtools/source/graphic/grfmgr.cxx | 20 ++++++++++++++++++--
+ 2 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/include/svtools/grfmgr.hxx b/include/svtools/grfmgr.hxx
+index 3e1423a..251ee6d 100644
+--- a/include/svtools/grfmgr.hxx
++++ b/include/svtools/grfmgr.hxx
+@@ -299,6 +299,8 @@ private:
+ 
+                             DECL_LINK( ImplAutoSwapOutHdl, void* );
+ 
++    void SVT_DLLPRIVATE     ResetCacheTimeOut();
++
+ protected:
+ 
+     virtual void            GraphicManagerDestroyed();
+diff --git a/svtools/source/graphic/grfmgr.cxx b/svtools/source/graphic/grfmgr.cxx
+index 087d27b..a405ea7 100644
+--- a/svtools/source/graphic/grfmgr.cxx
++++ b/svtools/source/graphic/grfmgr.cxx
+@@ -744,10 +744,26 @@ void GraphicObject::StopAnimation( OutputDevice* pOut, long nExtraData )
+         mpSimpleCache->maGraphic.StopAnimation( pOut, nExtraData );
+ }
+ 
++void GraphicObject::ResetCacheTimeOut()
++{
++    if (mpSwapOutTimer)
++    {
++        mpSwapOutTimer->Stop();
++        mpSwapOutTimer->Start();
++    }
++}
++
+ const Graphic& GraphicObject::GetGraphic() const
+ {
+-    if( mbAutoSwapped )
+-        ( (GraphicObject*) this )->ImplAutoSwapIn();
++    GraphicObject *pThis = const_cast<GraphicObject*>(this);
++
++    if (mbAutoSwapped)
++        pThis->ImplAutoSwapIn();
++
++    //fdo#50697 If we've been asked to provide the graphic, then reset
++    //the cache timeout to start from now and not remain at the
++    //time of creation
++    pThis->ResetCacheTimeOut();
+ 
+     return maGraphic;
+ }
+-- 
+1.9.0
+

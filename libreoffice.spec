@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -298,6 +298,10 @@ Patch38: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch39: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
 Patch40: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
 Patch41: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
+Patch42: 0001-center-slide-after-changing-zoom.patch
+Patch43: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
+Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2261,6 +2265,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri May 09 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-7
+- Resolves: fdo#77509 memory corruption / crash in Consolidate
+
+* Thu May 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-6
+- center current slide after changing zoom
+- add a status bar icon to fit slide to window
+- Related: fdo#50697 reset the cache timeout on GetGraphic
+
 * Thu May 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.4.2-5
 - Resolves: rhbz#1092589 Thoroughly check whether JRE is still present
 

@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -302,6 +302,7 @@ Patch42: 0001-center-slide-after-changing-zoom.patch
 Patch43: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
 Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
 Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
+Patch46: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2265,6 +2266,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri May 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-8
+- Resolves: rhbz#1071604 Draw depends on files from libreoffice-impress, crashes
+  without them
+
 * Fri May 09 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-7
 - Resolves: fdo#77509 memory corruption / crash in Consolidate
 

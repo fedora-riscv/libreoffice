@@ -211,7 +211,7 @@ index b5be076..229f98d 100644
 +    pDev->DrawImage(aPt, maImage);
 +}
 +
-+bool SvxZoomPageStatusBarControl::MouseButtonDown(const MouseEvent&)
++sal_Bool SvxZoomPageStatusBarControl::MouseButtonDown(const MouseEvent&)
 +{
 +    SvxZoomItem aZoom( SVX_ZOOM_WHOLEPAGE, 0, GetId() );
 +

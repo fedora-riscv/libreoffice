@@ -79,7 +79,7 @@ index 429ee9c..5d7950f 100644
 +    Image maImage;
 +public:
 +    virtual void    Paint( const UserDrawEvent& rEvt ) SAL_OVERRIDE;
-+    virtual bool    MouseButtonDown( const MouseEvent & rEvt ) SAL_OVERRIDE;
++    virtual sal_Bool MouseButtonDown( const MouseEvent & rEvt ) SAL_OVERRIDE;
 +
 +    SFX_DECL_STATUSBAR_CONTROL();
 +

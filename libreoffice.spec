@@ -303,6 +303,7 @@ Patch43: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
 Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
 Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
 Patch46: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
+Patch47: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

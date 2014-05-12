@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -305,6 +305,7 @@ Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
 Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
 Patch46: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
 Patch47: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
+Patch48: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2268,6 +2269,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-9
+- Resolves: rhbz#1096486 avoid access to nonexisting parent
+
 * Fri May 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-8
 - Resolves: rhbz#1071604 Draw depends on files from libreoffice-impress, crashes
   without them

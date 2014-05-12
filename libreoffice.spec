@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -308,6 +308,7 @@ Patch47: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
 Patch48: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
 Patch49: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
 Patch50: 0001-fdo-78119-find-the-longest-match-for-month-name.patch
+Patch51: 0001-fdo-77242-fix-crash.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2271,6 +2272,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-11
+- Resolves: rhbz#1096747 format->page crash on html doc
+
 * Mon May 12 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-10
 - Resolves: fdo#78119 bad july (červenec) month name support in czech
   localization

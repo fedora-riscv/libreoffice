@@ -306,6 +306,7 @@ Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
 Patch46: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
 Patch47: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
 Patch48: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
+Patch49: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2271,6 +2272,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon May 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-9
 - Resolves: rhbz#1096486 avoid access to nonexisting parent
+- Resolves: rhbz#1096295 hard to distinguish slides in slide pane
 
 * Fri May 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-8
 - Resolves: rhbz#1071604 Draw depends on files from libreoffice-impress, crashes

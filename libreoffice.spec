@@ -309,6 +309,7 @@ Patch48: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
 Patch49: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
 Patch50: 0001-fdo-78119-find-the-longest-match-for-month-name.patch
 Patch51: 0001-fdo-77242-fix-crash.patch
+Patch52: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

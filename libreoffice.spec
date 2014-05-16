@@ -311,6 +311,7 @@ Patch52: 0001-fix-for-doxygen-1.8.7.patch
 Patch53: 0001-Use-SVM-metafile-instead-of-PNG-for-diagrams-SmartAr.patch
 Patch54: 0001-fix-memory-leak-on-pasting-metafiles-into-writer.patch
 Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
+Patch56: 0001-strangely-obvious-leaky-code.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2278,6 +2279,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - render smart-art with a vector format so it can be scaled nicely
 - fix leak on pasting metafiles into office
 - fix leak on pasting draw items into office
+- fix another leak on scaling metric items
 
 * Thu May 15 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-13
 - fix SDK doc generation with doxygen 1.8.7

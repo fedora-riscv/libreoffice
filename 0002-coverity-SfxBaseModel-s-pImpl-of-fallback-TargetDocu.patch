@@ -1,0 +1,73 @@
+From 195ced38c64e2599ca64713a3f6ed9791824e28b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 16 May 2014 16:36:13 +0100
+Subject: [PATCH 2/2] coverity: SfxBaseModel's pImpl of fallback TargetDocument
+ for paste leaks
+
+e.g. repeatedly pasting a metafile into writer and deleting it.
+
+==13369== 342 (232 direct, 110 indirect) bytes in 1 blocks are definitely lost in loss record 19,396 of 22,170
+==13369==    at 0x4A06965: operator new(unsigned long) (in /usr/lib64/valgrind/vgpreload_memcheck-amd64-linux.so)
+==13369==    by 0x686D72E: SfxBaseModel::SfxBaseModel(SfxObjectShell*) (sfxbasemodel.cxx:518)
+==13369==    by 0x288CA9C1: SvxUnoDrawingModel::SvxUnoDrawingModel(SdrModel*) (unomod.cxx:255)
+==13369==    by 0x28961055: SvxDrawingLayerImport(SdrModel*, com::sun::star::uno::Reference<com::sun::star::io::XInputStream> const&, com::sun::star::uno::Reference<com::sun::star::lang::XComponent> const&, char const*) (xmlexport.cxx:164)
+==13369==    by 0x28960FA2: SvxDrawingLayerImport(SdrModel*, com::sun::star::uno::Reference<com::sun::star::io::XInputStream> const&, com::sun::star::uno::Reference<com::sun::star::lang::XComponent> const&) (xmlexport.cxx:148)
+==13369==    by 0x2896175E: SvxDrawingLayerImport(SdrModel*, com::sun::star::uno::Reference<com::sun::star::io::XInputStream> const&) (xmlexport.cxx:254)
+==13369==    by 0x240B1002: SwFEShell::Paste(SvStream&, unsigned short, Point const*) (fecopy.cxx:1333)
+==13369==    by 0x247B981A: SwTransferable::_PasteSdrFormat(TransferableDataHelper&, SwWrtShell&, unsigned short, Point const*, unsigned char, bool) (swdtflvr.cxx:2207)
+==13369==    by 0x247B678E: SwTransferable::PasteData(TransferableDataHelper&, SwWrtShell&, unsigned short, unsigned long, unsigned short, bool, bool, Point const*, signed char, bool) (swdtflvr.cxx:1481)
+==13369==    by 0x247B5AE4: SwTransferable::Paste(SwWrtShell&, TransferableDataHelper&) (swdtflvr.cxx:1150)
+==13369==    by 0x2488FCCE: SwBaseShell::ExecClpbrd(SfxRequest&) (basesh.cxx:277)
+
+     Reference< lang::XComponent > xTargetDocument( xComponent );
+     if( !xTargetDocument.is() )
+     {
+>        xTargetDocument = new SvxUnoDrawingModel( pModel );
+         pModel->setUnoModel( Reference< XInterface >::query( xTargetDocument ) );
+     }
+
+Change-Id: I3bd0fc983d9b6bdcdc91071a4ec3d2c584397ebf
+---
+ sfx2/source/doc/sfxbasemodel.cxx | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/sfx2/source/doc/sfxbasemodel.cxx b/sfx2/source/doc/sfxbasemodel.cxx
+index 3ad6fc9..b50afe1 100644
+--- a/sfx2/source/doc/sfxbasemodel.cxx
++++ b/sfx2/source/doc/sfxbasemodel.cxx
+@@ -523,18 +523,15 @@ SfxBaseModel::SfxBaseModel( SfxObjectShell *pObjectShell )
+     }
+ }
+ 
+-
+ //  destructor
+-
+-
+ SfxBaseModel::~SfxBaseModel()
+ {
++    //In SvxDrawingLayerImport when !xTargetDocument the fallback SvxUnoDrawingModel created there
++    //never gets disposed called on it, so m_pData leaks.
++    delete m_pData, m_pData = 0;
+ }
+ 
+-
+ //  XInterface
+-
+-
+ Any SAL_CALL SfxBaseModel::queryInterface( const uno::Type& rType ) throw( RuntimeException, std::exception )
+ {
+     if  (   ( !m_bSupportEmbeddedScripts && rType.equals( cppu::UnoType<document::XEmbeddedScripts>::get() ) )
+@@ -545,10 +542,7 @@ Any SAL_CALL SfxBaseModel::queryInterface( const uno::Type& rType ) throw( Runti
+     return SfxBaseModel_Base::queryInterface( rType );
+ }
+ 
+-
+ //  XInterface
+-
+-
+ void SAL_CALL SfxBaseModel::acquire() throw( )
+ {
+     // Attention:
+-- 
+1.9.0
+

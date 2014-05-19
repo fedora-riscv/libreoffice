@@ -284,7 +284,7 @@ Patch25: 0001-drop-OnlyShowIn-from-.desktop-files.patch
 Patch26: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
 Patch27: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
 Patch28: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch29 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch29: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
 Patch30: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
 Patch31: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
 Patch32: 0001-add-a-format-all-comments-feature.patch

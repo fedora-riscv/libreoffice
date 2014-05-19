@@ -1,8 +1,8 @@
-From 195ced38c64e2599ca64713a3f6ed9791824e28b Mon Sep 17 00:00:00 2001
+From cbb4637768e36bb53c9cdfb096398d027ff5ec91 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 16 May 2014 16:36:13 +0100
-Subject: [PATCH 2/2] coverity: SfxBaseModel's pImpl of fallback TargetDocument
- for paste leaks
+Subject: [PATCH] coverity: SfxBaseModel's pImpl of fallback TargetDocument for
+ paste leaks
 
 e.g. repeatedly pasting a metafile into writer and deleting it.
 
@@ -28,46 +28,25 @@ e.g. repeatedly pasting a metafile into writer and deleting it.
 
 Change-Id: I3bd0fc983d9b6bdcdc91071a4ec3d2c584397ebf
 ---
- sfx2/source/doc/sfxbasemodel.cxx | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ sfx2/source/doc/sfxbasemodel.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/sfx2/source/doc/sfxbasemodel.cxx b/sfx2/source/doc/sfxbasemodel.cxx
-index 3ad6fc9..b50afe1 100644
+index 1de92d6..67096db 100644
 --- a/sfx2/source/doc/sfxbasemodel.cxx
 +++ b/sfx2/source/doc/sfxbasemodel.cxx
-@@ -523,18 +523,15 @@ SfxBaseModel::SfxBaseModel( SfxObjectShell *pObjectShell )
-     }
- }
- 
--
- //  destructor
--
--
+@@ -537,6 +537,11 @@ SfxBaseModel::SfxBaseModel( SfxObjectShell *pObjectShell )
  SfxBaseModel::~SfxBaseModel()
  {
+     DBG_DTOR(sfx2_SfxBaseModel,NULL);
 +    //In SvxDrawingLayerImport when !xTargetDocument the fallback SvxUnoDrawingModel created there
 +    //never gets disposed called on it, so m_pData leaks.
-+    delete m_pData, m_pData = 0;
++    IMPL_SfxBaseModel_DataContainer* pData = m_pData;
++    m_pData = 0;
++    delete pData;
  }
  
--
- //  XInterface
--
--
- Any SAL_CALL SfxBaseModel::queryInterface( const uno::Type& rType ) throw( RuntimeException, std::exception )
- {
-     if  (   ( !m_bSupportEmbeddedScripts && rType.equals( cppu::UnoType<document::XEmbeddedScripts>::get() ) )
-@@ -545,10 +542,7 @@ Any SAL_CALL SfxBaseModel::queryInterface( const uno::Type& rType ) throw( Runti
-     return SfxBaseModel_Base::queryInterface( rType );
- }
- 
--
- //  XInterface
--
--
- void SAL_CALL SfxBaseModel::acquire() throw( )
- {
-     // Attention:
+ //________________________________________________________________________________________________________
 -- 
 1.9.0
 

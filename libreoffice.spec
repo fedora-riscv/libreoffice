@@ -154,6 +154,7 @@ BuildRequires: pkgconfig(gtk+-2.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: hyphen-devel
 %if 0%{?fedora}
+BuildRequires: pkgconfig(glew)
 BuildRequires: kdelibs4-devel
 %endif
 BuildRequires: pkgconfig(ice)

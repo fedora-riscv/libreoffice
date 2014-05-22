@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.4
+%define libo_version 4.3.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .beta1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -36,8 +36,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        14%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -60,39 +60,40 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel}
-Source11:       %{external_url}/47203e7cade74e5c385aa812f21e7932-mdds_0.10.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds
+Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
+Source12:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-glew
 %if 0%{?rhel} < 7
-Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
-Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
-Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
-Source15:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
-Source16:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
-Source17:       %{external_url}/libcdr-0.0.15.tar.bz2
-Source18:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
-Source19:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
-Source20:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
-Source21:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source22:       %{external_url}/libvisio-0.0.31.tar.bz2
-Source23:       %{external_url}/861ef15fa0bc018f9ddc932c4ad8b6dd-lcms2-2.4.tar.gz
-Source24:       %{external_url}/libmspub-0.0.6.tar.bz2
-Source25:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.tar.bz2
-Source26:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
-Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+Source13:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
+Source14:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
+Source15:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
+Source16:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
+Source17:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
+Source18:       %{external_url}/libcdr-0.0.15.tar.bz2
+Source19:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
+Source20:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
+Source21:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
+Source22:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source23:       %{external_url}/libvisio-0.0.31.tar.bz2
+Source24:       %{external_url}/lcms2-2.6.tar.gz
+Source25:       %{external_url}/libmspub-0.0.6.tar.bz2
+Source26:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
+Source27:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
+Source28:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
+Source29:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
-Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source30:       %{external_url}/libodfgen-0.0.4.tar.bz2
-Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source32:       %{external_url}/libetonyek-0.0.4.tar.bz2
-Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
-Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
-Source35:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
-Source36:       %{external_url}/libabw-0.0.2.tar.bz2
-Source37:       %{external_url}/libatomic_ops-7_2d.zip
-Source38:       %{external_url}/libeot-0.01.tar.bz2
-Source39:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
+Source30:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+Source31:       %{external_url}/libodfgen-0.0.4.tar.bz2
+Source32:       %{external_url}/libmwaw-0.2.0.tar.bz2
+Source33:       %{external_url}/libetonyek-0.0.4.tar.bz2
+Source34:       %{external_url}/libfreehand-0.0.0.tar.bz2
+Source35:       %{external_url}/libe-book-0.0.3.tar.bz2
+Source36:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
+Source37:       %{external_url}/libabw-0.0.2.tar.bz2
+Source38:       %{external_url}/libatomic_ops-7_2d.zip
+Source39:       %{external_url}/libeot-0.01.tar.bz2
+Source40:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
 %endif
 
@@ -138,6 +139,7 @@ BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 %endif
 BuildRequires: fontpackages-devel
+BuildRequires: glm-devel
 BuildRequires: pkgconfig(freetype2)
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
@@ -183,7 +185,7 @@ BuildRequires: pkgconfig(libidn)
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libmspub-0.0)
-BuildRequires: pkgconfig(liborcus-0.6)
+BuildRequires: pkgconfig(liborcus-0.8)
 BuildRequires: pkgconfig(libvisio-0.0)
 BuildRequires: pkgconfig(libwpd-0.9)
 BuildRequires: pkgconfig(libwpg-0.2)
@@ -254,64 +256,34 @@ Requires: %{name}-math = %{epoch}:%{version}-%{release}
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
 
-Patch1:  openoffice.org-2.0.2.rh188467.printingdefaults.patch
-Patch2:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
-Patch3:  openoffice.org-3.0.0.ooo88341.sc.verticalboxes.patch
-Patch4:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
-Patch5:  openoffice.org-3.1.0.ooo101274.opening-a-directory.patch
-Patch6:  libreoffice-installfix.patch
+# not upstreamed
+Patch1:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+# not upstreamed
+Patch2:  0001-vertical-content-overflowing-out-of-cell-i88341.patch
+# not upstreamed
+Patch3:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+# not upstreamed
+Patch4:  0001-i101274-a-directory-on-command-line-is-silently-igno.patch
+# not upstreamed
+Patch5:  libreoffice-installfix.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
+# not upstreamed
 Patch7: libreoffice-rhel6gcj.patch
-Patch8: libreoffice-rhel6poppler.patch
-Patch9: libreoffice-rhel6langs.patch
-Patch10: libreoffice-rhel6glib.patch
+# not upstreamed
+Patch7: libreoffice-rhel6poppler.patch
+# not upstreamed
+Patch8: libreoffice-rhel6langs.patch
+# not upstreamed
+Patch9: libreoffice-rhel6glib.patch
 %endif
-Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
-Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch14: 0001-disable-firebird-unit-test.patch
-Patch15: 0001-never-run-autogen.sh.patch
-Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
-Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch18: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-Patch19: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch20: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
-Patch21: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch22: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
-Patch23: 0001-Package-GeneratedPackage-fixup.patch
-Patch24: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
-Patch25: 0001-drop-OnlyShowIn-from-.desktop-files.patch
-Patch26: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
-Patch27: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
-Patch28: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch29: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
-Patch30: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
-Patch31: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
-Patch32: 0001-add-a-format-all-comments-feature.patch
-Patch33: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
-Patch34: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch35: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
-Patch36: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
-Patch37: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch38: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
-Patch39: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
-Patch40: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
-Patch41: 0001-center-slide-after-changing-zoom.patch
-Patch42: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
-Patch43: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
-Patch44: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
-Patch45: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
-Patch46: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
-Patch47: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
-Patch48: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
-Patch49: 0001-fdo-78119-find-the-longest-match-for-month-name.patch
-Patch50: 0001-fdo-77242-fix-crash.patch
-Patch51: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
-Patch52: 0001-fix-for-doxygen-1.8.7.patch
-Patch53: 0001-Use-SVM-metafile-instead-of-PNG-for-diagrams-SmartAr.patch
-Patch54: 0001-fix-memory-leak-on-pasting-metafiles-into-writer.patch
-Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
-Patch56: 0001-strangely-obvious-leaky-code.patch
+# not upstreamed
+Patch10: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+# not upstreamed
+Patch11: 0001-disable-firebird-unit-test.patch
+# not upstreamed
+Patch12: 0001-never-run-autogen.sh.patch
+# not upstreamed
+Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1237,12 +1209,16 @@ aclocal -I m4
 autoconf
 %endif
 
+# TODO: enable gltf?
+# TODO: enable coinmp?
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
+ --disable-coinmp \
  --disable-fetch-external \
+ --disable-gltf \
  --disable-gnome-vfs \
  --disable-openssl \
  --enable-dbus \
@@ -1510,7 +1486,7 @@ rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
 
 mkdir -p %{buildroot}%{baseinstdir}/share/psprint/driver
-cp -p psprint_config/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
+cp -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" %{buildroot}%{baseinstdir}/program/fundamentalrc
@@ -1593,7 +1569,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdeploymentgui.so
 %{baseinstdir}/program/libdlgprovlo.so
 %{baseinstdir}/program/libexpwraplo.so
-%{baseinstdir}/program/libfastsaxlo.so
 %{baseinstdir}/program/flat_logo.svg
 %{baseinstdir}/program/libfps_officelo.so
 %{baseinstdir}/program/gdbtrace
@@ -1601,7 +1576,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/gnome-open-url.bin
-%{baseinstdir}/program/libhatchwindowfactorylo.so
 %{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
@@ -1679,7 +1653,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmtfrendererlo.so
 %{baseinstdir}/program/libmysqllo.so
 %{baseinstdir}/program/libodbclo.so
-%{baseinstdir}/program/libodbcbaselo.so
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
 %{baseinstdir}/program/libooxlo.so
@@ -1699,9 +1672,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libsdbtlo.so
 %{baseinstdir}/program/libsddlo.so
 %{baseinstdir}/program/libsduilo.so
-%{baseinstdir}/program/libspalo.so
 %{baseinstdir}/program/libspelllo.so
 %{baseinstdir}/program/libsrtrs1.so
+%{baseinstdir}/program/libstoragefdlo.so
 %{baseinstdir}/program/libsvgiolo.so
 %{baseinstdir}/program/libsvxlo.so
 %{baseinstdir}/program/libsvxcorelo.so
@@ -1710,7 +1683,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libtextconv_dict.so
 %{baseinstdir}/program/libtextconversiondlgslo.so
 %{baseinstdir}/program/libtextfdlo.so
-%{baseinstdir}/program/libtvhlp1.so
 %{baseinstdir}/program/libodfflatxmllo.so
 # TODO: shouldn't it have lo suffix?
 %{baseinstdir}/program/libucbhelper.so
@@ -1776,13 +1748,11 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/resource/scnen-US.res
 %{baseinstdir}/program/resource/sden-US.res
 %{baseinstdir}/program/resource/sfxen-US.res
-%{baseinstdir}/program/resource/spaen-US.res
 %{baseinstdir}/program/resource/sdbten-US.res
 %{baseinstdir}/program/resource/svlen-US.res
 %{baseinstdir}/program/resource/svten-US.res
 %{baseinstdir}/program/resource/svxen-US.res
 %{baseinstdir}/program/resource/swen-US.res
-%{baseinstdir}/program/resource/textconversiondlgsen-US.res
 %{baseinstdir}/program/resource/tplen-US.res
 %{baseinstdir}/program/resource/uuien-US.res
 %{baseinstdir}/program/resource/upden-US.res
@@ -1796,7 +1766,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libsimplecanvaslo.so
 %{baseinstdir}/program/libslideshowlo.so
 %{baseinstdir}/program/libsofficeapp.so
-%{baseinstdir}/program/spadmin.bin
 %{baseinstdir}/program/libstringresourcelo.so
 %{baseinstdir}/program/libsysshlo.so
 %{baseinstdir}/program/libucpcmis1lo.so
@@ -1824,8 +1793,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_tango.zip
-%{baseinstdir}/share/config/psetup.xpm
-%{baseinstdir}/share/config/psetupl.xpm
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
 %if %{with langpacks}
@@ -1911,7 +1878,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libsfxlo.so
 %{baseinstdir}/program/libsotlo.so
 %{baseinstdir}/program/libspllo.so
-%{baseinstdir}/program/libspl_unxlo.so
 %{baseinstdir}/program/libsvllo.so
 %{baseinstdir}/program/libsvtlo.so
 %{baseinstdir}/program/libtklo.so
@@ -1920,6 +1886,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucpfile1.so
 %{baseinstdir}/program/libutllo.so
 %{baseinstdir}/program/libvcllo.so
+%{baseinstdir}/program/libvclopengllo.so
+%{baseinstdir}/program/libwriterperfectlo.so
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/liblocalebe1lo.so
@@ -1944,11 +1912,14 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
 %{baseinstdir}/program/sofficerc
-%{baseinstdir}/program/spadmin
 %{baseinstdir}/program/unoinfo
 %{baseinstdir}/program/libnpsoplugin.so
 %{baseinstdir}/program/oosplash
 %{baseinstdir}/program/shell/
+%dir %{baseinstdir}/share/filter
+%{baseinstdir}/share/filter/oox-drawingml-adj-names
+%{baseinstdir}/share/filter/oox-drawingml-cs-presets
+%{baseinstdir}/share/filter/vml-shape-types
 %{baseinstdir}/share/xdg/
 %{baseinstdir}/program/redirectrc
 %{_datadir}/applications/libreoffice-startcenter.desktop
@@ -2275,6 +2246,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 21 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-1.beta1
+- update to 4.3.0 beta1
+
 * Fri May 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-14
 - render smart-art with a vector format so it can be scaled nicely
 - fix leak on pasting metafiles into office

@@ -1,4 +1,4 @@
-From 1be2e01e592466aec2e60fbf1af528cfab1572db Mon Sep 17 00:00:00 2001
+From 9834a43821ccf9feb4cee971057f3fc136b5add8 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 1 Dec 2011 14:02:07 +0100
 Subject: [PATCH] #i101274 a directory on command line is silently ignored
@@ -9,10 +9,10 @@ Subject: [PATCH] #i101274 a directory on command line is silently ignored
  2 files changed, 76 insertions(+)
 
 diff --git a/comphelper/source/misc/stillreadwriteinteraction.cxx b/comphelper/source/misc/stillreadwriteinteraction.cxx
-index b3dd6e8..d0f5738 100644
+index 10f1855..650b88f 100644
 --- a/comphelper/source/misc/stillreadwriteinteraction.cxx
 +++ b/comphelper/source/misc/stillreadwriteinteraction.cxx
-@@ -87,6 +87,7 @@ ucbhelper::InterceptedInteraction::EInterceptionState StillReadWriteInteraction:
+@@ -85,6 +85,7 @@ ucbhelper::InterceptedInteraction::EInterceptionState StillReadWriteInteraction:
              bAbort = (
                  (exIO.Code == css::ucb::IOErrorCode_ACCESS_DENIED     )
                  || (exIO.Code == css::ucb::IOErrorCode_LOCKING_VIOLATION )
@@ -21,7 +21,7 @@ index b3dd6e8..d0f5738 100644
  #ifdef MACOSX
                  // this is a workaround for MAC, on this platform if the file is locked
 diff --git a/ucbhelper/source/client/content.cxx b/ucbhelper/source/client/content.cxx
-index 95e589f..d7fc181 100644
+index c8ccd88..ac5920a 100644
 --- a/ucbhelper/source/client/content.cxx
 +++ b/ucbhelper/source/client/content.cxx
 @@ -27,6 +27,7 @@
@@ -60,8 +60,8 @@ index 95e589f..d7fc181 100644
  
  using namespace com::sun::star::container;
  using namespace com::sun::star::beans;
-@@ -283,6 +292,54 @@ static Reference< XContent > getContent(
-     return Reference< XContent >();
+@@ -304,6 +313,54 @@ static Reference< XContent > getContentNoThrow(
+     return xContent;
  }
  
 +namespace
@@ -112,10 +112,10 @@ index 95e589f..d7fc181 100644
 +
 +}
 +
- //=========================================================================
- //=========================================================================
- //
-@@ -699,7 +756,10 @@ Reference< XInputStream > Content::openStream()
+ 
+ 
+ 
+@@ -718,7 +775,10 @@ Reference< XInputStream > Content::openStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -126,7 +126,7 @@ index 95e589f..d7fc181 100644
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -724,7 +784,10 @@ Reference< XInputStream > Content::openStreamNoLock()
+@@ -743,7 +803,10 @@ Reference< XInputStream > Content::openStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -137,7 +137,7 @@ index 95e589f..d7fc181 100644
  
      Reference< XActiveDataSink > xSink = new ActiveDataSink;
  
-@@ -749,7 +812,10 @@ Reference< XStream > Content::openWriteableStream()
+@@ -768,7 +831,10 @@ Reference< XStream > Content::openWriteableStream()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -148,7 +148,7 @@ index 95e589f..d7fc181 100644
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -774,7 +840,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
+@@ -793,7 +859,10 @@ Reference< XStream > Content::openWriteableStreamNoLock()
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
@@ -159,28 +159,28 @@ index 95e589f..d7fc181 100644
  
      Reference< XActiveDataStreamer > xStreamer = new ActiveDataStreamer;
  
-@@ -799,7 +868,10 @@ sal_Bool Content::openStream( const Reference< XActiveDataSink >& rSink )
+@@ -818,7 +887,10 @@ bool Content::openStream( const Reference< XActiveDataSink >& rSink )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
 +        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
-         return sal_False;
+         return false;
 +    }
  
      OpenCommandArgument2 aArg;
      aArg.Mode       = OpenMode::DOCUMENT;
-@@ -822,7 +894,10 @@ sal_Bool Content::openStream( const Reference< XOutputStream >& rStream )
+@@ -841,7 +913,10 @@ bool Content::openStream( const Reference< XOutputStream >& rStream )
      throw( CommandAbortedException, RuntimeException, Exception )
  {
      if ( !isDocument() )
 +    {
 +        lcl_displayMessage(m_xImpl->getComponentContext(), m_xImpl->getEnvironment(), getURL());
-         return sal_False;
+         return false;
 +    }
  
      OpenCommandArgument2 aArg;
      aArg.Mode       = OpenMode::DOCUMENT;
 -- 
-1.8.0
+1.9.0
 

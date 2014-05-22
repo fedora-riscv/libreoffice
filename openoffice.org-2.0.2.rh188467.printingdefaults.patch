@@ -7,10 +7,10 @@ Subject: [PATCH] rhbz#188467 printing defaults
  psprint_config/configuration/ppds/SGENPRT.PS | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/psprint_config/configuration/ppds/SGENPRT.PS b/psprint_config/configuration/ppds/SGENPRT.PS
+diff --git a/vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS b/vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS
 index 0446757..177e2c4 100644
---- a/psprint_config/configuration/ppds/SGENPRT.PS
-+++ b/psprint_config/configuration/ppds/SGENPRT.PS
+--- a/vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS
++++ b/vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS
 @@ -42,6 +42,7 @@
  *ColorDevice: True
  *DefaultColorSpace: RGB

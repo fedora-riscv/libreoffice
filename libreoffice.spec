@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        15%{?libo_prerelease}%{?dist}
+Release:        16%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -312,6 +312,7 @@ Patch54: 0001-fix-memory-leak-on-pasting-metafiles-into-writer.patch
 Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
 Patch56: 0001-strangely-obvious-leaky-code.patch
 Patch57: 0001-various-situations-where-graphic-go-missing-on-save.patch
+Patch58: 0001-fdo-78536-sfx2-template-dialog-make-the-am-i-dead-ye.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2275,6 +2276,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-16.UNBUILT
+- Resolves: rhbz#1100357 crash after closing style dialog
+
 * Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-15
 - Resolves: rhbz#1084822 graphics missing after save and reload
 

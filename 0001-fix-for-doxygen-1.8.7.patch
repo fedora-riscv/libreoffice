@@ -1,0 +1,41 @@
+From 2e9a77aa2d8e83f6296cd9204759d18b0ec5f0b5 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 15 May 2014 13:41:16 +0200
+Subject: [PATCH] fix for doxygen 1.8.7
+
+Earlier versions apparently used HTML as default if no output format was
+specified. 1.8.7 no longer does that.
+
+Change-Id: Ia8f908f54b344530e1b50e8800c032f782fb36e9
+---
+ odk/docs/cpp/Doxyfile | 1 +
+ odk/docs/idl/Doxyfile | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/odk/docs/cpp/Doxyfile b/odk/docs/cpp/Doxyfile
+index 30346e0..2519f1b 100644
+--- a/odk/docs/cpp/Doxyfile
++++ b/odk/docs/cpp/Doxyfile
+@@ -24,6 +24,7 @@ WARN_FORMAT = "$file:$line: $text"
+ INPUT = %
+ RECURSIVE = YES
+ 
++GENERATE_HTML = YES
+ HTML_OUTPUT = .
+ 
+ GENERATE_LATEX = NO
+diff --git a/odk/docs/idl/Doxyfile b/odk/docs/idl/Doxyfile
+index 6eead54..c065b33 100644
+--- a/odk/docs/idl/Doxyfile
++++ b/odk/docs/idl/Doxyfile
+@@ -13,6 +13,7 @@ STRIP_FROM_PATH = %
+ INPUT = %
+ RECURSIVE = YES
+ 
++GENERATE_HTML = YES
+ HTML_OUTPUT = .
+ GENERATE_LATEX = NO
+ 
+-- 
+1.9.0
+

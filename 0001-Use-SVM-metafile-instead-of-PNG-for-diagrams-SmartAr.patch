@@ -1,0 +1,73 @@
+From 633003965a4be0c535b43cc3072c5c4a95109d34 Mon Sep 17 00:00:00 2001
+From: Tor Lillqvist <tml@collabora.com>
+Date: Fri, 16 May 2014 16:43:25 +0300
+Subject: [PATCH] Use SVM (metafile) instead of PNG for diagrams (SmartArt)
+
+It seemed a bit pointless to waste CPU cycles on PNG-compressing a
+bitmap image only to later then uncompress it anyway. vcl's PNG
+writing code showed up as 13% on the time profile of TiledLibreOffice
+when displaying a document full of SmartArts.
+
+Miklos suggested I try using SVM (which I guess means "StarView
+Metafile") instead. When using SVM, no rendering of diagrams to
+bitmaps during loading is done, but the diagram stays stored in a
+resolution-independent (vector-ish) form. Which means it will be
+rendered nicely and crisply regardless of the zoom level.
+
+At least, that is my understanding, and experimentation (on OS X and Linux)
+seems to confirm.
+
+ce8c0ff07559ddcc729bffd7a68f4c6f281882e3
+
+Change-Id: Ice8c0ff07559ddcc729bffd7a68f4c6f281882e3
+---
+ oox/source/drawingml/shape.cxx | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
+
+diff --git a/oox/source/drawingml/shape.cxx b/oox/source/drawingml/shape.cxx
+index b319c38..33c846c 100644
+--- a/oox/source/drawingml/shape.cxx
++++ b/oox/source/drawingml/shape.cxx
+@@ -1088,7 +1088,7 @@ Reference < XShape > Shape::renderDiagramToGraphic( XmlFilterBase& rFilterBase )
+         Reference < io::XOutputStream > xOutputStream( xStream->getOutputStream() );
+ 
+         // Rendering format
+-        OUString sFormat( "PNG" );
++        OUString sFormat( "SVM" );
+ 
+         // Size of the rendering
+         awt::Size aActualSize = mxShape->getSize();
+@@ -1097,21 +1097,15 @@ Reference < XShape > Shape::renderDiagramToGraphic( XmlFilterBase& rFilterBase )
+         awt::Size aSize = awt::Size( static_cast < sal_Int32 > ( ( fPixelsPer100thmm * aActualSize.Width ) + 0.5 ),
+                                      static_cast < sal_Int32 > ( ( fPixelsPer100thmm * aActualSize.Height ) + 0.5 ) );
+ 
+-        Sequence< PropertyValue > aFilterData( 7 );
+-        aFilterData[ 0 ].Name = "Compression";
+-        aFilterData[ 0 ].Value <<= static_cast < sal_Int32 > ( 9 );
+-        aFilterData[ 1 ].Name = "Interlaced";
+-        aFilterData[ 1 ].Value <<= static_cast < sal_Int32 > ( 1 );
+-        aFilterData[ 2 ].Name = "Translucent";
+-        aFilterData[ 2 ].Value <<= static_cast < sal_Int32 > ( 1 );
+-        aFilterData[ 3 ].Name = "PixelWidth";
+-        aFilterData[ 3 ].Value <<= aSize.Width;
+-        aFilterData[ 4 ].Name = "PixelHeight";
+-        aFilterData[ 4 ].Value <<= aSize.Height;
+-        aFilterData[ 5 ].Name = "LogicalWidth";
+-        aFilterData[ 5 ].Value <<= aActualSize.Width;
+-        aFilterData[ 6 ].Name = "LogicalHeight";
+-        aFilterData[ 6 ].Value <<= aActualSize.Height;
++        Sequence< PropertyValue > aFilterData( 4 );
++        aFilterData[ 0 ].Name = "PixelWidth";
++        aFilterData[ 0 ].Value <<= aSize.Width;
++        aFilterData[ 1 ].Name = "PixelHeight";
++        aFilterData[ 1 ].Value <<= aSize.Height;
++        aFilterData[ 2 ].Name = "LogicalWidth";
++        aFilterData[ 2 ].Value <<= aActualSize.Width;
++        aFilterData[ 3 ].Name = "LogicalHeight";
++        aFilterData[ 3 ].Value <<= aActualSize.Height;
+ 
+         Sequence < PropertyValue > aDescriptor( 3 );
+         aDescriptor[ 0 ].Name = "OutputStream";
+-- 
+1.9.0
+

@@ -1,0 +1,25 @@
+From 5dc66e7a9a86b40f4209eba08aad6cc9294e8845 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 16 May 2014 20:50:24 +0100
+Subject: [PATCH] strangely obvious leaky code
+
+Change-Id: I968cbb784d53e0cff0649061c58f752939226a09
+---
+ svx/source/sdr/properties/itemsettools.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/svx/source/sdr/properties/itemsettools.cxx b/svx/source/sdr/properties/itemsettools.cxx
+index ce937b3..2879b48 100644
+--- a/svx/source/sdr/properties/itemsettools.cxx
++++ b/svx/source/sdr/properties/itemsettools.cxx
+@@ -120,6 +120,7 @@ namespace sdr
+                         SfxPoolItem* pNewItem = pItem->Clone();
+                         pNewItem->ScaleMetrics(nMul, nDiv);
+                         rSet.Put(*pNewItem);
++                        delete pNewItem;
+                     }
+                 }
+                 nWhich = aIter.NextWhich();
+-- 
+1.9.0
+

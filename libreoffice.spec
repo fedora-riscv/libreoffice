@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        15%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -265,46 +265,53 @@ Patch8: libreoffice-rhel6poppler.patch
 Patch9: libreoffice-rhel6langs.patch
 Patch10: libreoffice-rhel6glib.patch
 %endif
-%if 0%{?rhel} && 0%{?rhel} == 7
-Patch11: 0001-fix-libetonyek-build.patch
-%endif
-Patch12: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
-Patch13: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-Patch14: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
-Patch15: 0001-disable-firebird-unit-test.patch
-Patch16: 0001-never-run-autogen.sh.patch
-Patch17: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
-Patch18: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch19: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-Patch20: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch21: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
-Patch22: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch23: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
-Patch24: 0001-Package-GeneratedPackage-fixup.patch
-Patch25: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
-Patch26: 0001-drop-OnlyShowIn-from-.desktop-files.patch
-Patch27: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
-Patch28: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
-Patch29: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch30: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
-Patch31: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
-Patch32: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
-Patch33: 0001-add-a-format-all-comments-feature.patch
-Patch34: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
-Patch35: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch36: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
-Patch37: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
-Patch38: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch39: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
-Patch40: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
-Patch41: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
-Patch42: 0001-center-slide-after-changing-zoom.patch
-Patch43: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
-Patch44: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
-Patch45: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
-Patch46: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
-Patch47: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
-Patch48: 0001-various-situations-where-graphic-go-missing-on-save.patch
+Patch11: 0001-Related-rhbz-1032774-bodge-around-reported-NULL-valu.patch
+Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch13: 0001-Resolves-rhbz-912529-Kerkis-SmallCaps-shown-instead-.patch
+Patch14: 0001-disable-firebird-unit-test.patch
+Patch15: 0001-never-run-autogen.sh.patch
+Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
+Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
+Patch18: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
+Patch19: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
+Patch20: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
+Patch21: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
+Patch22: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch23: 0001-Package-GeneratedPackage-fixup.patch
+Patch24: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
+Patch25: 0001-drop-OnlyShowIn-from-.desktop-files.patch
+Patch26: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
+Patch27: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
+Patch28: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch29: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch30: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
+Patch31: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
+Patch32: 0001-add-a-format-all-comments-feature.patch
+Patch33: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
+Patch34: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
+Patch35: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
+Patch36: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
+Patch37: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch38: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
+Patch39: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
+Patch40: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
+Patch41: 0001-center-slide-after-changing-zoom.patch
+Patch42: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch43: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
+Patch44: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
+Patch45: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
+Patch46: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
+Patch47: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
+Patch48: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
+Patch49: 0001-fdo-78119-find-the-longest-match-for-month-name.patch
+Patch50: 0001-fdo-77242-fix-crash.patch
+Patch51: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
+Patch52: 0001-fix-for-doxygen-1.8.7.patch
+Patch53: 0001-Use-SVM-metafile-instead-of-PNG-for-diagrams-SmartAr.patch
+Patch54: 0001-fix-memory-leak-on-pasting-metafiles-into-writer.patch
+Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
+Patch56: 0001-strangely-obvious-leaky-code.patch
+Patch57: 0001-various-situations-where-graphic-go-missing-on-save.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2268,8 +2275,31 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-9
+* Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-15
 - Resolves: rhbz#1084822 graphics missing after save and reload
+
+* Fri May 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-14
+- render smart-art with a vector format so it can be scaled nicely
+- fix leak on pasting metafiles into office
+- fix leak on pasting draw items into office
+- fix another leak on scaling metric items
+
+* Thu May 15 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-13
+- fix SDK doc generation with doxygen 1.8.7
+
+* Wed May 14 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-12
+- rebuild for new poppler
+
+* Mon May 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-11
+- Resolves: rhbz#1096747 format->page crash on html doc
+
+* Mon May 12 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-10
+- Resolves: fdo#78119 bad july (červenec) month name support in czech
+  localization
+
+* Mon May 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-9
+- Resolves: rhbz#1096486 avoid access to nonexisting parent
+- Resolves: rhbz#1096295 hard to distinguish slides in slide pane
 
 * Fri May 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.4.2-8
 - Resolves: rhbz#1071604 Draw depends on files from libreoffice-impress, crashes

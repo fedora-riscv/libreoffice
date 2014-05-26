@@ -285,10 +285,8 @@ Patch12: 0001-disable-firebird-unit-test.patch
 Patch13: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
-%ifarch %{arm}
 # not upstreamed
 Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

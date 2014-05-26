@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -285,6 +285,10 @@ Patch11: 0001-disable-firebird-unit-test.patch
 Patch12: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
+%ifarch %{arm}
+# not upstreamed
+Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2247,6 +2251,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 26 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-4.beta1
+- unblock build on ARM
+
 * Fri May 23 2014 Petr Machata <pmachata@redhat.com> - 1:4.3.0.0-3.beta1
 - Rebuild for boost 1.55.0
 

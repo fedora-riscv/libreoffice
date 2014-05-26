@@ -299,12 +299,12 @@ Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\)\\.so.*$/d
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
 %else
-%global libo_bundled_libs_filter ^libfbembed\\.so.*$
+%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\)\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -1640,6 +1640,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
+%if 0%{?rhel}
+%{baseinstdir}/program/libGLEW.so.*
+%endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so

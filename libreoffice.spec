@@ -271,23 +271,23 @@ Patch5:  libreoffice-installfix.patch
 # not upstreamed
 Patch7: libreoffice-rhel6gcj.patch
 # not upstreamed
-Patch7: libreoffice-rhel6poppler.patch
+Patch8: libreoffice-rhel6poppler.patch
 # not upstreamed
-Patch8: libreoffice-rhel6langs.patch
+Patch9: libreoffice-rhel6langs.patch
 # not upstreamed
-Patch9: libreoffice-rhel6glib.patch
+Patch10: libreoffice-rhel6glib.patch
 %endif
 # not upstreamed
-Patch10: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch11: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch11: 0001-disable-firebird-unit-test.patch
+Patch12: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch12: 0001-never-run-autogen.sh.patch
+Patch13: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
 %ifarch %{arm}
 # not upstreamed
-Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 %endif
 
 %define instdir %{_libdir}

@@ -1814,6 +1814,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
+%if 0%{?rhel}
+%dir %{baseinstdir}/share/firebird
+%{baseinstdir}/share/firebird/firebird.msg
+%endif
 %{baseinstdir}/share/dtd/officedocument
 %{baseinstdir}/share/gallery
 %dir %{baseinstdir}/share/labels

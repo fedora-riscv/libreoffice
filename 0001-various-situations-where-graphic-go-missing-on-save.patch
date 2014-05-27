@@ -1,0 +1,274 @@
+From 5ea29fa466cd7bc245d78e88587b6b160628bc2f Mon Sep 17 00:00:00 2001
+From: Oliver-Rainer Wittmann <orw@apache.org>
+Date: Mon, 19 May 2014 11:37:11 +0000
+Subject: [PATCH] various situations where graphic go missing on save
+
+Resolves: #i114361# provide and accept changed URL...
+
+of embedded graphic file during save (ODF export)
+
+(cherry picked from commit a90c007908eb3f66e28a9ea525729065db652b6f)
+
+Conflicts:
+	sw/inc/ndgrf.hxx
+	sw/source/core/graphic/ndgrf.cxx
+	sw/source/core/unocore/unoframe.cxx
+	sw/source/filter/xml/xmltexte.cxx
+	xmloff/source/draw/shapeexport2.cxx
+
+(cherry picked from commit 192abfb36b8a4859879fcb49326d59ed62083c8d)
+
+Conflicts:
+	sw/inc/ndgrf.hxx
+
+Change-Id: I9d4a02af2561467fe1a66f036b55d6dcf2429986
+
+Resolves: #i124946# only apply new embedded stream name...
+
+for a graphic, if is already has one.
+
+- needed correction for the fix made for issue #i114361#
+
+(cherry picked from commit 23a4bd91ceb89e5e0a2413f80fc987db106a0bc9)
+
+Conflicts:
+	sw/inc/ndgrf.hxx
+	sw/source/core/graphic/ndgrf.cxx
+	sw/source/filter/xml/xmltexte.cxx
+
+(cherry picked from commit 05e07167e422caf58d23ff883edda30acc3ba88d)
+
+Conflicts:
+	sw/inc/ndgrf.hxx
+	sw/source/core/graphic/ndgrf.cxx
+
+Change-Id: Ia9771932ae5b380ccae9b0a3cbb79d41f5d9bdb8
+
+Resolves: #i124966# keep picture format information
+
+- <GfxLink> instance - also for the reading of preview picture data
+
+in order to avoid trouble on save in case that the preview data equals the
+picture data
+
+(cherry picked from commit d6af1b601bb8fe2569d17e01505f67e1becc9366)
+
+Conflicts:
+	svx/source/svdraw/svdograf.cxx
+
+(cherry picked from commit 597ae8dd9c28ee370874b219d594fa1c105f2c72)
+
+Conflicts:
+	svx/source/svdraw/svdograf.cxx
+
+Change-Id: Ifecb07b4d5d33d593502fccd6f21644893027d2d
+---
+ svx/source/svdraw/svdograf.cxx      |  2 +-
+ sw/inc/ndgrf.hxx                    | 10 ++++++----
+ sw/source/core/graphic/ndgrf.cxx    | 18 +++++++++---------
+ sw/source/core/unocore/unoframe.cxx |  1 -
+ sw/source/filter/xml/xmltexte.cxx   | 14 +++++++++-----
+ xmloff/source/draw/shapeexport2.cxx |  9 ++++++---
+ 6 files changed, 31 insertions(+), 23 deletions(-)
+
+diff --git a/svx/source/svdraw/svdograf.cxx b/svx/source/svdraw/svdograf.cxx
+index d918eaa..9891c1b 100644
+--- a/svx/source/svdraw/svdograf.cxx
++++ b/svx/source/svdraw/svdograf.cxx
+@@ -1345,7 +1345,7 @@ IMPL_LINK( SdrGrafObj, ImpSwapHdl, GraphicObject*, pO )
+ 
+                         com::sun::star::awt::Size aPreviewSizeHint( 64, 64 );
+                         sal_Bool bAllowPartialStreamRead = true;
+-                        sal_Bool bCreateNativeLink = false;
++                        sal_Bool bCreateNativeLink = true;
+                         (*pFilterData)[ 0 ].Name = String( RTL_CONSTASCII_USTRINGPARAM( "PreviewSizeHint" ) );
+                         (*pFilterData)[ 0 ].Value <<= aPreviewSizeHint;
+                         (*pFilterData)[ 1 ].Name = String( RTL_CONSTASCII_USTRINGPARAM( "AllowPartialStreamRead" ) );
+diff --git a/sw/inc/ndgrf.hxx b/sw/inc/ndgrf.hxx
+index e970615..3a1f344 100644
+--- a/sw/inc/ndgrf.hxx
++++ b/sw/inc/ndgrf.hxx
+@@ -76,7 +76,6 @@ class SW_DLLPUBLIC SwGrfNode: public SwNoTxtNode
+ 
+     void InsertLink( const String& rGrfName, const String& rFltName );
+     sal_Bool ImportGraphic( SvStream& rStrm );
+-    sal_Bool HasStreamName() const { return maGrfObj.HasUserData(); }
+     /** adjust return type and rename method to
+        indicate that its an private one. */
+ 
+@@ -181,9 +180,12 @@ public:
+     short SwapIn( sal_Bool bWaitForData = sal_False );
+     /// Remove graphic in order to free memory.
+     short SwapOut();
+-    /// Access to storage stream-name.
+-    void SetStreamName( const String& r ) { maGrfObj.SetUserData( r ); }
+-    void SetNewStreamName( const String& r ) { aNewStrmName = r; }
++    bool HasEmbeddedStreamName() const { return maGrfObj.HasUserData(); }
++    /// applying new stream name for embedded graphic - needed as saving the document might change this stream name
++    void ApplyNewEmbeddedStreamName(const OUString& r)
++    {
++        maGrfObj.SetUserData(r);
++    }
+     /// Is this node selected by any shell?
+     sal_Bool IsSelected() const;
+ #endif
+diff --git a/sw/source/core/graphic/ndgrf.cxx b/sw/source/core/graphic/ndgrf.cxx
+index 97ff385..f851682 100644
+--- a/sw/source/core/graphic/ndgrf.cxx
++++ b/sw/source/core/graphic/ndgrf.cxx
+@@ -223,7 +223,7 @@ sal_Bool SwGrfNode::ReRead(
+     else if( pGraphic && !rGrfName.Len() )
+     {
+         // Old stream must be deleted before the new one is set.
+-        if( HasStreamName() )
++        if( HasEmbeddedStreamName() )
+             DelStreamName();
+ 
+         maGrfObj.SetGraphic( *pGraphic );
+@@ -233,7 +233,7 @@ sal_Bool SwGrfNode::ReRead(
+     else if( pGrfObj && !rGrfName.Len() )
+     {
+         // Old stream must be deleted before the new one is set.
+-        if( HasStreamName() )
++        if( HasEmbeddedStreamName() )
+             DelStreamName();
+ 
+         maGrfObj = *pGrfObj;
+@@ -247,7 +247,7 @@ sal_Bool SwGrfNode::ReRead(
+         return sal_True;
+     else
+     {
+-        if( HasStreamName() )
++        if( HasEmbeddedStreamName() )
+             DelStreamName();
+ 
+         // create new link for the graphic object
+@@ -510,7 +510,7 @@ short SwGrfNode::SwapIn( sal_Bool bWaitForData )
+     else if( maGrfObj.IsSwappedOut() )
+     {
+         // graphic is in storage or in a temp file
+-        if( !HasStreamName() )
++        if( !HasEmbeddedStreamName() )
+             nRet = (short)maGrfObj.SwapIn();
+         else
+         {
+@@ -564,7 +564,7 @@ short SwGrfNode::SwapOut()
+             // Swapping is only needed for embedded pictures.
+             // The graphic will be written into a temp file if it is new, i.e.
+             // if there is no stream name in the storage yet
+-            if( !HasStreamName() )
++            if( !HasEmbeddedStreamName() )
+                 if( !maGrfObj.SwapOut() )
+                     return 0;
+         }
+@@ -614,7 +614,7 @@ sal_Bool SwGrfNode::SavePersistentData()
+     }
+ 
+     // swap in first if already in storage
+-    if( HasStreamName() && !SwapIn() )
++    if( HasEmbeddedStreamName() && !SwapIn() )
+         return sal_False;
+ 
+     // #i44367#
+@@ -768,7 +768,7 @@ void SwGrfNode::ScaleImageMap()
+ 
+ void SwGrfNode::DelStreamName()
+ {
+-    if( HasStreamName() )
++    if( HasEmbeddedStreamName() )
+     {
+         // then remove graphic from storage
+         uno::Reference < embed::XStorage > xDocStg = GetDoc()->GetDocStorage();
+@@ -918,7 +918,7 @@ SwCntntNode* SwGrfNode::MakeCopy( SwDoc* pDoc, const SwNodeIndex& rIdx ) const
+ 
+     Graphic aTmpGrf;
+     SwBaseLink* pLink = (SwBaseLink*)(::sfx2::SvBaseLink*) refLink;
+-    if( !pLink && HasStreamName() )
++    if( !pLink && HasEmbeddedStreamName() )
+     {
+         try
+         {
+@@ -998,7 +998,7 @@ IMPL_LINK( SwGrfNode, SwapGraphic, GraphicObject*, pGrfObj )
+     {
+         pRet = GRFMGR_AUTOSWAPSTREAM_TEMP;
+ 
+-        if( HasStreamName() )
++        if( HasEmbeddedStreamName() )
+         {
+             try
+             {
+diff --git a/sw/source/core/unocore/unoframe.cxx b/sw/source/core/unocore/unoframe.cxx
+index 0273a1e..974d889 100644
+--- a/sw/source/core/unocore/unoframe.cxx
++++ b/sw/source/core/unocore/unoframe.cxx
+@@ -1557,7 +1557,6 @@ uno::Any SwXFrame::getPropertyValue(const OUString& rPropertyName)
+             if(pIdx)
+             {
+                 SwNodeIndex aIdx(*pIdx, 1);
+-//              SwNoTxtNode* pNoTxt = aIdx.GetNode().GetNoTxtNode();
+                 SwGrfNode* pGrfNode = aIdx.GetNode().GetGrfNode();
+                 if(!pGrfNode)
+                     throw uno::RuntimeException();
+diff --git a/sw/source/filter/xml/xmltexte.cxx b/sw/source/filter/xml/xmltexte.cxx
+index fe7edfb..fabc8e6 100644
+--- a/sw/source/filter/xml/xmltexte.cxx
++++ b/sw/source/filter/xml/xmltexte.cxx
+@@ -205,11 +205,15 @@ void SwXMLTextParagraphExport::setTextEmbeddedGraphicURL(
+     SwGrfNode *pGrfNd = GetNoTxtNode( rPropSet )->GetGrfNode();
+     if( !pGrfNd->IsGrfLink() )
+     {
+-        String aNewURL( RTL_CONSTASCII_USTRINGPARAM("vnd.sun.star.Package:") );
+-        aNewURL += String(rURL);
+-
+-// This is nonsensical.
+-//        pGrfNd->SetNewStreamName( aNewURL );
++        // Apply new embedded stream name, only if graphic node already has one.
++        // - The saving of recovery information triggers this method, but for a newly created
++        //   document the new embedded stream name shall not be applied.
++        // - The saving of a newly created document to own format (ODF) triggers this method,
++        //   but the embedded stream name is not needed as its original inserted data is still in use.
++        if (pGrfNd->HasEmbeddedStreamName())
++        {
++            pGrfNd->ApplyNewEmbeddedStreamName("vnd.sun.star.Package:" + rURL);
++        }
+ 
+         // #i15411# save-as will swap all graphics in; we need to swap
+         // them out again, to prevent excessive memory use
+diff --git a/xmloff/source/draw/shapeexport2.cxx b/xmloff/source/draw/shapeexport2.cxx
+index 58cb26e..c0a04e2 100644
+--- a/xmloff/source/draw/shapeexport2.cxx
++++ b/xmloff/source/draw/shapeexport2.cxx
+@@ -1135,7 +1135,6 @@ void XMLShapeExport::ImpExportGraphicObjectShape(
+                 }
+ 
+                 OUString aStreamURL;
+-                OUString aStr;
+ 
+                 xPropSet->getPropertyValue( OUString("GraphicStreamURL")) >>= aStreamURL;
+                 xPropSet->getPropertyValue( OUString("GraphicURL")) >>= sImageURL;
+@@ -1160,16 +1159,20 @@ void XMLShapeExport::ImpExportGraphicObjectShape(
+                     }
+                 }
+ 
+-                aStr = mrExport.AddEmbeddedGraphicObject( aResolveURL );
++                OUString aStr = mrExport.AddEmbeddedGraphicObject( aResolveURL );
+                 mrExport.AddAttribute(XML_NAMESPACE_XLINK, XML_HREF, aStr );
+ 
+                 if( !aStr.isEmpty() )
+                 {
++                    aStreamURL = sPackageURL;
+                     if( aStr[ 0 ] == '#' )
+                     {
+-                        aStreamURL = sPackageURL;
+                         aStreamURL = aStreamURL.concat( aStr.copy( 1, aStr.getLength() - 1 ) );
+                     }
++                    else
++                    {
++                        aStreamURL = aStreamURL.concat( aStr );
++                    }
+ 
+                     // update stream URL for load on demand
+                     uno::Any aAny;
+-- 
+1.9.0
+

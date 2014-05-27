@@ -1242,7 +1242,6 @@ touch autogen.lastrun
  --with-help \
  --with-system-dicts \
  --with-system-libs \
- --without-afms \
  --without-fonts \
  --without-ppds \
  --without-system-npapi-headers \

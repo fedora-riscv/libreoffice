@@ -259,12 +259,15 @@ Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
 
 # not upstreamed
-Patch1:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+Patch0:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 # not upstreamed
-Patch2:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
-Patch3:  libreoffice-installfix.patch
-%if 0%{?rhel} && 0%{?rhel} < 7
+Patch2:  libreoffice-installfix.patch
+%if 0%{?rhel}
+# not upstreamed
+Patch3: 0001-disable-failing-test-on-rhel.patch
+%if 0%{?rhel} < 7
 # not upstreamed
 Patch4: libreoffice-rhel6gcj.patch
 # not upstreamed
@@ -273,6 +276,7 @@ Patch5: libreoffice-rhel6poppler.patch
 Patch6: libreoffice-rhel6langs.patch
 # not upstreamed
 Patch7: libreoffice-rhel6glib.patch
+%endif
 %endif
 # not upstreamed
 Patch8: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch

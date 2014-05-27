@@ -261,33 +261,29 @@ Requires: %{name}-emailmerge = %{epoch}:%{version}-%{release}
 # not upstreamed
 Patch1:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 # not upstreamed
-Patch2:  0001-vertical-content-overflowing-out-of-cell-i88341.patch
+Patch2:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
-Patch3:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
-# not upstreamed
-Patch4:  0001-i101274-a-directory-on-command-line-is-silently-igno.patch
-# not upstreamed
-Patch5:  libreoffice-installfix.patch
+Patch3:  libreoffice-installfix.patch
 %if 0%{?rhel} && 0%{?rhel} < 7
 # not upstreamed
-Patch7: libreoffice-rhel6gcj.patch
+Patch4: libreoffice-rhel6gcj.patch
 # not upstreamed
-Patch8: libreoffice-rhel6poppler.patch
+Patch5: libreoffice-rhel6poppler.patch
 # not upstreamed
-Patch9: libreoffice-rhel6langs.patch
+Patch6: libreoffice-rhel6langs.patch
 # not upstreamed
-Patch10: libreoffice-rhel6glib.patch
+Patch7: libreoffice-rhel6glib.patch
 %endif
 # not upstreamed
-Patch11: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch8: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch12: 0001-disable-firebird-unit-test.patch
+Patch9: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch13: 0001-never-run-autogen.sh.patch
+Patch10: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch11: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
-Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch12: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

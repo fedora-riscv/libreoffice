@@ -1,0 +1,40 @@
+From f841951b0244d2c8c1430fae03de005a84fe565d Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Sun, 25 May 2014 13:39:03 +0200
+Subject: [PATCH 3/9] the other way around...
+
+Change-Id: I6aeaa95079e37e710e5b8b1b8ce24464e11f45bb
+---
+ external/libodfgen/ExternalProject_libodfgen.mk   | 2 +-
+ external/librevenge/ExternalProject_librevenge.mk | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/external/libodfgen/ExternalProject_libodfgen.mk b/external/libodfgen/ExternalProject_libodfgen.mk
+index 80cb2b0..ab430df 100644
+--- a/external/libodfgen/ExternalProject_libodfgen.mk
++++ b/external/libodfgen/ExternalProject_libodfgen.mk
+@@ -33,7 +33,7 @@ $(call gb_ExternalProject_get_state_target,libodfgen,build) :
+ 			--disable-werror \
+ 			--disable-weffc \
+ 			--without-docs \
+-			$(if $(VERBOSE)$(verbose),--enable-silent-rules) \
++			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+ 			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost) -I$(BUILDDIR)/config_$(gb_Side))" \
+ 			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+diff --git a/external/librevenge/ExternalProject_librevenge.mk b/external/librevenge/ExternalProject_librevenge.mk
+index e9a826c..1783993 100644
+--- a/external/librevenge/ExternalProject_librevenge.mk
++++ b/external/librevenge/ExternalProject_librevenge.mk
+@@ -34,7 +34,7 @@ $(call gb_ExternalProject_get_state_target,librevenge,build) :
+ 			--disable-streams \
+ 			--disable-generators \
+ 			--without-docs \
+-			$(if $(VERBOSE)$(verbose),--enable-silent-rules) \
++			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+ 			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost) -I$(BUILDDIR)/config_$(gb_Side))" \
+ 			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+-- 
+1.9.3
+

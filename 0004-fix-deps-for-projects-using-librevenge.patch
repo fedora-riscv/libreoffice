@@ -1,0 +1,50 @@
+From 6f0f3ab008092c7a84fa1712b3c4ea736b0d2159 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Sun, 25 May 2014 13:06:57 +0200
+Subject: [PATCH 4/9] fix deps for projects using librevenge
+
+Change-Id: Icc6e2465d96cc95b229a1f7abc6d51362ae3d016
+---
+ RepositoryExternal.mk | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/RepositoryExternal.mk b/RepositoryExternal.mk
+index 13eb221..920436a 100644
+--- a/RepositoryExternal.mk
++++ b/RepositoryExternal.mk
+@@ -1772,6 +1772,8 @@ $(call gb_LinkTarget_add_libs,$(1),$(REVENGE_LIBS))
+ 
+ endef
+ 
++gb_ExternalProject__use_revenge :=
++
+ else # !SYSTEM_REVENGE
+ 
+ ifeq ($(COM),MSC)
+@@ -1791,6 +1793,11 @@ $(call gb_LinkTarget_use_libraries,$(1),\
+ 
+ endef
+ 
++define gb_ExternalProject__use_revenge
++$(call gb_ExternalProject_get_preparation_target,$(1)) : $(call gb_Library_get_target,revenge)
++
++endef
++
+ else # !MSC
+ 
+ $(eval $(call gb_Helper_register_packages_for_install,ooo, \
+@@ -1809,6 +1816,11 @@ $(call gb_LinkTarget_add_libs,$(1),\
+ )
+ endef
+ 
++define gb_ExternalProject__use_revenge
++$(call gb_ExternalProject_use_package,$(1),librevenge)
++
++endef
++
+ endif # MSC
+ 
+ endif # SYSTEM_REVENGE
+-- 
+1.9.3
+

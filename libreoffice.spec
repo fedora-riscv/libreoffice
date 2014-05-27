@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -71,31 +71,32 @@ Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
 Source18:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
 Source19:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
-Source20:       %{external_url}/libcdr-0.0.15.tar.bz2
-Source21:       %{external_url}/b85436266b2ac91d351ab5684b181151-libwpg-0.2.2.tar.bz2
-Source22:       %{external_url}/a3dcac551fae5ebbec16e844810828c4-libwpd-0.9.9.tar.bz2
-Source23:       %{external_url}/46eb0e7f213ad61bd5dee0c494132cb0-libwps-0.2.9.tar.bz2
-Source24:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source25:       %{external_url}/libvisio-0.0.31.tar.bz2
-Source26:       %{external_url}/lcms2-2.6.tar.gz
-Source27:       %{external_url}/libmspub-0.0.6.tar.bz2
-Source28:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source29:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
-Source30:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source21:       %{external_url}/lcms2-2.6.tar.gz
+Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
+Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
+Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
+Source25:       %{external_url}/libcdr-0.1.0.tar.bz2
+Source26:       %{external_url}/libwpg-0.3.0.tar.bz2
+Source27:       %{external_url}/libwpd-0.10.0.tar.bz2
+Source28:       %{external_url}/libwps-0.3.0.tar.bz2
+Source29:       %{external_url}/libvisio-0.1.0.tar.bz2
+Source30:       %{external_url}/libmspub-0.1.0.tar.bz2
 Source31:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source32:       %{external_url}/libodfgen-0.0.4.tar.bz2
-Source33:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source34:       %{external_url}/libetonyek-0.0.4.tar.bz2
-Source35:       %{external_url}/libfreehand-0.0.0.tar.bz2
-Source36:       %{external_url}/libe-book-0.0.3.tar.bz2
+Source32:       %{external_url}/libodfgen-0.1.0.tar.bz2
+Source33:       %{external_url}/libmwaw-0.3.1.tar.bz2
+Source34:       %{external_url}/libetonyek-0.1.0.tar.bz2
+Source35:       %{external_url}/libfreehand-0.1.0.tar.bz2
+Source36:       %{external_url}/libe-book-0.1.0.tar.bz2
 Source37:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
-Source38:       %{external_url}/libabw-0.0.2.tar.bz2
+Source38:       %{external_url}/libabw-0.1.0.tar.bz2
 Source39:       %{external_url}/libatomic_ops-7_2d.zip
 Source40:       %{external_url}/libeot-0.01.tar.bz2
 Source41:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot
+Source42:       %{external_url}/librevenge-0.0.0.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot --without-system-librevenge
 %endif
 
 # build tools
@@ -164,18 +165,24 @@ BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: pkgconfig(lcms2)
-BuildRequires: pkgconfig(libcdr-0.0)
 %endif
 %if 0%{?fedora}
-BuildRequires: pkgconfig(libabw-0.0)
+BuildRequires: pkgconfig(libabw-0.1)
+BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libcmis-0.4)
-BuildRequires: pkgconfig(libe-book-0.0)
+BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
-BuildRequires: pkgconfig(libetonyek-0.0)
-BuildRequires: pkgconfig(libfreehand-0.0)
-BuildRequires: pkgconfig(libmwaw-0.2)
-BuildRequires: pkgconfig(libodfgen-0.0)
+BuildRequires: pkgconfig(libetonyek-0.1)
+BuildRequires: pkgconfig(libfreehand-0.1)
+BuildRequires: pkgconfig(libmwaw-0.3)
+BuildRequires: pkgconfig(libmspub-0.1)
+BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.8)
+BuildRequires: pkgconfig(librevenge-0.0)
+BuildRequires: pkgconfig(libvisio-0.1)
+BuildRequires: pkgconfig(libwpd-0.10)
+BuildRequires: pkgconfig(libwpg-0.3)
+BuildRequires: pkgconfig(libwps-0.3)
 BuildRequires: pkgconfig(mdds)
 %endif
 BuildRequires: pkgconfig(libcurl)
@@ -187,11 +194,6 @@ BuildRequires: pkgconfig(libidn)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: pkgconfig(liblangtag)
-BuildRequires: pkgconfig(libmspub-0.0)
-BuildRequires: pkgconfig(libvisio-0.0)
-BuildRequires: pkgconfig(libwpd-0.9)
-BuildRequires: pkgconfig(libwpg-0.2)
-BuildRequires: pkgconfig(libwps-0.2)
 %else
 BuildRequires: libjpeg-devel
 %endif
@@ -288,6 +290,15 @@ Patch10: 0001-never-run-autogen.sh.patch
 Patch11: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch12: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch13: 0001-build-libodfgen-as-shared-lib.patch
+Patch14: 0002-bundle-librevenge.patch
+Patch15: 0003-the-other-way-around.patch
+Patch16: 0004-fix-deps-for-projects-using-librevenge.patch
+Patch17: 0005-always-provide-REDLAND_CFLAGS-LIBS-to-ext.-projects.patch
+Patch18: 0006-rebase-all-import-libs.patch
+Patch19: 0007-libwpd-stream-does-not-exist-anymore.patch
+Patch20: 0008-export-SYSTEM_REVENGE.patch
+Patch21: 0009-drop-trailing-comma.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -299,12 +310,12 @@ Patch12: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\)\\.so.*$/d
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\|odfgen\\|revenge\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
 %else
-%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\)\\.so.*$
+%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\|odfgen\\|revenge\\)\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -1208,10 +1219,10 @@ export PYTHON_LIBS=`python-config --libs python`
 %endif
 %endif
 
-%if 0%{?rhel} && 0%{?rhel} < 7
+# %%if 0%%{?rhel} && 0%%{?rhel} < 7
 aclocal -I m4
 autoconf
-%endif
+# %endif
 
 # TODO: enable gltf?
 # TODO: enable coinmp?
@@ -1641,6 +1652,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
 %{baseinstdir}/program/libGLEW.so.*
+%{baseinstdir}/program/libodfgen-0.1.so.*
+%{baseinstdir}/program/librevenge-0.0.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
@@ -2256,6 +2269,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 28 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-6.beta1
+- switch to librevenge-based import libs
+
 * Tue May 27 2014 Kalev Lember <kalevlember@gmail.com> - 1:4.3.0.0-5.beta1
 - Rebuild for boost 1.55.0
 

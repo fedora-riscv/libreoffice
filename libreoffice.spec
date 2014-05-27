@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2253,6 +2253,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue May 27 2014 Kalev Lember <kalevlember@gmail.com> - 1:4.3.0.0-5.beta1
+- Rebuild for boost 1.55.0
+
 * Mon May 26 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-4.beta1
 - unblock build on ARM
 

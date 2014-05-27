@@ -1,0 +1,86 @@
+From 118cbbe50ac975f2960d3668881bbaab47af6113 Mon Sep 17 00:00:00 2001
+Message-Id: <118cbbe50ac975f2960d3668881bbaab47af6113.1401227225.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 27 May 2014 23:19:36 +0200
+Subject: [PATCH] resolved fdo#70455 B1:SOMENAME is not a valid singleton
+ reference
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+(cherry picked from commit ac8532ce26e79453b3a969b956ebb7823c455131)
+
+Conflicts:
+	sc/source/core/tool/address.cxx
+
+Change-Id: Iac80d74a9ec6382a232fdc2f4b798e57dc643ad3
+---
+ sc/source/core/tool/address.cxx | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch"
+
+diff --git a/sc/source/core/tool/address.cxx b/sc/source/core/tool/address.cxx
+index e21aa19..77f1ebd 100644
+--- a/sc/source/core/tool/address.cxx
++++ b/sc/source/core/tool/address.cxx
+@@ -842,6 +842,14 @@ lcl_a1_get_row( const sal_Unicode* p, ScAddress* pAddr, sal_uInt16* nFlags )
+     return pEnd;
+ }
+ 
++/// B:B or 2:2, but not B:2 or 2:B or B2:B or B:B2 or ...
++static bool isValidSingleton( sal_uInt16 nFlags, sal_uInt16 nFlags2 )
++{
++    bool bCols = (nFlags & SCA_VALID_COL) && ((nFlags & SCA_VALID_COL2) || (nFlags2 & SCA_VALID_COL));
++    bool bRows = (nFlags & SCA_VALID_ROW) && ((nFlags & SCA_VALID_ROW2) || (nFlags2 & SCA_VALID_ROW));
++    return (bCols && !bRows) || (!bCols && bRows);
++}
++
+ static sal_uInt16
+ lcl_ScRange_Parse_XL_A1( ScRange& r,
+                          const sal_Unicode* p,
+@@ -948,7 +956,7 @@ lcl_ScRange_Parse_XL_A1( ScRange& r,
+     }
+ 
+     p = tmp2;
+-    p = lcl_eatWhiteSpace( p+1 );
++    p = lcl_eatWhiteSpace( p+1 );   // after ':'
+     tmp1 = lcl_a1_get_col( p, &r.aEnd, &nFlags2 );
+     if( !tmp1 && !aEndTabName.Len() )     // Probably the aEndTabName was specified after the first range
+     {
+@@ -961,16 +969,17 @@ lcl_ScRange_Parse_XL_A1( ScRange& r,
+                 r.aEnd.SetTab( nTab );
+                 nFlags |= SCA_VALID_TAB2 | SCA_TAB2_3D | SCA_TAB2_ABSOLUTE;
+             }
+-            p = lcl_eatWhiteSpace( p+1 );
++            if (*p == '!' || *p == ':')
++                p = lcl_eatWhiteSpace( p+1 );
+             tmp1 = lcl_a1_get_col( p, &r.aEnd, &nFlags2 );
+         }
+     }
+-    if( !tmp1 ) // strange, but valid singleton
+-        return nFlags;
++    if( !tmp1 ) // strange, but maybe valid singleton
++        return isValidSingleton( nFlags, nFlags2) ? nFlags : (nFlags & ~SCA_VALID);
+ 
+     tmp2 = lcl_a1_get_row( tmp1, &r.aEnd, &nFlags2 );
+-    if( !tmp2 ) // strange, but valid singleton
+-        return nFlags;
++    if( !tmp2 ) // strange, but maybe valid singleton
++        return isValidSingleton( nFlags, nFlags2) ? nFlags : (nFlags & ~SCA_VALID);
+ 
+     if ( *tmp2 != 0 )
+     {
+
+--------------erAck-patch-parts--
+
+

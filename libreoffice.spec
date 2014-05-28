@@ -313,6 +313,8 @@ Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
 Patch56: 0001-strangely-obvious-leaky-code.patch
 Patch57: 0001-various-situations-where-graphic-go-missing-on-save.patch
 Patch58: 0001-fdo-78536-sfx2-template-dialog-make-the-am-i-dead-ye.patch
+Patch59: 0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch
+Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2276,8 +2278,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-16.UNBUILT
+* Wed May 28 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-16
 - Resolves: rhbz#1100357 crash after closing style dialog
+- Resolves: rhbz#1101224 crash when clipboard-copying a sheet to HTML
+- Resolves: fdo#70455 loading .xlsx some formulas with range operator are corrupted
 
 * Fri May 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-15
 - Resolves: rhbz#1084822 graphics missing after save and reload

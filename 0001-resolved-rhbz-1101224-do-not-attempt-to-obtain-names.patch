@@ -1,0 +1,56 @@
+From 8ce7b5072123fc9b1a0ef4ee640cc0f86d37283f Mon Sep 17 00:00:00 2001
+Message-Id: <8ce7b5072123fc9b1a0ef4ee640cc0f86d37283f.1401266493.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 27 May 2014 12:31:30 +0200
+Subject: [PATCH] resolved rhbz#1101224 do not attempt to obtain names for NULL
+ tabs
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+This happened when the HTML export via clipboard tried to resolve
+conditional formats, where we have a temporary instance of a document
+containing only the sheet to be exported.
+
+Change-Id: Ic7498a1cab3eabede74773868287a2cc3edef052
+(cherry picked from commit 17979abf4fde202cae231be19a218be3fe27d04c)
+---
+ sc/source/core/data/document.cxx | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch"
+
+diff --git a/sc/source/core/data/document.cxx b/sc/source/core/data/document.cxx
+index 47164be..2ec7d68 100644
+--- a/sc/source/core/data/document.cxx
++++ b/sc/source/core/data/document.cxx
+@@ -259,9 +259,14 @@ std::vector<OUString> ScDocument::GetAllTableNames() const
+     TableContainer::const_iterator it = maTabs.begin(), itEnd = maTabs.end();
+     for (; it != itEnd; ++it)
+     {
++        // Positions need to be preserved for ScCompiler and address convention
++        // context, so still push an empty string for NULL tabs.
+         OUString aName;
+-        const ScTable& rTab = **it;
+-        rTab.GetName(aName);
++        if (*it)
++        {
++            const ScTable& rTab = **it;
++            rTab.GetName(aName);
++        }
+         aNames.push_back(aName);
+     }
+ 
+
+--------------erAck-patch-parts--
+
+

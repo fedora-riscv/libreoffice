@@ -1,0 +1,163 @@
+From 660d48599ce3c5a23838a441e1bd51c3f2b8dc20 Mon Sep 17 00:00:00 2001
+From: osnola <alonso@loria.fr>
+Date: Wed, 28 May 2014 18:13:06 +0200
+Subject: [PATCH 04/18] add new libmwaw drawing formats (forgotten files)
+
+Change-Id: Ib9ecd643a552063e2a09874776b3ea0f30e8440a
+(cherry picked from commit ba0b63869ace532720bd7c13099e62c478d8cc31)
+---
+ filter/Configuration_filter.mk                       | 17 +++++++++++++++--
+ writerperfect/Library_wpftdraw.mk                    |  2 ++
+ writerperfect/source/draw/ImportFilterBase.cxx       |  6 ++++++
+ writerperfect/source/draw/ImportFilterBase.hxx       |  3 +++
+ writerperfect/source/draw/wpftdraw.component         |  4 ++++
+ writerperfect/source/draw/wpftdraw_genericfilter.cxx |  5 +++++
+ 6 files changed, 35 insertions(+), 2 deletions(-)
+
+diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
+index fcc989b..9783f50 100644
+--- a/filter/Configuration_filter.mk
++++ b/filter/Configuration_filter.mk
+@@ -599,10 +599,17 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_draw_types.xcu,filter/s
+ 	draw8_template \
+ 	draw_WordPerfect_Graphics \
+ 	draw_Visio_Document \
+-    draw_Publisher_Document \
++	draw_Publisher_Document \
+ 	draw_CorelDraw_Document \
+ 	draw_Corel_Presentation_Exchange \
+ 	draw_Freehand_Document \
++	draw_Visio_Document \
++	draw_Beagle_Works \
++	draw_ClarisWorks \
++	draw_Great_Works \
++	draw_Mac_Works \
++	draw_MacPaint \
++	draw_SuperPaint \
+ )
+ 
+ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_draw_filters.xcu,filter/source/config/fragments/filters,\
+@@ -613,10 +620,16 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_draw_filters.xcu,filt
+ 	draw8_template \
+ 	WordPerfectGraphics \
+ 	VisioDocument \
+-    PublisherDocument \
++	PublisherDocument \
+ 	CorelDrawDocument \
+ 	CorelPresentationExchange \
+ 	FreehandDocument \
++	Beagle_Works_Draw \
++	ClarisWorks_Draw \
++	Great_Works_Draw \
++	Mac_Works_Draw \
++	MacPaint_Draw \
++	SuperPaint_Draw \
+ )
+ 
+ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
+diff --git a/writerperfect/Library_wpftdraw.mk b/writerperfect/Library_wpftdraw.mk
+index 807afc9..01a1ebe 100644
+--- a/writerperfect/Library_wpftdraw.mk
++++ b/writerperfect/Library_wpftdraw.mk
+@@ -40,6 +40,7 @@ $(eval $(call gb_Library_use_externals,wpftdraw,\
+ 	cdr \
+ 	freehand \
+ 	mspub \
++	mwaw \
+ 	odfgen \
+ 	revenge \
+ 	visio \
+@@ -58,6 +59,7 @@ $(eval $(call gb_Library_add_exception_objects,wpftdraw,\
+ 	writerperfect/source/draw/FreehandImportFilter \
+ 	writerperfect/source/draw/ImportFilterBase \
+ 	writerperfect/source/draw/MSPUBImportFilter \
++	writerperfect/source/draw/MWAWDrawImportFilter \
+ 	writerperfect/source/draw/VisioImportFilter \
+ 	writerperfect/source/draw/WPGImportFilter \
+ 	writerperfect/source/draw/wpftdraw_genericfilter \
+diff --git a/writerperfect/source/draw/ImportFilterBase.cxx b/writerperfect/source/draw/ImportFilterBase.cxx
+index 6fc09b2..fc6c8ee 100644
+--- a/writerperfect/source/draw/ImportFilterBase.cxx
++++ b/writerperfect/source/draw/ImportFilterBase.cxx
+@@ -95,6 +95,8 @@ throw (RuntimeException, std::exception)
+     OdgGenerator exporter;
+     exporter.addDocumentHandler(&xHandler, ODF_FLAT_XML);
+ 
++    doRegisterHandlers(exporter);
++
+     return doImportDocument(input, exporter);
+ }
+ 
+@@ -170,6 +172,10 @@ throw (Exception, RuntimeException, std::exception)
+     }
+ }
+ 
++void ImportFilterImpl::doRegisterHandlers( OdgGenerator & )
++{
++}
++
+ }
+ }
+ 
+diff --git a/writerperfect/source/draw/ImportFilterBase.hxx b/writerperfect/source/draw/ImportFilterBase.hxx
+index 56a1808..f326d98 100644
+--- a/writerperfect/source/draw/ImportFilterBase.hxx
++++ b/writerperfect/source/draw/ImportFilterBase.hxx
+@@ -39,6 +39,8 @@ namespace xml { namespace sax {
+ }
+ } } }
+ 
++class OdgGenerator;
++
+ namespace writerperfect
+ {
+ namespace draw
+@@ -80,6 +82,7 @@ public:
+ private:
+     virtual bool doDetectFormat( librevenge::RVNGInputStream &rInput, OUString &rTypeName ) = 0;
+     virtual bool doImportDocument( librevenge::RVNGInputStream &rInput, librevenge::RVNGDrawingInterface &rGenerator ) = 0;
++    virtual void doRegisterHandlers( OdgGenerator &rGenerator );
+ 
+ private:
+     ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext > mxContext;
+diff --git a/writerperfect/source/draw/wpftdraw.component b/writerperfect/source/draw/wpftdraw.component
+index d524116..cc65f3c 100644
+--- a/writerperfect/source/draw/wpftdraw.component
++++ b/writerperfect/source/draw/wpftdraw.component
+@@ -25,6 +25,10 @@
+     <service name="com.sun.star.document.ImportFilter"/>
+     <service name="com.sun.star.document.ExtendedTypeDetection"/>
+   </implementation>
++  <implementation name="com.sun.star.comp.Draw.MWAWDrawImportFilter">
++    <service name="com.sun.star.document.ImportFilter"/>
++    <service name="com.sun.star.document.ExtendedTypeDetection"/>
++  </implementation>
+   <implementation name="com.sun.star.comp.Draw.VisioImportFilter">
+     <service name="com.sun.star.document.ImportFilter"/>
+     <service name="com.sun.star.document.ExtendedTypeDetection"/>
+diff --git a/writerperfect/source/draw/wpftdraw_genericfilter.cxx b/writerperfect/source/draw/wpftdraw_genericfilter.cxx
+index 43cabc1..821ac7c 100644
+--- a/writerperfect/source/draw/wpftdraw_genericfilter.cxx
++++ b/writerperfect/source/draw/wpftdraw_genericfilter.cxx
+@@ -32,6 +32,7 @@
+ #include "CDRImportFilter.hxx"
+ #include "CMXImportFilter.hxx"
+ #include "MSPUBImportFilter.hxx"
++#include "MWAWDrawImportFilter.hxx"
+ #include "FreehandImportFilter.hxx"
+ #include "VisioImportFilter.hxx"
+ #include "WPGImportFilter.hxx"
+@@ -53,6 +54,10 @@ static cppu::ImplementationEntry const services[] = {
+       &MSPUBImportFilter_getImplementationName,
+       &MSPUBImportFilter_getSupportedServiceNames,
+       &cppu::createSingleComponentFactory, 0, 0 },
++    { &MWAWDrawImportFilter_createInstance,
++      &MWAWDrawImportFilter_getImplementationName,
++      &MWAWDrawImportFilter_getSupportedServiceNames,
++      &cppu::createSingleComponentFactory, 0, 0 },
+     { &VisioImportFilter_createInstance,
+       &VisioImportFilter_getImplementationName,
+       &VisioImportFilter_getSupportedServiceNames,
+-- 
+1.9.3
+

@@ -1,0 +1,113 @@
+From 8ea986b7c5fb87c5991801acba3d47378294d85c Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 28 May 2014 10:22:41 +0200
+Subject: [PATCH 01/18] improve WPXSvInputStream test
+
+Change-Id: I95817ea44b6793d4a80b74b32f3b5477c6169b26
+(cherry picked from commit c14a6e0570c33c8a1258d5b562ca082de2cf05ce)
+---
+ writerperfect/CppunitTest_writerperfect_stream.mk |  1 +
+ writerperfect/qa/unit/WPXSvStreamTest.cxx         | 42 +++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+
+diff --git a/writerperfect/CppunitTest_writerperfect_stream.mk b/writerperfect/CppunitTest_writerperfect_stream.mk
+index 8416008..ad943e0 100644
+--- a/writerperfect/CppunitTest_writerperfect_stream.mk
++++ b/writerperfect/CppunitTest_writerperfect_stream.mk
+@@ -47,6 +47,7 @@ $(eval $(call gb_CppunitTest_use_components,writerperfect_stream,\
+ 	package/util/package2 \
+ 	ucb/source/core/ucb1 \
+     ucb/source/ucp/file/ucpfile1 \
++    unotools/util/utl \
+ ))
+ 
+ $(eval $(call gb_CppunitTest_add_exception_objects,writerperfect_stream,\
+diff --git a/writerperfect/qa/unit/WPXSvStreamTest.cxx b/writerperfect/qa/unit/WPXSvStreamTest.cxx
+index d75f201..c2b4f20 100644
+--- a/writerperfect/qa/unit/WPXSvStreamTest.cxx
++++ b/writerperfect/qa/unit/WPXSvStreamTest.cxx
+@@ -9,6 +9,7 @@
+ 
+ #include <algorithm>
+ #include <cassert>
++#include <sstream>
+ 
+ #include <boost/shared_ptr.hpp>
+ 
+@@ -98,6 +99,24 @@ const shared_ptr<RVNGInputStream> lcl_createStreamForURL(const rtl::OUString &rU
+     return pInput;
+ }
+ 
++void lcl_testSubStreams(const shared_ptr<RVNGInputStream> &pInput)
++{
++    shared_ptr<RVNGInputStream> pSubStream;
++
++    // all valid substreams can be read
++    for (std::size_t i = 0; i != pInput->subStreamCount(); ++i)
++    {
++        std::ostringstream msg("opening substream ");
++        msg << i;
++        pSubStream.reset(pInput->getSubStreamById(i));
++        CPPUNIT_ASSERT_MESSAGE(msg.str(), bool(pSubStream));
++    }
++
++    // invalid substreams cannot be read
++    pSubStream.reset(pInput->getSubStreamById(pInput->subStreamCount()));
++    CPPUNIT_ASSERT(!pSubStream);
++}
++
+ void WPXSvStreamTest::testRead()
+ {
+     const shared_ptr<RVNGInputStream> pInput(lcl_createStream());
+@@ -281,8 +300,17 @@ void WPXSvStreamTest::testStructured()
+         assert(bool(pInput));
+ 
+         CPPUNIT_ASSERT(pInput->isStructured());
++        CPPUNIT_ASSERT(2 == pInput->subStreamCount());
++        lcl_testSubStreams(pInput);
++
++        // check for existing substream
++        CPPUNIT_ASSERT(pInput->existsSubStream("WordDocument"));
+         shared_ptr<RVNGInputStream> pSubStream(pInput->getSubStreamByName("WordDocument"));
+         CPPUNIT_ASSERT(bool(pSubStream));
++        CPPUNIT_ASSERT(!pSubStream->isEnd());
++
++        // check for not existing substream
++        CPPUNIT_ASSERT(!pInput->existsSubStream("foo"));
+         pSubStream.reset(pInput->getSubStreamByName("foo"));
+         CPPUNIT_ASSERT(!pSubStream);
+     }
+@@ -293,8 +321,18 @@ void WPXSvStreamTest::testStructured()
+         assert(bool(pInput));
+ 
+         CPPUNIT_ASSERT(pInput->isStructured());
++        CPPUNIT_ASSERT(9 == pInput->subStreamCount());
++        lcl_testSubStreams(pInput);
++
++        // check for existing substream
++        CPPUNIT_ASSERT(pInput->existsSubStream("content.xml"));
+         shared_ptr<RVNGInputStream> pSubStream(pInput->getSubStreamByName("content.xml"));
+         CPPUNIT_ASSERT(bool(pSubStream));
++        CPPUNIT_ASSERT(!pSubStream->isEnd());
++
++        // check for not existing substream
++        CPPUNIT_ASSERT(pInput->existsSubStream("content.xml"));
++        CPPUNIT_ASSERT(!pInput->existsSubStream("foo"));
+         pSubStream.reset(pInput->getSubStreamByName("foo"));
+         CPPUNIT_ASSERT(!pSubStream);
+     }
+@@ -304,7 +342,11 @@ void WPXSvStreamTest::testStructured()
+         const shared_ptr<RVNGInputStream> pInput(lcl_createStream());
+ 
+         CPPUNIT_ASSERT(!pInput->isStructured());
++        CPPUNIT_ASSERT(0 == pInput->subStreamCount());
++        CPPUNIT_ASSERT(!pInput->existsSubStream("foo"));
+         CPPUNIT_ASSERT(0 == pInput->getSubStreamByName("foo"));
++        CPPUNIT_ASSERT(0 == pInput->getSubStreamById(42));
++        CPPUNIT_ASSERT(0 == pInput->subStreamName(42));
+     }
+ }
+ 
+-- 
+1.9.3
+

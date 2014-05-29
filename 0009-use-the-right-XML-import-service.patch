@@ -1,0 +1,27 @@
+From f43b8775a3d33269367e47ea081979971db85b58 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 29 May 2014 15:10:33 +0200
+Subject: [PATCH 09/18] use the right XML import service
+
+Change-Id: I45637984f02e3363812ff8c9f0cbd3464786f4de
+(cherry picked from commit 243e6a98d80ed896686b4486b4e675ffb2cc1f59)
+---
+ writerperfect/source/impress/KeynoteImportFilter.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/writerperfect/source/impress/KeynoteImportFilter.cxx b/writerperfect/source/impress/KeynoteImportFilter.cxx
+index 236e5d9..5edbfa9 100644
+--- a/writerperfect/source/impress/KeynoteImportFilter.cxx
++++ b/writerperfect/source/impress/KeynoteImportFilter.cxx
+@@ -133,7 +133,7 @@ throw (RuntimeException, std::exception)
+     // An XML import service: what we push sax messages to..
+     Reference < XDocumentHandler > xInternalHandler(
+         mxContext->getServiceManager()->createInstanceWithContext(
+-            "com.sun.star.comp.Draw.XMLOasisImporter", mxContext),
++            "com.sun.star.comp.Impress.XMLOasisImporter", mxContext),
+         css::uno::UNO_QUERY_THROW);
+ 
+     // The XImporter sets up an empty target document for XDocumentHandler to write to..
+-- 
+1.9.3
+

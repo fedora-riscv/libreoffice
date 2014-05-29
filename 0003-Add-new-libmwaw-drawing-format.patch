@@ -1,0 +1,721 @@
+From f458e912d88059a1b129e91bf4d15c03baf3346d Mon Sep 17 00:00:00 2001
+From: osnola <alonso@loria.fr>
+Date: Wed, 28 May 2014 18:09:57 +0200
+Subject: [PATCH 03/18] Add new libmwaw drawing format...
+
+Change-Id: I7fa7a46143126bdf27cf7cb30245dbcb244645ef
+(cherry picked from commit 0e17d7bb8acdbc0c36406a352c37f5cb0a987ced)
+---
+ .../config/fragments/filters/Beagle_Works_Draw.xcu |  29 ++++
+ .../config/fragments/filters/ClarisWorks_Draw.xcu  |  30 ++++
+ .../config/fragments/filters/Great_Works_Draw.xcu  |  29 ++++
+ .../config/fragments/filters/MacPaint_Draw.xcu     |  30 ++++
+ .../config/fragments/filters/Mac_Works_Draw.xcu    |  30 ++++
+ .../config/fragments/filters/SuperPaint_Draw.xcu   |  30 ++++
+ .../config/fragments/types/draw_Beagle_Works.xcu   |  29 ++++
+ .../config/fragments/types/draw_ClarisWorks.xcu    |  29 ++++
+ .../config/fragments/types/draw_Great_Works.xcu    |  29 ++++
+ .../config/fragments/types/draw_MacPaint.xcu       |  29 ++++
+ .../config/fragments/types/draw_Mac_Works.xcu      |  29 ++++
+ .../config/fragments/types/draw_SuperPaint.xcu     |  29 ++++
+ writerperfect/source/draw/MWAWDrawImportFilter.cxx | 191 +++++++++++++++++++++
+ writerperfect/source/draw/MWAWDrawImportFilter.hxx |  53 ++++++
+ 14 files changed, 596 insertions(+)
+ create mode 100644 filter/source/config/fragments/filters/Beagle_Works_Draw.xcu
+ create mode 100644 filter/source/config/fragments/filters/ClarisWorks_Draw.xcu
+ create mode 100644 filter/source/config/fragments/filters/Great_Works_Draw.xcu
+ create mode 100644 filter/source/config/fragments/filters/MacPaint_Draw.xcu
+ create mode 100644 filter/source/config/fragments/filters/Mac_Works_Draw.xcu
+ create mode 100644 filter/source/config/fragments/filters/SuperPaint_Draw.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_Beagle_Works.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_ClarisWorks.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_Great_Works.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_MacPaint.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_Mac_Works.xcu
+ create mode 100644 filter/source/config/fragments/types/draw_SuperPaint.xcu
+ create mode 100644 writerperfect/source/draw/MWAWDrawImportFilter.cxx
+ create mode 100644 writerperfect/source/draw/MWAWDrawImportFilter.hxx
+
+diff --git a/filter/source/config/fragments/filters/Beagle_Works_Draw.xcu b/filter/source/config/fragments/filters/Beagle_Works_Draw.xcu
+new file mode 100644
+index 0000000..57b5879
+--- /dev/null
++++ b/filter/source/config/fragments/filters/Beagle_Works_Draw.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="Beagle_Works_Draw" oor:op="replace">
++    <prop oor:name="Flags">
++        <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
++    </prop>
++    <prop oor:name="FilterService">
++        <value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value xml:lang="en-US">BeagleWorks/WordPerfect Works v1 Document</value>
++    </prop>
++    <prop oor:name="FileFormatVersion">
++        <value>0</value>
++    </prop>
++    <prop oor:name="Type">
++        <value>draw_Beagle_Works</value>
++    </prop>
++    <prop oor:name="DocumentService">
++        <value>com.sun.star.drawing.DrawingDocument</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/filters/ClarisWorks_Draw.xcu b/filter/source/config/fragments/filters/ClarisWorks_Draw.xcu
+new file mode 100644
+index 0000000..f4924b7
+--- /dev/null
++++ b/filter/source/config/fragments/filters/ClarisWorks_Draw.xcu
+@@ -0,0 +1,30 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="ClarisWorks_Draw" oor:op="replace">
++        <prop oor:name="Flags"><value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value></prop>
++        <prop oor:name="UIComponent"/>
++        <prop oor:name="FilterService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="UserData"><value></value></prop>
++        <prop oor:name="UIName">
++            <value xml:lang="en-US">ClarisWorks/AppleWorks Document</value>
++        </prop>
++        <prop oor:name="FileFormatVersion"><value>0</value></prop>
++        <prop oor:name="Type"><value>draw_ClarisWorks</value></prop>
++        <prop oor:name="TemplateName"/>
++        <prop oor:name="DocumentService"><value>com.sun.star.drawing.DrawingDocument</value></prop>
++    </node>
+diff --git a/filter/source/config/fragments/filters/Great_Works_Draw.xcu b/filter/source/config/fragments/filters/Great_Works_Draw.xcu
+new file mode 100644
+index 0000000..4bb0667
+--- /dev/null
++++ b/filter/source/config/fragments/filters/Great_Works_Draw.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="Great_Works_Draw" oor:op="replace">
++    <prop oor:name="Flags">
++        <value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value>
++    </prop>
++    <prop oor:name="FilterService">
++        <value>com.sun.star.comp.Draaw.MWAWDrawImportFilter</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value xml:lang="en-US">GreatWorks Document</value>
++    </prop>
++    <prop oor:name="FileFormatVersion">
++        <value>0</value>
++    </prop>
++    <prop oor:name="Type">
++        <value>draw_Great_Works</value>
++    </prop>
++    <prop oor:name="DocumentService">
++        <value>com.sun.star.drawing.DrawingDocument</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/filters/MacPaint_Draw.xcu b/filter/source/config/fragments/filters/MacPaint_Draw.xcu
+new file mode 100644
+index 0000000..80f8021
+--- /dev/null
++++ b/filter/source/config/fragments/filters/MacPaint_Draw.xcu
+@@ -0,0 +1,30 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="MacPaint_Draw" oor:op="replace">
++        <prop oor:name="Flags"><value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value></prop>
++        <prop oor:name="UIComponent"/>
++        <prop oor:name="FilterService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="UserData"><value></value></prop>
++        <prop oor:name="UIName">
++            <value xml:lang="en-US">MacPaint (v1)</value>
++        </prop>
++        <prop oor:name="FileFormatVersion"><value>0</value></prop>
++        <prop oor:name="Type"><value>draw_MacPaint</value></prop>
++        <prop oor:name="TemplateName"/>
++        <prop oor:name="DocumentService"><value>com.sun.star.drawing.DrawingDocument</value></prop>
++    </node>
+diff --git a/filter/source/config/fragments/filters/Mac_Works_Draw.xcu b/filter/source/config/fragments/filters/Mac_Works_Draw.xcu
+new file mode 100644
+index 0000000..1c02f3f
+--- /dev/null
++++ b/filter/source/config/fragments/filters/Mac_Works_Draw.xcu
+@@ -0,0 +1,30 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="Mac_Works_Draw" oor:op="replace">
++        <prop oor:name="Flags"><value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value></prop>
++        <prop oor:name="UIComponent"/>
++        <prop oor:name="FilterService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="UserData"><value></value></prop>
++        <prop oor:name="UIName">
++            <value xml:lang="en-US">Microsoft Works for Mac Document (v1 - v4)</value>
++        </prop>
++        <prop oor:name="FileFormatVersion"><value>0</value></prop>
++        <prop oor:name="Type"><value>draw_Mac_Works</value></prop>
++        <prop oor:name="TemplateName"/>
++        <prop oor:name="DocumentService"><value>com.sun.star.drawing.DrawingDocument</value></prop>
++    </node>
+diff --git a/filter/source/config/fragments/filters/SuperPaint_Draw.xcu b/filter/source/config/fragments/filters/SuperPaint_Draw.xcu
+new file mode 100644
+index 0000000..ccac863
+--- /dev/null
++++ b/filter/source/config/fragments/filters/SuperPaint_Draw.xcu
+@@ -0,0 +1,30 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="SuperPaint_Draw" oor:op="replace">
++        <prop oor:name="Flags"><value>IMPORT ALIEN USESOPTIONS 3RDPARTYFILTER PREFERRED</value></prop>
++        <prop oor:name="UIComponent"/>
++        <prop oor:name="FilterService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="UserData"><value></value></prop>
++        <prop oor:name="UIName">
++            <value xml:lang="en-US">SuperPaint (v1)</value>
++        </prop>
++        <prop oor:name="FileFormatVersion"><value>0</value></prop>
++        <prop oor:name="Type"><value>draw_SuperPaint</value></prop>
++        <prop oor:name="TemplateName"/>
++        <prop oor:name="DocumentService"><value>com.sun.star.drawing.DrawingDocument</value></prop>
++    </node>
+diff --git a/filter/source/config/fragments/types/draw_Beagle_Works.xcu b/filter/source/config/fragments/types/draw_Beagle_Works.xcu
+new file mode 100644
+index 0000000..177ad97
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_Beagle_Works.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="draw_Beagle_Works" oor:op="replace">
++    <prop oor:name="DetectService">
++        <value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value>
++    </prop>
++    <prop oor:name="Extensions">
++        <value>dummy</value>
++    </prop>
++    <prop oor:name="MediaType">
++        <value></value>
++    </prop>
++    <prop oor:name="Preferred">
++        <value>true</value>
++    </prop>
++    <prop oor:name="PreferredFilter">
++        <value>Beagle_Works_Draw</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value>BeagleWorks/WordPerfect Works Document</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/types/draw_ClarisWorks.xcu b/filter/source/config/fragments/types/draw_ClarisWorks.xcu
+new file mode 100644
+index 0000000..74672eb
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_ClarisWorks.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="draw_ClarisWorks" oor:op="replace" >
++        <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="URLPattern"/>
++        <prop oor:name="Extensions"><value>cwk</value></prop>
++        <prop oor:name="MediaType"><value>application/clarisworks</value></prop>
++        <prop oor:name="Preferred"><value>true</value></prop>
++        <prop oor:name="PreferredFilter"><value>Claris_Works_Draw</value></prop>
++        <prop oor:name="UIName">
++            <value>ClarisWorks/AppleWorks Document</value>
++        </prop>
++        <prop oor:name="ClipboardFormat"/>
++    </node>
+diff --git a/filter/source/config/fragments/types/draw_Great_Works.xcu b/filter/source/config/fragments/types/draw_Great_Works.xcu
+new file mode 100644
+index 0000000..f9aeb07
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_Great_Works.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++-->
++
++<node oor:name="draw_Great_Works" oor:op="replace">
++    <prop oor:name="DetectService">
++        <value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value>
++    </prop>
++    <prop oor:name="Extensions">
++        <value>dummy</value>
++    </prop>
++    <prop oor:name="MediaType">
++        <value></value>
++    </prop>
++    <prop oor:name="Preferred">
++        <value>true</value>
++    </prop>
++    <prop oor:name="PreferredFilter">
++        <value>Great_Works_Draw</value>
++    </prop>
++    <prop oor:name="UIName">
++        <value>GreatWorks Document</value>
++    </prop>
++</node>
+diff --git a/filter/source/config/fragments/types/draw_MacPaint.xcu b/filter/source/config/fragments/types/draw_MacPaint.xcu
+new file mode 100644
+index 0000000..5811ea5
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_MacPaint.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="draw_MacPaint" oor:op="replace" >
++        <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="URLPattern"/>
++        <prop oor:name="Extensions"><value>wps</value></prop>
++        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Preferred"><value>true</value></prop>
++        <prop oor:name="PreferredFilter"><value>MacPaint_Draw</value></prop>
++        <prop oor:name="UIName">
++            <value>MacPaint (v1)</value>
++        </prop>
++        <prop oor:name="ClipboardFormat"/>
++    </node>
+diff --git a/filter/source/config/fragments/types/draw_Mac_Works.xcu b/filter/source/config/fragments/types/draw_Mac_Works.xcu
+new file mode 100644
+index 0000000..79ef12c
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_Mac_Works.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="draw_Mac_Works" oor:op="replace" >
++        <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="URLPattern"/>
++        <prop oor:name="Extensions"><value>wps</value></prop>
++        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Preferred"><value>true</value></prop>
++        <prop oor:name="PreferredFilter"><value>Mac_Works_Draw</value></prop>
++        <prop oor:name="UIName">
++            <value>Microsoft Works for Mac Document (v1 - v4)</value>
++        </prop>
++        <prop oor:name="ClipboardFormat"/>
++    </node>
+diff --git a/filter/source/config/fragments/types/draw_SuperPaint.xcu b/filter/source/config/fragments/types/draw_SuperPaint.xcu
+new file mode 100644
+index 0000000..6dbd4a9
+--- /dev/null
++++ b/filter/source/config/fragments/types/draw_SuperPaint.xcu
+@@ -0,0 +1,29 @@
++<!--
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++-->
++    <node oor:name="draw_SuperPaint" oor:op="replace" >
++        <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
++        <prop oor:name="URLPattern"/>
++        <prop oor:name="Extensions"><value>wps</value></prop>
++        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Preferred"><value>true</value></prop>
++        <prop oor:name="PreferredFilter"><value>SuperPaint_Draw</value></prop>
++        <prop oor:name="UIName">
++            <value>SuperPaint (v1)</value>
++        </prop>
++        <prop oor:name="ClipboardFormat"/>
++    </node>
+diff --git a/writerperfect/source/draw/MWAWDrawImportFilter.cxx b/writerperfect/source/draw/MWAWDrawImportFilter.cxx
+new file mode 100644
+index 0000000..feddcdb
+--- /dev/null
++++ b/writerperfect/source/draw/MWAWDrawImportFilter.cxx
+@@ -0,0 +1,191 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* MWAWDrawImportFilter: Sets up the filter, and calls DocumentCollector
++ * to do the actual filtering
++ *
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ */
++
++#include <com/sun/star/uno/Reference.h>
++#include <cppuhelper/supportsservice.hxx>
++
++#include <libmwaw/libmwaw.hxx>
++#include <libodfgen/libodfgen.hxx>
++
++#include "MWAWDrawImportFilter.hxx"
++
++using com::sun::star::uno::Sequence;
++using com::sun::star::uno::Reference;
++using com::sun::star::uno::Any;
++using com::sun::star::uno::XInterface;
++using com::sun::star::uno::Exception;
++using com::sun::star::uno::RuntimeException;
++using com::sun::star::uno::XComponentContext;
++
++static bool handleEmbeddedMWAWGraphicObject(const librevenge::RVNGBinaryData &data, OdfDocumentHandler *pHandler,  const OdfStreamType streamType)
++{
++    OdgGenerator exporter;
++    exporter.addDocumentHandler(pHandler, streamType);
++    return MWAWDocument::decodeGraphic(data, &exporter);
++}
++
++static bool handleEmbeddedMWAWSpreadsheetObject(const librevenge::RVNGBinaryData &data, OdfDocumentHandler *pHandler,  const OdfStreamType streamType)
++{
++    OdsGenerator exporter;
++    exporter.addDocumentHandler(pHandler, streamType);
++    return MWAWDocument::decodeSpreadsheet(data, &exporter);
++}
++
++bool MWAWDrawImportFilter::doImportDocument( librevenge::RVNGInputStream &rInput, librevenge::RVNGDrawingInterface &rGenerator )
++{
++    return MWAWDocument::MWAW_R_OK == MWAWDocument::parse(&rInput, &rGenerator);
++}
++
++bool MWAWDrawImportFilter::doDetectFormat( librevenge::RVNGInputStream &rInput, OUString &rTypeName )
++{
++    rTypeName = "";
++
++    MWAWDocument::Type docType = MWAWDocument::MWAW_T_UNKNOWN;
++    MWAWDocument::Kind docKind = MWAWDocument::MWAW_K_UNKNOWN;
++    const MWAWDocument::Confidence confidence = MWAWDocument::isFileFormatSupported(&rInput, docType, docKind);
++
++    if (confidence == MWAWDocument::MWAW_C_EXCELLENT)
++    {
++        if ( docKind == MWAWDocument::MWAW_K_DRAW || docKind == MWAWDocument::MWAW_K_PAINT )
++        {
++            switch (docType)
++            {
++            case MWAWDocument::MWAW_T_BEAGLEWORKS:
++                rTypeName = "draw_Beagle_Works";
++                break;
++            case MWAWDocument::MWAW_T_CLARISWORKS:
++                rTypeName = "draw_ClarisWorks";
++                break;
++            case MWAWDocument::MWAW_T_GREATWORKS:
++                rTypeName = "draw_Great_Works";
++                break;
++            case MWAWDocument::MWAW_T_MACPAINT:
++                rTypeName = "draw_MacPaint";
++                break;
++            case MWAWDocument::MWAW_T_MICROSOFTWORKS:
++                rTypeName = "draw_Mac_Works";
++                break;
++            case MWAWDocument::MWAW_T_SUPERPAINT:
++                rTypeName = "draw_SuperPaint";
++                break;
++
++            case MWAWDocument::MWAW_T_ACTA:
++            case MWAWDocument::MWAW_T_ADOBEILLUSTRATOR:
++            case MWAWDocument::MWAW_T_CLARISRESOLVE:
++            case MWAWDocument::MWAW_T_DBASE:
++            case MWAWDocument::MWAW_T_DOCMAKER:
++            case MWAWDocument::MWAW_T_EDOC:
++            case MWAWDocument::MWAW_T_FAMILYTREEMAKER:
++            case MWAWDocument::MWAW_T_FILEMAKER:
++            case MWAWDocument::MWAW_T_FOXBASE:
++            case MWAWDocument::MWAW_T_FRAMEMAKER:
++            case MWAWDocument::MWAW_T_FULLIMPACT:
++            case MWAWDocument::MWAW_T_FULLPAINT:
++            case MWAWDocument::MWAW_T_FULLWRITE:
++            case MWAWDocument::MWAW_T_INFOGENIE:
++            case MWAWDocument::MWAW_T_KALEIDAGRAPH:
++            case MWAWDocument::MWAW_T_HANMACWORDJ:
++            case MWAWDocument::MWAW_T_HANMACWORDK:
++            case MWAWDocument::MWAW_T_LIGHTWAYTEXT:
++            case MWAWDocument::MWAW_T_MACDOC:
++            case MWAWDocument::MWAW_T_MACDRAFT:
++            case MWAWDocument::MWAW_T_MACDRAW:
++            case MWAWDocument::MWAW_T_MACDRAWPRO:
++            case MWAWDocument::MWAW_T_MACWRITE:
++            case MWAWDocument::MWAW_T_MACWRITEPRO:
++            case MWAWDocument::MWAW_T_MARINERWRITE:
++            case MWAWDocument::MWAW_T_MINDWRITE:
++            case MWAWDocument::MWAW_T_MICROSOFTFILE:
++            case MWAWDocument::MWAW_T_MICROSOFTMULTIPLAN:
++            case MWAWDocument::MWAW_T_MICROSOFTWORD:
++            case MWAWDocument::MWAW_T_MORE:
++            case MWAWDocument::MWAW_T_NISUSWRITER:
++            case MWAWDocument::MWAW_T_OVERVUE:
++            case MWAWDocument::MWAW_T_PAGEMAKER:
++            case MWAWDocument::MWAW_T_PIXELPAINT:
++            case MWAWDocument::MWAW_T_RAGTIME:
++            case MWAWDocument::MWAW_T_READYSETGO:
++            case MWAWDocument::MWAW_T_SYMPOSIUM:
++            case MWAWDocument::MWAW_T_TEACHTEXT:
++            case MWAWDocument::MWAW_T_TEXEDIT:
++            case MWAWDocument::MWAW_T_TRAPEZE:
++            case MWAWDocument::MWAW_T_WINGZ:
++            case MWAWDocument::MWAW_T_WRITENOW:
++            case MWAWDocument::MWAW_T_WRITERPLUS:
++            case MWAWDocument::MWAW_T_XPRESS:
++            case MWAWDocument::MWAW_T_ZWRITE:
++            case MWAWDocument::MWAW_T_4DIMENSION:
++
++            case MWAWDocument::MWAW_T_RESERVED1:
++            case MWAWDocument::MWAW_T_RESERVED2:
++            case MWAWDocument::MWAW_T_RESERVED3:
++            case MWAWDocument::MWAW_T_RESERVED4:
++            case MWAWDocument::MWAW_T_RESERVED5:
++            case MWAWDocument::MWAW_T_RESERVED6:
++            case MWAWDocument::MWAW_T_RESERVED7:
++            case MWAWDocument::MWAW_T_RESERVED8:
++            case MWAWDocument::MWAW_T_RESERVED9:
++            case MWAWDocument::MWAW_T_UNKNOWN:
++            default:
++                break;
++            }
++        }
++    }
++
++    return !rTypeName.isEmpty();
++}
++
++void MWAWDrawImportFilter::doRegisterHandlers( OdgGenerator &rGenerator )
++{
++    rGenerator.registerEmbeddedObjectHandler("image/mwaw-odg", &handleEmbeddedMWAWGraphicObject);
++    rGenerator.registerEmbeddedObjectHandler("image/mwaw-ods", &handleEmbeddedMWAWSpreadsheetObject);
++}
++
++OUString MWAWDrawImportFilter_getImplementationName ()
++throw (RuntimeException)
++{
++    return OUString (  "com.sun.star.comp.Draw.MWAWDrawImportFilter"  );
++}
++
++Sequence< OUString > SAL_CALL MWAWDrawImportFilter_getSupportedServiceNames(  )
++throw (RuntimeException)
++{
++    Sequence < OUString > aRet(2);
++    OUString *pArray = aRet.getArray();
++    pArray[0] =  "com.sun.star.document.ImportFilter";
++    pArray[1] =  "com.sun.star.document.ExtendedTypeDetection";
++    return aRet;
++}
++
++Reference< XInterface > SAL_CALL MWAWDrawImportFilter_createInstance( const Reference< XComponentContext > &rContext)
++throw( Exception )
++{
++    return (cppu::OWeakObject *) new MWAWDrawImportFilter( rContext );
++}
++
++// XServiceInfo
++OUString SAL_CALL MWAWDrawImportFilter::getImplementationName(  )
++throw (RuntimeException, std::exception)
++{
++    return MWAWDrawImportFilter_getImplementationName();
++}
++sal_Bool SAL_CALL MWAWDrawImportFilter::supportsService( const OUString &rServiceName )
++throw (RuntimeException, std::exception)
++{
++    return cppu::supportsService( this, rServiceName );
++}
++Sequence< OUString > SAL_CALL MWAWDrawImportFilter::getSupportedServiceNames(  )
++throw (RuntimeException, std::exception)
++{
++    return MWAWDrawImportFilter_getSupportedServiceNames();
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/writerperfect/source/draw/MWAWDrawImportFilter.hxx b/writerperfect/source/draw/MWAWDrawImportFilter.hxx
+new file mode 100644
+index 0000000..173629e
+--- /dev/null
++++ b/writerperfect/source/draw/MWAWDrawImportFilter.hxx
+@@ -0,0 +1,53 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ */
++
++#ifndef _MWAWDRAWIMPORTFILTER_HXX
++#define _MWAWDRAWIMPORTFILTER_HXX
++
++#include <com/sun/star/lang/XServiceInfo.hpp>
++#include <com/sun/star/uno/XComponentContext.hpp>
++
++#include "ImportFilterBase.hxx"
++
++/* This component will be instantiated for both import or export. Whether it calls
++ * setSourceDocument or setTargetDocument determines which Impl function the filter
++ * member calls */
++class MWAWDrawImportFilter : public writerperfect::draw::ImportFilterBase
++{
++public:
++    MWAWDrawImportFilter( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext > &rxContext )
++        : writerperfect::draw::ImportFilterBase( rxContext ) {}
++
++    // XServiceInfo
++    virtual OUString SAL_CALL getImplementationName(  )
++    throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++    virtual sal_Bool SAL_CALL supportsService( const OUString &ServiceName )
++    throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames(  )
++    throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++
++private:
++    virtual bool doDetectFormat( librevenge::RVNGInputStream &rInput, OUString &rTypeName ) SAL_OVERRIDE;
++    virtual bool doImportDocument( librevenge::RVNGInputStream &rInput, librevenge::RVNGDrawingInterface &rGenerator ) SAL_OVERRIDE;
++    virtual void doRegisterHandlers( OdgGenerator &rGenerator ) SAL_OVERRIDE;
++};
++
++OUString MWAWDrawImportFilter_getImplementationName()
++throw ( ::com::sun::star::uno::RuntimeException );
++
++::com::sun::star::uno::Sequence< OUString > SAL_CALL MWAWDrawImportFilter_getSupportedServiceNames(  )
++throw ( ::com::sun::star::uno::RuntimeException );
++
++::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface >
++SAL_CALL MWAWDrawImportFilter_createInstance( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext > &rContext)
++throw ( ::com::sun::star::uno::Exception );
++
++#endif
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+-- 
+1.9.3
+

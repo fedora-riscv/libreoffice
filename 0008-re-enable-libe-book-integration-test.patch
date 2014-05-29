@@ -1,0 +1,27 @@
+From 78c555ce9d94218f74a319829cf88e79e02e1b62 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 29 May 2014 13:33:04 +0200
+Subject: [PATCH 08/18] re-enable libe-book integration test
+
+Change-Id: I217183d55607f16c3b996b27b131953962afee96
+(cherry picked from commit 5dfb6e74c68073eb1742c53393c683d5841de255)
+---
+ writerperfect/qa/unit/WpftWriterFilterTest.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/writerperfect/qa/unit/WpftWriterFilterTest.cxx b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
+index 2e60222..8028522 100644
+--- a/writerperfect/qa/unit/WpftWriterFilterTest.cxx
++++ b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
+@@ -32,7 +32,7 @@ WpftWriterFilterTest::WpftWriterFilterTest()
+ void WpftWriterFilterTest::test()
+ {
+     doTest("com.sun.star.comp.Writer.AbiWordImportFilter", "/writerperfect/qa/unit/data/writer/libabw/");
+-    // doTest("org.libreoffice.comp.Writer.EBookImportFilter", "/writerperfect/qa/unit/data/writer/libe-book/");
++    doTest("org.libreoffice.comp.Writer.EBookImportFilter", "/writerperfect/qa/unit/data/writer/libe-book/");
+     doTest("com.sun.star.comp.Writer.MSWorksImportFilter", "/writerperfect/qa/unit/data/writer/libwps/");
+     // doTest("com.sun.star.comp.Writer.MWAWImportFilter", "/writerperfect/qa/unit/data/writer/libmwaw/");
+     doTest("com.sun.star.comp.Writer.WordPerfectImportFilter", "/writerperfect/qa/unit/data/writer/libwpd/");
+-- 
+1.9.3
+

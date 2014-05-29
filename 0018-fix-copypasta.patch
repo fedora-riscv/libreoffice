@@ -1,0 +1,61 @@
+From da20023bf585f7c937ab7f5927f1425d25a79a50 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 29 May 2014 19:24:21 +0200
+Subject: [PATCH 18/18] fix copypasta
+
+Change-Id: I397426edff584b29210b4df925677893cda35cc7
+(cherry picked from commit 8dd624128bf12e013c17b3b24c0b24135296bb8e)
+---
+ filter/source/config/fragments/types/draw_MacPaint.xcu   | 4 ++--
+ filter/source/config/fragments/types/draw_Mac_Works.xcu  | 4 ++--
+ filter/source/config/fragments/types/draw_SuperPaint.xcu | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/filter/source/config/fragments/types/draw_MacPaint.xcu b/filter/source/config/fragments/types/draw_MacPaint.xcu
+index 5811ea5..4cadffd 100644
+--- a/filter/source/config/fragments/types/draw_MacPaint.xcu
++++ b/filter/source/config/fragments/types/draw_MacPaint.xcu
+@@ -18,8 +18,8 @@
+     <node oor:name="draw_MacPaint" oor:op="replace" >
+         <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
+         <prop oor:name="URLPattern"/>
+-        <prop oor:name="Extensions"><value>wps</value></prop>
+-        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Extensions"><value>dummy</value></prop>
++        <prop oor:name="MediaType"></prop>
+         <prop oor:name="Preferred"><value>true</value></prop>
+         <prop oor:name="PreferredFilter"><value>MacPaint_Draw</value></prop>
+         <prop oor:name="UIName">
+diff --git a/filter/source/config/fragments/types/draw_Mac_Works.xcu b/filter/source/config/fragments/types/draw_Mac_Works.xcu
+index 79ef12c..15dea54 100644
+--- a/filter/source/config/fragments/types/draw_Mac_Works.xcu
++++ b/filter/source/config/fragments/types/draw_Mac_Works.xcu
+@@ -18,8 +18,8 @@
+     <node oor:name="draw_Mac_Works" oor:op="replace" >
+         <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
+         <prop oor:name="URLPattern"/>
+-        <prop oor:name="Extensions"><value>wps</value></prop>
+-        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Extensions"><value>dummy</value></prop>
++        <prop oor:name="MediaType"></prop>
+         <prop oor:name="Preferred"><value>true</value></prop>
+         <prop oor:name="PreferredFilter"><value>Mac_Works_Draw</value></prop>
+         <prop oor:name="UIName">
+diff --git a/filter/source/config/fragments/types/draw_SuperPaint.xcu b/filter/source/config/fragments/types/draw_SuperPaint.xcu
+index 6dbd4a9..6f7e349 100644
+--- a/filter/source/config/fragments/types/draw_SuperPaint.xcu
++++ b/filter/source/config/fragments/types/draw_SuperPaint.xcu
+@@ -18,8 +18,8 @@
+     <node oor:name="draw_SuperPaint" oor:op="replace" >
+         <prop oor:name="DetectService"><value>com.sun.star.comp.Draw.MWAWDrawImportFilter</value></prop>
+         <prop oor:name="URLPattern"/>
+-        <prop oor:name="Extensions"><value>wps</value></prop>
+-        <prop oor:name="MediaType"><value>application/vnd.ms-works</value></prop>
++        <prop oor:name="Extensions"><value>dummy</value></prop>
++        <prop oor:name="MediaType"></prop>
+         <prop oor:name="Preferred"><value>true</value></prop>
+         <prop oor:name="PreferredFilter"><value>SuperPaint_Draw</value></prop>
+         <prop oor:name="UIName">
+-- 
+1.9.3
+

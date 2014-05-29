@@ -1,0 +1,41 @@
+From dbced7129da1412bf282327491584cc78601c6c7 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 29 May 2014 17:13:33 +0200
+Subject: [PATCH 15/18] enable integration test for libmwaw calc import
+
+Change-Id: I9ff3ed6b74d93483a2157087707c5ec47888dd6a
+(cherry picked from commit 64a9f9968a6aa801af183a142c490943702a2d68)
+---
+ writerperfect/qa/unit/WpftCalcFilterTest.cxx                     | 1 +
+ writerperfect/qa/unit/data/calc/libmwaw/fail/.gitignore          | 0
+ writerperfect/qa/unit/data/calc/libmwaw/indeterminate/.gitignore | 0
+ writerperfect/qa/unit/data/calc/libmwaw/pass/.gitignore          | 0
+ 4 files changed, 1 insertion(+)
+ create mode 100644 writerperfect/qa/unit/data/calc/libmwaw/fail/.gitignore
+ create mode 100644 writerperfect/qa/unit/data/calc/libmwaw/indeterminate/.gitignore
+ create mode 100644 writerperfect/qa/unit/data/calc/libmwaw/pass/.gitignore
+
+diff --git a/writerperfect/qa/unit/WpftCalcFilterTest.cxx b/writerperfect/qa/unit/WpftCalcFilterTest.cxx
+index ba1ed1e..6af5c04 100644
+--- a/writerperfect/qa/unit/WpftCalcFilterTest.cxx
++++ b/writerperfect/qa/unit/WpftCalcFilterTest.cxx
+@@ -31,6 +31,7 @@ WpftCalcFilterTest::WpftCalcFilterTest()
+ 
+ void WpftCalcFilterTest::test()
+ {
++    doTest("com.sun.star.comp.Calc.MWAWCalcImportFilter", "/writerperfect/qa/unit/data/calc/libmwaw/");
+     doTest("com.sun.star.comp.Calc.MSWorksCalcImportFilter", "/writerperfect/qa/unit/data/calc/libwps/");
+ }
+ 
+diff --git a/writerperfect/qa/unit/data/calc/libmwaw/fail/.gitignore b/writerperfect/qa/unit/data/calc/libmwaw/fail/.gitignore
+new file mode 100644
+index 0000000..e69de29
+diff --git a/writerperfect/qa/unit/data/calc/libmwaw/indeterminate/.gitignore b/writerperfect/qa/unit/data/calc/libmwaw/indeterminate/.gitignore
+new file mode 100644
+index 0000000..e69de29
+diff --git a/writerperfect/qa/unit/data/calc/libmwaw/pass/.gitignore b/writerperfect/qa/unit/data/calc/libmwaw/pass/.gitignore
+new file mode 100644
+index 0000000..e69de29
+-- 
+1.9.3
+

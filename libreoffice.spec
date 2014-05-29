@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -299,6 +299,24 @@ Patch18: 0006-rebase-all-import-libs.patch
 Patch19: 0007-libwpd-stream-does-not-exist-anymore.patch
 Patch20: 0008-export-SYSTEM_REVENGE.patch
 Patch21: 0009-drop-trailing-comma.patch
+Patch22: 0001-improve-WPXSvInputStream-test.patch
+Patch23: 0002-enable-new-handlers.patch
+Patch24: 0003-Add-new-libmwaw-drawing-format.patch
+Patch25: 0004-add-new-libmwaw-drawing-formats-forgotten-files.patch
+Patch26: 0005-organize-the-test-data-files-by-test.patch
+Patch27: 0006-fix-return-value-for-libe-book-import-filter.patch
+Patch28: 0007-parse-zipped-FictionBook-2-files-again.patch
+Patch29: 0008-re-enable-libe-book-integration-test.patch
+Patch30: 0009-use-the-right-XML-import-service.patch
+Patch31: 0010-Try-to-add-support-for-WKS-WDB-files.patch
+Patch32: 0011-Make-the-wdb-wks-and-GreatWorks-draw-work.patch
+Patch33: 0012-add-writerperfect-calc-integration-test.patch
+Patch34: 0013-Add-new-libmwaw-s-database-spreadsheet-formats.patch
+Patch35: 0014-fix-detection-of-Keynote-3-documents.patch
+Patch36: 0015-enable-integration-test-for-libmwaw-calc-import.patch
+Patch37: 0016-enable-integration-test-for-libmwaw-draw-import.patch
+Patch38: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
+Patch39: 0018-fix-copypasta.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2078,6 +2096,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libscopencllo.so
 %{baseinstdir}/program/libscuilo.so
 %{baseinstdir}/program/libsolverlo.so
+%{baseinstdir}/program/libwpftcalclo.so
 %{baseinstdir}/program/resource/analysisen-US.res
 %{baseinstdir}/program/resource/dateen-US.res
 %{baseinstdir}/program/resource/foren-US.res
@@ -2269,6 +2288,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu May 29 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-7.beta1
+- fix some fallout from the import libs rebase
+
 * Wed May 28 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-6.beta1
 - switch to librevenge-based import libs
 

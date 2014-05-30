@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        16%{?libo_prerelease}%{?dist}
+Release:        17%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -315,6 +315,7 @@ Patch57: 0001-various-situations-where-graphic-go-missing-on-save.patch
 Patch58: 0001-fdo-78536-sfx2-template-dialog-make-the-am-i-dead-ye.patch
 Patch59: 0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch
 Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
+Patch61: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2278,6 +2279,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri May 30 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-17-UNBUILT
+- Related: rhbz#1102033 mysql connector woes
+
 * Wed May 28 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-16
 - Resolves: rhbz#1100357 crash after closing style dialog
 - Resolves: rhbz#1101224 crash when clipboard-copying a sheet to HTML

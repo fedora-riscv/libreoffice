@@ -325,6 +325,7 @@ Patch40: 0016-enable-integration-test-for-libmwaw-draw-import.patch
 Patch41: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
 Patch42: 0018-fix-copypasta.patch
 Patch43: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
+Patch44: 0001-only-def-graphite-external-if-enable-graphite.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

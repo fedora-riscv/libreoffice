@@ -1,0 +1,39 @@
+From 026dc56eb7deb7c49b6d54875a697d4a431082fe Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 30 May 2014 19:50:24 +0200
+Subject: [PATCH] only def graphite external if --enable-graphite
+
+Change-Id: I58271b5138b6dda4c448af63146a2f2171cb61a1
+---
+ RepositoryExternal.mk | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/RepositoryExternal.mk b/RepositoryExternal.mk
+index 240a7fe..ada101e 100644
+--- a/RepositoryExternal.mk
++++ b/RepositoryExternal.mk
+@@ -1321,6 +1321,8 @@ endef
+ 
+ endif # SYSTEM_FONTCONFIG
+ 
++ifeq ($(ENABLE_GRAPHITE),TRUE)
++
+ ifneq ($(SYSTEM_GRAPHITE),)
+ 
+ define gb_LinkTarget__use_graphite
+@@ -1348,6 +1350,12 @@ endef
+ 
+ endif # SYSTEM_GRAPHITE
+ 
++else # !ENABLE_GRAPHITE
++
++gb_LinkTarget__use_graphite :=
++
++endif # ENABLE_GRAPHITE
++
+ ifneq ($(SYSTEM_ICU),)
+ 
+ gb_LinkTarget__use_icu_headers:=
+-- 
+1.9.3
+

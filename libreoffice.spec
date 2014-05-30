@@ -326,6 +326,11 @@ Patch41: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
 Patch42: 0018-fix-copypasta.patch
 Patch43: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 Patch44: 0001-only-def-graphite-external-if-enable-graphite.patch
+Patch45: 0001-fix-creation-of-substreams-for-OLE2.patch
+Patch46: 0002-generalize-this-for-Zip-too.patch
+Patch47: 0003-reading-from-a-stream-must-start-at-the-beginning.patch
+Patch48: 0004-fix-filter-names.patch
+Patch49: 0005-add-dummy-extension.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

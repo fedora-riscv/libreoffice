@@ -1,0 +1,27 @@
+From 576a7210e52b7b3dec8cb6476c8cd44d9bf5dbb1 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 30 May 2014 12:43:22 +0200
+Subject: [PATCH 3/5] reading from a stream must start at the beginning
+
+Change-Id: I0c668244fffcda04a8fe34ef629754f5935cab4b
+(cherry picked from commit ee016fbbe3f3af67b2b8b6fb516bf523a0e704ff)
+---
+ writerperfect/source/common/WPXSvInputStream.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/writerperfect/source/common/WPXSvInputStream.cxx b/writerperfect/source/common/WPXSvInputStream.cxx
+index c9ff75a..b5786bf 100644
+--- a/writerperfect/source/common/WPXSvInputStream.cxx
++++ b/writerperfect/source/common/WPXSvInputStream.cxx
+@@ -468,6 +468,8 @@ WPXSvInputStreamImpl::WPXSvInputStreamImpl( Reference< XInputStream > xStream )
+             try
+             {
+                 mnLength = mxSeekable->getLength();
++                if (0 < mxSeekable->getPosition())
++                    mxSeekable->seek(0);
+             }
+             catch ( ... )
+             {
+-- 
+1.9.3
+

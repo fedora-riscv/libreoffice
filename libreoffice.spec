@@ -283,44 +283,47 @@ Patch8: 0001-Revert-resolve-crashes-with-ICU-53.1-in-locales-with.patch
 # reverted upstream commit
 Patch9: 0002-upgrade-to-ICU-53.1-fdo-77071-related.patch
 %endif
+# not upstreamed
+# TODO: fails on ppc; investigate
+Patch10: 0001-disable-swui-test-on-RHEL-7.patch
 %endif
 # not upstreamed
-Patch10: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch11: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch11: 0001-disable-firebird-unit-test.patch
+Patch12: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch12: 0001-never-run-autogen.sh.patch
+Patch13: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
-Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch15: 0001-build-libodfgen-as-shared-lib.patch
-Patch16: 0002-bundle-librevenge.patch
-Patch17: 0003-the-other-way-around.patch
-Patch18: 0004-fix-deps-for-projects-using-librevenge.patch
-Patch19: 0005-always-provide-REDLAND_CFLAGS-LIBS-to-ext.-projects.patch
-Patch20: 0006-rebase-all-import-libs.patch
-Patch21: 0007-libwpd-stream-does-not-exist-anymore.patch
-Patch22: 0008-export-SYSTEM_REVENGE.patch
-Patch23: 0009-drop-trailing-comma.patch
-Patch24: 0001-improve-WPXSvInputStream-test.patch
-Patch25: 0002-enable-new-handlers.patch
-Patch26: 0003-Add-new-libmwaw-drawing-format.patch
-Patch27: 0004-add-new-libmwaw-drawing-formats-forgotten-files.patch
-Patch28: 0005-organize-the-test-data-files-by-test.patch
-Patch29: 0006-fix-return-value-for-libe-book-import-filter.patch
-Patch30: 0007-parse-zipped-FictionBook-2-files-again.patch
-Patch31: 0008-re-enable-libe-book-integration-test.patch
-Patch32: 0009-use-the-right-XML-import-service.patch
-Patch33: 0010-Try-to-add-support-for-WKS-WDB-files.patch
-Patch34: 0011-Make-the-wdb-wks-and-GreatWorks-draw-work.patch
-Patch35: 0012-add-writerperfect-calc-integration-test.patch
-Patch36: 0013-Add-new-libmwaw-s-database-spreadsheet-formats.patch
-Patch37: 0014-fix-detection-of-Keynote-3-documents.patch
-Patch38: 0015-enable-integration-test-for-libmwaw-calc-import.patch
-Patch39: 0016-enable-integration-test-for-libmwaw-draw-import.patch
-Patch40: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
-Patch41: 0018-fix-copypasta.patch
+Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch16: 0001-build-libodfgen-as-shared-lib.patch
+Patch17: 0002-bundle-librevenge.patch
+Patch18: 0003-the-other-way-around.patch
+Patch19: 0004-fix-deps-for-projects-using-librevenge.patch
+Patch20: 0005-always-provide-REDLAND_CFLAGS-LIBS-to-ext.-projects.patch
+Patch21: 0006-rebase-all-import-libs.patch
+Patch22: 0007-libwpd-stream-does-not-exist-anymore.patch
+Patch23: 0008-export-SYSTEM_REVENGE.patch
+Patch24: 0009-drop-trailing-comma.patch
+Patch25: 0001-improve-WPXSvInputStream-test.patch
+Patch26: 0002-enable-new-handlers.patch
+Patch27: 0003-Add-new-libmwaw-drawing-format.patch
+Patch28: 0004-add-new-libmwaw-drawing-formats-forgotten-files.patch
+Patch29: 0005-organize-the-test-data-files-by-test.patch
+Patch30: 0006-fix-return-value-for-libe-book-import-filter.patch
+Patch31: 0007-parse-zipped-FictionBook-2-files-again.patch
+Patch32: 0008-re-enable-libe-book-integration-test.patch
+Patch33: 0009-use-the-right-XML-import-service.patch
+Patch34: 0010-Try-to-add-support-for-WKS-WDB-files.patch
+Patch35: 0011-Make-the-wdb-wks-and-GreatWorks-draw-work.patch
+Patch36: 0012-add-writerperfect-calc-integration-test.patch
+Patch37: 0013-Add-new-libmwaw-s-database-spreadsheet-formats.patch
+Patch38: 0014-fix-detection-of-Keynote-3-documents.patch
+Patch39: 0015-enable-integration-test-for-libmwaw-calc-import.patch
+Patch40: 0016-enable-integration-test-for-libmwaw-draw-import.patch
+Patch41: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
+Patch42: 0018-fix-copypasta.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

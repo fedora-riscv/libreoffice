@@ -316,6 +316,7 @@ Patch58: 0001-fdo-78536-sfx2-template-dialog-make-the-am-i-dead-ye.patch
 Patch59: 0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch
 Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
 Patch61: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
+Patch62: 0001-fdo-77806-Use-the-common-block-position-set-for-star.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2279,8 +2280,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri May 30 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-17-UNBUILT
+* Tue Jun 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-17
 - Related: rhbz#1102033 mysql connector woes
+- Resolves: fdo#77806 Use the common block position set for start
 
 * Wed May 28 2014 Eike Rathke <erack@redhat.com> - 1:4.2.4.2-16
 - Resolves: rhbz#1100357 crash after closing style dialog

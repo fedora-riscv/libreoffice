@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -37,7 +37,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -85,17 +85,17 @@ Source28:       %{external_url}/libwps-0.3.0.tar.bz2
 Source29:       %{external_url}/libvisio-0.1.0.tar.bz2
 Source30:       %{external_url}/libmspub-0.1.0.tar.bz2
 Source31:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source32:       %{external_url}/libodfgen-0.1.0.tar.bz2
+Source32:       %{external_url}/libodfgen-0.1.1.tar.bz2
 Source33:       %{external_url}/libmwaw-0.3.1.tar.bz2
-Source34:       %{external_url}/libetonyek-0.1.0.tar.bz2
+Source34:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source35:       %{external_url}/libfreehand-0.1.0.tar.bz2
-Source36:       %{external_url}/libe-book-0.1.0.tar.bz2
+Source36:       %{external_url}/libe-book-0.1.1.tar.bz2
 Source37:       %{external_url}/Firebird-2.5.2.26540-0.tar.bz2
 Source38:       %{external_url}/libabw-0.1.0.tar.bz2
 Source39:       %{external_url}/libatomic_ops-7_2d.zip
 Source40:       %{external_url}/libeot-0.01.tar.bz2
-Source41:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
-Source42:       %{external_url}/librevenge-0.0.0.tar.bz2
+Source41:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source42:       %{external_url}/librevenge-0.0.1.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-firebird --without-system-libabw --without-system-libatomic_ops --without-system-libeot --without-system-librevenge
 %endif
 
@@ -299,40 +299,7 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-build-libodfgen-as-shared-lib.patch
-Patch18: 0002-bundle-librevenge.patch
-Patch19: 0003-the-other-way-around.patch
-Patch20: 0004-fix-deps-for-projects-using-librevenge.patch
-Patch21: 0005-always-provide-REDLAND_CFLAGS-LIBS-to-ext.-projects.patch
-Patch22: 0006-rebase-all-import-libs.patch
-Patch23: 0007-libwpd-stream-does-not-exist-anymore.patch
-Patch24: 0008-export-SYSTEM_REVENGE.patch
-Patch25: 0009-drop-trailing-comma.patch
-Patch26: 0001-improve-WPXSvInputStream-test.patch
-Patch27: 0002-enable-new-handlers.patch
-Patch28: 0003-Add-new-libmwaw-drawing-format.patch
-Patch29: 0004-add-new-libmwaw-drawing-formats-forgotten-files.patch
-Patch30: 0005-organize-the-test-data-files-by-test.patch
-Patch31: 0006-fix-return-value-for-libe-book-import-filter.patch
-Patch32: 0007-parse-zipped-FictionBook-2-files-again.patch
-Patch33: 0008-re-enable-libe-book-integration-test.patch
-Patch34: 0009-use-the-right-XML-import-service.patch
-Patch35: 0010-Try-to-add-support-for-WKS-WDB-files.patch
-Patch36: 0011-Make-the-wdb-wks-and-GreatWorks-draw-work.patch
-Patch37: 0012-add-writerperfect-calc-integration-test.patch
-Patch38: 0013-Add-new-libmwaw-s-database-spreadsheet-formats.patch
-Patch39: 0014-fix-detection-of-Keynote-3-documents.patch
-Patch40: 0015-enable-integration-test-for-libmwaw-calc-import.patch
-Patch41: 0016-enable-integration-test-for-libmwaw-draw-import.patch
-Patch42: 0017-these-formats-are-supported-by-libmwaw-0.3.x.patch
-Patch43: 0018-fix-copypasta.patch
 Patch44: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
-Patch45: 0001-only-def-graphite-external-if-enable-graphite.patch
-Patch46: 0001-fix-creation-of-substreams-for-OLE2.patch
-Patch47: 0002-generalize-this-for-Zip-too.patch
-Patch48: 0003-reading-from-a-stream-must-start-at-the-beginning.patch
-Patch49: 0004-fix-filter-names.patch
-Patch50: 0005-add-dummy-extension.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -344,12 +311,12 @@ Patch50: 0005-add-dummy-extension.patch
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\|odfgen\\|revenge\\)\\.so.*$/d
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
 %else
-%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\|odfgen\\|revenge\\)\\.so.*$
+%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps\\)\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -1021,7 +988,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l br -n Breton -F -H
 %endif
-%langpack -l ca -n Catalan -F -H -Y -M -A -T -o ca_ES -V -w ca_ES
+%langpack -l ca -n Catalan -F -H -Y -M -A -T -o ca_ES -V -w ca_ES -X
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X -o cs_CZ -V -w cs_CZ
 %langpack -l cy -n Welsh -F -H -Y -o cy_GB -V -w cy_GB
 %langpack -l da -n Danish -F -H -Y -M -A -T -X -o da_DK -V -w da_DK
@@ -1032,20 +999,20 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l et -n Estonian -F -H -Y -T -o et_EE -V -w et_EE
 %langpack -l eu -n Basque -F -H -Y -T -o eu_ES -V -w eu_ES
 %if 0%{?fedora} || 0%{?rhel} >= 7
-%langpack -l fa -n Farsi -A -H -Y -s ctl
+%langpack -l fa -n Farsi -A -H -Y -s ctl -X
 %endif
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l fi -n Finnish -F -A -T -o fi_FI -V -w fi_FI
+%langpack -l fi -n Finnish -F -A -T -o fi_FI -V -w fi_FI -X
 %else
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI -V -w fi_FI
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI -V -w fi_FI -X
 %endif
 %langpack -l fr -n French -F -H -Y -M -A -T -X -O -W
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -w ga_IE
 %langpack -l gl -n Galician -F -H -Y -T -o gl_ES -V -w gl_ES
 %langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -w gu_IN -T
 %langpack -l he -n Hebrew -F -H -s ctl -o he_IL -V -w he_IL -T
-%langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN -v hi-IN -w hi_IN
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR -T
+%langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN -v hi-IN -w hi_IN -X
+%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR -T -X
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU -V -w hu_HU
 %langpack -l it -n Italian -F -H -Y -M -A -T -X -O -W
 %langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP -V -w ja_JP
@@ -1054,7 +1021,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -w ka_IN
 %langpack -l ko -n Korean -F -H -A -s cjk -T -c korea -X -o ko_KR -V -w ko_KR
-%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -w lt_LT
+%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -w lt_LT -X
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M
 %endif
@@ -1077,7 +1044,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -o pt_BR -V -w pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt -o pt_PT -v pt -W
-%langpack -l ro -n Romanian -A -F -H -Y -M -O
+%langpack -l ro -n Romanian -A -F -H -Y -M -O -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X -O -W
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S ctl -T -O
@@ -1686,8 +1653,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
 %{baseinstdir}/program/libGLEW.so.*
+%{baseinstdir}/program/libmwaw-0.3.so.*
 %{baseinstdir}/program/libodfgen-0.1.so.*
 %{baseinstdir}/program/librevenge-0.0.so.*
+%{baseinstdir}/program/libwps-0.3.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
@@ -2304,6 +2273,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jun 04 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-8.beta2
+- update to 4.3.0 beta2
+
 * Thu May 29 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-7.beta1
 - fix some fallout from the import libs rebase
 

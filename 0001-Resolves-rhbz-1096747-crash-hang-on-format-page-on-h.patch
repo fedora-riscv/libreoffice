@@ -1,0 +1,33 @@
+From 829aa9e03ae570e15af1f754b292709f38f643ea Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 5 Jun 2014 13:49:14 +0100
+Subject: [PATCH] Resolves: rhbz#1096747 crash/hang on format-page on html
+ document
+
+Change-Id: I9a989620375eb210e553b84b7a642a0360c8f03f
+(cherry picked from commit 655377e90c57bb68e5000f06f76531baf9eeaa37)
+---
+ sw/source/ui/fmtui/tmpdlg.cxx | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/sw/source/ui/fmtui/tmpdlg.cxx b/sw/source/ui/fmtui/tmpdlg.cxx
+index a6bed35..823c376 100644
+--- a/sw/source/ui/fmtui/tmpdlg.cxx
++++ b/sw/source/ui/fmtui/tmpdlg.cxx
+@@ -299,6 +299,13 @@ SwTemplateDlg::SwTemplateDlg(Window* pParent,
+                 if(!aCJKOptions.IsAsianTypographyEnabled())
+                     RemoveTabPage("textgrid");
+             }
++            else
++            {
++                RemoveTabPage("borders");
++                RemoveTabPage("columns");
++                RemoveTabPage("footnotes");
++                RemoveTabPage("textgrid");
++            }
+         }
+         break;
+         // numbering styles
+-- 
+1.9.3
+

@@ -318,6 +318,7 @@ Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
 Patch61: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 Patch62: 0001-fdo-77806-Use-the-common-block-position-set-for-star.patch
 Patch63: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
+Patch64: 0001-Resolves-rhbz-1096747-crash-hang-on-format-page-on-h.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2281,8 +2282,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jun 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-18-UNBUILT
+* Thu Jun 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-18
 - Resolves: rhbz#1104068 crash converting fontwork to curve
+- Resolves: rhbz#1096747 crash/hang on format page in html document
 
 * Tue Jun 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-17
 - Related: rhbz#1102033 mysql connector woes

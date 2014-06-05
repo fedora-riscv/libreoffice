@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        17%{?libo_prerelease}%{?dist}
+Release:        18%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -317,6 +317,7 @@ Patch59: 0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch
 Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
 Patch61: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 Patch62: 0001-fdo-77806-Use-the-common-block-position-set-for-star.patch
+Patch63: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2280,6 +2281,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-18-UNBUILT
+- Resolves: rhbz#1104068 crash converting fontwork to curve
+
 * Tue Jun 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-17
 - Related: rhbz#1102033 mysql connector woes
 - Resolves: fdo#77806 Use the common block position set for start

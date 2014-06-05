@@ -1,0 +1,33 @@
+From 3beb1c8028755cdc945db9da7bd1f9ba0f8df332 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 15 Mar 2014 13:49:20 +0000
+Subject: [PATCH] Resolves: rhbz#1104068 crash converting fontwork to curve
+
+via metafile, i.e. take fontwork example 11, convert
+to metafile and convert that to curve
+
+was coverity#1019335 Dereference after null check
+
+(cherry picked from commit d77cc9d2cdc702f2b2016498df107f4120d27690)
+
+Change-Id: I309e0c3f8a0630991e2aad64f995567e0920be3b
+---
+ svx/source/svdraw/svdograf.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/svx/source/svdraw/svdograf.cxx b/svx/source/svdraw/svdograf.cxx
+index 0a672d3..0446977 100644
+--- a/svx/source/svdraw/svdograf.cxx
++++ b/svx/source/svdraw/svdograf.cxx
+@@ -1011,7 +1011,7 @@ void SdrGrafObj::SetPage( SdrPage* pNewPage )
+             ImpLinkAbmeldung();
+     }
+ 
+-    if(!pModel && !GetStyleSheet() && pNewPage->GetModel())
++    if(!pModel && !GetStyleSheet() && pNewPage && pNewPage->GetModel())
+     {
+         // #i119287# Set default StyleSheet for SdrGrafObj here, it is different from 'Default'. This
+         // needs to be done before the style 'Default' is set from the :SetModel() call which is triggered
+-- 
+1.9.3
+

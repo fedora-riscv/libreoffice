@@ -118,55 +118,47 @@ BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
 BuildRequires: zip
 
-# libs / headers
-BuildRequires: pkgconfig(gconf-2.0)
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: pkgconfig(bluez)
-%else
-%ifnarch s390 s390x
-BuildRequires: pkgconfig(bluez)
-%endif
-%endif
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: boost-devel
-BuildRequires: pkgconfig(libclucene-core)
-%endif
-BuildRequires: pkgconfig(cppunit)
+# libs / headers - common
 BuildRequires: cups-devel
+BuildRequires: expat-devel
+BuildRequires: fontpackages-devel
+BuildRequires: hyphen-devel
+BuildRequires: libicu-devel
+BuildRequires: lpsolve-devel
+BuildRequires: openldap-devel
+BuildRequires: pam-devel
+BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
-BuildRequires: expat-devel
+BuildRequires: pkgconfig(freetype2)
+BuildRequires: pkgconfig(gconf-2.0)
+BuildRequires: pkgconfig(glu)
+BuildRequires: pkgconfig(gtk+-2.0)
+BuildRequires: pkgconfig(hunspell)
+BuildRequires: pkgconfig(ice)
+BuildRequires: pkgconfig(libcurl)
+BuildRequires: pkgconfig(libidn)
+BuildRequires: pkgconfig(libxml-2.0)
+BuildRequires: pkgconfig(libxslt)
+BuildRequires: pkgconfig(neon)
+BuildRequires: pkgconfig(nss)
+BuildRequires: pkgconfig(poppler)
+BuildRequires: pkgconfig(redland)
+BuildRequires: pkgconfig(sane-backends)
+BuildRequires: pkgconfig(xext)
+BuildRequires: pkgconfig(xinerama)
+BuildRequires: pkgconfig(xt)
+BuildRequires: pkgconfig(zlib)
+BuildRequires: unixODBC-devel
+BuildRequires: vigra-devel
+
+# libs / headers - conditional
 %if 0%{?fedora}
 BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 BuildRequires: glm-devel
-%endif
-BuildRequires: fontpackages-devel
-BuildRequires: pkgconfig(freetype2)
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: gstreamer-devel
-BuildRequires: gstreamer-plugins-base-devel
-%else
-BuildRequires: pkgconfig(graphite2)
-BuildRequires: pkgconfig(gstreamer-1.0)
-BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
-BuildRequires: pkgconfig(harfbuzz)
-%endif
-BuildRequires: pkgconfig(gtk+-2.0)
-BuildRequires: pkgconfig(hunspell)
-BuildRequires: hyphen-devel
-%if 0%{?fedora}
-BuildRequires: pkgconfig(glew)
 BuildRequires: kdelibs4-devel
-%endif
-BuildRequires: pkgconfig(ice)
-BuildRequires: pkgconfig(xext)
-BuildRequires: pkgconfig(xinerama)
-BuildRequires: pkgconfig(xt)
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: pkgconfig(lcms2)
-%endif
-%if 0%{?fedora}
+BuildRequires: pkgconfig(glew)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libcmis-0.4)
@@ -174,8 +166,8 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libfreehand-0.1)
-BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libmspub-0.1)
+BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.8)
 BuildRequires: pkgconfig(librevenge-0.0)
@@ -185,46 +177,48 @@ BuildRequires: pkgconfig(libwpg-0.3)
 BuildRequires: pkgconfig(libwps-0.3)
 BuildRequires: pkgconfig(mdds)
 %endif
-BuildRequires: pkgconfig(libcurl)
+
 %if 0%{?fedora} || 0%{?rhel} >= 7
+BuildRequires: boost-devel
+BuildRequires: pkgconfig(graphite2)
+BuildRequires: pkgconfig(harfbuzz)
+BuildRequires: pkgconfig(lcms2)
+BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libexttextcat)
+BuildRequires: pkgconfig(liblangtag)
+BuildRequires: pkgconfig(mythes)
+BuildRequires: pkgconfig(poppler-cpp)
+BuildRequires: postgresql-devel
 %endif
-BuildRequires: libicu-devel
-BuildRequires: pkgconfig(libidn)
+
+# libs / headers - special cases
+%if 0%{?rhel} && 0%{?rhel} < 7
+BuildRequires: gstreamer-devel
+BuildRequires: gstreamer-plugins-base-devel
+%else
+BuildRequires: pkgconfig(gstreamer-1.0)
+BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
+%endif
+
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: pkgconfig(liblangtag)
 %else
 BuildRequires: libjpeg-devel
 %endif
-BuildRequires: pkgconfig(libxml-2.0)
-BuildRequires: pkgconfig(libxslt)
-BuildRequires: lpsolve-devel
-BuildRequires: pkgconfig(glu)
+
 %if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: pkgconfig(mythes)
+BuildRequires: pkgconfig(bluez)
+%else
+%ifnarch s390 s390x
+BuildRequires: pkgconfig(bluez)
 %endif
-BuildRequires: pkgconfig(neon)
-BuildRequires: pkgconfig(nss)
-BuildRequires: openldap-devel
-BuildRequires: pam-devel
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: pkgconfig(poppler-cpp)
 %endif
-BuildRequires: pkgconfig(poppler)
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: postgresql-devel
-%endif
+
 %if 0%{libo_python3}
 BuildRequires: pkgconfig(python3)
 %else
 BuildRequires: python-devel
 %endif
-BuildRequires: pkgconfig(redland)
-BuildRequires: pkgconfig(sane-backends)
-BuildRequires: unixODBC-devel
-BuildRequires: vigra-devel
-BuildRequires: pkgconfig(zlib)
 
 # java stuff
 BuildRequires: ant

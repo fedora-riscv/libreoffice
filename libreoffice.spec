@@ -303,14 +303,15 @@ Patch44: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
+%global libo_bundled_libs_common fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps\\)\\.so.*$/d
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
 %else
-%global libo_bundled_libs_filter ^lib\\(fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps\\)\\.so.*$
+%global libo_bundled_libs_filter ^lib\\(%libo_bundled_libs_common\\)\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif

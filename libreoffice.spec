@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        18%{?libo_prerelease}%{?dist}
+Release:        19%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2283,6 +2283,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Jun 08 2014 Kevin Kofler <Kevin@tigcc.ticalc.org> - 1:4.2.4.2-19
+- rebuild against fixed Qt to get KDE file dialogs back
+- Resolves: rhbz#1105422 KDE file dialogs not showing in libreoffice
+
 * Thu Jun 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.4.2-18
 - Resolves: rhbz#1104068 crash converting fontwork to curve
 - Resolves: rhbz#1096747 crash/hang on format page in html document

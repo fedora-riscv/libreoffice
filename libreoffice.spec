@@ -1283,13 +1283,13 @@ export PRODUCTVERSIONSHORT PRODUCTVERSION
 mkdir -p %{buildroot}%{instdir}
 if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
-    cat $ WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
+    cat $WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end---
     echo - ---dump log start -- SDK---
-    cat $ WORKDIR/installation/LibreOffice_SDK/installed/logging/en-US/log_*_en-US.log
+    cat $WORKDIR/installation/LibreOffice_SDK/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end -- SDK---
     echo - ---dump log start -- languagepacks---
-    cat $ WORKDIR/installation/LibreOffice_languagepack/installed/logging/en-US/log_*_en-US.log
+    cat $WORKDIR/installation/LibreOffice_languagepack/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end -- languagepacks---
     exit 1
 fi

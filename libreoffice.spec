@@ -321,6 +321,7 @@ Patch63: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
 Patch64: 0001-Resolves-rhbz-1096747-crash-hang-on-format-page-on-h.patch
 Patch65: 0001-fdo-78801-fdo-52547-Paste-preference-is-image-then-h.patch
 Patch66: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
+Patch67: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1881,16 +1882,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/wordbook/en-GB.dic
 %{baseinstdir}/share/wordbook/en-US.dic
 %{baseinstdir}/share/wordbook/technical.dic
-%dir %{baseinstdir}/share/xslt
-%{baseinstdir}/share/xslt/common
-%dir %{baseinstdir}/share/xslt/export
-%{baseinstdir}/share/xslt/export/common
-%{baseinstdir}/share/xslt/export/spreadsheetml
-%{baseinstdir}/share/xslt/export/wordml
-%dir %{baseinstdir}/share/xslt/import
-%{baseinstdir}/share/xslt/import/common
-%{baseinstdir}/share/xslt/import/spreadsheetml
-%{baseinstdir}/share/xslt/import/wordml
 %{baseinstdir}/program/liblnthlo.so
 %{_bindir}/unopkg
 %{_mandir}/man1/unopkg.1*
@@ -2208,10 +2199,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/graphicfilter.xcd
 
 %files xsltfilter
-%{baseinstdir}/share/xslt/docbook
-%{baseinstdir}/share/xslt/export/uof
-%{baseinstdir}/share/xslt/export/xhtml
-%{baseinstdir}/share/xslt/import/uof
+%{baseinstdir}/share/xslt
 %{baseinstdir}/share/registry/xsltfilter.xcd
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 

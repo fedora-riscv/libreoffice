@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        19%{?libo_prerelease}%{?dist}
+Release:        20%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -320,6 +320,7 @@ Patch62: 0001-fdo-77806-Use-the-common-block-position-set-for-star.patch
 Patch63: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
 Patch64: 0001-Resolves-rhbz-1096747-crash-hang-on-format-page-on-h.patch
 Patch65: 0001-fdo-78801-fdo-52547-Paste-preference-is-image-then-h.patch
+Patch66: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2283,6 +2284,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.2.4-20
+- Resolves: rhbz#1105376 FlatODF import/export does not work unless
+  libreoffice-xsltfilter is installed
+
 * Sun Jun 08 2014 Kevin Kofler <Kevin@tigcc.ticalc.org> - 1:4.2.4.2-19
 - rebuild against fixed Qt to get KDE file dialogs back
 - Resolves: rhbz#1105422 KDE file dialogs not showing in libreoffice

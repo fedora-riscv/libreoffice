@@ -1,0 +1,168 @@
+From be4b837ed225af13d6f964eca7e3f95e44c8e45a Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 9 Jun 2014 13:51:36 +0200
+Subject: [PATCH] move UOF and Office 2003 filters to xsltfilter module
+
+Change-Id: I6e5ac310567bb7bd12fbba444e4e1deb9fea30d5
+---
+ filter/Configuration_filter.mk               | 15 +++++++++------
+ postprocess/CustomTarget_registry.mk         |  1 +
+ scp2/source/ooo/file_ooo.scp                 |  7 -------
+ scp2/source/ooo/module_hidden_ooo.scp        |  1 -
+ scp2/source/xsltfilter/file_xsltfilter.scp   |  7 +++++++
+ scp2/source/xsltfilter/module_xsltfilter.scp |  1 +
+ 6 files changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
+index 9256a6c..57d6940 100644
+--- a/filter/Configuration_filter.mk
++++ b/filter/Configuration_filter.mk
+@@ -357,7 +357,6 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu,filter
+ 	pdf_Portable_Document_Format \
+ 	writer8_template \
+ 	writer8 \
+-	writer_MS_Word_2003_XML \
+ 	writer_MS_Word_2007_XML \
+ 	writer_MS_Word_2007_XML_Template \
+ 	writer_OOXML \
+@@ -419,7 +418,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,fi
+ 	writer_pdf_Export\
+ 	writer8\
+ 	writer8_template \
+-	MS_Word_2003_XML \
+ 	MS_Word_2007_XML \
+ 	MS_Word_2007_XML_Template \
+ 	OOXML_Text \
+@@ -444,7 +442,6 @@ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fr
+ 	writer_StarOffice_XML_Writer_Template_ui \
+ 	writer8_ui \
+ 	writer8_template_ui \
+-	MS_Word_2003_XML_ui \
+ 	MS_Word_2007_XML_ui \
+ 	MS_Word_2007_XML_Template_ui \
+ 	OOXML_Text_ui \
+@@ -535,7 +532,6 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_calc_types.xcu,filter/s
+ 	calc_dBase\
+ 	calc8 \
+ 	calc8_template \
+-	calc_MS_Excel_2003_XML \
+ 	MS_Excel_2007_XML \
+ 	MS_Excel_2007_XML_Template \
+ 	MS_Excel_2007_Binary \
+@@ -574,7 +570,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_calc_filters.xcu,filt
+ 	dBase \
+ 	calc8 \
+ 	calc8_template \
+-	MS_Excel_2003_XML \
+ 	calc_MS_Excel_2007_XML \
+ 	calc_MS_Excel_2007_XML_Template \
+ 	calc_MS_Excel_2007_Binary \
+@@ -601,7 +596,6 @@ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fr
+ 	calc_StarOffice_XML_Calc_Template_ui \
+ 	calc8_ui \
+ 	calc8_template_ui \
+-	MS_Excel_2003_XML_ui \
+ 	calc_MS_Excel_2007_XML_ui \
+ 	calc_MS_Excel_2007_XML_Template_ui \
+ 	calc_MS_Excel_2007_Binary_ui \
+@@ -993,7 +987,9 @@ $(call filter_Configuration_add_internal_filters,fcfg_langpack,fcfg_internalgrap
+ 
+ # fcfg_xslt
+ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_xslt_types.xcu,filter/source/config/fragments/types,\
++	calc_MS_Excel_2003_XML \
+ 	writer_DocBook_File \
++	writer_MS_Word_2003_XML \
+ 	XHTML_File \
+ 	Unified_Office_Format_text \
+ 	Unified_Office_Format_spreadsheet \
+@@ -1002,6 +998,8 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_xslt_types.xcu,filter/s
+ 
+ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_xslt_filters.xcu,filter/source/config/fragments/filters,\
+ 	DocBook_File \
++	MS_Excel_2003_XML \
++	MS_Word_2003_XML \
+ 	XHTML_Calc_File \
+ 	XHTML_Draw_File \
+ 	XHTML_Impress_File \
+@@ -1011,4 +1009,9 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_xslt_filters.xcu,filt
+ 	UOF_presentation \
+ )
+ 
++$(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
++	MS_Excel_2003_XML_ui \
++	MS_Word_2003_XML_ui \
++)
++
+ # vim: set noet sw=4 ts=4:
+diff --git a/postprocess/CustomTarget_registry.mk b/postprocess/CustomTarget_registry.mk
+index 2ae4ab6..b147251 100644
+--- a/postprocess/CustomTarget_registry.mk
++++ b/postprocess/CustomTarget_registry.mk
+@@ -427,6 +427,7 @@ postprocess_FILES_writer := \
+ 	$(postprocess_MOD)/org/openoffice/Setup-writer.xcu
+ 
+ postprocess_DEPS_xsltfilter := main
++postprocess_OPTDEPS_xsltfilter := calc writer
+ postprocess_FILES_xsltfilter := \
+ 	$(call gb_XcuFilterFiltersTarget_get_target,fcfg_xslt_filters.xcu) \
+ 	$(call gb_XcuFilterTypesTarget_get_target,fcfg_xslt_types.xcu)
+diff --git a/scp2/source/ooo/file_ooo.scp b/scp2/source/ooo/file_ooo.scp
+index f643a52..5875930 100644
+--- a/scp2/source/ooo/file_ooo.scp
++++ b/scp2/source/ooo/file_ooo.scp
+@@ -598,13 +598,6 @@ End
+ 
+ #endif
+ 
+-File gid_File_filter_xslt
+-    TXT_FILE_BODY;
+-    Styles = (FILELIST, PACKED);
+-    Dir = FILELIST_DIR;
+-    Name = "filter_xslt.filelist";
+-End
+-
+ File gid_Starregistry_Services_Rdb
+     TXT_FILE_BODY;
+     Name = "services.rdb";
+diff --git a/scp2/source/ooo/module_hidden_ooo.scp b/scp2/source/ooo/module_hidden_ooo.scp
+index 7b3c2ca..6b36645 100644
+--- a/scp2/source/ooo/module_hidden_ooo.scp
++++ b/scp2/source/ooo/module_hidden_ooo.scp
+@@ -274,7 +274,6 @@ Module gid_Module_Root_Files_6
+     gid_File_Share_Registry_Main_Xcd,
+     gid_File_Share_Registry_Forcedefault_Xcd,
+ 	gid_File_Pymailmerge,
+-	gid_File_filter_xslt,
+ 	gid_File_Extra_Fontunxpsprint,
+ 	gid_File_Extra_Fontunxppds,
+ 	gid_File_Extra_Fontunxafm);
+diff --git a/scp2/source/xsltfilter/file_xsltfilter.scp b/scp2/source/xsltfilter/file_xsltfilter.scp
+index 9cc699b..36ba626 100644
+--- a/scp2/source/xsltfilter/file_xsltfilter.scp
++++ b/scp2/source/xsltfilter/file_xsltfilter.scp
+@@ -38,3 +38,10 @@ File gid_File_filter_xhtml
+     Dir = FILELIST_DIR;
+     Name = "filter_xhtml.filelist";
+ End
++
++File gid_File_filter_xslt
++    TXT_FILE_BODY;
++    Styles = (FILELIST, PACKED);
++    Dir = FILELIST_DIR;
++    Name = "filter_xslt.filelist";
++End
+diff --git a/scp2/source/xsltfilter/module_xsltfilter.scp b/scp2/source/xsltfilter/module_xsltfilter.scp
+index ad3af2b..8ae95ba 100644
+--- a/scp2/source/xsltfilter/module_xsltfilter.scp
++++ b/scp2/source/xsltfilter/module_xsltfilter.scp
+@@ -26,6 +26,7 @@ Module gid_Module_Optional_Xsltfiltersamples
+     ParentID = gid_Module_Optional;
+     Files = ( gid_File_filter_docbook,
+     gid_File_filter_xhtml,
++        gid_File_filter_xslt,
+     gid_File_Share_Registry_Xsltfilter_Xcd );
+     Minimal = NO;
+     Default = YES;
+-- 
+1.9.3
+

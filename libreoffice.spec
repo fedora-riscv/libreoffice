@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -282,6 +282,7 @@ Patch45: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
 Patch46: 0001-fdo-76663-Let-s-not-skip-the-first-element-of-a-matr.patch
 Patch47: 0001-various-situations-where-graphic-go-missing-on-save.patch
 Patch48: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
+Patch49: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2159,6 +2160,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 09 2014 David Tardon <dtardon@redhat.com> - 1:4.1.6.2-5
+- Resolves: rhbz#1105376 FlatODF import/export does not work unless
+  libreoffice-xsltfilter is installed
+
 * Wed May 28 2014 Eike Rathke <erack@redhat.com> - 1:4.1.6.2-4
 - Resolves: fdo#70455 loading .xlsx some formulas with range operator are corrupted
 

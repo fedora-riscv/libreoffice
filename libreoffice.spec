@@ -293,7 +293,7 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch44: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
+Patch17: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

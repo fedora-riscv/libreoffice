@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.4
+%define libo_version 4.2.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        20%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -274,54 +274,28 @@ Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
 Patch18: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
 Patch19: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch20: 0001-Wizards-should-look-for-templates-in-Template_intern.patch
-Patch21: 0001-actively-search-for-wizards-dir-in-all-internal-temp.patch
-Patch22: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
-Patch23: 0001-Package-GeneratedPackage-fixup.patch
-Patch24: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
-Patch25: 0001-drop-OnlyShowIn-from-.desktop-files.patch
-Patch26: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
-Patch27: 0001-prevent-KDE-Qt-from-interfering-with-the-session-man.patch
-Patch28: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch29: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
-Patch30: 0001-Resolves-rhbz-1086714-overlarge-pixmap.patch
-Patch31: 0001-Resolves-rhbz-1089377-crash-on-loading-a-specific-rt.patch
-Patch32: 0001-add-a-format-all-comments-feature.patch
-Patch33: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
-Patch34: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch35: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
-Patch36: 0001-Related-rhbz-1032774-slide-restarter-should-disable-.patch
-Patch37: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch38: 0001-resolved-fdo-78294-default-null-date-for-document-im.patch
-Patch39: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
-Patch40: 0001-Resolves-rhbz-1092589-Thoroughly-check-whether-JRE-i.patch
-Patch41: 0001-center-slide-after-changing-zoom.patch
-Patch42: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
-Patch43: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
-Patch44: 0001-resolve-fdo-77509-memory-corruption-crash-in-Consoli.patch
-Patch45: 0001-rhbz-1071604-don-t-crash-if-slide-layout-configs-are.patch
-Patch46: 0001-Related-rhbz-1071604-don-t-paint-anim.-effect-icon.patch
-Patch47: 0001-Resolves-rhbz-1096486-avoid-access-to-nonexisting-pa.patch
-Patch48: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
-Patch49: 0001-fdo-78119-find-the-longest-match-for-month-name.patch
-Patch50: 0001-fdo-77242-fix-crash.patch
-Patch51: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
-Patch52: 0001-fix-for-doxygen-1.8.7.patch
-Patch53: 0001-Use-SVM-metafile-instead-of-PNG-for-diagrams-SmartAr.patch
-Patch54: 0001-fix-memory-leak-on-pasting-metafiles-into-writer.patch
-Patch55: 0002-coverity-SfxBaseModel-s-pImpl-of-fallback-TargetDocu.patch
-Patch56: 0001-strangely-obvious-leaky-code.patch
-Patch57: 0001-various-situations-where-graphic-go-missing-on-save.patch
-Patch58: 0001-fdo-78536-sfx2-template-dialog-make-the-am-i-dead-ye.patch
-Patch59: 0001-resolved-rhbz-1101224-do-not-attempt-to-obtain-names.patch
-Patch60: 0001-resolved-fdo-70455-B1-SOMENAME-is-not-a-valid-single.patch
-Patch61: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
-Patch62: 0001-fdo-77806-Use-the-common-block-position-set-for-star.patch
-Patch63: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
-Patch64: 0001-Resolves-rhbz-1096747-crash-hang-on-format-page-on-h.patch
-Patch65: 0001-fdo-78801-fdo-52547-Paste-preference-is-image-then-h.patch
-Patch66: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
-Patch67: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
+Patch20: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch21: 0001-Package-GeneratedPackage-fixup.patch
+Patch22: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
+Patch23: 0001-drop-OnlyShowIn-from-.desktop-files.patch
+Patch24: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
+Patch25: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch26: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch27: 0001-add-a-format-all-comments-feature.patch
+Patch28: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
+Patch29: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
+Patch30: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
+Patch31: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch32: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
+Patch33: 0001-center-slide-after-changing-zoom.patch
+Patch34: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch35: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
+Patch36: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
+Patch37: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
+Patch38: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
+Patch39: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
+Patch40: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
+Patch41: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2272,6 +2246,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 12 2014 David Tardon <dtardon@redhat.com> - 1:4.2.5.2-1
+- update to 4.2.5
+
 * Mon Jun 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.2.4-20
 - Resolves: rhbz#1105376 FlatODF import/export does not work unless
   libreoffice-xsltfilter is installed

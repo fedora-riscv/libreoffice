@@ -126,7 +126,7 @@ BuildRequires: icu
 BuildRequires: make
 BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
-if %{?fedora}
+%if 0%{?fedora}
 BuildRequires: ucpp
 %endif
 BuildRequires: zip

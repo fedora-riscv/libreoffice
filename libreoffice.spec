@@ -61,24 +61,20 @@ Source6:        %{external_url}/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.
 Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 
-%if 0%{?fedora}
-Source9:        %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-%global bundling_options %{?bundling_options} --with-system-ucpp
-%endif
-
 %if 0%{?fedora} || 0%{?rhel} >= 7
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 %endif
 
 %if 0%{?rhel}
+Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
 Source12:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
 Source13:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
 Source14:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-glew --without-system-glm --without-system-orcus
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-mdds --without-system-glew --without-system-glm --without-system-orcus
 %if 0%{?rhel} < 7
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
@@ -1265,6 +1261,7 @@ touch autogen.lastrun
  --with-help \
  --with-system-dicts \
  --with-system-libs \
+ --with-system-ucpp \
  --without-fonts \
  --without-ppds \
  --without-system-npapi-headers \

@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease %{nil}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        9%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -306,9 +306,6 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
-Patch18: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
-Patch19: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2280,6 +2277,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jun 17 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.1-1
+- update to 4.3.0 rc1
+
 * Mon Jun 09 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.0-9.beta2
 - Resolves: rhbz#1105376 FlatODF import/export does not work unless
   libreoffice-xsltfilter is installed

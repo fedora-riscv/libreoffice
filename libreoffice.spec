@@ -306,6 +306,7 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch17: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

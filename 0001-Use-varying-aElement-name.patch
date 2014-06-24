@@ -1,0 +1,26 @@
+From c4fc6ae7e4b1e10c805c057564ccd4753249fce0 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 20 May 2014 14:55:40 +0200
+Subject: [PATCH] Use varying aElement name
+
+Change-Id: Idc135ef5031a01961cc18d897a734b598bc833f4
+---
+ sfx2/source/doc/docmacromode.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sfx2/source/doc/docmacromode.cxx b/sfx2/source/doc/docmacromode.cxx
+index 7082bc4..00efbfb 100644
+--- a/sfx2/source/doc/docmacromode.cxx
++++ b/sfx2/source/doc/docmacromode.cxx
+@@ -342,7 +342,7 @@ namespace sfx2
+                             if( aElement == aStdLibName || aElement == aVBAProject )
+                             {
+                                 Reference < XNameAccess > xLib;
+-                                Any aAny = xContainer->getByName( aStdLibName );
++                                Any aAny = xContainer->getByName( aElement );
+                                 aAny >>= xLib;
+                                 if ( xLib.is() && xLib->hasElements() )
+                                     return sal_True;
+-- 
+1.9.3
+

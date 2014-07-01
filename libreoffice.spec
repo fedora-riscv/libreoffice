@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -297,6 +297,9 @@ Patch39: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
 Patch40: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
 Patch41: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
 Patch42: 0001-fix-detection-of-Salesforce-html.patch
+Patch43: 0001-Check-for-empty-before-calling-top.patch
+Patch44: 0002-Don-t-go-further-and-pop-the-stack-if-it-s-empty.patch
+Patch45: 0003-Use-a-new-fast-parser-instance-for-each-XML-fragment.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2247,6 +2250,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jul 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-3-UNBUILT
+- Resolves: rhbz#1089207 crash in OOXML import
+
 * Tue Jul 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-2
 - fix detection of salesforce html pretending to be .xls by stripping
   leading whitespace before <!DOCTYPE line

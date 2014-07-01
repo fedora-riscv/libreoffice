@@ -1,0 +1,43 @@
+From a57ac68e18925dfad1377e8bb40a5f74988ade97 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 1 Jul 2014 12:50:45 +0100
+Subject: [PATCH] fix detection of Salesforce html
+
+Change-Id: Ie777c253e221527cba8affaf766e2eddfc78c103
+---
+ svtools/source/svhtml/parhtml.cxx | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/svtools/source/svhtml/parhtml.cxx b/svtools/source/svhtml/parhtml.cxx
+index 54c1548..13a56c3 100644
+--- a/svtools/source/svhtml/parhtml.cxx
++++ b/svtools/source/svhtml/parhtml.cxx
+@@ -1925,6 +1925,16 @@ bool HTMLParser::IsHTMLFormat( const sal_Char* pHeader,
+ 
+     sCmp = sCmp.toAsciiLowerCase();
+ 
++    sal_Char c;
++    sal_Int32 nPos;
++    for (nPos = 0; nPos < sCmp.getLength(); ++nPos)
++    {
++        c = sCmp[nPos];
++        if (c != ' ' && c != '\n' && c != '\t' && c != '\r' && c != '\f')
++            break;
++    }
++    sCmp = sCmp.copy(nPos);
++
+     // A HTML document must have a '<' in the first line
+     sal_Int32 nStart = sCmp.indexOf('<');
+     if (nStart == -1)
+@@ -1932,8 +1942,6 @@ bool HTMLParser::IsHTMLFormat( const sal_Char* pHeader,
+     nStart++;
+ 
+     // followed by arbitrary characters followed by a blank or '>'
+-    sal_Char c;
+-    sal_Int32 nPos;
+     for( nPos = nStart; nPos < sCmp.getLength(); ++nPos )
+     {
+         if( '>'==(c=sCmp[nPos]) || HTML_ISSPACE(c) )
+-- 
+1.9.3
+

@@ -300,6 +300,7 @@ Patch42: 0001-fix-detection-of-Salesforce-html.patch
 Patch43: 0001-Check-for-empty-before-calling-top.patch
 Patch44: 0002-Don-t-go-further-and-pop-the-stack-if-it-s-empty.patch
 Patch45: 0003-Use-a-new-fast-parser-instance-for-each-XML-fragment.patch
+Patch46: 0001-allow-build-with-icu-4.2.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2250,8 +2251,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Jul 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-3-UNBUILT
+* Wed Jul 02 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-3-UNBUILT
 - Resolves: rhbz#1089207 crash in OOXML import
+- allow building with icu 4.2
 
 * Tue Jul 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-2
 - fix detection of salesforce html pretending to be .xls by stripping

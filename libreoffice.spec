@@ -45,7 +45,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.2
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
@@ -93,7 +93,7 @@ Source26:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source27:       %{external_url}/libwpd-0.10.0.tar.bz2
 Source28:       %{external_url}/libwps-0.3.0.tar.bz2
 Source29:       %{external_url}/libvisio-0.1.0.tar.bz2
-Source30:       %{external_url}/libmspub-0.1.0.tar.bz2
+Source30:       %{external_url}/libmspub-0.1.1.tar.bz2
 Source31:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source32:       %{external_url}/libodfgen-0.1.1.tar.bz2
 Source33:       %{external_url}/libmwaw-0.3.1.tar.bz2
@@ -2275,6 +2275,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 02 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.2-1
+- update to 4.3.0 rc2
+
 * Tue Jun 17 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.1-1
 - update to 4.3.0 rc1
 

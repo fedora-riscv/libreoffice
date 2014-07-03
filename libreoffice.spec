@@ -285,28 +285,25 @@ Patch5: libreoffice-rhel6poppler.patch
 Patch6: libreoffice-rhel6langs.patch
 # not upstreamed
 Patch7: libreoffice-rhel6glib.patch
-# reverted upstream commit
-Patch8: 0001-Revert-resolve-crashes-with-ICU-53.1-in-locales-with.patch
-# reverted upstream commit
-Patch9: 0002-upgrade-to-ICU-53.1-fdo-77071-related.patch
 # not upstreamed
-Patch10: 0001-disable-failing-test-on-rhel-6.patch
+Patch8: 0001-disable-failing-test-on-rhel-6.patch
 %endif
 # not upstreamed
 # TODO: fails on ppc; investigate
-Patch11: 0001-disable-swui-test-on-RHEL-7.patch
+Patch9: 0001-disable-swui-test-on-RHEL-7.patch
 %endif
 # not upstreamed
-Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch10: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch13: 0001-disable-firebird-unit-test.patch
+Patch11: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch14: 0001-never-run-autogen.sh.patch
+Patch12: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
-Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
+Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch15: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
+Patch16: 0001-allow-build-with-icu-4.2.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

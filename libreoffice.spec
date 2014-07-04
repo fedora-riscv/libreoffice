@@ -305,6 +305,7 @@ Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch15: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
 Patch16: 0001-allow-build-with-icu-4.2.patch
 Patch17: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch18: 0001-Resolves-fdo-80911-toggle-original-page-orientation-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

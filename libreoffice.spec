@@ -301,6 +301,7 @@ Patch43: 0001-Check-for-empty-before-calling-top.patch
 Patch44: 0002-Don-t-go-further-and-pop-the-stack-if-it-s-empty.patch
 Patch45: 0003-Use-a-new-fast-parser-instance-for-each-XML-fragment.patch
 Patch46: 0001-allow-build-with-icu-4.2.patch
+Patch47: 0001-Resolves-fdo-80911-toggle-original-page-orientation-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2251,9 +2252,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jul 02 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-3-UNBUILT
+* Fri Jul 04 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-3
 - Resolves: rhbz#1089207 crash in OOXML import
 - allow building with icu 4.2
+- Resolves: fdo#80911 toggle fallback paper sizes when they are already
+  in landscape mode
 
 * Tue Jul 01 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-2
 - fix detection of salesforce html pretending to be .xls by stripping

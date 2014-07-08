@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -304,6 +304,7 @@ Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch15: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
 Patch16: 0001-allow-build-with-icu-4.2.patch
+Patch17: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2275,6 +2276,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jul 08 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.2-2
+- avoid problems detecting HTML files with xls extension
+
 * Wed Jul 02 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.2-1
 - update to 4.3.0 rc2
 

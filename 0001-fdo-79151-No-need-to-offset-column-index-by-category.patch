@@ -1,0 +1,50 @@
+From eb4a6f38829bfb9e2569c2a9b6e0e0ad6277555c Mon Sep 17 00:00:00 2001
+From: Kohei Yoshida <kohei.yoshida@collabora.com>
+Date: Thu, 26 Jun 2014 14:51:47 -0400
+Subject: [PATCH] fdo#79151: No need to offset column index by category labels.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In fact, doing so would lead to a corrupt internal data table.  The
+internal data stores category labels separately from the column data, so
+there is no reason why we need to offset for category labels here.
+
+(cherry picked from commit ecde8155fefcdacb08177a10a4eddc24f6675b0b)
+
+Conflicts:
+	chart2/source/controller/dialogs/DataBrowserModel.cxx
+
+Change-Id: I29dd99e53837cba7a1e28d2a1ef39a5384378805
+Reviewed-on: https://gerrit.libreoffice.org/9928
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ chart2/source/controller/dialogs/DataBrowserModel.cxx | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/chart2/source/controller/dialogs/DataBrowserModel.cxx b/chart2/source/controller/dialogs/DataBrowserModel.cxx
+index 8bfa963..e3544e0 100644
+--- a/chart2/source/controller/dialogs/DataBrowserModel.cxx
++++ b/chart2/source/controller/dialogs/DataBrowserModel.cxx
+@@ -344,9 +344,6 @@ void DataBrowserModel::insertDataSeries( sal_Int32 nAfterColumnIndex )
+ 
+         if( xChartType.is())
+         {
+-            sal_Int32 nOffset = 0;
+-            if( xDiagram.is() && lcl_ShowCategories( xDiagram ))
+-                nOffset=getCategoryColumnCount();
+             // get shared sequences of current series
+             Reference< chart2::XDataSeriesContainer > xSeriesCnt( xChartType, uno::UNO_QUERY );
+             lcl_tSharedSeqVec aSharedSequences;
+@@ -364,7 +361,6 @@ void DataBrowserModel::insertDataSeries( sal_Int32 nAfterColumnIndex )
+                             xSource->getDataSequences());
+                         sal_Int32 nSeqIdx = 0;
+                         sal_Int32 nSeqSize = aLSequences.getLength();
+-                        nStartCol -= (nOffset - 1);
+                         for( sal_Int32 nIndex = nStartCol;
+                              (nSeqIdx < nSeqSize);
+                              ++nSeqIdx )
+-- 
+1.9.3
+

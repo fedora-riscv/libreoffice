@@ -1,21 +1,33 @@
-From 86c6f18c2766aad43d6e3bfcf3530e40440ebca7 Mon Sep 17 00:00:00 2001
+From df7ff240db01ee0e993c7cbc30d3370d6d1d0956 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Tue, 8 Jul 2014 17:01:27 +0200
 Subject: [PATCH] avoid problems detecting HTML files with .xls ext.
 
+(cherry picked from commit 86c6f18c2766aad43d6e3bfcf3530e40440ebca7)
+Signed-off-by: David Tardon <dtardon@redhat.com>
+
+Conflicts:
+	filter/source/textfilterdetect/filterdetect.cxx
+
 Change-Id: I9955223aac20f3f640fde51bb7231666c269ca70
 ---
- filter/Configuration_filter.mk                     |  1 +
- filter/source/config/fragments/types/calc_HTML.xcu | 35 ++++++++++++++++++++++
- filter/source/textfilterdetect/filterdetect.cxx    |  6 ++--
- 3 files changed, 38 insertions(+), 4 deletions(-)
+ filter/Configuration_filter.mk                     |   1 +
+ filter/source/config/fragments/types/calc_HTML.xcu |  35 ++++
+ sc/Library_scd.mk                                  |   1 +
+ sc/inc/htmlfilterdetect.hxx                        |  80 +++++++++
+ sc/source/filter/html/htmlfilterdetect.cxx         | 180 +++++++++++++++++++++
+ sc/source/ui/unoobj/detreg.cxx                     |   9 ++
+ sc/util/scd.component                              |   3 +
+ 7 files changed, 309 insertions(+)
  create mode 100644 filter/source/config/fragments/types/calc_HTML.xcu
+ create mode 100644 sc/inc/htmlfilterdetect.hxx
+ create mode 100644 sc/source/filter/html/htmlfilterdetect.cxx
 
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
-index e035464..0465f17 100644
+index fe84350..36cf294 100644
 --- a/filter/Configuration_filter.mk
 +++ b/filter/Configuration_filter.mk
-@@ -512,6 +512,7 @@ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fr
+@@ -514,6 +514,7 @@ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fr
  $(call filter_Configuration_add_types,fcfg_langpack,fcfg_calc_types.xcu,filter/source/config/fragments/types,\
  	calc_DIF \
  	calc_ODS_FlatXML \
@@ -25,7 +37,7 @@ index e035464..0465f17 100644
  	calc_Lotus \
 diff --git a/filter/source/config/fragments/types/calc_HTML.xcu b/filter/source/config/fragments/types/calc_HTML.xcu
 new file mode 100644
-index 0000000..51bf8f1
+index 0000000..f4682da
 --- /dev/null
 +++ b/filter/source/config/fragments/types/calc_HTML.xcu
 @@ -0,0 +1,35 @@
@@ -53,7 +65,7 @@ index 0000000..51bf8f1
 +    the detection is just a heuristic (e.g., wp1 or wp42 supported by
 +    libwpd). -->
 +    <node oor:name="calc_HTML" oor:op="replace" >
-+        <prop oor:name="DetectService"><value>com.sun.star.comp.filters.PlainTextFilterDetect</value></prop>
++        <prop oor:name="DetectService"><value>com.sun.star.comp.calc.HtmlFilterDetect</value></prop>
 +        <prop oor:name="URLPattern"/>
 +        <prop oor:name="Extensions"><value>xls</value></prop>
 +        <prop oor:name="MediaType"><value>text/html</value></prop>
@@ -64,33 +76,329 @@ index 0000000..51bf8f1
 +        </prop>
 +        <prop oor:name="ClipboardFormat"/>
 +    </node>
-diff --git a/filter/source/textfilterdetect/filterdetect.cxx b/filter/source/textfilterdetect/filterdetect.cxx
-index ffad7fa..1d29dd4 100644
---- a/filter/source/textfilterdetect/filterdetect.cxx
-+++ b/filter/source/textfilterdetect/filterdetect.cxx
-@@ -132,7 +132,7 @@ OUString SAL_CALL PlainTextFilterDetect::detect(uno::Sequence<beans::PropertyVal
-     OUString aExt = aParser.getExtension(INetURLObject::LAST_SEGMENT, true, INetURLObject::DECODE_WITH_CHARSET);
-     aExt = aExt.toAsciiLowerCase();
+diff --git a/sc/Library_scd.mk b/sc/Library_scd.mk
+index 4d02ae1..1b4d035 100644
+--- a/sc/Library_scd.mk
++++ b/sc/Library_scd.mk
+@@ -37,6 +37,7 @@ $(eval $(call gb_Library_use_libraries,scd,\
+ ))
  
--    if (aType == "generic_HTML")
-+    if ((aType == "generic_HTML") || (aType == "calc_HTML"))
-     {
-         uno::Reference<io::XInputStream> xInStream(aMediaDesc[MediaDescriptor::PROP_INPUTSTREAM()], uno::UNO_QUERY);
-         if (!xInStream.is() || !IsHTMLStream(xInStream))
-@@ -141,12 +141,10 @@ OUString SAL_CALL PlainTextFilterDetect::detect(uno::Sequence<beans::PropertyVal
-         // Decide which filter to use based on the document service first,
-         // then on extension if that's not available.
+ $(eval $(call gb_Library_add_exception_objects,scd,\
++	sc/source/filter/html/htmlfilterdetect \
+ 	sc/source/ui/unoobj/detreg \
+ 	sc/source/ui/unoobj/scdetect \
+ 	sc/source/ui/unoobj/exceldetect \
+diff --git a/sc/inc/htmlfilterdetect.hxx b/sc/inc/htmlfilterdetect.hxx
+new file mode 100644
+index 0000000..f131e89
+--- /dev/null
++++ b/sc/inc/htmlfilterdetect.hxx
+@@ -0,0 +1,80 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++ */
++
++#ifndef INCLUDED_SC_INC_HTMLFILTERDETECT_HXX
++#define INCLUDED_SC_INC_HTMLFILTERDETECT_HXX
++
++#include <com/sun/star/document/XExtendedFilterDetection.hpp>
++#include <com/sun/star/lang/XInitialization.hpp>
++#include <com/sun/star/lang/XServiceInfo.hpp>
++#include <com/sun/star/uno/XComponentContext.hpp>
++
++#include <cppuhelper/implbase3.hxx>
++
++namespace sc
++{
++
++class HtmlFilterDetect : public cppu::WeakImplHelper3<
++    com::sun::star::document::XExtendedFilterDetection,
++    com::sun::star::lang::XInitialization,
++    com::sun::star::lang::XServiceInfo>
++{
++    com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext> mxCxt;
++
++public:
++
++    HtmlFilterDetect (const com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext>& xCxt);
++    virtual ~HtmlFilterDetect();
++
++    // XExtendedFilterDetection
++
++    virtual OUString SAL_CALL detect(com::sun::star::uno::Sequence<com::sun::star::beans::PropertyValue>& lDescriptor)
++            throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
++
++    // XInitialization
++
++    virtual void SAL_CALL initialize( const ::com::sun::star::uno::Sequence<com::sun::star::uno::Any>& aArguments)
++        throw (com::sun::star::uno::Exception, com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++
++    // XServiceInfo
++
++    virtual OUString SAL_CALL getImplementationName()
++        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++
++    virtual sal_Bool SAL_CALL supportsService(const OUString& ServiceName)
++        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++
++    virtual com::sun::star::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
++        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
++};
++
++OUString HtmlFilterDetect_getImplementationName();
++
++bool HtmlFilterDetect_supportsService(const OUString& ServiceName);
++
++com::sun::star::uno::Sequence<OUString> HtmlFilterDetect_getSupportedServiceNames();
++
++com::sun::star::uno::Reference<com::sun::star::uno::XInterface>
++HtmlFilterDetect_createInstance(const com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext>& rCxt);
++
++}
++
++#endif
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sc/source/filter/html/htmlfilterdetect.cxx b/sc/source/filter/html/htmlfilterdetect.cxx
+new file mode 100644
+index 0000000..f2f3db5
+--- /dev/null
++++ b/sc/source/filter/html/htmlfilterdetect.cxx
+@@ -0,0 +1,180 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ */
++
++#include "htmlfilterdetect.hxx"
++
++#include <svtools/htmltokn.h>
++#include <ucbhelper/content.hxx>
++#include <unotools/mediadescriptor.hxx>
++#include <unotools/ucbstreamhelper.hxx>
++
++#include <com/sun/star/lang/XMultiServiceFactory.hpp>
++#include <com/sun/star/io/XInputStream.hpp>
++#include <cppuhelper/supportsservice.hxx>
++#include <boost/scoped_ptr.hpp>
++
++#define CALC_HTML_FILTER   "calc_HTML_WebQuery"
++
++namespace sc
++{
++
++using namespace ::com::sun::star;
++using utl::MediaDescriptor;
++
++namespace {
++
++bool IsHTMLStream( const uno::Reference<io::XInputStream>& xInStream )
++{
++    boost::scoped_ptr<SvStream> pInStream( utl::UcbStreamHelper::CreateStream( xInStream ) );
++    if ( !pInStream || pInStream->GetError() )
++        // No stream
++        return false;
++
++    // Read the stream header
++    pInStream->StartReadingUnicodeText( RTL_TEXTENCODING_DONTKNOW );
++    const sal_Size nUniPos = pInStream->Tell();
++    const sal_uInt16 nSize = 4096;
++
++    OString sHeader;
++    if ( nUniPos == 3 || nUniPos == 0 ) // UTF-8 or non-Unicode
++        sHeader = read_uInt8s_ToOString( *pInStream, nSize );
++    else // UTF-16 (nUniPos = 2)
++        sHeader = OUStringToOString( read_uInt16s_ToOUString( *pInStream, nSize ), RTL_TEXTENCODING_ASCII_US );
++
++    // Now check whether the stream begins with a known HTML tag.
++    enum DetectPhase { BeforeTag, TagOpened, InTagName };
++    DetectPhase dp = BeforeTag;
++
++    const char* pHeader = sHeader.getStr();
++    const int   nLength = sHeader.getLength();
++    int i = 0, nStartOfTagIndex = 0;
++
++    for ( i = 0; i < nLength; ++i, ++pHeader )
++    {
++        char c = *pHeader;
++        if ( c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\f' )
++        {
++            if ( dp == TagOpened )
++                return false; // Invalid: Should start with a tag name
++            else if ( dp == InTagName )
++                break; // End of tag name reached
++        }
++        else if ( c == '<' )
++        {
++            if ( dp == BeforeTag )
++                dp = TagOpened;
++            else
++                return false; // Invalid: Nested '<'
++        }
++        else if ( c == '>' )
++        {
++            if ( dp == InTagName )
++                break; // End of tag name reached
++            else
++                return false; // Invalid: Empty tag or before '<'
++        }
++        else if ( c == '!' )
++        {
++            if ( dp == TagOpened )
++                return true; // "<!" - DOCTYPE or comments block
++            else
++                return false; // Invalid: '!' before '<' or inside tag name
++        }
++        else
++        {
++            if ( dp == BeforeTag )
++                return false; // Invalid: Should start with a tag
++            else if ( dp == TagOpened )
++            {
++                nStartOfTagIndex = i;
++                dp = InTagName;
++            }
++        }
++    }
++
++    // The string following '<' has to be a known HTML token.
++    OString aToken = sHeader.copy( nStartOfTagIndex, i - nStartOfTagIndex );
++    if ( GetHTMLToken( OStringToOUString( aToken.toAsciiLowerCase(), RTL_TEXTENCODING_ASCII_US ) ) != 0 )
++        return true;
++
++    return false;
++}
++
++}
++
++HtmlFilterDetect::HtmlFilterDetect(const uno::Reference<uno::XComponentContext>& xCxt) :
++    mxCxt(xCxt) {}
++
++HtmlFilterDetect::~HtmlFilterDetect() {}
++
++OUString SAL_CALL HtmlFilterDetect::detect(uno::Sequence<beans::PropertyValue>& lDescriptor) throw (uno::RuntimeException, std::exception)
++{
++    MediaDescriptor aMediaDesc(lDescriptor);
++
++    OUString aType = aMediaDesc.getUnpackedValueOrDefault(MediaDescriptor::PROP_TYPENAME(), OUString() );
++
++    uno::Reference<io::XInputStream> xInStream(aMediaDesc[MediaDescriptor::PROP_INPUTSTREAM()], uno::UNO_QUERY);
++    if (!xInStream.is() || !IsHTMLStream(xInStream))
++        return OUString();
++
++    aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(CALC_HTML_FILTER);
++
++    aMediaDesc >> lDescriptor;
++    return aType;
++}
++
++// XInitialization
++
++void SAL_CALL HtmlFilterDetect::initialize(const uno::Sequence<uno::Any>& /*aArguments*/)
++    throw (uno::Exception, uno::RuntimeException, std::exception)
++{
++}
++
++OUString HtmlFilterDetect_getImplementationName()
++{
++    return OUString("com.sun.star.comp.calc.HtmlFilterDetect");
++}
++
++uno::Sequence<OUString> HtmlFilterDetect_getSupportedServiceNames()
++{
++    uno::Sequence<OUString> aRet(2);
++    OUString* pArray = aRet.getArray();
++    pArray[0] = "com.sun.star.document.ExtendedTypeDetection";
++    pArray[1] = "com.sun.star.comp.filters.HtmlFilterDetect";
++    return aRet;
++}
++
++uno::Reference<uno::XInterface> HtmlFilterDetect_createInstance(
++    const uno::Reference<uno::XComponentContext> & rCxt)
++{
++    return (cppu::OWeakObject*) new HtmlFilterDetect(rCxt);
++}
++
++// XServiceInfo
++OUString SAL_CALL HtmlFilterDetect::getImplementationName()
++    throw (uno::RuntimeException, std::exception)
++{
++    return HtmlFilterDetect_getImplementationName();
++}
++
++sal_Bool SAL_CALL HtmlFilterDetect::supportsService(const OUString& rServiceName)
++    throw (uno::RuntimeException, std::exception)
++{
++    return cppu::supportsService(this, rServiceName);
++}
++
++uno::Sequence<OUString> SAL_CALL HtmlFilterDetect::getSupportedServiceNames()
++    throw (uno::RuntimeException, std::exception)
++{
++    return HtmlFilterDetect_getSupportedServiceNames();
++}
++
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sc/source/ui/unoobj/detreg.cxx b/sc/source/ui/unoobj/detreg.cxx
+index 6edc743..f840ac1 100644
+--- a/sc/source/ui/unoobj/detreg.cxx
++++ b/sc/source/ui/unoobj/detreg.cxx
+@@ -18,6 +18,7 @@
+  */
  
--        if (aDocService == CALC_DOCSERVICE)
-+        if ((aDocService == CALC_DOCSERVICE) || (aType == "calc_HTML"))
-             aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(CALC_HTML_FILTER);
-         else if (aDocService == WRITER_DOCSERVICE)
-             aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(WRITER_HTML_FILTER);
--        else if (aExt == "xls")
--            aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(CALC_HTML_FILTER);
-         else
-             aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(WEB_HTML_FILTER);
-     }
+ 
++#include "htmlfilterdetect.hxx"
+ #include "scdetect.hxx"
+ #include "exceldetect.hxx"
+ #include <cppuhelper/implementationentry.hxx>
+@@ -42,6 +43,14 @@ static const cppu::ImplementationEntry spServices[] =
+         0, 0
+     },
+ 
++    {
++        sc::HtmlFilterDetect_createInstance,
++        sc::HtmlFilterDetect_getImplementationName,
++        sc::HtmlFilterDetect_getSupportedServiceNames,
++        cppu::createSingleComponentFactory,
++        0, 0
++    },
++
+     { 0, 0, 0, 0, 0, 0 }
+ };
+ 
+diff --git a/sc/util/scd.component b/sc/util/scd.component
+index 767429a..76ed959 100644
+--- a/sc/util/scd.component
++++ b/sc/util/scd.component
+@@ -25,4 +25,7 @@
+   <implementation name="com.sun.star.comp.calc.ExcelBiffFormatDetector">
+     <service name="com.sun.star.frame.ExtendedTypeDetection"/>
+   </implementation>
++  <implementation name="com.sun.star.comp.calc.HtmlFilterDetect">
++    <service name="com.sun.star.frame.ExtendedTypeDetection"/>
++  </implementation>
+ </component>
 -- 
 1.9.3
 

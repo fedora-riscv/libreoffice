@@ -1,0 +1,72 @@
+From 92216be6ce13990b8ea6b6264c656d2bc1746401 Mon Sep 17 00:00:00 2001
+Message-Id: <92216be6ce13990b8ea6b6264c656d2bc1746401.1405453526.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 11 Jul 2014 23:15:50 +0200
+Subject: [PATCH] resolved fdo#77018 keep external references intact during
+ sort
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Needs e463de2a56453a0d2cb0b5b58e96f7639f37cdd1 fix for fdo#79441 to
+work.
+
+Change-Id: Ide1cbeb4b25b17b5102977ccbdf8e6dbfcadfc60
+(cherry picked from commit db0a4c2575ffba1c170d74882b0f5a6229ec072f)
+Reviewed-on: https://gerrit.libreoffice.org/10245
+Reviewed-by: Kohei Yoshida <libreoffice@kohei.us>
+Tested-by: Kohei Yoshida <libreoffice@kohei.us>
+---
+ sc/source/core/tool/token.cxx | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-fdo-77018-keep-external-references-intact-d.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-fdo-77018-keep-external-references-intact-d.patch"
+
+diff --git a/sc/source/core/tool/token.cxx b/sc/source/core/tool/token.cxx
+index 8f51a72..ab47bee 100644
+--- a/sc/source/core/tool/token.cxx
++++ b/sc/source/core/tool/token.cxx
+@@ -531,6 +531,9 @@ bool ScToken::Is3DRef() const
+             if ( GetSingleRef().IsFlag3D() )
+                 return true;
+             break;
++        case svExternalSingleRef:
++        case svExternalDoubleRef:
++            return true;
+         default:
+         {
+             // added to avoid warnings
+@@ -2251,6 +2254,20 @@ void ScTokenArray::ReadjustRelative3DReferences( const ScAddress& rOldPos,
+                 }
+             }
+             break;
++            case svExternalDoubleRef :
++            {
++                ScSingleRefData& rRef2 = static_cast<ScToken*>(pCode[j])->GetSingleRef2();
++                ScAddress aAbs = rRef2.toAbs(rOldPos);
++                rRef2.SetAddress(aAbs, rNewPos);
++            }
++            //! fallthru
++            case svExternalSingleRef :
++            {
++                ScSingleRefData& rRef1 = static_cast<ScToken*>(pCode[j])->GetSingleRef();
++                ScAddress aAbs = rRef1.toAbs(rOldPos);
++                rRef1.SetAddress(aAbs, rNewPos);
++            }
++            break;
+             default:
+             {
+                 // added to avoid warnings
+
+--------------erAck-patch-parts--
+
+

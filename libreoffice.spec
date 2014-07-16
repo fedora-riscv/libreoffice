@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1831,6 +1831,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images.zip
 %{baseinstdir}/share/config/images_crystal.zip
+%{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
 %{baseinstdir}/share/config/images_sifr.zip
@@ -2280,6 +2281,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 16 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.1-1
+- update to 4.3.0 rc3
+
 * Tue Jul 08 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.2-2
 - avoid problems detecting HTML files with xls extension
 

@@ -306,6 +306,8 @@ Patch15: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
 Patch16: 0001-allow-build-with-icu-4.2.patch
 Patch17: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
 Patch18: 0001-Resolves-fdo-80911-toggle-original-page-orientation-.patch
+Patch19: 0001-scrolling-very-slow-in-calc.patch
+Patch20: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

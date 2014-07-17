@@ -307,6 +307,7 @@ Patch49: 0001-fdo-79151-No-need-to-offset-column-index-by-category.patch
 Patch50: 0001-resolved-fdo-79441-keep-3D-references-intact-during-.patch
 Patch51: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
 Patch52: 0001-scrolling-very-slow-in-calc.patch
+Patch53: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2257,8 +2258,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jul 16 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-7-UNBUILT
+* Thu Jul 17 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-7-UNBUILT
 - speculative fix for scrolling woes in calc
+- Related: rhbz#1117853 nStartPara of EE_PARA_NOT_FOUND
 
 * Tue Jul 15 2014 Eike Rathke <erack@redhat.com> - 1:4.2.5.2-6
 - Resolves: rhbz#1118983 sorting breaks cell references to other sheets

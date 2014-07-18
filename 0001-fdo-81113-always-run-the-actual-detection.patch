@@ -1,0 +1,69 @@
+From c10390a681a4d4696d45a6d38f7d01829f368daa Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 16 Jul 2014 15:13:36 +0200
+Subject: [PATCH] fdo#81113 always run the actual detection
+
+The old code only run detection if an UCBContent property was passed.
+That means that any time the function got only InputStream, it claimed
+that it was a Keynote presentation.
+
+Change-Id: I377828229e7e95384257bde247612d7768307581
+---
+ .../source/impress/KeynoteImportFilter.cxx         | 36 +++++++++++-----------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/writerperfect/source/impress/KeynoteImportFilter.cxx b/writerperfect/source/impress/KeynoteImportFilter.cxx
+index 5edbfa9..4b7b029 100644
+--- a/writerperfect/source/impress/KeynoteImportFilter.cxx
++++ b/writerperfect/source/impress/KeynoteImportFilter.cxx
+@@ -247,29 +247,29 @@ throw( com::sun::star::uno::RuntimeException, std::exception )
+         {
+             return OUString();
+         }
++    }
+ 
+-        libetonyek::EtonyekDocument::Type type = libetonyek::EtonyekDocument::TYPE_UNKNOWN;
+-        const libetonyek::EtonyekDocument::Confidence confidence = libetonyek::EtonyekDocument::isSupported( input.get(), &type );
+-        if ((libetonyek::EtonyekDocument::CONFIDENCE_NONE == confidence) || (libetonyek::EtonyekDocument::TYPE_KEYNOTE != type))
+-            return OUString();
++    libetonyek::EtonyekDocument::Type type = libetonyek::EtonyekDocument::TYPE_UNKNOWN;
++    const libetonyek::EtonyekDocument::Confidence confidence = libetonyek::EtonyekDocument::isSupported( input.get(), &type );
++    if ((libetonyek::EtonyekDocument::CONFIDENCE_NONE == confidence) || (libetonyek::EtonyekDocument::TYPE_KEYNOTE != type))
++        return OUString();
+ 
+-        if ( confidence == libetonyek::EtonyekDocument::CONFIDENCE_SUPPORTED_PART )
+-        {
+-            assert( !bIsPackage );
++    if ( confidence == libetonyek::EtonyekDocument::CONFIDENCE_SUPPORTED_PART )
++    {
++       assert( !bIsPackage );
+ 
+-            const Reference < container::XChild > xChild( xContent, UNO_QUERY );
+-            if ( xChild.is() )
++        const Reference < container::XChild > xChild( xContent, UNO_QUERY );
++        if ( xChild.is() )
++        {
++            const Reference < ucb::XContent > xPackageContent( xChild->getParent(), UNO_QUERY );
++            if ( xPackageContent.is() )
+             {
+-                const Reference < ucb::XContent > xPackageContent( xChild->getParent(), UNO_QUERY );
+-                if ( xPackageContent.is() )
++                input.reset( new writerperfect::DirectoryStream( xPackageContent ) );
++                if ( libetonyek::EtonyekDocument::CONFIDENCE_EXCELLENT == libetonyek::EtonyekDocument::isSupported( input.get() ) )
+                 {
+-                    input.reset( new writerperfect::DirectoryStream( xPackageContent ) );
+-                    if ( libetonyek::EtonyekDocument::CONFIDENCE_EXCELLENT == libetonyek::EtonyekDocument::isSupported( input.get() ) )
+-                    {
+-                        xContent = xPackageContent;
+-                        bUCBContentChanged = true;
+-                        bIsPackage = true;
+-                    }
++                    xContent = xPackageContent;
++                    bUCBContentChanged = true;
++                    bIsPackage = true;
+                 }
+             }
+         }
+-- 
+1.9.3
+

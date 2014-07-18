@@ -309,6 +309,7 @@ Patch18: 0001-Resolves-fdo-80911-toggle-original-page-orientation-.patch
 Patch19: 0001-scrolling-very-slow-in-calc.patch
 Patch20: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch21: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch22: 0001-fdo-81113-always-run-the-actual-detection.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

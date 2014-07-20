@@ -50,7 +50,7 @@ index 03e899d..e3b4aa7 100644
  
          // if we have a title object and a text, set the text
 -        if( pTO )
-+        OutlinerParaObject* pOPO = pTO ? pOutliner->CreateParaObject(rOutliner.GetAbsPos(pPara), 1) : NULL;
++        OutlinerParaObject* pOPO = pTO ? pOutliner->CreateParaObject(pOutliner->GetAbsPos(pPara), 1) : NULL;
 +        if (pOPO)
          {
 -            pOPO = pOutliner->CreateParaObject( pOutliner->GetAbsPos( pPara ), 1 );

@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -308,6 +308,7 @@ Patch50: 0001-resolved-fdo-79441-keep-3D-references-intact-during-.patch
 Patch51: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
 Patch52: 0001-scrolling-very-slow-in-calc.patch
 Patch53: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch54: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2258,6 +2259,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-9
+- Resolves: rhbz#1121341 crash on closing shrunk validity window
+
 * Fri Jul 18 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-8
 - Resolves: rhbz#1117853 nStartPara of EE_PARA_NOT_FOUND
 - Related: rhbz#1089466 speculative fix for scrolling woes in calc

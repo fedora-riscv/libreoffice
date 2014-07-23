@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -309,6 +309,7 @@ Patch51: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
 Patch52: 0001-scrolling-very-slow-in-calc.patch
 Patch53: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch54: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
+Patch55: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2259,6 +2260,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-10
+- Related: rhbz#1117128 missing pictures in impress
+
 * Mon Jul 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-9
 - Resolves: rhbz#1121341 crash on closing shrunk validity window
 

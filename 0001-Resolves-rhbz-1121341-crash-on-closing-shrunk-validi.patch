@@ -41,14 +41,12 @@ index f40981c..d119747 100644
  // ============================================================================
  
  namespace {
-@@ -338,6 +339,24 @@ ScTPValidationValue::ScTPValidationValue( Window* pParent, const SfxItemSet& rAr
+@@ -338,6 +339,22 @@ ScTPValidationValue::ScTPValidationValue( Window* pParent, const SfxItemSet& rAr
      m_btnRef.Hide(); // cell range picker
  }
  
 +void ScTPValidationValue::ParkRefs()
 +{
-+    fprintf(stderr, "park refs\n");
-+
 +    //if there are children of the mpHBox, i.e.
 +    //in shrunk mode, this will crash
 +    //after the mpHBox is deleted

@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -310,6 +310,7 @@ Patch19: 0001-scrolling-very-slow-in-calc.patch
 Patch20: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch21: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch22: 0001-fdo-81113-always-run-the-actual-detection.patch
+Patch23: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2282,6 +2283,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 24 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.3-2
+- avoid image loss in Impress after auto-save
+
 * Wed Jul 16 2014 David Tardon <dtardon@redhat.com> - 1:4.3.0.1-1
 - update to 4.3.0 rc3
 

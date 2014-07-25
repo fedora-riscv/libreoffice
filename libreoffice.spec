@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -301,15 +301,14 @@ Patch43: 0001-Check-for-empty-before-calling-top.patch
 Patch44: 0002-Don-t-go-further-and-pop-the-stack-if-it-s-empty.patch
 Patch45: 0003-Use-a-new-fast-parser-instance-for-each-XML-fragment.patch
 Patch46: 0001-allow-build-with-icu-4.2.patch
-Patch47: 0001-Resolves-fdo-80911-toggle-original-page-orientation-.patch
-Patch48: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch49: 0001-fdo-79151-No-need-to-offset-column-index-by-category.patch
-Patch50: 0001-resolved-fdo-79441-keep-3D-references-intact-during-.patch
-Patch51: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
-Patch52: 0001-scrolling-very-slow-in-calc.patch
-Patch53: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch54: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
-Patch55: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
+Patch47: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch48: 0001-fdo-79151-No-need-to-offset-column-index-by-category.patch
+Patch49: 0001-resolved-fdo-79441-keep-3D-references-intact-during-.patch
+Patch50: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
+Patch51: 0001-scrolling-very-slow-in-calc.patch
+Patch52: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch53: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
+Patch54: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2260,6 +2259,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-11
+- Resolves: rhbz#1122868 toggling orientations causes more trouble
+
 * Wed Jul 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-10
 - Related: rhbz#1117128 missing pictures in impress
 

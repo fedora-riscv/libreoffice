@@ -298,6 +298,7 @@ Patch40: 0001-scrolling-very-slow-in-calc.patch
 Patch41: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch42: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
 Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
+Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2250,6 +2251,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-1
 - new bugfix release
+- Resolves: rhbz#1121254 crash when using font selector after adding new font
 
 * Fri Jul 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-11
 - Resolves: rhbz#1122868 toggling orientations causes more trouble

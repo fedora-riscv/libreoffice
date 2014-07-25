@@ -2259,7 +2259,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jul 24 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-11
+* Fri Jul 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-11
 - Resolves: rhbz#1122868 toggling orientations causes more trouble
 
 * Wed Jul 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-10

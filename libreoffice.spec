@@ -1092,7 +1092,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l es -n Spanish
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish
-%autocorr -l fr -n French
+%autocorr -l fr -n French -L
 %autocorr -l ga -n Irish
 %autocorr -l hr -n Croatian
 %autocorr -l hu -n Hungarian

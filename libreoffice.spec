@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.5
+%define libo_version 4.2.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -292,23 +292,12 @@ Patch34: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
 Patch35: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
 Patch36: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
 Patch37: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
-Patch38: 0001-deb-749592-mysql-connector-doesn-t-work-with-remote-.patch
-Patch39: 0001-Resolves-rhbz-1104068-crash-converting-fontwork-to-c.patch
-Patch40: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
-Patch41: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
-Patch42: 0001-fix-detection-of-Salesforce-html.patch
-Patch43: 0001-Check-for-empty-before-calling-top.patch
-Patch44: 0002-Don-t-go-further-and-pop-the-stack-if-it-s-empty.patch
-Patch45: 0003-Use-a-new-fast-parser-instance-for-each-XML-fragment.patch
-Patch46: 0001-allow-build-with-icu-4.2.patch
-Patch47: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch48: 0001-fdo-79151-No-need-to-offset-column-index-by-category.patch
-Patch49: 0001-resolved-fdo-79441-keep-3D-references-intact-during-.patch
-Patch50: 0001-resolved-fdo-77018-keep-external-references-intact-d.patch
-Patch51: 0001-scrolling-very-slow-in-calc.patch
-Patch52: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch53: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
-Patch54: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
+Patch38: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
+Patch39: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch40: 0001-scrolling-very-slow-in-calc.patch
+Patch41: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch42: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
+Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2259,6 +2248,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-1
+- new bugfix release
+
 * Fri Jul 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.5.2-11
 - Resolves: rhbz#1122868 toggling orientations causes more trouble
 

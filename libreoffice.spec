@@ -1356,7 +1356,6 @@ pushd %{buildroot}%{baseinstdir}/share/autocorr
 %make_autocorr_aliases -l af-ZA af-NA
 %make_autocorr_aliases -l de-DE de-AT de-BE de-CH de-LI de-LU
 %make_autocorr_aliases -l es-ES es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE
-%make_autocorr_aliases -l fr-FR fr-BE fr-CA fr-CH fr-LU fr-MC
 %make_autocorr_aliases -l it-IT it-CH
 %make_autocorr_aliases -l nl-NL nl-AW
 %make_autocorr_aliases -l sv-SE sv-FI

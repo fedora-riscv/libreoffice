@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -299,6 +299,7 @@ Patch41: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch42: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
 Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
+Patch45: 0001-rhbz-1079672-FileDialogHelper-don-t-hand-out-stale-p.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2248,6 +2249,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-2-UNBUILT
+- Resolves: rhbz#1079672: FileDialog: don't insert stale preview image
+
 * Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-1
 - new bugfix release
 - Resolves: rhbz#1121254 crash when using font selector after adding new font

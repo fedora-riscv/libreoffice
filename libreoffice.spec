@@ -300,6 +300,7 @@ Patch42: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
 Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
 Patch45: 0001-rhbz-1079672-FileDialogHelper-don-t-hand-out-stale-p.patch
+Patch46: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2249,8 +2250,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-2-UNBUILT
+* Fri Aug 15 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-2-UNBUILT
 - Resolves: rhbz#1079672: FileDialog: don't insert stale preview image
+- Related: rhbz#1130264 plausible fix for reported crash in avmedia
 
 * Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-1
 - new bugfix release

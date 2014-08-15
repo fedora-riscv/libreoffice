@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -307,6 +307,7 @@ Patch16: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
 Patch17: 0001-scrolling-very-slow-in-calc.patch
 Patch18: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch19: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch20: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2278,6 +2279,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 15 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-2
+- Related: rhbz#1130264 crash in media playback on s390x
+
 * Sun Aug 10 2014 David Tardon <dtardon@redhat.com> - 1:4.3.1.1-1
 - update to 4.3.1 rc1
 

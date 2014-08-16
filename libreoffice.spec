@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1983,26 +1983,28 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/ooviewdoc.1*
 
 %post core
-update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 for theme in hicolor locolor; do
     touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
 done
+touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 
 %postun core
-update-mime-database %{_datadir}/mime &> /dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 if [ $1 -eq 0 ] ; then
     for theme in hicolor locolor; do
         touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
         gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
     done
+    touch --no-create %{_datadir}/mime/packages &> /dev/null || :
+    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null ||
 fi
 
 %posttrans core
 for theme in hicolor locolor; do
     gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
 done
+update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null ||
 
 
 %files base
@@ -2279,6 +2281,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Aug 16 2014 Rex Dieter <rdieter@fedoraproject.org> 1:4.3.1.1-3
+- update mime scriptlets
+
 * Fri Aug 15 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-2
 - Related: rhbz#1130264 crash in media playback on s390x
 

@@ -1997,14 +1997,14 @@ if [ $1 -eq 0 ] ; then
         gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
     done
     touch --no-create %{_datadir}/mime/packages &> /dev/null || :
-    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null ||
+    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 fi
 
 %posttrans core
 for theme in hicolor locolor; do
     gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
 done
-update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null ||
+update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 
 %files base

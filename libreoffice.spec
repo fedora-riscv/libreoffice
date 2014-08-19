@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -369,7 +369,7 @@ Requires: hyphen-en, hyphen >= 2.4, autocorr-en
 Requires: hunspell-en
 %else
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
-Requires: java >= 1:1.6
+Requires: java-headless >= 1:1.6
 Requires: hunspell-en-US
 %endif
 Requires(pre):    gtk2 >= 2.9.4
@@ -2281,6 +2281,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Aug 19 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-5
+- Resolves: rhbz#1131425 try java-headless instead of java
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:4.3.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 

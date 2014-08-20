@@ -1028,7 +1028,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %endif
 %langpack -l mai -n Maithili -F -o mai_IN
 %if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ms -n Malay -F -H
+%langpack -l ms -n Malay -F -H -o ms_MY
 %endif
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -w ml_IN
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -w mr_IN

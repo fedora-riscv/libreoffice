@@ -1,0 +1,73 @@
+From d662ad12358a00f8db0d07b2741926a2ed7d7f4d Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 21 Aug 2014 14:49:53 +0200
+Subject: [PATCH] disable libe-book support
+
+Change-Id: I7aab13e9aac90f678231c0176d0d96aa09bea813
+---
+ configure.ac                                             | 5 -----
+ writerperfect/Library_wpftwriter.mk                      | 2 --
+ writerperfect/source/writer/wpftwriter_genericfilter.cxx | 4 ----
+ 3 files changed, 11 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2560a0d..e46f407 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7724,11 +7724,6 @@ fi
+ AC_SUBST([ENABLE_EOT])
+ 
+ dnl ===================================================================
+-dnl Check for system libe-book
+-dnl ===================================================================
+-libo_CHECK_SYSTEM_MODULE([libebook],[EBOOK],[libe-book-0.0 >= 0.0.2],["-I${WORKDIR}/UnpackedTarball/libebook/inc"],["-L${WORKDIR}/UnpackedTarball/libebook/src/lib/.libs -le-book-0.0"])
+-
+-dnl ===================================================================
+ dnl Check for system libetonyek
+ dnl ===================================================================
+ libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.0],["-I${WORKDIR}/UnpackedTarball/libetonyek/inc"],["-L${WORKDIR}/UnpackedTarball/libetonyek/src/lib/.libs -letonyek-0.0"])
+diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
+index cfcdf5d..67207cf 100644
+--- a/writerperfect/Library_wpftwriter.mk
++++ b/writerperfect/Library_wpftwriter.mk
+@@ -50,7 +50,6 @@ $(eval $(call gb_Library_use_static_libraries,wpftwriter,\
+ $(eval $(call gb_Library_use_externals,wpftwriter,\
+ 	abw \
+ 	boost_headers \
+-	ebook \
+ 	etonyek \
+ 	icui18n \
+ 	icudata \
+@@ -66,7 +65,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
+ 
+ $(eval $(call gb_Library_add_exception_objects,wpftwriter,\
+ 	writerperfect/source/writer/AbiWordImportFilter \
+-	writerperfect/source/writer/EBookImportFilter \
+ 	writerperfect/source/writer/MSWorksImportFilter \
+ 	writerperfect/source/writer/MWAWImportFilter \
+ 	writerperfect/source/writer/WordPerfectImportFilter \
+diff --git a/writerperfect/source/writer/wpftwriter_genericfilter.cxx b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
+index 05f6542..831bc38 100644
+--- a/writerperfect/source/writer/wpftwriter_genericfilter.cxx
++++ b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
+@@ -32,7 +32,6 @@
+ #include "sal/types.h"
+ 
+ #include "AbiWordImportFilter.hxx"
+-#include "EBookImportFilter.hxx"
+ #include "WordPerfectImportFilter.hxx"
+ #include "MSWorksImportFilter.hxx"
+ #include "MWAWImportFilter.hxx"
+@@ -52,9 +51,6 @@ static cppu::ImplementationEntry const services[] = {
+     { &MWAWImportFilter_createInstance, &MWAWImportFilter_getImplementationName,
+       &MWAWImportFilter_getSupportedServiceNames,
+       &cppu::createSingleComponentFactory, 0, 0 },
+-    { &EBookImportFilter_createInstance, &EBookImportFilter_getImplementationName,
+-      &EBookImportFilter_getSupportedServiceNames,
+-      &cppu::createSingleComponentFactory, 0, 0 },
+     { 0, 0, 0, 0, 0, 0 } };
+ 
+ }
+-- 
+1.9.3
+

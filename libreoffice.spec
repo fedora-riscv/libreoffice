@@ -86,10 +86,9 @@ Source30:       %{external_url}/libodfgen-0.0.4.tar.bz2
 Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source32:       %{external_url}/libetonyek-0.0.4.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
-Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
-Source35:       %{external_url}/libabw-0.0.2.tar.bz2
-Source36:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw
+Source34:       %{external_url}/libabw-0.0.2.tar.bz2
+Source35:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw
 %endif
 
 # build tools
@@ -298,6 +297,9 @@ Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
 Patch45: 0001-rhbz-1079672-FileDialogHelper-don-t-hand-out-stale-p.patch
 Patch46: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+%if 0%{?rhel}
+Patch47: 0001-disable-libe-book-support.patch
+%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

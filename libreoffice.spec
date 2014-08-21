@@ -99,12 +99,11 @@ Source32:       %{external_url}/libodfgen-0.1.1.tar.bz2
 Source33:       %{external_url}/libmwaw-0.3.1.tar.bz2
 Source34:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source35:       %{external_url}/libfreehand-0.1.0.tar.bz2
-Source36:       %{external_url}/libe-book-0.1.1.tar.bz2
-Source37:       %{external_url}/libabw-0.1.0.tar.bz2
-Source38:       %{external_url}/libatomic_ops-7_2d.zip
-Source39:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
-Source40:       %{external_url}/librevenge-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw --without-system-libatomic_ops --without-system-librevenge
+Source36:       %{external_url}/libabw-0.1.0.tar.bz2
+Source37:       %{external_url}/libatomic_ops-7_2d.zip
+Source38:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source39:       %{external_url}/librevenge-0.0.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-libatomic_ops --without-system-librevenge
 %endif
 
 # build tools
@@ -289,23 +288,25 @@ Patch8: 0001-disable-failing-test-on-rhel-6.patch
 # not upstreamed
 # TODO: fails on ppc; investigate
 Patch9: 0001-disable-swui-test-on-RHEL-7.patch
+# not upstreamed
+Patch10: 0001-disable-libe-book-support.patch
 %endif
 # not upstreamed
-Patch10: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch11: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch11: 0001-disable-firebird-unit-test.patch
+Patch12: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch12: 0001-never-run-autogen.sh.patch
+Patch13: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch13: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
-Patch14: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch15: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
-Patch16: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch17: 0001-scrolling-very-slow-in-calc.patch
-Patch18: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
-Patch19: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch20: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch16: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
+Patch17: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch18: 0001-scrolling-very-slow-in-calc.patch
+Patch19: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
+Patch20: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

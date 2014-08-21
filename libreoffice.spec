@@ -88,9 +88,8 @@ Source32:       %{external_url}/libetonyek-0.0.4.tar.bz2
 Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source34:       %{external_url}/libe-book-0.0.3.tar.bz2
 Source35:       %{external_url}/libabw-0.0.2.tar.bz2
-Source36:       %{external_url}/libeot-0.01.tar.bz2
-Source37:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw --without-system-libeot
+Source36:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw
 %endif
 
 # build tools
@@ -1192,16 +1191,16 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # make segfaults on parallel build
-%define distrooptions --disable-firebird-sdbc --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+%define distrooptions --disable-eot --disable-firebird-sdbc --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else # rhel7
-%define distrooptions --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --disable-eot --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
-%define distrooptions --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1233,7 +1232,6 @@ touch autogen.lastrun
  --disable-gnome-vfs \
  --disable-openssl \
  --enable-dbus \
- --enable-eot \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \

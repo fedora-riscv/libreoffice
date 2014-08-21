@@ -457,6 +457,16 @@ Provides: openoffice.org-bsh%{?_isa} = 1:3.3.0
 %description bsh
 Support BeanShell scripts in LibreOffice.
 
+%package officebean
+Summary: JavaBean for LibreOffice Components
+Group: Development/Libraries
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+
+%description officebean
+Allows embedding of LibreOffice documents within the Java environment. It
+provides a Java AWT window into which the backend LibreOffice process draws
+its visual representation
+
 %package rhino
 Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
@@ -1586,7 +1596,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/classes/commonwizards.jar
 %{baseinstdir}/program/classes/form.jar
 %{baseinstdir}/program/classes/query.jar
-%{baseinstdir}/program/classes/officebean.jar
 %{baseinstdir}/program/classes/report.jar
 %{baseinstdir}/program/classes/ScriptFramework.jar
 %{baseinstdir}/program/classes/ScriptProviderForJava.jar
@@ -1663,7 +1672,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libiralo.so
 %{baseinstdir}/program/libitglo.so
 %{baseinstdir}/program/libitilo.so
-%{baseinstdir}/program/libofficebean.so
 %{baseinstdir}/program/libfilelo.so
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
@@ -2054,6 +2062,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %files nlpsolver
 %docdir %{baseinstdir}/share/extensions/nlpsolver/help
 %{baseinstdir}/share/extensions/nlpsolver
+
+%files officebean
+%{baseinstdir}/program/classes/officebean.jar
+%{baseinstdir}/program/libofficebean.so
 
 %files ogltrans
 %{baseinstdir}/program/libOGLTranslo.so

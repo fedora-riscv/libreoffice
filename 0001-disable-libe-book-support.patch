@@ -1,51 +1,64 @@
-From d662ad12358a00f8db0d07b2741926a2ed7d7f4d Mon Sep 17 00:00:00 2001
+From 9a48c01ba0e64581c5d104917cd3ba60d03ab9e0 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
-Date: Thu, 21 Aug 2014 14:49:53 +0200
+Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
 
-Change-Id: I7aab13e9aac90f678231c0176d0d96aa09bea813
+Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
 ---
  configure.ac                                             | 5 -----
+ external/Module_external.mk                              | 1 -
  writerperfect/Library_wpftwriter.mk                      | 2 --
  writerperfect/source/writer/wpftwriter_genericfilter.cxx | 4 ----
- 3 files changed, 11 deletions(-)
+ 4 files changed, 12 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 2560a0d..e46f407 100644
+index 2f19999..bde14a8 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7724,11 +7724,6 @@ fi
- AC_SUBST([ENABLE_EOT])
+@@ -7757,11 +7757,6 @@ AS_IF([test "$COM" = "MSC"],
+ libo_CHECK_SYSTEM_MODULE([librevenge],[REVENGE],[librevenge-0.0 >= 0.0.1],["-I${WORKDIR}/UnpackedTarball/librevenge/inc"],["-L${librevenge_libdir} -lrevenge-0.0"])
  
  dnl ===================================================================
 -dnl Check for system libe-book
 -dnl ===================================================================
--libo_CHECK_SYSTEM_MODULE([libebook],[EBOOK],[libe-book-0.0 >= 0.0.2],["-I${WORKDIR}/UnpackedTarball/libebook/inc"],["-L${WORKDIR}/UnpackedTarball/libebook/src/lib/.libs -le-book-0.0"])
+-libo_CHECK_SYSTEM_MODULE([libebook],[EBOOK],[libe-book-0.1 >= 0.1.1])
 -
 -dnl ===================================================================
  dnl Check for system libetonyek
  dnl ===================================================================
- libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.0],["-I${WORKDIR}/UnpackedTarball/libetonyek/inc"],["-L${WORKDIR}/UnpackedTarball/libetonyek/src/lib/.libs -letonyek-0.0"])
+ libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1 >= 0.1.1])
+diff --git a/external/Module_external.mk b/external/Module_external.mk
+index 7049278..0e7fd60 100644
+--- a/external/Module_external.mk
++++ b/external/Module_external.mk
+@@ -35,7 +35,6 @@ $(eval $(call gb_Module_add_moduledirs,external,\
+ 	$(call gb_Helper_optional,CPPUNIT,cppunit) \
+ 	$(call gb_Helper_optional,CT2N,ct2n) \
+ 	$(call gb_Helper_optional,CURL,curl) \
+-	$(call gb_Helper_optional,EBOOK,libebook) \
+ 	$(call gb_Helper_optional,EPM,epm) \
+ 	$(call gb_Helper_optional,ETONYEK,libetonyek) \
+ 	$(call gb_Helper_optional,EXPAT,expat) \
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
-index cfcdf5d..67207cf 100644
+index db6afdf..e6ea0f5 100644
 --- a/writerperfect/Library_wpftwriter.mk
 +++ b/writerperfect/Library_wpftwriter.mk
-@@ -50,7 +50,6 @@ $(eval $(call gb_Library_use_static_libraries,wpftwriter,\
+@@ -42,7 +42,6 @@ $(eval $(call gb_Library_use_libraries,wpftwriter,\
  $(eval $(call gb_Library_use_externals,wpftwriter,\
  	abw \
  	boost_headers \
 -	ebook \
- 	etonyek \
  	icui18n \
- 	icudata \
-@@ -66,7 +65,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
+ 	icuuc \
+ 	libxml2 \
+@@ -57,7 +56,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
  
  $(eval $(call gb_Library_add_exception_objects,wpftwriter,\
  	writerperfect/source/writer/AbiWordImportFilter \
 -	writerperfect/source/writer/EBookImportFilter \
+ 	writerperfect/source/writer/ImportFilterBase \
  	writerperfect/source/writer/MSWorksImportFilter \
  	writerperfect/source/writer/MWAWImportFilter \
- 	writerperfect/source/writer/WordPerfectImportFilter \
 diff --git a/writerperfect/source/writer/wpftwriter_genericfilter.cxx b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
 index 05f6542..831bc38 100644
 --- a/writerperfect/source/writer/wpftwriter_genericfilter.cxx

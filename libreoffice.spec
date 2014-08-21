@@ -102,10 +102,9 @@ Source35:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source36:       %{external_url}/libe-book-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/libatomic_ops-7_2d.zip
-Source39:       %{external_url}/libeot-0.01.tar.bz2
-Source40:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
-Source41:       %{external_url}/librevenge-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw --without-system-libatomic_ops --without-system-libeot --without-system-librevenge
+Source39:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source40:       %{external_url}/librevenge-0.0.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libebook --without-system-libabw --without-system-libatomic_ops --without-system-librevenge
 %endif
 
 # build tools
@@ -1201,16 +1200,16 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # make segfaults on parallel build
-%define distrooptions --disable-firebird-sdbc --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+%define distrooptions --disable-eot --disable-firebird-sdbc --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else # rhel7
-%define distrooptions --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --disable-eot --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
-%define distrooptions --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 
 %if %{with langpacks}
@@ -1246,7 +1245,6 @@ touch autogen.lastrun
  --disable-gnome-vfs \
  --disable-openssl \
  --enable-dbus \
- --enable-eot \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \

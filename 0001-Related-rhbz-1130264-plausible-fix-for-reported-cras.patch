@@ -37,7 +37,7 @@ index ceea8e2..836e89e 100644
      }
  }
  
--
+-// ------------------------------------------------------------------------------
 -
  static gboolean pipeline_bus_callback( GstBus *, GstMessage *message, gpointer data )
  {

@@ -1,14 +1,15 @@
-From d662ad12358a00f8db0d07b2741926a2ed7d7f4d Mon Sep 17 00:00:00 2001
+From 192812819ed978d98cdec944cf51b40edbff1155 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 14:49:53 +0200
 Subject: [PATCH] disable libe-book support
 
 Change-Id: I7aab13e9aac90f678231c0176d0d96aa09bea813
 ---
- configure.ac                                             | 5 -----
- writerperfect/Library_wpftwriter.mk                      | 2 --
- writerperfect/source/writer/wpftwriter_genericfilter.cxx | 4 ----
- 3 files changed, 11 deletions(-)
+ configure.ac                                             |  5 -----
+ filter/Configuration_filter.mk                           | 14 --------------
+ writerperfect/Library_wpftwriter.mk                      |  2 --
+ writerperfect/source/writer/wpftwriter_genericfilter.cxx |  4 ----
+ 4 files changed, 25 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
 index 2560a0d..e46f407 100644
@@ -26,6 +27,38 @@ index 2560a0d..e46f407 100644
  dnl Check for system libetonyek
  dnl ===================================================================
  libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.0],["-I${WORKDIR}/UnpackedTarball/libetonyek/inc"],["-L${WORKDIR}/UnpackedTarball/libetonyek/src/lib/.libs -letonyek-0.0"])
+diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
+index fe84350..7c520fc 100644
+--- a/filter/Configuration_filter.mk
++++ b/filter/Configuration_filter.mk
+@@ -362,13 +362,6 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu,filter
+ 	writer_OOXML \
+ 	writer_OOXML_Template \
+ 	writer_layout_dump_xml \
+-	writer_BroadBand_eBook \
+-	writer_eReader_eBook \
+-	writer_FictionBook_2 \
+-	writer_PalmDoc \
+-	writer_Plucker_eBook \
+-	writer_TealDoc \
+-	writer_zTXT \
+ )
+ 
+ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
+@@ -424,13 +417,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,fi
+ 	OOXML_Text \
+ 	OOXML_Text_Template \
+ 	writer_layout_dump \
+-	BroadBand_eBook \
+-	eReader_eBook \
+-	FictionBook_2 \
+-	PalmDoc \
+-	Plucker_eBook \
+-	TealDoc \
+-	zTXT \
+ )
+ 
+ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
 index cfcdf5d..67207cf 100644
 --- a/writerperfect/Library_wpftwriter.mk

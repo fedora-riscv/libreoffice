@@ -308,18 +308,12 @@ Patch47: 0001-disable-libe-book-support.patch
 %define fontname opensymbol
 
 # rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel}
-%if 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|fbembed\\)\\.so.*$/d
+%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\)\\.so.*$/d
 %filter_from_provides %{libo_bundled_libs_filter}
 %filter_from_requires %{libo_bundled_libs_filter}
 %filter_setup
-%else
-%global libo_bundled_libs_filter ^libfbembed\\.so.*$
-%global __provides_exclude %{libo_bundled_libs_filter}
-%global __requires_exclude %{libo_bundled_libs_filter}
-%endif
 %endif
 
 %description
@@ -1986,9 +1980,6 @@ done
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
-%if 0%{?rhel}
-%{baseinstdir}/program/libfbembed.so.*
-%endif
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so

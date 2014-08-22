@@ -1220,7 +1220,7 @@ export PYTHON_LIBS=`python-config --libs python`
 %endif
 %endif
 
-%if 0%{?rhel} && 0%{?rhel} < 7
+%if 0%{?rhel}
 aclocal -I m4
 autoconf
 %endif

@@ -456,7 +456,7 @@ index a1874d8..105335eb 100644
      void * pCppReturn = 0; // if != 0 && != pUnoReturn, needs reconversion
  
 -        bool bOverFlow = false;
-+    bool bOverflow = false;
++    bool bOverFlow = false;
 +    bool bSimpleReturn = true;
  
      if (pReturnTypeDescr)

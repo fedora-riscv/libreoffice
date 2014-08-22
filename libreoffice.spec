@@ -315,7 +315,7 @@ Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common fbembed\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wps
+%global libo_bundled_libs_common GLEW\\|mwaw\\|odfgen\\|revenge\\|wps
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d
@@ -2011,9 +2011,6 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
 %{baseinstdir}/program/libabplo.so
-%if 0%{?rhel}
-%{baseinstdir}/program/libfbembed.so.*
-%endif
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so

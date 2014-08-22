@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -306,6 +306,7 @@ Patch18: 0001-scrolling-very-slow-in-calc.patch
 Patch19: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch20: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+Patch22: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2285,6 +2286,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-6
+- Resolves: rhbz#1131425 move libjawt-using office bean into a subpackage
+- Resolves: rhbz#1125588 port LibreOffice to ppc64le
+
 * Tue Aug 19 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-5
 - Resolves: rhbz#1131425 try java-headless instead of java
 

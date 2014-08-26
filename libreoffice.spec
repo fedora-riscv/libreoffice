@@ -70,12 +70,12 @@ Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 
 %if 0%{?rhel}
 Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
-Source12:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
-Source13:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
-Source14:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-mdds --without-system-glew --without-system-glm --without-system-orcus
+Source11:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
+Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
+Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus
 %if 0%{?rhel} < 7
+Source14:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -87,7 +87,7 @@ Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
 Source26:       %{external_url}/libcdr-0.1.0.tar.bz2
 Source27:       %{external_url}/libwpg-0.3.0.tar.bz2
@@ -183,7 +183,6 @@ BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
 BuildRequires: pkgconfig(libwpg-0.3)
 BuildRequires: pkgconfig(libwps-0.3)
-BuildRequires: pkgconfig(mdds)
 %endif
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -195,6 +194,7 @@ BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libexttextcat)
 BuildRequires: pkgconfig(liblangtag)
+BuildRequires: pkgconfig(mdds)
 BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(poppler-cpp)
 BuildRequires: postgresql-devel

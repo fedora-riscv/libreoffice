@@ -1,0 +1,95 @@
+From d7348f8dd0e7860b7d6a62f77a15031a637c039e Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 26 Aug 2014 16:04:04 +0200
+Subject: [PATCH] disable FreeHand support
+
+Change-Id: I7a62c1e0e5c63ce51b64a0cf0d4778896d44348e
+---
+ configure.ac                                         | 5 -----
+ filter/Configuration_filter.mk                       | 2 --
+ writerperfect/Library_wpftdraw.mk                    | 2 --
+ writerperfect/source/draw/wpftdraw_genericfilter.cxx | 5 -----
+ 4 files changed, 14 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2560a0d..dc87148 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7734,11 +7734,6 @@ dnl ===================================================================
+ libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.0],["-I${WORKDIR}/UnpackedTarball/libetonyek/inc"],["-L${WORKDIR}/UnpackedTarball/libetonyek/src/lib/.libs -letonyek-0.0"])
+ 
+ dnl ===================================================================
+-dnl Check for system libfreehand
+-dnl ===================================================================
+-libo_CHECK_SYSTEM_MODULE([libfreehand],[FREEHAND],[libfreehand-0.0],["-I${WORKDIR}/UnpackedTarball/libfreehand/inc"],["-L${WORKDIR}/UnpackedTarball/libfreehand/src/lib/.libs -lfreehand-0.0"])
+-
+-dnl ===================================================================
+ dnl Check for system libodfgen
+ dnl ===================================================================
+ libo_CHECK_SYSTEM_MODULE([libodfgen],[ODFGEN],[libodfgen-0.0 >= 0.0.3])
+diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
+index fe84350..7778b5c 100644
+--- a/filter/Configuration_filter.mk
++++ b/filter/Configuration_filter.mk
+@@ -607,7 +607,6 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_draw_types.xcu,filter/s
+     draw_Publisher_Document \
+ 	draw_CorelDraw_Document \
+ 	draw_Corel_Presentation_Exchange \
+-	draw_Freehand_Document \
+ )
+ 
+ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_draw_filters.xcu,filter/source/config/fragments/filters,\
+@@ -622,7 +621,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_draw_filters.xcu,filt
+     PublisherDocument \
+ 	CorelDrawDocument \
+ 	CorelPresentationExchange \
+-	FreehandDocument \
+ )
+ 
+ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
+diff --git a/writerperfect/Library_wpftdraw.mk b/writerperfect/Library_wpftdraw.mk
+index 84bb959..5be55c8 100644
+--- a/writerperfect/Library_wpftdraw.mk
++++ b/writerperfect/Library_wpftdraw.mk
+@@ -47,7 +47,6 @@ $(eval $(call gb_Library_use_static_libraries,wpftdraw,\
+ $(eval $(call gb_Library_use_externals,wpftdraw,\
+ 	cdr \
+ 	etonyek \
+-	freehand \
+ 	mspub \
+ 	odfgen \
+ 	visio \
+@@ -64,7 +63,6 @@ $(eval $(call gb_Library_use_externals,wpftdraw,\
+ $(eval $(call gb_Library_add_exception_objects,wpftdraw,\
+ 	writerperfect/source/draw/CDRImportFilter \
+ 	writerperfect/source/draw/CMXImportFilter \
+-	writerperfect/source/draw/FreehandImportFilter \
+ 	writerperfect/source/draw/MSPUBImportFilter \
+ 	writerperfect/source/draw/VisioImportFilter \
+ 	writerperfect/source/draw/WPGImportFilter \
+diff --git a/writerperfect/source/draw/wpftdraw_genericfilter.cxx b/writerperfect/source/draw/wpftdraw_genericfilter.cxx
+index 43cabc1..f2a3247 100644
+--- a/writerperfect/source/draw/wpftdraw_genericfilter.cxx
++++ b/writerperfect/source/draw/wpftdraw_genericfilter.cxx
+@@ -32,7 +32,6 @@
+ #include "CDRImportFilter.hxx"
+ #include "CMXImportFilter.hxx"
+ #include "MSPUBImportFilter.hxx"
+-#include "FreehandImportFilter.hxx"
+ #include "VisioImportFilter.hxx"
+ #include "WPGImportFilter.hxx"
+ 
+@@ -45,10 +44,6 @@ static cppu::ImplementationEntry const services[] = {
+     { &CMXImportFilter_createInstance, &CMXImportFilter_getImplementationName,
+       &CMXImportFilter_getSupportedServiceNames,
+       &cppu::createSingleComponentFactory, 0, 0 },
+-    { &FreehandImportFilter_createInstance,
+-      &FreehandImportFilter_getImplementationName,
+-      &FreehandImportFilter_getSupportedServiceNames,
+-      &cppu::createSingleComponentFactory, 0, 0 },
+     { &MSPUBImportFilter_createInstance,
+       &MSPUBImportFilter_getImplementationName,
+       &MSPUBImportFilter_getSupportedServiceNames,
+-- 
+1.9.3
+

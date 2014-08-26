@@ -301,6 +301,7 @@ Patch47: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
 Patch48: 0001-refine-current-date-time-hotkey-handling.patch
 %if 0%{?rhel}
 Patch49: 0001-disable-libe-book-support.patch
+Patch50: 0001-disable-FreeHand-support.patch
 %endif
 
 %define instdir %{_libdir}

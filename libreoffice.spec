@@ -86,15 +86,15 @@ Source21:       %{external_url}/lcms2-2.6.tar.gz
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
-Source25:       %{external_url}/libcdr-0.1.0.tar.bz2
-Source26:       %{external_url}/libwpg-0.3.0.tar.bz2
-Source27:       %{external_url}/libwpd-0.10.0.tar.bz2
-Source28:       %{external_url}/libwps-0.3.0.tar.bz2
-Source29:       %{external_url}/libvisio-0.1.0.tar.bz2
-Source30:       %{external_url}/libmspub-0.1.1.tar.bz2
-Source31:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+Source26:       %{external_url}/libcdr-0.1.0.tar.bz2
+Source27:       %{external_url}/libwpg-0.3.0.tar.bz2
+Source28:       %{external_url}/libwpd-0.10.0.tar.bz2
+Source29:       %{external_url}/libwps-0.3.0.tar.bz2
+Source30:       %{external_url}/libvisio-0.1.0.tar.bz2
+Source31:       %{external_url}/libmspub-0.1.1.tar.bz2
 Source32:       %{external_url}/libodfgen-0.1.1.tar.bz2
 Source33:       %{external_url}/libmwaw-0.3.1.tar.bz2
 Source34:       %{external_url}/libetonyek-0.1.1.tar.bz2
@@ -102,7 +102,7 @@ Source35:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source36:       %{external_url}/libabw-0.1.0.tar.bz2
 Source37:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge
 %endif
 
 # build tools
@@ -170,7 +170,6 @@ BuildRequires: kdelibs4-devel
 BuildRequires: pkgconfig(glew)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
-BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
@@ -193,6 +192,7 @@ BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libclucene-core)
+BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libexttextcat)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(mythes)

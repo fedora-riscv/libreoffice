@@ -79,16 +79,16 @@ Source25:       %{external_url}/ea2acaf140ae40a87a952caa75184f4d-liborcus-0.5.1.
 Source26:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.tar.bz2
 Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+Source29:       %{external_url}/libfreehand-0.0.0.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libfreehand
 %endif
-Source29:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source30:       %{external_url}/libodfgen-0.0.4.tar.bz2
-Source31:       %{external_url}/libmwaw-0.2.0.tar.bz2
-Source32:       %{external_url}/libetonyek-0.0.4.tar.bz2
-Source33:       %{external_url}/libfreehand-0.0.0.tar.bz2
+Source30:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+Source31:       %{external_url}/libodfgen-0.0.4.tar.bz2
+Source32:       %{external_url}/libmwaw-0.2.0.tar.bz2
+Source33:       %{external_url}/libetonyek-0.0.4.tar.bz2
 Source34:       %{external_url}/libabw-0.0.2.tar.bz2
 Source35:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libabw
 %endif
 
 # build tools
@@ -156,6 +156,7 @@ BuildRequires: pkgconfig(xt)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libcdr-0.0)
+BuildRequires: pkgconfig(libfreehand-0.0)
 %endif
 %if 0%{?fedora}
 BuildRequires: pkgconfig(libabw-0.0)
@@ -163,7 +164,6 @@ BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libe-book-0.0)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.0)
-BuildRequires: pkgconfig(libfreehand-0.0)
 BuildRequires: pkgconfig(libmwaw-0.2)
 BuildRequires: pkgconfig(libodfgen-0.0)
 BuildRequires: pkgconfig(mdds)

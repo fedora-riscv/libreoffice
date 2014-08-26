@@ -59,9 +59,8 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel}
-Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds
 %if 0%{?rhel} < 7
+Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -81,7 +80,7 @@ Source27:       %{external_url}/15cb8c0803064faef0c4ddf5bc5ca279-boost_1_54_0.ta
 Source28:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source29:       %{external_url}/libfreehand-0.0.0.tar.bz2
 Source30:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libfreehand --without-system-libcmis
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libfreehand --without-system-libcmis
 %endif
 Source31:       %{external_url}/libodfgen-0.0.4.tar.bz2
 Source32:       %{external_url}/libmwaw-0.2.0.tar.bz2
@@ -166,11 +165,11 @@ BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.0)
 BuildRequires: pkgconfig(libmwaw-0.2)
 BuildRequires: pkgconfig(libodfgen-0.0)
-BuildRequires: pkgconfig(mdds)
 %endif
 BuildRequires: pkgconfig(libcurl)
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: pkgconfig(libexttextcat)
+BuildRequires: pkgconfig(mdds)
 %endif
 BuildRequires: libicu-devel
 BuildRequires: pkgconfig(libidn)

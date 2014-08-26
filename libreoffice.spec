@@ -301,6 +301,7 @@ Patch46: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 Patch47: 0001-disable-libe-book-support.patch
 %endif
 Patch47: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
+Patch48: 0001-refine-current-date-time-hotkey-handling.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2246,6 +2247,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1079672: FileDialog: don't insert stale preview image
 - Related: rhbz#1130264 plausible fix for reported crash in avmedia
 - Resolves: rhbz#1125588 port LibreOffice to ppc64le
+- refine current date/time hotkey handling
 
 * Mon Jul 28 2014 David Tardon <dtardon@redhat.com> - 1:4.2.6.2-1
 - new bugfix release

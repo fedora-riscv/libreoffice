@@ -297,11 +297,11 @@ Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
 Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
 Patch45: 0001-rhbz-1079672-FileDialogHelper-don-t-hand-out-stale-p.patch
 Patch46: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-%if 0%{?rhel}
-Patch47: 0001-disable-libe-book-support.patch
-%endif
 Patch47: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
 Patch48: 0001-refine-current-date-time-hotkey-handling.patch
+%if 0%{?rhel}
+Patch49: 0001-disable-libe-book-support.patch
+%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

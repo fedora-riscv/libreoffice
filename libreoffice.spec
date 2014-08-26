@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2286,6 +2286,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Aug 26 2014 David Tardon <dtardon@redhat.com> - 1:4.3.1.1-7
+- rebuild for ICU 53.1
+
 * Fri Aug 22 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.1-6
 - Resolves: rhbz#1131425 move libjawt-using office bean into a subpackage
 - Resolves: rhbz#1125588 port LibreOffice to ppc64le

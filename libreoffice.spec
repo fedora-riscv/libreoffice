@@ -157,12 +157,12 @@ BuildRequires: pkgconfig(libabw-0.0)
 BuildRequires: pkgconfig(libcdr-0.0)
 BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libetonyek-0.0)
-BuildRequires: pkgconfig(libfreehand-0.0)
 BuildRequires: pkgconfig(libmwaw-0.2)
 BuildRequires: pkgconfig(libodfgen-0.0)
 %endif
 %if 0%{?fedora}
 BuildRequires: pkgconfig(libe-book-0.0)
+BuildRequires: pkgconfig(libfreehand-0.0)
 BuildRequires: pkgconfig(libeot)
 %endif
 BuildRequires: pkgconfig(libcurl)

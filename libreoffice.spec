@@ -307,6 +307,7 @@ Patch19: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch20: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
 Patch22: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
+Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

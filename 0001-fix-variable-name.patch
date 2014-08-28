@@ -1,0 +1,26 @@
+From b38de1f8f3712f0a632ff9b6fa10df2cf3ce268f Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 28 Aug 2014 13:44:13 +0200
+Subject: [PATCH] fix variable name
+
+Change-Id: I170f0390f8f510591d444f44c20434b15077e687
+---
+ bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx b/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
+index cfe720d..5836d8b 100644
+--- a/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
++++ b/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
+@@ -233,7 +233,7 @@ static void callVirtualMethod(void * pThis, sal_uInt32 nVtableIndex,
+                 "fmr    %0,     1\n\t"
+                 : "=f" (dret), "=r" (r3), "=r" (r4) : );
+ 
+-    MapReturn(r3, r4, dret, pReturnTypeRef, pRegisterReturn);
++    MapReturn(r3, r4, dret, pReturnTypeDescr, pRegisterReturn);
+ }
+ 
+ // Macros for easier insertion of values to registers or stack
+-- 
+1.9.3
+

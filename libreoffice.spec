@@ -299,6 +299,8 @@ Patch48: 0001-refine-current-date-time-hotkey-handling.patch
 Patch49: 0001-disable-libe-book-support.patch
 Patch50: 0001-disable-FreeHand-support.patch
 %endif
+Patch51: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
+Patch52: 0001-fix-variable-name.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

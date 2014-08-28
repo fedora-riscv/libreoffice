@@ -58,8 +58,7 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %global bundling_options --without-system-hsqldb
 %endif
 
-%if 0%{?rhel}
-%if 0%{?rhel} < 7
+%if 0%{?rhel} && 0%{?rhel} < 7
 Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
@@ -84,9 +83,8 @@ Source31:       %{external_url}/libodfgen-0.0.4.tar.bz2
 Source32:       %{external_url}/libmwaw-0.2.0.tar.bz2
 Source33:       %{external_url}/libetonyek-0.0.4.tar.bz2
 Source34:       %{external_url}/libabw-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libfreehand --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libabw
-%endif
 Source35:       %{external_url}/language-subtag-registry-2014-03-27.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-clucene --without-system-libvisio --without-system-lcms2 --without-system-libmspub --without-system-orcus --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libfreehand --without-system-libcmis --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libabw
 %endif
 
 # build tools

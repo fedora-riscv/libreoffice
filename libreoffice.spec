@@ -302,6 +302,7 @@ Patch50: 0001-disable-FreeHand-support.patch
 Patch51: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
 Patch52: 0001-fix-variable-name.patch
 Patch53: 0001-cast-arg-to-the-right-type.patch
+Patch54: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

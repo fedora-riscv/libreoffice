@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -311,6 +311,8 @@ Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
 Patch24: 0001-fix-variable-name.patch
 Patch25: 0001-cast-arg-to-the-right-type.patch
 Patch26: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
+Patch27: 0001-Update-config.-guess-sub.patch
+Patch28: 0002-Linux-AArch64-port.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2290,6 +2292,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 29 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.1.2-2
+- Resolves: rhbz#1098693 AArch64 port
+
 * Wed Aug 27 2014 David Tardon <dtardon@redhat.com> - 1:4.3.1.2-1
 - update to 4.3.1 rc2
 

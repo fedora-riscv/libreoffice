@@ -1164,7 +1164,7 @@ git config gc.auto 0 # disable auto packing
 git add -A
 git commit -q -a -m %{name}-%{version}
 
-#Customize Palette to remove Sun colours and add Red Hat colours
+#Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
  <draw:color draw:name="Red Hat 2" draw:color="#0093d9"/> 

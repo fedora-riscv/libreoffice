@@ -310,6 +310,7 @@ Patch22: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
 Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
 Patch24: 0001-fix-variable-name.patch
 Patch25: 0001-cast-arg-to-the-right-type.patch
+Patch26: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

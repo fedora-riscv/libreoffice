@@ -1172,11 +1172,11 @@ git commit -q -a -m %{name}-%{version}
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
- echo -e ' <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
- <draw:color draw:name="Red Hat 2" draw:color="#0093d9"/> 
- <draw:color draw:name="Red Hat 3" draw:color="#ff8d00"/>
- <draw:color draw:name="Red Hat 4" draw:color="#abb400"/>
- <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
+ echo -e '  <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
+  <draw:color draw:name="Red Hat 2" draw:color="#0093d9"/>
+  <draw:color draw:name="Red Hat 3" draw:color="#ff8d00"/>
+  <draw:color draw:name="Red Hat 4" draw:color="#abb400"/>
+  <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
 git commit -q -a -m 'add Red Hat colors to palette'

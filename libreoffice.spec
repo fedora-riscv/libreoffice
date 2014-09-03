@@ -160,12 +160,12 @@ BuildRequires: pkgconfig(libabw-0.0)
 BuildRequires: pkgconfig(libcdr-0.0)
 BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libetonyek-0.0)
+BuildRequires: pkgconfig(libfreehand-0.0)
 BuildRequires: pkgconfig(libmwaw-0.2)
 BuildRequires: pkgconfig(libodfgen-0.0)
 %endif
 %if 0%{?fedora}
 BuildRequires: pkgconfig(libe-book-0.0)
-BuildRequires: pkgconfig(libfreehand-0.0)
 BuildRequires: pkgconfig(libeot)
 %endif
 BuildRequires: pkgconfig(libcurl)
@@ -302,7 +302,6 @@ Patch47: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
 Patch48: 0001-refine-current-date-time-hotkey-handling.patch
 %if 0%{?rhel}
 Patch49: 0001-disable-libe-book-support.patch
-Patch50: 0001-disable-FreeHand-support.patch
 %endif
 Patch51: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
 Patch52: 0001-fix-variable-name.patch

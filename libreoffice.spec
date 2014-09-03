@@ -317,6 +317,7 @@ Patch24: 0001-fix-variable-name.patch
 Patch25: 0001-cast-arg-to-the-right-type.patch
 Patch26: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
 Patch27: 0002-Linux-AArch64-port.patch
+Patch28: 0001-fix-KDE4-detection-on-aarch64.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

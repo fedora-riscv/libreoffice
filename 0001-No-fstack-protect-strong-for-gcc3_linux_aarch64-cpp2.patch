@@ -14,7 +14,7 @@ index 33a5c00..c2e303d 100644
 --- a/bridges/Library_cpp_uno.mk
 +++ b/bridges/Library_cpp_uno.mk
 @@ -38,7 +38,14 @@ endif
- else ifneq (,$(filter ANDROID-AARCH64 LINUX-AARCH64,$(OS)-$(CPUNAME)))
+ else ifeq ($(OS)-$(CPUNAME),LINUX-AARCH64)
  
  bridges_SELECTED_BRIDGE := gcc3_linux_aarch64
 -bridge_exception_objects := abi callvirtualfunction cpp2uno uno2cpp

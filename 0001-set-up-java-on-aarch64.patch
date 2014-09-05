@@ -1,0 +1,28 @@
+From 6910ddd32da7f65ac38627aa5e5d2b0524cb4ef1 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 5 Sep 2014 08:23:50 +0200
+Subject: [PATCH] set up java on aarch64
+
+Change-Id: I76c9c79e5d21a99fa2578a4d98a7a7d41d32edb5
+---
+ configure.ac | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 2560a0d..873bcaa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7097,6 +7097,10 @@ if test -n "$ENABLE_JAVA" -a \( -z "$JAVALIB" -o -z "$JAVAINC" \); then
+ 
+         case "$host_cpu" in
+ 
++        aarch64)
++            JAVA_ARCH="aarch64"
++            JAVA_TOOLKIT="server"
++            ;;
+         alpha)
+             JAVA_ARCH="alpha"
+             JAVA_TOOLKIT="server"
+-- 
+1.9.3
+

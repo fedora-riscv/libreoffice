@@ -310,6 +310,7 @@ Patch55: 0002-Linux-AArch64-port.patch
 Patch56: 0001-fix-KDE4-detection-on-aarch64.patch
 Patch57: 0001-drop-useless-test-for-ant-apache-regexp.patch
 Patch58: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
+Patch59: 0001-set-up-java-on-aarch64.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,13 +1,13 @@
-From caa08b214542fdf1bed3912b9c4fac36e5d87eb2 Mon Sep 17 00:00:00 2001
+From e7257a25ac18e44dcfb7b6d8bdfafd4d956a50d9 Mon Sep 17 00:00:00 2001
 From: Jennifer Liebel <jliebel94@gmail.com>
 Date: Tue, 2 Sep 2014 12:40:20 +0000
 Subject: [PATCH] fdo#82496: Change picture option by rightclicking
 
 Change-Id: I31fb1a1f89030610a9d11b9236e8cde22dbc0ca5
 ---
- sw/sdi/_grfsh.sdi                 | 12 ++++++++++++
- sw/source/ui/app/mn.src           |  1 +
- sw/source/uibase/shells/grfsh.cxx |  3 +--
+ sw/sdi/_grfsh.sdi             | 12 ++++++++++++
+ sw/source/ui/app/mn.src       |  1 +
+ sw/source/ui/shells/grfsh.cxx |  3 +--
  3 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/sw/sdi/_grfsh.sdi b/sw/sdi/_grfsh.sdi
@@ -41,10 +41,10 @@ index 15c00cc..2eb2ab2 100644
      [
          ExecMethod = ExecAttr ;
 diff --git a/sw/source/ui/app/mn.src b/sw/source/ui/app/mn.src
-index f62c8da..79b797d 100644
+index 94ddb2f..68260a9 100644
 --- a/sw/source/ui/app/mn.src
 +++ b/sw/source/ui/app/mn.src
-@@ -1239,6 +1239,7 @@ Menu MN_GRF_POPUPMENU
+@@ -1253,6 +1253,7 @@ Menu MN_GRF_POPUPMENU
          MN_FRM_CAPTION_ITEM
          SEPARATOR;
          MenuItem { ITEM_SAVE_GRAPHIC };
@@ -52,11 +52,11 @@ index f62c8da..79b797d 100644
          MenuItem { ITEM_COMPRESS_GRAPHIC };
          MenuItem { ITEM_EXTERNAL_EDIT };
  
-diff --git a/sw/source/uibase/shells/grfsh.cxx b/sw/source/uibase/shells/grfsh.cxx
-index d5ecec5..0e13b38 100644
---- a/sw/source/core/uibase/shells/grfsh.cxx
-+++ b/sw/source/core/uibase/shells/grfsh.cxx
-@@ -178,7 +178,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
+diff --git a/sw/source/ui/shells/grfsh.cxx b/sw/source/ui/shells/grfsh.cxx
+index 00e49bf..15886c3 100644
+--- a/sw/source/ui/shells/grfsh.cxx
++++ b/sw/source/ui/shells/grfsh.cxx
+@@ -171,7 +171,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
              }
          }
          break;
@@ -64,15 +64,15 @@ index d5ecec5..0e13b38 100644
          case SID_EXTERNAL_EDIT:
          {
              // When the graphic is selected to be opened via some external tool
-@@ -191,7 +190,7 @@ void SwGrfShell::Execute(SfxRequest &rReq)
+@@ -184,7 +183,7 @@ void SwGrfShell::Execute(SfxRequest &rReq)
              }
          }
          break;
 -
 +        case SID_CHANGE_PICTURE:
          case SID_INSERT_GRAPHIC:
-         {
-             // #i123922# implement slot independent from the two below to
+         case FN_FORMAT_GRAFIC_DLG:
+         case FN_DRAW_WRAP_DLG:
 -- 
 1.9.3
 

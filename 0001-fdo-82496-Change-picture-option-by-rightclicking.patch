@@ -54,8 +54,8 @@ index f62c8da..79b797d 100644
  
 diff --git a/sw/source/uibase/shells/grfsh.cxx b/sw/source/uibase/shells/grfsh.cxx
 index d5ecec5..0e13b38 100644
---- a/sw/source/uibase/shells/grfsh.cxx
-+++ b/sw/source/uibase/shells/grfsh.cxx
+--- a/sw/source/core/uibase/shells/grfsh.cxx
++++ b/sw/source/core/uibase/shells/grfsh.cxx
 @@ -178,7 +178,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
              }
          }

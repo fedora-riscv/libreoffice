@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.1
+%define libo_version 4.3.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -310,17 +310,13 @@ Patch18: 0001-scrolling-very-slow-in-calc.patch
 Patch19: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
 Patch20: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
 Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-Patch22: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
-Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
-Patch24: 0001-fix-variable-name.patch
-Patch25: 0001-cast-arg-to-the-right-type.patch
-Patch26: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
-Patch27: 0002-Linux-AArch64-port.patch
-Patch28: 0001-fix-KDE4-detection-on-aarch64.patch
-Patch29: 0001-drop-useless-test-for-ant-apache-regexp.patch
-Patch30: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
-Patch31: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
-Patch32: 0001-create-a-master-document-template-type.patch
+Patch22: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
+Patch23: 0002-Linux-AArch64-port.patch
+Patch24: 0001-fix-KDE4-detection-on-aarch64.patch
+Patch25: 0001-drop-useless-test-for-ant-apache-regexp.patch
+Patch26: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
+Patch27: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
+Patch28: 0001-create-a-master-document-template-type.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2300,6 +2296,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Sep 12 2014 David Tardon <dtardon@redhat.com> - 1:4.3.2.1-1
+- update to 4.3.2 rc1
+
 * Wed Sep 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.1.2-5
 - create a master document template type
 

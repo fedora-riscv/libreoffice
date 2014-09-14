@@ -1117,8 +1117,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l ca -n Catalan
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
-%autocorr -l de -n German
-%autocorr -l es -n Spanish
+%autocorr -l de -n German -L
+%autocorr -l es -n Spanish -L
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish
 %autocorr -l fr -n French -L
@@ -1126,7 +1126,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l hr -n Croatian
 %autocorr -l hu -n Hungarian
 %autocorr -l is -n Icelandic
-%autocorr -l it -n Italian
+%autocorr -l it -n Italian -L
 %autocorr -l ja -n Japanese
 %autocorr -l ko -n Korean
 %autocorr -l lb -n Luxembourgish
@@ -1395,9 +1395,6 @@ pushd %{buildroot}%{baseinstdir}/share/autocorr
 %make_autocorr_aliases -l en-ZA en-NA en-ZW
 %if %{with langpacks}
 %make_autocorr_aliases -l af-ZA af-NA
-%make_autocorr_aliases -l de-DE de-AT de-BE de-CH de-LI de-LU
-%make_autocorr_aliases -l es-ES es-AR es-BO es-CL es-CO es-CR es-CU es-DO es-EC es-GT es-HN es-MX es-NI es-PA es-PE es-PR es-PY es-SV es-US es-UY es-VE
-%make_autocorr_aliases -l it-IT it-CH
 %make_autocorr_aliases -l nl-NL nl-AW
 %make_autocorr_aliases -l sv-SE sv-FI
 %else

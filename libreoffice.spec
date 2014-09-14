@@ -317,6 +317,7 @@ Patch25: 0001-drop-useless-test-for-ant-apache-regexp.patch
 Patch26: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
 Patch27: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
 Patch28: 0001-create-a-master-document-template-type.patch
+Patch29: 0001-fdo-80650-src-transl.-merge-must-be-case-sensitive.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

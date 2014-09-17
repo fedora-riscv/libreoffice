@@ -1,0 +1,65 @@
+From 572f3640bc343edf389e63a92b832046f361a0dc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 17 Sep 2014 14:32:03 +0100
+Subject: [PATCH] Resolves: fdo#80911 don't swap notes page width/height
+
+Change-Id: I9826f69d03de85ea8d2b2c025121599877798852
+(cherry picked from commit cca120ad92ecab741ca9683f3cf76d9e4fc81729)
+---
+ sd/source/ui/view/DocumentRenderer.cxx | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/sd/source/ui/view/DocumentRenderer.cxx b/sd/source/ui/view/DocumentRenderer.cxx
+index 7080e9d..1bfb039 100644
+--- a/sd/source/ui/view/DocumentRenderer.cxx
++++ b/sd/source/ui/view/DocumentRenderer.cxx
+@@ -1410,6 +1410,7 @@
+     {
+         SdDrawDocument* pDocument = mrBase.GetMainViewShell()->GetDoc();
+         rInfo.meOrientation = ORIENTATION_PORTRAIT;
++        bool bDoDodgyHeightWidthFit = !mpOptions->IsDraw() && !mpOptions->IsNotes();
+ 
+         if( ! mpOptions->IsBooklet())
+         {
+@@ -1418,19 +1419,32 @@
+         else if (rInfo.maPageSize.Width() < rInfo.maPageSize.Height())
+             rInfo.meOrientation = ORIENTATION_LANDSCAPE;
+ 
+-        const Size aPaperSize (rInfo.mpPrinter->GetPaperSize());
+-        if( (rInfo.meOrientation == ORIENTATION_LANDSCAPE &&
+-              (aPaperSize.Width() < aPaperSize.Height()))
+-           ||
+-            (rInfo.meOrientation == ORIENTATION_PORTRAIT &&
+-              (aPaperSize.Width() > aPaperSize.Height()))
+-          )
++        // Draw and Notes should abide by their specified paper size
++        Size aPaperSize;
++        if (!bDoDodgyHeightWidthFit)
+         {
+-            maPrintSize = awt::Size(aPaperSize.Height(), aPaperSize.Width());
++            aPaperSize.setWidth(rInfo.maPageSize.Width());
++            aPaperSize.setHeight(rInfo.maPageSize.Height());
+         }
+         else
+         {
+-            maPrintSize = awt::Size(aPaperSize.Width(), aPaperSize.Height());
++            aPaperSize.setWidth(rInfo.mpPrinter->GetPaperSize().Width());
++            aPaperSize.setHeight(rInfo.mpPrinter->GetPaperSize().Height());
++        }
++
++        maPrintSize = awt::Size(aPaperSize.Width(), aPaperSize.Height());
++
++        if (bDoDodgyHeightWidthFit)
++        {
++            if( (rInfo.meOrientation == ORIENTATION_LANDSCAPE &&
++                  (aPaperSize.Width() < aPaperSize.Height()))
++               ||
++                (rInfo.meOrientation == ORIENTATION_PORTRAIT &&
++                  (aPaperSize.Width() > aPaperSize.Height()))
++              )
++            {
++                maPrintSize = awt::Size(aPaperSize.Height(), aPaperSize.Width());
++            }
+         }
+ 
+         return true;

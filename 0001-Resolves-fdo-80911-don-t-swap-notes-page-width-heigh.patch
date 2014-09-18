@@ -1,27 +1,56 @@
-From 572f3640bc343edf389e63a92b832046f361a0dc Mon Sep 17 00:00:00 2001
+From c3f2c298d9deff2c6d71619b46789e741bbe5a5b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
-Date: Wed, 17 Sep 2014 14:32:03 +0100
+Date: Thu, 18 Sep 2014 11:40:26 +0100
 Subject: [PATCH] Resolves: fdo#80911 don't swap notes page width/height
 
-Change-Id: I9826f69d03de85ea8d2b2c025121599877798852
+IsDraw doesn't mean the app/page is Draw
+
+it means a slide in impress.
+
+commit 7b31e45ec7106d2cfbdbb7915d97667ba710f81c
+Date:   Mon Jun 23 20:55:21 2014 +0100
+    Make Draw use paper size when printing - fdo#63905
+
+    Previously, Draw/Impress use the default size from the printer.
+    Now Draw uses the paper size (specified in page formatting).
+    Impress still uses the old method - not sure if this is correct
+    but printing handouts etc probably complicate print/paper size.
+
+suggests the intent is for this to not affect Impress and to only
+affect Draw, so this does that
+
+(cherry picked from commit f1f89f0202232635e7fbbd7ca47de51755b2bce0)
+
+Conflicts:
+	sd/source/ui/view/DocumentRenderer.cxx
+
+Change-Id: I481a824ef244fd837992c893f6de0c051af0a26b
+
 (cherry picked from commit cca120ad92ecab741ca9683f3cf76d9e4fc81729)
+
+Conflicts:
+	sd/source/ui/view/DocumentRenderer.cxx
+
+Change-Id: I9826f69d03de85ea8d2b2c025121599877798852
 ---
- sd/source/ui/view/DocumentRenderer.cxx | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ sd/source/ui/view/DocumentRenderer.cxx | 52 +++++++++++++++++++++++++---------
+ 1 file changed, 39 insertions(+), 13 deletions(-)
 
 diff --git a/sd/source/ui/view/DocumentRenderer.cxx b/sd/source/ui/view/DocumentRenderer.cxx
-index 7080e9d..1bfb039 100644
+index 4136e89..dee683a 100644
 --- a/sd/source/ui/view/DocumentRenderer.cxx
 +++ b/sd/source/ui/view/DocumentRenderer.cxx
-@@ -1410,6 +1410,7 @@
+@@ -1409,7 +1409,9 @@ private:
+         PrintInfo& rInfo)
      {
          SdDrawDocument* pDocument = mrBase.GetMainViewShell()->GetDoc();
++        bool bIsDraw = pDocument->GetDocumentType() == DOCUMENT_TYPE_DRAW;
          rInfo.meOrientation = ORIENTATION_PORTRAIT;
-+        bool bDoDodgyHeightWidthFit = !mpOptions->IsDraw() && !mpOptions->IsNotes();
++        bool bDoDodgyHeightWidthFit = !bIsDraw && !mpOptions->IsNotes();
  
          if( ! mpOptions->IsBooklet())
          {
-@@ -1418,19 +1419,32 @@
+@@ -1418,19 +1420,32 @@ private:
          else if (rInfo.maPageSize.Width() < rInfo.maPageSize.Height())
              rInfo.meOrientation = ORIENTATION_LANDSCAPE;
  
@@ -63,3 +92,32 @@ index 7080e9d..1bfb039 100644
          }
  
          return true;
+@@ -1483,10 +1498,21 @@ private:
+ 
+             if (mpOptions->IsTime())
+                 aInfo.msTimeDate += GetSdrGlobalData().GetLocaleData()->getTime( Time( Time::SYSTEM ), sal_False, sal_False );
+-            aInfo.maPrintSize = aInfo.mpPrinter->GetOutputSize();
+-            maPrintSize = awt::Size(
+-                aInfo.mpPrinter->GetPaperSize().Width(),
+-                aInfo.mpPrinter->GetPaperSize().Height());
++
++            // Draw should use specified paper size when printing
++            if (mrBase.GetDocShell()->GetDocumentType() == DOCUMENT_TYPE_DRAW)
++            {
++                aInfo.maPrintSize = mrBase.GetDocument()->GetSdPage(0, PK_STANDARD)->GetSize();
++                maPrintSize = awt::Size(aInfo.maPrintSize.Width(),
++                                        aInfo.maPrintSize.Height());
++            }
++            else
++            {
++                aInfo.maPrintSize = aInfo.mpPrinter->GetOutputSize();
++                maPrintSize = awt::Size(
++                    aInfo.mpPrinter->GetPaperSize().Width(),
++                    aInfo.mpPrinter->GetPaperSize().Height());
++            }
+ 
+             switch (mpOptions->GetOutputQuality())
+             {
+-- 
+1.9.3
+

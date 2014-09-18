@@ -46,7 +46,7 @@ index 7080e9d..8e1739c 100644
          SdDrawDocument* pDocument = mrBase.GetMainViewShell()->GetDoc();
 +        bool bIsDraw = pDocument->GetDocumentType() == DOCUMENT_TYPE_DRAW;
          rInfo.meOrientation = ORIENTATION_PORTRAIT;
-+        bool bDoDodgyHeightWidthFit = bIsDraw && !mpOptions->IsNotes();
++        bool bDoDodgyHeightWidthFit = !bIsDraw && !mpOptions->IsNotes();
  
          if( ! mpOptions->IsBooklet())
          {

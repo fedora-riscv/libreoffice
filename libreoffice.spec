@@ -46,8 +46,8 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
-License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
+Release:        4%{?libo_prerelease}%{?dist}
+License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
 
@@ -390,6 +390,7 @@ Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
+Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
 Obsoletes: openoffice.org-core < 1:3.3.1
@@ -837,15 +838,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
-
-%package appdata
-Summary: AppData support for LibreOffice
-Group:   Applications/Productivity
-License: CC0
-BuildArch: noarch
-
-%description appdata
-%{name}-appdata contains the AppData definition file for LibreOffice.
 
 %endif
 
@@ -2054,6 +2046,7 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %{baseinstdir}/share/registry/base.xcd
 %{baseinstdir}/share/registry/reportbuilder.xcd
 %{baseinstdir}/program/sbase
+%{_datadir}/appdata/libreoffice-base.appdata.xml
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
@@ -2128,6 +2121,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc
+%{_datadir}/appdata/libreoffice-calc.appdata.xml
 %{_datadir}/applications/libreoffice-calc.desktop
 %{_bindir}/oocalc
 %{_mandir}/man1/oocalc.1*
@@ -2143,6 +2137,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
+%{_datadir}/appdata/libreoffice-draw.appdata.xml
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
 %{_mandir}/man1/oodraw.1*
@@ -2172,6 +2167,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
 %{baseinstdir}/program/swriter
+%{_datadir}/appdata/libreoffice-writer.appdata.xml
 %{_datadir}/applications/libreoffice-writer.desktop
 %{_bindir}/oowriter
 %{_mandir}/man1/oowriter.1*
@@ -2197,6 +2193,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/impress.xcd
 %{baseinstdir}/program/pagein-impress
 %{baseinstdir}/program/simpress
+%{_datadir}/appdata/libreoffice-impress.appdata.xml
 %{_datadir}/applications/libreoffice-impress.desktop
 %{_bindir}/ooimpress
 %{_mandir}/man1/ooimpress.1*
@@ -2297,14 +2294,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
-%files appdata
-%doc instdir/LICENSE
-%dir %{_datadir}/appdata
-%{_datadir}/appdata/*.appdata.xml
-
 %endif
 
 %changelog
+* Tue Sep 23 2014 Richard Hughes <richard@hughsie.com> - 1:4.3.2.2-4
+- move appdata files to desktop files, where the belong
+
 * Tue Sep 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.2.2-3
 - Resolves: rhbz#1054952 cannot access smb URLs on KDE
 

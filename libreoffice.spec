@@ -320,6 +320,7 @@ Patch28: 0001-create-a-master-document-template-type.patch
 Patch29: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
 Patch30: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
+Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2298,6 +2299,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Sep 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.2.2-2
 - make brochure printing of impress/draw work out of the box
+- Resolves: rhbz#1133863 fix looping layout
 
 * Mon Sep 22 2014 David Tardon <dtardon@redhat.com> - 1:4.3.2.2-1
 - update to 4.3.2 rc2

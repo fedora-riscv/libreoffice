@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -315,6 +315,7 @@ Patch60: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
 Patch61: 0001-create-a-master-document-template-type.patch
 Patch62: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
 Patch63: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
+Patch64: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2256,6 +2257,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Sep 23 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.6.3-6
+- improve impress notes brochure printing
+
 * Thu Sep 18 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.6.3-5
 - default n-up printing of notes to sensible 2x1
 

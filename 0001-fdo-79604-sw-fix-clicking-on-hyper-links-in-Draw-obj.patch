@@ -1,0 +1,86 @@
+From d9bf56c30137dc33dfc88bd06e98774113fb146d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Mon, 6 Oct 2014 23:37:18 +0200
+Subject: [PATCH] fdo#79604: sw: fix clicking on hyper-links in Draw objects
+
+The URL is dispatched in MouseButtonUp(), but this relies on
+MouseButtonDown() not selecting the drawing object when the cursor is
+over an URL field.
+
+(probably regression from commit 7e2f98d0a0c4a0f36a94353a256e7cc5caa3113b
+ and commit 5ed14025645200c77249da364870f5772c01df17)
+
+Change-Id: Ib1504baff5d1fffd6ce53b41d3ff726d8e4d5c9d
+(cherry picked from commit 5284e44ed0594a79b0cc22090a9a82b19962f6c2)
+---
+ sw/source/ui/docvw/edtwin.cxx | 38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
+
+diff --git a/sw/source/ui/docvw/edtwin.cxx b/sw/source/ui/docvw/edtwin.cxx
+index 7927987..82c032a 100644
+--- a/sw/source/ui/docvw/edtwin.cxx
++++ b/sw/source/ui/docvw/edtwin.cxx
+@@ -3126,8 +3126,27 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
+             case MOUSE_LEFT + KEY_MOD2:
+             {
+ 
++                // fdo#79604: first, check if a link has been clicked - do not
++                // select fly in this case!
++                if (1 == nNumberOfClicks)
++                {
++                    UpdatePointer( aDocPos, rMEvt.GetModifier() );
++                    SwEditWin::m_nDDStartPosY = aDocPos.Y();
++                    SwEditWin::m_nDDStartPosX = aDocPos.X();
++
++                    // hit an URL in DrawText object?
++                    if (bExecHyperlinks && pSdrView)
++                    {
++                        SdrViewEvent aVEvt;
++                        pSdrView->PickAnything(rMEvt, SDRMOUSEBUTTONDOWN, aVEvt);
++
++                        if (aVEvt.eEvent == SDREVENT_EXECUTEURL)
++                            bExecDrawTextLink = true;
++                    }
++                }
++
+                 bool bHandledFlyClick = false;
+-                if ( nNumberOfClicks == nNbFlyClicks )
++                if (!bExecDrawTextLink && nNumberOfClicks == nNbFlyClicks)
+                 {
+                     bHandledFlyClick = true;
+                     // only try to select frame, if pointer already was
+@@ -3250,22 +3269,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
+                 switch ( nNumberOfClicks )
+                 {
+                     case 1:
+-                    {
+-                        UpdatePointer( aDocPos, rMEvt.GetModifier() );
+-                        SwEditWin::m_nDDStartPosY = aDocPos.Y();
+-                        SwEditWin::m_nDDStartPosX = aDocPos.X();
+-
+-                        // hit an URL in DrawText object?
+-                        if (bExecHyperlinks && pSdrView)
+-                        {
+-                            SdrViewEvent aVEvt;
+-                            pSdrView->PickAnything(rMEvt, SDRMOUSEBUTTONDOWN, aVEvt);
+-
+-                            if (aVEvt.eEvent == SDREVENT_EXECUTEURL)
+-                                bExecDrawTextLink = true;
+-                        }
+                         break;
+-                    }
+                     case 2:
+                     {
+                         bFrmDrag = false;
+@@ -3663,7 +3667,7 @@ void SwEditWin::MouseButtonDown(const MouseEvent& _rMEvt)
+ 
+                     bNoInterrupt = bTmpNoInterrupt;
+                 }
+-                if ( !bOverURLGrf && !bOnlyText )
++                if (!bOverURLGrf && !bExecDrawTextLink && !bOnlyText)
+                 {
+                     const int nSelType = rSh.GetSelectionType();
+                     // Check in general, if an object is selectable at given position.
+-- 
+1.9.3
+

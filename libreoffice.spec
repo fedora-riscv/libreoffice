@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -321,6 +321,7 @@ Patch29: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
 Patch30: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
+Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -378,7 +379,6 @@ Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberatio
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
-Requires: gvfs-smb
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en
 %else
@@ -437,7 +437,6 @@ Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
-Requires: gvfs-smb
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
 %endif
@@ -584,7 +583,6 @@ mathematical symbols.
 %package writer
 Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
@@ -616,7 +614,6 @@ Enables the LibreOffice writer module to mail-merge to email.
 %package calc
 Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
@@ -634,7 +631,6 @@ The LibreOffice Spreadsheet application.
 %package draw
 Summary: LibreOffice Drawing Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
@@ -654,7 +650,6 @@ The LibreOffice Drawing Application.
 %package impress
 Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
@@ -682,7 +677,6 @@ The LibreOffice Presentation Application.
 %package math
 Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
@@ -715,7 +709,6 @@ flash filters.
 %package xsltfilter
 Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -2297,6 +2290,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Oct 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.2.2-5
+- Resolves: rhbz#1054952 bad access of smb URLs on KDE
+
 * Tue Sep 23 2014 Richard Hughes <richard@hughsie.com> - 1:4.3.2.2-4
 - move appdata files to desktop files, where the belong
 

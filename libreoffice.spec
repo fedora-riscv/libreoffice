@@ -322,6 +322,7 @@ Patch30: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
+Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

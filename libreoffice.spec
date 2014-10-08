@@ -317,6 +317,7 @@ Patch62: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
 Patch63: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch64: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch65: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
+Patch66: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -367,7 +368,6 @@ Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberatio
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
-Requires: gvfs-smb
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires: hunspell-en
 %else
@@ -425,7 +425,6 @@ Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
-Requires: gvfs-smb
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
 %endif
@@ -562,7 +561,6 @@ mathematical symbols.
 %package writer
 Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
@@ -594,7 +592,6 @@ Enables the LibreOffice writer module to mail-merge to email.
 %package calc
 Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
@@ -612,7 +609,6 @@ The LibreOffice Spreadsheet application.
 %package draw
 Summary: LibreOffice Drawing Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
@@ -632,7 +628,6 @@ The LibreOffice Drawing Application.
 %package impress
 Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
@@ -660,7 +655,6 @@ The LibreOffice Presentation Application.
 %package math
 Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
@@ -693,7 +687,6 @@ flash filters.
 %package xsltfilter
 Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
-Requires: gvfs-smb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -2266,8 +2259,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Sep 23 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.6.3-8-UNBUILT
+* Wed Oct 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.6.3-8
 - Resolves: fdo#79604 sw: fix clicking on hyper-links in Draw objects
+- Resolves: rhbz#1054952 bad access of smb URLs on KDE
 
 * Tue Sep 23 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.6.3-7
 - Resolves: rhbz#1054952 cannot access smb URLs on KDE

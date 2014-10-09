@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -318,6 +318,7 @@ Patch63: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch64: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch65: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
 Patch66: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
+Patch67: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2259,6 +2260,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Oct 09 2014 Eike Rathke <erack@redhat.com> - 1:4.2.6.3-9-UNBUILT
+- InsertCurrentTime: in input mode inherit matching format if set
+
 * Wed Oct 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.6.3-8
 - Resolves: fdo#79604 sw: fix clicking on hyper-links in Draw objects
 - Resolves: rhbz#1054952 bad access of smb URLs on KDE

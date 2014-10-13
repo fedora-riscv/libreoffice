@@ -1541,11 +1541,9 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 mkdir -p %{buildroot}%{_datadir}/glade3/catalogs
 mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
-%if 0%{?fedora}
 # rhbz#1049543 install appdata
 mkdir -p %{buildroot}%{_datadir}/appdata
 cp -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
-%endif
 
 # install man pages
 install -m 0755 -d %{buildroot}%{_mandir}/man1

@@ -1320,7 +1320,7 @@ export PRODUCTVERSIONSHORT PRODUCTVERSION
 
 # installation
 
-mkdir -p %{buildroot}%{instdir}
+install -m 0755 -d %{buildroot}%{instdir}
 if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
     cat $WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
@@ -1333,7 +1333,7 @@ if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; the
     echo - ---dump log end -- languagepacks---
     exit 1
 fi
-mkdir -p %{buildroot}%{baseinstdir}
+install -m 0755 -d %{buildroot}%{baseinstdir}
 mv $WORKDIR/installation/LibreOffice/installed/install/en-US/* %{buildroot}%{baseinstdir}
 %if %{with langpacks}
 for langpack in $WORKDIR/installation/LibreOffice_languagepack/installed/install/*; do
@@ -1400,7 +1400,7 @@ rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif
 popd
 #rhbz#484055 make these shared across multiple applications
-mkdir -p %{buildroot}%{_datadir}
+install -m 0755 -d %{buildroot}%{_datadir}
 mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
 chmod 755 %{buildroot}%{_datadir}/autocorr
 
@@ -1415,7 +1415,7 @@ find %{buildroot}%{baseinstdir} -exec chmod +w {} \;
 find %{buildroot}%{baseinstdir} -type d -exec chmod 0755 {} \;
 
 # move python bits into site-packages
-mkdir -p %{buildroot}%{libo_python_sitearch}
+install -m 0755 -d %{buildroot}%{libo_python_sitearch}
 pushd %{buildroot}%{libo_python_sitearch}
 echo "import sys, os" > uno.py
 echo "sys.path.append('%{baseinstdir}/program')" >> uno.py
@@ -1454,7 +1454,7 @@ if [ $pic == 1 ]; then false; fi
 if [ $executable == 1 ]; then false; fi
 
 #make up some /usr/bin scripts
-mkdir -p %{buildroot}%{_bindir}
+install -m 0755 -d %{buildroot}%{_bindir}
 
 pushd %{buildroot}%{_bindir}
 echo \#\!/bin/sh > ooffice
@@ -1502,11 +1502,11 @@ done
 # rhbz#156677 / rhbz#186515 do not show math and startcenter
 sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop
 # relocate the .desktop and icon files
-mkdir -p %{buildroot}%{_datadir}/applications
+install -m 0755 -d %{buildroot}%{_datadir}/applications
 for app in base calc draw impress math startcenter writer xsltfilter; do
     sed -i -e 's/\${UNIXBASISROOTNAME}/%{name}/' $app.desktop
     desktop-file-validate $app.desktop
-    cp -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
+    install -m 0644 -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
 
@@ -1517,33 +1517,33 @@ rm -rf icons/gnome applications application-registry
 #relocate the rest of them
 # rhbz#901346 512x512 icons are not used by anything
 for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
-    mkdir -p %{buildroot}%{_datadir}/`dirname $icon`
-    cp -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
+    install -m 0755 -d %{buildroot}%{_datadir}/`dirname $icon`
+    install -m 0644 -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
 done
-mkdir -p %{buildroot}%{_datadir}/mime-info
-cp -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
-cp -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
+install -m 0755 -d %{buildroot}%{_datadir}/mime-info
+install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
+install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
-mkdir -p %{buildroot}%{_datadir}/mime/packages
-cp -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
+install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
+install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
 
-mkdir -p %{buildroot}%{baseinstdir}/share/psprint/driver
-cp -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
+install -m 0755 -d %{buildroot}%{baseinstdir}/share/psprint/driver
+install -m 0644 -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" %{buildroot}%{baseinstdir}/program/fundamentalrc
 
 # move glade catalog to system glade dir
-mkdir -p %{buildroot}%{_datadir}/glade3/catalogs
+install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
 mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
 # rhbz#1049543 install appdata
-mkdir -p %{buildroot}%{_datadir}/appdata
-cp -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
+install -m 0755 -d %{buildroot}%{_datadir}/appdata
+install -m 0644 -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
 
 # install man pages
 install -m 0755 -d %{buildroot}%{_mandir}/man1

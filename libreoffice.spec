@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.6
+%define libo_version 4.2.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -18,8 +18,8 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-# http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 
@@ -35,8 +35,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        9%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -268,57 +268,50 @@ Patch14: 0001-disable-firebird-unit-test.patch
 Patch15: 0001-never-run-autogen.sh.patch
 Patch16: 0001-Related-rhbz-1065807-rework-i66157-for-multiple-writ.patch
 Patch17: 0001-Resolves-rhbz-1065807-use-xdg-Templates-for-default-.patch
-Patch18: 0001-rhbz-1057977-avoid-use-of-invalidated-pointers.patch
-Patch19: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
-Patch20: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
-Patch21: 0001-Package-GeneratedPackage-fixup.patch
-Patch22: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
-Patch23: 0001-drop-OnlyShowIn-from-.desktop-files.patch
-Patch24: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
-Patch25: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
-Patch26: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
-Patch27: 0001-add-a-format-all-comments-feature.patch
-Patch28: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
-Patch29: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
-Patch30: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
-Patch31: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch32: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
-Patch33: 0001-center-slide-after-changing-zoom.patch
-Patch34: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
-Patch35: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
-Patch36: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
-Patch37: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
-Patch38: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
-Patch39: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch40: 0001-scrolling-very-slow-in-calc.patch
-Patch41: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch42: 0001-Resolves-rhbz-1121341-crash-on-closing-shrunk-validi.patch
-Patch43: 0001-Resolves-i125289-do-apply-possible-changed-GraphicSt.patch
-Patch44: 0001-rhbz-1121254-reload-font-list-from-shell-on-change.patch
-Patch45: 0001-rhbz-1079672-FileDialogHelper-don-t-hand-out-stale-p.patch
-Patch46: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-Patch47: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
-Patch48: 0001-refine-current-date-time-hotkey-handling.patch
+Patch18: 0001-KDE-don-t-throw-on-TemplatePathVariable.patch
+Patch19: 0001-Change-SDK-javaodc-from-static-Package-to-dynamic-Ge.patch
+Patch20: 0001-Package-GeneratedPackage-fixup.patch
+Patch21: 0001-Related-rhbz-1075951-abrt-crash-in-MSWordExportBase-.patch
+Patch22: 0001-drop-OnlyShowIn-from-.desktop-files.patch
+Patch23: 0001-Resolves-rhbz-1081176-don-t-jump-to-cursor-pos-when.patch
+Patch24: 0001-Resolves-fdo-36815-enable-printing-WYSIWYG-sidewindo.patch
+Patch25: 0001-Related-fdo-36815-print-the-text-highlight-range-as-.patch
+Patch26: 0001-add-a-format-all-comments-feature.patch
+Patch27: 0001-Resolves-fdo-37130-use-10pt-Default-style-font-for-c.patch
+Patch28: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
+Patch29: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
+Patch30: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch31: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
+Patch32: 0001-center-slide-after-changing-zoom.patch
+Patch33: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch34: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
+Patch35: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
+Patch36: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
+Patch37: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
+Patch38: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch39: 0001-scrolling-very-slow-in-calc.patch
+Patch40: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch41: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+Patch42: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
+Patch43: 0001-refine-current-date-time-hotkey-handling.patch
 %if 0%{?rhel}
-Patch49: 0001-disable-libe-book-support.patch
+Patch44: 0001-disable-libe-book-support.patch
 %endif
-Patch51: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
-Patch52: 0001-fix-variable-name.patch
-Patch53: 0001-cast-arg-to-the-right-type.patch
-Patch54: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
-Patch55: 0002-Linux-AArch64-port.patch
-Patch56: 0001-fix-KDE4-detection-on-aarch64.patch
-Patch57: 0001-drop-useless-test-for-ant-apache-regexp.patch
-Patch58: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
-Patch59: 0001-set-up-java-on-aarch64.patch
-Patch60: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
-Patch61: 0001-create-a-master-document-template-type.patch
-Patch62: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
-Patch63: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
-Patch64: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
-Patch65: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
-Patch66: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
-Patch67: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
+Patch45: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
+Patch46: 0001-fix-variable-name.patch
+Patch47: 0001-cast-arg-to-the-right-type.patch
+Patch48: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
+Patch49: 0002-Linux-AArch64-port.patch
+Patch50: 0001-fix-KDE4-detection-on-aarch64.patch
+Patch51: 0001-drop-useless-test-for-ant-apache-regexp.patch
+Patch52: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
+Patch53: 0001-set-up-java-on-aarch64.patch
+Patch54: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
+Patch55: 0001-create-a-master-document-template-type.patch
+Patch56: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
+Patch57: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
+Patch58: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
+Patch59: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2260,7 +2253,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Oct 09 2014 Eike Rathke <erack@redhat.com> - 1:4.2.6.3-9-UNBUILT
+* Thu Oct 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.7.2-1
+- new upstream release
 - InsertCurrentTime: in input mode inherit matching format if set
 
 * Wed Oct 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.2.6.3-8

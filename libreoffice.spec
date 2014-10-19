@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -107,7 +107,8 @@ Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge
+Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-gltf
 %endif
 
 # build tools
@@ -179,6 +180,7 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libfreehand-0.1)
+BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
@@ -1259,8 +1261,8 @@ touch autogen.lastrun
  %vendoroption \
  %{?with_lang} \
  --disable-coinmp \
+ --disable-collada \
  --disable-fetch-external \
- --disable-gltf \
  --disable-gnome-vfs \
  --disable-openssl \
  --enable-dbus \
@@ -1278,6 +1280,7 @@ touch autogen.lastrun
  --with-external-tar="$EXTSRCDIR" \
  --with-help \
  --with-system-dicts \
+ --with-system-libgltf \
  --with-system-libs \
  --with-system-ucpp \
  --without-fonts \
@@ -2289,6 +2292,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Oct 19 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.1-2
+- enable support for 3-D models
+
 * Thu Oct 09 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.1-1
 - update to 4.3.3 rc1
 

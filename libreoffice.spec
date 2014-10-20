@@ -108,8 +108,11 @@ Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-gltf
+Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-gltf --without-system-opencollada
 %endif
+
+Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
 # build tools
 BuildRequires: autoconf
@@ -173,6 +176,7 @@ BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 BuildRequires: glm-devel
 BuildRequires: kdelibs4-devel
+BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(glew)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
@@ -325,6 +329,7 @@ Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
+Patch35: 0001-allow-to-build-with-system-opencollada.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1231,6 +1236,8 @@ export CXXFLAGS=$ARCH_FLAGS
 %endif
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
+export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
 
 %if %{with langpacks}
@@ -1261,7 +1268,6 @@ touch autogen.lastrun
  %vendoroption \
  %{?with_lang} \
  --disable-coinmp \
- --disable-collada \
  --disable-fetch-external \
  --disable-gnome-vfs \
  --disable-openssl \
@@ -1282,6 +1288,7 @@ touch autogen.lastrun
  --with-system-dicts \
  --with-system-libgltf \
  --with-system-libs \
+ --with-system-opencollada \
  --with-system-ucpp \
  --without-fonts \
  --without-ppds \

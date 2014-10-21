@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -282,36 +282,35 @@ Patch28: 0001-Related-fdo-36815-center-scaled-comment-page-vertica.patch
 Patch29: 0001-Resolves-fdo-78128-go-back-to-using-an-interim-metaf.patch
 Patch30: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch31: 0001-Related-fdo-36815-clip-overlarge-comment-contents.patch
-Patch32: 0001-center-slide-after-changing-zoom.patch
-Patch33: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
-Patch34: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
-Patch35: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
-Patch36: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
-Patch37: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
-Patch38: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch39: 0001-scrolling-very-slow-in-calc.patch
-Patch40: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch41: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-Patch42: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
-Patch43: 0001-refine-current-date-time-hotkey-handling.patch
+Patch32: 0001-add-a-status-bar-icon-to-fit-slide-to-window.patch
+Patch33: 0001-Related-fdo-50697-reset-the-cache-timeout-on-GetGrap.patch
+Patch34: 0001-Resolves-rhbz-1096295-hard-to-distinguish-selected-f.patch
+Patch35: 0001-update-libxmlsec-config.-to-support-ppc64le.patch
+Patch36: 0001-move-UOF-and-Office-2003-filters-to-xsltfilter-modul.patch
+Patch37: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch38: 0001-scrolling-very-slow-in-calc.patch
+Patch39: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch40: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+Patch41: 0001-Resolves-rhbz-1125588-port-LibreOffice-to-ppc64le.patch
+Patch42: 0001-refine-current-date-time-hotkey-handling.patch
 %if 0%{?rhel}
-Patch44: 0001-disable-libe-book-support.patch
+Patch43: 0001-disable-libe-book-support.patch
 %endif
-Patch45: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
-Patch46: 0001-fix-variable-name.patch
-Patch47: 0001-cast-arg-to-the-right-type.patch
-Patch48: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
-Patch49: 0002-Linux-AArch64-port.patch
-Patch50: 0001-fix-KDE4-detection-on-aarch64.patch
-Patch51: 0001-drop-useless-test-for-ant-apache-regexp.patch
-Patch52: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
-Patch53: 0001-set-up-java-on-aarch64.patch
-Patch54: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
-Patch55: 0001-create-a-master-document-template-type.patch
-Patch56: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
-Patch57: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
-Patch58: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
-Patch59: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
+Patch44: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
+Patch45: 0001-fix-variable-name.patch
+Patch46: 0001-cast-arg-to-the-right-type.patch
+Patch47: 0001-sigh-simply-forgot-to-include-the-endian-header.patch
+Patch48: 0002-Linux-AArch64-port.patch
+Patch49: 0001-fix-KDE4-detection-on-aarch64.patch
+Patch50: 0001-drop-useless-test-for-ant-apache-regexp.patch
+Patch51: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
+Patch52: 0001-set-up-java-on-aarch64.patch
+Patch53: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
+Patch54: 0001-create-a-master-document-template-type.patch
+Patch55: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
+Patch56: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
+Patch57: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
+Patch58: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2253,6 +2252,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Oct 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-2.UNBUILT
+- drop slide centering on scroll attempt
+
 * Thu Oct 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.7.2-1
 - new upstream release
 - InsertCurrentTime: in input mode inherit matching format if set

@@ -64,7 +64,7 @@ Source10:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 %endif
 
 %if 0%{?rhel} && 0%{?rhel} < 7
-Source11:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
+Source11:       %{external_url}/a67a46ec9d00d283a7cd8dbdd2906b59-mdds_0.11.0.tar.bz2
 Source12:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source13:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source14:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz

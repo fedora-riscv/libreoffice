@@ -1538,6 +1538,7 @@ popd
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
 
+# to-do, remove this in libreoffice 4.4 when --without-ppds is gone, it'll do the right thing on its own then
 install -m 0755 -d %{buildroot}%{baseinstdir}/share/psprint/driver
 install -m 0644 -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
 

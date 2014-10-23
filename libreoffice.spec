@@ -1275,7 +1275,6 @@ touch autogen.lastrun
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
- --enable-lockdown \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \

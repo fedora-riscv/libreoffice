@@ -1271,7 +1271,6 @@ touch autogen.lastrun
  --disable-fetch-external \
  --disable-gnome-vfs \
  --disable-openssl \
- --enable-dbus \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \

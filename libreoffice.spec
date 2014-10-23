@@ -1280,7 +1280,6 @@ touch autogen.lastrun
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
  --enable-symbols \
- --enable-vba \
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \

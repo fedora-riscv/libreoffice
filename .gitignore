@@ -44,6 +44,7 @@
 /libmspub-0.0.6.tar.bz2
 /libmwaw-0.2.0.tar.bz2
 /libodfgen-0.0.4.tar.bz2
+/libpagemaker-0.0.1.tar.bz2
 /libvisio-0.0.31.tar.bz2
 /libreoffice-4.2.4.1.tar.xz
 /libreoffice-help-4.2.4.1.tar.xz
@@ -60,7 +61,7 @@
 /libetonyek-0.1.0.tar.bz2
 /libfreehand-0.1.0.tar.bz2
 /libmspub-0.1.0.tar.bz2
-/libmwaw-0.3.1.tar.bz2
+/libmwaw-0.3.3.tar.bz2
 /libodfgen-0.1.0.tar.bz2
 /librevenge-0.0.0.tar.bz2
 /libvisio-0.1.0.tar.bz2
@@ -110,3 +111,6 @@
 /libreoffice-4.3.4.1.tar.xz
 /libreoffice-help-4.3.4.1.tar.xz
 /libreoffice-translations-4.3.4.1.tar.xz
+/libreoffice-4.4.0.0.beta1.tar.xz
+/libreoffice-help-4.4.0.0.beta1.tar.xz
+/libreoffice-translations-4.4.0.0.beta1.tar.xz

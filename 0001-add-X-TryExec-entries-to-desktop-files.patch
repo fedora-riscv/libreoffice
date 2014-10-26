@@ -20,7 +20,7 @@ index 26f1c6a..2861dfe 100644
 @@ -32,6 +32,7 @@ Keywords=Data;SQL;
  InitialPreference=5
  StartupWMClass=libreoffice-base
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=oobase
  
  Actions=NewDocument;
@@ -32,7 +32,7 @@ index fc5e241..c50f380 100644
 @@ -32,6 +32,7 @@ Keywords=Accounting;Stats;OpenDocument Spreadsheet;Chart;Microsoft Excel;Microso
  InitialPreference=5
  StartupWMClass=libreoffice-calc
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=oocalc
  
  Actions=NewDocument;
@@ -44,7 +44,7 @@ index b5d58ce..274275f 100644
 @@ -32,6 +32,7 @@ Keywords=Vector;Schema;Diagram;Layout;OpenDocument Graphics;Microsoft Publisher;
  InitialPreference=5
  StartupWMClass=libreoffice-draw
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=oodraw
  
  Actions=NewDocument;
@@ -56,7 +56,7 @@ index c1f6231..7e70bfb 100644
 @@ -32,6 +32,7 @@ Keywords=Slideshow;Slides;OpenDocument Presentation;Microsoft PowerPoint;Microso
  InitialPreference=5
  StartupWMClass=libreoffice-impress
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=ooimpress
  
  Actions=NewDocument;
@@ -68,7 +68,7 @@ index b6981f5..4d7bd3c 100644
 @@ -33,6 +33,7 @@ Keywords=Equation;OpenDocument Formula;Formula;odf;MathML;
  InitialPreference=5
  StartupWMClass=libreoffice-math
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=oomath
  
  Actions=NewDocument;
@@ -80,7 +80,7 @@ index c4cea12..6d943a9 100644
 @@ -32,6 +32,7 @@ Keywords=Text;Letter;Fax;Document;OpenDocument Text;Microsoft Word;Microsoft Wor
  InitialPreference=5
  StartupWMClass=libreoffice-writer
- X-KDE-Protocols=file,http,smb,ftp,webdav
+ X-KDE-Protocols=file,http,ftp,webdav
 +X-TryExec=oowriter
  
  Actions=NewDocument;

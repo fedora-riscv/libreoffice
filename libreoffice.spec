@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.4
+%define libo_version 4.4.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .beta1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -102,17 +102,18 @@ Source30:       %{external_url}/libwps-0.3.0.tar.bz2
 Source31:       %{external_url}/libvisio-0.1.0.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.1.tar.bz2
 Source33:       %{external_url}/libodfgen-0.1.1.tar.bz2
-Source34:       %{external_url}/libmwaw-0.3.1.tar.bz2
+Source34:       %{external_url}/libmwaw-0.3.3.tar.bz2
 Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada
+Source41:       %{external_url}/libpagemaker-0.0.1.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %endif
 
-Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
+Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
 # build tools
 BuildRequires: autoconf
@@ -189,6 +190,7 @@ BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.8)
+BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
@@ -312,43 +314,8 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
-Patch18: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch19: 0001-scrolling-very-slow-in-calc.patch
-Patch20: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
-Patch21: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch22: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
-Patch24: 0002-Linux-AArch64-port.patch
-Patch25: 0001-fix-KDE4-detection-on-aarch64.patch
-Patch26: 0001-drop-useless-test-for-ant-apache-regexp.patch
-Patch27: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
-Patch28: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
-Patch29: 0001-create-a-master-document-template-type.patch
-Patch30: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
-Patch31: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
-Patch32: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
-Patch33: 0001-Resolves-fdo-68967-looping-layout.patch
-Patch34: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
-Patch35: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
-Patch36: 0001-allow-to-build-with-system-opencollada.patch
-Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch38: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
-Patch39: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
-Patch40: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
-Patch41: 0001-implement-toggling-off-removeable-master-elements-wi.patch
-Patch42: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
-Patch43: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
-Patch44: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
-Patch45: 0001-have-a-stab-at-improving-impossible-question.patch
-Patch46: 0001-just-use-ANSI-C-declarations.patch
-Patch47: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
-Patch48: 0001-table-layout-cache-returns-wrong-rectangle.patch
-Patch49: 0001-impress-tables-are-not-interactively-growing.patch
-Patch50: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
-Patch51: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
-Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
-Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
+Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
+Patch18: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1076,7 +1043,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l kk -n Kazakh -F -H
 %endif
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -w ka_IN
-%langpack -l ko -n Korean -F -H -A -s cjk -T -c korea -X -o ko_KR -V -w ko_KR
+%langpack -l ko -n Korean -F -H -A -s cjk -T -X -o ko_KR -V -w ko_KR
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -w lt_LT -X
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M
@@ -1323,6 +1290,7 @@ export DESTDIR=../output
 export KDEMAINDIR=/usr
 export GNOMEDIR=/usr
 export GNOME_MIME_THEME=hicolor
+export PREFIXDIR=/usr
 # TODO use empty variables? Should make the renaming hacks in %%install
 # unnecessary.
 . ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION WORKDIR
@@ -1648,7 +1616,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
-%{baseinstdir}/program/gnome-open-url.bin
 %{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
@@ -1721,6 +1688,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
 %{baseinstdir}/program/libjdbclo.so
+# TODO: move elsewhere?
+%{baseinstdir}/program/liblibreofficekitgtk.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
 %{baseinstdir}/program/liblocaledata_en.so
@@ -1794,7 +1763,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmigrationoo2lo.so
 %{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmsformslo.so
-%{baseinstdir}/program/nsplugin
 %{baseinstdir}/program/open-url
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
@@ -1853,7 +1821,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucpexpand1lo.so
 %{baseinstdir}/program/libucpextlo.so
 %{baseinstdir}/program/libucptdoc1lo.so
-%{baseinstdir}/program/unorc
+%{baseinstdir}/program/lounorc
 %{baseinstdir}/program/libupdatefeedlo.so
 %{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
@@ -1868,7 +1836,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/autotext/en-US
 %{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
-%{baseinstdir}/share/config/images.zip
 %{baseinstdir}/share/config/images_crystal.zip
 %{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
@@ -1958,7 +1925,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucpfile1.so
 %{baseinstdir}/program/libutllo.so
 %{baseinstdir}/program/libvcllo.so
-%{baseinstdir}/program/libvclopengllo.so
 %{baseinstdir}/program/libwriterperfectlo.so
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
@@ -1985,7 +1951,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/soffice.bin
 %{baseinstdir}/program/sofficerc
 %{baseinstdir}/program/unoinfo
-%{baseinstdir}/program/libnpsoplugin.so
 %{baseinstdir}/program/oosplash
 %{baseinstdir}/program/shell/
 %dir %{baseinstdir}/share/filter
@@ -2128,7 +2093,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so
 %{baseinstdir}/program/libscfiltlo.so
-%{baseinstdir}/program/libscopencllo.so
 %{baseinstdir}/program/libscuilo.so
 %{baseinstdir}/program/libsolverlo.so
 %{baseinstdir}/program/libwpftcalclo.so

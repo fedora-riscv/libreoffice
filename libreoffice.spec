@@ -1261,7 +1261,6 @@ aclocal -I m4
 autoconf
 # %endif
 
-# TODO: enable gltf?
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
 touch autogen.lastrun

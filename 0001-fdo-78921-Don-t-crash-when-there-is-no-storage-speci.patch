@@ -1,0 +1,32 @@
+From c354deac3c6174b0e725c9bb6aab10b65a95fa0d Mon Sep 17 00:00:00 2001
+From: Maxim Monastirsky <momonasmon@gmail.com>
+Date: Tue, 20 May 2014 17:53:25 +0300
+Subject: [PATCH] fdo#78921 Don't crash when there is no storage specified
+
+Not sure it's a good idea to get here at all
+when exporting as flat xml, but anyway it
+shouldn't crash.
+
+Change-Id: Ib2ce6b044b4395222a394312d49f5a01d157f9f3
+---
+ xmloff/source/style/XMLFontAutoStylePool.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/xmloff/source/style/XMLFontAutoStylePool.cxx b/xmloff/source/style/XMLFontAutoStylePool.cxx
+index ff95ad6..4800c05 100644
+--- a/xmloff/source/style/XMLFontAutoStylePool.cxx
++++ b/xmloff/source/style/XMLFontAutoStylePool.cxx
+@@ -325,6 +325,10 @@ OUString XMLFontAutoStylePool::embedFontFile( const OUString& fileUrl )
+         osl::File file( fileUrl );
+         if( file.open( osl_File_OpenFlag_Read ) != osl::File::E_None )
+             return OUString();
++
++        if ( !GetExport().GetTargetStorage().is() )
++            return OUString();
++
+         uno::Reference< embed::XStorage > storage;
+         storage.set( GetExport().GetTargetStorage()->openStorageElement( OUString( "Fonts" ),
+             ::embed::ElementModes::WRITE ), uno::UNO_QUERY_THROW );
+-- 
+1.9.3
+

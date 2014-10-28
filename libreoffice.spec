@@ -311,6 +311,7 @@ Patch55: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
 Patch56: 0001-fdo-79604-sw-fix-clicking-on-hyper-links-in-Draw-obj.patch
 Patch57: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch58: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
+Patch59: 0001-fdo-78921-Don-t-crash-when-there-is-no-storage-speci.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2252,8 +2253,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Oct 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-2.UNBUILT
+* Tue Oct 28 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-2
 - drop slide centering on scroll attempt
+- Resolves: rhbz#1156664 crash on export to fodt with font embedding enabled
 
 * Thu Oct 16 2014 David Tardon <dtardon@redhat.com> - 1:4.2.7.2-1
 - new upstream release

@@ -323,6 +323,7 @@ Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
+Patch35: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

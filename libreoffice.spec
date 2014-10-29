@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.2
+%define libo_version 4.3.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -80,7 +80,7 @@ Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-lib
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus
 %if 0%{?rhel} < 7
-Source14:       %{external_url}/aa5ca9d1ed1082890835afab26400a39-mdds_0.10.3.tar.bz2
+Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -107,8 +107,12 @@ Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge
+Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
+Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-gltf --without-system-opencollada
 %endif
+
+Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
 # build tools
 BuildRequires: autoconf
@@ -172,6 +176,7 @@ BuildRequires: firebird-devel
 BuildRequires: firebird-libfbembed
 BuildRequires: glm-devel
 BuildRequires: kdelibs4-devel
+BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(glew)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
@@ -179,6 +184,7 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libfreehand-0.1)
+BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
@@ -323,7 +329,8 @@ Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
 Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
-Patch35: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
+Patch35: 0001-allow-to-build-with-system-opencollada.patch
+Patch36: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1230,6 +1237,8 @@ export CXXFLAGS=$ARCH_FLAGS
 %endif
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
+export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
 
 %if %{with langpacks}
@@ -1252,7 +1261,6 @@ aclocal -I m4
 autoconf
 # %endif
 
-# TODO: enable gltf?
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
 touch autogen.lastrun
@@ -1261,25 +1269,23 @@ touch autogen.lastrun
  %{?with_lang} \
  --disable-coinmp \
  --disable-fetch-external \
- --disable-gltf \
  --disable-gnome-vfs \
  --disable-openssl \
- --enable-dbus \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
- --enable-lockdown \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
  --enable-symbols \
- --enable-vba \
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \
  --with-help \
  --with-system-dicts \
+ --with-system-libgltf \
  --with-system-libs \
+ --with-system-opencollada \
  --with-system-ucpp \
  --without-fonts \
  --without-ppds \
@@ -1321,7 +1327,7 @@ export PRODUCTVERSIONSHORT PRODUCTVERSION
 
 # installation
 
-mkdir -p %{buildroot}%{instdir}
+install -m 0755 -d %{buildroot}%{instdir}
 if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
     cat $WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
@@ -1334,7 +1340,7 @@ if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; the
     echo - ---dump log end -- languagepacks---
     exit 1
 fi
-mkdir -p %{buildroot}%{baseinstdir}
+install -m 0755 -d %{buildroot}%{baseinstdir}
 mv $WORKDIR/installation/LibreOffice/installed/install/en-US/* %{buildroot}%{baseinstdir}
 %if %{with langpacks}
 for langpack in $WORKDIR/installation/LibreOffice_languagepack/installed/install/*; do
@@ -1401,7 +1407,7 @@ rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
 %endif
 popd
 #rhbz#484055 make these shared across multiple applications
-mkdir -p %{buildroot}%{_datadir}
+install -m 0755 -d %{buildroot}%{_datadir}
 mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
 chmod 755 %{buildroot}%{_datadir}/autocorr
 
@@ -1416,7 +1422,7 @@ find %{buildroot}%{baseinstdir} -exec chmod +w {} \;
 find %{buildroot}%{baseinstdir} -type d -exec chmod 0755 {} \;
 
 # move python bits into site-packages
-mkdir -p %{buildroot}%{libo_python_sitearch}
+install -m 0755 -d %{buildroot}%{libo_python_sitearch}
 pushd %{buildroot}%{libo_python_sitearch}
 echo "import sys, os" > uno.py
 echo "sys.path.append('%{baseinstdir}/program')" >> uno.py
@@ -1455,7 +1461,7 @@ if [ $pic == 1 ]; then false; fi
 if [ $executable == 1 ]; then false; fi
 
 #make up some /usr/bin scripts
-mkdir -p %{buildroot}%{_bindir}
+install -m 0755 -d %{buildroot}%{_bindir}
 
 pushd %{buildroot}%{_bindir}
 echo \#\!/bin/sh > ooffice
@@ -1503,11 +1509,11 @@ done
 # rhbz#156677 / rhbz#186515 do not show math and startcenter
 sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop
 # relocate the .desktop and icon files
-mkdir -p %{buildroot}%{_datadir}/applications
+install -m 0755 -d %{buildroot}%{_datadir}/applications
 for app in base calc draw impress math startcenter writer xsltfilter; do
     sed -i -e 's/\${UNIXBASISROOTNAME}/%{name}/' $app.desktop
     desktop-file-validate $app.desktop
-    cp -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
+    install -m 0644 -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
 
@@ -1518,35 +1524,34 @@ rm -rf icons/gnome applications application-registry
 #relocate the rest of them
 # rhbz#901346 512x512 icons are not used by anything
 for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
-    mkdir -p %{buildroot}%{_datadir}/`dirname $icon`
-    cp -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
+    install -m 0755 -d %{buildroot}%{_datadir}/`dirname $icon`
+    install -m 0644 -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
 done
-mkdir -p %{buildroot}%{_datadir}/mime-info
-cp -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
-cp -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
+install -m 0755 -d %{buildroot}%{_datadir}/mime-info
+install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
+install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
-mkdir -p %{buildroot}%{_datadir}/mime/packages
-cp -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
+install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
+install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
 
-mkdir -p %{buildroot}%{baseinstdir}/share/psprint/driver
-cp -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
+# to-do, remove this in libreoffice 4.4 when --without-ppds is gone, it'll do the right thing on its own then
+install -m 0755 -d %{buildroot}%{baseinstdir}/share/psprint/driver
+install -m 0644 -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{buildroot}%{baseinstdir}/share/psprint/driver/SGENPRT.PS
 
 # rhbz#452385 to auto have postgres in classpath if subsequently installed
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" %{buildroot}%{baseinstdir}/program/fundamentalrc
 
 # move glade catalog to system glade dir
-mkdir -p %{buildroot}%{_datadir}/glade3/catalogs
+install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
 mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
-%if 0%{?fedora}
 # rhbz#1049543 install appdata
-mkdir -p %{buildroot}%{_datadir}/appdata
-cp -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
-%endif
+install -m 0755 -d %{buildroot}%{_datadir}/appdata
+install -m 0644 -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
 
 # install man pages
 install -m 0755 -d %{buildroot}%{_mandir}/man1
@@ -2292,6 +2297,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Oct 28 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.2-1
+- update to 4.3.3 rc2
+
+* Sun Oct 19 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.1-2
+- enable support for 3-D models
+
+* Thu Oct 09 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.1-1
+- update to 4.3.3 rc1
+
 * Wed Oct 08 2014 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.2.2-5
 - Resolves: rhbz#1054952 bad access of smb URLs on KDE
 

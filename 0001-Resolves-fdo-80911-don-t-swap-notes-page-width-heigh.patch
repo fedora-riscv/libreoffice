@@ -40,11 +40,9 @@ diff --git a/sd/source/ui/view/DocumentRenderer.cxx b/sd/source/ui/view/Document
 index 7080e9d..8e1739c 100644
 --- a/sd/source/ui/view/DocumentRenderer.cxx
 +++ b/sd/source/ui/view/DocumentRenderer.cxx
-@@ -1409,7 +1409,9 @@ private:
-         PrintInfo& rInfo)
-     {
+@@ -1409,6 +1409,7 @@ private:
          SdDrawDocument* pDocument = mrBase.GetMainViewShell()->GetDoc();
-+        bool bIsDraw = pDocument->GetDocumentType() == DOCUMENT_TYPE_DRAW;
+         bool bIsDraw = pDocument->GetDocumentType() == DOCUMENT_TYPE_DRAW;
          rInfo.meOrientation = ORIENTATION_PORTRAIT;
 +        bool bDoDodgyHeightWidthFit = !bIsDraw && !mpOptions->IsNotes();
  
@@ -57,7 +55,7 @@ index 7080e9d..8e1739c 100644
 -        // Draw should abide by specified paper size
 +        // Draw and Notes should abide by their specified paper size
          Size aPaperSize;
--        if (mpOptions->IsDraw())
+-        if (bIsDraw)
 +        if (!bDoDodgyHeightWidthFit)
          {
              aPaperSize.setWidth(rInfo.maPageSize.Width());
@@ -93,15 +91,6 @@ index 7080e9d..8e1739c 100644
          }
  
          return true;
-@@ -1497,7 +1500,7 @@ private:
-                 aInfo.msTimeDate += GetSdrGlobalData().GetLocaleData()->getTime( Time( Time::SYSTEM ), false, false );
- 
-             // Draw should use specified paper size when printing
--            if (mpOptions->IsDraw())
-+            if (mrBase.GetDocShell()->GetDocumentType() == DOCUMENT_TYPE_DRAW)
-             {
-                 aInfo.maPrintSize = mrBase.GetDocument()->GetSdPage(0, PK_STANDARD)->GetSize();
-                 maPrintSize = awt::Size(aInfo.maPrintSize.Width(),
 -- 
 1.9.3
 

@@ -1,0 +1,45 @@
+From 1b0a732bd014566ac6e66939cca26f37a559f6a4 Mon Sep 17 00:00:00 2001
+Message-Id: <1b0a732bd014566ac6e66939cca26f37a559f6a4.1415023712.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 3 Nov 2014 14:52:27 +0100
+Subject: [PATCH] fdo#85403 broadcast changes after TextToColumn
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Regression introduced with 3d869cda8db03820dea8c4ba463eb155d05e933b for
+fdo#74014
+
+Change-Id: Ie8ca1e7c15609aaf80b4ecbb6ccffc30a3f79f0a
+(cherry picked from commit 99cfc0f8a321c3fd3ef1a49d669ebc5744dbf606)
+---
+ sc/source/ui/view/cellsh2.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fdo-85403-broadcast-changes-after-TextToColumn.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fdo-85403-broadcast-changes-after-TextToColumn.patch"
+
+diff --git a/sc/source/ui/view/cellsh2.cxx b/sc/source/ui/view/cellsh2.cxx
+index a93761c..85d3365 100644
+--- a/sc/source/ui/view/cellsh2.cxx
++++ b/sc/source/ui/view/cellsh2.cxx
+@@ -983,6 +983,7 @@ void ScCellShell::ExecuteDB( SfxRequest& rReq )
+                         pDlg->SaveParameters();
+                         aImport.SetExtOptions( aOptions );
+                         aImport.SetApi( false );
++                        aImport.SetImportBroadcast( true );
+                         aStream.Seek( 0 );
+                         aImport.ImportStream( aStream, OUString(), FORMAT_STRING );
+ 
+
+--------------erAck-patch-parts--
+
+

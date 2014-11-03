@@ -315,6 +315,7 @@ Patch59: 0001-fdo-78921-Don-t-crash-when-there-is-no-storage-speci.patch
 Patch60: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
 Patch61: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
 Patch62: 0002-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
+Patch63: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2258,6 +2259,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Oct 29 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-4.UNBUILT
 - Resolves: fdo#79602: Writer text formatting of proportional line space < 100%
+- Resolves: fdo#85403 broadcast changes after TextToColumn
 
 * Wed Oct 29 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-3
 - Resolves: rhbz#1146169 a11y frame's label dies before frame

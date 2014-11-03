@@ -2257,7 +2257,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Oct 29 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-4.UNBUILT
+* Mon Nov 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-4
 - Resolves: fdo#79602: Writer text formatting of proportional line space < 100%
 - Resolves: fdo#85403 broadcast changes after TextToColumn
 

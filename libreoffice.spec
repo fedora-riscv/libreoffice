@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -313,6 +313,8 @@ Patch57: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch58: 0001-InsertCurrentTime-in-input-mode-inherit-matching-for.patch
 Patch59: 0001-fdo-78921-Don-t-crash-when-there-is-no-storage-speci.patch
 Patch60: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
+Patch61: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
+Patch62: 0002-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2254,6 +2256,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Oct 29 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-4.UNBUILT
+- Resolves: fdo#79602: Writer text formatting of proportional line space < 100%
+
 * Wed Oct 29 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-3
 - Resolves: rhbz#1146169 a11y frame's label dies before frame
 

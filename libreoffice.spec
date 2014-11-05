@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -331,6 +331,7 @@ Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
 Patch35: 0001-allow-to-build-with-system-opencollada.patch
 Patch36: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
+Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2297,6 +2298,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-2
+- Resolves: fdo#37559 revert adding extra dummy polygons
+
 * Tue Oct 28 2014 David Tardon <dtardon@redhat.com> - 1:4.3.3.2-1
 - update to 4.3.3 rc2
 

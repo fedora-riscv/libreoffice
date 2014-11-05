@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -316,6 +316,7 @@ Patch60: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
 Patch61: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
 Patch62: 0002-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
 Patch63: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
+Patch64: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2257,6 +2258,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-5
+- Resolves: fdo#37559 revert adding extra dummy polygons
+
 * Mon Nov 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-4
 - Resolves: fdo#79602: Writer text formatting of proportional line space < 100%
 - Resolves: fdo#85403 broadcast changes after TextToColumn

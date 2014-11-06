@@ -1,0 +1,225 @@
+From 9bfd1aced3da2aab9df3fc6f93543a5b6b1075b6 Mon Sep 17 00:00:00 2001
+From: Hideki Ikeda <hideki.ikeda@gmail.com>
+Date: Thu, 17 Jul 2014 16:46:16 -0400
+Subject: [PATCH] fdo#60712 - Inherits cell styles in inserting rows/columns
+
+Add the code to copy cell styles from the caret row/column
+to new rows/columns. The span is also copiedl.
+
+Change-Id: I39596a33141ed2159ea2d09e422892cbd68cd81a
+Reviewed-on: https://gerrit.libreoffice.org/10373
+Reviewed-by: Kohei Yoshida <libreoffice@kohei.us>
+Tested-by: Kohei Yoshida <libreoffice@kohei.us>
+---
+ svx/source/table/cell.cxx            |  20 +++++
+ svx/source/table/cell.hxx            |   2 +
+ svx/source/table/tablecontroller.cxx | 142 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 164 insertions(+)
+
+diff --git a/svx/source/table/cell.cxx b/svx/source/table/cell.cxx
+index ce7a6a9..5fd38f9 100644
+--- a/svx/source/table/cell.cxx
++++ b/svx/source/table/cell.cxx
+@@ -525,6 +525,26 @@ void Cell::setMerged()
+ 
+ 
+ 
++void Cell::copyFormatFrom( const CellRef& xSourceCell )
++{
++    if( xSourceCell.is() && mpProperties )
++    {
++        mpProperties->SetMergedItemSet( xSourceCell->GetObjectItemSet() );
++
++        SdrTableObj& rTableObj = dynamic_cast< SdrTableObj& >( GetObject() );
++        SdrTableObj& rSourceTableObj = dynamic_cast< SdrTableObj& >( xSourceCell->GetObject() );
++
++        if(rSourceTableObj.GetModel() != rTableObj.GetModel())
++        {
++            SetStyleSheet( 0, true );
++        }
++
++        notifyModified();
++    }
++}
++
++
++
+ void Cell::notifyModified()
+ {
+     if( mxTable.is() )
+diff --git a/svx/source/table/cell.hxx b/svx/source/table/cell.hxx
+index 65fdcd0..66cc5a7 100644
+--- a/svx/source/table/cell.hxx
++++ b/svx/source/table/cell.hxx
+@@ -102,6 +102,8 @@ public:
+ 
+     SVX_DLLPRIVATE void setMerged();
+ 
++    SVX_DLLPRIVATE void copyFormatFrom( const CellRef& xSourceCell );
++
+     // XInterface
+     SVX_DLLPRIVATE virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type& Type ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+     SVX_DLLPRIVATE virtual void SAL_CALL acquire() throw () SAL_OVERRIDE;
+diff --git a/svx/source/table/tablecontroller.cxx b/svx/source/table/tablecontroller.cxx
+index 514505c..c310cb2 100644
+--- a/svx/source/table/tablecontroller.cxx
++++ b/svx/source/table/tablecontroller.cxx
+@@ -564,6 +564,77 @@ void SvxTableController::onInsert( sal_uInt16 nSId, const SfxItemSet* pArgs )
+                             getPropertyValue( sSize ) );
+             }
+ 
++            // Copy cell properties
++            sal_Int32 nPropSrcCol = (bInsertAfter ? aEnd.mnCol : aStart.mnCol + nNewColumns);
++            sal_Int32 nRowSpan = 0;
++            bool bNewSpan = false;
++
++            for( sal_Int32 nRow = 0; nRow < mxTable->getRowCount(); ++nRow )
++            {
++                CellRef xSourceCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nPropSrcCol, nRow ).get() ) );
++
++                // When we insert new COLUMNs, we want to copy ROW spans.
++                if( nRowSpan == 0 )
++                {
++                    // we are not in a span yet. Let's find out if the current cell is in a span.
++                    sal_Int32 nColSpan;
++                    sal_Int32 nSpanInfoCol;
++
++                    if( xSourceCell->getRowSpan() > 1 )
++                    {
++                        // The current cell is the top-left cell in a span.
++                        // Get the span info and propagate it to the target.
++                        nRowSpan = xSourceCell->getRowSpan();
++                        nColSpan = xSourceCell->getColumnSpan();
++                        nSpanInfoCol = nPropSrcCol;
++                    }
++                    else if( xSourceCell->isMerged() )
++                    {
++                        // The current cell is a middle cell in a 2D span.
++                        // Look for the top-left cell in the span.
++                        for( nSpanInfoCol = nPropSrcCol - 1; nSpanInfoCol >= 0; --nSpanInfoCol )
++                        {
++                            CellRef xMergeInfoCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nSpanInfoCol, nRow ).get() ) );
++                            if( !xMergeInfoCell->isMerged() )
++                            {
++                                nRowSpan = xMergeInfoCell->getRowSpan();
++                                nColSpan = xMergeInfoCell->getColumnSpan();
++                                break;
++                            }
++                        }
++                        if( nRowSpan == 1 )
++                            nRowSpan = 0;
++                    }
++
++                    // The target colomns are outside the span; Start a new span.
++                    if( nRowSpan > 0 && ( nNewStartColumn < nSpanInfoCol || nSpanInfoCol + nColSpan <= nNewStartColumn ) )
++                        bNewSpan = true;
++                }
++
++                // Now copy the properties from the source to the targets
++                for( sal_Int32 nOffset = 0; nOffset < nNewColumns; nOffset++ )
++                {
++                    CellRef xTargetCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nNewStartColumn + nOffset, nRow ).get() ) );
++                    if( xTargetCell.is() )
++                    {
++                        if( nRowSpan > 0 )
++                        {
++                            if( bNewSpan )
++                                xTargetCell->merge( 1, nRowSpan );
++                            else
++                                xTargetCell->setMerged();
++                        }
++                        xTargetCell->copyFormatFrom( xSourceCell );
++                    }
++                }
++
++                if( nRowSpan > 0 )
++                {
++                    --nRowSpan;
++                    bNewSpan = false;
++                }
++            }
++
+             if( bUndo )
+                 mpModel->EndUndo();
+ 
+@@ -597,6 +668,77 @@ void SvxTableController::onInsert( sal_uInt16 nSId, const SfxItemSet* pArgs )
+                             getPropertyValue( sSize ) );
+             }
+ 
++            // Copy the cell properties
++            sal_Int32 nPropSrcRow = (bInsertAfter ? aEnd.mnRow : aStart.mnRow + nNewRows);
++            sal_Int32 nColSpan = 0;
++            bool bNewSpan = false;
++
++            for( sal_Int32 nCol = 0; nCol < mxTable->getColumnCount(); ++nCol )
++            {
++                CellRef xSourceCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nCol, nPropSrcRow ).get() ) );
++
++                // When we insert new ROWs, we want to copy COLUMN spans.
++                if( nColSpan == 0 )
++                {
++                    // we are not in a span yet. Let's find out if the current cell is in a span.
++                    sal_Int32 nRowSpan;
++                    sal_Int32 nSpanInfoRow;
++
++                    if( xSourceCell->getColumnSpan() > 1 )
++                    {
++                        // The current cell is the top-left cell in a span.
++                        // Get the span info and propagate it to the target.
++                        nColSpan = xSourceCell->getColumnSpan();
++                        nRowSpan = xSourceCell->getRowSpan();
++                        nSpanInfoRow = nPropSrcRow;
++                    }
++                    else if( xSourceCell->isMerged() )
++                    {
++                        // The current cell is a middle cell in a 2D span.
++                        // Look for the top-left cell in the span.
++                        for( nSpanInfoRow = nPropSrcRow - 1; nSpanInfoRow >= 0; --nSpanInfoRow )
++                        {
++                            CellRef xMergeInfoCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nCol, nSpanInfoRow ).get() ) );
++                            if( !xMergeInfoCell->isMerged() )
++                            {
++                                nColSpan = xMergeInfoCell->getColumnSpan();
++                                nRowSpan = xMergeInfoCell->getRowSpan();
++                                break;
++                            }
++                        }
++                        if( nColSpan == 1 )
++                            nColSpan = 0;
++                    }
++
++                    // Inserted rows are outside the span; Start a new span.
++                    if( nColSpan > 0 && ( nNewRowStart < nSpanInfoRow || nSpanInfoRow + nRowSpan <= nNewRowStart ) )
++                        bNewSpan = true;
++                }
++
++                // Now copy the properties from the source to the targets
++                for( sal_Int32 nOffset = 0; nOffset < nNewRows; ++nOffset )
++                {
++                    CellRef xTargetCell( dynamic_cast< Cell* >( mxTable->getCellByPosition( nCol, nNewRowStart + nOffset ).get() ) );
++                    if( xTargetCell.is() )
++                    {
++                        if( nColSpan > 0 )
++                        {
++                            if( bNewSpan )
++                                xTargetCell->merge( nColSpan, 1 );
++                            else
++                                xTargetCell->setMerged();
++                        }
++                        xTargetCell->copyFormatFrom( xSourceCell );
++                    }
++                }
++
++                if( nColSpan > 0 )
++                {
++                    --nColSpan;
++                    bNewSpan = false;
++                }
++            }
++
+             if( bUndo )
+                 mpModel->EndUndo();
+ 
+-- 
+1.9.3
+

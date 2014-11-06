@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -342,6 +342,7 @@ Patch44: 0001-Resolves-fdo-84729-buffer-cache-grows-to-over-9000-u.patch
 Patch45: 0001-Resolves-fdo-84885-chart-wizard-dialog-cut-off.patch
 Patch46: 0001-Resolves-fdo-62682-crash-on-second-export-of-svg.patch
 Patch47: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
+Patch48: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2308,6 +2309,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-4-UNBUILT
+- Resolves: fdo#60712 Inherits cell styles in inserting rows/columns
+
 * Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-3
 - Resolves: fdo#76581 copy-and-paste -> slideshow crash in presenter console
 

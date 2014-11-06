@@ -2308,7 +2308,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-3-UNBUILT
+* Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-3
 - Resolves: fdo#76581 copy-and-paste -> slideshow crash in presenter console
 
 * Wed Nov 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-2

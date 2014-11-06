@@ -1,0 +1,240 @@
+From cff2323e10161d3cbbdba088e8ec74aee3839c62 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 30 Oct 2014 15:12:33 +0100
+Subject: [PATCH] fdo#79602: sw: add new compatibiltiy flag
+ PropLineSpacingShrinksFirstLine
+
+This is enabled by default, to get the new formatting where the first
+line of a paragraph is shrunk if a proportional line spacing < 100% is
+applied; existing OOo documents get the previous (before LO 3.3)
+formatting.  Since the formatting in LO releases is broken anyway, it
+does not matter much which way documents written by old LO get
+formatted.
+
+(cherry picked from commit 9605763e3dc8c85137787c77c31e8639553a35ed)
+
+Conflicts:
+	sw/source/filter/ww8/ww8par.cxx
+
+Change-Id: I0952f568a933c137bd03070759989cac3517d8b9
+Reviewed-on: https://gerrit.libreoffice.org/12157
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+Tested-by: Miklos Vajna <vmiklos@collabora.co.uk>
+---
+ sw/inc/IDocumentSettingAccess.hxx                 |  3 ++-
+ sw/source/core/doc/DocumentSettingManager.cxx     |  6 ++++++
+ sw/source/core/inc/DocumentSettingManager.hxx     |  1 +
+ sw/source/core/text/itrform2.cxx                  |  3 ++-
+ sw/source/core/uibase/uno/SwXDocumentSettings.cxx | 21 ++++++++++++++++++++-
+ sw/source/filter/ww8/ww8par.cxx                   |  1 +
+ sw/source/filter/xml/xmlimp.cxx                   | 10 ++++++++++
+ writerfilter/source/filter/ImportFilter.cxx       |  1 +
+ 8 files changed, 43 insertions(+), 3 deletions(-)
+
+diff --git a/sw/inc/IDocumentSettingAccess.hxx b/sw/inc/IDocumentSettingAccess.hxx
+index 4e94a1e..a67d469 100644
+--- a/sw/inc/IDocumentSettingAccess.hxx
++++ b/sw/inc/IDocumentSettingAccess.hxx
+@@ -79,6 +79,7 @@ namespace com { namespace sun { namespace star { namespace i18n { struct Forbidd
+          TAB_OVER_MARGIN,
+          // MS Word still wraps text around objects with less space than LO would.
+          SURROUND_TEXT_WRAP_SMALL,
++         PROP_LINE_SPACING_SHRINKS_FIRST_LINE,
+          // COMPATIBILITY FLAGS END
+ 
+          BROWSE_MODE,
+@@ -93,7 +94,7 @@ namespace com { namespace sun { namespace star { namespace i18n { struct Forbidd
+          FLOATTABLE_NOMARGINS,
+          EMBED_FONTS,
+          EMBED_SYSTEM_FONTS,
+-         APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING
++         APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING,
+      };
+ 
+  public:
+diff --git a/sw/source/core/doc/DocumentSettingManager.cxx b/sw/source/core/doc/DocumentSettingManager.cxx
+index 68ff997..184b242 100644
+--- a/sw/source/core/doc/DocumentSettingManager.cxx
++++ b/sw/source/core/doc/DocumentSettingManager.cxx
+@@ -75,6 +75,7 @@ sw::DocumentSettingManager::DocumentSettingManager(SwDoc &rDoc)
+     mbBackgroundParaOverDrawings(false),
+     mbTabOverMargin(false),
+     mbSurroundTextWrapSmall(false),
++    mbPropLineSpacingShrinksFirstLine(true),
+     mApplyParagraphMarkFormatToNumbering(false),
+     mbLastBrowseMode( false )
+ 
+@@ -149,6 +150,7 @@ bool sw::DocumentSettingManager::get(/*[in]*/ DocumentSettingId id) const
+         case BACKGROUND_PARA_OVER_DRAWINGS: return mbBackgroundParaOverDrawings;
+         case TAB_OVER_MARGIN: return mbTabOverMargin;
+         case SURROUND_TEXT_WRAP_SMALL: return mbSurroundTextWrapSmall;
++        case PROP_LINE_SPACING_SHRINKS_FIRST_LINE: return mbPropLineSpacingShrinksFirstLine;
+ 
+         case BROWSE_MODE: return mbLastBrowseMode; // Attention: normally the SwViewShell has to be asked!
+         case HTML_MODE: return mbHTMLMode;
+@@ -311,6 +313,10 @@ void sw::DocumentSettingManager::set(/*[in]*/ DocumentSettingId id, /*[in]*/ boo
+             mbSurroundTextWrapSmall = value;
+             break;
+ 
++        case PROP_LINE_SPACING_SHRINKS_FIRST_LINE:
++            mbPropLineSpacingShrinksFirstLine = value;
++            break;
++
+         // COMPATIBILITY FLAGS END
+ 
+         case BROWSE_MODE: //can be used temporary (load/save) when no SwViewShell is available
+diff --git a/sw/source/core/inc/DocumentSettingManager.hxx b/sw/source/core/inc/DocumentSettingManager.hxx
+index 2e8ab4b..3226278 100644
+--- a/sw/source/core/inc/DocumentSettingManager.hxx
++++ b/sw/source/core/inc/DocumentSettingManager.hxx
+@@ -85,6 +85,7 @@ class DocumentSettingManager :
+     bool mbBackgroundParaOverDrawings;
+     bool mbTabOverMargin;
+     bool mbSurroundTextWrapSmall;
++    bool mbPropLineSpacingShrinksFirstLine; // fdo#79602
+     bool mApplyParagraphMarkFormatToNumbering;
+ 
+     bool mbLastBrowseMode                           : 1;
+diff --git a/sw/source/core/text/itrform2.cxx b/sw/source/core/text/itrform2.cxx
+index 4880013..9dfa8ad 100644
+--- a/sw/source/core/text/itrform2.cxx
++++ b/sw/source/core/text/itrform2.cxx
+@@ -1743,7 +1743,8 @@ void SwTxtFormatter::CalcRealHeight( bool bNewLine )
+                 case SVX_LINE_SPACE_AUTO:
+                     // shrink first line of paragraph too on spacing < 100%
+                     if (IsParaLine() &&
+-                        pSpace->GetInterLineSpaceRule() == SVX_INTER_LINE_SPACE_PROP)
++                        pSpace->GetInterLineSpaceRule() == SVX_INTER_LINE_SPACE_PROP
++                        && GetTxtFrm()->GetTxtNode()->getIDocumentSettingAccess()->get(IDocumentSettingAccess::PROP_LINE_SPACING_SHRINKS_FIRST_LINE))
+                     {
+                         long nTmp = pSpace->GetPropLineSpace();
+                         // Word will render < 50% too but it's just not readable
+diff --git a/sw/source/core/uibase/uno/SwXDocumentSettings.cxx b/sw/source/core/uibase/uno/SwXDocumentSettings.cxx
+index 6ab7e54..fb64d02 100644
+--- a/sw/source/core/uibase/uno/SwXDocumentSettings.cxx
++++ b/sw/source/core/uibase/uno/SwXDocumentSettings.cxx
+@@ -123,7 +123,8 @@ enum SwDocumentSettingsPropertyHandles
+     HANDLE_EMBED_SYSTEM_FONTS,
+     HANDLE_TAB_OVER_MARGIN,
+     HANDLE_SURROUND_TEXT_WRAP_SMALL,
+-    HANDLE_APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING
++    HANDLE_APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING,
++    HANDLE_PROP_LINE_SPACING_SHRINKS_FIRST_LINE,
+ };
+ 
+ static MasterPropertySetInfo * lcl_createSettingsInfo()
+@@ -195,6 +196,7 @@ static MasterPropertySetInfo * lcl_createSettingsInfo()
+         { OUString("TabOverMargin"), HANDLE_TAB_OVER_MARGIN, cppu::UnoType<bool>::get(), 0, 0},
+         { OUString("SurroundTextWrapSmall"), HANDLE_SURROUND_TEXT_WRAP_SMALL, cppu::UnoType<bool>::get(), 0, 0},
+         { OUString("ApplyParagraphMarkFormatToNumbering"), HANDLE_APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING, cppu::UnoType<bool>::get(), 0, 0},
++        { OUString("PropLineSpacingShrinksFirstLine"),       HANDLE_PROP_LINE_SPACING_SHRINKS_FIRST_LINE,         cppu::UnoType<bool>::get(),           0,   0},
+ /*
+  * As OS said, we don't have a view when we need to set this, so I have to
+  * find another solution before adding them to this property set - MTG
+@@ -802,6 +804,16 @@ void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInf
+             mpDoc->set(IDocumentSettingAccess::APPLY_PARAGRAPH_MARK_FORMAT_TO_NUMBERING, bTmp);
+         }
+         break;
++        case HANDLE_PROP_LINE_SPACING_SHRINKS_FIRST_LINE:
++        {
++            bool bTmp;
++            if (rValue >>= bTmp)
++            {
++                mpDoc->set(
++                    IDocumentSettingAccess::PROP_LINE_SPACING_SHRINKS_FIRST_LINE, bTmp);
++            }
++        }
++        break;
+         default:
+             throw UnknownPropertyException();
+     }
+@@ -1230,6 +1242,13 @@ void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInf
+             rValue.setValue( &bTmp, ::getBooleanCppuType() );
+         }
+         break;
++        case HANDLE_PROP_LINE_SPACING_SHRINKS_FIRST_LINE:
++        {
++            sal_Bool const bTmp(mpDoc->get(
++                IDocumentSettingAccess::PROP_LINE_SPACING_SHRINKS_FIRST_LINE));
++            rValue <<= bTmp;
++        }
++        break;
+         default:
+             throw UnknownPropertyException();
+     }
+diff --git a/sw/source/filter/ww8/ww8par.cxx b/sw/source/filter/ww8/ww8par.cxx
+index 0bf4265..cb2a23f 100644
+--- a/sw/source/filter/ww8/ww8par.cxx
++++ b/sw/source/filter/ww8/ww8par.cxx
+@@ -1927,6 +1927,7 @@ void SwWW8ImplReader::ImportDop()
+     rDoc.set(IDocumentSettingAccess::CLIPPED_PICTURES, true);
+     rDoc.set(IDocumentSettingAccess::TAB_OVER_MARGIN, true);
+     rDoc.set(IDocumentSettingAccess::SURROUND_TEXT_WRAP_SMALL, true);
++    rDoc.set(IDocumentSettingAccess::PROP_LINE_SPACING_SHRINKS_FIRST_LINE, true);
+ 
+     // COMPATIBILITY FLAGS END
+ 
+diff --git a/sw/source/filter/xml/xmlimp.cxx b/sw/source/filter/xml/xmlimp.cxx
+index 3af249c..b04cfbd 100644
+--- a/sw/source/filter/xml/xmlimp.cxx
++++ b/sw/source/filter/xml/xmlimp.cxx
+@@ -1055,6 +1055,9 @@ void SwXMLImport::SetViewSettings(const Sequence < PropertyValue > & aViewProps)
+         GetTextImport()->SetShowChanges( bShowRedlineChanges );
+ }
+ 
++// Note: this will be called only if there are OOo elements in settings.xml.
++// So if a setting is missing there we can assume that it was written
++// by an OOo/LO version that is older than the introduction of the setting!
+ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aConfigProps)
+ {
+     // this method will modify the document directly -> lock SolarMutex
+@@ -1104,6 +1107,7 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
+     aSet.insert("ClippedPictures");
+     aSet.insert("BackgroundParaOverDrawings");
+     aSet.insert("TabOverMargin");
++    aSet.insert("PropLineSpacingShrinksFirstLine");
+ 
+     sal_Int32 nCount = aConfigProps.getLength();
+     const PropertyValue* pValues = aConfigProps.getConstArray();
+@@ -1138,6 +1142,7 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
+     bool bClippedPictures = false;
+     bool bBackgroundParaOverDrawings = false;
+     bool bTabOverMargin = false;
++    bool bPropLineSpacingShrinksFirstLine = false;
+ 
+     const PropertyValue* currentDatabaseDataSource = NULL;
+     const PropertyValue* currentDatabaseCommand = NULL;
+@@ -1225,6 +1230,8 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
+                     bBackgroundParaOverDrawings = true;
+                 else if ( pValues->Name == "TabOverMargin" )
+                     bTabOverMargin = true;
++                else if ( pValues->Name == "PropLineSpacingShrinksFirstLine" )
++                    bPropLineSpacingShrinksFirstLine = true;
+             }
+             catch( Exception& )
+             {
+@@ -1400,6 +1407,9 @@ void SwXMLImport::SetConfigurationSettings(const Sequence < PropertyValue > & aC
+     if ( !bTabOverMargin )
+         xProps->setPropertyValue("TabOverMargin", makeAny( false ) );
+ 
++    if (!bPropLineSpacingShrinksFirstLine)
++        xProps->setPropertyValue("PropLineSpacingShrinksFirstLine", makeAny(false));
++
+     SwDoc *pDoc = getDoc();
+     SfxPrinter *pPrinter = pDoc->getPrinter( false );
+     if( pPrinter )
+diff --git a/writerfilter/source/filter/ImportFilter.cxx b/writerfilter/source/filter/ImportFilter.cxx
+index 277f2da..51a6d55 100644
+--- a/writerfilter/source/filter/ImportFilter.cxx
++++ b/writerfilter/source/filter/ImportFilter.cxx
+@@ -225,6 +225,7 @@ void WriterFilter::setTargetDocument( const uno::Reference< lang::XComponent >&
+    xSettings->setPropertyValue( "ClippedPictures", uno::makeAny( sal_True ) );
+    xSettings->setPropertyValue( "BackgroundParaOverDrawings", uno::makeAny( sal_True ) );
+    xSettings->setPropertyValue( "TabOverMargin", uno::makeAny( sal_True ) );
++   xSettings->setPropertyValue("PropLineSpacingShrinksFirstLine", uno::makeAny(sal_True));
+ }
+ 
+ void WriterFilter::setSourceDocument( const uno::Reference< lang::XComponent >& xDoc )
+-- 
+1.9.3
+

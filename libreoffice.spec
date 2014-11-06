@@ -109,7 +109,7 @@ Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-gltf --without-system-opencollada
+%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada
 %endif
 
 Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2

@@ -1,0 +1,58 @@
+From 6b379995697f8ac25f8f3871c9c91e8dc009afa8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 24 Oct 2014 15:10:15 +0100
+Subject: [PATCH] Resolves: fdo#84729 buffer cache grows to over 9000 unused
+ entries
+
+regression from
+
+commit a5351434fbea1126961f5dbaa986e7c9e686c24e
+Author: tsahi glik <tsahi.glik@cloudon.com>
+Date:   Thu Jan 16 12:51:44 2014 -0800
+    fix rendering issues in iOS with aqua
+
+because now the cache just fills up because nothing will have
+a depth of "0" and a new entry is created every time.
+
+0 could be seen to mean "whatever is a good non-1bit depth" or auto or
+something. (Do the uses of "8" really mean 8)
+
+0 passed to new VirtualDevice under Linux/X ends up using the depth of the
+outputdev, so here set nBits to that value to start with and the problem
+goes away
+
+Change-Id: I4390d6f7edef9dc7430cc77e3518dc751a5f479d
+(cherry picked from commit e25a020d59b019893d2e04ac61e4ed25ef0a6e61)
+Reviewed-on: https://gerrit.libreoffice.org/12087
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+Tested-by: Miklos Vajna <vmiklos@collabora.co.uk>
+---
+ drawinglayer/source/processor2d/vclhelperbufferdevice.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx b/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
+index 2f98e71..d812d93 100644
+--- a/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
++++ b/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
+@@ -85,6 +85,9 @@ namespace
+         ::osl::MutexGuard aGuard(m_aMutex);
+         VirtualDevice* pRetval = 0;
+ 
++        if (nBits == 0)
++            nBits = rOutDev.GetBitCount();
++
+         if(!maFreeBuffers.empty())
+         {
+             bool bOkay(false);
+@@ -183,6 +186,8 @@ namespace
+ 
+         maUsedBuffers.erase(aUsedFound);
+         maFreeBuffers.push_back(&rDevice);
++        SAL_WARN_IF(maFreeBuffers.size() > 1000, "drawinglayer", "excessive cached buffers, "
++            << maFreeBuffers.size() << " entries!");
+         Start();
+     }
+ 
+-- 
+1.9.3
+

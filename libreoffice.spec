@@ -334,17 +334,18 @@ Patch36: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
 Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch38: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
 Patch39: 0001-Resolves-fdo-68347-fix-word-count-with-recorded-chan.patch
-Patch40: 0001-fdo-85215-Ensure-that-formula-broadcasting-works-aft.patch
-Patch41: 0001-fdo-85282-Correct-adjustment-of-range-reference-on-d.patch
-Patch42: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
-Patch43: 0001-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
-Patch44: 0001-Resolves-fdo-84729-buffer-cache-grows-to-over-9000-u.patch
-Patch45: 0001-Resolves-fdo-84885-chart-wizard-dialog-cut-off.patch
-Patch46: 0001-Resolves-fdo-62682-crash-on-second-export-of-svg.patch
-Patch47: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
-Patch48: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
-Patch49: 0001-implement-toggling-off-removeable-master-elements-wi.patch
-Patch50: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
+Patch40: 0001-fdo-81633-Add-a-hidden-configuration-option-to-toggl.patch
+Patch41: 0001-fdo-85215-Ensure-that-formula-broadcasting-works-aft.patch
+Patch42: 0001-fdo-85282-Correct-adjustment-of-range-reference-on-d.patch
+Patch43: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
+Patch44: 0001-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
+Patch45: 0001-Resolves-fdo-84729-buffer-cache-grows-to-over-9000-u.patch
+Patch46: 0001-Resolves-fdo-84885-chart-wizard-dialog-cut-off.patch
+Patch47: 0001-Resolves-fdo-62682-crash-on-second-export-of-svg.patch
+Patch48: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
+Patch49: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
+Patch50: 0001-implement-toggling-off-removeable-master-elements-wi.patch
+Patch51: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

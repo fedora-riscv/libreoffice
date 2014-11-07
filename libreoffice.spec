@@ -317,6 +317,7 @@ Patch61: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
 Patch62: 0002-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
 Patch63: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 Patch64: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
+Patch65: 0001-resolved-fdo-82936-do-not-clear-the-3D-flag-on-refup.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2258,6 +2259,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Nov 07 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-6-UNBUILT
+- Resolves: rhbz#1160924 do not clear the 3D flag on refupdate (fdo#82936)
+
 * Wed Nov 05 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-5
 - Resolves: fdo#37559 revert adding extra dummy polygons
 

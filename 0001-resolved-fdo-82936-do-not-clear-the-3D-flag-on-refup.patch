@@ -1,0 +1,44 @@
+From d267785c1a63054eb3693045d955fcc01a66b4eb Mon Sep 17 00:00:00 2001
+Message-Id: <d267785c1a63054eb3693045d955fcc01a66b4eb.1415383988.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 22 Aug 2014 12:59:47 +0200
+Subject: [PATCH] resolved fdo#82936 do not clear the 3D flag on refupdate
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I2ae1368a2ffc20e988ff3ab66590a9f98902b862
+(cherry picked from commit 75aad687cb5e63a41303aea568bf68b2b5f15d31)
+---
+ sc/source/core/tool/token.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-resolved-fdo-82936-do-not-clear-the-3D-flag-on-refup.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-resolved-fdo-82936-do-not-clear-the-3D-flag-on-refup.patch"
+
+diff --git a/sc/source/core/tool/token.cxx b/sc/source/core/tool/token.cxx
+index 77d7d1d..fd362e3 100644
+--- a/sc/source/core/tool/token.cxx
++++ b/sc/source/core/tool/token.cxx
+@@ -2847,7 +2847,8 @@ sc::RefUpdateResult ScTokenArray::AdjustReferenceOnMove(
+                 }
+ 
+                 rRef.SetAddress(aAbs, rNewPos);
+-                rRef.SetFlag3D(b3DFlag);
++                if (b3DFlag)
++                    rRef.SetFlag3D(b3DFlag);
+             }
+             break;
+             case svDoubleRef:
+
+--------------erAck-patch-parts--
+
+

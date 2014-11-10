@@ -137,13 +137,13 @@ index cd643b0..6e7cb8d 100644
 +            }
 +        }
 +
-+        for (SdrObject* pObj : aPresMarksToRemove)
++        for (std::vector<SdrObject*>::iterator aI = aPresMarksToRemove.begin(); aI < aPresMarksToRemove.end(); ++aI)
 +        {
 +            //Unmark object
-+            mpDrawView->MarkObj(pObj, mpDrawView->GetSdrPageView(), true);
-+            SdPage* pPage = (SdPage*)pObj->GetPage();
++            mpDrawView->MarkObj((*aI), mpDrawView->GetSdrPageView(), true);
++            SdPage* pPage = (SdPage*)(*aI)->GetPage();
 +            //remove placeholder from master page
-+            pPage->DestroyDefaultPresObj(pPage->GetPresObjKind(pObj));
++            pPage->DestroyDefaultPresObj(pPage->GetPresObjKind((*aI)));
 +        }
 +
 +        bConsumed = true;

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.3
+%define libo_version 4.3.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -330,33 +330,16 @@ Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
 Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
 Patch35: 0001-allow-to-build-with-system-opencollada.patch
-Patch36: 0001-Resolves-rhbz-1146169-a11y-frames-label-dies-before-.patch
-Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch38: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
-Patch39: 0001-Resolves-fdo-68347-fix-word-count-with-recorded-chan.patch
-Patch40: 0001-fdo-81633-Add-a-hidden-configuration-option-to-toggl.patch
-Patch41: 0001-fdo-85215-Ensure-that-formula-broadcasting-works-aft.patch
-Patch42: 0001-fdo-85282-Correct-adjustment-of-range-reference-on-d.patch
-Patch43: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
-Patch44: 0001-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
-Patch45: 0001-Resolves-fdo-84729-buffer-cache-grows-to-over-9000-u.patch
-Patch46: 0001-Resolves-fdo-84885-chart-wizard-dialog-cut-off.patch
-Patch47: 0001-Resolves-fdo-62682-crash-on-second-export-of-svg.patch
-Patch48: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
-Patch49: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
-Patch50: 0001-implement-toggling-off-removeable-master-elements-wi.patch
-Patch51: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
-Patch52: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
-Patch53: 0001-fdo-83901-ROW-and-COLUMN-to-be-properly-recalculated.patch
-Patch54: 0001-fdo-80846-Broadcast-changes-before-EndUndo.patch
-Patch55: 0001-Back-port-Kohei-s-comprehensive-sorting-unit-tests-f.patch
-Patch56: 0001-Adapt-sorting-unit-tests-for-new-default.patch
-Patch57: 0001-fdo-80284-Avoid-broadcasting-during-cell-delete-shif.patch
-Patch58: 0001-fdo-82047-Correctly-adjust-references-in-range-names.patch
-Patch59: 0001-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
-Patch60: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
-Patch61: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
-Patch62: 0001-have-a-stab-at-improving-impossible-question.patch
+Patch36: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
+Patch37: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
+Patch38: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
+Patch39: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
+Patch40: 0001-implement-toggling-off-removeable-master-elements-wi.patch
+Patch41: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
+Patch42: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
+Patch43: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
+Patch44: 0001-have-a-stab-at-improving-impossible-question.patch
+Patch45: 0001-just-use-ANSI-C-declarations.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2323,10 +2306,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 11 2014 David Tardon <dtardon@redhat.com> - 1:4.3.4.1-1
+- update to 4.3.4 rc1
+
 * Tue Nov 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-6
 - strip hard coded numbering off outline master previews
 
-* Tue Nov 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-5
+* Mon Nov 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-5
 - Resolves: rhbz#1161238 sync PRESOBJ_OUTLINE para depth on load
 
 * Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-4

@@ -356,6 +356,7 @@ Patch58: 0001-fdo-82047-Correctly-adjust-references-in-range-names.patch
 Patch59: 0001-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
 Patch60: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 Patch61: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
+Patch62: 0001-have-a-stab-at-improving-impossible-question.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

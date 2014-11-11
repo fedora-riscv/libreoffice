@@ -1,0 +1,35 @@
+From e963f4ee14fdda118a54745dcfca46e6244f0999 Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 3 Nov 2014 14:52:27 +0100
+Subject: [PATCH] fdo#85403 broadcast changes after TextToColumn
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Regression introduced with 3d869cda8db03820dea8c4ba463eb155d05e933b for
+fdo#74014
+
+Change-Id: Ie8ca1e7c15609aaf80b4ecbb6ccffc30a3f79f0a
+(cherry picked from commit 99cfc0f8a321c3fd3ef1a49d669ebc5744dbf606)
+Reviewed-on: https://gerrit.libreoffice.org/12216
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sc/source/ui/view/cellsh2.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sc/source/ui/view/cellsh2.cxx b/sc/source/ui/view/cellsh2.cxx
+index 9a0fc853..7b7189c 100644
+--- a/sc/source/ui/view/cellsh2.cxx
++++ b/sc/source/ui/view/cellsh2.cxx
+@@ -976,6 +976,7 @@ void ScCellShell::ExecuteDB( SfxRequest& rReq )
+                         pDlg->SaveParameters();
+                         aImport.SetExtOptions( aOptions );
+                         aImport.SetApi( false );
++                        aImport.SetImportBroadcast( true );
+                         aStream.Seek( 0 );
+                         aImport.ImportStream( aStream, OUString(), FORMAT_STRING );
+ 
+-- 
+1.9.3
+

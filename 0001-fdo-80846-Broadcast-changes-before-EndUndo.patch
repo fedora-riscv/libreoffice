@@ -1,0 +1,80 @@
+From eb5f25984307cd9e63e9cc88cbdb09228d66b097 Mon Sep 17 00:00:00 2001
+From: Kohei Yoshida <kohei.yoshida@collabora.com>
+Date: Sat, 11 Oct 2014 14:18:10 -0400
+Subject: [PATCH] fdo#80846: Broadcast changes before EndUndo().
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+EndUndo() calls PostDataChanged(), which renders the recalculated formula
+cells.  Not broadcasting before EndUndo causes some dependent formula
+cells to not get recalculated.
+
+This one unfortunately is not currently unit-testable as this behavior
+depends on the presence of ScTabViewShell....
+
+Change-Id: I86288608b7f2627cda7c74be27a18029832775ef
+(cherry picked from commit 424bfaa773e58d6b609ac7f64907db4b542d1315)
+Reviewed-on: https://gerrit.libreoffice.org/11927
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sc/source/ui/undo/undoblk3.cxx | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
+
+diff --git a/sc/source/ui/undo/undoblk3.cxx b/sc/source/ui/undo/undoblk3.cxx
+index 03edabf..6784134 100644
+--- a/sc/source/ui/undo/undoblk3.cxx
++++ b/sc/source/ui/undo/undoblk3.cxx
+@@ -170,12 +170,20 @@ void ScUndoDeleteContents::DoChange( const bool bUndo )
+         SetChangeTrack();
+     }
+ 
++    if (nFlags & IDF_CONTENTS)
++    {
++        // Broadcast only when the content changes. fdo#74687
++        if (mpDataSpans)
++            BroadcastChanges(*mpDataSpans);
++        else
++            BroadcastChanges(aRange);
++    }
++
+     ScTabViewShell* pViewShell = ScTabViewShell::GetActiveViewShell();
+     if ( !( (pViewShell) && pViewShell->AdjustRowHeight(
+                                 aRange.aStart.Row(), aRange.aEnd.Row() ) ) )
+ /*A*/   pDocShell->PostPaint( aRange, PAINT_GRID | PAINT_EXTRAS, nExtFlags );
+ 
+-    pDocShell->PostDataChanged();
+     if (pViewShell)
+         pViewShell->CellContentChanged();
+ 
+@@ -188,15 +196,6 @@ void ScUndoDeleteContents::Undo()
+     DoChange( true );
+     EndUndo();
+ 
+-    if (nFlags & IDF_CONTENTS)
+-    {
+-        // Broadcast only when the content changes. fdo#74687
+-        if (mpDataSpans)
+-            BroadcastChanges(*mpDataSpans);
+-        else
+-            BroadcastChanges(aRange);
+-    }
+-
+     HelperNotifyChanges::NotifyIfChangesListeners(*pDocShell, aRange);
+ }
+ 
+@@ -206,10 +205,6 @@ void ScUndoDeleteContents::Redo()
+     DoChange( false );
+     EndRedo();
+ 
+-    if (nFlags & IDF_CONTENTS)
+-        // Broadcast only when the content changes. fdo#74687
+-        BroadcastChanges(aRange);
+-
+     HelperNotifyChanges::NotifyIfChangesListeners(*pDocShell, aRange);
+ }
+ 
+-- 
+1.9.3
+

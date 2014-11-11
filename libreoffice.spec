@@ -347,6 +347,14 @@ Patch49: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
 Patch50: 0001-implement-toggling-off-removeable-master-elements-wi.patch
 Patch51: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
 Patch52: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
+Patch53: 0001-fdo-83901-ROW-and-COLUMN-to-be-properly-recalculated.patch
+Patch54: 0001-fdo-80846-Broadcast-changes-before-EndUndo.patch
+Patch55: 0001-Back-port-Kohei-s-comprehensive-sorting-unit-tests-f.patch
+Patch56: 0001-Adapt-sorting-unit-tests-for-new-default.patch
+Patch57: 0001-fdo-80284-Avoid-broadcasting-during-cell-delete-shif.patch
+Patch58: 0001-fdo-82047-Correctly-adjust-references-in-range-names.patch
+Patch59: 0001-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
+Patch60: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2313,7 +2321,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-5
+* Tue Nov 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-5
 - Resolves: rhbz#1161238 sync PRESOBJ_OUTLINE para depth on load
 
 * Thu Nov 06 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.3.2-4

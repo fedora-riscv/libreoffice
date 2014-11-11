@@ -1,0 +1,40 @@
+From b35c51d15189835bd388411f9ab4baefacd7b460 Mon Sep 17 00:00:00 2001
+From: Kohei Yoshida <kohei.yoshida@collabora.com>
+Date: Fri, 17 Oct 2014 21:48:31 -0400
+Subject: [PATCH] fdo#80284: Avoid broadcasting during cell delete & shift.
+
+Broadcasting it here and marking formula cells dirty prevents them
+from being entered into the formula tree at the end.  They get marked
+"postponed dirty" during reference update, and are supposed to be
+set dirty at the end.
+
+Change-Id: I65977300ee4ee26b6166d170acd2145abcbbf288
+(cherry picked from commit 7fef943114b9184e69c8c714bf158116b8d9caf7)
+Reviewed-on: https://gerrit.libreoffice.org/12014
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+---
+ sc/source/core/data/table2.cxx | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/sc/source/core/data/table2.cxx b/sc/source/core/data/table2.cxx
+index 9abd954..9b4fd02 100644
+--- a/sc/source/core/data/table2.cxx
++++ b/sc/source/core/data/table2.cxx
+@@ -391,11 +391,8 @@ void ScTable::DeleteCol(
+         }
+     }
+ 
+-    {   // scope for bulk broadcast
+-        ScBulkBroadcast aBulkBroadcast( pDocument->GetBASM());
+-        for (SCSIZE i = 0; i < nSize; i++)
+-            aCol[nStartCol + i].DeleteArea(nStartRow, nEndRow, IDF_ALL);
+-    }
++    for (SCSIZE i = 0; i < nSize; i++)
++        aCol[nStartCol + i].DeleteArea(nStartRow, nEndRow, IDF_ALL, false);
+ 
+     if ((nStartRow == 0) && (nEndRow == MAXROW))
+     {
+-- 
+1.9.3
+

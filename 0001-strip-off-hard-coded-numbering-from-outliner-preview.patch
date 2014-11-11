@@ -47,7 +47,7 @@ index fd8cacc..ad1cd23 100644
 +            //If the preview has hard-coded bullets/numbering then they must
 +            //be stripped to reveal the true underlying styles attributes
 +            SfxItemSet aAttrs(pOutliner->GetParaAttribs(j));
-+            if (aAttrs.GetItemState(EE_PARA_NUMBULLET) == SfxItemState::SET)
++            if (aAttrs.GetItemState(EE_PARA_NUMBULLET) == SFX_ITEM_SET)
 +            {
 +                aAttrs.ClearItem(EE_PARA_NUMBULLET);
 +                pOutliner->SetParaAttribs(j, aAttrs);

@@ -2260,7 +2260,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Nov 07 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-6-UNBUILT
+* Fri Nov 07 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-6
 - Resolves: rhbz#1160924 do not clear the 3D flag on refupdate (fdo#82936)
 - Resolves: fdo#85282: Correct adjustment of range reference on delete & shift.
 

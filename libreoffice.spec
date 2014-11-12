@@ -386,9 +386,11 @@ Requires(preun):  gtk2 >= 2.9.4
 Requires(postun): gtk2 >= 2.9.4
 Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
+Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
+Obsoletes: openoffice.org-headless < 1:3.3.1
 Obsoletes: openoffice.org-javafilter < 1:3.3.1
 Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
 Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
@@ -400,6 +402,8 @@ Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
 Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
 Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
+Provides: openoffice.org-headless = 1:3.3.0
+Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
 %endif
 
 %description core
@@ -781,22 +785,6 @@ Provides: openoffice.org-sdk-doc%{?_isa} = 1:3.3.0
 %description sdk-doc
 This provides documentation for programming using the LibreOffice APIs
 and examples of creating extensions (UNO components) for LibreOffice.
-
-%package headless
-Summary: LibreOffice Headless plug-in
-Group: Development/Libraries
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-headless < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-headless = 1:3.3.0
-Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
-%endif
-
-%description headless
-A plug-in for LibreOffice that enables it to function without an X server. 
-It implements the -headless command line option and allows LibreOffice to be
-used as a backend server for e.g. document conversion.
 
 %package glade
 Summary: Support for creating LibreOffice dialogs in glade
@@ -1621,6 +1609,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
+%{baseinstdir}/program/libbasebmplo.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbiblo.so
 %{baseinstdir}/program/libcached1.so
@@ -1748,6 +1737,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libvbahelperlo.so
 %{baseinstdir}/program/libvclplug_genlo.so
 %{baseinstdir}/program/libvclplug_gtklo.so
+%{baseinstdir}/program/libvclplug_svplo.so
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
@@ -2241,10 +2231,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %docdir %{sdkinstdir}/docs
 %{sdkinstdir}/docs/
 %{sdkinstdir}/examples/
-
-%files headless
-%{baseinstdir}/program/libbasebmplo.so
-%{baseinstdir}/program/libvclplug_svplo.so
 
 %files pyuno
 %{baseinstdir}/program/libpyuno.so

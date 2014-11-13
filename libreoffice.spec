@@ -341,6 +341,7 @@ Patch43: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
 Patch44: 0001-have-a-stab-at-improving-impossible-question.patch
 Patch45: 0001-just-use-ANSI-C-declarations.patch
 Patch46: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
+Patch47: 0001-table-layout-cache-returns-wrong-rectangle.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2307,6 +2308,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-2
+- fix impress table layout cache wrt wrong table selection border
+
 * Tue Nov 11 2014 David Tardon <dtardon@redhat.com> - 1:4.3.4.1-1
 - update to 4.3.4 rc1
 

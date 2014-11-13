@@ -1,0 +1,79 @@
+From f79f3d1322b396f5f45ccd7742015749e93ac57b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 13 Nov 2014 13:32:35 +0000
+Subject: [PATCH] table layout cache returns wrong rectangle
+
+the layouter can modify its input rectangle to grow
+it to the necessary size to contain the layout
+
+but we're returning the input rectangle when the inputs are the same as the
+last call, not returning the output rectangle.
+
+cache the output rect for a given input and return that
+
+so now insert->table in impress and tab so extra cells are added and
+then select the table and the blue border contains the whole
+table, not just the first two rows
+
+Change-Id: I4f09594d82c1597204afbd059e175af9bf8e2527
+(cherry picked from commit 98cd2671f0a215ced6203372ac673e2380031ac0)
+---
+ svx/source/table/svdotable.cxx | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/svx/source/table/svdotable.cxx b/svx/source/table/svdotable.cxx
+index d49cfb3..fbd532a 100644
+--- a/svx/source/table/svdotable.cxx
++++ b/svx/source/table/svdotable.cxx
+@@ -244,7 +244,8 @@ public:
+     virtual bool isInUse() SAL_OVERRIDE;
+ private:
+     static SdrTableObjImpl* lastLayoutTable;
+-    static Rectangle lastLayoutRectangle;
++    static Rectangle lastLayoutInputRectangle;
++    static Rectangle lastLayoutResultRectangle;
+     static bool lastLayoutFitWidth;
+     static bool lastLayoutFitHeight;
+     static WritingMode lastLayoutMode;
+@@ -253,7 +254,8 @@ private:
+ };
+ 
+ SdrTableObjImpl* SdrTableObjImpl::lastLayoutTable = NULL;
+-Rectangle SdrTableObjImpl::lastLayoutRectangle;
++Rectangle SdrTableObjImpl::lastLayoutInputRectangle;
++Rectangle SdrTableObjImpl::lastLayoutResultRectangle;
+ bool SdrTableObjImpl::lastLayoutFitWidth;
+ bool SdrTableObjImpl::lastLayoutFitHeight;
+ WritingMode SdrTableObjImpl::lastLayoutMode;
+@@ -696,14 +698,14 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
+         // Optimization: SdrTableObj::SetChanged() can call this very often, repeatedly
+         // with the same settings, noticeably increasing load time. Skip if already done.
+         WritingMode writingMode = mpTableObj->GetWritingMode();
+-        if( lastLayoutTable != this || lastLayoutRectangle != rArea
++        if( lastLayoutTable != this || lastLayoutInputRectangle != rArea
+             || lastLayoutFitWidth != bFitWidth || lastLayoutFitHeight != bFitHeight
+             || lastLayoutMode != writingMode
+             || lastRowCount != getRowCount()
+             || lastColCount != getColumnCount() )
+         {
+             lastLayoutTable = this;
+-            lastLayoutRectangle = rArea;
++            lastLayoutInputRectangle = rArea;
+             lastLayoutFitWidth = bFitWidth;
+             lastLayoutFitHeight = bFitHeight;
+             lastLayoutMode = writingMode;
+@@ -711,6 +713,11 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
+             lastColCount = getColumnCount();
+             TableModelNotifyGuard aGuard( mxTable.get() );
+             mpLayouter->LayoutTable( rArea, bFitWidth, bFitHeight );
++            lastLayoutResultRectangle = rArea;
++        }
++        else
++        {
++            rArea = lastLayoutResultRectangle;
+         }
+     }
+ }
+-- 
+1.9.3
+

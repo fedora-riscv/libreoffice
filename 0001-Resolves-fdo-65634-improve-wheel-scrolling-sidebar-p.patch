@@ -1,39 +1,29 @@
-From 641154c259334874bbbcb735f0064f3241f293ad Mon Sep 17 00:00:00 2001
+From dd530195e3c9a694767f21f2a8e8a9591078c696 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 27 Jun 2014 14:36:01 +0100
 Subject: [PATCH] Resolves: fdo#65634 improve wheel-scrolling sidebar panels
 
 Change-Id: I213d85a1e2bbd2377f6f0326433ddd57dc346721
 ---
- sfx2/source/sidebar/Deck.cxx  | 34 ++--------------------------------
+ sfx2/source/sidebar/Deck.cxx  | 24 ++----------------------
  sfx2/source/sidebar/Deck.hxx  |  5 +----
- vcl/source/window/winproc.cxx | 26 ++++++++++++++++++++++++++
- 3 files changed, 29 insertions(+), 36 deletions(-)
+ vcl/source/window/winproc.cxx | 42 +++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 42 insertions(+), 29 deletions(-)
 
 diff --git a/sfx2/source/sidebar/Deck.cxx b/sfx2/source/sidebar/Deck.cxx
-index c7777dd..0be4a46 100644
+index 3d0f43c..9f89268 100644
 --- a/sfx2/source/sidebar/Deck.cxx
 +++ b/sfx2/source/sidebar/Deck.cxx
-@@ -190,9 +190,6 @@ void Deck::DataChanged (const DataChangedEvent& rEvent)
-     RequestLayout();
- }
- 
--
--
--
- bool Deck::Notify (NotifyEvent& rEvent)
- {
-     if (rEvent.GetType() == EVENT_COMMAND)
-@@ -202,7 +199,7 @@ bool Deck::Notify (NotifyEvent& rEvent)
+@@ -206,7 +206,7 @@ long Deck::Notify (NotifyEvent& rEvent)
              switch (pCommandEvent->GetCommand())
              {
                  case COMMAND_WHEEL:
--                    return ProcessWheelEvent(pCommandEvent, rEvent);
-+                    return ProcessWheelEvent(pCommandEvent);
+-                    return ProcessWheelEvent(pCommandEvent, rEvent)
++                    return ProcessWheelEvent(pCommandEvent)
+                         ? sal_True
+                         : sal_False;
  
-                 default:
-                     break;
-@@ -212,24 +209,13 @@ bool Deck::Notify (NotifyEvent& rEvent)
+@@ -218,24 +218,13 @@ long Deck::Notify (NotifyEvent& rEvent)
      return Window::Notify(rEvent);
  }
  
@@ -59,7 +49,7 @@ index c7777dd..0be4a46 100644
      // Get the wheel data and check that it describes a valid vertical
      // scroll.
      const CommandWheelData* pData = pCommandEvent->GetWheelData();
-@@ -246,9 +232,6 @@ bool Deck::ProcessWheelEvent (
+@@ -252,9 +241,6 @@ bool Deck::ProcessWheelEvent (
      return true;
  }
  
@@ -69,21 +59,7 @@ index c7777dd..0be4a46 100644
  void Deck::SetPanels (const SharedPanelContainer& rPanels)
  {
      maPanels = rPanels;
-@@ -256,13 +239,6 @@ void Deck::SetPanels (const SharedPanelContainer& rPanels)
-     RequestLayout();
- }
- 
--
--
--
--
--
--
--
- void Deck::RequestLayout (void)
- {
-     mnMinimalWidth = 0;
-@@ -278,17 +254,11 @@ void Deck::RequestLayout (void)
+@@ -288,17 +274,11 @@ void Deck::RequestLayout (void)
          *mpVerticalScrollBar);
  }
  
@@ -102,10 +78,10 @@ index c7777dd..0be4a46 100644
  {
      if (mpVerticalScrollBar && mpVerticalScrollBar->IsVisible())
 diff --git a/sfx2/source/sidebar/Deck.hxx b/sfx2/source/sidebar/Deck.hxx
-index ea33fa2..a88e258 100644
+index 33eff61..c2f8dfa 100644
 --- a/sfx2/source/sidebar/Deck.hxx
 +++ b/sfx2/source/sidebar/Deck.hxx
-@@ -100,12 +100,9 @@ private:
+@@ -101,12 +101,9 @@ private:
      ::boost::scoped_ptr<ScrollBar> mpVerticalScrollBar;
  
      DECL_LINK(HandleVerticalScrollBarChange,void*);
@@ -120,13 +96,19 @@ index ea33fa2..a88e258 100644
  
  #endif
 diff --git a/vcl/source/window/winproc.cxx b/vcl/source/window/winproc.cxx
-index c8094c4..4fab948 100644
+index 7a93680..eba587e 100644
 --- a/vcl/source/window/winproc.cxx
 +++ b/vcl/source/window/winproc.cxx
-@@ -1366,8 +1366,22 @@ static bool acceptableWheelScrollTarget(const Window *pMouseWindow)
-     return (pMouseWindow && pMouseWindow->IsInputEnabled() && !pMouseWindow->IsInModalMode());
+@@ -1426,10 +1426,27 @@ static sal_Bool ImplCallWheelCommand( Window* pWindow, const Point& rPos,
+     return sal_False;
  }
  
+-// -----------------------------------------------------------------------
++static bool acceptableWheelScrollTarget(const Window *pMouseWindow)
++{
++    return (pMouseWindow && pMouseWindow->IsInputEnabled() && !pMouseWindow->IsInModalMode());
++}
++
 +//If the last event at the same absolute screen position was handled by a
 +//different window then reuse that window if the event occurs within 1/2 a
 +//second, i.e. so scrolling down something like the calc sidebar that contains
@@ -137,8 +119,8 @@ index c8094c4..4fab948 100644
 +{
 +    return (rEvt.mnX == rPrevEvt.mnX && rEvt.mnY == rPrevEvt.mnY && rEvt.mnTime-rPrevEvt.mnTime < 500/*ms*/);
 +}
-+
- static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEvt, bool scaleDirectly = false )
+ 
+ static long ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEvt, bool scaleDirectly = false )
  {
 +    static SalWheelMouseEvent aPreviousEvent;
 +    static Window *pPreviousWindow;
@@ -146,10 +128,20 @@ index c8094c4..4fab948 100644
      ImplDelData aDogTag( pWindow );
  
      ImplSVData* pSVData = ImplGetSVData();
-@@ -1431,6 +1445,16 @@ static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
-         pMouseWindow = pMouseWindow->GetParent();
+@@ -1485,8 +1502,25 @@ static long ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
+         bIsFloat = true;
      }
  
+-    if ( pMouseWindow &&
+-         pMouseWindow->IsEnabled() && pMouseWindow->IsInputEnabled() && ! pMouseWindow->IsInModalMode() )
++    while (acceptableWheelScrollTarget(pMouseWindow))
++    {
++        if (pMouseWindow->IsEnabled())
++            break;
++        //try the parent if this one is disabled
++        pMouseWindow = pMouseWindow->GetParent();
++    }
++
 +    // avoid the problem that scrolling via wheel to this point brings a widget
 +    // under the mouse that also accepts wheel commands, so stick with the old
 +    // widget if the time gap is very small
@@ -160,16 +152,17 @@ index c8094c4..4fab948 100644
 +
 +    aPreviousEvent = rEvt;
 +
-     if (acceptableWheelScrollTarget(pMouseWindow) && pMouseWindow->IsEnabled())
++    if (acceptableWheelScrollTarget(pMouseWindow) && !pMouseWindow->IsInModalMode())
      {
          // transform coordinates to float window frame coordinates
-@@ -1441,6 +1465,8 @@ static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
+         Point aRelMousePos( pMouseWindow->OutputToScreenPixel(
+@@ -1496,6 +1530,8 @@ static long ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
          bRet = ImplCallWheelCommand( pMouseWindow, aRelMousePos, &aWheelData );
      }
  
 +    pPreviousWindow = !bRet ? pMouseWindow : NULL;
 +
-     // if the command was not handled try the focus window
+     // if the commad was not handled try the focus window
      if ( bRet )
      {
 -- 

@@ -1,0 +1,177 @@
+From 641154c259334874bbbcb735f0064f3241f293ad Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 27 Jun 2014 14:36:01 +0100
+Subject: [PATCH] Resolves: fdo#65634 improve wheel-scrolling sidebar panels
+
+Change-Id: I213d85a1e2bbd2377f6f0326433ddd57dc346721
+---
+ sfx2/source/sidebar/Deck.cxx  | 34 ++--------------------------------
+ sfx2/source/sidebar/Deck.hxx  |  5 +----
+ vcl/source/window/winproc.cxx | 26 ++++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 36 deletions(-)
+
+diff --git a/sfx2/source/sidebar/Deck.cxx b/sfx2/source/sidebar/Deck.cxx
+index c7777dd..0be4a46 100644
+--- a/sfx2/source/sidebar/Deck.cxx
++++ b/sfx2/source/sidebar/Deck.cxx
+@@ -190,9 +190,6 @@ void Deck::DataChanged (const DataChangedEvent& rEvent)
+     RequestLayout();
+ }
+ 
+-
+-
+-
+ bool Deck::Notify (NotifyEvent& rEvent)
+ {
+     if (rEvent.GetType() == EVENT_COMMAND)
+@@ -202,7 +199,7 @@ bool Deck::Notify (NotifyEvent& rEvent)
+             switch (pCommandEvent->GetCommand())
+             {
+                 case COMMAND_WHEEL:
+-                    return ProcessWheelEvent(pCommandEvent, rEvent);
++                    return ProcessWheelEvent(pCommandEvent);
+ 
+                 default:
+                     break;
+@@ -212,24 +209,13 @@ bool Deck::Notify (NotifyEvent& rEvent)
+     return Window::Notify(rEvent);
+ }
+ 
+-
+-
+-
+-bool Deck::ProcessWheelEvent (
+-    CommandEvent* pCommandEvent,
+-    NotifyEvent& rEvent)
++bool Deck::ProcessWheelEvent(CommandEvent* pCommandEvent)
+ {
+     if ( ! mpVerticalScrollBar)
+         return false;
+     if ( ! mpVerticalScrollBar->IsVisible())
+         return false;
+ 
+-    // Ignore all wheel commands from outside the vertical scroll bar.
+-    // Otherwise after a scroll we might land on a spin field and
+-    // subsequent wheel events would change the value of that control.
+-    if (rEvent.GetWindow() != mpVerticalScrollBar.get())
+-        return true;
+-
+     // Get the wheel data and check that it describes a valid vertical
+     // scroll.
+     const CommandWheelData* pData = pCommandEvent->GetWheelData();
+@@ -246,9 +232,6 @@ bool Deck::ProcessWheelEvent (
+     return true;
+ }
+ 
+-
+-
+-
+ void Deck::SetPanels (const SharedPanelContainer& rPanels)
+ {
+     maPanels = rPanels;
+@@ -256,13 +239,6 @@ void Deck::SetPanels (const SharedPanelContainer& rPanels)
+     RequestLayout();
+ }
+ 
+-
+-
+-
+-
+-
+-
+-
+ void Deck::RequestLayout (void)
+ {
+     mnMinimalWidth = 0;
+@@ -278,17 +254,11 @@ void Deck::RequestLayout (void)
+         *mpVerticalScrollBar);
+ }
+ 
+-
+-
+-
+ ::Window* Deck::GetPanelParentWindow (void)
+ {
+     return mpScrollContainer.get();
+ }
+ 
+-
+-
+-
+ void Deck::ShowPanel (const Panel& rPanel)
+ {
+     if (mpVerticalScrollBar && mpVerticalScrollBar->IsVisible())
+diff --git a/sfx2/source/sidebar/Deck.hxx b/sfx2/source/sidebar/Deck.hxx
+index ea33fa2..a88e258 100644
+--- a/sfx2/source/sidebar/Deck.hxx
++++ b/sfx2/source/sidebar/Deck.hxx
+@@ -100,12 +100,9 @@ private:
+     ::boost::scoped_ptr<ScrollBar> mpVerticalScrollBar;
+ 
+     DECL_LINK(HandleVerticalScrollBarChange,void*);
+-    bool ProcessWheelEvent (
+-        CommandEvent* pCommandEvent,
+-        NotifyEvent& rEvent);
++    bool ProcessWheelEvent(CommandEvent* pCommandEvent);
+ };
+ 
+-
+ } } // end of namespace sfx2::sidebar
+ 
+ #endif
+diff --git a/vcl/source/window/winproc.cxx b/vcl/source/window/winproc.cxx
+index c8094c4..4fab948 100644
+--- a/vcl/source/window/winproc.cxx
++++ b/vcl/source/window/winproc.cxx
+@@ -1366,8 +1366,22 @@ static bool acceptableWheelScrollTarget(const Window *pMouseWindow)
+     return (pMouseWindow && pMouseWindow->IsInputEnabled() && !pMouseWindow->IsInModalMode());
+ }
+ 
++//If the last event at the same absolute screen position was handled by a
++//different window then reuse that window if the event occurs within 1/2 a
++//second, i.e. so scrolling down something like the calc sidebar that contains
++//widgets that respond to wheel events will continue to send the event to the
++//scrolling widget in favour of the widget that happens to end up under the
++//mouse.
++static bool shouldReusePreviousMouseWindow(const SalWheelMouseEvent& rPrevEvt, const SalWheelMouseEvent& rEvt)
++{
++    return (rEvt.mnX == rPrevEvt.mnX && rEvt.mnY == rPrevEvt.mnY && rEvt.mnTime-rPrevEvt.mnTime < 500/*ms*/);
++}
++
+ static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEvt, bool scaleDirectly = false )
+ {
++    static SalWheelMouseEvent aPreviousEvent;
++    static Window *pPreviousWindow;
++
+     ImplDelData aDogTag( pWindow );
+ 
+     ImplSVData* pSVData = ImplGetSVData();
+@@ -1431,6 +1445,16 @@ static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
+         pMouseWindow = pMouseWindow->GetParent();
+     }
+ 
++    // avoid the problem that scrolling via wheel to this point brings a widget
++    // under the mouse that also accepts wheel commands, so stick with the old
++    // widget if the time gap is very small
++    if (shouldReusePreviousMouseWindow(aPreviousEvent, rEvt) && acceptableWheelScrollTarget(pPreviousWindow))
++    {
++        pMouseWindow = pPreviousWindow;
++    }
++
++    aPreviousEvent = rEvt;
++
+     if (acceptableWheelScrollTarget(pMouseWindow) && pMouseWindow->IsEnabled())
+     {
+         // transform coordinates to float window frame coordinates
+@@ -1441,6 +1465,8 @@ static bool ImplHandleWheelEvent( Window* pWindow, const SalWheelMouseEvent& rEv
+         bRet = ImplCallWheelCommand( pMouseWindow, aRelMousePos, &aWheelData );
+     }
+ 
++    pPreviousWindow = !bRet ? pMouseWindow : NULL;
++
+     // if the command was not handled try the focus window
+     if ( bRet )
+     {
+-- 
+1.9.3
+

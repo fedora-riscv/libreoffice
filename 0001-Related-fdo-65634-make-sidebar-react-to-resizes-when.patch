@@ -1,0 +1,127 @@
+From df630b8f8c2c92ec2cd1e4be6a3f54a4e4960e92 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 27 Jun 2014 15:52:33 +0100
+Subject: [PATCH] Related: fdo#65634 make sidebar react to resizes when
+ floating
+
+the parent isn't a SfxSplitWindow in this case, but it should
+still react to the resize
+
+Change-Id: Ia298d45b33fc272d6169df12cf2c58a881255163
+---
+ sfx2/source/sidebar/SidebarController.cxx | 70 ++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 29 deletions(-)
+
+diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
+index a5dbcfd..cb26640 100644
+--- a/sfx2/source/sidebar/SidebarController.cxx
++++ b/sfx2/source/sidebar/SidebarController.cxx
+@@ -315,9 +315,6 @@ void SAL_CALL SidebarController::requestLayout (void)
+     RestrictWidth(nMinimalWidth);
+ }
+ 
+-
+-
+-
+ void SidebarController::BroadcastPropertyChange (void)
+ {
+     DataChangedEvent aEvent (DATACHANGED_USER);
+@@ -325,9 +322,6 @@ void SidebarController::BroadcastPropertyChange (void)
+     mpParentWindow->Invalidate(INVALIDATE_CHILDREN);
+ }
+ 
+-
+-
+-
+ void SidebarController::NotifyResize (void)
+ {
+     if (mpTabBar == 0)
+@@ -361,11 +355,48 @@ void SidebarController::NotifyResize (void)
+     else
+         bIsDeckVisible = false;
+ 
+-    SfxSplitWindow* pSplitWindow = GetSplitWindow();
+-    if ( mpCurrentDeck && pSplitWindow )
++    if (mpCurrentDeck)
+     {
+-        // Find out that which side of the Window do we need to attach the Sidebar?
+-        if ( pSplitWindow->GetAlign() == WINDOWALIGN_RIGHT )        // attach the Sidebar towards the right-side of screen
++        SfxSplitWindow* pSplitWindow = GetSplitWindow();
++        if (pSplitWindow)   //in sidebar mode
++        {
++            // Find out that which side of the Window do we need to attach the Sidebar?
++            if ( pSplitWindow->GetAlign() == WINDOWALIGN_RIGHT )        // attach the Sidebar towards the right-side of screen
++            {
++                // Place the deck first.
++                {
++                    if (bIsDeckVisible)
++                    {
++                        mpCurrentDeck->setPosSizePixel(0,0, nWidth-nTabBarDefaultWidth, nHeight);
++                        mpCurrentDeck->Show();
++                        mpCurrentDeck->RequestLayout();
++                    }
++                    else
++                        mpCurrentDeck->Hide();
++                }
++
++                // Now place the tab bar.
++                mpTabBar->setPosSizePixel(nWidth-nTabBarDefaultWidth,0,nTabBarDefaultWidth,nHeight);
++                mpTabBar->Show();
++            }
++            else if ( pSplitWindow->GetAlign() == WINDOWALIGN_LEFT)     // attach the Sidebar towards the left-side of screen
++            {
++                // Place the tab bar first.
++                mpTabBar->setPosSizePixel(0,0,nTabBarDefaultWidth,nHeight);
++                mpTabBar->Show();
++
++                // Now place the deck.
++                if (bIsDeckVisible)
++                {
++                    mpCurrentDeck->setPosSizePixel(nTabBarDefaultWidth,0, nWidth-nTabBarDefaultWidth, nHeight);
++                    mpCurrentDeck->Show();
++                    mpCurrentDeck->RequestLayout();
++                }
++                else
++                    mpCurrentDeck->Hide();
++            }
++        }
++        else //floating window mode
+         {
+             // Place the deck first.
+             {
+@@ -383,22 +414,6 @@ void SidebarController::NotifyResize (void)
+             mpTabBar->setPosSizePixel(nWidth-nTabBarDefaultWidth,0,nTabBarDefaultWidth,nHeight);
+             mpTabBar->Show();
+         }
+-        else if ( pSplitWindow->GetAlign() == WINDOWALIGN_LEFT)     // attach the Sidebar towards the left-side of screen
+-        {
+-            // Place the tab bar first.
+-            mpTabBar->setPosSizePixel(0,0,nTabBarDefaultWidth,nHeight);
+-            mpTabBar->Show();
+-
+-            // Now place the deck.
+-            if (bIsDeckVisible)
+-            {
+-                mpCurrentDeck->setPosSizePixel(nTabBarDefaultWidth,0, nWidth-nTabBarDefaultWidth, nHeight);
+-                mpCurrentDeck->Show();
+-                mpCurrentDeck->RequestLayout();
+-            }
+-            else
+-                mpCurrentDeck->Hide();
+-        }
+     }
+ 
+     // Determine if the closer of the deck can be shown.
+@@ -414,9 +429,6 @@ void SidebarController::NotifyResize (void)
+     RestrictWidth(nMinimalWidth);
+ }
+ 
+-
+-
+-
+ void SidebarController::ProcessNewWidth (const sal_Int32 nNewWidth)
+ {
+     if ( ! mbIsDeckRequestedOpen)
+-- 
+1.9.3
+

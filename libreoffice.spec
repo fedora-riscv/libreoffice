@@ -319,6 +319,8 @@ Patch63: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 Patch64: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch65: 0001-resolved-fdo-82936-do-not-clear-the-3D-flag-on-refup.patch
 Patch66: 0001-fdo-85282-Correct-adjustment-of-range-reference-on-d.patch
+Patch67: 0001-Resolves-fdo-65634-improve-wheel-scrolling-sidebar-p.patch
+Patch68: 0001-Related-fdo-65634-make-sidebar-react-to-resizes-when.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2260,6 +2262,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 13 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-7
+- Resolves: rhbz#1163477 improve wheel scrolling in sidebar
+
 * Fri Nov 07 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-6
 - Resolves: rhbz#1160924 do not clear the 3D flag on refupdate (fdo#82936)
 - Resolves: fdo#85282: Correct adjustment of range reference on delete & shift.

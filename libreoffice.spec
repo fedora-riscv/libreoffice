@@ -340,6 +340,7 @@ Patch42: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
 Patch43: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
 Patch44: 0001-have-a-stab-at-improving-impossible-question.patch
 Patch45: 0001-just-use-ANSI-C-declarations.patch
+Patch46: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

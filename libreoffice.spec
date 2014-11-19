@@ -343,8 +343,9 @@ Patch45: 0001-just-use-ANSI-C-declarations.patch
 Patch46: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
 Patch47: 0001-table-layout-cache-returns-wrong-rectangle.patch
 Patch48: 0001-impress-tables-are-not-interactively-growing.patch
-Patch49: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
-Patch50: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
+Patch49: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
+Patch50: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
+Patch51: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

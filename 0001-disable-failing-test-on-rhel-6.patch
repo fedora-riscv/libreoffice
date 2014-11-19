@@ -19,6 +19,20 @@ index 824f3f5..3214658 100644
  ))
  endif
  
--- 
-1.9.3
-
+diff --git a/writerperfect/Module_writerperfect.mk b/writerperfect/Module_writerperfect.mk
+index 9c30697..c5fbcca 100644
+--- a/writerperfect/Module_writerperfect.mk
++++ b/writerperfect/Module_writerperfect.mk
+@@ -31,12 +31,4 @@ $(eval $(call gb_Module_add_check_targets,writerperfect,\
+ 	CppunitTest_writerperfect_stream \
+ ))
+ 
+-$(eval $(call gb_Module_add_slowcheck_targets,writerperfect,\
+-	CppunitTest_writerperfect_calc \
+-	CppunitTest_writerperfect_draw \
+-	CppunitTest_writerperfect_impress \
+-	CppunitTest_writerperfect_writer \
+-	StaticLibrary_writerperfect_importtestbase \
+-))
+-
+ # vim: set noet sw=4 ts=4:

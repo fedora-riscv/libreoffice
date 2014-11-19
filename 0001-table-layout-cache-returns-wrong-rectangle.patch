@@ -1,7 +1,7 @@
-From f79f3d1322b396f5f45ccd7742015749e93ac57b Mon Sep 17 00:00:00 2001
+From b5a90399a502498c28779706b3f518b4ea224b4d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 13 Nov 2014 13:32:35 +0000
-Subject: [PATCH] table layout cache returns wrong rectangle
+Subject: [PATCH 1/2] table layout cache returns wrong rectangle
 
 the layouter can modify its input rectangle to grow
 it to the necessary size to contain the layout
@@ -22,11 +22,11 @@ Change-Id: I4f09594d82c1597204afbd059e175af9bf8e2527
  1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/svx/source/table/svdotable.cxx b/svx/source/table/svdotable.cxx
-index d49cfb3..fbd532a 100644
+index 45c6a30..e3a2a47 100644
 --- a/svx/source/table/svdotable.cxx
 +++ b/svx/source/table/svdotable.cxx
 @@ -244,7 +244,8 @@ public:
-     virtual bool isInUse() SAL_OVERRIDE;
+     virtual bool isInUse();
  private:
      static SdrTableObjImpl* lastLayoutTable;
 -    static Rectangle lastLayoutRectangle;
@@ -45,7 +45,7 @@ index d49cfb3..fbd532a 100644
  bool SdrTableObjImpl::lastLayoutFitWidth;
  bool SdrTableObjImpl::lastLayoutFitHeight;
  WritingMode SdrTableObjImpl::lastLayoutMode;
-@@ -696,14 +698,14 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
+@@ -698,14 +700,14 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
          // Optimization: SdrTableObj::SetChanged() can call this very often, repeatedly
          // with the same settings, noticeably increasing load time. Skip if already done.
          WritingMode writingMode = mpTableObj->GetWritingMode();
@@ -62,7 +62,7 @@ index d49cfb3..fbd532a 100644
              lastLayoutFitWidth = bFitWidth;
              lastLayoutFitHeight = bFitHeight;
              lastLayoutMode = writingMode;
-@@ -711,6 +713,11 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
+@@ -713,6 +715,11 @@ void SdrTableObjImpl::LayoutTable( Rectangle& rArea, bool bFitWidth, bool bFitHe
              lastColCount = getColumnCount();
              TableModelNotifyGuard aGuard( mxTable.get() );
              mpLayouter->LayoutTable( rArea, bFitWidth, bFitHeight );

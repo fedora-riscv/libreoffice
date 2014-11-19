@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -323,6 +323,8 @@ Patch67: 0001-Resolves-fdo-65634-improve-wheel-scrolling-sidebar-p.patch
 Patch68: 0001-Related-fdo-65634-make-sidebar-react-to-resizes-when.patch
 Patch69: 0001-table-layout-cache-returns-wrong-rectangle.patch
 Patch70: 0001-impress-tables-are-not-interactively-growing.patch
+Patch71: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
+Patch72: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2264,6 +2266,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Nov 19 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-9
+- Resolves: rhbz#1165740 arbitrarily backport some rtf crash fixes
+
 * Wed Nov 19 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-8
 - table resizing etc in impress is mangled
 

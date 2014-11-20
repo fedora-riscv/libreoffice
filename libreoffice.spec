@@ -2318,7 +2318,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thi Nov 20 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-5
+* Thu Nov 20 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-5
 - Resolves: rhbz#1164551 we want to ensure that a libjvm.so is available
   but we have no firm interest in which one that is
 

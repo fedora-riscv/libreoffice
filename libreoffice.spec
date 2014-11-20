@@ -299,53 +299,55 @@ Patch8: 0001-disable-failing-test-on-rhel-6.patch
 Patch9: 0001-disable-swui-test-on-RHEL-7.patch
 # not upstreamed
 Patch10: 0001-disable-libe-book-support.patch
+%else
+Patch11: 0001-disable-failing-while-libmwaw-fix-pending.patch
 %endif
 # not upstreamed
-Patch11: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch12: 0001-disable-firebird-unit-test.patch
+Patch13: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch13: 0001-never-run-autogen.sh.patch
+Patch14: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch14: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
-Patch15: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch16: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
-Patch17: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
-Patch18: 0001-scrolling-very-slow-in-calc.patch
-Patch19: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
-Patch20: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
-Patch21: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
-Patch22: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
-Patch23: 0002-Linux-AArch64-port.patch
-Patch24: 0001-fix-KDE4-detection-on-aarch64.patch
-Patch25: 0001-drop-useless-test-for-ant-apache-regexp.patch
-Patch26: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
-Patch27: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
-Patch28: 0001-create-a-master-document-template-type.patch
-Patch29: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
-Patch30: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
-Patch31: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
-Patch32: 0001-Resolves-fdo-68967-looping-layout.patch
-Patch33: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
-Patch34: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
-Patch35: 0001-allow-to-build-with-system-opencollada.patch
-Patch36: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch37: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
-Patch38: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
-Patch39: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
-Patch40: 0001-implement-toggling-off-removeable-master-elements-wi.patch
-Patch41: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
-Patch42: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
-Patch43: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
-Patch44: 0001-have-a-stab-at-improving-impossible-question.patch
-Patch45: 0001-just-use-ANSI-C-declarations.patch
-Patch46: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
-Patch47: 0001-table-layout-cache-returns-wrong-rectangle.patch
-Patch48: 0001-impress-tables-are-not-interactively-growing.patch
-Patch49: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
-Patch50: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
-Patch51: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
+Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch17: 0001-rhbz-1111216-allow-to-export-an-empty-sheet-to-PDF.patch
+Patch18: 0001-avoid-problems-detecting-HTML-files-with-.xls-ext.patch
+Patch19: 0001-scrolling-very-slow-in-calc.patch
+Patch20: 0001-Related-rhbz-1117853-nStartPara-of-EE_PARA_NOT_FOUND.patch
+Patch21: 0001-Resolves-fdo-81487-pasting-into-outline-view-crashes.patch
+Patch22: 0001-Related-rhbz-1130264-plausible-fix-for-reported-cras.patch
+Patch23: 0001-if-_CALL_ELF-if-defined-_CALL_ELF-_CALL_ELF-2.patch
+Patch24: 0002-Linux-AArch64-port.patch
+Patch25: 0001-fix-KDE4-detection-on-aarch64.patch
+Patch26: 0001-drop-useless-test-for-ant-apache-regexp.patch
+Patch27: 0001-No-fstack-protect-strong-for-gcc3_linux_aarch64-cpp2.patch
+Patch28: 0001-fdo-82496-Change-picture-option-by-rightclicking.patch
+Patch29: 0001-create-a-master-document-template-type.patch
+Patch30: 0001-Resolves-fdo-80911-don-t-swap-notes-page-width-heigh.patch
+Patch31: 0001-default-n-up-printing-of-notes-to-sensible-2-x-1-not.patch
+Patch32: 0001-n-up-printing-done-by-vcl-brochures-by-draw-impress.patch
+Patch33: 0001-Resolves-fdo-68967-looping-layout.patch
+Patch34: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
+Patch35: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
+Patch36: 0001-allow-to-build-with-system-opencollada.patch
+Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
+Patch38: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
+Patch39: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
+Patch40: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
+Patch41: 0001-implement-toggling-off-removeable-master-elements-wi.patch
+Patch42: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
+Patch43: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
+Patch44: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
+Patch45: 0001-have-a-stab-at-improving-impossible-question.patch
+Patch46: 0001-just-use-ANSI-C-declarations.patch
+Patch47: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
+Patch48: 0001-table-layout-cache-returns-wrong-rectangle.patch
+Patch49: 0001-impress-tables-are-not-interactively-growing.patch
+Patch50: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
+Patch51: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
+Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

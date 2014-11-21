@@ -1,0 +1,124 @@
+From 84cce94c86c3357b88017f29b84b3c19bd1ab731 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Nov 2014 15:53:14 +0000
+Subject: [PATCH] Resolves: fdo#86466 Wrong background color shown in format
+ table in impress
+
+regression from
+
+commit 440e2031ce8cffc8dc573e359a330236f9c11dfb
+    bnc#882627: Allow to edit spacing to contents even with no borders visible.
+
+which was an attempt to fix regression from
+
+commit 9e5342509b302ba1f816f21cc3ad1cb7093982e0
+Date:   Mon Jun 3 14:22:07 2013 +0200
+
+    copy values from the original item set
+
+    ... because SfxAbstractDialog::GetOutputItemSet() only contains the
+    items that have been _changed_ in the dialog.
+
+Now format color shows the expected color, and loading the sample for
+bnc#882627 and selecting cells and changing the border distance (etc) doesn't
+cause bulleting and paragraph alignment properties to be stripped away
+
+(cherry picked from commit e91ab2104b62b689dca2c565cd81a8cb40885822)
+
+Conflicts:
+	svx/source/table/tablecontroller.cxx
+
+Change-Id: Id414e09faa221d151f393971654b17bbe9f46d81
+---
+ svx/source/table/tablecontroller.cxx | 44 ++++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 12 deletions(-)
+
+diff --git a/svx/source/table/tablecontroller.cxx b/svx/source/table/tablecontroller.cxx
+index 0b239e1..f7a5468 100644
+--- a/svx/source/table/tablecontroller.cxx
++++ b/svx/source/table/tablecontroller.cxx
+@@ -858,6 +858,19 @@ void SvxTableController::onSelect( sal_uInt16 nSId )
+     }
+ }
+ 
++namespace
++{
++    SvxBoxItem mergeDrawinglayerTextDistancesAndSvxBoxItem(const SfxItemSet& rAttrSet)
++    {
++        // merge drawing layer text distance items into SvxBoxItem used by the dialog
++        SvxBoxItem aBoxItem( static_cast< const SvxBoxItem& >( rAttrSet.Get( SDRATTR_TABLE_BORDER ) ) );
++        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( static_cast<const SdrMetricItem&>(rAttrSet.Get(SDRATTR_TEXT_LEFTDIST)).GetValue()), BOX_LINE_LEFT );
++        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( static_cast<const SdrMetricItem&>(rAttrSet.Get(SDRATTR_TEXT_RIGHTDIST)).GetValue()), BOX_LINE_RIGHT );
++        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( static_cast<const SdrMetricItem&>(rAttrSet.Get(SDRATTR_TEXT_UPPERDIST)).GetValue()), BOX_LINE_TOP );
++        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( static_cast<const SdrMetricItem&>(rAttrSet.Get(SDRATTR_TEXT_LOWERDIST)).GetValue()), BOX_LINE_BOTTOM );
++        return aBoxItem;
++    }
++}
+ 
+ void SvxTableController::onFormatTable( SfxRequest& rReq )
+ {
+@@ -872,15 +885,11 @@ void SvxTableController::onFormatTable( SfxRequest& rReq )
+         SfxItemSet aNewAttr( pTableObj->GetModel()->GetItemPool() );
+ 
+         // merge drawing layer text distance items into SvxBoxItem used by the dialog
+-        SvxBoxItem aBoxItem( static_cast< const SvxBoxItem& >( aNewAttr.Get( SDRATTR_TABLE_BORDER ) ) );
+-        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( ((SdrTextLeftDistItem&)(aNewAttr.Get(SDRATTR_TEXT_LEFTDIST))).GetValue()), BOX_LINE_LEFT );
+-        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( ((SdrTextRightDistItem&)(aNewAttr.Get(SDRATTR_TEXT_RIGHTDIST))).GetValue()), BOX_LINE_RIGHT );
+-        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( ((SdrTextUpperDistItem&)(aNewAttr.Get(SDRATTR_TEXT_UPPERDIST))).GetValue()), BOX_LINE_TOP );
+-        aBoxItem.SetDistance( sal::static_int_cast< sal_uInt16 >( ((SdrTextLowerDistItem&)(aNewAttr.Get(SDRATTR_TEXT_LOWERDIST))).GetValue()), BOX_LINE_BOTTOM );
++        SvxBoxItem aBoxItem(mergeDrawinglayerTextDistancesAndSvxBoxItem(aNewAttr));
+ 
+         SvxBoxInfoItem aBoxInfoItem( static_cast< const SvxBoxInfoItem& >( aNewAttr.Get( SDRATTR_TABLE_BORDER_INNER ) ) );
+ 
+-        MergeAttrFromSelectedCells(aNewAttr, true);
++        MergeAttrFromSelectedCells(aNewAttr, false);
+         FillCommonBorderAttrFromSelectedCells( aBoxItem, aBoxInfoItem );
+         aNewAttr.Put( aBoxItem );
+         aNewAttr.Put( aBoxInfoItem );
+@@ -890,8 +899,21 @@ void SvxTableController::onFormatTable( SfxRequest& rReq )
+         // Even Cancel Button is returning positive(101) value,
+         if( pDlg.get() && ( pDlg->Execute() == RET_OK ) )
+         {
+-            SfxItemSet aNewSet( aNewAttr );
+-            aNewSet.Put( *(pDlg->GetOutputItemSet ()) );
++            SfxItemSet aNewSet( *(pDlg->GetOutputItemSet ()) );
++
++            //Only properties that were unchanged by the dialog appear in this
++            //itemset.  We had constructed these two properties from other
++            //ones, so if they were not changed, then forcible set them back to
++            //their originals in the new result set so we can decompose that
++            //unchanged state back to their input properties
++            if (aNewSet.GetItemState(SDRATTR_TABLE_BORDER, false) != SFX_ITEM_SET)
++            {
++                aNewSet.Put(aBoxItem);
++            }
++            if (aNewSet.GetItemState(SDRATTR_TABLE_BORDER_INNER, false) != SFX_ITEM_SET)
++            {
++                aNewSet.Put(aBoxInfoItem);
++            }
+ 
+             SvxBoxItem aNewBoxItem( static_cast< const SvxBoxItem& >( aNewSet.Get( SDRATTR_TABLE_BORDER ) ) );
+ 
+@@ -912,8 +934,6 @@ void SvxTableController::onFormatTable( SfxRequest& rReq )
+     }
+ }
+ 
+-
+-
+ void SvxTableController::Execute( SfxRequest& rReq )
+ {
+     const sal_uInt16 nSId = rReq.GetSlot();
+@@ -2951,8 +2971,8 @@ void SvxTableController::FillCommonBorderAttrFromSelectedCells( SvxBoxItem& rBox
+                     nCellFlags |= (nCol > aEnd.mnCol)    ? CELL_AFTER : 0;
+ 
+                     const SfxItemSet& rSet = xCell->GetItemSet();
+-                    const SvxBoxItem& rCellBoxItem = static_cast< const SvxBoxItem& >( rSet.Get(SDRATTR_TABLE_BORDER ) );
+-                    lcl_MergeCommonBorderAttr( aLinesState, rCellBoxItem, nCellFlags );
++                    SvxBoxItem aCellBoxItem(mergeDrawinglayerTextDistancesAndSvxBoxItem(rSet));
++                    lcl_MergeCommonBorderAttr( aLinesState, aCellBoxItem, nCellFlags );
+                 }
+             }
+ 
+-- 
+1.9.3
+

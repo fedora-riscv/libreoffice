@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -348,6 +348,7 @@ Patch49: 0001-impress-tables-are-not-interactively-growing.patch
 Patch50: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
 Patch51: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
 Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
+Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2318,6 +2319,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Nov 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-6
+- Resolves: fdo#86466 Wrong background color shown in impress table
+
 * Thu Nov 20 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-5
 - Resolves: rhbz#1164551 we want to ensure that a libjvm.so is available
   but we have no firm interest in which one that is

@@ -17,16 +17,16 @@ index 53a19bb..6702d9f 100644
  $(eval $(call gb_Module_add_slowcheck_targets,sw,\
 -    CppunitTest_sw_uwriter \
      CppunitTest_sw_htmlexport \
+     CppunitTest_sw_htmlimport \
      CppunitTest_sw_macros_test \
-     CppunitTest_sw_ooxmlexport \
 @@ -60,7 +59,6 @@ $(eval $(call gb_Module_add_slowcheck_targets,sw,\
      CppunitTest_sw_rtfimport \
      CppunitTest_sw_odfexport \
      CppunitTest_sw_odfimport \
 -    CppunitTest_sw_uiwriter \
+     CppunitTest_sw_mailmerge \
+     CppunitTest_sw_globalfilter \
  ))
- 
- ifneq ($(DISABLE_CVE_TESTS),TRUE)
 -- 
 1.9.3
 

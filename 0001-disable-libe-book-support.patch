@@ -90,9 +90,9 @@ index db6afdf..e6ea0f5 100644
  $(eval $(call gb_Library_add_exception_objects,wpftwriter,\
  	writerperfect/source/writer/AbiWordImportFilter \
 -	writerperfect/source/writer/EBookImportFilter \
- 	writerperfect/source/writer/ImportFilterBase \
  	writerperfect/source/writer/MSWorksImportFilter \
  	writerperfect/source/writer/MWAWImportFilter \
+ 	writerperfect/source/writer/WordPerfectImportFilter \
 diff --git a/writerperfect/qa/unit/WpftWriterFilterTest.cxx b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 index 904daab..fb44878 100644
 --- a/writerperfect/qa/unit/WpftWriterFilterTest.cxx
@@ -117,16 +117,18 @@ index 05f6542..831bc38 100644
  #include "WordPerfectImportFilter.hxx"
  #include "MSWorksImportFilter.hxx"
  #include "MWAWImportFilter.hxx"
-@@ -52,9 +51,6 @@ static cppu::ImplementationEntry const services[] = {
-     { &MWAWImportFilter_createInstance, &MWAWImportFilter_getImplementationName,
-       &MWAWImportFilter_getSupportedServiceNames,
-       &cppu::createSingleComponentFactory, 0, 0 },
--    { &EBookImportFilter_createInstance, &EBookImportFilter_getImplementationName,
--      &EBookImportFilter_getSupportedServiceNames,
--      &cppu::createSingleComponentFactory, 0, 0 },
-     { 0, 0, 0, 0, 0, 0 } };
+@@ -52,11 +51,6 @@ static cppu::ImplementationEntry const services[] = {
+         &MWAWImportFilter_getSupportedServiceNames,
+         &cppu::createSingleComponentFactory, 0, 0
+     },
+-    {
+-        &EBookImportFilter_createInstance, &EBookImportFilter_getImplementationName,
+-        &EBookImportFilter_getSupportedServiceNames,
+-        &cppu::createSingleComponentFactory, 0, 0
+-    },
+     { 0, 0, 0, 0, 0, 0 }
+ };
  
- }
 -- 
 1.9.3
 

@@ -19,7 +19,7 @@ index c5e3e67..8bd18b4 100644
  		-linkoffline http://java.sun.com/j2se/1.5/docs/api $(SRCDIR)/odk/docs/java \
  		$(odk_JAVAPACKAGES) \
 -		$(if $(JAVADOCISGJDOC),,-notimestamp) \
- 		> $@
+ 		> $@)
  
  # vim: set noet sw=4 ts=4:
 diff --git a/scp2/source/ooo/common_brand.scp b/scp2/source/ooo/common_brand.scp

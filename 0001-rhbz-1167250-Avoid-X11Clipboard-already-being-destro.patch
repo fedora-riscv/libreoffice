@@ -1,0 +1,99 @@
+From b604509093dc70914e3ad60d178098dafd26b021 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 24 Nov 2014 14:00:30 +0100
+Subject: [PATCH] rhbz#1167250: Avoid X11Clipboard already being destroyed in
+ constructor
+
+...via SelectionManager::run's aKeep acquring and releasing getReference()
+
+Change-Id: I18696d30c41ca9ae101261668cbf54cb0a6c45fc
+(cherry picked from commit 94d2de0ba1f010be7acf0d00ce5b2ed4ed2b895b)
+---
+ vcl/unx/generic/dtrans/X11_clipboard.cxx | 15 +++++++++++----
+ vcl/unx/generic/dtrans/X11_clipboard.hxx |  6 +++++-
+ vcl/unx/generic/dtrans/X11_service.cxx   |  4 ++--
+ 3 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/vcl/unx/generic/dtrans/X11_clipboard.cxx b/vcl/unx/generic/dtrans/X11_clipboard.cxx
+index 10863b2..6280526 100644
+--- a/vcl/unx/generic/dtrans/X11_clipboard.cxx
++++ b/vcl/unx/generic/dtrans/X11_clipboard.cxx
+@@ -30,6 +30,7 @@
+ #include <uno/mapping.hxx>
+ #include <cppuhelper/factory.hxx>
+ #include <cppuhelper/supportsservice.hxx>
++#include <rtl/ref.hxx>
+ #include <rtl/tencinfo.h>
+ 
+ #if OSL_DEBUG_LEVEL > 1
+@@ -59,16 +60,22 @@ X11Clipboard::X11Clipboard( SelectionManager& rManager, Atom aSelection ) :
+ #if OSL_DEBUG_LEVEL > 1
+     fprintf( stderr, "creating instance of X11Clipboard (this=%p)\n", this );
+ #endif
++}
+ 
+-    if( m_aSelection != None )
++css::uno::Reference<css::datatransfer::clipboard::XClipboard>
++X11Clipboard::create( SelectionManager& rManager, Atom aSelection )
++{
++    rtl::Reference<X11Clipboard> cb(new X11Clipboard(rManager, aSelection));
++    if( aSelection != None )
+     {
+-        m_rSelectionManager.registerHandler( m_aSelection, *this );
++        rManager.registerHandler( aSelection, *cb.get() );
+     }
+     else
+     {
+-        m_rSelectionManager.registerHandler( XA_PRIMARY, *this );
+-        m_rSelectionManager.registerHandler( m_rSelectionManager.getAtom( OUString("CLIPBOARD") ), *this );
++        rManager.registerHandler( XA_PRIMARY, *cb.get() );
++        rManager.registerHandler( rManager.getAtom( OUString("CLIPBOARD") ), *cb.get() );
+     }
++    return cb.get();
+ }
+ 
+ // ------------------------------------------------------------------------
+diff --git a/vcl/unx/generic/dtrans/X11_clipboard.hxx b/vcl/unx/generic/dtrans/X11_clipboard.hxx
+index eaff171..a18e279 100644
+--- a/vcl/unx/generic/dtrans/X11_clipboard.hxx
++++ b/vcl/unx/generic/dtrans/X11_clipboard.hxx
+@@ -48,6 +48,8 @@ namespace x11 {
+         ::std::list< com::sun::star::uno::Reference< ::com::sun::star::datatransfer::clipboard::XClipboardListener > > m_aListeners;
+         Atom                                                    m_aSelection;
+ 
++        X11Clipboard( SelectionManager& rManager, Atom aSelection );
++
+     protected:
+ 
+ 
+@@ -58,7 +60,9 @@ namespace x11 {
+ 
+     public:
+ 
+-        X11Clipboard( SelectionManager& rManager, Atom aSelection );
++        static css::uno::Reference<css::datatransfer::clipboard::XClipboard>
++        create( SelectionManager& rManager, Atom aSelection );
++
+         virtual ~X11Clipboard();
+ 
+         static X11Clipboard* get( const OUString& rDisplayName, Atom aSelection );
+diff --git a/vcl/unx/generic/dtrans/X11_service.cxx b/vcl/unx/generic/dtrans/X11_service.cxx
+index 644e88d..545e66c 100644
+--- a/vcl/unx/generic/dtrans/X11_service.cxx
++++ b/vcl/unx/generic/dtrans/X11_service.cxx
+@@ -80,10 +80,10 @@ css::uno::Reference< XInterface > X11SalInstance::CreateClipboard( const Sequenc
+     if( it != m_aInstances.end() )
+         return it->second;
+ 
+-    X11Clipboard* pClipboard = new X11Clipboard( rManager, nSelection );
++    css::uno::Reference<css::datatransfer::clipboard::XClipboard> pClipboard = X11Clipboard::create( rManager, nSelection );
+     m_aInstances[ nSelection ] = pClipboard;
+ 
+-    return static_cast<OWeakObject*>(pClipboard);
++    return pClipboard;
+ }
+ 
+ // ------------------------------------------------------------------------
+-- 
+1.9.3
+

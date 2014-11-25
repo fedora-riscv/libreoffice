@@ -110,8 +110,13 @@ Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada
+%if 0%{?csb-rhel-7-hack}
+Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
+Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
+Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
 %endif
-
+%endif
 Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
 # build tools
@@ -202,10 +207,12 @@ BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libclucene-core)
-BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(libexttextcat)
+%if !0%{?csb-rhel-7-hack}
+BuildRequires: pkgconfig(libcmis-0.4)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(mdds)
+%endif
 BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(poppler-cpp)
 BuildRequires: postgresql-devel

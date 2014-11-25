@@ -323,6 +323,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
+Patch19: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,40 @@
+From 0b3976fe49ddf6324c9c61842d3f01f89566c4c9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 25 Nov 2014 15:56:29 +0000
+Subject: [PATCH] Revert "Resolves: #i63015# always default to
+ WinAnsiEncoding..."
+
+Because under Linux use text
+"'"
+and font "Nimbus Sans L"
+and export as pdf and the output is garbled
+
+If we do want to stick WinAnsiEncoding here then we'll presumably have have to
+test that pEncoding actually matches WinAnsiEncoding and/or generate an
+additional Encoding/Differences from WinAnsiEncoding for that font.
+
+This reverts commit eea16cb3e65a4308caddb7618d31a76ca259dbb1.
+
+(cherry picked from commit 297b22bd49ea11a90063ab8503fb83090f351668)
+
+Change-Id: I9dd8de2a68ad276cce769545186d169160880e09
+---
+ vcl/source/gdi/pdfwriter_impl.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
+index 5548629..2f44dd5 100644
+--- a/vcl/source/gdi/pdfwriter_impl.cxx
++++ b/vcl/source/gdi/pdfwriter_impl.cxx
+@@ -3491,7 +3491,7 @@ std::map< sal_Int32, sal_Int32 > PDFWriterImpl::emitEmbeddedFont( const Physical
+                 "<</Type/Font/Subtype/Type1/BaseFont/" );
+             appendName( aInfo.m_aPSName, aLine );
+             aLine.append( "\n" );
+-            if( !pFont->IsSymbolFont() )
++            if( !pFont->IsSymbolFont() &&  pEncoding == 0 )
+                 aLine.append( "/Encoding/WinAnsiEncoding\n" );
+             if( nToUnicodeStream )
+             {
+-- 
+1.9.3
+

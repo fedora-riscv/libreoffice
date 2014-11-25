@@ -1,0 +1,52 @@
+From 99023fe9bd7d8b665faed7fe9cb98b3fb8922292 Mon Sep 17 00:00:00 2001
+From: Michael Meeks <michael.meeks@collabora.com>
+Date: Tue, 7 Oct 2014 10:10:27 +0100
+Subject: [PATCH] Disable sdremote by default, and improve flow control.
+
+It was intended to disable sdremote by default when it exited
+experimental mode.
+
+This reverts commit 576943b9bf7506829de97d2194c4bee35a485436.
+
+Change-Id: I2c1b5443e334021bd9574316167f48b1af6200e5
+Reviewed-on: https://gerrit.libreoffice.org/11837
+Reviewed-by: Jan Holesovsky <kendy@collabora.com>
+Tested-by: Jan Holesovsky <kendy@collabora.com>
+---
+ officecfg/registry/schema/org/openoffice/Office/Impress.xcs | 2 +-
+ sd/source/ui/remotecontrol/Server.cxx                       | 6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/officecfg/registry/schema/org/openoffice/Office/Impress.xcs b/officecfg/registry/schema/org/openoffice/Office/Impress.xcs
+index b740aca..01836d6 100644
+--- a/officecfg/registry/schema/org/openoffice/Office/Impress.xcs
++++ b/officecfg/registry/schema/org/openoffice/Office/Impress.xcs
+@@ -629,7 +629,7 @@
+             <desc>Indicates whether to enable the Impress remote controller.</desc>
+             <label>Enable remote control</label>
+           </info>
+-          <value>true</value>
++          <value>false</value>
+         </prop>
+         <prop oor:name="EnablePresenterScreen" oor:type="xs:boolean" oor:nillable="false">
+            <info>
+diff --git a/sd/source/ui/remotecontrol/Server.cxx b/sd/source/ui/remotecontrol/Server.cxx
+index 51796cc..fb24e67 100644
+--- a/sd/source/ui/remotecontrol/Server.cxx
++++ b/sd/source/ui/remotecontrol/Server.cxx
+@@ -115,7 +115,11 @@ void RemoteServer::execute()
+         {
+             OString aName( aLine );
+ 
+-            if ( ! pSocket->readLine( aLine ) ) delete pSocket;
++            if ( ! pSocket->readLine( aLine ) )
++            {
++                delete pSocket;
++                continue;
++            }
+             OString aPin( aLine );
+ 
+             SocketAddr aClientAddr;
+-- 
+1.9.3
+

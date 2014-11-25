@@ -42,7 +42,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/default/
@@ -286,6 +286,7 @@ Patch49: 0001-rhbz-1105376-move-FlatODF-filter-config-to-right-pla.patch
 Patch50: 0001-Fix-fdo-71423-crash-while-editing-Impress-tables.patch
 Patch51: 0001-Use-varying-aElement-name.patch
 Patch52: 0001-Resolves-i125386-secured-user-request-and-changed-so.patch
+Patch53: 0001-Disable-sdremote-by-default-and-improve-flow-control.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2163,6 +2164,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 25 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.6.2-9
+- Resolves: rhbz#1167503 CVE-2014-3693 Use-after-free in Impress Remote socket manager
+
 * Tue Sep 09 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.1.6.2-8
 - Resolves: rhbz#1139592 CVE-2014-3575 arbitrary file preview disclosure via ole2 objects
 

@@ -350,6 +350,7 @@ Patch51: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
 Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 Patch54: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
+Patch55: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2320,8 +2321,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 24 2014 Stephan Bergmann <sbergman@redhat.com>  - 1:4.3.4.1-7-UNBUILT
+* Tue Nov 25 2014 Stephan Bergmann <sbergman@redhat.com>  - 1:4.3.4.1-7
 - Resolves: fdo#1167250 Crash in clipboard code
+- Revert: #i63015# always default to WinAnsiEncoding for Type1 pdf export
 
 * Fri Nov 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-6
 - Resolves: fdo#86466 Wrong background color shown in impress table

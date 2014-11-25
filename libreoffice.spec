@@ -117,6 +117,7 @@ Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
 %endif
 %endif
+
 Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
 # build tools

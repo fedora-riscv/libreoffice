@@ -326,6 +326,12 @@ Patch70: 0001-impress-tables-are-not-interactively-growing.patch
 Patch71: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
 Patch72: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 Patch73: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
+Patch74: 0001-fdo-81633-Add-a-hidden-configuration-option-to-toggl.patch
+Patch75: 0002-fdo-85215-Ensure-that-formula-broadcasting-works-aft.patch
+Patch76: 0005-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
+Patch77: 0006-fdo-83765-do-not-update-references-in-SortReorderByC.patch
+Patch78: 0007-fix-fdo-79441-again-and-keep-references-to-other-she.patch
+Patch79: 0008-fdo-86708-paint-after-Undo-of-Sort.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2267,8 +2273,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 24 2014 Stephan Bergmann <sbergman@redhat.com>  - 1:4.2.7.2.-10-UNBUILT
-- Resolves: fdo#1167250 Crash in clipboard code
+* Wed Nov 26 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-10
+- Resolves: rhbz#1167250 Crash in clipboard code
+- Resolves: rhbz#1164898 and various other Calc sorting issues
+-           see also fdo#85215, fdo#83765, fdo#79441
 
 * Wed Nov 19 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-9
 - Resolves: rhbz#1165740 arbitrarily backport some rtf crash fixes

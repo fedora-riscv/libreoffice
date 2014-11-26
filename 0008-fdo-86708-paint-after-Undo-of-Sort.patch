@@ -1,0 +1,52 @@
+From 57d68a12a7f8c8ac1e60eda33a9f96ce3bca75c2 Mon Sep 17 00:00:00 2001
+Message-Id: <57d68a12a7f8c8ac1e60eda33a9f96ce3bca75c2.1417014698.git.erack@redhat.com>
+In-Reply-To: <67f3ce3a9df2bc62db5602dd84975047c1137b92.1417014697.git.erack@redhat.com>
+References: <67f3ce3a9df2bc62db5602dd84975047c1137b92.1417014697.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 25 Nov 2014 19:02:08 +0100
+Subject: [PATCH 8/8] fdo#86708 paint after Undo of Sort
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Regression of 10fc138307afb4b39baddb0d56eb8e986e5d29ea that exchanged
+the PostPaint with SetDirty, but the paint is also needed.
+
+Change-Id: Ic3e81fa106f405568effaed71ab33b575b4c5c5c
+(cherry picked from commit 5cec4ea827570a5bb0a368025f3733b841107d07)
+Reviewed-on: https://gerrit.libreoffice.org/13123
+Reviewed-by: Andras Timar <andras.timar@collabora.com>
+Tested-by: Andras Timar <andras.timar@collabora.com>
+---
+ sc/source/ui/undo/undosort.cxx | 3 +++
+ 1 file changed, 3 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0008-fdo-86708-paint-after-Undo-of-Sort.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0008-fdo-86708-paint-after-Undo-of-Sort.patch"
+
+diff --git a/sc/source/ui/undo/undosort.cxx b/sc/source/ui/undo/undosort.cxx
+index 4a00707..f86bdc2 100644
+--- a/sc/source/ui/undo/undosort.cxx
++++ b/sc/source/ui/undo/undosort.cxx
+@@ -49,6 +49,9 @@ void UndoSort::Execute( bool bUndo )
+     rDoc.SetDirty(maParam.maSortRange);
+     if (!aParam.mbUpdateRefs)
+         rDoc.BroadcastCells(aParam.maSortRange, SC_HINT_DATACHANGED);
++
++    pDocShell->PostPaint(maParam.maSortRange, PAINT_GRID);
++    pDocShell->PostDataChanged();
+ }
+ 
+ }
+
+--------------erAck-patch-parts--
+
+

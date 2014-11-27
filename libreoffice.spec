@@ -333,6 +333,7 @@ Patch77: 0006-fdo-83765-do-not-update-references-in-SortReorderByC.patch
 Patch78: 0007-fix-fdo-79441-again-and-keep-references-to-other-she.patch
 Patch79: 0008-fdo-86708-paint-after-Undo-of-Sort.patch
 Patch80: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
+Patch81: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2274,8 +2275,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-11-unbuilt
+* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-11
 - Resolves: fdo#84043 don't create duplicate Mirrored props
+- Resolves: rhbz#1165444 abrt crash with NULL pView
 
 * Wed Nov 26 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-10
 - Resolves: rhbz#1167250 Crash in clipboard code

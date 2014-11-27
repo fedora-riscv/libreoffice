@@ -1,0 +1,78 @@
+From 10924e1e0c3b88f5650994b6943193d23f99109d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 27 Nov 2014 11:30:45 +0000
+Subject: [PATCH] Resolves: fdo#84043 don't create duplicate Mirrored[X|Y]
+ properties
+
+regression from 13ef16423e78d3ea825172594f08c47d2f9bfd09
+
+commit 13ef16423e78d3ea825172594f08c47d2f9bfd09
+Author: Armin Le Grand <alg@apache.org>
+Date:   Wed Nov 21 13:23:01 2012 +0000
+
+    For backward compatibility take mirrorings in setTransformation into account
+
+    Also found an error in SdrObjCustomShape::TRGetBaseGeometry when MirrorY was used
+
+    (cherry picked from commit 4116c33b12d3787c406f0348f89efcb1cf409507)
+
+Change-Id: I7bfb5dea32b8ab8498e3d92975c49b830c81e6fb
+(cherry picked from commit 751e5b32c5c361995bf0ba3295f773341fd92c23)
+---
+ xmloff/source/draw/ximpshap.cxx | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
+
+diff --git a/xmloff/source/draw/ximpshap.cxx b/xmloff/source/draw/ximpshap.cxx
+index 74bb00c..6a8c77a 100644
+--- a/xmloff/source/draw/ximpshap.cxx
++++ b/xmloff/source/draw/ximpshap.cxx
+@@ -3832,22 +3832,38 @@ void SdXMLCustomShapeContext::EndElement()
+ 
+         if(bFlippedX || bFlippedY)
+         {
+-            beans::PropertyValue aNewPoroperty;
++            OUString sName;
+ 
+             if(bFlippedX)
++                sName = "MirroredX";
++            else
++                sName = "MirroredY";
++
++            //fdo#84043 overwrite the property if it already exists, otherwise append it
++            beans::PropertyValue* pItem;
++            std::vector< beans::PropertyValue >::iterator aI(maCustomShapeGeometry.begin());
++            std::vector< beans::PropertyValue >::iterator aE(maCustomShapeGeometry.end());
++            while (aI != aE)
++            {
++                if (aI->Name == sName)
++                    break;
++                ++aI;
++            }
++            if (aI != aE)
+             {
+-                aNewPoroperty.Name = "MirroredX";
++                beans::PropertyValue& rItem = *aI;
++                pItem = &rItem;
+             }
+             else
+             {
+-                aNewPoroperty.Name = "MirroredY";
++                maCustomShapeGeometry.push_back(beans::PropertyValue());
++                pItem = &maCustomShapeGeometry.back();
+             }
+ 
+-            aNewPoroperty.Handle = -1;
+-            aNewPoroperty.Value <<= sal_True;
+-            aNewPoroperty.State = beans::PropertyState_DIRECT_VALUE;
+-
+-            maCustomShapeGeometry.push_back(aNewPoroperty);
++            pItem->Name = sName;
++            pItem->Handle = -1;
++            pItem->Value <<= sal_True;
++            pItem->State = beans::PropertyState_DIRECT_VALUE;
+         }
+     }
+ 
+-- 
+1.9.3
+

@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -332,6 +332,7 @@ Patch76: 0005-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
 Patch77: 0006-fdo-83765-do-not-update-references-in-SortReorderByC.patch
 Patch78: 0007-fix-fdo-79441-again-and-keep-references-to-other-she.patch
 Patch79: 0008-fdo-86708-paint-after-Undo-of-Sort.patch
+Patch80: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2273,6 +2274,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-11-unbuilt
+- Resolves: fdo#84043 don't create duplicate Mirrored props
+
 * Wed Nov 26 2014 Eike Rathke <erack@redhat.com> - 1:4.2.7.2-10
 - Resolves: rhbz#1167250 Crash in clipboard code
 - Resolves: rhbz#1164898 and various other Calc sorting issues

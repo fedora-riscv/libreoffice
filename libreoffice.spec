@@ -360,6 +360,7 @@ Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 Patch54: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
 Patch55: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
 Patch56: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
+Patch57: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2330,8 +2331,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-8.unbuilt
+* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-8
 - Resolves: fdo#84043 don't create duplicate Mirrored props
+- Resolves: rhbz#1165444 abrt crash with NULL pView
 
 * Tue Nov 25 2014 Stephan Bergmann <sbergman@redhat.com>  - 1:4.3.4.1-7
 - Resolves: fdo#1167250 Crash in clipboard code

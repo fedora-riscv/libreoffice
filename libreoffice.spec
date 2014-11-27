@@ -2284,6 +2284,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Nov 22 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-1.beta1
+- update to 4.4.0 beta1
+
 * Fri Nov 21 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-6
 - Resolves: fdo#86466 Wrong background color shown in impress table
 

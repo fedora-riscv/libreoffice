@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -359,6 +359,7 @@ Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
 Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 Patch54: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
 Patch55: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
+Patch56: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2329,6 +2330,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-8.unbuilt
+- Resolves: fdo#84043 don't create duplicate Mirrored props
+
 * Tue Nov 25 2014 Stephan Bergmann <sbergman@redhat.com>  - 1:4.3.4.1-7
 - Resolves: fdo#1167250 Crash in clipboard code
 - Revert: #i63015# always default to WinAnsiEncoding for Type1 pdf export

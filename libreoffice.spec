@@ -334,6 +334,7 @@ Patch78: 0007-fix-fdo-79441-again-and-keep-references-to-other-she.patch
 Patch79: 0008-fdo-86708-paint-after-Undo-of-Sort.patch
 Patch80: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 Patch81: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
+Patch82: 0001-rhbz-1016758-Dispose-bridges-when-disposing-bridge-f.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2277,6 +2278,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Nov 28 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-12.unbuilt
 - Resolves: rhbz#1167683 crash in SwPostItMgr::HasNotes
+- Resolves: rhbz#1016758 crash on exit
 
 * Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-11
 - Resolves: fdo#84043 don't create duplicate Mirrored props

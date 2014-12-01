@@ -1,0 +1,86 @@
+From bf3ebcc6aae09d233df6632e72cf06b1d9256692 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 19 May 2014 18:06:16 +0200
+Subject: [PATCH] rhbz#1016758: Dispose bridges when disposing bridge factory
+
+... (which happens when the service manager is disposed), so that no bridges can
+still run during exit.  But this is so glaring that I wonder whether I missed
+the obvious when I originally wrote that code, or whether I rather miss the
+obvious now.  So better let this rest for a while on master before deciding
+about any backports.
+
+(cherry picked from commit 184e4ef35641403fd293262ee413ceee37b3761a)
+Conflicts:
+	binaryurp/source/bridgefactory.cxx
+
+Change-Id: I7c9ad6c8a53dfd1a7b702640920dcb0a9a2c3007
+---
+ binaryurp/source/bridgefactory.cxx | 31 +++++++++++++++++++++++++++++++
+ binaryurp/source/bridgefactory.hxx |  2 ++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/binaryurp/source/bridgefactory.cxx b/binaryurp/source/bridgefactory.cxx
+index 34182b3..6f13614 100644
+--- a/binaryurp/source/bridgefactory.cxx
++++ b/binaryurp/source/bridgefactory.cxx
+@@ -115,6 +115,11 @@ css::uno::Reference< css::bridge::XBridge > BridgeFactory::createBridge(
+     rtl::Reference< Bridge > b;
+     {
+         osl::MutexGuard g(*this);
++        if (rBHelper.bDisposed) {
++            throw css::lang::DisposedException(
++                "BridgeFactory disposed",
++                static_cast< cppu::OWeakObject * >(this));
++        }
+         if (named_.find(sName) != named_.end()) {
+             throw css::bridge::BridgeExistsException(
+                 sName, static_cast< cppu::OWeakObject * >(this));
+@@ -172,6 +177,32 @@ BridgeFactory::getExistingBridges() throw (css::uno::RuntimeException) {
+     return s;
+ }
+ 
++void BridgeFactory::disposing() {
++    BridgeList l1;
++    BridgeMap l2;
++    {
++        osl::MutexGuard g(*this);
++        l1.swap(unnamed_);
++        l2.swap(named_);
++    }
++    for (BridgeList::iterator i(l1.begin()); i != l1.end(); ++i) {
++        try {
++            css::uno::Reference<css::lang::XComponent>(
++                *i, css::uno::UNO_QUERY_THROW)->dispose();
++        } catch (css::uno::Exception & e) {
++            SAL_WARN("binaryurp", "ignoring Exception " << e.Message);
++        }
++    }
++    for (BridgeMap::iterator i(l2.begin()); i != l2.end(); ++i) {
++        try {
++            css::uno::Reference<css::lang::XComponent>(
++                i->second, css::uno::UNO_QUERY_THROW)->dispose();
++        } catch (css::uno::Exception & e) {
++            SAL_WARN("binaryurp", "ignoring Exception " << e.Message);
++        }
++    }
++}
++
+ }
+ 
+ namespace {
+diff --git a/binaryurp/source/bridgefactory.hxx b/binaryurp/source/bridgefactory.hxx
+index a949e63..98f1ab2 100644
+--- a/binaryurp/source/bridgefactory.hxx
++++ b/binaryurp/source/bridgefactory.hxx
+@@ -114,6 +114,8 @@ private:
+         com::sun::star::uno::Reference< com::sun::star::bridge::XBridge > >
+     SAL_CALL getExistingBridges() throw (com::sun::star::uno::RuntimeException);
+ 
++    void SAL_CALL disposing() SAL_OVERRIDE;
++
+     typedef
+         std::list<
+             com::sun::star::uno::Reference< com::sun::star::bridge::XBridge > >
+-- 
+1.9.3
+

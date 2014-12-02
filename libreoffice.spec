@@ -326,6 +326,7 @@ Patch18: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
 Patch19: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
 Patch20: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 Patch21: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
+Patch22: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

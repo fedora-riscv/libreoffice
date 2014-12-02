@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -407,6 +407,7 @@ Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3
 Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
+Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
@@ -2285,6 +2286,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 02 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-4.beta1
+- add Provides: libreoffice-headless; packages are depending on it
+
 * Thu Nov 27 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.4.0.0-3.beta1
 - Resolves: rhbz#1165444 abrt crash with NULL pView
 

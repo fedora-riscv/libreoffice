@@ -112,6 +112,7 @@ Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada
 %if 0%{?csb_rhel_7_hack}
 Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
+Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis

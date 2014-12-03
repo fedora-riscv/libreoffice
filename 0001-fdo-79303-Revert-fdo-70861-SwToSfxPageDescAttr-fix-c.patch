@@ -1,0 +1,72 @@
+From a1b579010e8d4835e344badbacd6e27db68d7d21 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 27 Nov 2014 23:38:38 +0100
+Subject: [PATCH] fdo#79303: Revert "fdo#70861 SwToSfxPageDescAttr: fix call to
+ ...
+
+... SvxExtParagraphTabPage"
+
+This reverts commit 5ce19ddcb6595c71980aecfa1e8c0827343159a4.
+
+It is now simply wrong to claim that a SID_ATTR_PARA_PAGENUM item with
+value 0 is set, when that is a valid offset value.
+
+SwTxtShell::Execute() will call SfxToSwPageDescAttr() which pulls the
+SID_ATTR_PARA_PAGENUM out of the item set and sets it.
+
+Change-Id: If5a155c2874486b3ef7d01883fe73f8e5fca46fe
+Signed-off-by: Andras Timar <andras.timar@collabora.com>
+(cherry picked from commit d12fc79394842951807ab8c58a810cd9c5848cb7)
+
+fdo#70861: cui: fix crash in SvxExtParagraphTabPage
+
+SvxExtParagraphTabPage::Reset() must not request a pool default for
+SID_ATTR_PARA_PAGENUM because it simply does not exist; the item is
+backed by a member of SwPageDesc in Writer.
+
+(cherry picked from commit 9c1a1b98776ca2216d82af303394a09f2bac0471)
+Signed-off-by: Andras Timar <andras.timar@collabora.com>
+
+Conflicts:
+	cui/source/tabpages/paragrph.cxx
+
+Change-Id: I9b157f048cd986566f9b01f3677b53d5974b6c8d
+(cherry picked from commit 7cbc78da69a755b8a994c46c5f04bee0b4b0dd1b)
+---
+ cui/source/tabpages/paragrph.cxx | 2 +-
+ sw/source/ui/utlui/uitool.cxx    | 5 ++---
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/cui/source/tabpages/paragrph.cxx b/cui/source/tabpages/paragrph.cxx
+index f8e7db1..5d564c1 100644
+--- a/cui/source/tabpages/paragrph.cxx
++++ b/cui/source/tabpages/paragrph.cxx
+@@ -1562,7 +1562,7 @@ void SvxExtParagraphTabPage::Reset( const SfxItemSet& rSet )
+ 
+     _nWhich = GetWhich( SID_ATTR_PARA_PAGENUM );
+ 
+-    if ( rSet.GetItemState(_nWhich) >= SFX_ITEM_AVAILABLE )
++    if ( rSet.GetItemState(_nWhich) >= SFX_ITEM_SET )
+     {
+         const sal_uInt16 nPageNum =
+             ( (const SfxUInt16Item&)rSet.Get( _nWhich ) ).GetValue();
+diff --git a/sw/source/ui/utlui/uitool.cxx b/sw/source/ui/utlui/uitool.cxx
+index 512d0bd..e0c4a36 100644
+--- a/sw/source/ui/utlui/uitool.cxx
++++ b/sw/source/ui/utlui/uitool.cxx
+@@ -642,10 +642,9 @@ void SwToSfxPageDescAttr( SfxItemSet& rCoreSet )
+         bPut = false;
+     }
+ 
+-    // TODO for now always pass a page number to cui, it can't make a
+-    // difference between 0 and no page number at the moment.
++    if (oNumOffset)
+     {
+-        SfxUInt16Item aPageNum( SID_ATTR_PARA_PAGENUM, oNumOffset ? oNumOffset.get() : 0 );
++        SfxUInt16Item aPageNum( SID_ATTR_PARA_PAGENUM, oNumOffset.get() );
+         rCoreSet.Put( aPageNum );
+     }
+ 
+-- 
+1.9.3
+

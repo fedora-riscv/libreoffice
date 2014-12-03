@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -362,6 +362,7 @@ Patch55: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
 Patch56: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 Patch57: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 Patch58: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
+Patch59: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2332,6 +2333,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-10
+- Related: fdo#78151 only make outline title and subtitle readonly in
+  master view
+
 * Tue Dec 02 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-9
 - Fix slow updates with annotations
 

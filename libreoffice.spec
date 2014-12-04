@@ -1911,6 +1911,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %if 0%{?rhel} && 0%{?rhel} < 7
 %{baseinstdir}/share/liblangtag
 %endif
+%if 0%{?csb_rhel_7_hack}
+%{baseinstdir}/share/liblangtag
+%endif
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver

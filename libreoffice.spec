@@ -2314,7 +2314,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %exclude %{baseinstdir}/share/Scripts/python/LibreLogo
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
-%{libo_python_sitearch}/program/officehelper.py*
+%{libo_python_sitearch}/officehelper.py*
 %if 0%{libo_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*

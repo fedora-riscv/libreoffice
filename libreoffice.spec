@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1426,6 +1426,7 @@ echo "os.putenv('URE_BOOTSTRAP', 'vnd.sun.star.pathname:%{baseinstdir}/program/f
 cat %{buildroot}%{baseinstdir}/program/uno.py >> uno.py
 rm -f %{buildroot}%{baseinstdir}/program/uno.py*
 mv -f %{buildroot}%{baseinstdir}/program/unohelper.py* .
+mv -f %{buildroot}%{baseinstdir}/program/officehelper.py* .
 popd
 
 # rhbz#477435 package opensymbol separately
@@ -2145,7 +2146,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %files emailmerge
 %{baseinstdir}/program/mailmerge.py*
 %{baseinstdir}/program/msgbox.py*
-%{baseinstdir}/program/officehelper.py*
 
 %files writer
 %{baseinstdir}/help/en-US/swriter.*
@@ -2264,9 +2264,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %exclude %{baseinstdir}/share/Scripts/python/LibreLogo
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
+%{libo_python_sitearch}/officehelper.py*
 %if 0%{libo_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
+%{libo_python_sitearch}/__pycache__/officehelper.cpython-*
 %endif
 %{baseinstdir}/share/registry/pyuno.xcd
 
@@ -2287,6 +2289,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 02 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-5.beta1-UNBUILT
+- move officehelper.py to pyuno package so it can be imported from python
+
 * Tue Dec 02 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-4.beta1
 - add Provides: libreoffice-headless; packages are depending on it
 

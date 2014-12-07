@@ -119,6 +119,7 @@ Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %endif
 %endif
 Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
+Source43:       %{external_url}/clcc-0.3.0-25-src.zip
 
 # build tools
 BuildRequires: autoconf

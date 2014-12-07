@@ -95,13 +95,13 @@ Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.t
 Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
-Source27:       %{external_url}/libcdr-0.1.0.tar.bz2
+Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
 Source30:       %{external_url}/libwps-0.3.0.tar.bz2
 Source31:       %{external_url}/libvisio-0.1.0.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.1.tar.bz2
-Source33:       %{external_url}/libodfgen-0.1.1.tar.bz2
+Source33:       %{external_url}/libodfgen-0.1.2.tar.bz2
 Source34:       %{external_url}/libmwaw-0.3.3.tar.bz2
 Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
@@ -109,7 +109,7 @@ Source37:       %{external_url}/libabw-0.1.0.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
-Source41:       %{external_url}/libpagemaker-0.0.1.tar.bz2
+Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %if 0%{?csb_rhel_7_hack}
 Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2

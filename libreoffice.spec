@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -322,11 +322,6 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch18: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
-Patch19: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
-Patch20: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
-Patch21: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
-Patch22: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2289,7 +2284,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Dec 02 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-5.beta1-UNBUILT
+* Sat Dec 06 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-5.beta2
+- update to 4.4.0 beta2
 - move officehelper.py to pyuno package so it can be imported from python
 
 * Tue Dec 02 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-4.beta1

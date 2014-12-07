@@ -119,7 +119,6 @@ Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %endif
 %endif
 Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
-Source43:       %{external_url}/clcc-0.3.0-25-src.zip
 
 # build tools
 BuildRequires: autoconf
@@ -323,6 +322,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
+Patch18: 0001-Revert-No-need-to-have-OpenCL-optional-at-configure-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1261,6 +1261,7 @@ touch autogen.lastrun
  --disable-coinmp \
  --disable-fetch-external \
  --disable-gnome-vfs \
+ --disable-opencl \
  --disable-openssl \
  --enable-evolution2 \
  --enable-ext-nlpsolver \

@@ -1,4 +1,4 @@
-From aa99cd6187c29bd958d4effaafce4d3a12fa31c0 Mon Sep 17 00:00:00 2001
+From c8bc15772d69e60334b53aa73832d4a719676f59 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 8 Dec 2014 09:56:33 +0000
 Subject: [PATCH] Resolves: rhbz#1164614 xslt dialog crashes if there are no
@@ -11,7 +11,7 @@ Change-Id: Id7d967389cbc9f8ae120749bbe1c79bbbe46b212
  2 files changed, 16 insertions(+)
 
 diff --git a/filter/source/xsltdialog/xmlfiltersettingsdialog.cxx b/filter/source/xsltdialog/xmlfiltersettingsdialog.cxx
-index 8d85688..e698688 100644
+index 17095fa..62bf721 100644
 --- a/filter/source/xsltdialog/xmlfiltersettingsdialog.cxx
 +++ b/filter/source/xsltdialog/xmlfiltersettingsdialog.cxx
 @@ -1355,6 +1355,16 @@ SvxPathControl::SvxPathControl(Window* pParent)
@@ -44,15 +44,15 @@ index 8d85688..e698688 100644
          m_pHeaderBar->SetItemSize(ITEMID_NAME, nFirstColumnWidth);
          m_pHeaderBar->SetItemSize(ITEMID_TYPE, 0xFFFF);
 diff --git a/filter/source/xsltdialog/xmlfiltersettingsdialog.hxx b/filter/source/xsltdialog/xmlfiltersettingsdialog.hxx
-index 7fbd362..86828af 100644
+index 60b9983..c7630de 100644
 --- a/filter/source/xsltdialog/xmlfiltersettingsdialog.hxx
 +++ b/filter/source/xsltdialog/xmlfiltersettingsdialog.hxx
 @@ -44,6 +44,7 @@ private:
      HeaderBar* m_pHeaderBar;
      XMLFilterListBox* m_pFocusCtrl;
  protected:
-+    virtual Size GetOptimalSize() const SAL_OVERRIDE;
-     virtual void setAllocation(const Size &rAllocation) SAL_OVERRIDE;
++    virtual Size GetOptimalSize() const;
+     virtual void setAllocation(const Size &rAllocation);
  public:
      SvxPathControl(Window* pParent);
 -- 

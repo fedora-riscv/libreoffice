@@ -365,6 +365,8 @@ Patch57: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 Patch58: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
 Patch59: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
 Patch60: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
+Patch61: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
+Patch62: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2343,6 +2345,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Mon Dec 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-11
 - move officehelper.py to pyuno package so it can be imported from python
 - Resolves: rhbz#1164614 xslt dialog crashes if there are no entries
+- fix copying and saving of styles in Impress
 
 * Wed Dec 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-10
 - Related: fdo#78151 only make outline title and subtitle readonly in

@@ -323,6 +323,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-Revert-No-need-to-have-OpenCL-optional-at-configure-.patch
+Patch19: 0001-Don-t-treat-clew-as-part-of-an-external-clcc-module.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1261,7 +1262,6 @@ touch autogen.lastrun
  --disable-coinmp \
  --disable-fetch-external \
  --disable-gnome-vfs \
- --disable-opencl \
  --disable-openssl \
  --enable-evolution2 \
  --enable-ext-nlpsolver \

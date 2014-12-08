@@ -364,6 +364,7 @@ Patch56: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
 Patch57: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 Patch58: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
 Patch59: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
+Patch60: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2339,8 +2340,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-11-UNBUILT
+* Mon Dec 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-11
 - move officehelper.py to pyuno package so it can be imported from python
+- Resolves: rhbz#1164614 xslt dialog crashes if there are no entries
 
 * Wed Dec 03 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-10
 - Related: fdo#78151 only make outline title and subtitle readonly in

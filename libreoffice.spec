@@ -2093,9 +2093,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en-US/scalc.*
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
+%{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
+%{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so

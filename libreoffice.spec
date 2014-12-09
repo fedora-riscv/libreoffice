@@ -747,7 +747,7 @@ creation and management of PostgreSQL databases through a GUI.
 Summary: UNO Runtime Environment
 Group: Development/Libraries
 #rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
-%if %{__isa_bits} == 64
+%if 0%{?__isa_bits} == 64
 %global mark64 ()(64bit)
 %endif
 Requires: unzip, libjvm.so%{?mark64}

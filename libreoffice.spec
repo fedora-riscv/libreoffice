@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -367,6 +367,7 @@ Patch59: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
 Patch60: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
 Patch61: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
 Patch62: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
+Patch63: 0001-fdo-37682-paint-the-right-area.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2342,6 +2343,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.3.4.1-12
+- Resolves: fdo#37682 fix export of whole Draw page to PNG
+
 * Mon Dec 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-11
 - move officehelper.py to pyuno package so it can be imported from python
 - Resolves: rhbz#1164614 xslt dialog crashes if there are no entries

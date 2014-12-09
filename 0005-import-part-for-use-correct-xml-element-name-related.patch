@@ -1,0 +1,66 @@
+From 05fdfc03bbb4795d1339dad37bbe48dc5b63330d Mon Sep 17 00:00:00 2001
+From: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Date: Mon, 8 Dec 2014 00:47:44 +0100
+Subject: [PATCH 5/5] import part for: " use correct xml element name, related
+ fdo#45266"
+
+Change-Id: Ied71383fc837c7e667455f84937801e8d45f2989
+---
+ include/xmloff/xmltoken.hxx       | 1 +
+ sc/source/filter/xml/xmldpimp.cxx | 2 +-
+ sc/source/filter/xml/xmlimprt.cxx | 1 +
+ xmloff/source/core/xmltoken.cxx   | 1 +
+ 4 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/include/xmloff/xmltoken.hxx b/include/xmloff/xmltoken.hxx
+index 09bc908..a61ca9c 100644
+--- a/include/xmloff/xmltoken.hxx
++++ b/include/xmloff/xmltoken.hxx
+@@ -2608,6 +2608,7 @@ namespace xmloff { namespace token {
+         XML_IS_GROUP_FIELD,
+         XML_DATA_PILOT_GROUPS,
+         XML_DATA_PILOT_GROUP,
++        XML_DATA_PILOT_GROUP_MEMBER,
+ 
+         XML_JAPANESE_CANDLE_STICK,
+         XML_NAMED_SYMBOL,
+diff --git a/sc/source/filter/xml/xmldpimp.cxx b/sc/source/filter/xml/xmldpimp.cxx
+index d9d0ebb..66ca38e 100644
+--- a/sc/source/filter/xml/xmldpimp.cxx
++++ b/sc/source/filter/xml/xmldpimp.cxx
+@@ -1867,7 +1867,7 @@ SvXMLImportContext *ScXMLDataPilotGroupContext::CreateChildContext( sal_uInt16 n
+ 
+     if (nPrefix == XML_NAMESPACE_TABLE)
+     {
+-        if (IsXMLToken(rLName, XML_DATA_PILOT_MEMBER))
++        if (IsXMLToken(rLName, XML_DATA_PILOT_MEMBER) || IsXMLToken(rLName, XML_DATA_PILOT_GROUP_MEMBER))
+             pContext = new ScXMLDataPilotGroupMemberContext(GetScImport(), nPrefix, rLName, xAttrList, this);
+     }
+ 
+diff --git a/sc/source/filter/xml/xmlimprt.cxx b/sc/source/filter/xml/xmlimprt.cxx
+index 5c5a761..4b9a076 100644
+--- a/sc/source/filter/xml/xmlimprt.cxx
++++ b/sc/source/filter/xml/xmlimprt.cxx
+@@ -1801,6 +1801,7 @@ const SvXMLTokenMap& ScXMLImport::GetDataPilotMembersElemTokenMap()
+         static const SvXMLTokenMapEntry aDataPilotMembersElemTokenMap[] =
+         {
+             { XML_NAMESPACE_TABLE, XML_DATA_PILOT_MEMBER,       XML_TOK_DATA_PILOT_MEMBERS_ELEM_DATA_PILOT_MEMBER   },
++            { XML_NAMESPACE_TABLE, XML_DATA_PILOT_GROUP_MEMBER,       XML_TOK_DATA_PILOT_MEMBERS_ELEM_DATA_PILOT_MEMBER   },
+             XML_TOKEN_MAP_END
+         };
+ 
+diff --git a/xmloff/source/core/xmltoken.cxx b/xmloff/source/core/xmltoken.cxx
+index d9d646e..5a91104 100644
+--- a/xmloff/source/core/xmltoken.cxx
++++ b/xmloff/source/core/xmltoken.cxx
+@@ -2613,6 +2613,7 @@ namespace xmloff { namespace token {
+         TOKEN( "is-group-field",                       XML_IS_GROUP_FIELD ),
+         TOKEN( "data-pilot-groups",                    XML_DATA_PILOT_GROUPS ),
+         TOKEN( "data-pilot-group",                     XML_DATA_PILOT_GROUP ),
++        TOKEN( "data-pilot-group-member",              XML_DATA_PILOT_GROUP_MEMBER ),
+         TOKEN( "japanese-candle-stick",        XML_JAPANESE_CANDLE_STICK ),
+         TOKEN( "named-symbol",                 XML_NAMED_SYMBOL ),
+         TOKEN( "diamond",                      XML_DIAMOND ),
+-- 
+1.9.3
+

@@ -326,6 +326,10 @@ Patch70: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
 Patch71: 0001-rhbz-1016758-Dispose-bridges-when-disposing-bridge-f.patch
 Patch72: 0001-fdo-79303-Revert-fdo-70861-SwToSfxPageDescAttr-fix-c.patch
 Patch73: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
+Patch74: 0002-fdo-72811-Revert-Broken-security-password-when-savin.patch
+Patch75: 0003-fdo-86795-xmloff-ODF-import-do-not-import-checkbox-f.patch
+Patch76: 0004-import-part-for-export-to-extension-namespace-instea.patch
+Patch77: 0005-import-part-for-use-correct-xml-element-name-related.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2269,6 +2273,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
 - update to 4.2.8
+- Resolves: fdo#72811 fix ODF 1.1 export
 
 * Mon Dec 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-12
 - Resolves: rhbz#1167683 crash in SwPostItMgr::HasNotes

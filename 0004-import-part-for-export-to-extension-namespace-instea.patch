@@ -1,0 +1,56 @@
+From 34ed3bc64d64c8f4b1c8738cd530dc2401dbbd78 Mon Sep 17 00:00:00 2001
+From: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Date: Mon, 8 Dec 2014 00:45:29 +0100
+Subject: [PATCH 4/5] import part for: "export to extension namespace instead
+ of odf ..."
+
+See master commit a4e4cdcdd7acfe779b2a3b244dd449f136308a93
+
+(cherry picked from commit 40ac1ada98e3e2648daf9d17e520040be2c17911)
+Signed-off-by: Michael Stahl <mstahl@redhat.com>
+
+Conflicts:
+	xmloff/source/style/PageMasterStyleMap.cxx
+
+(cherry picked from commit 55568c0b95d2b2a072b896107963052bf78f1ff0)
+
+Conflicts:
+	xmloff/source/style/PageMasterStyleMap.cxx
+
+Change-Id: I0b61e05e3b153ba7efe351b18cb705ea6348f546
+---
+ xmloff/source/style/PageMasterStyleMap.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/xmloff/source/style/PageMasterStyleMap.cxx b/xmloff/source/style/PageMasterStyleMap.cxx
+index 458bfdf..c32c38e 100644
+--- a/xmloff/source/style/PageMasterStyleMap.cxx
++++ b/xmloff/source/style/PageMasterStyleMap.cxx
+@@ -24,12 +24,15 @@
+ using namespace ::xmloff::token;
+ 
+ #define MAP(name,prefix,token,type,context,version)  { name, sizeof(name)-1, prefix, token, type, context, version, false }
++#define MAP_IMPORT(name,prefix,token,type,context,version)  { name, sizeof(name)-1, prefix, token, type, context, version, true }
+ #define PLMAP(name,prefix,token,type,context) \
+         MAP(name,prefix,token,type|XML_TYPE_PROP_PAGE_LAYOUT,context, SvtSaveOptions::ODFVER_010)
+ #define PLMAP_12(name,prefix,token,type,context) \
+         MAP(name,prefix,token,type|XML_TYPE_PROP_PAGE_LAYOUT,context, SvtSaveOptions::ODFVER_012)
+ #define PLMAP_EX(name,prefix,token,type,context) \
+         MAP(name,prefix,token,type|XML_TYPE_PROP_PAGE_LAYOUT,context, SvtSaveOptions::ODFVER_012_EXT_COMPAT)
++#define PLMAP_EXT_IMPORT(name,prefix,token,type,context) \
++        MAP_IMPORT(name,prefix,token,type|XML_TYPE_PROP_PAGE_LAYOUT,context, SvtSaveOptions::ODFVER_012_EXT_COMPAT)
+ #define HFMAP(name,prefix,token,type,context) \
+         MAP(name,prefix,token,type|XML_TYPE_PROP_HEADER_FOOTER,context, SvtSaveOptions::ODFVER_010)
+ 
+@@ -83,6 +86,8 @@ const XMLPropertyMapEntry aXMLPageMasterStyleMap[] =
+     PLMAP( "ScaleToPages",          XML_NAMESPACE_STYLE,    XML_SCALE_TO_PAGES,             XML_TYPE_NUMBER16,                                      CTF_PM_SCALETOPAGES ),
+     PLMAP( "ScaleToPagesX",         XML_NAMESPACE_STYLE,    XML_SCALE_TO_X,                 XML_TYPE_NUMBER16,                                      CTF_PM_SCALETOX ),
+     PLMAP( "ScaleToPagesY",         XML_NAMESPACE_STYLE,    XML_SCALE_TO_Y,                 XML_TYPE_NUMBER16,                                      CTF_PM_SCALETOY ),
++    PLMAP_EXT_IMPORT( "ScaleToPagesX",            XML_NAMESPACE_LO_EXT,    XML_SCALE_TO_X,                  XML_TYPE_NUMBER16,                                        CTF_PM_SCALETOX ),
++    PLMAP_EXT_IMPORT( "ScaleToPagesY",            XML_NAMESPACE_LO_EXT,    XML_SCALE_TO_Y,                 XML_TYPE_NUMBER16,                                        CTF_PM_SCALETOY ),
+     PLMAP( "CenterHorizontally",        XML_NAMESPACE_STYLE,    XML_TABLE_CENTERING,            XML_PM_TYPE_CENTER_HORIZONTAL | MID_FLAG_MULTI_PROPERTY | MID_FLAG_MERGE_ATTRIBUTE, 0 ),
+     PLMAP( "CenterVertically",      XML_NAMESPACE_STYLE,    XML_TABLE_CENTERING,            XML_PM_TYPE_CENTER_VERTICAL | MID_FLAG_MULTI_PROPERTY | MID_FLAG_MERGE_ATTRIBUTE, 0 ),
+     PLMAP( "TextColumns",               XML_NAMESPACE_STYLE,    XML_COLUMNS,    MID_FLAG_ELEMENT_ITEM|XML_TYPE_TEXT_COLUMNS, CTF_PM_TEXTCOLUMNS ),
+-- 
+1.9.3
+

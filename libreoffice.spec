@@ -325,6 +325,7 @@ Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-Revert-No-need-to-have-OpenCL-optional-at-configure-.patch
 Patch19: 0001-Don-t-treat-clew-as-part-of-an-external-clcc-module.patch
 Patch20: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
+Patch21: 0001-fdo-37682-paint-the-right-area.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

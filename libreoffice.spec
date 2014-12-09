@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.2.7
+%define libo_version 4.2.8
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -317,26 +317,15 @@ Patch61: 0001-fdo-79602-sw-fix-text-formatting-of-proportional-lin.patch
 Patch62: 0002-fdo-79602-sw-add-new-compatibiltiy-flag-PropLineSpac.patch
 Patch63: 0001-fdo-85403-broadcast-changes-after-TextToColumn.patch
 Patch64: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch65: 0001-resolved-fdo-82936-do-not-clear-the-3D-flag-on-refup.patch
-Patch66: 0001-fdo-85282-Correct-adjustment-of-range-reference-on-d.patch
-Patch67: 0001-Resolves-fdo-65634-improve-wheel-scrolling-sidebar-p.patch
-Patch68: 0001-Related-fdo-65634-make-sidebar-react-to-resizes-when.patch
-Patch69: 0001-table-layout-cache-returns-wrong-rectangle.patch
-Patch70: 0001-impress-tables-are-not-interactively-growing.patch
-Patch71: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
-Patch72: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
-Patch73: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
-Patch74: 0001-fdo-81633-Add-a-hidden-configuration-option-to-toggl.patch
-Patch75: 0002-fdo-85215-Ensure-that-formula-broadcasting-works-aft.patch
-Patch76: 0005-fdo-85215-Don-t-adjust-references-wrt-cell-position-.patch
-Patch77: 0006-fdo-83765-do-not-update-references-in-SortReorderByC.patch
-Patch78: 0007-fix-fdo-79441-again-and-keep-references-to-other-she.patch
-Patch79: 0008-fdo-86708-paint-after-Undo-of-Sort.patch
-Patch80: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
-Patch81: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
-Patch82: 0001-rhbz-1016758-Dispose-bridges-when-disposing-bridge-f.patch
-Patch83: 0001-fdo-79303-Revert-fdo-70861-SwToSfxPageDescAttr-fix-c.patch
-Patch84: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
+Patch65: 0001-Resolves-fdo-65634-improve-wheel-scrolling-sidebar-p.patch
+Patch66: 0001-Related-fdo-65634-make-sidebar-react-to-resizes-when.patch
+Patch67: 0001-table-layout-cache-returns-wrong-rectangle.patch
+Patch68: 0001-impress-tables-are-not-interactively-growing.patch
+Patch69: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
+Patch70: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
+Patch71: 0001-rhbz-1016758-Dispose-bridges-when-disposing-bridge-f.patch
+Patch72: 0001-fdo-79303-Revert-fdo-70861-SwToSfxPageDescAttr-fix-c.patch
+Patch73: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2278,6 +2267,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
+- update to 4.2.8
+
 * Mon Dec 08 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.7.2-12
 - Resolves: rhbz#1167683 crash in SwPostItMgr::HasNotes
 - Resolves: rhbz#1016758 crash on exit

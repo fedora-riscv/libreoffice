@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -330,6 +330,7 @@ Patch74: 0002-fdo-72811-Revert-Broken-security-password-when-savin.patch
 Patch75: 0003-fdo-86795-xmloff-ODF-import-do-not-import-checkbox-f.patch
 Patch76: 0004-import-part-for-export-to-extension-namespace-instea.patch
 Patch77: 0005-import-part-for-use-correct-xml-element-name-related.patch
+Patch78: 0001-Resolves-fdo-87141-Remove-deletes-the-node-release-d.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2271,6 +2272,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2.UNBUILT
+- Resolves: fdo#87141 Remove deletes the node but we want to release it
+
 * Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
 - update to 4.2.8
 - Resolves: fdo#72811 fix ODF 1.1 export

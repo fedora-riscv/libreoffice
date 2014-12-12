@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2290,6 +2290,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 12 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-6.beta2
+- Resolves: rhbz#1116534 crash when pasting over a formula
+
 * Sat Dec 06 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-5.beta2
 - update to 4.4.0 beta2
 - move officehelper.py to pyuno package so it can be imported from python

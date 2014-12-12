@@ -92,7 +92,7 @@ Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
 Source27:       %{external_url}/libcdr-0.1.0.tar.bz2
@@ -114,7 +114,7 @@ Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
 %endif
 %endif

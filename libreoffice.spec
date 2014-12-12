@@ -331,6 +331,7 @@ Patch75: 0003-fdo-86795-xmloff-ODF-import-do-not-import-checkbox-f.patch
 Patch76: 0004-import-part-for-export-to-extension-namespace-instea.patch
 Patch77: 0005-import-part-for-use-correct-xml-element-name-related.patch
 Patch78: 0001-Resolves-fdo-87141-Remove-deletes-the-node-release-d.patch
+Patch79: 0001-resolved-fdo-87237-propagate-error-values-through-ma.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2274,6 +2275,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Dec 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2.UNBUILT
 - Resolves: fdo#87141 Remove deletes the node but we want to release it
+- Resolves: fdo#87237 propagate error values through matrix comparisons
 
 * Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
 - update to 4.2.8

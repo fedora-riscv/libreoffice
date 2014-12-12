@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -326,6 +326,7 @@ Patch18: 0001-Revert-No-need-to-have-OpenCL-optional-at-configure-.patch
 Patch19: 0001-Don-t-treat-clew-as-part-of-an-external-clcc-module.patch
 Patch20: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 Patch21: 0001-fdo-37682-paint-the-right-area.patch
+Patch22: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2290,6 +2291,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 12 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.4.0.0-6.beta2
+- Resolves: fdo#87242 fix unwanted text shadows during cairo animations
+
 * Sat Dec 06 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-5.beta2
 - update to 4.4.0 beta2
 - move officehelper.py to pyuno package so it can be imported from python

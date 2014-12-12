@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -357,6 +357,7 @@ Patch49: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
 Patch50: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 Patch51: 0001-fdo-37682-paint-the-right-area.patch
 Patch52: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
+Patch53: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2332,6 +2333,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 12 2014 David Tardon <dtardon@redhat.com> -  1:4.3.5.2-3-UNBUILT
+- Resolves: rhbz#1116534 crash when pasting over a formula
+
 * Fri Dec 12 2014 David Tardon <dtardon@redhat.com> - 1:4.3.5.2-2
 - Resolves: fdo#87242 fix unwanted text shadows during cairo animation
 

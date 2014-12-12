@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.4
+%define libo_version 4.3.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        13%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -92,7 +92,7 @@ Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
 Source27:       %{external_url}/libcdr-0.1.0.tar.bz2
@@ -114,7 +114,7 @@ Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
 %endif
 %endif
@@ -342,33 +342,20 @@ Patch34: 0001-Remove-smb-from-X-KDE-Protocols-lines.patch
 Patch35: 0001-libgcrypt-and-gnutls-are-only-used-by-our-internal-e.patch
 Patch36: 0001-allow-to-build-with-system-opencollada.patch
 Patch37: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch38: 0001-Resolves-fdo-76581-copy-and-paste-slideshow-crash-in.patch
-Patch39: 0001-fdo-85247-copy-and-paste-of-a-slide-results-in-a-blu.patch
-Patch40: 0001-fdo-60712-Inherits-cell-styles-in-inserting-rows-col.patch
-Patch41: 0001-implement-toggling-off-removeable-master-elements-wi.patch
-Patch42: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
-Patch43: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
-Patch44: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
-Patch45: 0001-have-a-stab-at-improving-impossible-question.patch
-Patch46: 0001-just-use-ANSI-C-declarations.patch
-Patch47: 0001-valgrind-check-return-of-convertDateTime-before-usin.patch
-Patch48: 0001-table-layout-cache-returns-wrong-rectangle.patch
-Patch49: 0001-impress-tables-are-not-interactively-growing.patch
-Patch50: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
-Patch51: 0001-Resolves-fdo-86449-backport-rtf-fixes.patch
-Patch52: 0002-Resolves-fdo-86451-guard-all-the-tops-post-pop.patch
-Patch53: 0001-Resolves-fdo-86466-Wrong-background-color-shown-in-f.patch
-Patch54: 0001-rhbz-1167250-Avoid-X11Clipboard-already-being-destro.patch
-Patch55: 0001-Revert-Resolves-i63015-always-default-to-WinAnsiEnco.patch
-Patch56: 0001-Resolves-fdo-84043-don-t-create-duplicate-Mirrored-X.patch
-Patch57: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
-Patch58: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
-Patch59: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
-Patch60: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
-Patch61: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
-Patch62: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
-Patch63: 0001-fdo-37682-paint-the-right-area.patch
-Patch64: 0001-Resolves-fdo-87141-Remove-deletes-the-node-release-d.patch
+Patch38: 0001-implement-toggling-off-removeable-master-elements-wi.patch
+Patch39: 0001-Resolves-fdo-78151-change-style-on-toggling-bullets-.patch
+Patch40: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
+Patch41: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
+Patch42: 0001-have-a-stab-at-improving-impossible-question.patch
+Patch43: 0001-just-use-ANSI-C-declarations.patch
+Patch44: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
+Patch45: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
+Patch46: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
+Patch47: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
+Patch48: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
+Patch49: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
+Patch50: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
+Patch51: 0001-fdo-37682-paint-the-right-area.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2344,6 +2331,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 12 2014 David Tardon <dtardon@redhat.com> - 1:4.3.5.2-1
+- new upstream release
+
 * Thu Dec 11 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.3.4.1-13
 - Resolves: rhbz#1173170 fix crash in impress undo
 

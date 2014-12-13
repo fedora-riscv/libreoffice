@@ -966,7 +966,6 @@ This package provides gdb pretty printers for package %{name}.
 # %%langpack -l cs -n Czech -H -A -m cs-CZ
 #  b de g  jk     q  tu    z BCD  G IJK  N PQR  U    Z0123456789
 %define langpack(Aa:c:EFf:Hh:i:L:l:Mm:n:p:Oo:r:S:s:TVv:Ww:Xx:Yy:) \
-%define project LibreOffice \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define _langpack_lang %{-L:%{-L*}}%{!-L:%{lang}} \
 %define pkgname langpack-%{lang} \
@@ -975,7 +974,7 @@ This package provides gdb pretty printers for package %{name}.
 %global langpack_langs %{langpack_langs} %{_langpack_lang} %{-i:%{-i*}} \
 \
 %package %{pkgname} \
-Summary: %{langname} language pack for %{project} \
+Summary: %{langname} language pack for LibreOffice \
 Group: Applications/Productivity \
 Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
@@ -984,25 +983,18 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
 %{-r:Requires: %{-r*}} \
-%define obs openoffice.org-langpack \
-%define obsv 1:3.3.1 \
-%define aobs openoffice.org2-langpack \
-%define aobsv 1:3.0.0 \
-%define vaobs openoffice.org-langpack \
-%define vaobsv 1:2.0.3 \
-%{-o:Obsoletes: %{obs}-%{-o*} < %{obsv}}%{!-o:%{-O:Obsoletes: %{obs}-%{lang} < %{obsv}}} \
-%{-w:Obsoletes: %{aobs}-%{-x*} < %{aobsv}}%{!-x:%{-W:Obsoletes: %{aobs}-%{lang} < %{aobsv}}} \
-%{-v:Obsoletes: %{vaobs}-%{-v*} < %{vaobsv}}%{!-v:%{-V:Obsoletes: %{vaobs}-%{lang} < %{vaobsv}}} \
+%{-o:Obsoletes: openoffice.org-langpack-%{-o*} < 1:3.3.1}%{!-o:%{-O:Obsoletes: openoffice.org-langpack-%{lang} < 1:3.3.1}} \
+%{-w:Obsoletes: openoffice.org2-langpack-%{-x*} < 1:3.0.0}%{!-x:%{-W:Obsoletes: openoffice.org2-langpack-%{lang} < 1:3.0.0}} \
+%{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < %1:2.0.3}} \
 %{-p:Provides: %{name}-langpack-%{-p*}} \
 \
 %description %{pkgname} \
-Provides additional %{langname} translations and resources for %{project}. \
+Provides additional %{langname} translations and resources for LibreOffice. \
 \
 %files %{pkgname} \
 %{!-E: \
-%define autotextdir %{baseinstdir}/share/autotext \
 %{expand:%%_langpack_common %{_langpack_lang}} \
-%{-x:%{autotextdir}/%{-x*}}%{!-x:%{-X:%{autotextdir}/%{_langpack_lang}}} \
+%{-x:%{baseinstdir}/share/autotext/%{-x*}}%{!-x:%{-X:%{baseinstdir}/share/autotext/%{_langpack_lang}}} \
 %{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
 %{-T: \

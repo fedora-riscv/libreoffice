@@ -2333,7 +2333,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Dec 12 2014 David Tardon <dtardon@redhat.com> -  1:4.3.5.2-3-UNBUILT
+* Mon Dec 15 2014 David Tardon <dtardon@redhat.com> -  1:4.3.5.2-3
 - Resolves: rhbz#1116534 crash when pasting over a formula
 
 * Fri Dec 12 2014 David Tardon <dtardon@redhat.com> - 1:4.3.5.2-2

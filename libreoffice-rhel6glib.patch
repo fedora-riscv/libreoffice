@@ -41,7 +41,7 @@ diff --git a/shell/Module_shell.mk b/shell/Module_shell.mk
 index 3461381..eb74104 100644
 --- a/shell/Module_shell.mk
 +++ b/shell/Module_shell.mk
-@@ -14,14 +14,6 @@ $(eval $(call gb_Module_add_targets,shell,\
+@@ -14,22 +14,6 @@ $(eval $(call gb_Module_add_targets,shell,\
  	Library_localebe \
  ))
  
@@ -53,9 +53,14 @@ index 3461381..eb74104 100644
 -endif
 -endif
 -
+-ifeq ($(OS),SOLARIS)
+-ifeq ($(ENABLE_GIO),TRUE)
+-$(eval $(call gb_Module_add_targets,shell,\
+-    Library_losessioninstall \
+-))
+-endif
+-endif
+-
  ifeq ($(ENABLE_GCONF),TRUE)
  $(eval $(call gb_Module_add_targets,shell,\
  	Library_gconfbe \
--- 
-1.8.5.3
-

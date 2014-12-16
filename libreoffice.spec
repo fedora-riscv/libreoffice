@@ -334,6 +334,7 @@ Patch78: 0001-Resolves-fdo-87141-Remove-deletes-the-node-release-d.patch
 Patch79: 0001-resolved-fdo-87237-propagate-error-values-through-ma.patch
 Patch80: 0001-resolved-fdo-86809-connect-filter-conditions-correct.patch
 Patch81: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
+Patch82: 0001-fdo-79249-call-formula-compiler-with-error-string.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2280,6 +2281,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#87237 propagate error values through matrix comparisons
 - Resolves: fdo#86809 connect filter conditions correctly
 - Resolves: rhbz#1116534 crash when pasting over a formula
+- Resolves: fdo#79249 call formula compiler with error string
 
 * Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
 - update to 4.2.8

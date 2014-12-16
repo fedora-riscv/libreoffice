@@ -1,0 +1,101 @@
+From a21f6bd2f4bde8da08edb6730ec9a4a3cb626f0a Mon Sep 17 00:00:00 2001
+Message-Id: <a21f6bd2f4bde8da08edb6730ec9a4a3cb626f0a.1418733119.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 16 Dec 2014 01:37:31 +0100
+Subject: [PATCH] fdo#79249 call formula compiler with error string
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... instead of attempting to stringize a NaN coded error value.
+
+Regression introduced with 30a20743ae17e6e02183a65603d38968253b3ffb
+
+(cherry picked from commit 994607b55104b9ae4554554c13b001b8d5d513b6)
+
+construct grouped ScFormulaCell with bDirty=true, fdo#79249 related
+
+Noticed when loading
+https://bugs.freedesktop.org/attachment.cgi?id=99844
+with fdo#79249 fix where oox::xls::applyCellFormulas() groups the
+consecutive =#N/A formulas. Only A1 result was displayed, other cells
+were displayed empty.
+
+(cherry picked from commit a1dc5e97da273bf35d58d54e625149022569a993)
+
+correct error string, #N/A instead of #NA
+
+(cherry picked from commit 758755e31b3d9e1ed2eab522d4794282178346ac)
+
+Change-Id: Ia7a8ca39938820ac75db169404446fa696c6ee1b
+3a541f74d3d25e1515a1c6d47f02ec6a8e817c93
+15019072b6e812b9ffe29d3ee6afacd9ab526948
+---
+ sc/source/core/data/formulacell.cxx      | 2 +-
+ sc/source/filter/oox/sheetdatabuffer.cxx | 7 ++++++-
+ sc/source/filter/oox/unitconverter.cxx   | 2 +-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fdo-79249-call-formula-compiler-with-error-string.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fdo-79249-call-formula-compiler-with-error-string.patch"
+
+diff --git a/sc/source/core/data/formulacell.cxx b/sc/source/core/data/formulacell.cxx
+index c0fead2..26ae959 100644
+--- a/sc/source/core/data/formulacell.cxx
++++ b/sc/source/core/data/formulacell.cxx
+@@ -683,7 +683,7 @@ ScFormulaCell::ScFormulaCell(
+     nSeenInIteration(0),
+     cMatrixFlag ( cInd ),
+     nFormatType(xGroup->mnFormatType),
+-    bDirty(false),
++    bDirty(true),
+     bChanged( false ),
+     bRunning( false ),
+     bCompile( false ),
+diff --git a/sc/source/filter/oox/sheetdatabuffer.cxx b/sc/source/filter/oox/sheetdatabuffer.cxx
+index b3963df..60987c9 100644
+--- a/sc/source/filter/oox/sheetdatabuffer.cxx
++++ b/sc/source/filter/oox/sheetdatabuffer.cxx
+@@ -209,11 +209,16 @@ void SheetDataBuffer::setBooleanCell( const CellModel& rModel, bool bValue )
+ 
+ void SheetDataBuffer::setErrorCell( const CellModel& rModel, const OUString& rErrorCode )
+ {
+-    setErrorCell( rModel, getUnitConverter().calcBiffErrorCode( rErrorCode ) );
++    // Using the formula compiler now we can simply pass on the error string.
++    getFormulaBuffer().setCellFormula( rModel.maCellAddr, rErrorCode);
++    setCellFormat( rModel );
+ }
+ 
+ void SheetDataBuffer::setErrorCell( const CellModel& rModel, sal_uInt8 nErrorCode )
+ {
++    assert(!"stringizing any NaN will only give 'nan'");
++    /* FIXME: map nErrorCode to error string and call setErrorCell() above. */
++
+     OUStringBuffer aBuf;
+     aBuf.append('{');
+     aBuf.append(BiffHelper::calcDoubleFromError(nErrorCode));
+diff --git a/sc/source/filter/oox/unitconverter.cxx b/sc/source/filter/oox/unitconverter.cxx
+index 55ba77f..108b248 100644
+--- a/sc/source/filter/oox/unitconverter.cxx
++++ b/sc/source/filter/oox/unitconverter.cxx
+@@ -120,7 +120,7 @@ UnitConverter::UnitConverter( const WorkbookHelper& rHelper ) :
+     addErrorCode( BIFF_ERR_REF,   "#REF!" );
+     addErrorCode( BIFF_ERR_NAME,  "#NAME?" );
+     addErrorCode( BIFF_ERR_NUM,   "#NUM!" );
+-    addErrorCode( BIFF_ERR_NA,    "#NA" );
++    addErrorCode( BIFF_ERR_NA,    "#N/A" );
+ }
+ 
+ void UnitConverter::finalizeImport()
+
+--------------erAck-patch-parts--
+
+

@@ -1,0 +1,57 @@
+From b6270f320dbac5ec5a181037dddeefb81aa0dbca Mon Sep 17 00:00:00 2001
+Message-Id: <b6270f320dbac5ec5a181037dddeefb81aa0dbca.1418931724.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 18 Dec 2014 20:07:55 +0100
+Subject: [PATCH] fdo#68385 update references only if cut originates from the
+ same document
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: Ia7b27309251cf9e47505c58d8ed0172d134280f4
+(cherry picked from commit f2ac9fab2677a6a718f251baef75d3cae96d1f01)
+---
+ sc/source/core/data/document.cxx | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fdo-68385-update-references-only-if-cut-originates-f.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fdo-68385-update-references-only-if-cut-originates-f.patch"
+
+diff --git a/sc/source/core/data/document.cxx b/sc/source/core/data/document.cxx
+index c6c3196..b423f05 100644
+--- a/sc/source/core/data/document.cxx
++++ b/sc/source/core/data/document.cxx
+@@ -2552,11 +2552,16 @@ void ScDocument::CopyBlockFromClip(
+                 aRefCxt.mnTabDelta = nDz;
+                 if (rCxt.getClipDoc()->GetClipParam().mbCutMode)
+                 {
+-                    bool bOldInserting = IsInsertingFromOtherDoc();
+-                    SetInsertingFromOtherDoc( true);
+-                    aRefCxt.meMode = URM_MOVE;
+-                    UpdateReference(aRefCxt, rCxt.getUndoDoc(), false);
+-                    SetInsertingFromOtherDoc( bOldInserting);
++                    // Update references only if cut originates from the same
++                    // document we are pasting into.
++                    if (rCxt.getClipDoc()->GetPool() == GetPool())
++                    {
++                        bool bOldInserting = IsInsertingFromOtherDoc();
++                        SetInsertingFromOtherDoc( true);
++                        aRefCxt.meMode = URM_MOVE;
++                        UpdateReference(aRefCxt, rCxt.getUndoDoc(), false);
++                        SetInsertingFromOtherDoc( bOldInserting);
++                    }
+                 }
+                 else
+                 {
+
+--------------erAck-patch-parts--
+
+

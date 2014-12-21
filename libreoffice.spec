@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease %{nil}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -80,7 +80,7 @@ Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-lib
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus
 %if 0%{?rhel} < 7
-Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
+Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -91,8 +91,8 @@ Source21:       %{external_url}/lcms2-2.6.tar.gz
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source25:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
+Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
 %endif
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
@@ -112,9 +112,9 @@ Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %if 0%{?csb_rhel_7_hack}
-Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
-Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-04-10.tar.bz2
+Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
+Source25:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
+Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
 %endif
 %endif
@@ -322,11 +322,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch18: 0001-Revert-No-need-to-have-OpenCL-optional-at-configure-.patch
-Patch19: 0001-Don-t-treat-clew-as-part-of-an-external-clcc-module.patch
-Patch20: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
-Patch21: 0001-fdo-37682-paint-the-right-area.patch
-Patch22: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
+Patch18: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2283,6 +2279,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Dec 21 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.1-1
+- update to 4.4.0 rc1
+
 * Fri Dec 12 2014 David Tardon <dtardon@redhat.com> - 1:4.4.0.0-6.beta2
 - Resolves: rhbz#1116534 crash when pasting over a formula
 

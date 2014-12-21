@@ -211,7 +211,7 @@ BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libexttextcat)
 %if !0%{?csb_rhel_7_hack}
-BuildRequires: pkgconfig(libcmis-0.4)
+BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(mdds)
 %endif

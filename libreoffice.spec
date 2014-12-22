@@ -1760,6 +1760,52 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmigrationoo2lo.so
 %{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmsformslo.so
+%dir %{baseinstdir}/program/opengl
+%{baseinstdir}/program/opengl/backgroundFragmentShader.glsl
+%{baseinstdir}/program/opengl/backgroundVertexShader.glsl
+%{baseinstdir}/program/opengl/blendedTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/blendedTextureVertexShader.glsl
+%{baseinstdir}/program/opengl/commonFragmentShader.glsl
+%{baseinstdir}/program/opengl/convolutionFragmentShader.glsl
+%{baseinstdir}/program/opengl/debugFragmentShader.glsl
+%{baseinstdir}/program/opengl/debugVertexShader.glsl
+%{baseinstdir}/program/opengl/diffTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/dumbVertexShader.glsl
+%{baseinstdir}/program/opengl/dummyVertexShader.glsl
+%{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/maskedTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/pickingFragmentShader.glsl
+%{baseinstdir}/program/opengl/pickingVertexShader.glsl
+%{baseinstdir}/program/opengl/radialGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/radialMultiColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/radialTwoColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/rectangularMultiColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/rectangularTwoColorGradientFragmentShader.glsl
+%{baseinstdir}/program/opengl/renderTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/renderTextureVertexShader.glsl
+%{baseinstdir}/program/opengl/replaceColorFragmentShader.glsl
+%{baseinstdir}/program/opengl/screenTextFragmentShader.glsl
+%{baseinstdir}/program/opengl/screenTextVertexShader.glsl
+%{baseinstdir}/program/opengl/shape3DFragmentShader.glsl
+%{baseinstdir}/program/opengl/shape3DFragmentShaderBatch.glsl
+%{baseinstdir}/program/opengl/shape3DFragmentShaderBatchScroll.glsl
+%{baseinstdir}/program/opengl/shape3DFragmentShaderV300.glsl
+%{baseinstdir}/program/opengl/shape3DVertexShader.glsl
+%{baseinstdir}/program/opengl/shape3DVertexShaderBatch.glsl
+%{baseinstdir}/program/opengl/shape3DVertexShaderBatchScroll.glsl
+%{baseinstdir}/program/opengl/shape3DVertexShaderV300.glsl
+%{baseinstdir}/program/opengl/solidFragmentShader.glsl
+%{baseinstdir}/program/opengl/symbolFragmentShader.glsl
+%{baseinstdir}/program/opengl/symbolVertexShader.glsl
+%{baseinstdir}/program/opengl/textFragmentShader.glsl
+%{baseinstdir}/program/opengl/textFragmentShaderBatch.glsl
+%{baseinstdir}/program/opengl/textVertexShader.glsl
+%{baseinstdir}/program/opengl/textVertexShaderBatch.glsl
+%{baseinstdir}/program/opengl/textureFragmentShader.glsl
+%{baseinstdir}/program/opengl/textureVertexShader.glsl
+%{baseinstdir}/program/opengl/transformedTextureVertexShader.glsl
 %{baseinstdir}/program/open-url
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
@@ -2066,6 +2112,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files ogltrans
 %{baseinstdir}/program/libOGLTranslo.so
+%{baseinstdir}/program/basicVertexShader.glsl
+%{baseinstdir}/program/dissolveFragmentShader.glsl
+%{baseinstdir}/program/staticFragmentShader.glsl
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 

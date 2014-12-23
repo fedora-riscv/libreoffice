@@ -2112,9 +2112,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files ogltrans
 %{baseinstdir}/program/libOGLTranslo.so
-%{baseinstdir}/program/basicVertexShader.glsl
-%{baseinstdir}/program/dissolveFragmentShader.glsl
-%{baseinstdir}/program/staticFragmentShader.glsl
+%{baseinstdir}/program/opengl/basicVertexShader.glsl
+%{baseinstdir}/program/opengl/dissolveFragmentShader.glsl
+%{baseinstdir}/program/opengl/staticFragmentShader.glsl
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 

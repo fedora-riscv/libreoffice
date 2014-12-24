@@ -1766,6 +1766,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/blendedTextureFragmentShader.glsl
 %{baseinstdir}/program/opengl/blendedTextureVertexShader.glsl
 %{baseinstdir}/program/opengl/commonFragmentShader.glsl
+%{baseinstdir}/program/opengl/commonVertexShader.glsl
 %{baseinstdir}/program/opengl/convolutionFragmentShader.glsl
 %{baseinstdir}/program/opengl/debugFragmentShader.glsl
 %{baseinstdir}/program/opengl/debugVertexShader.glsl
@@ -1776,6 +1777,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/maskedTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/maskFragmentShader.glsl
 %{baseinstdir}/program/opengl/pickingFragmentShader.glsl
 %{baseinstdir}/program/opengl/pickingVertexShader.glsl
 %{baseinstdir}/program/opengl/radialGradientFragmentShader.glsl

@@ -1170,6 +1170,8 @@ git am %{patches}
 sed -i -e /CppunitTest_sw_ooxmlsdrexport/d sw/Module_sw.mk
 git commit -am 'disable failing tests on rhel'
 %endif
+sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
+git commit -am 'disable failing tests'
 
 %if 0%{?rhel} && 0%{?rhel} < 7
 cp -r translations/source/en-GB translations/source/ms

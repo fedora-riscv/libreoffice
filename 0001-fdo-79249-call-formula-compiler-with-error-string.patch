@@ -1,5 +1,5 @@
-From a21f6bd2f4bde8da08edb6730ec9a4a3cb626f0a Mon Sep 17 00:00:00 2001
-Message-Id: <a21f6bd2f4bde8da08edb6730ec9a4a3cb626f0a.1418733119.git.erack@redhat.com>
+From c143074b100396c33a02e5e1dde89f7b5e799ba7 Mon Sep 17 00:00:00 2001
+Message-Id: <c143074b100396c33a02e5e1dde89f7b5e799ba7.1420460950.git.erack@redhat.com>
 From: Eike Rathke <erack@redhat.com>
 Date: Tue, 16 Dec 2014 01:37:31 +0100
 Subject: [PATCH] fdo#79249 call formula compiler with error string
@@ -32,14 +32,20 @@ correct error string, #N/A instead of #NA
 
 (cherry picked from commit 758755e31b3d9e1ed2eab522d4794282178346ac)
 
+implement an actually working setErrorCell() from BIFF error codes
+
+(cherry picked from commit ca9a81b2ca858b82e863e1e6f917928916fea79e)
+
 Change-Id: Ia7a8ca39938820ac75db169404446fa696c6ee1b
 3a541f74d3d25e1515a1c6d47f02ec6a8e817c93
 15019072b6e812b9ffe29d3ee6afacd9ab526948
+67b8fc324779875ba14e2d69204c40fe27cc180e
 ---
- sc/source/core/data/formulacell.cxx      | 2 +-
- sc/source/filter/oox/sheetdatabuffer.cxx | 7 ++++++-
- sc/source/filter/oox/unitconverter.cxx   | 2 +-
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ sc/source/core/data/formulacell.cxx      |  2 +-
+ sc/source/filter/inc/unitconverter.hxx   |  3 +++
+ sc/source/filter/oox/sheetdatabuffer.cxx | 12 ++++--------
+ sc/source/filter/oox/unitconverter.cxx   | 16 +++++++++++++++-
+ 4 files changed, 23 insertions(+), 10 deletions(-)
 
 
 --------------erAck-patch-parts
@@ -60,11 +66,25 @@ index c0fead2..26ae959 100644
      bChanged( false ),
      bRunning( false ),
      bCompile( false ),
+diff --git a/sc/source/filter/inc/unitconverter.hxx b/sc/source/filter/inc/unitconverter.hxx
+index 88921d1..dbd6424 100644
+--- a/sc/source/filter/inc/unitconverter.hxx
++++ b/sc/source/filter/inc/unitconverter.hxx
+@@ -88,6 +88,9 @@ public:
+     /** Returns a BIFF error code from the passed error string. */
+     sal_uInt8           calcBiffErrorCode( const OUString& rErrorCode ) const;
+ 
++    /** Returns an error string from the passed BIFF error code. */
++    const OUString&     calcErrorString( sal_uInt8 nErrorCode ) const;
++
+ private:
+     /** Adds an error code to the internal maps. */
+     void                addErrorCode( sal_uInt8 nErrorCode, const OUString& rErrorCode );
 diff --git a/sc/source/filter/oox/sheetdatabuffer.cxx b/sc/source/filter/oox/sheetdatabuffer.cxx
-index b3963df..60987c9 100644
+index b3963df..eaab100 100644
 --- a/sc/source/filter/oox/sheetdatabuffer.cxx
 +++ b/sc/source/filter/oox/sheetdatabuffer.cxx
-@@ -209,11 +209,16 @@ void SheetDataBuffer::setBooleanCell( const CellModel& rModel, bool bValue )
+@@ -209,18 +209,14 @@ void SheetDataBuffer::setBooleanCell( const CellModel& rModel, bool bValue )
  
  void SheetDataBuffer::setErrorCell( const CellModel& rModel, const OUString& rErrorCode )
  {
@@ -76,14 +96,19 @@ index b3963df..60987c9 100644
  
  void SheetDataBuffer::setErrorCell( const CellModel& rModel, sal_uInt8 nErrorCode )
  {
-+    assert(!"stringizing any NaN will only give 'nan'");
-+    /* FIXME: map nErrorCode to error string and call setErrorCell() above. */
-+
-     OUStringBuffer aBuf;
-     aBuf.append('{');
-     aBuf.append(BiffHelper::calcDoubleFromError(nErrorCode));
+-    OUStringBuffer aBuf;
+-    aBuf.append('{');
+-    aBuf.append(BiffHelper::calcDoubleFromError(nErrorCode));
+-    aBuf.append('}');
+-
+-    getFormulaBuffer().setCellFormula(rModel.maCellAddr, aBuf.makeStringAndClear());
+-    setCellFormat( rModel );
++    setErrorCell( rModel, getUnitConverter().calcErrorString( nErrorCode));
+ }
+ 
+ void SheetDataBuffer::setDateCell( const CellModel& rModel, const OUString& rDateString )
 diff --git a/sc/source/filter/oox/unitconverter.cxx b/sc/source/filter/oox/unitconverter.cxx
-index 55ba77f..108b248 100644
+index 55ba77f..2eff676 100644
 --- a/sc/source/filter/oox/unitconverter.cxx
 +++ b/sc/source/filter/oox/unitconverter.cxx
 @@ -120,7 +120,7 @@ UnitConverter::UnitConverter( const WorkbookHelper& rHelper ) :
@@ -95,6 +120,27 @@ index 55ba77f..108b248 100644
  }
  
  void UnitConverter::finalizeImport()
+@@ -226,6 +226,20 @@ sal_uInt8 UnitConverter::calcBiffErrorCode( const OUString& rErrorCode ) const
+     return (aIt == maOoxErrCodes.end()) ? BIFF_ERR_NA : aIt->second;
+ }
+ 
++const OUString& UnitConverter::calcErrorString( sal_uInt8 nErrorCode ) const
++{
++    OoxErrorCodeMap::const_iterator iFail( maOoxErrCodes.end());
++    for (OoxErrorCodeMap::const_iterator aIt( maOoxErrCodes.begin()); aIt != maOoxErrCodes.end(); ++aIt)
++    {
++        if (aIt->second == nErrorCode)
++            return aIt->first;
++        if (aIt->second == BIFF_ERR_NA)
++            iFail = aIt;
++    }
++    assert(iFail != maOoxErrCodes.end());   // BIFF_ERR_NA really should be in the map..
++    return iFail->first;
++}
++
+ void UnitConverter::addErrorCode( sal_uInt8 nErrorCode, const OUString& rErrorCode )
+ {
+     maOoxErrCodes[ rErrorCode ]  = nErrorCode;
 
 --------------erAck-patch-parts--
 

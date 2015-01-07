@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1442,6 +1442,7 @@ popd
 install -m 0755 -d %{buildroot}%{_datadir}
 mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
 chmod 755 %{buildroot}%{_datadir}/autocorr
+ln -s %{buildroot}%{baseinstdir}/share/autocorr %{_datadir}/autocorr
 
 #remove it in case we didn't build with gcj
 rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
@@ -2334,8 +2335,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jan 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-5
+- Resolves: rhbz#1177547 system autocorr files not detected
+
 * Thu Dec 18 2014 Caolán McNamara <caolanm@redhat.com> -  1:4.3.5.2-4
-- Resolve: rhbz#1175142 nStarts ends up as an invalid -1
+- Resolves: rhbz#1175142 nStarts ends up as an invalid -1
 
 * Mon Dec 15 2014 David Tardon <dtardon@redhat.com> -  1:4.3.5.2-3
 - Resolves: rhbz#1116534 crash when pasting over a formula

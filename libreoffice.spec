@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -98,15 +98,15 @@ Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
-Source30:       %{external_url}/libwps-0.3.0.tar.bz2
-Source31:       %{external_url}/libvisio-0.1.0.tar.bz2
-Source32:       %{external_url}/libmspub-0.1.1.tar.bz2
-Source33:       %{external_url}/libodfgen-0.1.2.tar.bz2
-Source34:       %{external_url}/libmwaw-0.3.3.tar.bz2
+Source30:       %{external_url}/libwps-0.3.1.tar.bz2
+Source31:       %{external_url}/libvisio-0.1.1.tar.bz2
+Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
+Source33:       %{external_url}/libodfgen-0.1.3.tar.bz2
+Source34:       %{external_url}/libmwaw-0.3.4.tar.bz2
 Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
-Source37:       %{external_url}/libabw-0.1.0.tar.bz2
-Source38:       %{external_url}/librevenge-0.0.1.tar.bz2
+Source37:       %{external_url}/libabw-0.1.1.tar.bz2
+Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
@@ -322,7 +322,6 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch18: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2334,6 +2333,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 09 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-1
+- update to 4.4.0 rc2
+
 * Wed Jan 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.0.1-2
 - Resolves: rhbz#1177547 system autocorr files not detected
 

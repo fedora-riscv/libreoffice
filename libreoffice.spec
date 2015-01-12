@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -360,6 +360,8 @@ Patch52: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
 Patch53: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
 Patch54: 0001-Resolves-rhbz-1175142-nStarts-ends-up-as-an-invalid-.patch
 Patch55: 0001-fdo-82681-return-IsUserDefined-w-o-negation.patch
+Patch56: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
+Patch57: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2331,6 +2333,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jan 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-7
+- Resolves: fdo#36772 calc and draw tabbars tabs are too small
+- Resolves: fdo#73165 spell checking isn't kicking in until typist pauses
+
 * Fri Jan 09 2015 David Tardon <dtardon@redhat.com> - 1:4.3.5.2-6
 - Resolves: fdo#82681 Draw crashes when copying table row
 

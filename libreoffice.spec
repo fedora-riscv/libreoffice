@@ -362,6 +362,7 @@ Patch54: 0001-Resolves-rhbz-1175142-nStarts-ends-up-as-an-invalid-.patch
 Patch55: 0001-fdo-82681-return-IsUserDefined-w-o-negation.patch
 Patch56: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
 Patch57: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
+Patch58: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2336,6 +2337,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Mon Jan 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-7
 - Resolves: fdo#36772 calc and draw tabbars tabs are too small
 - Resolves: fdo#73165 spell checking isn't kicking in until typist pauses
+- radio check top center bottom alignment for table cells
 
 * Fri Jan 09 2015 David Tardon <dtardon@redhat.com> - 1:4.3.5.2-6
 - Resolves: fdo#82681 Draw crashes when copying table row

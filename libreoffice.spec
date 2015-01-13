@@ -1933,6 +1933,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/template/common
 %{baseinstdir}/share/template/common/internal
 %{baseinstdir}/share/template/common/layout
+%{baseinstdir}/share/template/common/officorr
+%{baseinstdir}/share/template/common/offimisc
+%{baseinstdir}/share/template/common/personal
+%{baseinstdir}/share/template/common/presnt
 %{baseinstdir}/share/template/common/wizard
 %{baseinstdir}/share/template/wizard
 %dir %{baseinstdir}/share/wordbook

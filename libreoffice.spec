@@ -323,6 +323,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
+Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

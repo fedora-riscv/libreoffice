@@ -390,7 +390,7 @@ index 8634835..043d2d4 100644
 +    Comparators aComparisons(buildComparators(rSrcDoc, *this));
  
 -    nRet = aD1.ShowDiffs( aD0 );
-+    for (auto a : aComparisons)
++    for (auto& a : aComparisons)
 +    {
 +        CompareData& rD0 = *a.first.get();
 +        CompareData& rD1 = *a.second.get();
@@ -405,7 +405,7 @@ index 8634835..043d2d4 100644
                         nsRedlineMode_t::REDLINE_SHOW_INSERT | nsRedlineMode_t::REDLINE_SHOW_DELETE));
  
 -        aD1.SetRedlinesToDoc( !bDocWasModified );
-+        for (auto a : aComparisons)
++        for (auto& a : aComparisons)
 +        {
 +            CompareData& rD1 = *a.second.get();
 +            rD1.SetRedlinesToDoc( !bDocWasModified );

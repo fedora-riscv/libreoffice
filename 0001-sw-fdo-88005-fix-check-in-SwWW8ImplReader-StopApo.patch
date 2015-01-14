@@ -1,0 +1,40 @@
+From 26c9dc5711f883f69d4f42eff6cb472b03cc16c2 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Mon, 12 Jan 2015 20:02:29 +0100
+Subject: [PATCH] sw: fdo#88005: fix check in SwWW8ImplReader::StopApo()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+404f16e97f1c2fcd8f9a1297bdfa46cba970467e is embarrassing crap; the real
+problem there is that the paragraph that should be removed is _inside_
+the frame, but in sf_68e4f217c107f6eada21adfe6e3c9c57-82055-minimized.doc
+the MoveInsideFly() is not called so a non-empty body paragraph was removed.
+
+Change-Id: I5d4443804c52a5fa30ddb51609ccbbee07abc5aa
+(cherry picked from commit e71668c4e642cc497206bfbe7191f64bddf31db0)
+Reviewed-on: https://gerrit.libreoffice.org/13885
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit b25967266ec1dfa3662783ddc58a4b0c3c9ba953)
+---
+ sw/source/filter/ww8/ww8par6.cxx | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sw/source/filter/ww8/ww8par6.cxx b/sw/source/filter/ww8/ww8par6.cxx
+index 392fdac..4d5dc74 100644
+--- a/sw/source/filter/ww8/ww8par6.cxx
++++ b/sw/source/filter/ww8/ww8par6.cxx
+@@ -2471,8 +2471,7 @@ void SwWW8ImplReader::StopApo()
+         Color aBg(0xFE, 0xFF, 0xFF, 0xFF);  //Transparent by default
+ 
+         SwTxtNode* pNd = aPref.GetNode().GetTxtNode();
+-        if (pNd && &pPaM->GetPoint()->nNode.GetNode()
+-                        != &pSFlyPara->pMainTextPos->nNode.GetNode())
++        if (pNd && pSFlyPara->pFlyFmt)
+         {
+             /*
+             #i582#
+-- 
+2.1.0
+

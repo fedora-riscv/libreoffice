@@ -2278,6 +2278,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: fdo#79249 call formula compiler with error string
 - Resolves: fdo#68385 update references only if cut originates from the same document
 - Resolves: fdo#73165 don't restart timer if already running
+- Resolves: fdo#88005 fix check in SwWW8ImplReader::StopApo()
 
 * Tue Dec 09 2014 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-1
 - update to 4.2.8

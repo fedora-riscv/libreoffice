@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -364,6 +364,7 @@ Patch56: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
 Patch57: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 Patch58: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch59: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
+Patch50: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2335,7 +2336,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jan 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-8
+* Wed Jan 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9-UNBUILT
+- classic draw rectangles fit to contour utterly broken
+
+* Tue Jan 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-8
 - allow comparing documents which only differ by frame contents
 
 * Mon Jan 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-7

@@ -2337,7 +2337,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jan 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9
+* Wed Jan 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9
 - classic draw rectangles fit to contour utterly broken
 - Use the same advanced Ellipse and Rectangle shapes in writer as draw/impress
 

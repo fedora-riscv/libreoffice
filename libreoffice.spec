@@ -365,6 +365,7 @@ Patch57: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 Patch58: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch59: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch50: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
+Patch51: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2336,8 +2337,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jan 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9-UNBUILT
+* Wed Jan 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9
 - classic draw rectangles fit to contour utterly broken
+- Use the same advanced Ellipse and Rectangle shapes in writer as draw/impress
 
 * Tue Jan 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-8
 - allow comparing documents which only differ by frame contents

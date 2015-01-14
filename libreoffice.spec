@@ -325,6 +325,7 @@ Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
+Patch21: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

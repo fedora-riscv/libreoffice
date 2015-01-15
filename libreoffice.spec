@@ -367,6 +367,7 @@ Patch59: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch60: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
 Patch61: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch62: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
+Patch63: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2338,10 +2339,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-10.unbuilt
+* Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-10
 - Resolves: rhbz#1182018 python required for wizards now
 - Resolves: rhbz#1180114 writerfilter: don't crash on w:customXmlDelRangeStart
   etc.
+- Resolves: rhbz#1162352 SwDataChanged dtor accesses deleted PaM
 
 * Wed Jan 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9
 - classic draw rectangles fit to contour utterly broken

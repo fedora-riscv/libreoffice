@@ -232,7 +232,7 @@ index d5c3298..b9e51fe 100644
 -            ScImportExport aObj( GetViewData()->GetDocument(), aCellPos );
 -            aObj.SetImportBroadcast(true);
 +            ScAddress aCellPos( nPosX, nPosY, GetViewData().GetTabNo() );
-+            ScImportExport aObj( GetViewData().GetDocument(), aCellPos );
++            ScImportExport aObj( GetViewData()->GetDocument(), aCellPos );
 +            aObj.SetOverwriting( true );
  
              OUString aStr;

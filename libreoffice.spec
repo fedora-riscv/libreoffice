@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2337,6 +2337,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-10.unbuilt
+- Resolves: rhbz#1182018 python required for wizards now
+
 * Wed Jan 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-9
 - classic draw rectangles fit to contour utterly broken
 - Use the same advanced Ellipse and Rectangle shapes in writer as draw/impress

@@ -337,6 +337,7 @@ Patch81: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
 Patch82: 0001-fdo-79249-call-formula-compiler-with-error-string.patch
 Patch83: 0001-fdo-68385-update-references-only-if-cut-originates-f.patch
 Patch84: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
+Patch85: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2270,7 +2271,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 10 2014 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2.UNBUILT
+* Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2
 - Resolves: fdo#87141 Remove deletes the node but we want to release it
 - Resolves: fdo#87237 propagate error values through matrix comparisons
 - Resolves: fdo#86809 connect filter conditions correctly

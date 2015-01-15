@@ -452,6 +452,7 @@ Requires:  hsqldb
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-report-builder < 1:4.1.0.0
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
@@ -593,6 +594,7 @@ mathematical symbols.
 Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
@@ -624,6 +626,7 @@ Enables the LibreOffice writer module to mail-merge to email.
 Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
@@ -641,6 +644,7 @@ The LibreOffice Spreadsheet application.
 Summary: LibreOffice Drawing Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
@@ -660,6 +664,7 @@ The LibreOffice Drawing Application.
 Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
@@ -687,6 +692,7 @@ The LibreOffice Presentation Application.
 Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1

@@ -140,7 +140,7 @@ index fc671af..f1c721f 100644
 --- a/writerfilter/source/ooxml/model.xml
 +++ b/writerfilter/source/ooxml/model.xml
 @@ -17281,6 +17281,22 @@
-     <resource name="CT_TrackChange" resource="Properties">
+     <resource name="CT_TrackChange" resource="Properties" tag="redline">
        <attribute name="author" tokenid="ooxml:CT_TrackChange_author"/>
        <attribute name="date" tokenid="ooxml:CT_TrackChange_date"/>
 +      <action name="end" tokenid="ooxml:EG_RangeMarkupElements_customXmlInsRangeStart" action="sendPropertiesWithId" sendtokenid="ooxml:EG_RangeMarkupElements_customXmlInsRangeStart"/>
@@ -160,7 +160,7 @@ index fc671af..f1c721f 100644
 +      <action name="end" tokenid="ooxml:EG_RangeMarkupElements_customXmlMoveToRangeEnd" action="sendPropertiesWithId" sendtokenid="ooxml:EG_RangeMarkupElements_customXmlMoveToRangeEnd"/>
 +      <action name="end" tokenid="ooxml:EG_RangeMarkupElements_customXmlMoveToRangeEnd" action="clearProps"/>
      </resource>
-     <resource name="CT_CellMergeTrackChange" resource="Properties">
+     <resource name="CT_CellMergeTrackChange" resource="Properties" tag="redline">
        <attribute name="vMerge" tokenid="ooxml:CT_CellMergeTrackChange_vMerge"/>
 -- 
 2.1.0

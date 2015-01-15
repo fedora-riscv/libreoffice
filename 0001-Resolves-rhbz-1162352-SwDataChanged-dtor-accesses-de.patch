@@ -1,4 +1,4 @@
-From 385694f1e65c1cb8195d39d50c78ea083430b63b Mon Sep 17 00:00:00 2001
+From 5fc783dace4a3ecd3a63b1c5b087346fe3b449b9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 15 Jan 2015 14:43:27 +0000
 Subject: [PATCH] Resolves: rhbz#1162352 SwDataChanged dtor accesses deleted
@@ -15,18 +15,26 @@ Conflicts:
 
 Change-Id: I90e998561f2645ebfa51423bcaab9a4195144338
 ---
- sw/source/core/doc/docfmt.cxx | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sw/source/core/doc/docfmt.cxx | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/sw/source/core/doc/docfmt.cxx b/sw/source/core/doc/docfmt.cxx
-index 18e5137..8aa95d4 100644
+index 43cfe77..34ceca7 100644
 --- a/sw/source/core/doc/docfmt.cxx
 +++ b/sw/source/core/doc/docfmt.cxx
-@@ -363,10 +363,10 @@ void SwDoc::ResetAttrs( const SwPaM &rRg,
+@@ -66,6 +66,7 @@
+ #include <SwUndoFmt.hxx>
+ #include <UndoManager.hxx>
+ #include <docsh.hxx>
++#include <boost/scoped_ptr.hpp>
+ 
+ using namespace ::com::sun::star::i18n;
+ using namespace ::com::sun::star::lang;
+@@ -376,10 +377,10 @@ void SwDoc::ResetAttrs( const SwPaM &rRg,
      }
  
      // #i96644#
--    boost::scoped_ptr< SwDataChanged > pDataChanged;
+-    std::auto_ptr< SwDataChanged > pDataChanged;
 +    boost::scoped_ptr< SwDataChanged > xDataChanged;
      if ( bSendDataChangedEvents )
      {
@@ -35,7 +43,7 @@ index 18e5137..8aa95d4 100644
      }
      SwHistory* pHst = 0;
      if (GetIDocumentUndoRedo().DoesUndo())
-@@ -468,10 +468,12 @@ void SwDoc::ResetAttrs( const SwPaM &rRg,
+@@ -481,10 +482,12 @@ void SwDoc::ResetAttrs( const SwPaM &rRg,
          GetNodes().ForEach( pStt->nNode, aTmpEnd, lcl_RstTxtAttr, &aPara );
      }
  

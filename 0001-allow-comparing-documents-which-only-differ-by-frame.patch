@@ -1,4 +1,4 @@
-From 1876a826802892d2bccf85ca81f4049d870d0cc4 Mon Sep 17 00:00:00 2001
+From b2b455b4258993a9982efb829b333df9905fe95c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 13 Jan 2015 13:55:58 +0000
 Subject: [PATCH] allow comparing documents which only differ by frame contents
@@ -10,11 +10,11 @@ comparing the contents of those frames
 
 Change-Id: Ib8ad2ba938da48a46c012961b00d81b2c386a368
 ---
- sw/source/core/doc/doccomp.cxx | 236 +++++++++++++++++++++++++----------------
- 1 file changed, 144 insertions(+), 92 deletions(-)
+ sw/source/core/doc/doccomp.cxx | 238 +++++++++++++++++++++++++----------------
+ 1 file changed, 146 insertions(+), 92 deletions(-)
 
 diff --git a/sw/source/core/doc/doccomp.cxx b/sw/source/core/doc/doccomp.cxx
-index 3a6e4f3..a9bdb72 100644
+index 3a6e4f3..210224f 100644
 --- a/sw/source/core/doc/doccomp.cxx
 +++ b/sw/source/core/doc/doccomp.cxx
 @@ -35,6 +35,7 @@
@@ -380,7 +380,7 @@ index 3a6e4f3..a9bdb72 100644
  // Returns (the difference count?) if something is different
  long SwDoc::CompareDoc( const SwDoc& rDoc )
  {
-@@ -1808,19 +1855,26 @@ long SwDoc::CompareDoc( const SwDoc& rDoc )
+@@ -1808,19 +1855,28 @@ long SwDoc::CompareDoc( const SwDoc& rDoc )
      rSrcDoc.SetRedlineMode( nsRedlineMode_t::REDLINE_SHOW_INSERT );
      SetRedlineMode((RedlineMode_t)(nsRedlineMode_t::REDLINE_ON | nsRedlineMode_t::REDLINE_SHOW_INSERT));
  
@@ -391,8 +391,9 @@ index 3a6e4f3..a9bdb72 100644
 +    Comparators aComparisons(buildComparators(rSrcDoc, *this));
  
 -    nRet = aD1.ShowDiffs( aD0 );
-+    for (auto& a : aComparisons)
++    for (Comparators::iterator aIter = aComparisons.begin(); aIter != aComparisons.end(); ++aIter)
 +    {
++        CompareDataPtrPair& a = *aIter;
 +        CompareData& rD0 = *a.first.get();
 +        CompareData& rD1 = *a.second.get();
 +        rD1.CompareLines( rD0 );
@@ -406,15 +407,16 @@ index 3a6e4f3..a9bdb72 100644
                         nsRedlineMode_t::REDLINE_SHOW_INSERT | nsRedlineMode_t::REDLINE_SHOW_DELETE));
  
 -        aD1.SetRedlinesToDoc( !bDocWasModified );
-+        for (auto& a : aComparisons)
++        for (Comparators::iterator aIter = aComparisons.begin(); aIter != aComparisons.end(); ++aIter)
 +        {
++            CompareDataPtrPair& a = *aIter;
 +            CompareData& rD1 = *a.second.get();
 +            rD1.SetRedlinesToDoc( !bDocWasModified );
 +        }
          SetModified();
      }
  
-@@ -2026,11 +2080,9 @@ long SwDoc::MergeDoc( const SwDoc& rDoc )
+@@ -2026,11 +2082,9 @@ long SwDoc::MergeDoc( const SwDoc& rDoc )
      rSrcDoc.SetRedlineMode( nsRedlineMode_t::REDLINE_SHOW_DELETE );
      SetRedlineMode( nsRedlineMode_t::REDLINE_SHOW_DELETE );
  

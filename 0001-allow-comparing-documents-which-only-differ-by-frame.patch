@@ -17,11 +17,12 @@ diff --git a/sw/source/core/doc/doccomp.cxx b/sw/source/core/doc/doccomp.cxx
 index 3a6e4f3..210224f 100644
 --- a/sw/source/core/doc/doccomp.cxx
 +++ b/sw/source/core/doc/doccomp.cxx
-@@ -35,6 +35,7 @@
+@@ -35,6 +35,8 @@
  #include <section.hxx>
  #include <tox.hxx>
  #include <docsh.hxx>
 +#include <fmtcntnt.hxx>
++#include <boost/shared_ptr.hpp>
  
  #include <com/sun/star/document/XDocumentPropertiesSupplier.hpp>
  #include <com/sun/star/document/XDocumentProperties.hpp>
@@ -335,7 +336,7 @@ index 3a6e4f3..210224f 100644
      return true;
  }
  
-+typedef std::shared_ptr<CompareData> CompareDataPtr;
++typedef boost::shared_ptr<CompareData> CompareDataPtr;
 +typedef std::pair<CompareDataPtr, CompareDataPtr> CompareDataPtrPair;
 +typedef std::vector<CompareDataPtrPair> Comparators;
 +

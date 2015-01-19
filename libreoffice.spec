@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -369,6 +369,7 @@ Patch61: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch62: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
 Patch63: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
 Patch64: 0001-Resolves-fdo-86978-append-formula-cells-to-track-ins.patch
+Patch65: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2340,6 +2341,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jan 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12-UNBUILT
+- if we change the keys we have to resort based on the new keys
+
 * Fri Jan 16 2015 Eike Rathke <erack@redhat.com> - 1:4.3.5.2-11
 - Resolves: rhbz#1171828 fdo#86978 append formula cells to track instead of tree
 

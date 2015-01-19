@@ -2343,6 +2343,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Jan 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12-UNBUILT
 - if we change the keys we have to resort based on the new keys
+- Resolves: rhbz#1136013 ExternalToolEdit crash
 
 * Fri Jan 16 2015 Eike Rathke <erack@redhat.com> - 1:4.3.5.2-11
 - Resolves: rhbz#1171828 fdo#86978 append formula cells to track instead of tree

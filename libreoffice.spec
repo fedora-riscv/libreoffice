@@ -327,6 +327,7 @@ Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
 Patch21: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch22: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
+Patch23: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -328,6 +328,7 @@ Patch20: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
 Patch21: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch22: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
 Patch23: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
+Patch24: 0001-rhbz-1175027-sw-fix-life-cycle-of-SwConnectionDispos.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2351,9 +2352,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jan 15 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-2
+* Mon Jan 19 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-2
 - Resolves: rhbz#1180114 writerfilter: don't crash on w:customXmlDelRangeStart
   etc.
+- Resolves: rhbz#1175027 fix life cycle of SwConnectionDisposedListener_Impl
 
 * Fri Jan 09 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-1
 - update to 4.4.0 rc2

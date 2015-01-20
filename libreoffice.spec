@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -338,6 +338,7 @@ Patch82: 0001-fdo-79249-call-formula-compiler-with-error-string.patch
 Patch83: 0001-fdo-68385-update-references-only-if-cut-originates-f.patch
 Patch84: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 Patch85: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
+Patch86: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2271,6 +2272,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3-UNBUILT
+- font cache gets broken on adding an embedded font
+
 * Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2
 - Resolves: fdo#87141 Remove deletes the node but we want to release it
 - Resolves: fdo#87237 propagate error values through matrix comparisons

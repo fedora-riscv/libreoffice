@@ -329,6 +329,7 @@ Patch21: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch22: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
 Patch23: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
 Patch24: 0001-rhbz-1175027-sw-fix-life-cycle-of-SwConnectionDispos.patch
+Patch25: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

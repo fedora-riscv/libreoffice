@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -341,6 +341,7 @@ Patch85: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
 Patch86: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 Patch87: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch88: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
+Patch89: 0001-Resolves-fdo-88721-correct-negated-condition-in-rang.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2278,6 +2279,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 23 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-4-UNBUILT
+- Resolves: fdo#88721 correct negated condition in range name validation
+
 * Thu Jan 22 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3
 - font cache gets broken on adding an embedded font
 - Resolves: rhbz#1177547 system autocorr files not detected

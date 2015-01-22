@@ -1,0 +1,51 @@
+From d88e63579bfd6af736349f29e8cc73cacf6834b1 Mon Sep 17 00:00:00 2001
+Message-Id: <d88e63579bfd6af736349f29e8cc73cacf6834b1.1421968374.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 22 Jan 2015 23:36:23 +0100
+Subject: [PATCH] Resolves: fdo#88721 correct negated condition in range name
+ validation
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Fallout of 72b9dd277bab328c4d9227439e27e8c29b43fa7d String to OUString
+conversion.
+
+(cherry picked from commit 34f8864c9af563cbcd34352b3edefc67ba235ae7)
+
+Conflicts:
+	sc/source/core/tool/rangenam.cxx
+
+Change-Id: I89a90da11790efba9e8ce4c9464dfca50b08c3ce
+---
+ sc/source/core/tool/rangenam.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-fdo-88721-correct-negated-condition-in-rang.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-fdo-88721-correct-negated-condition-in-rang.patch"
+
+diff --git a/sc/source/core/tool/rangenam.cxx b/sc/source/core/tool/rangenam.cxx
+index 5d88ee8..a2164e4a 100644
+--- a/sc/source/core/tool/rangenam.cxx
++++ b/sc/source/core/tool/rangenam.cxx
+@@ -465,7 +465,7 @@ void ScRangeData::MakeValidName( OUString& rName )
+         {
+             //! Range Parse is partially valid also with invalid sheet name,
+             //! Address Parse dito, during compile name would generate a #REF!
+-            if ( rName.indexOf( '.' ) == -1 )
++            if ( rName.indexOf( '.' ) != -1 )
+                 rName = rName.replaceFirst( ".", "_" );
+             else
+                 rName = "_" + rName;
+
+--------------erAck-patch-parts--
+
+

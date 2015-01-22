@@ -1392,6 +1392,7 @@ popd
 mkdir -p %{buildroot}%{_datadir}
 mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
 chmod 755 %{buildroot}%{_datadir}/autocorr
+ln -s %{buildroot}%{baseinstdir}/share/autocorr %{_datadir}/autocorr
 
 #remove it in case we didn't build with gcj
 rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
@@ -2272,8 +2273,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3-UNBUILT
+* Thu Jan 22 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3-UNBUILT
 - font cache gets broken on adding an embedded font
+- Resolves: rhbz#1177547 system autocorr files not detected
 
 * Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2
 - Resolves: fdo#87141 Remove deletes the node but we want to release it

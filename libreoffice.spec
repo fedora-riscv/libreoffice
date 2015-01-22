@@ -1395,7 +1395,7 @@ popd
 mkdir -p %{buildroot}%{_datadir}
 mv -f %{buildroot}%{baseinstdir}/share/autocorr %{buildroot}%{_datadir}/autocorr
 chmod 755 %{buildroot}%{_datadir}/autocorr
-ln -s %{buildroot}%{baseinstdir}/share/autocorr %{_datadir}/autocorr
+ln -s %{_datadir}/autocorr %{buildroot}%{baseinstdir}/share/autocorr
 
 #remove it in case we didn't build with gcj
 rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar

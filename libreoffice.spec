@@ -340,6 +340,7 @@ Patch84: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 Patch85: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
 Patch86: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 Patch87: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
+Patch88: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2280,6 +2281,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - font cache gets broken on adding an embedded font
 - Resolves: rhbz#1177547 system autocorr files not detected
 - Resolves: rhbz#1184582 crash in grammar checking thread
+- Resolves: fdo#88378 flipping by reversing co-ords no longer works
 
 * Thu Jan 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-2
 - Resolves: fdo#87141 Remove deletes the node but we want to release it

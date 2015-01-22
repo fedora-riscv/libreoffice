@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -330,6 +330,7 @@ Patch22: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
 Patch23: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
 Patch24: 0001-rhbz-1175027-sw-fix-life-cycle-of-SwConnectionDispos.patch
 Patch25: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
+Patch26: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2353,6 +2354,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 22 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.0.2-3-UNBUILT
+- Resolves: rhbz#1184582 crash in grammar checking thread
+
 * Mon Jan 19 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-2
 - Resolves: rhbz#1180114 writerfilter: don't crash on w:customXmlDelRangeStart
   etc.

@@ -342,6 +342,7 @@ Patch86: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 Patch87: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch88: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
 Patch89: 0001-Resolves-fdo-88721-correct-negated-condition-in-rang.patch
+Patch90: 0001-fix-abuse-of-OUStringBuffer-int-ctor.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2281,6 +2282,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Jan 23 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-4-UNBUILT
 - Resolves: fdo#88721 correct negated condition in range name validation
+- fix abuse of OUStringBuffer(int) ctor
 
 * Thu Jan 22 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3
 - font cache gets broken on adding an embedded font

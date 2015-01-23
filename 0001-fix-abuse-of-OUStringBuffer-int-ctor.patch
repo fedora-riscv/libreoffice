@@ -1,0 +1,60 @@
+From dcf03204565282f6a0e54170659f611e057010f5 Mon Sep 17 00:00:00 2001
+Message-Id: <dcf03204565282f6a0e54170659f611e057010f5.1422026719.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 23 Jan 2015 14:28:54 +0100
+Subject: [PATCH] fix abuse of OUStringBuffer(int) ctor
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Partial backport of 853c2fc71a96755a9dee629fd5d0e1cff9a48034
+
+Change-Id: I14e26da332a829c6381ee9e07571171ebebe0ac0
+---
+ sc/source/core/data/documen4.cxx       | 3 ++-
+ sc/source/core/data/documentimport.cxx | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-fix-abuse-of-OUStringBuffer-int-ctor.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-fix-abuse-of-OUStringBuffer-int-ctor.patch"
+
+diff --git a/sc/source/core/data/documen4.cxx b/sc/source/core/data/documen4.cxx
+index 03ee3ef..95091f3 100644
+--- a/sc/source/core/data/documen4.cxx
++++ b/sc/source/core/data/documen4.cxx
+@@ -374,7 +374,8 @@ void ScDocument::InsertTableOp(const ScTabOpParam& rParam,      // Mehrfachopera
+     }
+ 
+     ScRefAddress aRef;
+-    OUStringBuffer aForString('=');
++    OUStringBuffer aForString;
++    aForString.append('=');
+     aForString.append(ScCompiler::GetNativeSymbol(ocTableOp));
+     aForString.append(ScCompiler::GetNativeSymbol( ocOpen));
+ 
+diff --git a/sc/source/core/data/documentimport.cxx b/sc/source/core/data/documentimport.cxx
+index 3ca06c5..b431f7f 100644
+--- a/sc/source/core/data/documentimport.cxx
++++ b/sc/source/core/data/documentimport.cxx
+@@ -333,7 +333,8 @@ void ScDocumentImport::setTableOpCells(const ScRange& rRange, const ScTabOpParam
+ 
+     ScDocument* pDoc = &mpImpl->mrDoc;
+     ScRefAddress aRef;
+-    OUStringBuffer aFormulaBuf('=');
++    OUStringBuffer aFormulaBuf;
++    aFormulaBuf.append('=');
+     aFormulaBuf.append(ScCompiler::GetNativeSymbol(ocTableOp));
+     aFormulaBuf.append(ScCompiler::GetNativeSymbol(ocOpen));
+ 
+
+--------------erAck-patch-parts--
+
+

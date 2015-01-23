@@ -2357,7 +2357,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Jan 23 2015 Marek Kasik <mkasik@redhat.com> - 1:4.4.0.2-4
 - Rebuild (poppler-0.30.0)
 
-* Thu Jan 22 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.0.2-3-UNBUILT
+* Thu Jan 22 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.0.2-3
 - Resolves: rhbz#1184582 crash in grammar checking thread
 
 * Mon Jan 19 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.2-2

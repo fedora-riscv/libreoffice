@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2354,6 +2354,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 23 2015 Marek Kasik <mkasik@redhat.com> - 1:4.4.0.2-4
+- Rebuild (poppler-0.30.0)
+
 * Thu Jan 22 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.0.2-3-UNBUILT
 - Resolves: rhbz#1184582 crash in grammar checking thread
 

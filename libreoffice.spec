@@ -373,6 +373,7 @@ Patch65: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
 Patch66: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 Patch67: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch68: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
+Patch69: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2344,12 +2345,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jan 22 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12-UNBUILT
+* Sat Jan 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12-UNBUILT
 - Resolves: rhbz#1136013 ExternalToolEdit crash
 - font cache gets broken on adding an embedded font
 - if we change the keys we have to resort based on the new keys
 - Resolves: rhbz#1184582 crash in grammar checking thread
 - Resolves: fdo#88378 flipping by reversing coords no longer works
+- Resolves: rhbz#1179642 crash in GetFocus
 
 * Fri Jan 16 2015 Eike Rathke <erack@redhat.com> - 1:4.3.5.2-11
 - Resolves: rhbz#1171828 fdo#86978 append formula cells to track instead of tree

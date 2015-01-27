@@ -330,6 +330,7 @@ Patch22: 0001-rhbz-1175027-sw-fix-life-cycle-of-SwConnectionDispos.patch
 Patch23: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch24: 0001-Related-rhbz-1185307-One-more-location-to-look-for-H.patch
 Patch25: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
+Patch26: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

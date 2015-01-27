@@ -1,0 +1,414 @@
+From 2e161c21f77e54b73c70e5b6f94b57fcd963672c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 27 Jan 2015 13:56:36 +0000
+Subject: [PATCH] rhbz#1177022: vcl: fix PDF embedding of Type 1 fonts
+
+Change-Id: I8e9be4a8ea432a11cdccdd3dd80c5cdc9d6d88a1
+---
+ vcl/generic/fontmanager/fontmanager.cxx | 25 +++++++++++++++++++++-
+ vcl/generic/print/genpspgraphics.cxx    |  8 +++----
+ vcl/headless/svptext.cxx                |  4 ++--
+ vcl/inc/fontmanager.hxx                 |  7 ++++++-
+ vcl/inc/generic/genpspgraphics.h        |  6 ++++--
+ vcl/inc/headless/svpgdi.hxx             |  2 +-
+ vcl/inc/quartz/salgdi.h                 |  2 +-
+ vcl/inc/salgdi.hxx                      |  8 +++++--
+ vcl/inc/unx/salgdi.h                    |  2 +-
+ vcl/inc/win/salgdi.h                    |  2 +-
+ vcl/quartz/salgdi.cxx                   |  2 +-
+ vcl/source/gdi/pdfwriter_impl.cxx       | 37 +++++++++++++++++++++++++++++++--
+ vcl/unx/generic/gdi/salgdi3.cxx         |  4 ++--
+ vcl/win/source/gdi/salgdi3.cxx          |  2 +-
+ 14 files changed, 89 insertions(+), 22 deletions(-)
+
+diff --git a/vcl/generic/fontmanager/fontmanager.cxx b/vcl/generic/fontmanager/fontmanager.cxx
+index 0677625..2bef8ad 100644
+--- a/vcl/generic/fontmanager/fontmanager.cxx
++++ b/vcl/generic/fontmanager/fontmanager.cxx
+@@ -290,6 +290,7 @@ bool PrintFontManager::PrintFont::readAfmMetrics( MultiAtomProvider* pProvider,
+     }
+ 
+     m_aEncodingVector.clear();
++    m_aEncodingVectorPriority.clear();
+     // fill in global info
+ 
+     // PSName
+@@ -503,7 +504,10 @@ bool PrintFontManager::PrintFont::readAfmMetrics( MultiAtomProvider* pProvider,
+                 {
+                     pUnicodes[i] = pChar->code + 0xf000;
+                     if( bFillEncodingvector )
++                    {
+                         m_aEncodingVector[ pUnicodes[i] ] = pChar->code;
++                        m_aEncodingVectorPriority.insert(pUnicodes[i]);
++                    }
+                     continue;
+                 }
+ 
+@@ -564,7 +568,10 @@ bool PrintFontManager::PrintFont::readAfmMetrics( MultiAtomProvider* pProvider,
+                 {
+                     m_pMetrics->m_aMetrics[ pUnicodes[i] ] = aMetric;
+                     if( bFillEncodingvector )
++                    {
+                         m_aEncodingVector[ pUnicodes[i] ] = pChar->code;
++                        m_aEncodingVectorPriority.insert(pUnicodes[i]);
++                    }
+                 }
+                 else if( pChar->name )
+                 {
+@@ -592,13 +599,21 @@ bool PrintFontManager::PrintFont::readAfmMetrics( MultiAtomProvider* pProvider,
+                     ::std::pair< ::boost::unordered_multimap< sal_uInt8, sal_Unicode >::const_iterator,
+                           ::boost::unordered_multimap< sal_uInt8, sal_Unicode >::const_iterator >
+                           aCodes = rManager.getUnicodeFromAdobeCode( pChar->code );
++                    bool bFirst = true;
+                     while( aCodes.first != aCodes.second )
+                     {
+                         if( (*aCodes.first).second != 0 )
+                         {
+                             m_pMetrics->m_aMetrics[ (*aCodes.first).second ] = aMetric;
+                             if( bFillEncodingvector )
++                            {
+                                 m_aEncodingVector[ (*aCodes.first).second ] = pChar->code;
++                                if (bFirst) // arbitrarily prefer the first one
++                                {
++                                    m_aEncodingVectorPriority.insert((*aCodes.first).second);
++                                    bFirst = false;
++                                }
++                            }
+                         }
+                         ++aCodes.first;
+                     }
+@@ -612,7 +627,10 @@ bool PrintFontManager::PrintFont::readAfmMetrics( MultiAtomProvider* pProvider,
+                     m_pMetrics->m_aMetrics[ code ] = aMetric;
+                     // maybe should try to find the name in the convtabs ?
+                     if( bFillEncodingvector )
++                    {
+                         m_aEncodingVector[ code ] = pChar->code;
++                        m_aEncodingVectorPriority.insert(code);
++                    }
+                 }
+             }
+         }
+@@ -2132,7 +2150,7 @@ void PrintFontManager::getGlyphWidths( fontID nFont,
+     }
+ }
+ 
+-const std::map< sal_Unicode, sal_Int32 >* PrintFontManager::getEncodingMap( fontID nFont, const std::map< sal_Unicode, OString >** pNonEncoded ) const
++const std::map< sal_Unicode, sal_Int32 >* PrintFontManager::getEncodingMap( fontID nFont, const std::map< sal_Unicode, OString >** pNonEncoded, std::set<sal_Unicode> const** ppPriority ) const
+ {
+     PrintFont* pFont = getFont( nFont );
+     if( !pFont || pFont->m_eType != fonttype::Type1 )
+@@ -2144,6 +2162,11 @@ const std::map< sal_Unicode, sal_Int32 >* PrintFontManager::getEncodingMap( font
+     if( pNonEncoded )
+         *pNonEncoded = pFont->m_aNonEncoded.size() ? &pFont->m_aNonEncoded : NULL;
+ 
++    if (ppPriority)
++    {
++        *ppPriority = &pFont->m_aEncodingVectorPriority;
++    }
++
+     return pFont->m_aEncodingVector.size() ? &pFont->m_aEncodingVector : NULL;
+ }
+ 
+diff --git a/vcl/generic/print/genpspgraphics.cxx b/vcl/generic/print/genpspgraphics.cxx
+index 1678852..b89efd6 100644
+--- a/vcl/generic/print/genpspgraphics.cxx
++++ b/vcl/generic/print/genpspgraphics.cxx
+@@ -1008,7 +1008,7 @@ bool GenPspGraphics::CreateFontSubset(
+     return bSuccess;
+ }
+ 
+-const Ucs2SIntMap* GenPspGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded )
++const Ucs2SIntMap* GenPspGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded, std::set<sal_Unicode> const** ppPriority)
+ {
+     // in this context the pFont->GetFontId() is a valid PSP
+     // font since they are the only ones left after the PDF
+@@ -1016,7 +1016,7 @@ const Ucs2SIntMap* GenPspGraphics::GetFontEncodingVector( const PhysicalFontFace
+     // which this method was created). The correct way would
+     // be to have the GlyphCache search for the PhysicalFontFace pFont
+     psp::fontID aFont = pFont->GetFontId();
+-    return GenPspGraphics::DoGetFontEncodingVector( aFont, pNonEncoded );
++    return GenPspGraphics::DoGetFontEncodingVector( aFont, pNonEncoded, ppPriority );
+ }
+ 
+ void GenPspGraphics::GetGlyphWidths( const PhysicalFontFace* pFont,
+@@ -1033,7 +1033,7 @@ void GenPspGraphics::GetGlyphWidths( const PhysicalFontFace* pFont,
+     GenPspGraphics::DoGetGlyphWidths( aFont, bVertical, rWidths, rUnicodeEnc );
+ }
+ 
+-const Ucs2SIntMap* GenPspGraphics::DoGetFontEncodingVector( fontID aFont, const Ucs2OStrMap** pNonEncoded )
++const Ucs2SIntMap* GenPspGraphics::DoGetFontEncodingVector( fontID aFont, const Ucs2OStrMap** pNonEncoded, std::set<sal_Unicode> const** ppPriority)
+ {
+     psp::PrintFontManager& rMgr = psp::PrintFontManager::get();
+ 
+@@ -1045,7 +1045,7 @@ const Ucs2SIntMap* GenPspGraphics::DoGetFontEncodingVector( fontID aFont, const
+         return NULL;
+     }
+ 
+-    return rMgr.getEncodingMap( aFont, pNonEncoded );
++    return rMgr.getEncodingMap( aFont, pNonEncoded, ppPriority );
+ }
+ 
+ void GenPspGraphics::DoGetGlyphWidths( psp::fontID aFont,
+diff --git a/vcl/headless/svptext.cxx b/vcl/headless/svptext.cxx
+index 49b1464..40f86d4 100644
+--- a/vcl/headless/svptext.cxx
++++ b/vcl/headless/svptext.cxx
+@@ -321,7 +321,7 @@ bool SvpSalGraphics::CreateFontSubset(
+     return bSuccess;
+ }
+ 
+-const Ucs2SIntMap* SvpSalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded )
++const Ucs2SIntMap* SvpSalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded, std::set<sal_Unicode> const** ppPriority)
+ {
+     // in this context the pFont->GetFontId() is a valid PSP
+     // font since they are the only ones left after the PDF
+@@ -329,7 +329,7 @@ const Ucs2SIntMap* SvpSalGraphics::GetFontEncodingVector( const PhysicalFontFace
+     // which this method was created). The correct way would
+     // be to have the GlyphCache search for the PhysicalFontFace pFont
+     psp::fontID aFont = pFont->GetFontId();
+-    return GenPspGraphics::DoGetFontEncodingVector( aFont, pNonEncoded );
++    return GenPspGraphics::DoGetFontEncodingVector(aFont, pNonEncoded, ppPriority);
+ }
+ 
+ const void* SvpSalGraphics::GetEmbedFontData(
+diff --git a/vcl/inc/fontmanager.hxx b/vcl/inc/fontmanager.hxx
+index e1203bd..0091849 100644
+--- a/vcl/inc/fontmanager.hxx
++++ b/vcl/inc/fontmanager.hxx
+@@ -202,7 +202,12 @@ class VCL_PLUGIN_PUBLIC PrintFontManager
+         bool                                        m_bHaveVerticalSubstitutedGlyphs;
+         bool                                        m_bUserOverride;
+ 
++        /// mapping from unicode (well, UCS-2) to font code
+         std::map< sal_Unicode, sal_Int32 >          m_aEncodingVector;
++        /// HACK for Type 1 fonts: if multiple UCS-2 codes map to the same
++        /// font code, this set contains the preferred one, i.e., the one that
++        /// is specified explicitly via "C" or "CH" in the AFM file
++        std::set<sal_Unicode>                  m_aEncodingVectorPriority;
+         std::map< sal_Unicode, OString >       m_aNonEncoded;
+ 
+         explicit PrintFont( fonttype::type eType );
+@@ -438,7 +443,7 @@ public:
+     // if ppNonEncoded is set and non encoded type1 glyphs exist
+     // then *ppNonEncoded is set to the mapping for nonencoded glyphs.
+     // the encoding vector contains -1 for non encoded glyphs
+-    const std::map< sal_Unicode, sal_Int32 >* getEncodingMap( fontID nFontID, const std::map< sal_Unicode, OString >** ppNonEncoded ) const;
++    const std::map< sal_Unicode, sal_Int32 >* getEncodingMap( fontID nFontID, const std::map< sal_Unicode, OString >** ppNonEncoded, std::set<sal_Unicode> const ** ppPriority ) const;
+ 
+     // evaluates copyright flags for TrueType fonts for printing/viewing
+     // type1 fonts do not have such a feature, so return for them is true
+diff --git a/vcl/inc/generic/genpspgraphics.h b/vcl/inc/generic/genpspgraphics.h
+index 9cc4766..0f64be9 100644
+--- a/vcl/inc/generic/genpspgraphics.h
++++ b/vcl/inc/generic/genpspgraphics.h
+@@ -60,7 +60,8 @@ public:
+ 
+     // helper methods for sharing with X11SalGraphics
+     static const Ucs2SIntMap* DoGetFontEncodingVector( psp::fontID aFont,
+-                                                       const Ucs2OStrMap** pNonEncoded );
++                                                       const Ucs2OStrMap** pNonEncoded,
++                                                       std::set<sal_Unicode> const** ppPriority);
+     static void             DoGetGlyphWidths( psp::fontID aFont,
+                                               bool bVertical,
+                                               Int32Vector& rWidths,
+@@ -106,7 +107,8 @@ public:
+                                               int nGlyphs,
+                                               FontSubsetInfo& rInfo ) SAL_OVERRIDE;
+     virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*,
+-                                                      const Ucs2OStrMap** ppNonEncoded ) SAL_OVERRIDE;
++                                                      const Ucs2OStrMap** ppNonEncoded,
++                                                      std::set<sal_Unicode> const** ppPriority) SAL_OVERRIDE;
+     virtual const void*     GetEmbedFontData( const PhysicalFontFace*,
+                                               const sal_Ucs* pUnicodes,
+                                               sal_Int32* pWidths,
+diff --git a/vcl/inc/headless/svpgdi.hxx b/vcl/inc/headless/svpgdi.hxx
+index 800ab1a..898e7ff 100644
+--- a/vcl/inc/headless/svpgdi.hxx
++++ b/vcl/inc/headless/svpgdi.hxx
+@@ -169,7 +169,7 @@ public:
+                                               int nGlyphs,
+                                               FontSubsetInfo& rInfo
+                                               ) SAL_OVERRIDE;
+-    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded ) SAL_OVERRIDE;
++    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded, std::set<sal_Unicode> const** ) SAL_OVERRIDE;
+     virtual const void*     GetEmbedFontData( const PhysicalFontFace*,
+                                               const sal_Ucs* pUnicodes,
+                                               sal_Int32* pWidths,
+diff --git a/vcl/inc/quartz/salgdi.h b/vcl/inc/quartz/salgdi.h
+index 57dec5b..d73964b 100644
+--- a/vcl/inc/quartz/salgdi.h
++++ b/vcl/inc/quartz/salgdi.h
+@@ -366,7 +366,7 @@ public:
+     // glyphs with only a name) exist it is set to the corresponding
+     // map for non encoded glyphs; the encoding vector contains -1
+     // as encoding for these cases
+-    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded ) SAL_OVERRIDE;
++    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded, std::set<sal_Unicode> const** ) SAL_OVERRIDE;
+ 
+     // GetEmbedFontData: gets the font data for a font marked
+     // embeddable by GetDevFontList or NULL in case of error
+diff --git a/vcl/inc/salgdi.hxx b/vcl/inc/salgdi.hxx
+index 8ef2638..f1cbcab 100644
+--- a/vcl/inc/salgdi.hxx
++++ b/vcl/inc/salgdi.hxx
+@@ -30,6 +30,7 @@
+ #include "sallayout.hxx"
+ 
+ #include <map>
++#include <set>
+ 
+ class PhysicalFontCollection;
+ class SalBitmap;
+@@ -272,8 +273,11 @@ public:
+     // glyphs with only a name) exist it is set to the corresponding
+     // map for non encoded glyphs; the encoding vector contains -1
+     // as encoding for these cases
+-    virtual const Ucs2SIntMap*
+-                            GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded ) = 0;
++    virtual const Ucs2SIntMap*  GetFontEncodingVector(
++                                    const PhysicalFontFace*,
++                                    const Ucs2OStrMap** ppNonEncoded,
++                                    std::set<sal_Unicode> const** ppPriority) = 0;
++
+ 
+     // GetEmbedFontData: gets the font data for a font marked
+     // embeddable by GetDevFontList or NULL in case of error
+diff --git a/vcl/inc/unx/salgdi.h b/vcl/inc/unx/salgdi.h
+index 7c799f4..e586a28 100644
+--- a/vcl/inc/unx/salgdi.h
++++ b/vcl/inc/unx/salgdi.h
+@@ -242,7 +242,7 @@ public:
+                                               int nGlyphs,
+                                               FontSubsetInfo& rInfo
+                                               ) SAL_OVERRIDE;
+-    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded ) SAL_OVERRIDE;
++    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded, std::set<sal_Unicode> const** ppPriority ) SAL_OVERRIDE;
+     virtual const void* GetEmbedFontData( const PhysicalFontFace*,
+                                           const sal_Ucs* pUnicodes,
+                                           sal_Int32* pWidths,
+diff --git a/vcl/inc/win/salgdi.h b/vcl/inc/win/salgdi.h
+index dac4d6e..82d79a6 100644
+--- a/vcl/inc/win/salgdi.h
++++ b/vcl/inc/win/salgdi.h
+@@ -346,7 +346,7 @@ public:
+     // glyphs with only a name) exist it is set to the corresponding
+     // map for non encoded glyphs; the encoding vector contains -1
+     // as encoding for these cases
+-    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded );
++    virtual const Ucs2SIntMap* GetFontEncodingVector( const PhysicalFontFace*, const Ucs2OStrMap** ppNonEncoded, std::set<sal_Unicode> const** );
+ 
+     // GetEmbedFontData: gets the font data for a font marked
+     // embeddable by GetDevFontList or NULL in case of error
+diff --git a/vcl/quartz/salgdi.cxx b/vcl/quartz/salgdi.cxx
+index 4a346df..287401e 100644
+--- a/vcl/quartz/salgdi.cxx
++++ b/vcl/quartz/salgdi.cxx
+@@ -757,7 +757,7 @@ void AquaSalGraphics::GetGlyphWidths( const PhysicalFontFace* pFontData, bool bV
+ }
+ 
+ const Ucs2SIntMap* AquaSalGraphics::GetFontEncodingVector(
+-    const PhysicalFontFace*, const Ucs2OStrMap** /*ppNonEncoded*/ )
++    const PhysicalFontFace*, const Ucs2OStrMap** /*ppNonEncoded*/, std::set<sal_Unicode> const** )
+ {
+     return NULL;
+ }
+diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
+index 2f44dd5..b49e884 100644
+--- a/vcl/source/gdi/pdfwriter_impl.cxx
++++ b/vcl/source/gdi/pdfwriter_impl.cxx
+@@ -3067,7 +3067,9 @@ std::map< sal_Int32, sal_Int32 > PDFWriterImpl::emitEmbeddedFont( const Physical
+     sal_Int32 nFontDescriptor = 0;
+ 
+     // prepare font encoding
+-    const Ucs2SIntMap* pEncoding = m_pReferenceDevice->mpGraphics->GetFontEncodingVector( pFont, NULL );
++    std::set<sal_Unicode> const * pPriority(0);
++    const Ucs2SIntMap *const pEncoding =
++        m_pReferenceDevice->mpGraphics->GetFontEncodingVector( pFont, NULL, &pPriority );
+     sal_Int32 nToUnicodeStream = 0;
+     sal_uInt8 nEncoding[256];
+     sal_Ucs nEncodedCodes[256];
+@@ -3086,6 +3088,37 @@ std::map< sal_Int32, sal_Int32 > PDFWriterImpl::emitEmbeddedFont( const Physical
+             if( it->second != -1 )
+             {
+                 sal_Int32 nCode = (sal_Int32)(it->second & 0x000000ff);
++                SAL_WARN_IF(nCode != it->second, "vcl.gdi", "emitEmbeddedFont: FIXME: cannot handle Type 1 font with code points > 256");
++                if (nEncoding[nCode] != 0)
++                {
++                    // should not have 2 identical mappings
++                    assert(nEncodedCodes[nCode] != it->first);
++                    if (pPriority)
++                    {
++                        bool bExist = pPriority->find(nEncodedCodes[nCode]) != pPriority->end();
++                        bool bIter  = pPriority->find(it->first) != pPriority->end();
++                        SAL_WARN_IF(bExist && bIter, "vcl.gdi", "both are preferred? odd...");
++                        if (bExist)
++                        {
++                            continue;
++                        }
++                        // note: aUnicodes will contain the old one but that
++                        // does not matter because there's nothing iterating it
++                    }
++                    else
++                    {
++                        // is this fallback important? let's prefer lower one
++                        if (nEncodedCodes[nCode] < it->first)
++                        {
++                            SAL_WARN("vcl.gdi", "emitEmbeddedFont: ignoring code " << nCode << " mapping to " << it->first << " in favor of " << nEncodedCodes[nCode]);
++                            continue;
++                        }
++                        else
++                        {
++                            SAL_WARN("vcl.gdi", "emitEmbeddedFont: ignoring code " << nCode << " mapping to " << nEncodedCodes[nCode] << " in favor of " << it->first);
++                        }
++                    }
++                }
+                 nEncoding[ nCode ] = static_cast<sal_uInt8>( nCode );
+                 nEncodedCodes[ nCode ] = it->first;
+                 pEncToUnicodeIndex[ nCode ] = static_cast<sal_Int32>(aUnicodes.size());
+@@ -7073,7 +7106,7 @@ void PDFWriterImpl::registerGlyphs( int nGlyphs,
+             const Ucs2SIntMap* pEncoding = NULL;
+             const Ucs2OStrMap* pNonEncoded = NULL;
+             getReferenceDevice()->AcquireGraphics();
+-            pEncoding = m_pReferenceDevice->mpGraphics->GetFontEncodingVector( pCurrentFont, &pNonEncoded );
++            pEncoding = m_pReferenceDevice->mpGraphics->GetFontEncodingVector( pCurrentFont, &pNonEncoded, 0 );
+ 
+             Ucs2SIntMap::const_iterator enc_it;
+             Ucs2OStrMap::const_iterator nonenc_it;
+diff --git a/vcl/unx/generic/gdi/salgdi3.cxx b/vcl/unx/generic/gdi/salgdi3.cxx
+index 841aeef..6f0544b 100644
+--- a/vcl/unx/generic/gdi/salgdi3.cxx
++++ b/vcl/unx/generic/gdi/salgdi3.cxx
+@@ -721,7 +721,7 @@ void X11SalGraphics::FreeEmbedFontData( const void* pData, long nLen )
+     GenPspGraphics::DoFreeEmbedFontData( pData, nLen );
+ }
+ 
+-const Ucs2SIntMap* X11SalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded )
++const Ucs2SIntMap* X11SalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded, std::set<sal_Unicode> const** ppPriority)
+ {
+     // in this context the pFont->GetFontId() is a valid PSP
+     // font since they are the only ones left after the PDF
+@@ -729,7 +729,7 @@ const Ucs2SIntMap* X11SalGraphics::GetFontEncodingVector( const PhysicalFontFace
+     // which this method was created). The correct way would
+     // be to have the GlyphCache search for the PhysicalFontFace pFont
+     psp::fontID aFont = pFont->GetFontId();
+-    return GenPspGraphics::DoGetFontEncodingVector( aFont, pNonEncoded );
++    return GenPspGraphics::DoGetFontEncodingVector( aFont, pNonEncoded, ppPriority );
+ }
+ 
+ void X11SalGraphics::GetGlyphWidths( const PhysicalFontFace* pFont,
+diff --git a/vcl/win/source/gdi/salgdi3.cxx b/vcl/win/source/gdi/salgdi3.cxx
+index d2e13a9..2c5aaf7 100644
+--- a/vcl/win/source/gdi/salgdi3.cxx
++++ b/vcl/win/source/gdi/salgdi3.cxx
+@@ -2654,7 +2654,7 @@ void WinSalGraphics::FreeEmbedFontData( const void* pData, long /*nLen*/ )
+     delete[] reinterpret_cast<char*>(const_cast<void*>(pData));
+ }
+ 
+-const Ucs2SIntMap* WinSalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded )
++const Ucs2SIntMap* WinSalGraphics::GetFontEncodingVector( const PhysicalFontFace* pFont, const Ucs2OStrMap** pNonEncoded, std::set<sal_Unicode> const**)
+ {
+     // TODO: even for builtin fonts we get here... why?
+     if( !pFont->IsEmbeddable() )
+-- 
+1.9.3
+

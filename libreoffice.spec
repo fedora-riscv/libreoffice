@@ -343,6 +343,8 @@ Patch87: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch88: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
 Patch89: 0001-Resolves-fdo-88721-correct-negated-condition-in-rang.patch
 Patch90: 0001-fix-abuse-of-OUStringBuffer-int-ctor.patch
+Patch91: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
+Patch92: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2280,9 +2282,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 23 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-4-UNBUILT
+* Tue Jan 27 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-4
 - Resolves: fdo#88721 correct negated condition in range name validation
 - fix abuse of OUStringBuffer(int) ctor
+- Resolves: rhbz#1177022 fix PDF embedding of Type 1 fonts
 
 * Thu Jan 22 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-3
 - font cache gets broken on adding an embedded font

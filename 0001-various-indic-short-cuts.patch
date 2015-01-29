@@ -1,0 +1,515 @@
+From 71d0cb116c549a51b58b6f2f73f2668ef61b4326 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 29 Jan 2015 16:26:49 +0000
+Subject: [PATCH] various indic short-cuts
+
+Change-Id: Ie6ab5fd787672146abc716cb7346b0bb2f95068c
+---
+ source/bn-IN/sfx2/uiconfig/ui.po |  2 +-
+ source/bn-IN/vcl/source/src.po   |  6 ++--
+ source/ml/sfx2/uiconfig/ui.po    |  2 +-
+ source/ml/vcl/source/src.po      | 76 ++++++++++++++++++++--------------------
+ source/or/vcl/source/src.po      | 12 +++----
+ source/ta/sfx2/uiconfig/ui.po    |  2 +-
+ source/ta/vcl/source/src.po      |  4 +--
+ 7 files changed, 52 insertions(+), 52 deletions(-)
+
+diff --git a/translations/source/bn-IN/sfx2/uiconfig/ui.po b/translations/source/bn-IN/sfx2/uiconfig/ui.po
+index 1143832..f988162 100644
+--- a/translations/source/bn-IN/sfx2/uiconfig/ui.po
++++ b/translations/source/bn-IN/sfx2/uiconfig/ui.po
+@@ -948,7 +948,7 @@ msgctxt ""
+ "label\n"
+ "string.text"
+ msgid "Close _without saving"
+-msgstr ""
++msgstr "সংরক্ষণ না করে লগ-আউট করা হবে (_w)"
+ 
+ #: securityinfopage.ui
+ msgctxt ""
+diff --git a/translations/source/bn-IN/vcl/source/src.po b/translations/source/bn-IN/vcl/source/src.po
+index 5af12b6..c822c72 100644
+--- a/translations/source/bn-IN/vcl/source/src.po
++++ b/translations/source/bn-IN/vcl/source/src.po
+@@ -90,7 +90,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CLOSE\n"
+ "string.text"
+ msgid "~Close"
+-msgstr ""
++msgstr "বন্ধ করুন (~C)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -194,7 +194,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_OPEN\n"
+ "string.text"
+ msgid "~Open"
+-msgstr ""
++msgstr "খুলুন (~O)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -250,7 +250,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_PLAY\n"
+ "string.text"
+ msgid "~Play"
+-msgstr ""
++msgstr "বাজান (~P)"
+ 
+ #: btntext.src
+ msgctxt ""
+diff --git a/translations/source/ml/sfx2/uiconfig/ui.po b/translations/source/ml/sfx2/uiconfig/ui.po
+index f800a3a..795983b 100644
+--- a/translations/source/ml/sfx2/uiconfig/ui.po
++++ b/translations/source/ml/sfx2/uiconfig/ui.po
+@@ -950,7 +950,7 @@ msgctxt ""
+ "label\n"
+ "string.text"
+ msgid "Close _without saving"
+-msgstr "_സൂക്ഷിക്കാതെ അടക്കുക"
++msgstr "സൂക്ഷിക്കാതെ അടക്കുക (~w)"
+ 
+ #: securityinfopage.ui
+ msgctxt ""
+diff --git a/translations/source/ml/vcl/source/src.po b/translations/source/ml/vcl/source/src.po
+index 45d62e7..14ef0f7 100644
+--- a/translations/source/ml/vcl/source/src.po
++++ b/translations/source/ml/vcl/source/src.po
+@@ -23,7 +23,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_OK\n"
+ "string.text"
+ msgid "~OK"
+-msgstr "ശരി"
++msgstr "ശരി (~O)"
+ 
+ #. This is used on buttons for platforms other than windows, there should be a ~ mnemonic in this string
+ #: btntext.src
+@@ -32,7 +32,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CANCEL\n"
+ "string.text"
+ msgid "~Cancel"
+-msgstr "റദ്ദാക്കുക"
++msgstr "റദ്ദാക്കുക (~C)"
+ 
+ #. This is used on buttons for Windows, there should be no ~ mnemonic in this string
+ #: btntext.src
+@@ -58,7 +58,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_YES\n"
+ "string.text"
+ msgid "~Yes"
+-msgstr "ശരി"
++msgstr "ശരി (~Y)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -66,7 +66,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_NO\n"
+ "string.text"
+ msgid "~No"
+-msgstr "ഇല്ല"
++msgstr "ഇല്ല (~N)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -74,7 +74,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_RETRY\n"
+ "string.text"
+ msgid "~Retry"
+-msgstr "വീണ്ടും ശ്രമിക്കുക"
++msgstr "വീണ്ടും ശ്രമിക്കുക (~R)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -82,7 +82,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_HELP\n"
+ "string.text"
+ msgid "~Help"
+-msgstr "സഹായം"
++msgstr "സഹായം (~H)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -90,7 +90,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CLOSE\n"
+ "string.text"
+ msgid "~Close"
+-msgstr ""
++msgstr "അടയ്ക്കുക (~C)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -98,7 +98,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_MORE\n"
+ "string.text"
+ msgid "~More"
+-msgstr "~കൂടുതല്‍"
++msgstr "കൂടുതല്‍ (~M)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -106,7 +106,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_LESS\n"
+ "string.text"
+ msgid "~Less"
+-msgstr "~കുറവു്"
++msgstr "കുറവു് (~L)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -114,7 +114,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_IGNORE\n"
+ "string.text"
+ msgid "~Ignore"
+-msgstr "അവഗണിക്കുക"
++msgstr "അവഗണിക്കുക (~I)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -122,7 +122,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_ABORT\n"
+ "string.text"
+ msgid "~Abort"
+-msgstr "~നിര്‍ത്തുക"
++msgstr "നിര്‍ത്തുക (~A)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -130,7 +130,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_RESET\n"
+ "string.text"
+ msgid "R~eset"
+-msgstr "വീണ്ടും ~സജ്ജമാക്കുക"
++msgstr "വീണ്ടും ~സജമാക്കുക (~E)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -138,7 +138,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_ADD\n"
+ "string.text"
+ msgid "~Add"
+-msgstr "~ചേര്‍ക്കുക"
++msgstr "ചേര്‍ക്കുക (~A)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -146,7 +146,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_DELETE\n"
+ "string.text"
+ msgid "~Delete"
+-msgstr "നീക്കം ചെയ്യു~ക"
++msgstr "നീക്കം ചെയ്യുക (~D)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -154,7 +154,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_REMOVE\n"
+ "string.text"
+ msgid "~Remove"
+-msgstr "നീക്കം ചെയ്യുക"
++msgstr "നീക്കം ചെയ്യുക (~R)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -162,7 +162,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_NEW\n"
+ "string.text"
+ msgid "~New"
+-msgstr "പുതിയ"
++msgstr "പുതിയ (~N)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -170,7 +170,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_EDIT\n"
+ "string.text"
+ msgid "~Edit"
+-msgstr "എഡിറ്റു ചെയ്യുക"
++msgstr "എഡിറ്റു ചെയ്യുക (~E)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -178,7 +178,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_APPLY\n"
+ "string.text"
+ msgid "~Apply"
+-msgstr "പ്രാബല്യത്തിലാക്കുക"
++msgstr "പ്രാബല്യത്തിലാക്കുക (~A)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -186,7 +186,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_SAVE\n"
+ "string.text"
+ msgid "~Save"
+-msgstr "സംഭരിക്കുക..."
++msgstr "സംഭരിക്കുക... (~S)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -194,7 +194,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_OPEN\n"
+ "string.text"
+ msgid "~Open"
+-msgstr ""
++msgstr "തുറക്കുക (~O)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -202,7 +202,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_UNDO\n"
+ "string.text"
+ msgid "~Undo"
+-msgstr "അണ്ഡു"
++msgstr "അണ്ഡു (~U)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -210,7 +210,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_PASTE\n"
+ "string.text"
+ msgid "~Paste"
+-msgstr "പേസ്റ്റ്  "
++msgstr "പേസ്റ്റ്   (~P)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -218,7 +218,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_NEXT\n"
+ "string.text"
+ msgid "~Next"
+-msgstr "~അടുത്തതു്"
++msgstr "അടുത്തതു് (~N)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -226,7 +226,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_GO_UP\n"
+ "string.text"
+ msgid "~Up"
+-msgstr "മുകളില്"
++msgstr "മുകളില് (~U)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -234,7 +234,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_GO_DOWN\n"
+ "string.text"
+ msgid "Do~wn"
+-msgstr "താഴോട്ട്"
++msgstr "താഴോട്ട് (~W)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -250,7 +250,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_PLAY\n"
+ "string.text"
+ msgid "~Play"
+-msgstr ""
++msgstr "പ്ര~വര്‍ത്തിപ്പിയ്ക്കുക (~P)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -282,7 +282,7 @@ msgctxt ""
+ "STR_FPICKER_AUTO_EXTENSION\n"
+ "string.text"
+ msgid "~Automatic file name extension"
+-msgstr "~ഓട്ടോമാറ്റിക് ഫയല്‍ നാമം എക്സ്റ്റെന്‍ഷന്‍"
++msgstr "ഓട്ടോമാറ്റിക് ഫയല്‍ നാമം എക്സ്റ്റെന്‍ഷന്‍"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -290,7 +290,7 @@ msgctxt ""
+ "STR_FPICKER_PASSWORD\n"
+ "string.text"
+ msgid "Save with pass~word"
+-msgstr "~രഹസ്യവാക്ക് ഉപയോഗിച്ചു് സൂക്ഷിയ്ക്കുക"
++msgstr "രഹസ്യവാക്ക് ഉപയോഗിച്ചു് സൂക്ഷിയ്ക്കുക"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -298,7 +298,7 @@ msgctxt ""
+ "STR_FPICKER_FILTER_OPTIONS\n"
+ "string.text"
+ msgid "~Edit filter settings"
+-msgstr "ഫില്‍റ്റര്‍ സജ്ജീകരണങ്ങള്‍ ~ചിട്ടപ്പെടുത്തുക"
++msgstr "ഫില്‍റ്റര്‍ സജ്ജീകരണങ്ങള്‍ ചിട്ടപ്പെടുത്തുക"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -306,7 +306,7 @@ msgctxt ""
+ "STR_FPICKER_READONLY\n"
+ "string.text"
+ msgid "~Read-only"
+-msgstr "~റീഡ്-ഒണ്‍ലി"
++msgstr "റീഡ്-ഒണ്‍ലി"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -314,7 +314,7 @@ msgctxt ""
+ "STR_FPICKER_INSERT_AS_LINK\n"
+ "string.text"
+ msgid "Insert as ~Link"
+-msgstr "~കണ്ണിയായി ഇടയ്ക്കു് ചേര്‍ക്കുക"
++msgstr "കണ്ണിയായി ഇടയ്ക്കു് ചേര്‍ക്കുക"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -322,7 +322,7 @@ msgctxt ""
+ "STR_FPICKER_SHOW_PREVIEW\n"
+ "string.text"
+ msgid "Pr~eview"
+-msgstr "തി~രനോട്ടം"
++msgstr "തിരനോട്ടം"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -330,7 +330,7 @@ msgctxt ""
+ "STR_FPICKER_PLAY\n"
+ "string.text"
+ msgid "~Play"
+-msgstr "പ്ര~വര്‍ത്തിപ്പിയ്ക്കുക"
++msgstr "പ്രവര്‍ത്തിപ്പിയ്ക്കുക"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -338,7 +338,7 @@ msgctxt ""
+ "STR_FPICKER_VERSION\n"
+ "string.text"
+ msgid "~Version:"
+-msgstr "~പതിപ്പു്:"
++msgstr "പതിപ്പു്:"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -346,7 +346,7 @@ msgctxt ""
+ "STR_FPICKER_TEMPLATES\n"
+ "string.text"
+ msgid "S~tyles:"
+-msgstr "ശൈ~ലികള്‍:"
++msgstr "ശൈലികള്‍:"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -362,7 +362,7 @@ msgctxt ""
+ "STR_FPICKER_SELECTION\n"
+ "string.text"
+ msgid "~Selection"
+-msgstr "~തെരഞ്ഞെടുക്കല്‍"
++msgstr "തെരഞ്ഞെടുക്കല്‍"
+ 
+ #: fpicker.src
+ msgctxt ""
+@@ -426,7 +426,7 @@ msgctxt ""
+ "STR_FPICKER_TYPE\n"
+ "string.text"
+ msgid "File ~type"
+-msgstr "ഫയല്‍ ~തരം"
++msgstr "ഫയല്‍ തരം"
+ 
+ #: helptext.src
+ msgctxt ""
+@@ -655,7 +655,7 @@ msgctxt ""
+ "SV_MENU_EDIT_DELETE\n"
+ "menuitem.text"
+ msgid "~Delete"
+-msgstr "നീക്കം ചെയ്യു~ക"
++msgstr "നീക്കം ചെയ്യുക"
+ 
+ #: menu.src
+ msgctxt ""
+diff --git a/translations/source/or/vcl/source/src.po b/translations/source/or/vcl/source/src.po
+index 093549e..def5229 100644
+--- a/translations/source/or/vcl/source/src.po
++++ b/translations/source/or/vcl/source/src.po
+@@ -23,7 +23,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_OK\n"
+ "string.text"
+ msgid "~OK"
+-msgstr "OK"
++msgstr "~OK"
+ 
+ #. This is used on buttons for platforms other than windows, there should be a ~ mnemonic in this string
+ #: btntext.src
+@@ -32,7 +32,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CANCEL\n"
+ "string.text"
+ msgid "~Cancel"
+-msgstr "ରଦ୍ଦ କର"
++msgstr "ରଦ୍ଦ କର (~C)"
+ 
+ #. This is used on buttons for Windows, there should be no ~ mnemonic in this string
+ #: btntext.src
+@@ -90,7 +90,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CLOSE\n"
+ "string.text"
+ msgid "~Close"
+-msgstr ""
++msgstr "ବନ୍ଦକରନ୍ତୁ (~C)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -186,7 +186,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_SAVE\n"
+ "string.text"
+ msgid "~Save"
+-msgstr "ସଞ୍ଚଯ କର"
++msgstr "ସଞ୍ଚଯ କର (~S)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -194,7 +194,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_OPEN\n"
+ "string.text"
+ msgid "~Open"
+-msgstr ""
++msgstr "ଖୋଲ (~O)"
+ 
+ #: btntext.src
+ msgctxt ""
+@@ -250,7 +250,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_PLAY\n"
+ "string.text"
+ msgid "~Play"
+-msgstr ""
++msgstr "ବଜାଅ (~P)"
+ 
+ #: btntext.src
+ msgctxt ""
+diff --git a/translations/source/ta/sfx2/uiconfig/ui.po b/translations/source/ta/sfx2/uiconfig/ui.po
+index 3515b5f..a3f36bd 100644
+--- a/translations/source/ta/sfx2/uiconfig/ui.po
++++ b/translations/source/ta/sfx2/uiconfig/ui.po
+@@ -950,7 +950,7 @@ msgctxt ""
+ "label\n"
+ "string.text"
+ msgid "Close _without saving"
+-msgstr "சேமிக்காமல் மூடு"
++msgstr "சேமிக்காமல் மூடு (~W)"
+ 
+ #: securityinfopage.ui
+ msgctxt ""
+diff --git a/translations/source/ta/vcl/source/src.po b/translations/source/ta/vcl/source/src.po
+index 1b83380..136439d 100644
+--- a/translations/source/ta/vcl/source/src.po
++++ b/translations/source/ta/vcl/source/src.po
+@@ -32,7 +32,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CANCEL\n"
+ "string.text"
+ msgid "~Cancel"
+-msgstr "ரத்துசெய்"
++msgstr "ரத்துசெய் (~C)"
+ 
+ #. This is used on buttons for Windows, there should be no ~ mnemonic in this string
+ #: btntext.src
+@@ -91,7 +91,7 @@ msgctxt ""
+ "SV_BUTTONTEXT_CLOSE\n"
+ "string.text"
+ msgid "~Close"
+-msgstr "மூடு"
++msgstr "மூடு (~C)"
+ 
+ #: btntext.src
+ msgctxt ""
+-- 
+1.9.3
+

@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -332,6 +332,7 @@ Patch24: 0001-Related-rhbz-1185307-One-more-location-to-look-for-H.patch
 Patch25: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
 Patch26: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch27: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
+Patch28: 0001-fix-assert-call.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2355,6 +2356,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jan 29 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.3-5
+- fix build on s390
+
 * Wed Jan 28 2015 Petr Machata <pmachata@redhat.com> - 1:4.4.0.3-4
 - Rebuild for boost 1.57.0
 

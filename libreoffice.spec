@@ -376,6 +376,7 @@ Patch68: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
 Patch69: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
 Patch70: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
+Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2347,7 +2348,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Jan 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12-UNBUILT
+* Fri Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12
 - Resolves: rhbz#1136013 ExternalToolEdit crash
 - font cache gets broken on adding an embedded font
 - if we change the keys we have to resort based on the new keys
@@ -2356,6 +2357,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1179642 crash in GetFocus
 - don't strip font names of apparent script suffixes
 - Resolves: rhbz#1177022 fix PDF embedding of Type 1 fonts
+- make certain change-tracking odts not crash on deleting text
 
 * Fri Jan 16 2015 Eike Rathke <erack@redhat.com> - 1:4.3.5.2-11
 - Resolves: rhbz#1171828 fdo#86978 append formula cells to track instead of tree

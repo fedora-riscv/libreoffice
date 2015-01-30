@@ -2348,7 +2348,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12
+* Fri Jan 30 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12
 - Resolves: rhbz#1136013 ExternalToolEdit crash
 - font cache gets broken on adding an embedded font
 - if we change the keys we have to resort based on the new keys

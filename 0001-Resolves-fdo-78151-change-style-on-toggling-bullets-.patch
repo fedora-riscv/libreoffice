@@ -1,4 +1,4 @@
-From 5399853eb369457d3060190ed0f1af348004501c Mon Sep 17 00:00:00 2001
+From 34dcadf5f7bec6a02e3269d4cffb27e036303b2a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 6 Jun 2014 15:13:26 +0100
 Subject: [PATCH] Resolves: fdo#78151 change style on toggling bullets on
@@ -229,7 +229,7 @@ index 9a03c4f..de7f1a2 100644
 +    GroupId = GID_OPTIONS;
 +]
 diff --git a/sd/source/core/stlpool.cxx b/sd/source/core/stlpool.cxx
-index 17ca4f0..2015613 100644
+index c98dff7..8fdec5e 100644
 --- a/sd/source/core/stlpool.cxx
 +++ b/sd/source/core/stlpool.cxx
 @@ -1052,9 +1052,49 @@ void SdStyleSheetPool::UpdateStdNames()
@@ -437,18 +437,18 @@ index 1dd0c40..42b453c 100644
  
                          SfxItemSet& rAttr = pStyleSheet->GetItemSet();
 diff --git a/sd/source/ui/inc/DrawViewShell.hxx b/sd/source/ui/inc/DrawViewShell.hxx
-index 96c5c9c..996b35b 100644
+index 7ec42ea..6e4b55a 100644
 --- a/sd/source/ui/inc/DrawViewShell.hxx
 +++ b/sd/source/ui/inc/DrawViewShell.hxx
-@@ -31,6 +31,7 @@
- #include <com/sun/star/scanner/XScannerManager2.hpp>
+@@ -32,6 +32,7 @@
  #include <unotools/caserotate.hxx>
+ #include <boost/shared_ptr.hpp>
  
 +class Outliner;
  class SdPage;
+ class SdrExternalToolEdit;
  class DrawDocShell;
- class TabBar;
-@@ -41,6 +42,7 @@ class TransferableClipboardListener;
+@@ -43,6 +44,7 @@ class TransferableClipboardListener;
  class AbstractSvxNameDialog;
  class SdrLayer;
  class SvxClipboardFmtItem;
@@ -456,7 +456,7 @@ index 96c5c9c..996b35b 100644
  
  namespace sd {
  
-@@ -161,6 +163,10 @@ public:
+@@ -163,6 +165,10 @@ public:
      virtual OUString GetSelectionText( bool bCompleteWords = false );
      virtual bool    HasSelection( bool bText = true ) const;
  
@@ -603,10 +603,10 @@ index 605983c..761ed63 100644
          case SID_SHRINK_FONT_SIZE:
          {
 diff --git a/sd/source/ui/view/drviews2.cxx b/sd/source/ui/view/drviews2.cxx
-index 384a6c7..1b56692 100644
+index 688432e..685adbd 100644
 --- a/sd/source/ui/view/drviews2.cxx
 +++ b/sd/source/ui/view/drviews2.cxx
-@@ -1824,6 +1824,56 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
+@@ -1799,6 +1799,56 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
          }
          break;
  
@@ -806,5 +806,5 @@ index 53e48a5..8755f8e 100644
  
      bool bDefaultTextRestored = RestoreDefaultText( dynamic_cast< SdrTextObj* >( GetTextEditObject() ) );
 -- 
-1.9.3
+2.1.0
 

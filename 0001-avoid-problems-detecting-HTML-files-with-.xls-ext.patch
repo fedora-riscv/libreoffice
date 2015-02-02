@@ -1,4 +1,4 @@
-From 86c6f18c2766aad43d6e3bfcf3530e40440ebca7 Mon Sep 17 00:00:00 2001
+From 15bb6158591e9d8350f817ca20129c2e947cceda Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Tue, 8 Jul 2014 17:01:27 +0200
 Subject: [PATCH] avoid problems detecting HTML files with .xls ext.
@@ -12,11 +12,11 @@ Change-Id: I9955223aac20f3f640fde51bb7231666c269ca70
  create mode 100644 filter/source/config/fragments/types/calc_HTML.xcu
 
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
-index e035464..0465f17 100644
+index 39fabfc..787a175 100644
 --- a/filter/Configuration_filter.mk
 +++ b/filter/Configuration_filter.mk
-@@ -512,6 +512,7 @@ $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fr
- $(call filter_Configuration_add_types,fcfg_langpack,fcfg_calc_types.xcu,filter/source/config/fragments/types,\
+@@ -520,6 +520,7 @@ $(eval $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/co
+ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_calc_types.xcu,filter/source/config/fragments/types,\
  	calc_DIF \
  	calc_ODS_FlatXML \
 +	calc_HTML \
@@ -92,5 +92,5 @@ index ffad7fa..1d29dd4 100644
              aMediaDesc[MediaDescriptor::PROP_FILTERNAME()] <<= OUString(WEB_HTML_FILTER);
      }
 -- 
-1.9.3
+2.1.0
 

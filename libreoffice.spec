@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.5
+%define libo_version 4.3.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -349,31 +349,18 @@ Patch41: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
 Patch42: 0001-have-a-stab-at-improving-impossible-question.patch
 Patch43: 0001-just-use-ANSI-C-declarations.patch
 Patch44: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
-Patch45: 0001-Resolves-rhbz-1165444-abrt-crash-with-NULL-pView.patch
-Patch46: 0001-Only-call-super-expensive-Invalidate-on-scrollbar-to.patch
 Patch47: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
-Patch48: 0001-Resolves-rhbz-1164614-xslt-dialog-crashes-if-there-a.patch
 Patch49: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
 Patch50: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
 Patch51: 0001-fdo-37682-paint-the-right-area.patch
 Patch52: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
-Patch53: 0001-rhbz-1116534-crash-when-pasting-over-a-formula.patch
-Patch54: 0001-Resolves-rhbz-1175142-nStarts-ends-up-as-an-invalid-.patch
-Patch55: 0001-fdo-82681-return-IsUserDefined-w-o-negation.patch
 Patch56: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
-Patch57: 0001-Resolves-fdo-73165-don-t-restart-timer-if-already-ru.patch
 Patch58: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch59: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
-Patch60: 0001-classic-draw-rectangles-fit-to-contour-utterly-broke.patch
 Patch61: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
-Patch62: 0001-rhbz-1180114-writerfilter-don-t-crash-on-w-customXml.patch
 Patch63: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
-Patch64: 0001-Resolves-fdo-86978-append-formula-cells-to-track-ins.patch
 Patch65: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
-Patch66: 0001-font-cache-gets-broken-on-adding-an-embedded-font.patch
 Patch67: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
-Patch68: 0001-Resolves-fdo-88378-flipping-by-reversing-co-ord-syst.patch
-Patch69: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
 Patch70: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
@@ -2348,6 +2335,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Feb 02 2015 David Tardon <dtardon@redhat.com> - 1:4.3.6.2-1
+- update to 4.3.6
+
 * Fri Jan 30 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.5.2-12
 - Resolves: rhbz#1136013 ExternalToolEdit crash
 - font cache gets broken on adding an embedded font

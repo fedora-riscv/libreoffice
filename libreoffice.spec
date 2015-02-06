@@ -371,6 +371,7 @@ Patch73: 0001-Resolves-fdo-84887-TabBar-ImplShowPage-crash.patch
 Patch74: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
 Patch75: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 Patch76: 0001-build-libetonyek-with-no-strict-aliasing.patch
+Patch77: 0002-propagate-user-set-CFLAGS-to-build.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

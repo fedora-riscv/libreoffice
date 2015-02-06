@@ -1899,6 +1899,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java
 %dir %{baseinstdir}/share/autotext
+%dir %{_datadir}/autocorr
 %{baseinstdir}/share/autocorr
 %{baseinstdir}/share/autotext/en-US
 %{baseinstdir}/share/basic

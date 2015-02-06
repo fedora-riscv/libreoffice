@@ -329,6 +329,7 @@ Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch21: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 Patch22: 0001-build-libetonyek-with-no-strict-aliasing.patch
+Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

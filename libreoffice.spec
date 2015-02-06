@@ -355,6 +355,7 @@ Patch96: 0001-Resolves-tdf-89500-catch-ISO-8601-datetime-in-all-lo.patch
 Patch97: 0001-Resolves-tdf-89484-check-that-sheet-reference-is-wit.patch
 Patch98: 0001-Resolves-tdf-81659-handle-expand-reference-edge-corr.patch
 Patch99: 0001-tdf-89679-fix-incorrect-mapping-of-font-family-compl.patch
+Patch100: 0001-build-libetonyek-with-no-strict-aliasing.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,49 @@
+From 496bb4a0d0dd6f12c28cf69934a8aa2ddf96cdc1 Mon Sep 17 00:00:00 2001
+Message-Id: <496bb4a0d0dd6f12c28cf69934a8aa2ddf96cdc1.1423263533.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 6 Feb 2015 23:32:54 +0100
+Subject: [PATCH] Resolves: tdf#83461 do not override MatColsRows if already
+ set
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+ScMatrixFormulaCellToken::SetMatColsRows() via
+ScFormulaCell::SetMatColsRows() is used during document import and
+preselected cell area input of an array formula. Do not override
+existing values with subsequent result matrix dimensions.
+
+Change-Id: I9e844b5064ea276f3cbcb680eb1127c344328e00
+(cherry picked from commit e32eff2bb4c12fdc33e476b9f12bb4bb71d22ebc)
+---
+ sc/source/core/tool/formularesult.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-83461-do-not-override-MatColsRows-if-al.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-83461-do-not-override-MatColsRows-if-al.patch"
+
+diff --git a/sc/source/core/tool/formularesult.cxx b/sc/source/core/tool/formularesult.cxx
+index 0237253..d134962 100644
+--- a/sc/source/core/tool/formularesult.cxx
++++ b/sc/source/core/tool/formularesult.cxx
+@@ -168,7 +168,7 @@ void ScFormulaResult::SetToken( const formula::FormulaToken* p )
+         {
+             const ScMatrixFormulaCellToken* pNewMatFormula =
+                 dynamic_cast<const ScMatrixFormulaCellToken*>(pMatResult);
+-            if (pNewMatFormula)
++            if (pNewMatFormula && (pMatFormula->GetMatCols() <= 0 || pMatFormula->GetMatRows() <= 0))
+             {
+                 SAL_WARN( "sc", "ScFormulaResult::SetToken: pNewMatFormula and pMatFormula, overriding matrix formula dimension; intended?");
+                 pMatFormula->SetMatColsRows( pNewMatFormula->GetMatCols(),
+
+--------------erAck-patch-parts--
+
+

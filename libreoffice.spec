@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -346,6 +346,7 @@ Patch90: 0001-fix-abuse-of-OUStringBuffer-int-ctor.patch
 Patch91: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch92: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch93: 0001-various-indic-short-cuts.patch
+Patch94: 0001-Resolves-tdf-83461-do-not-override-MatColsRows-if-al.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2283,6 +2284,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Feb 06 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-6-UNBUILT
+- Resolves: tdf#83461 do not override MatColsRows if already set
+
 * Thu Jan 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-5
 - Resolves: rhbz#1134841 bn/ml "close without saving" short-cuts
 - Resolves: rhbz#1134824 as/or/ml "save" short-cuts

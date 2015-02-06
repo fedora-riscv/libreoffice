@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -364,6 +364,7 @@ Patch67: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
 Patch70: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
+Patch73: 0001-Resolves-fdo-84887-TabBar-ImplShowPage-crash.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2335,6 +2336,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Feb 06 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-2
+- Resolves: rhbz#1123710 crash opening Draw
+
 * Mon Feb 02 2015 David Tardon <dtardon@redhat.com> - 1:4.3.6.2-1
 - update to 4.3.6
 

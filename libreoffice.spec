@@ -98,6 +98,9 @@ BuildRequires: automake
 BuildRequires: bc
 BuildRequires: binutils
 BuildRequires: bison
+%if 0%{?rhel} && 0%{?rhel} < 7
+BuildRequires: chrpath
+%endif
 BuildRequires: desktop-file-utils
 BuildRequires: doxygen
 BuildRequires: findutils
@@ -1436,6 +1439,14 @@ install -d -m 0755 %{buildroot}%{_fontdir}
 install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
 rm -rf %{buildroot}%{baseinstdir}/share/fonts
+
+%if 0%{?rhel} && 0%{?rhel} < 7
+#fix rpath for redland libs
+chrpath -r '$ORIGIN:$ORIGIN/../ure-link/lib' \
+    %{buildroot}%{baseinstdir}/program/libraptor2-lo.so.0 \
+    %{buildroot}%{baseinstdir}/program/librasqal-lo.so.3 \
+    %{buildroot}%{baseinstdir}/program/librdf-lo.so.0
+%endif
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through

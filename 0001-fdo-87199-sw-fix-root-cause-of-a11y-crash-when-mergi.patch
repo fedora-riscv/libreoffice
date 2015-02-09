@@ -1,0 +1,51 @@
+From 9b1b08f3b209c299750c4fccef9c42898c1ac943 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 18 Dec 2014 21:52:51 +0100
+Subject: [PATCH] fdo#87199: sw: fix root cause of a11y crash when merging
+ cells
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit f9eff2a402a4cd28d7dbfb6ce27cbf96b31e576f is not quite right
+because it will leave the mpNext chain unreachable; that could perhaps
+be imporoved by calling RemoveFromLayout(), but...
+
+Actually the problem is basically that one of the deleted SwCellFrms
+points to a SwTableBox with getRowSpan() -1 (because it has been merged)
+and thus IsInCoveredCell() returns true and that causes ~SwCellFrm() to
+skip disposing the SwAccessible stuff, so the SwCellFrm is still
+contained in the SwAccessibleMap.
+
+Because it's rather hard to prevent this sort of thing in general,
+better change SwAccessibleMap::Dispose() to assume that if it found its
+way into the SwAccessibleMap it should be disposed and removed.
+
+Change-Id: Ib4cec6924cb026ae30bdac6857957adf237b4d70
+(cherry picked from commit 296e8b597c141b6b54cbf943871d6a6820c1779d)
+Reviewed-on: https://gerrit.libreoffice.org/13533
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 56d06e78ccdd8ae8c8e50a5b647272b4166f63cb)
+---
+ sw/source/core/access/accmap.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/core/access/accmap.cxx b/sw/source/core/access/accmap.cxx
+index 8829214..940919a 100644
+--- a/sw/source/core/access/accmap.cxx
++++ b/sw/source/core/access/accmap.cxx
+@@ -1617,7 +1617,9 @@ void SwAccessibleMap::Dispose( const SwFrm *pFrm,
+     OSL_ENSURE( !aFrmOrObj.GetSwFrm() || aFrmOrObj.GetSwFrm()->IsAccessibleFrm(),
+             "non accessible frame should be disposed" );
+ 
+-    if( aFrmOrObj.IsAccessible( GetShell()->IsPreview() ) )
++    if (aFrmOrObj.IsAccessible( GetShell()->IsPreview() )
++            // fdo#87199 dispose the darn thing if it ever was accessible
++        || (pFrm && mpFrmMap && mpFrmMap->find(pFrm) != mpFrmMap->end()))
+     {
+         ::rtl::Reference< SwAccessibleContext > xAccImpl;
+         ::rtl::Reference< SwAccessibleContext > xParentAccImpl;
+-- 
+2.1.0
+

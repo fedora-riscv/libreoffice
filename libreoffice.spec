@@ -347,6 +347,7 @@ Patch91: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch92: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch93: 0001-various-indic-short-cuts.patch
 Patch94: 0001-Resolves-tdf-83461-do-not-override-MatColsRows-if-al.patch
+Patch95: 0001-fdo-87199-sw-fix-root-cause-of-a11y-crash-when-mergi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2286,6 +2287,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Fri Feb 06 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-6-UNBUILT
 - Resolves: tdf#83461 do not override MatColsRows if already set
+- Resolves: rhbz#1190657 tdf#87199 Writer crashes when merging table cells
 
 * Thu Jan 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-5
 - Resolves: rhbz#1134841 bn/ml "close without saving" short-cuts

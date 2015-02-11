@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.0
+%define libo_version 4.4.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -45,8 +45,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -325,14 +325,7 @@ Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
-Patch21: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
-Patch22: 0001-rhbz-1175027-sw-fix-life-cycle-of-SwConnectionDispos.patch
-Patch23: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
-Patch24: 0001-Related-rhbz-1185307-One-more-location-to-look-for-H.patch
-Patch25: 0001-Resolves-rhbz-1179642-crash-in-GetFocus-with-empty-m.patch
-Patch26: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
-Patch27: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
-Patch28: 0001-fix-assert-call.patch
+Patch21: 0001-fix-linker-error.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2357,6 +2350,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Feb 10 2015 David Tardon <dtardon@redhat.com> - 1:4.4.1.1-1
+- update to 4.4.1 rc1
+
 * Thu Jan 29 2015 David Tardon <dtardon@redhat.com> - 1:4.4.0.3-5
 - fix build on s390
 

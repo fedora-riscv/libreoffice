@@ -1,4 +1,4 @@
-From 0571c25e9a0994f71686227257123b17b21b5c8e Mon Sep 17 00:00:00 2001
+From 05d0763302dd6cebfa60d760667670b3c46b2f2b Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
@@ -42,10 +42,10 @@ index 7049278..0e7fd60 100644
  	$(call gb_Helper_optional,ETONYEK,libetonyek) \
  	$(call gb_Helper_optional,EXPAT,expat) \
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
-index 57d6940..fe77479 100644
+index 39fabfc..300c926 100644
 --- a/filter/Configuration_filter.mk
 +++ b/filter/Configuration_filter.mk
-@@ -362,13 +362,6 @@ $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu,filter
+@@ -370,13 +370,6 @@ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu
  	writer_OOXML \
  	writer_OOXML_Template \
  	writer_layout_dump_xml \
@@ -56,10 +56,10 @@ index 57d6940..fe77479 100644
 -	writer_Plucker_eBook \
 -	writer_TealDoc \
 -	writer_zTXT \
- )
+ ))
  
- $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
-@@ -423,13 +416,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,fi
+ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
+@@ -431,13 +424,6 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
  	OOXML_Text \
  	OOXML_Text_Template \
  	writer_layout_dump \
@@ -70,9 +70,9 @@ index 57d6940..fe77479 100644
 -	Plucker_eBook \
 -	TealDoc \
 -	zTXT \
- )
+ ))
  
- $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
+ $(eval $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
 index db6afdf..e6ea0f5 100644
 --- a/writerperfect/Library_wpftwriter.mk

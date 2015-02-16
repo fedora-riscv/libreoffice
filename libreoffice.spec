@@ -80,7 +80,7 @@ Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-lib
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus
 %if 0%{?rhel} < 7
-Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
+Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -111,7 +111,7 @@ Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada
 %if 0%{?csb_rhel_7_hack}
-Source14:       %{external_url}/896272c1a9e396b871cb4dffbd694503-mdds_0.11.1.tar.bz2
+Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source25:       %{external_url}/22f8a85daf4a012180322e1f52a7563b-libcmis-0.4.1.tar.gz
 Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2

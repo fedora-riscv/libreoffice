@@ -36,3 +36,22 @@ index 9c30697..c5fbcca 100644
 -))
 -
  # vim: set noet sw=4 ts=4:
+--- a/sd/Module_sd.mk
++++ b/sd/Module_sd.mk
+@@ -25,16 +25,6 @@
+     UIConfig_simpress \
+ ))
+ 
+-ifneq ($(OS),DRAGONFLY)
+-$(eval $(call gb_Module_add_check_targets,sd,\
+-    CppunitTest_sd_uimpress \
+-    CppunitTest_sd_import_tests \
+-    CppunitTest_sd_filters_test \
+-    CppunitTest_sd_html_export_tests \
+-))
+-endif
+-
+-
+ $(eval $(call gb_Module_add_subsequentcheck_targets,sd,\
+     JunitTest_sd_unoapi \
+ ))

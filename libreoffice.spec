@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -365,6 +365,7 @@ Patch70: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
 Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
 Patch73: 0001-Resolves-fdo-84887-TabBar-ImplShowPage-crash.patch
+Patch74: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2336,6 +2337,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 18 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-3
+- Resolves: rhbz#1193971 clear hard coded char props in cells
+
 * Fri Feb 06 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-2
 - Resolves: rhbz#1123710 crash opening Draw
 

@@ -1,4 +1,4 @@
-From fc40c8ce262a5d9ba65c27dc525c1d040c8ed8ad Mon Sep 17 00:00:00 2001
+From dffb7a52ddba02b725d0f1d2438931e20655475f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 18 Feb 2015 15:04:45 +0000
 Subject: [PATCH] Resolves: rhbz#1193971 clear hard-coded char props in table
@@ -91,7 +91,7 @@ index 7945d2c..928f9e2 100644
          // To make Undo reconstruct text attributes correctly after Format.Standard
          bool bHasEEItems=SearchOutlinerItems(rAttr,bReplaceAll);
 diff --git a/svx/source/table/cell.cxx b/svx/source/table/cell.cxx
-index 8d64dbc..a55d069 100644
+index 8d64dbc..7c2e5eb 100644
 --- a/svx/source/table/cell.cxx
 +++ b/svx/source/table/cell.cxx
 @@ -139,6 +139,8 @@ SdrText* CellTextProvider::getText(sal_Int32 nIndex) const
@@ -121,7 +121,7 @@ index 8d64dbc..a55d069 100644
 +
 +                        for (std::vector<sal_uInt16>::const_iterator aI = aCharWhichIds.begin(); aI != aCharWhichIds.end(); ++aI)
 +                        {
-+                            pOutliner->RemoveCharAttribs(nPara, *aI);
++                            pOutliner->QuickRemoveCharAttribs(nPara, *aI);
 +                        }
 +
                          pOutliner->SetParaAttribs(nPara, aSet);

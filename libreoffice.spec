@@ -326,6 +326,7 @@ Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch21: 0001-fix-linker-error.patch
+Patch22: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,46 @@
+From 19e583288aac725e9010bb731c5b789f5f785f21 Mon Sep 17 00:00:00 2001
+Message-Id: <19e583288aac725e9010bb731c5b789f5f785f21.1424817901.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 24 Feb 2015 20:29:39 +0100
+Subject: [PATCH] Resolves: tdf#89484 check that sheet reference is within
+ selected sheets
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I88f1d0a134ffa3fbb9a5b5abdabbd4774f457e81
+(cherry picked from commit 5803c76f318b2a8b655bf83a8257f60cd112ac71)
+---
+ sc/source/core/tool/token.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-89484-check-that-sheet-reference-is-wit.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-89484-check-that-sheet-reference-is-wit.patch"
+
+diff --git a/sc/source/core/tool/token.cxx b/sc/source/core/tool/token.cxx
+index f561614..db7f339 100644
+--- a/sc/source/core/tool/token.cxx
++++ b/sc/source/core/tool/token.cxx
+@@ -2670,6 +2670,10 @@ bool expandRangeByEdge( const sc::RefUpdateContext& rCxt, ScRange& rRefRange, co
+         // Edge-expansion is turned off.
+         return false;
+ 
++    if (!(rSelectedRange.aStart.Tab() <= rRefRange.aStart.Tab() && rRefRange.aEnd.Tab() <= rSelectedRange.aEnd.Tab()))
++        // Sheet references not within selected range.
++        return false;
++
+     if (rCxt.mnColDelta > 0)
+     {
+         // Insert and shift right.
+
+--------------erAck-patch-parts--
+
+

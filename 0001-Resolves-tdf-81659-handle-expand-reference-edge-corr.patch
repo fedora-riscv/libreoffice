@@ -1,0 +1,281 @@
+From 3a9fc69e8f6de916c8f4ee9a7253346244c17cc7 Mon Sep 17 00:00:00 2001
+Message-Id: <3a9fc69e8f6de916c8f4ee9a7253346244c17cc7.1424968626.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 26 Feb 2015 12:54:13 +0100
+Subject: [PATCH] Resolves: tdf#81659 handle expand reference edge correctly
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+split formula grouping for reference edge expansion, tdf#81659 related
+
+Edge expansion may change expressions individually, which must be split
+off the group.
+
+(cherry picked from commit 0cd15b4494f8e8abe67a258fb10189135bf5a8ac)
+
+tdf#81659 check that references are at least 2 cols/rows to expand edge
+
+Needs also 0cd15b4494f8e8abe67a258fb10189135bf5a8ac if edges are to be
+expanded and formula grouping is affected.
+
+(cherry picked from commit 23b0112ecea2f8796a4e237e9061de1a36997a30)
+
+Backported.
+
+b3cee8dd214d216907248316a2ac5a290399b169
+
+Change-Id: Id4328bd8c42f2ff9f83d2edc845537971f3a39d3
+---
+ sc/inc/tokenarray.hxx          |   3 +
+ sc/source/core/data/column.cxx |  29 +++++++++
+ sc/source/core/tool/token.cxx  | 132 +++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 158 insertions(+), 6 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-81659-handle-expand-reference-edge-corr.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-81659-handle-expand-reference-edge-corr.patch"
+
+diff --git a/sc/inc/tokenarray.hxx b/sc/inc/tokenarray.hxx
+index 75451e1..5153045 100644
+--- a/sc/inc/tokenarray.hxx
++++ b/sc/inc/tokenarray.hxx
+@@ -231,6 +231,9 @@ public:
+     void CheckRelativeReferenceBounds(
+         const ScAddress& rPos, SCROW nGroupLen, const ScRange& rRange, std::vector<SCROW>& rBounds ) const;
+ 
++    void CheckExpandReferenceBounds(
++        const sc::RefUpdateContext& rCxt, const ScAddress& rPos, SCROW nGroupLen, std::vector<SCROW>& rBounds ) const;
++
+     /**
+      * Create a string representation of formula token array without modifying
+      * the internal state of the token array.
+diff --git a/sc/source/core/data/column.cxx b/sc/source/core/data/column.cxx
+index c014e00..14e2ed6 100644
+--- a/sc/source/core/data/column.cxx
++++ b/sc/source/core/data/column.cxx
+@@ -2308,6 +2308,27 @@ public:
+     }
+ };
+ 
++class UpdateRefExpandGroupBoundChecker : public SharedTopFormulaCellPicker
++{
++    const sc::RefUpdateContext& mrCxt;
++    std::vector<SCROW>& mrBounds;
++
++public:
++    UpdateRefExpandGroupBoundChecker(const sc::RefUpdateContext& rCxt, std::vector<SCROW>& rBounds) :
++        mrCxt(rCxt), mrBounds(rBounds) {}
++
++    virtual ~UpdateRefExpandGroupBoundChecker() {}
++
++    virtual void processSharedTop( ScFormulaCell** ppCells, size_t /*nRow*/, size_t /*nLength*/ ) SAL_OVERRIDE
++    {
++        // Check its tokens and record its reference boundaries.
++        ScFormulaCell& rCell = **ppCells;
++        const ScTokenArray& rCode = *rCell.GetCode();
++        rCode.CheckExpandReferenceBounds(
++            mrCxt, rCell.aPos, rCell.GetSharedLength(), mrBounds);
++    }
++};
++
+ class FormulaGroupPicker : public SharedTopFormulaCellPicker
+ {
+     std::vector<sc::FormulaGroupEntry>& mrGroups;
+@@ -2393,6 +2414,14 @@ bool ScColumn::UpdateReference( sc::RefUpdateContext& rCxt, ScDocument* pUndoDoc
+     UpdateRefGroupBoundChecker aBoundChecker(rCxt, aBounds);
+     std::for_each(maCells.begin(), maCells.end(), aBoundChecker);
+ 
++    // If expand reference edges is on, splitting groups may happen anywhere
++    // where a reference points to an adjacent row of the insertion.
++    if (rCxt.mnRowDelta > 0 && rCxt.mrDoc.IsExpandRefs())
++    {
++        UpdateRefExpandGroupBoundChecker aExpandChecker(rCxt, aBounds);
++        std::for_each(maCells.begin(), maCells.end(), aExpandChecker);
++    }
++
+     // Do the actual splitting.
+     sc::SharedFormulaUtil::splitFormulaCellGroups(maCells, aBounds);
+ 
+diff --git a/sc/source/core/tool/token.cxx b/sc/source/core/tool/token.cxx
+index db7f339..e17e7c9 100644
+--- a/sc/source/core/tool/token.cxx
++++ b/sc/source/core/tool/token.cxx
+@@ -2632,9 +2632,18 @@ bool expandRange( const sc::RefUpdateContext& rCxt, ScRange& rRefRange, const Sc
+             // Selected range is only partially overlapping in vertical direction. Bail out.
+             return false;
+ 
+-        if (!rCxt.mrDoc.IsExpandRefs() && rSelectedRange.aStart.Col() <= rRefRange.aStart.Col())
+-            // Selected range is at the left end and the edge expansion is turned off.  No expansion.
+-            return false;
++        if (rCxt.mrDoc.IsExpandRefs())
++        {
++            if (rRefRange.aEnd.Col() - rRefRange.aStart.Col() < 1)
++                // Reference must be at least two columns wide.
++                return false;
++        }
++        else
++        {
++            if (rSelectedRange.aStart.Col() <= rRefRange.aStart.Col())
++                // Selected range is at the left end and the edge expansion is turned off.  No expansion.
++                return false;
++        }
+ 
+         // Move the last column position to the right.
+         SCCOL nDelta = rSelectedRange.aEnd.Col() - rSelectedRange.aStart.Col() + 1;
+@@ -2648,9 +2657,18 @@ bool expandRange( const sc::RefUpdateContext& rCxt, ScRange& rRefRange, const Sc
+             // Selected range is only partially overlapping in horizontal direction. Bail out.
+             return false;
+ 
+-        if (!rCxt.mrDoc.IsExpandRefs() && rSelectedRange.aStart.Row() <= rRefRange.aStart.Row())
+-            // Selected range is at the top end and the edge expansion is turned off.  No expansion.
+-            return false;
++        if (rCxt.mrDoc.IsExpandRefs())
++        {
++            if (rRefRange.aEnd.Row() - rRefRange.aStart.Row() < 1)
++                // Reference must be at least two rows tall.
++                return false;
++        }
++        else
++        {
++            if (rSelectedRange.aStart.Row() <= rRefRange.aStart.Row())
++                // Selected range is at the top end and the edge expansion is turned off.  No expansion.
++                return false;
++        }
+ 
+         // Move the last row position down.
+         SCROW nDelta = rSelectedRange.aEnd.Row() - rSelectedRange.aStart.Row() + 1;
+@@ -2677,6 +2695,11 @@ bool expandRangeByEdge( const sc::RefUpdateContext& rCxt, ScRange& rRefRange, co
+     if (rCxt.mnColDelta > 0)
+     {
+         // Insert and shift right.
++
++        if (rRefRange.aEnd.Col() - rRefRange.aStart.Col() < 1)
++            // Reference must be at least two columns wide.
++            return false;
++
+         if (rRefRange.aStart.Row() < rSelectedRange.aStart.Row() || rSelectedRange.aEnd.Row() < rRefRange.aEnd.Row())
+             // Selected range is only partially overlapping in vertical direction. Bail out.
+             return false;
+@@ -2692,6 +2715,10 @@ bool expandRangeByEdge( const sc::RefUpdateContext& rCxt, ScRange& rRefRange, co
+     }
+     else if (rCxt.mnRowDelta > 0)
+     {
++        if (rRefRange.aEnd.Row() - rRefRange.aStart.Row() < 1)
++            // Reference must be at least two rows tall.
++            return false;
++
+         if (rRefRange.aStart.Col() < rSelectedRange.aStart.Col() || rSelectedRange.aEnd.Col() < rRefRange.aEnd.Col())
+             // Selected range is only partially overlapping in horizontal direction. Bail out.
+             return false;
+@@ -3767,6 +3794,99 @@ void ScTokenArray::CheckRelativeReferenceBounds(
+     }
+ }
+ 
++void ScTokenArray::CheckExpandReferenceBounds(
++    const sc::RefUpdateContext& rCxt, const ScAddress& rPos, SCROW nGroupLen, std::vector<SCROW>& rBounds ) const
++{
++    const SCROW nInsRow = rCxt.maRange.aStart.Row();
++    const FormulaToken* const * p = pCode;
++    const FormulaToken* const * pEnd = p + static_cast<size_t>(nLen);
++    for (; p != pEnd; ++p)
++    {
++        switch ((*p)->GetType())
++        {
++            case svDoubleRef:
++            {
++                const ScToken* pToken = static_cast<const ScToken*>(*p);
++                const ScComplexRefData& rRef = pToken->GetDoubleRef();
++                bool bStartRowRelative = rRef.Ref1.IsRowRel();
++                bool bEndRowRelative = rRef.Ref2.IsRowRel();
++
++                // For absolute references nothing needs to be done, they stay
++                // the same for all and if to be expanded the group will be
++                // adjusted later.
++                if (!bStartRowRelative && !bEndRowRelative)
++                    break;  // switch
++
++                ScRange aAbsStart(rRef.toAbs(rPos));
++                ScAddress aPos(rPos);
++                aPos.IncRow(nGroupLen);
++                ScRange aAbsEnd(rRef.toAbs(aPos));
++                // References must be at least two rows to be expandable.
++                if ((aAbsStart.aEnd.Row() - aAbsStart.aStart.Row() < 1) &&
++                        (aAbsEnd.aEnd.Row() - aAbsEnd.aStart.Row() < 1))
++                    break;  // switch
++
++                // Only need to process if an edge may be touching the
++                // insertion row anywhere within the run of the group.
++                if (!((aAbsStart.aStart.Row() <= nInsRow && nInsRow <= aAbsEnd.aStart.Row()) ||
++                            (aAbsStart.aEnd.Row() <= nInsRow && nInsRow <= aAbsEnd.aEnd.Row())))
++                    break;  // switch
++
++                SCROW nStartRow = aAbsStart.aStart.Row();
++                SCROW nEndRow = aAbsStart.aEnd.Row();
++                // Position on first relevant range.
++                SCROW nOffset = 0;
++                if (nEndRow + 1 < nInsRow)
++                {
++                    if (bEndRowRelative)
++                    {
++                        nOffset = nInsRow - nEndRow - 1;
++                        nEndRow += nOffset;
++                        if (bStartRowRelative)
++                            nStartRow += nOffset;
++                    }
++                    else    // bStartRowRelative==true
++                    {
++                        nOffset = nInsRow - nStartRow;
++                        nStartRow += nOffset;
++                        // Start is overtaking End, swap.
++                        bStartRowRelative = false;
++                        bEndRowRelative = true;
++                    }
++                }
++                for (SCROW i = nOffset; i < nGroupLen; ++i)
++                {
++                    bool bSplit = (nStartRow == nInsRow || nEndRow + 1 == nInsRow);
++                    if (bSplit)
++                        rBounds.push_back( rPos.Row() + i);
++
++                    if (bEndRowRelative)
++                        ++nEndRow;
++                    if (bStartRowRelative)
++                    {
++                        ++nStartRow;
++                        if (!bEndRowRelative && nStartRow == nEndRow)
++                        {
++                            // Start is overtaking End, swap.
++                            bStartRowRelative = false;
++                            bEndRowRelative = true;
++                        }
++                    }
++                    if (nInsRow < nStartRow || (!bStartRowRelative && nInsRow <= nEndRow))
++                    {
++                        if (bSplit && (++i < nGroupLen))
++                            rBounds.push_back( rPos.Row() + i);
++                        break;  // for, out of range now
++                    }
++                }
++            }
++            break;
++            default:
++                ;
++        }
++    }
++}
++
+ namespace {
+ 
+ void appendDouble( sc::TokenStringContext& rCxt, OUStringBuffer& rBuf, double fVal )
+
+--------------erAck-patch-parts--
+
+

@@ -1,0 +1,49 @@
+From a693d9e1aa7a91eeecbd612c012850161a2a0767 Mon Sep 17 00:00:00 2001
+Message-Id: <a693d9e1aa7a91eeecbd612c012850161a2a0767.1425047991.git.erack@redhat.com>
+From: Mark Hung <marklh9@gmail.com>
+Date: Thu, 26 Feb 2015 16:55:46 -0800
+Subject: [PATCH] tdf#89679 - fix incorrect mapping of font-family-complex and
+ CharFontNameAsian
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I4adad1675f2a880e14ed870a3c74e43e8898c371
+Reviewed-on: https://gerrit.libreoffice.org/14663
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Julien Nabet <serval2412@yahoo.fr>
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+(cherry picked from commit cda9ae79e58d861a85128d6a37587b633b956aae)
+---
+ sc/source/filter/xml/editattributemap.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-tdf-89679-fix-incorrect-mapping-of-font-family-compl.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-tdf-89679-fix-incorrect-mapping-of-font-family-compl.patch"
+
+diff --git a/sc/source/filter/xml/editattributemap.cxx b/sc/source/filter/xml/editattributemap.cxx
+index decea89..15510a2 100644
+--- a/sc/source/filter/xml/editattributemap.cxx
++++ b/sc/source/filter/xml/editattributemap.cxx
+@@ -21,7 +21,7 @@ ScXMLEditAttributeMap::Entry aEntries[] = {
+     { XML_NAMESPACE_STYLE, "font-charset-complex", "CharFontCharSetComplex", EE_CHAR_FONTINFO_CTL, MID_FONT_CHAR_SET },
+     { XML_NAMESPACE_FO, "font-family", "CharFontName", EE_CHAR_FONTINFO, MID_FONT_FAMILY_NAME },
+     { XML_NAMESPACE_STYLE, "font-family-asian", "CharFontNameAsian", EE_CHAR_FONTINFO_CJK, MID_FONT_FAMILY_NAME },
+-    { XML_NAMESPACE_STYLE, "font-family-complex", "CharFontNameAsian", EE_CHAR_FONTINFO_CTL, MID_FONT_FAMILY_NAME },
++    { XML_NAMESPACE_STYLE, "font-family-complex", "CharFontNameComplex", EE_CHAR_FONTINFO_CTL, MID_FONT_FAMILY_NAME },
+     { XML_NAMESPACE_STYLE, "font-family-generic", "CharFontFamily", EE_CHAR_FONTINFO, MID_FONT_FAMILY },
+     { XML_NAMESPACE_STYLE, "font-family-generic-asian", "CharFontFamilyAsian", EE_CHAR_FONTINFO_CJK, MID_FONT_FAMILY },
+     { XML_NAMESPACE_STYLE, "font-family-generic-complex", "CharFontFamilyComplex", EE_CHAR_FONTINFO_CTL, MID_FONT_FAMILY },
+
+--------------erAck-patch-parts--
+
+

@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -351,6 +351,7 @@ Patch95: 0001-fdo-87199-sw-fix-root-cause-of-a11y-crash-when-mergi.patch
 Patch96: 0001-Resolves-tdf-89500-catch-ISO-8601-datetime-in-all-lo.patch
 Patch97: 0001-Resolves-tdf-89484-check-that-sheet-reference-is-wit.patch
 Patch98: 0001-Resolves-tdf-81659-handle-expand-reference-edge-corr.patch
+Patch99: 0001-tdf-89679-fix-incorrect-mapping-of-font-family-compl.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2288,6 +2289,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Feb 27 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-7-UNBUILT
+- Resolves: tdf#89679 fix incorrect mapping of font-family-complex and CharFontNameAsian
+
 * Thu Feb 26 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-6
 - Resolves: tdf#83461 do not override MatColsRows if already set
 - Resolves: rhbz#1190657 tdf#87199 Writer crashes when merging table cells

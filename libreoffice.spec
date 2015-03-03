@@ -91,10 +91,10 @@ Source21:       %{external_url}/lcms2-2.6.tar.gz
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-Source25:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
-Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz --without-system-libcmis
+Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
+Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
@@ -110,12 +110,11 @@ Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
 Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
+%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %if 0%{?csb_rhel_7_hack}
 Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
-Source25:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag --without-system-libcmis
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag
 %endif
 %endif
 Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
@@ -186,6 +185,7 @@ BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(glew)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
+BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
@@ -211,7 +211,6 @@ BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libexttextcat)
 %if !0%{?csb_rhel_7_hack}
-BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(mdds)
 %endif

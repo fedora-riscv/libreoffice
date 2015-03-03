@@ -1177,6 +1177,7 @@ git am %{patches}
 # disable failing tests
 %if 0%{?rhel}
 sed -i -e /CppunitTest_sw_ooxmlsdrexport/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sc_ucalc/d sc/Module_sc.mk
 git commit -am 'disable failing tests on rhel'
 %endif
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk

@@ -56,9 +56,9 @@ index 57d6940..fe77479 100644
 -	writer_Plucker_eBook \
 -	writer_TealDoc \
 -	writer_zTXT \
- )
+ ))
  
- $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
+ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
 @@ -423,13 +416,6 @@ $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,fi
  	OOXML_Text \
  	OOXML_Text_Template \
@@ -70,9 +70,9 @@ index 57d6940..fe77479 100644
 -	Plucker_eBook \
 -	TealDoc \
 -	zTXT \
- )
+ ))
  
- $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
+ $(eval $(call filter_Configuration_add_ui_filters,fcfg_langpack,filter/source/config/fragments/filters,\
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
 index db6afdf..e6ea0f5 100644
 --- a/writerperfect/Library_wpftwriter.mk

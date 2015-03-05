@@ -113,7 +113,7 @@ Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %if 0%{?csb_rhel_7_hack}
 Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
-Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag
 %endif
 %endif

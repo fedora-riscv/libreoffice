@@ -366,6 +366,7 @@ Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
 Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
 Patch73: 0001-Resolves-fdo-84887-TabBar-ImplShowPage-crash.patch
 Patch74: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
+Patch75: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.1
+%define libo_version 4.4.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -45,7 +45,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
@@ -324,8 +324,6 @@ Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
 Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
 Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
 Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
-Patch21: 0001-fix-linker-error.patch
-Patch22: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2353,6 +2351,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Mar 12 2015 David Tardon <dtardon@redhat.com> - 1:4.4.2.1-1
+- update to 4.2.2 rc1
+
 * Mon Feb 23 2015 David Tardon <dtardon@redhat.com> - 1:4.4.1.2-1
 - update to 4.4.1 rc2
 

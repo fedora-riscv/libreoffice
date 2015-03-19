@@ -1,4 +1,4 @@
-From 01a882039ec4d0edf4da7d3e10ffea569a3e4aee Mon Sep 17 00:00:00 2001
+From 6698a143ebf961519884aefb8b00dc2d61c66818 Mon Sep 17 00:00:00 2001
 From: Norbert Thiebaud <nthiebaud@gmail.com>
 Date: Fri, 27 Jun 2014 10:29:46 +0200
 Subject: [PATCH] fdo#69036 do not try to create a sfxApplication when we are
@@ -17,7 +17,7 @@ Change-Id: Ic166367ca399d613743f379ebbfbffb5813701c0
  2 files changed, 21 insertions(+), 16 deletions(-)
 
 diff --git a/include/sfx2/app.hxx b/include/sfx2/app.hxx
-index 1c67756..0928635 100644
+index 3f81077..fe12622 100644
 --- a/include/sfx2/app.hxx
 +++ b/include/sfx2/app.hxx
 @@ -149,6 +149,7 @@ public:
@@ -37,14 +37,14 @@ index 1c67756..0928635 100644
      SAL_DLLPRIVATE SfxDispatcher* GetDispatcher_Impl();
  
 diff --git a/sfx2/source/doc/objxtor.cxx b/sfx2/source/doc/objxtor.cxx
-index 9ce512b..a374578 100644
+index 1fbe840..32e8b6c 100644
 --- a/sfx2/source/doc/objxtor.cxx
 +++ b/sfx2/source/doc/objxtor.cxx
 @@ -462,12 +462,17 @@ bool SfxObjectShell::Close()
          if ( pImp->bClosing )
          {
              // remove from Document list
--            SfxApplication *pSfxApp = SfxGetpApp();
+-            SfxApplication *pSfxApp = SFX_APP();
 -            SfxObjectShellArr_Impl &rDocs = pSfxApp->GetObjectShells_Impl();
 -            SfxObjectShellArr_Impl::iterator it = std::find( rDocs.begin(), rDocs.end(), this );
 -            if ( it != rDocs.end() )
@@ -91,34 +91,34 @@ index 9ce512b..a374578 100644
      pSfxApp->NotifyEvent( SfxEventHint(SFX_EVENT_PREPARECLOSEDOC, GlobalEventConfig::GetEventName(STR_EVENT_PREPARECLOSEDOC), this) );
  
      if( GetCreateMode() == SFX_CREATE_MODE_EMBEDDED )
-@@ -712,7 +717,7 @@ BasicManager* SfxObjectShell::GetBasicManager() const
-     {
-         pBasMgr = lcl_getBasicManagerForDocument( *this );
-         if ( !pBasMgr )
--            pBasMgr = SFX_APP()->GetBasicManager();
-+            pBasMgr = SfxGetpApp()->GetBasicManager();
-     }
-     catch (const css::ucb::ContentCreationException& e)
-     {
-@@ -793,7 +798,7 @@ Reference< XLibraryContainer > SfxObjectShell::GetDialogContainer()
+@@ -713,7 +718,7 @@ BasicManager* SfxObjectShell::GetBasicManager() const
+ #else
+     BasicManager* pBasMgr = lcl_getBasicManagerForDocument( *this );
+     if ( !pBasMgr )
+-        pBasMgr = SFX_APP()->GetBasicManager();
++        pBasMgr = SfxGetpApp()->GetBasicManager();
+     return pBasMgr;
+ #endif
+ }
+@@ -787,7 +792,7 @@ Reference< XLibraryContainer > SfxObjectShell::GetDialogContainer()
  
-     SAL_WARN("sfx.doc", "SfxObjectShell::GetDialogContainer: falling back to the application - is this really expected here?");
+     OSL_FAIL( "SfxObjectShell::GetDialogContainer: falling back to the application - is this really expected here?" );
  #endif
 -    return SFX_APP()->GetDialogContainer();
 +    return SfxGetpApp()->GetDialogContainer();
  }
  
- Reference< XLibraryContainer > SfxObjectShell::GetBasicContainer()
-@@ -814,7 +819,7 @@ Reference< XLibraryContainer > SfxObjectShell::GetBasicContainer()
-     }
-     SAL_WARN("sfx.doc", "SfxObjectShell::GetBasicContainer: falling back to the application - is this really expected here?");
+ 
+@@ -804,7 +809,7 @@ Reference< XLibraryContainer > SfxObjectShell::GetBasicContainer()
+ 
+     OSL_FAIL( "SfxObjectShell::GetBasicContainer: falling back to the application - is this really expected here?" );
  #endif
 -    return SFX_APP()->GetBasicContainer();
 +    return SfxGetpApp()->GetBasicContainer();
  }
  
- StarBASIC* SfxObjectShell::GetBasic() const
-@@ -961,7 +966,7 @@ void SfxObjectShell::SetCurrentComponent( const Reference< XInterface >& _rxComp
+ 
+@@ -947,7 +952,7 @@ void SfxObjectShell::SetCurrentComponent( const Reference< XInterface >& _rxComp
      // but we should have filtered quite some unnecessary calls already.
  
  #ifndef DISABLE_SCRIPTING
@@ -127,7 +127,7 @@ index 9ce512b..a374578 100644
      rTheCurrentComponent = _rxComponent;
      if ( pAppMgr )
      {
-@@ -1156,11 +1161,11 @@ void SfxObjectShell::SetInitialized_Impl( const bool i_fromInitNew )
+@@ -1142,11 +1147,11 @@ void SfxObjectShell::SetInitialized_Impl( const bool i_fromInitNew )
      if ( i_fromInitNew )
      {
          SetActivateEvent_Impl( SFX_EVENT_CREATEDOC );
@@ -142,5 +142,5 @@ index 9ce512b..a374578 100644
  }
  
 -- 
-2.1.0
+1.9.3
 

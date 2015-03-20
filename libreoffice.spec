@@ -325,6 +325,7 @@ Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch21: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 Patch22: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
+Patch24: 0001-gdk-pixbuf-xlib-2.0-gdk-pixbuf-2.0.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

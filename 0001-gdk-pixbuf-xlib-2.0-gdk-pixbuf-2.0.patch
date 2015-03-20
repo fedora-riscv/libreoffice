@@ -1,0 +1,26 @@
+From 88baab7de3b4e91c049ba3af39daf1969d596432 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 20 Mar 2015 16:48:57 +0000
+Subject: [PATCH] gdk-pixbuf-xlib-2.0->gdk-pixbuf-2.0
+
+Change-Id: Ib58578fd9e093d912294d861094e19151a097534
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index bdf5503..c51b6a2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10062,7 +10062,7 @@ ENABLE_SYSTRAY_GTK=""
+ if test  "$test_gtk" = "yes"; then
+ 
+     if test "$ENABLE_GTK" = "TRUE"; then
+-        PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.10.0 gdk-pixbuf-xlib-2.0 >= 2.2 ,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
++        PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.10.0 gdk-pixbuf-2.0 >= 2.2 ,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
+         GTK_CFLAGS=$(printf '%s' "$GTK_CFLAGS" | sed -e "s/-I/${ISYSTEM?}/g")
+         PKG_CHECK_MODULES(GTHREAD, gthread-2.0,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
+         BUILD_TYPE="$BUILD_TYPE GTK"
+-- 
+1.9.3
+

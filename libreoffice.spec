@@ -357,6 +357,7 @@ Patch98: 0001-Resolves-tdf-81659-handle-expand-reference-edge-corr.patch
 Patch99: 0001-tdf-89679-fix-incorrect-mapping-of-font-family-compl.patch
 Patch100: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch101: 0002-propagate-user-set-CFLAGS-to-build.patch
+Patch102: 0001-Resolves-tdf-89958-filter-ends-with-does-not-end-wit.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2303,8 +2304,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Feb 27 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-7-UNBUILT
+* Fri Mar 20 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-7
 - Resolves: tdf#89679 fix incorrect mapping of font-family-complex and CharFontNameAsian
+- Resolves: tdf#89958 filter ends with / does not end with correction
 
 * Thu Feb 26 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-6
 - Resolves: tdf#83461 do not override MatColsRows if already set

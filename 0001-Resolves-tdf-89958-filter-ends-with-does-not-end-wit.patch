@@ -1,0 +1,68 @@
+From 9fc28e43c3f465e503abc2eaf885027b63cee27a Mon Sep 17 00:00:00 2001
+Message-Id: <9fc28e43c3f465e503abc2eaf885027b63cee27a.1426853284.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 20 Mar 2015 11:10:13 +0000
+Subject: [PATCH] Resolves: tdf#89958 filter ends with / does not end with
+ correction
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Regression of 8850633fe4cdac306c35caab1a0d14c13d9df864 String to
+OUString and xub_StrLen to sal_Int32 conversion, it worked by accident
+only anyway..
+
+(cherry picked from commit 9e2e9453cbca9399e1c670b354cfc3c23d70307f)
+
+Backported.
+
+Change-Id: Id6fea7075949b98e58294d9fdaae4313f69f9b55
+---
+ sc/source/core/data/table3.cxx | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-89958-filter-ends-with-does-not-end-wit.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-89958-filter-ends-with-does-not-end-wit.patch"
+
+diff --git a/sc/source/core/data/table3.cxx b/sc/source/core/data/table3.cxx
+index 58621c6..b22468a 100644
+--- a/sc/source/core/data/table3.cxx
++++ b/sc/source/core/data/table3.cxx
+@@ -2255,9 +2255,9 @@ public:
+                     OUString aQuer( mpTransliteration->transliterate(
+                         aQueryStr, ScGlobal::eLnge, 0, aQueryStr.getLength(),
+                         NULL ) );
+-                    xub_StrLen nIndex = (rEntry.eOp == SC_ENDS_WITH
+-                        || rEntry.eOp == SC_DOES_NOT_END_WITH) ? (aCell.getLength()-aQuer.getLength()) : 0;
+-                    sal_Int32 nStrPos = aCell.indexOf( aQuer, nIndex );
++                    sal_Int32 nIndex = (rEntry.eOp == SC_ENDS_WITH || rEntry.eOp == SC_DOES_NOT_END_WITH) ?
++                        (aCell.getLength() - aQuer.getLength()) : 0;
++                    sal_Int32 nStrPos = ((nIndex < 0) ? -1 : aCell.indexOf( aQuer, nIndex ));
+                     switch (rEntry.eOp)
+                     {
+                     case SC_EQUAL:
+@@ -2275,10 +2275,10 @@ public:
+                         bOk = ( nStrPos != 0 );
+                         break;
+                     case SC_ENDS_WITH:
+-                        bOk = ( nStrPos + aQuer.getLength() == aCell.getLength() );
++                        bOk = (nStrPos >= 0 && nStrPos + aQuer.getLength() == aCell.getLength() );
+                         break;
+                     case SC_DOES_NOT_END_WITH:
+-                        bOk = ( nStrPos + aQuer.getLength() != aCell.getLength() );
++                        bOk = (nStrPos < 0 || nStrPos + aQuer.getLength() != aCell.getLength() );
+                         break;
+                     default:
+                         {
+
+--------------erAck-patch-parts--
+
+

@@ -78,9 +78,10 @@ Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.
 Source11:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
 Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus
-%if 0%{?rhel} < 7
+# system mdds 0.10.3 causes a crash in sc_ucalc unit test
 Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
+%if 0%{?rhel} < 7
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
 Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
@@ -92,7 +93,7 @@ Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
 Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
+%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
@@ -112,9 +113,8 @@ Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
 %if 0%{?csb_rhel_7_hack}
-Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
 Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-liblangtag
+%global bundling_options %{?bundling_options} --without-system-liblangtag
 %endif
 %endif
 Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
@@ -204,6 +204,7 @@ BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
 BuildRequires: pkgconfig(libwpg-0.3)
 BuildRequires: pkgconfig(libwps-0.3)
+BuildRequires: pkgconfig(mdds)
 %endif
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -215,7 +216,6 @@ BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libexttextcat)
 %if !0%{?csb_rhel_7_hack}
 BuildRequires: pkgconfig(liblangtag)
-BuildRequires: pkgconfig(mdds)
 %endif
 BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(poppler-cpp)
@@ -1177,12 +1177,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 
 # apply patches
 git am %{patches}
-
-# disable failing tests
-%if 0%{?rhel}
-sed -i -e /CppunitTest_sc_ucalc/d sc/Module_sc.mk
-git commit -am 'disable failing tests on rhel'
-%endif
 
 %if 0%{?rhel} && 0%{?rhel} < 7
 cp -r translations/source/en-GB translations/source/ms

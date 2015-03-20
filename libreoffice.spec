@@ -305,7 +305,9 @@ Patch8: 0001-disable-failing-test-on-rhel-6.patch
 %endif
 # not upstreamed
 Patch10: 0001-disable-libe-book-support.patch
-%else
+%endif
+%if 0%{?csb_rhel_7_hack}
+# not upstreamed
 Patch11: 0001-disable-failing-while-libmwaw-fix-pending.patch
 %endif
 # not upstreamed

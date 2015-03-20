@@ -306,9 +306,6 @@ Patch7: libreoffice-rhel6glib.patch
 Patch8: 0001-disable-failing-test-on-rhel-6.patch
 %endif
 # not upstreamed
-# TODO: fails on ppc; investigate
-Patch9: 0001-disable-swui-test-on-RHEL-7.patch
-# not upstreamed
 Patch10: 0001-disable-libe-book-support.patch
 %else
 Patch11: 0001-disable-failing-while-libmwaw-fix-pending.patch

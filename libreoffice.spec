@@ -291,8 +291,6 @@ Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch2:  libreoffice-installfix.patch
 %if 0%{?rhel}
-# not upstreamed
-Patch3: 0001-disable-failing-test-on-rhel.patch
 %if 0%{?rhel} < 7
 # not upstreamed
 Patch4: libreoffice-rhel6gcj.patch

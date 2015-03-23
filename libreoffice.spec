@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2304,6 +2304,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-8-UNBUILT
+- Resolves: rhbz#1204244 group sdb windows together as 'base'
+
 * Fri Mar 20 2015 Eike Rathke <erack@redhat.com> - 1:4.2.8.2-7
 - Resolves: tdf#89679 fix incorrect mapping of font-family-complex and CharFontNameAsian
 - Resolves: tdf#89958 filter ends with / does not end with correction

@@ -112,10 +112,6 @@ Source39:       %{external_url}/libgltf-0.0.2.tar.bz2
 Source40:       %{external_url}/OpenCOLLADA-master-6509aa13af.tar.bz2
 Source41:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libgltf --without-system-opencollada --without-system-libpagemaker
-%if 0%{?csb_rhel_7_hack}
-Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-liblangtag
-%endif
 %endif
 Source42:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 
@@ -214,9 +210,7 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libexttextcat)
-%if !0%{?csb_rhel_7_hack}
 BuildRequires: pkgconfig(liblangtag)
-%endif
 BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(poppler-cpp)
 BuildRequires: postgresql-devel
@@ -305,10 +299,6 @@ Patch8: 0001-disable-failing-test-on-rhel-6.patch
 %endif
 # not upstreamed
 Patch10: 0001-disable-libe-book-support.patch
-%endif
-%if 0%{?csb_rhel_7_hack}
-# not upstreamed
-Patch11: 0001-disable-failing-while-libmwaw-fix-pending.patch
 %endif
 # not upstreamed
 Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch

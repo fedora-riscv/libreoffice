@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -373,7 +373,8 @@ Patch75: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 Patch76: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch77: 0002-propagate-user-set-CFLAGS-to-build.patch
 Patch78: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
-Patch79: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
+Patch79: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
+Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2354,6 +2355,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Mar 26 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-6
+- Resolves: tdf#90256 repair invalid docking positions
+
 * Mon Mar 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-5
 - Resolves: rhbz#1204244 group sdb windows together as 'base'
 

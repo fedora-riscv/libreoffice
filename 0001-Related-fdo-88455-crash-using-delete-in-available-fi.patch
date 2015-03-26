@@ -1,0 +1,64 @@
+From f0fae54f44874a0da9e591f990ce5d2c906bff60 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 2 Feb 2015 21:04:28 +0000
+Subject: [PATCH] Related: fdo#88455 crash using delete in available fields
+
+Change-Id: I4ac5fe6f42b425ee96124b2dde39ff397a081638
+(cherry picked from commit 1746c886362b8525b04365dd6b7203b8098b99ba)
+Reviewed-on: https://gerrit.libreoffice.org/14291
+Tested-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ sc/source/ui/dbgui/PivotLayoutTreeListData.cxx  | 10 ++++++----
+ sc/source/ui/dbgui/PivotLayoutTreeListLabel.cxx | 10 ++++++----
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/sc/source/ui/dbgui/PivotLayoutTreeListData.cxx b/sc/source/ui/dbgui/PivotLayoutTreeListData.cxx
+index e8f4805..33dbaa2 100644
+--- a/sc/source/ui/dbgui/PivotLayoutTreeListData.cxx
++++ b/sc/source/ui/dbgui/PivotLayoutTreeListData.cxx
+@@ -253,12 +253,14 @@ void ScPivotLayoutTreeListData::KeyInput(const KeyEvent& rKeyEvent)
+     KeyCode aCode = rKeyEvent.GetKeyCode();
+     sal_uInt16 nCode = aCode.GetCode();
+ 
+-    switch (nCode)
++    if (nCode == KEY_DELETE)
+     {
+-        case KEY_DELETE:
+-            GetModel()->Remove(GetCurEntry());
+-            return;
++        const SvTreeListEntry* pEntry = GetCurEntry();
++        if (pEntry)
++            GetModel()->Remove(pEntry);
++        return;
+     }
++
+     SvTreeListBox::KeyInput(rKeyEvent);
+ }
+ 
+diff --git a/sc/source/ui/dbgui/PivotLayoutTreeListLabel.cxx b/sc/source/ui/dbgui/PivotLayoutTreeListLabel.cxx
+index a094f2a..746b512 100644
+--- a/sc/source/ui/dbgui/PivotLayoutTreeListLabel.cxx
++++ b/sc/source/ui/dbgui/PivotLayoutTreeListLabel.cxx
+@@ -80,12 +80,14 @@ void ScPivotLayoutTreeListLabel::KeyInput(const KeyEvent& rKeyEvent)
+     KeyCode aCode = rKeyEvent.GetKeyCode();
+     sal_uInt16 nCode = aCode.GetCode();
+ 
+-    switch (nCode)
++    if (nCode == KEY_DELETE)
+     {
+-        case KEY_DELETE:
+-            GetModel()->Remove(GetCurEntry());
+-            return;
++        const SvTreeListEntry* pEntry = GetCurEntry();
++        if (pEntry)
++            GetModel()->Remove(pEntry);
++        return;
+     }
++
+     SvTreeListBox::KeyInput(rKeyEvent);
+ }
+ 
+-- 
+1.9.3
+

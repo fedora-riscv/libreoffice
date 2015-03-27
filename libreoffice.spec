@@ -2356,7 +2356,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Mar 26 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-7.UNBUILT
+* Fri Mar 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-7
 - Resolves: rhbz#1183806 crash on pressing delete in empty pivot table lists
 
 * Thu Mar 26 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-6

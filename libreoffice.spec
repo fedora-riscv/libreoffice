@@ -320,6 +320,7 @@ Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
 Patch24: 0001-gdk-pixbuf-xlib-2.0-gdk-pixbuf-2.0.patch
 Patch25: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch26: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
+Patch27: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

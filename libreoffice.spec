@@ -46,7 +46,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -173,6 +173,7 @@ BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
 BuildRequires: vigra-devel
+BuildRequires: libappstream-glib
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -1558,6 +1559,21 @@ done
 export DESTDIR=%{buildroot}
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
+# Update the screenshot shown in the software center
+#
+# NOTE: It would be *awesome* if this file was pushed upstream.
+#
+# See http://people.freedesktop.org/~hughsient/appdata/#screenshots for more details.
+#
+appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-writer.appdata.xml \
+  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
+  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png 
+appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-calc.appdata.xml \
+  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png 
+appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-draw.appdata.xml \
+  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
+appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-impress.appdata.xml \
+  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
 
 %check
 unset WITH_LANG
@@ -2347,6 +2363,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 30 2015 Richard Hughes <rhughes@redhat.com> - 1:4.4.2.2-2
+- Use better AppData screenshots
+
 * Thu Mar 26 2015 David Tardon <dtardon@redhat.com> - 1:4.4.2.2-1
 - update to 4.4.2 rc2
 

@@ -136,6 +136,7 @@ BuildRequires: make
 BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}
+BuildRequires: libappstream-glib
 BuildRequires: ucpp
 %endif
 BuildRequires: zip
@@ -173,7 +174,6 @@ BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
 BuildRequires: vigra-devel
-BuildRequires: libappstream-glib
 
 # libs / headers - conditional
 %if 0%{?fedora}

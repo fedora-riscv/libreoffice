@@ -378,7 +378,7 @@ Patch78: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
 Patch79: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch81: 0001-Related-fdo-88455-crash-using-delete-in-available-fi.patch
-Patch82: negative after-text indents ignored by msword for apos
+Patch82: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

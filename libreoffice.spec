@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -378,6 +378,7 @@ Patch78: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
 Patch79: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch81: 0001-Related-fdo-88455-crash-using-delete-in-available-fi.patch
+Patch82: negative after-text indents ignored by msword for apos
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2358,6 +2359,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-8
+- negative after-text indents ignored by msword for apos
+
 * Fri Mar 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-7
 - Resolves: rhbz#1183806 crash on pressing delete in empty pivot table lists
 

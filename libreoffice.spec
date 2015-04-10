@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -325,6 +325,7 @@ Patch25: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch26: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch27: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
 Patch28: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
+Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2366,6 +2367,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 10 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.2.2-3-UNBUILT
+- Resolves: rhbz#1197614 crash when updating extension
+
 * Mon Mar 30 2015 Richard Hughes <rhughes@redhat.com> - 1:4.4.2.2-2
 - Use better AppData screenshots
 

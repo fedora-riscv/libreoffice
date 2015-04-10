@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -379,6 +379,7 @@ Patch79: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch81: 0001-Related-fdo-88455-crash-using-delete-in-available-fi.patch
 Patch82: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
+Patch83: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2359,6 +2360,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 10 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-9-UNBUILT
+- Resolves: rhbz#1197614 crash when updating extension
+
 * Tue Apr 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-8
 - negative after-text indents ignored by msword for apos
 

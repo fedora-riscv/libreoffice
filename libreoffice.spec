@@ -1237,7 +1237,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # make segfaults on parallel build
-%define distrooptions --disable-eot --disable-firebird-sdbc --disable-gio --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+%define distrooptions --disable-eot --disable-firebird-sdbc --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
@@ -1896,9 +1896,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/share/registry/gnome.xcd
-%endif
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
 %{baseinstdir}/share/registry/oo-ad-ldap.xcd.sample
@@ -1958,9 +1956,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlscriptlo.so
 %{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/liblocalebe1lo.so
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/libucpgio1lo.so
-%endif
 %{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions

@@ -326,6 +326,7 @@ Patch26: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch27: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
 Patch28: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
+Patch30: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2363,8 +2364,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Apr 10 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.2.2-3-UNBUILT
+* Tue Apr 14 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.2.2-3
 - Resolves: rhbz#1197614 crash when updating extension
+- Resolves: rhbz#1134285 redundant user/password request for WebDAV access
 
 * Mon Mar 30 2015 Richard Hughes <rhughes@redhat.com> - 1:4.4.2.2-2
 - Use better AppData screenshots

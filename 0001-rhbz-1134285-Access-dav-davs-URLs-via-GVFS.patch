@@ -1,0 +1,79 @@
+From 51e0d789c344547956764c3b5f0ef5a304f4e0aa Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 13 Apr 2015 18:27:33 +0200
+Subject: [PATCH] rhbz#1134285: Access dav, davs URLs via GVFS
+
+...so that LO shares the credentials with Nautilus once the connection has been
+set up in Nautilus.
+
+The reason the (non-standard) dav, davs URLs used by GNOME's old GnomeVFS and
+successor GVFS/GIO were handled via LO's webdav UCP rather than the GNOME-
+specific gnomevfs resp. gio UCP since b07a5fcc600ad564315d36fbd18495184fdf69cf
+"INTEGRATION: CWS tkr10: i84676 neon and gnome-vfs2" is discussed at
+<https://bz.apache.org/ooo/show_bug.cgi?id=84676> "mixing neon and the hidden
+embedded contents old [sic] another neon inside libhttp.so of gnome-vfs2 is
+unreliable" and only pertains to the legacy gnomevfs UCP, not the new gio one.
+So keep handling dav, davs URLs via LO's internal webdav UCP under legacy
+--enable-gnome-vfs, but handle them via the GNOME-specific gio UCP under the
+default --enable-gio.
+
+Change-Id: Ib132168701a7ae0a7dcabdead6a299eda0cd4594
+---
+ officecfg/Configuration_officecfg.mk                         | 1 +
+ officecfg/registry/data/org/openoffice/ucb/Configuration.xcu | 6 ++++--
+ postprocess/CustomTarget_registry.mk                         | 3 +++
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/officecfg/Configuration_officecfg.mk b/officecfg/Configuration_officecfg.mk
+index 7e2af03..af992b9 100644
+--- a/officecfg/Configuration_officecfg.mk
++++ b/officecfg/Configuration_officecfg.mk
+@@ -121,6 +121,7 @@ $(eval $(call gb_Configuration_add_spool_modules,registry,officecfg/registry/dat
+ 	org/openoffice/TypeDetection/UISort-math.xcu \
+ 	org/openoffice/ucb/Configuration-gio.xcu \
+ 	org/openoffice/ucb/Configuration-neon.xcu \
++	org/openoffice/ucb/Configuration-neon_gnomevfs.xcu \
+ 	org/openoffice/ucb/Configuration-win.xcu \
+ ))
+ 
+diff --git a/officecfg/registry/data/org/openoffice/ucb/Configuration.xcu b/officecfg/registry/data/org/openoffice/ucb/Configuration.xcu
+index e9704d3..9cb2a1a 100644
+--- a/officecfg/registry/data/org/openoffice/ucb/Configuration.xcu
++++ b/officecfg/registry/data/org/openoffice/ucb/Configuration.xcu
+@@ -89,7 +89,8 @@
+                 <value/>
+               </prop>
+             </node>
+-            <node oor:name="Provider7" oor:op="replace" install:module="neon">
++            <node oor:name="Provider7" oor:op="replace"
++                install:module="neon_gnomevfs">
+               <prop oor:name="ServiceName">
+                 <value>com.sun.star.ucb.WebDAVContentProvider</value>
+               </prop>
+@@ -155,7 +156,8 @@
+                 <value/>
+               </prop>
+             </node>
+-            <node oor:name="Provider13" oor:op="replace" install:module="neon">
++            <node oor:name="Provider13" oor:op="replace"
++                install:module="neon_gnomevfs">
+               <prop oor:name="ServiceName">
+                 <value>com.sun.star.ucb.WebDAVContentProvider</value>
+               </prop>
+diff --git a/postprocess/CustomTarget_registry.mk b/postprocess/CustomTarget_registry.mk
+index a568832..e12640f 100644
+--- a/postprocess/CustomTarget_registry.mk
++++ b/postprocess/CustomTarget_registry.mk
+@@ -328,6 +328,9 @@ postprocess_DRIVERS += ado
+ endif
+ ifneq ($(WITH_WEBDAV),)
+ postprocess_FILES_main += $(postprocess_MOD)/org/openoffice/ucb/Configuration-neon.xcu
++ifeq ($(ENABLE_GNOMEVFS),TRUE)
++postprocess_FILES_main += $(postprocess_MOD)/org/openoffice/ucb/Configuration-neon_gnomevfs.xcu
++endif
+ endif
+ ifeq ($(ENABLE_EVOAB2),TRUE)
+ postprocess_FILES_main += $(call gb_XcuModuleTarget_get_target,connectivity/registry/evoab2)/org/openoffice/Office/DataAccess/Drivers-evoab2.xcu
+-- 
+2.1.0
+

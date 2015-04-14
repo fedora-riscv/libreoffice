@@ -380,6 +380,7 @@ Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch81: 0001-Related-fdo-88455-crash-using-delete-in-available-fi.patch
 Patch82: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch83: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
+Patch84: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2356,8 +2357,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Apr 10 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-9-UNBUILT
+* Tue Apr 14 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-9
 - Resolves: rhbz#1197614 crash when updating extension
+- Resolves: rhbz#1134285 redundant user/password request for WebDAV access
 
 * Tue Apr 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.6.2-8
 - negative after-text indents ignored by msword for apos

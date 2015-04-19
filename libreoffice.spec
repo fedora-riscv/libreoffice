@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.2
+%define libo_version 5.0.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .alpha1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -47,8 +47,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -81,7 +81,7 @@ Source11:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
 Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 # system mdds 0.10.3 causes a crash in sc_ucalc unit test
-Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
+Source14:       %{external_url}/17edb780d4054e4205cd956910672b83-mdds_0.12.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
 %if 0%{?rhel} < 7
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
@@ -123,9 +123,6 @@ BuildRequires: automake
 BuildRequires: bc
 BuildRequires: binutils
 BuildRequires: bison
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: chrpath
-%endif
 BuildRequires: desktop-file-utils
 BuildRequires: doxygen
 BuildRequires: findutils
@@ -203,7 +200,7 @@ BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
 BuildRequires: pkgconfig(libwpg-0.3)
 BuildRequires: pkgconfig(libwps-0.3)
-BuildRequires: pkgconfig(mdds)
+BuildRequires: pkgconfig(mdds) >= 0.12.0
 %endif
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -313,24 +310,9 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-Resolves-fdo-37559-revert-adding-extra-dummy-polygon.patch
-Patch18: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
-Patch19: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
-Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
-Patch21: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
-Patch22: 0001-build-libetonyek-with-no-strict-aliasing.patch
-Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
-Patch24: 0001-gdk-pixbuf-xlib-2.0-gdk-pixbuf-2.0.patch
-Patch25: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
-Patch26: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
-Patch27: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
-Patch28: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
-Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
-Patch30: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
-%define ureinstdir %{baseinstdir}/ure
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
 
@@ -367,7 +349,6 @@ Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires: %{name}-math = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter = %{epoch}:%{version}-%{release}
 
@@ -379,7 +360,6 @@ filters.
 Summary: Core modules for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -391,6 +371,11 @@ Requires: hunspell-en
 Requires: java-headless >= 1:1.6
 Requires: hunspell-en-US
 %endif
+#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
+%if 0%{?__isa_bits} == 64
+%global mark64 ()(64bit)
+%endif
+Requires: unzip, libjvm.so%{?mark64}
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -399,6 +384,7 @@ Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
+Obsoletes: libreoffice-ure < 1:5.0.0.0
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
 Obsoletes: openoffice.org-headless < 1:3.3.1
@@ -406,9 +392,11 @@ Obsoletes: openoffice.org-javafilter < 1:3.3.1
 Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
 Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
 Obsoletes: openoffice.org-testtools < 1:3.3.1
+Obsoletes: openoffice.org-ure < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
+Provides: libreoffice-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
@@ -416,6 +404,8 @@ Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
 Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
 Provides: openoffice.org-headless = 1:3.3.0
 Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
+Provides: openoffice.org-ure = 1:3.3.0
+Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
 %endif
 
 %description core
@@ -425,7 +415,6 @@ The shared core libraries and support files for LibreOffice.
 Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{libo_python3}
 Requires: python3
 %else
@@ -450,7 +439,6 @@ Requires: postgresql-jdbc
 %if 0%{?rhel} && 0%{?rhel} < 7
 Requires:  hsqldb
 %endif
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
@@ -518,7 +506,6 @@ Requires: jakarta-commons-lang, jakarta-commons-logging
 Requires: apache-commons-codec, jakarta-commons-httpclient
 Requires: apache-commons-lang, apache-commons-logging
 %endif
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
@@ -535,7 +522,6 @@ your new and existing documents transparently with writer to a wiki page.
 %package nlpsolver
 Summary: Non-linear solver engine for LibreOffice Calc
 Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 
@@ -546,7 +532,6 @@ programming model when more complex, nonlinear programming is required.
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
 Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
@@ -562,7 +547,6 @@ Requires good quality 3D support for your graphics card for best experience.
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-pdfimport < 1:3.3.1
@@ -596,7 +580,6 @@ Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -628,7 +611,6 @@ Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -646,7 +628,6 @@ Summary: LibreOffice Drawing Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
@@ -666,7 +647,6 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
@@ -694,7 +674,6 @@ Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -710,7 +689,6 @@ The LibreOffice Equation Editor Application.
 %package graphicfilter
 Summary: LibreOffice Extra Graphic filters
 Group: Applications/Productivity
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -742,7 +720,6 @@ Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: postgresql-libs
 
 %description postgresql
@@ -750,32 +727,9 @@ A PostgreSQL connector for the database front-end for LibreOffice. Allows
 creation and management of PostgreSQL databases through a GUI.
 %endif
 
-%package ure
-Summary: UNO Runtime Environment
-Group: Development/Libraries
-#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
-%if 0%{?__isa_bits} == 64
-%global mark64 ()(64bit)
-%endif
-Requires: unzip, libjvm.so%{?mark64}
-Obsoletes: openoffice.org-ure < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-ure = 1:3.3.0
-Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
-%endif
-
-%description ure
-UNO is the component model of LibreOffice. UNO offers interoperability between
-programming languages, other components models and hardware architectures,
-either in process or over process boundaries, in the Intranet as well as in the
-Internet. UNO components may be implemented in and accessed from any
-programming language for which a UNO implementation (AKA language binding) and
-an appropriate bridge or adapter exists
-
 %package sdk
 Summary: Software Development Kit for LibreOffice
 Group: Development/Libraries
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
@@ -807,7 +761,6 @@ and examples of creating extensions (UNO components) for LibreOffice.
 %package glade
 Summary: Support for creating LibreOffice dialogs in glade
 Group: Development/Libraries
-Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: glade3-libgladeui
 
@@ -1356,7 +1309,6 @@ pushd %{buildroot}%{sdkinstdir}
     sed -e "s,@OO_SDK_NAME@,sdk," \
         -e "s,@OO_SDK_HOME@,%{sdkinstdir}," \
         -e "s,@OFFICE_HOME@,%{baseinstdir}," \
-        -e "s,@OO_SDK_URE_HOME@,%{ureinstdir}," \
         -e "s,@OO_SDK_MAKE_HOME@,/usr/bin," \
         -e "s,@OO_SDK_ZIP_HOME@,/usr/bin," \
         -e "s,@OO_SDK_CPP_HOME@,/usr/bin," \
@@ -1430,14 +1382,6 @@ install -d -m 0755 %{buildroot}%{_fontdir}
 install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
 rm -rf %{buildroot}%{baseinstdir}/share/fonts
-
-%if 0%{?rhel} && 0%{?rhel} < 7
-#fix rpath for redland libs
-chrpath -r '$ORIGIN:$ORIGIN/../ure-link/lib' \
-    %{buildroot}%{baseinstdir}/program/libraptor2-lo.so.0 \
-    %{buildroot}%{baseinstdir}/program/librasqal-lo.so.3 \
-    %{buildroot}%{baseinstdir}/program/librdf-lo.so.0
-%endif
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through
@@ -1562,7 +1506,7 @@ for app in oobase oocalc oodraw ooffice ooimpress oomath ooviewdoc oowriter open
 done
 
 export DESTDIR=%{buildroot}
-make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
+./solenv/bin/install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
 
 # Update the screenshot shown in the software center
 #
@@ -1641,7 +1585,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
 %{baseinstdir}/program/gnome-open-url
-%{baseinstdir}/program/kde-open-url
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
@@ -1774,7 +1717,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libvbahelperlo.so
 %{baseinstdir}/program/libvclplug_genlo.so
 %{baseinstdir}/program/libvclplug_gtklo.so
-%{baseinstdir}/program/libvclplug_svplo.so
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
@@ -1900,7 +1842,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/lounorc
 %{baseinstdir}/program/libupdatefeedlo.so
-%{baseinstdir}/ure-link
 %{baseinstdir}/program/uri-encode
 %{baseinstdir}/program/libvbaeventslo.so
 %{baseinstdir}/program/libvclcanvaslo.so
@@ -1915,7 +1856,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/autotext/en-US
 %{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
-%{baseinstdir}/share/config/images_crystal.zip
+%{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
@@ -2062,6 +2003,56 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/soffice.1*
 %{_mandir}/man1/ooffice.1*
 %{_mandir}/man1/ooviewdoc.1*
+# URE
+%{baseinstdir}/program/classes/java_uno.jar
+%{baseinstdir}/program/classes/juh.jar
+%{baseinstdir}/program/classes/jurt.jar
+%{baseinstdir}/program/classes/ridl.jar
+%{baseinstdir}/program/classes/unoloader.jar
+%{baseinstdir}/program/javaldx
+%{baseinstdir}/program/javavendors.xml
+%{baseinstdir}/program/jvmfwk3rc
+%{baseinstdir}/program/JREProperties.class
+%{baseinstdir}/program/libaffine_uno_uno.so
+%{baseinstdir}/program/libbinaryurplo.so
+%{baseinstdir}/program/libbootstraplo.so
+%{baseinstdir}/program/libgcc3_uno.so
+%{baseinstdir}/program/libintrospectionlo.so
+%{baseinstdir}/program/libinvocadaptlo.so
+%{baseinstdir}/program/libinvocationlo.so
+%{baseinstdir}/program/libiolo.so
+%{baseinstdir}/program/libjava_uno.so
+%{baseinstdir}/program/libjavaloaderlo.so
+%{baseinstdir}/program/libjavavmlo.so
+%{baseinstdir}/program/libjpipe.so
+%{baseinstdir}/program/libjuh.so
+%{baseinstdir}/program/libjuhx.so
+%{baseinstdir}/program/libjvmaccesslo.so
+%{baseinstdir}/program/libjvmfwklo.so
+%{baseinstdir}/program/liblog_uno_uno.so
+%{baseinstdir}/program/libnamingservicelo.so
+%{baseinstdir}/program/libproxyfaclo.so
+%{baseinstdir}/program/libreflectionlo.so
+%{baseinstdir}/program/libreglo.so
+%{baseinstdir}/program/libsal_textenclo.so
+%{baseinstdir}/program/libstocserviceslo.so
+%{baseinstdir}/program/libstorelo.so
+%{baseinstdir}/program/libuno_cppu.so.3
+%{baseinstdir}/program/libuno_cppuhelpergcc3.so.3
+%{baseinstdir}/program/libuno_purpenvhelpergcc3.so.3
+%{baseinstdir}/program/libuno_sal.so.3
+%{baseinstdir}/program/libuno_salhelpergcc3.so.3
+%{baseinstdir}/program/libunoidllo.so
+%{baseinstdir}/program/libunsafe_uno_uno.so
+%{baseinstdir}/program/libuuresolverlo.so
+%{baseinstdir}/program/libxmlreaderlo.so
+%{baseinstdir}/program/regmerge
+%{baseinstdir}/program/regview
+%{baseinstdir}/program/services.rdb
+%{baseinstdir}/program/types.rdb
+%{baseinstdir}/program/uno
+%{baseinstdir}/program/uno.bin
+%{baseinstdir}/program/unorc
 
 %post core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2311,10 +2302,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/postgresql.xcd
 %endif
 
-%files ure
-%doc instdir/LICENSE
-%{ureinstdir}
-
 %files sdk
 %{sdkinstdir}/
 %exclude %{sdkinstdir}/docs/
@@ -2358,12 +2345,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %if 0%{?fedora}
 
 %files kde
+%{baseinstdir}/program/kde4-open-url
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
 %endif
 
 %changelog
+* Sun Apr 19 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-1.alpha1
+- update to 5.0.0 alpha1
+
 * Tue Apr 14 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.2.2-3
 - Resolves: rhbz#1197614 crash when updating extension
 - Resolves: rhbz#1134285 redundant user/password request for WebDAV access

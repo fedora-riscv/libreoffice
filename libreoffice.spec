@@ -1570,14 +1570,14 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 #
 # See http://people.freedesktop.org/~hughsient/appdata/#screenshots for more details.
 #
-appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-writer.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-writer.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png 
-appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-calc.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-calc.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png 
-appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-draw.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-draw.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
-appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-impress.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-impress.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
 
 %check

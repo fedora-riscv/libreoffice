@@ -349,6 +349,7 @@ Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires: %{name}-math = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter = %{epoch}:%{version}-%{release}
 
@@ -360,6 +361,7 @@ filters.
 Summary: Core modules for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -371,11 +373,6 @@ Requires: hunspell-en
 Requires: java-headless >= 1:1.6
 Requires: hunspell-en-US
 %endif
-#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
-%if 0%{?__isa_bits} == 64
-%global mark64 ()(64bit)
-%endif
-Requires: unzip, libjvm.so%{?mark64}
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -384,7 +381,6 @@ Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
-Obsoletes: libreoffice-ure < 1:5.0.0.0
 Obsoletes: openoffice.org-core < 1:3.3.1
 Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
 Obsoletes: openoffice.org-headless < 1:3.3.1
@@ -392,11 +388,9 @@ Obsoletes: openoffice.org-javafilter < 1:3.3.1
 Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
 Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
 Obsoletes: openoffice.org-testtools < 1:3.3.1
-Obsoletes: openoffice.org-ure < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
-Provides: libreoffice-ure = %{epoch}:%{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-core = 1:3.3.0
 Provides: openoffice.org-core%{?_isa} = 1:3.3.0
@@ -404,8 +398,6 @@ Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
 Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
 Provides: openoffice.org-headless = 1:3.3.0
 Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
-Provides: openoffice.org-ure = 1:3.3.0
-Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
 %endif
 
 %description core
@@ -415,6 +407,7 @@ The shared core libraries and support files for LibreOffice.
 Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 %if 0%{libo_python3}
 Requires: python3
 %else
@@ -442,6 +435,7 @@ Requires:  hsqldb
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-report-builder < 1:4.1.0.0
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
@@ -508,6 +502,7 @@ Requires: apache-commons-lang, apache-commons-logging
 %endif
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-wiki-publisher = 1:3.3.0
@@ -524,6 +519,7 @@ Summary: Non-linear solver engine for LibreOffice Calc
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 
 %description nlpsolver
 A non-linear solver engine for Calc as an alternative to the default linear
@@ -534,6 +530,7 @@ Summary: 3D OpenGL slide transitions for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-ogltrans = 1:3.3.0
@@ -549,6 +546,7 @@ Summary: PDF Importer for LibreOffice Draw
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-pdfimport < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-pdfimport = 1:3.3.0
@@ -580,6 +578,7 @@ Summary: LibreOffice Word Processor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -611,6 +610,7 @@ Summary: LibreOffice Spreadsheet Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -630,6 +630,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
 Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -647,6 +648,7 @@ Summary: LibreOffice Presentation Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
@@ -674,6 +676,7 @@ Summary: LibreOffice Equation Editor Application
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -690,6 +693,7 @@ The LibreOffice Equation Editor Application.
 Summary: LibreOffice Extra Graphic filters
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-graphicfilter = 1:3.3.0
@@ -720,6 +724,7 @@ Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: postgresql-libs
 
 %description postgresql
@@ -727,10 +732,33 @@ A PostgreSQL connector for the database front-end for LibreOffice. Allows
 creation and management of PostgreSQL databases through a GUI.
 %endif
 
+%package ure
+Summary: UNO Runtime Environment
+Group: Development/Libraries
+#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
+%if 0%{?__isa_bits} == 64
+%global mark64 ()(64bit)
+%endif
+Requires: unzip, libjvm.so%{?mark64}
+Obsoletes: openoffice.org-ure < 1:3.3.1
+%if 0%{?rhel} && 0%{?rhel} < 7
+Provides: openoffice.org-ure = 1:3.3.0
+Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
+%endif
+
+%description ure
+UNO is the component model of LibreOffice. UNO offers interoperability between
+programming languages, other components models and hardware architectures,
+either in process or over process boundaries, in the Intranet as well as in the
+Internet. UNO components may be implemented in and accessed from any
+programming language for which a UNO implementation (AKA language binding) and
+an appropriate bridge or adapter exists
+
 %package sdk
 Summary: Software Development Kit for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
 %if 0%{?rhel} && 0%{?rhel} < 7
@@ -762,6 +790,7 @@ and examples of creating extensions (UNO components) for LibreOffice.
 Summary: Support for creating LibreOffice dialogs in glade
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: glade3-libgladeui
 
 %description glade
@@ -2007,56 +2036,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/soffice.1*
 %{_mandir}/man1/ooffice.1*
 %{_mandir}/man1/ooviewdoc.1*
-# URE
-%{baseinstdir}/program/classes/java_uno.jar
-%{baseinstdir}/program/classes/juh.jar
-%{baseinstdir}/program/classes/jurt.jar
-%{baseinstdir}/program/classes/ridl.jar
-%{baseinstdir}/program/classes/unoloader.jar
-%{baseinstdir}/program/javaldx
-%{baseinstdir}/program/javavendors.xml
-%{baseinstdir}/program/jvmfwk3rc
-%{baseinstdir}/program/JREProperties.class
-%{baseinstdir}/program/libaffine_uno_uno.so
-%{baseinstdir}/program/libbinaryurplo.so
-%{baseinstdir}/program/libbootstraplo.so
-%{baseinstdir}/program/libgcc3_uno.so
-%{baseinstdir}/program/libintrospectionlo.so
-%{baseinstdir}/program/libinvocadaptlo.so
-%{baseinstdir}/program/libinvocationlo.so
-%{baseinstdir}/program/libiolo.so
-%{baseinstdir}/program/libjava_uno.so
-%{baseinstdir}/program/libjavaloaderlo.so
-%{baseinstdir}/program/libjavavmlo.so
-%{baseinstdir}/program/libjpipe.so
-%{baseinstdir}/program/libjuh.so
-%{baseinstdir}/program/libjuhx.so
-%{baseinstdir}/program/libjvmaccesslo.so
-%{baseinstdir}/program/libjvmfwklo.so
-%{baseinstdir}/program/liblog_uno_uno.so
-%{baseinstdir}/program/libnamingservicelo.so
-%{baseinstdir}/program/libproxyfaclo.so
-%{baseinstdir}/program/libreflectionlo.so
-%{baseinstdir}/program/libreglo.so
-%{baseinstdir}/program/libsal_textenclo.so
-%{baseinstdir}/program/libstocserviceslo.so
-%{baseinstdir}/program/libstorelo.so
-%{baseinstdir}/program/libuno_cppu.so.3
-%{baseinstdir}/program/libuno_cppuhelpergcc3.so.3
-%{baseinstdir}/program/libuno_purpenvhelpergcc3.so.3
-%{baseinstdir}/program/libuno_sal.so.3
-%{baseinstdir}/program/libuno_salhelpergcc3.so.3
-%{baseinstdir}/program/libunoidllo.so
-%{baseinstdir}/program/libunsafe_uno_uno.so
-%{baseinstdir}/program/libuuresolverlo.so
-%{baseinstdir}/program/libxmlreaderlo.so
-%{baseinstdir}/program/regmerge
-%{baseinstdir}/program/regview
-%{baseinstdir}/program/services.rdb
-%{baseinstdir}/program/types.rdb
-%{baseinstdir}/program/uno
-%{baseinstdir}/program/uno.bin
-%{baseinstdir}/program/unorc
 
 %post core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -2305,6 +2284,57 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
 %{baseinstdir}/share/registry/postgresql.xcd
 %endif
+
+%files ure
+%{baseinstdir}/program/classes/java_uno.jar
+%{baseinstdir}/program/classes/juh.jar
+%{baseinstdir}/program/classes/jurt.jar
+%{baseinstdir}/program/classes/ridl.jar
+%{baseinstdir}/program/classes/unoloader.jar
+%{baseinstdir}/program/javaldx
+%{baseinstdir}/program/javavendors.xml
+%{baseinstdir}/program/jvmfwk3rc
+%{baseinstdir}/program/JREProperties.class
+%{baseinstdir}/program/libaffine_uno_uno.so
+%{baseinstdir}/program/libbinaryurplo.so
+%{baseinstdir}/program/libbootstraplo.so
+%{baseinstdir}/program/libgcc3_uno.so
+%{baseinstdir}/program/libintrospectionlo.so
+%{baseinstdir}/program/libinvocadaptlo.so
+%{baseinstdir}/program/libinvocationlo.so
+%{baseinstdir}/program/libiolo.so
+%{baseinstdir}/program/libjava_uno.so
+%{baseinstdir}/program/libjavaloaderlo.so
+%{baseinstdir}/program/libjavavmlo.so
+%{baseinstdir}/program/libjpipe.so
+%{baseinstdir}/program/libjuh.so
+%{baseinstdir}/program/libjuhx.so
+%{baseinstdir}/program/libjvmaccesslo.so
+%{baseinstdir}/program/libjvmfwklo.so
+%{baseinstdir}/program/liblog_uno_uno.so
+%{baseinstdir}/program/libnamingservicelo.so
+%{baseinstdir}/program/libproxyfaclo.so
+%{baseinstdir}/program/libreflectionlo.so
+%{baseinstdir}/program/libreglo.so
+%{baseinstdir}/program/libsal_textenclo.so
+%{baseinstdir}/program/libstocserviceslo.so
+%{baseinstdir}/program/libstorelo.so
+%{baseinstdir}/program/libuno_cppu.so.3
+%{baseinstdir}/program/libuno_cppuhelpergcc3.so.3
+%{baseinstdir}/program/libuno_purpenvhelpergcc3.so.3
+%{baseinstdir}/program/libuno_sal.so.3
+%{baseinstdir}/program/libuno_salhelpergcc3.so.3
+%{baseinstdir}/program/libunoidllo.so
+%{baseinstdir}/program/libunsafe_uno_uno.so
+%{baseinstdir}/program/libuuresolverlo.so
+%{baseinstdir}/program/libxmlreaderlo.so
+%{baseinstdir}/program/regmerge
+%{baseinstdir}/program/regview
+%{baseinstdir}/program/services.rdb
+%{baseinstdir}/program/types.rdb
+%{baseinstdir}/program/uno
+%{baseinstdir}/program/uno.bin
+%{baseinstdir}/program/unorc
 
 %files sdk
 %{sdkinstdir}/

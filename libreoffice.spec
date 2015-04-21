@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.3.6
+%define libo_version 4.3.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -19,8 +19,8 @@
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 # default for f23 onwards
@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -348,34 +348,26 @@ Patch40: 0001-Resolves-rhbz-1161238-sync-PRESOBJ_OUTLINE-para-dept.patch
 Patch41: 0001-strip-off-hard-coded-numbering-from-outliner-preview.patch
 Patch42: 0001-have-a-stab-at-improving-impossible-question.patch
 Patch43: 0001-just-use-ANSI-C-declarations.patch
-Patch44: 0001-officecfg-set-VCL.WM.ShouldSwitchWorkspace-to-false.patch
-Patch47: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
-Patch49: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
-Patch50: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
-Patch51: 0001-fdo-37682-paint-the-right-area.patch
-Patch52: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
-Patch56: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
-Patch58: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
-Patch59: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
-Patch61: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
-Patch63: 0001-Resolves-rhbz-1162352-SwDataChanged-dtor-accesses-de.patch
-Patch65: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
-Patch67: 0001-rhbz-1184582-At-least-catch-and-log-UNO-exceptions-i.patch
-Patch70: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
-Patch71: 0001-rhbz-1177022-vcl-fix-PDF-embedding-of-Type-1-fonts.patch
-Patch72: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
-Patch73: 0001-Resolves-fdo-84887-TabBar-ImplShowPage-crash.patch
-Patch74: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
-Patch75: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
-Patch76: 0001-build-libetonyek-with-no-strict-aliasing.patch
-Patch77: 0002-propagate-user-set-CFLAGS-to-build.patch
-Patch78: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
-Patch79: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
-Patch80: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
-Patch81: 0001-Related-fdo-88455-crash-using-delete-in-available-fi.patch
-Patch82: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
-Patch83: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
-Patch84: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
+Patch44: 0001-Related-fdo-78151-only-make-outline-title-and-subtit.patch
+Patch45: 0001-ooo-93212-avoid-slicing-during-construction-of-SdrPa.patch
+Patch46: 0001-don-t-copy-stylesheet-s-HelpID-if-this-s-a-rename.patch
+Patch47: 0001-fdo-37682-paint-the-right-area.patch
+Patch48: 0001-Related-fdo-87242-init-VirtualDevice-with-size-of-su.patch
+Patch49: 0001-fdo-36772-Move-the-scrollbar-and-sheet-tabs-in-a-sep.patch
+Patch50: 0001-radio-check-top-center-bottom-alignment-for-table-ce.patch
+Patch51: 0001-allow-comparing-documents-which-only-differ-by-frame.patch
+Patch52: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
+Patch53: 0001-if-we-change-the-keys-we-have-to-resort-based-on-the.patch
+Patch54: 0001-don-t-strip-font-names-of-apparent-script-suffixes-a.patch
+Patch55: 0001-During-DocumentRedlineManager-SetRedlineMode-the-arr.patch
+Patch56: 0001-Resolves-rhbz-1193971-clear-hard-coded-char-props-in.patch
+Patch57: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
+Patch58: 0001-build-libetonyek-with-no-strict-aliasing.patch
+Patch59: 0002-propagate-user-set-CFLAGS-to-build.patch
+Patch60: 0001-fdo-69036-do-not-try-to-create-a-sfxApplication-when.patch
+Patch61: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
+Patch62: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
+Patch63: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2352,6 +2344,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Apr 21 2015 David Tardon <dtardon@redhat.com> - 1:4.3.7.2-1
+- update to 4.3.7
+
 * Tue Apr 14 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.3.6.2-9
 - Resolves: rhbz#1197614 crash when updating extension
 - Resolves: rhbz#1134285 redundant user/password request for WebDAV access

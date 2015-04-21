@@ -53,11 +53,6 @@ License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
 
-%if 0%{?rhel} && 0%{?rhel} >= 7
-# improve build time by only building for platforms libreoffice is shipped for
-ExcludeArch:    %{ix86} ppc ppc64 s390 s390x
-%endif
-
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
 Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
 Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz

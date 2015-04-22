@@ -177,6 +177,7 @@ BuildRequires: glm-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(glew)
+BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libcmis-0.5)
@@ -813,6 +814,15 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
+%package gtk3
+Summary: LibreOffice GTK+ 3 integration plug-in
+Group:   Applications/Productivity
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+
+%description gtk3
+A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
+This plugin is experimental and it is not suggested for normal use.
+
 %endif
 
 %if 0%{?_enable_debug_packages}
@@ -1204,7 +1214,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
 export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
@@ -2377,6 +2387,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/kde4-open-url
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
+
+%files gtk3
+%{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %endif
 

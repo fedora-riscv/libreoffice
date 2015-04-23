@@ -1266,7 +1266,6 @@ touch autogen.lastrun
  --with-system-opencollada \
  --with-system-ucpp \
  --without-fonts \
- --without-ppds \
  --without-system-npapi-headers \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \

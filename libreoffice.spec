@@ -23,8 +23,11 @@
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
+# limit to fedora, as it breaks building of some bundled projects
+%if 0%{?fedora}
 # default for f23 onwards
 %global _hardened_build 1
+%endif
 
 # get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,

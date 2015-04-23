@@ -1,4 +1,4 @@
-From f3e71fdf4ff42e49a872737f4da7b69f89e3cc23 Mon Sep 17 00:00:00 2001
+From c938bee66b52dd9d72fd0fe8eb4ebda0b6dafd25 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
@@ -10,8 +10,9 @@ Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
  filter/Configuration_filter.mk                           | 14 --------------
  writerperfect/Library_wpftwriter.mk                      |  2 --
  writerperfect/qa/unit/WpftWriterFilterTest.cxx           |  1 -
+ writerperfect/source/writer/wpftwriter.component         |  4 ----
  writerperfect/source/writer/wpftwriter_genericfilter.cxx |  6 ------
- 6 files changed, 29 deletions(-)
+ 7 files changed, 33 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
 index 8b8cc34..22a5c3c 100644
@@ -105,6 +106,19 @@ index 904daab..fb44878 100644
      doTest("com.sun.star.comp.Writer.MSWorksImportFilter", "/writerperfect/qa/unit/data/writer/libwps/");
      doTest("com.sun.star.comp.Writer.MWAWImportFilter", "/writerperfect/qa/unit/data/writer/libmwaw/");
      doTest("com.sun.star.comp.Writer.WordPerfectImportFilter", "/writerperfect/qa/unit/data/writer/libwpd/");
+diff --git a/writerperfect/source/writer/wpftwriter.component b/writerperfect/source/writer/wpftwriter.component
+index 8a204ec..8966bac 100644
+--- a/writerperfect/source/writer/wpftwriter.component
++++ b/writerperfect/source/writer/wpftwriter.component
+@@ -34,8 +34,4 @@
+     <service name="com.sun.star.document.ExtendedTypeDetection"/>
+     <service name="com.sun.star.document.ImportFilter"/>
+   </implementation>
+-  <implementation name="org.libreoffice.comp.Writer.EBookImportFilter">
+-    <service name="com.sun.star.document.ExtendedTypeDetection"/>
+-    <service name="com.sun.star.document.ImportFilter"/>
+-  </implementation>
+ </component>
 diff --git a/writerperfect/source/writer/wpftwriter_genericfilter.cxx b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
 index cd60fe2..fa2202f 100644
 --- a/writerperfect/source/writer/wpftwriter_genericfilter.cxx
@@ -130,5 +144,5 @@ index cd60fe2..fa2202f 100644
  };
  
 -- 
-2.3.5
+1.8.3.1
 

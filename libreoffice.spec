@@ -317,7 +317,7 @@ Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common GLEW\\|mwaw\\|odfgen\\|revenge\\|wps
+%global libo_bundled_libs_common GLEW\\|mwaw\\|odfgen\\|revenge\\|wpd\\|wpg\\|wps
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d
@@ -1693,6 +1693,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmwaw-0.3.so.*
 %{baseinstdir}/program/libodfgen-0.1.so.*
 %{baseinstdir}/program/librevenge-0.0.so.*
+%{baseinstdir}/program/libwpd-0.10.so.*
+%{baseinstdir}/program/libwpg-0.3.so.*
 %{baseinstdir}/program/libwps-0.3.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so

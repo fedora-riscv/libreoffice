@@ -370,6 +370,7 @@ Patch62: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch63: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch64: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
 Patch65: 0001-rhbz-1198848-sw-delete-all-table-redlines-to-fix-DOC.patch
+Patch66: 0001-Resolves-rhbz-1215060-get-LibreOffice-to-load-specif.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2346,8 +2347,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-3.UNBUILT
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-3
 - Resolves: rhbz#1198848  fix DOCX redline import crash
+- Resolves: rhbz#1215060 fix docx table import crash
 
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-2
 - Resolves: tdf#73211 fix gtk checkboxes droppings after toggle off

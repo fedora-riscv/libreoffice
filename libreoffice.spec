@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -369,6 +369,7 @@ Patch61: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
 Patch62: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
 Patch63: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch64: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
+Patch65: 0001-rhbz-1198848-sw-delete-all-table-redlines-to-fix-DOC.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2345,7 +2346,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-2
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-3.UNBUILT
+- Resolves: rhbz#1198848  fix DOCX redline import crash
+
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-2
 - Resolves: tdf#73211 fix gtk checkboxes droppings after toggle off
 
 * Tue Apr 21 2015 David Tardon <dtardon@redhat.com> - 1:4.3.7.2-1

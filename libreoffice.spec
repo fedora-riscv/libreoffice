@@ -126,6 +126,7 @@ BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
+BuildRequires: gdb
 BuildRequires: git
 BuildRequires: gperf
 BuildRequires: icu
@@ -1276,6 +1277,7 @@ touch autogen.lastrun
  %{?bundling_options} \
  %{?archoptions}
 
+ulimit -c unlimited
 make VERBOSE=true
 
 #generate the icons and mime type stuff

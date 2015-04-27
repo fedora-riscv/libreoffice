@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -372,6 +372,10 @@ Patch63: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch64: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
 Patch65: 0001-rhbz-1198848-sw-delete-all-table-redlines-to-fix-DOC.patch
 Patch66: 0001-Resolves-rhbz-1215060-get-LibreOffice-to-load-specif.patch
+Patch67: 0001-tdf-87400-sw-fix-SwIndexReg-assertion-in-AutoCorrect.patch
+Patch68: 0002-sw-fix-crash-on-SwUndoDelete-after-select-all-with-t.patch
+Patch69: 0003-rhbz-1205072-sw-resource-mangement-SNAFU-caused-by-S.patch
+Patch70: 0004-sw-fix-SwAccessibleParagraph-crash-on-delete.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2349,8 +2353,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-4.UNBUILT
+- Resolves: tdf#87400 ~SwIndexReg assertion in AutoCorrect
+- Resolves: rhbz#1205072 Writer crash when copying to clipboard
+
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-3
-- Resolves: rhbz#1198848  fix DOCX redline import crash
+- Resolves: rhbz#1198848 fix DOCX redline import crash
 - Resolves: rhbz#1215060 fix docx table import crash
 
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-2

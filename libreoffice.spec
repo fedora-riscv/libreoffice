@@ -324,6 +324,7 @@ Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
 Patch30: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
 Patch31: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
 Patch32: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
+Patch33: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2367,6 +2368,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Apr 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.2.2-5-UNBUILT
 - on using add color button don't frighten with an error message
+- the 'Edit' button is a color picker, rename and move
 
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.2.2-4
 - Resolves: tdf#73211 fix annoying checkbox droppings on toggle off

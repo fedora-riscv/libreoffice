@@ -1,0 +1,72 @@
+From 0de1b098c7ae85c3d3ce97c04f2d6512b05ace03 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 29 Apr 2015 16:23:06 +0100
+Subject: [PATCH] the 'Edit' button is a color picker, rename and move
+
+to the color value entry column
+
+Change-Id: I3c044fbff2e93c553f2eb8da33f99a944a6db336
+---
+ cui/uiconfig/ui/colorpage.ui | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
+
+diff --git a/cui/uiconfig/ui/colorpage.ui b/cui/uiconfig/ui/colorpage.ui
+index 8a5ff5f..5d91456 100644
+--- a/cui/uiconfig/ui/colorpage.ui
++++ b/cui/uiconfig/ui/colorpage.ui
+@@ -429,6 +429,22 @@
+                       </packing>
+                     </child>
+                     <child>
++                      <object class="GtkButton" id="edit">
++                        <property name="label">_Pick</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">True</property>
++                        <property name="use_underline">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">1</property>
++                        <property name="top_attach">5</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <placeholder/>
++                    </child>
++                    <child>
+                       <placeholder/>
+                     </child>
+                     <child>
+@@ -480,20 +496,6 @@
+                       </packing>
+                     </child>
+                     <child>
+-                      <object class="GtkButton" id="edit">
+-                        <property name="label">gtk-edit</property>
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="receives_default">True</property>
+-                        <property name="use_stock">True</property>
+-                      </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">2</property>
+-                      </packing>
+-                    </child>
+-                    <child>
+                       <object class="GtkButton" id="delete">
+                         <property name="label">gtk-delete</property>
+                         <property name="visible">True</property>
+@@ -504,7 +506,7 @@
+                       <packing>
+                         <property name="expand">False</property>
+                         <property name="fill">True</property>
+-                        <property name="position">3</property>
++                        <property name="position">2</property>
+                       </packing>
+                     </child>
+                     <child>
+-- 
+2.1.0
+

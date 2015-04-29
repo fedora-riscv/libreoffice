@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -323,6 +323,7 @@ Patch28: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
 Patch30: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
 Patch31: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
+Patch32: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2364,6 +2365,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.2.2-5-UNBUILT
+- on using add color button don't frighten with an error message
+
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.2.2-4
 - Resolves: tdf#73211 fix annoying checkbox droppings on toggle off
 

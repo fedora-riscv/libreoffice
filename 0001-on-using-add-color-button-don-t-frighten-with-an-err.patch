@@ -1,0 +1,173 @@
+From 9de9e0f579d0fac041eb3df2db2aa72b7cad9e96 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 29 Apr 2015 16:06:20 +0100
+Subject: [PATCH] on using 'add' color button, don't frighten with an error
+
+that the name already exists if the user didn't use the
+edit entry yet. Just always, like the gradient one, put
+up the dialog to enter a name, use the entry text if
+that name isn't taken, and generate a new one if its is.
+
+Change-Id: Ibd3d37db73ecdbae7998884d3397cbc2bc6b7c3f
+---
+ cui/source/tabpages/tpcolor.cxx  | 87 +++++++++++++++++++++++-----------------
+ cui/source/tabpages/tpgradnt.cxx | 12 +++---
+ 2 files changed, 56 insertions(+), 43 deletions(-)
+
+diff --git a/cui/source/tabpages/tpcolor.cxx b/cui/source/tabpages/tpcolor.cxx
+index 7dbda37..6ca1043 100644
+--- a/cui/source/tabpages/tpcolor.cxx
++++ b/cui/source/tabpages/tpcolor.cxx
+@@ -656,58 +656,70 @@ IMPL_LINK_NOARG(SvxColorTabPage, ModifiedHdl_Impl)
+ 
+ IMPL_LINK_NOARG(SvxColorTabPage, ClickAddHdl_Impl)
+ {
+-    vcl::Window *pWindow = this;
+-    while( pWindow )
+-    {
+-        pWindow = pWindow->GetParent();
+-    }
+-
+-    ResMgr& rMgr = CUI_MGR();
+-    OUString aDesc( ResId( RID_SVXSTR_DESC_COLOR, rMgr ) );
++    OUString aNewName( SVX_RES( RID_SVXSTR_COLOR ) );
++    OUString aDesc( CUI_RES( RID_SVXSTR_DESC_COLOR ) );
+     OUString aName( m_pEdtName->GetText() );
+-    XColorEntry* pEntry;
++
+     long nCount = pColorList->Count();
+-    bool bDifferent = true;
++    long j = 1;
+ 
+     // check if name is already existing
+-    for ( long i = 0; i < nCount && bDifferent; i++ )
+-        if ( aName == pColorList->GetColor( i )->GetName() )
+-            bDifferent = false;
++    while (1)
++    {
++        bool bDifferent = true;
++
++        for( long i = 0; i < nCount && bDifferent; i++ )
++            if ( aName == pColorList->GetColor( i )->GetName() )
++                bDifferent = false;
++
++        if (bDifferent)
++            break;
+ 
+-    // if yes, it is repeated and a new name is demanded
+-    if ( !bDifferent )
++        aName = aNewName;
++        aName += " ";
++        aName += OUString::number( j++ );
++    }
++
++    SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
++    boost::scoped_ptr<AbstractSvxNameDialog> pDlg(pFact->CreateSvxNameDialog( GetParentDialog(), aName, aDesc ));
++    boost::scoped_ptr<MessageDialog> pWarnBox;
++    sal_uInt16 nError = 1;
++
++    while (pDlg->Execute() == RET_OK)
+     {
+-        MessageDialog aWarningBox( GetParentDialog()
+-                                   ,"DuplicateNameDialog"
+-                                   ,"cui/ui/queryduplicatedialog.ui");
+-        aWarningBox.Execute();
++        pDlg->GetName( aName );
+ 
+-        SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
+-        boost::scoped_ptr<AbstractSvxNameDialog> pDlg(pFact->CreateSvxNameDialog( GetParentDialog(), aName, aDesc ));
+-        bool bLoop = true;
++        bool bDifferent = true;
+ 
+-        while ( !bDifferent && bLoop && pDlg->Execute() == RET_OK )
++        for (long i = 0; i < nCount && bDifferent; ++i)
+         {
+-            pDlg->GetName( aName );
+-            bDifferent = true;
++            if( aName == pColorList->GetColor( i )->GetName() )
++                bDifferent = false;
++        }
+ 
+-            for( long i = 0; i < nCount && bDifferent; i++ )
+-            {
+-                if( aName == pColorList->GetColor( i )->GetName() )
+-                    bDifferent = false;
+-            }
++        if (bDifferent)
++        {
++            nError = 0;
++            break;
++        }
+ 
+-            if( bDifferent )
+-                bLoop = false;
+-            else
+-                aWarningBox.Execute();
++        if( !pWarnBox )
++        {
++            pWarnBox.reset(new MessageDialog( GetParentDialog()
++                                        ,"DuplicateNameDialog"
++                                        ,"cui/ui/queryduplicatedialog.ui"));
+         }
++
++        if( pWarnBox->Execute() != RET_OK )
++            break;
+     }
+ 
+-    // if not existing the entry is entered
+-    if( bDifferent )
++    pDlg.reset();
++    pWarnBox.reset();
++
++    if (!nError)
+     {
+-        pEntry = new XColorEntry( aCurrentColor, aName );
++        XColorEntry* pEntry = new XColorEntry( aCurrentColor, aName );
+ 
+         pColorList->Insert( pEntry, pColorList->Count() );
+ 
+@@ -721,6 +733,7 @@ IMPL_LINK_NOARG(SvxColorTabPage, ClickAddHdl_Impl)
+ 
+         SelectColorLBHdl_Impl( this );
+     }
++
+     UpdateModified();
+ 
+     return 0;
+diff --git a/cui/source/tabpages/tpgradnt.cxx b/cui/source/tabpages/tpgradnt.cxx
+index a96b218..a33c391 100644
+--- a/cui/source/tabpages/tpgradnt.cxx
++++ b/cui/source/tabpages/tpgradnt.cxx
+@@ -426,23 +426,23 @@ IMPL_LINK_NOARG(SvxGradientTabPage, ClickAddHdl_Impl)
+     }
+ 
+     SvxAbstractDialogFactory* pFact = SvxAbstractDialogFactory::Create();
+-    DBG_ASSERT(pFact, "Dialog creation failed!");
+     boost::scoped_ptr<AbstractSvxNameDialog> pDlg(pFact->CreateSvxNameDialog( GetParentDialog(), aName, aDesc ));
+-    DBG_ASSERT(pDlg, "Dialog creation failed!");
+     boost::scoped_ptr<MessageDialog> pWarnBox;
+-    sal_uInt16         nError   = 1;
++    sal_uInt16 nError   = 1;
+ 
+-    while( pDlg->Execute() == RET_OK )
++    while (pDlg->Execute() == RET_OK)
+     {
+         pDlg->GetName( aName );
+ 
+         bDifferent = true;
+ 
+-        for( long i = 0; i < nCount && bDifferent; i++ )
++        for (long i = 0; i < nCount && bDifferent; ++i)
++        {
+             if( aName == pGradientList->GetGradient( i )->GetName() )
+                 bDifferent = false;
++        }
+ 
+-        if( bDifferent )
++        if (bDifferent)
+         {
+             nError = 0;
+             break;
+-- 
+2.1.0
+

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.2
+%define libo_version 4.4.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -315,16 +315,11 @@ Patch20: 0001-Use-the-same-advanced-Ellipse-and-Rectangle-shapes-i.patch
 Patch21: 0001-add-accel.-to-switch-monitors-to-pres.-console.patch
 Patch22: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
-Patch24: 0001-gdk-pixbuf-xlib-2.0-gdk-pixbuf-2.0.patch
-Patch25: 0001-Resolves-rhbz-1204244-group-sdb-windows-together-as-.patch
-Patch26: 0001-Resolves-tdf-90256-repair-invalid-docking-positions.patch
-Patch27: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
-Patch28: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
-Patch29: 0001-rhbz-1197614-Fix-calculation-of-m_bHasActive-when-re.patch
-Patch30: 0001-rhbz-1134285-Access-dav-davs-URLs-via-GVFS.patch
-Patch31: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
-Patch32: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
-Patch33: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
+Patch24: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
+Patch25: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
+Patch26: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
+Patch27: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
+Patch28: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2366,7 +2361,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Apr 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.2.2-5-UNBUILT
+* Wed Apr 29 2015 David Tardon <dtardon@redhat.com> - 1:4.4.3.2-1
+- update to 4.4.3
 - on using add color button don't frighten with an error message
 - the 'Edit' button is a color picker, rename and move
 

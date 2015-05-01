@@ -376,6 +376,7 @@ Patch67: 0001-tdf-87400-sw-fix-SwIndexReg-assertion-in-AutoCorrect.patch
 Patch68: 0002-sw-fix-crash-on-SwUndoDelete-after-select-all-with-t.patch
 Patch69: 0003-rhbz-1205072-sw-resource-mangement-SNAFU-caused-by-S.patch
 Patch70: 0004-sw-fix-SwAccessibleParagraph-crash-on-delete.patch
+Patch71: 0001-DOCX-import-fix-handling-of-dropdown-SDT-around-cell.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2353,9 +2354,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-4.UNBUILT
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-4
 - Resolves: tdf#87400 ~SwIndexReg assertion in AutoCorrect
 - Resolves: rhbz#1205072 Writer crash when copying to clipboard
+- Resolves: rhbz#1217569 import crash on loading specific .docx
 
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-3
 - Resolves: rhbz#1198848 fix DOCX redline import crash

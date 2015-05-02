@@ -1628,7 +1628,7 @@ export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
 %if 0%{?rhel} && 0%{?rhel} < 7
 timeout 2h make smoketest.subsequentcheck
 %else
-timeout -k 2m 2h make smoketest.subsequentcheck
+timeout -k 5m 3h make smoketest.subsequentcheck
 %endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

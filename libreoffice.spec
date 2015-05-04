@@ -48,7 +48,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -377,6 +377,7 @@ Patch68: 0002-sw-fix-crash-on-SwUndoDelete-after-select-all-with-t.patch
 Patch69: 0003-rhbz-1205072-sw-resource-mangement-SNAFU-caused-by-S.patch
 Patch70: 0004-sw-fix-SwAccessibleParagraph-crash-on-delete.patch
 Patch71: 0001-DOCX-import-fix-handling-of-dropdown-SDT-around-cell.patch
+Patch72: 0001-rhbz-1213173-connectivity-Calc-driver-prevent-docume.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2354,6 +2355,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-5.UNBUILT
+- Resolves: rhbz#1213173 Calc database driver: prevent document being disposed
+
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-4
 - Resolves: tdf#87400 ~SwIndexReg assertion in AutoCorrect
 - Resolves: rhbz#1205072 Writer crash when copying to clipboard

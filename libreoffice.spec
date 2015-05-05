@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -324,6 +324,8 @@ Patch25: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
 Patch26: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
 Patch27: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
 Patch28: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
+Patch29: 0001-use-a-sizegroup-to-stop-area-panel-jumping.patch
+Patch30: 0002-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2363,6 +2365,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue May 05 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-2
+- Use new color selector in the toolbar for area fill
+
 * Wed Apr 29 2015 David Tardon <dtardon@redhat.com> - 1:4.4.3.2-1
 - update to 4.4.3
 - on using add color button don't frighten with an error message

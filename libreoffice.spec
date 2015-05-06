@@ -382,6 +382,7 @@ Patch70: 0004-sw-fix-SwAccessibleParagraph-crash-on-delete.patch
 Patch71: 0001-DOCX-import-fix-handling-of-dropdown-SDT-around-cell.patch
 Patch72: 0001-rhbz-1213173-connectivity-Calc-driver-prevent-docume.patch
 Patch73: 0001-Resolves-tdf-90757-ensure-start-row-end-row-order-ma.patch
+Patch74: 0001-Resolves-tdf-91078-check-also-DBData-modified-not-on.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2360,6 +2361,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-5.UNBUILT
 - Resolves: rhbz#1213173 Calc database driver: prevent document being disposed
 - Resolves: tdf#90757 ensure start row / end row order makes sense
+- Resolves: tdf#91078 check also DBData modified, not only named expressions
 
 * Fri Apr 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-4
 - Resolves: tdf#87400 ~SwIndexReg assertion in AutoCorrect

@@ -1565,6 +1565,7 @@ done
 export DESTDIR=%{buildroot}
 make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb"
 
+%if 0%{?fedora}
 # Update the screenshot shown in the software center
 #
 # NOTE: It would be *awesome* if this file was pushed upstream.
@@ -1580,6 +1581,7 @@ appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffic
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
 appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffice-impress.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
+%endif
 
 %check
 unset WITH_LANG

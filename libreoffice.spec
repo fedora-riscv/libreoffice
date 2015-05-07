@@ -129,6 +129,7 @@ BuildRequires: desktop-file-utils
 BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
+BuildRequires: gdb
 BuildRequires: gcc-c++
 BuildRequires: git
 BuildRequires: gperf
@@ -1284,6 +1285,7 @@ touch autogen.lastrun
  %{?bundling_options} \
  %{?archoptions}
 
+ulimit -c unlimited
 make VERBOSE=true
 
 #generate the icons and mime type stuff

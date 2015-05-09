@@ -2360,7 +2360,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri May 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-5.UNBUILT
+* Sat May 09 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-5
 - Resolves: rhbz#1213173 Calc database driver: prevent document being disposed
 - Resolves: tdf#90757 ensure start row / end row order makes sense
 - Resolves: tdf#91078 check also DBData modified, not only named expressions

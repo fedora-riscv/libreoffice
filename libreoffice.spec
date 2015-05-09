@@ -1587,6 +1587,7 @@ appstream-util replace-screenshots $RPM_BUILD_ROOT%{_datadir}/appdata/libreoffic
 %endif
 
 %check
+ulimit -c unlimited
 unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"

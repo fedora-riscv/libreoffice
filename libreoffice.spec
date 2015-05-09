@@ -1626,6 +1626,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 
 
 %check
+ulimit -c unlimited
 unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"

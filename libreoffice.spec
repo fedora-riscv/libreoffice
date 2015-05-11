@@ -2371,7 +2371,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri May 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-3
+* Mon May 11 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-3
 - don't include red spelling underlines on bitmap copy/paste
 
 * Tue May 05 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-2

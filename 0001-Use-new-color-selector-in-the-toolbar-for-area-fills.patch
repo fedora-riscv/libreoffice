@@ -1,4 +1,4 @@
-From 6b8fc84d441fb671c3bec2ecd049efb55163cf73 Mon Sep 17 00:00:00 2001
+From 3756af985ceb1a34a2305ea94c6ac8153f4b2183 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 1 May 2015 17:15:31 +0100
 Subject: [PATCH] Use new color selector in the toolbar for area fills
@@ -1603,5 +1603,5 @@ index ea0d91d..f01a12d 100644
      Window::DataChanged(rDCEvt);
  }
 -- 
-2.1.0
+2.4.0
 

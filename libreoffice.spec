@@ -326,7 +326,7 @@ Patch26: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
 Patch27: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
 Patch28: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
 Patch29: 0001-use-a-sizegroup-to-stop-area-panel-jumping.patch
-Patch30: 0002-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
+Patch30: 0001-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
 Patch31: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 
 %define instdir %{_libdir}

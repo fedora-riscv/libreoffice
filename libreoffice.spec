@@ -1009,7 +1009,7 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-r:Requires: %{-r*}} \
 %{-o:Obsoletes: openoffice.org-langpack-%{-o*} < 1:3.3.1}%{!-o:%{-O:Obsoletes: openoffice.org-langpack-%{lang} < 1:3.3.1}} \
 %{-w:Obsoletes: openoffice.org2-langpack-%{-x*} < 1:3.0.0}%{!-x:%{-W:Obsoletes: openoffice.org2-langpack-%{lang} < 1:3.0.0}} \
-%{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < %1:2.0.3}} \
+%{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < 1:2.0.3}} \
 %{-p:Provides: %{name}-langpack-%{-p*}} \
 \
 %description %{pkgname} \

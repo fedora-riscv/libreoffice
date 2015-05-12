@@ -385,6 +385,7 @@ Patch73: 0001-Resolves-tdf-90757-ensure-start-row-end-row-order-ma.patch
 Patch74: 0001-Resolves-tdf-91078-check-also-DBData-modified-not-on.patch
 Patch75: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 Patch76: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch77: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

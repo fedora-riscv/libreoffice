@@ -181,7 +181,7 @@ BuildRequires: firebird-libfbembed
 BuildRequires: glm-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
-BuildRequires: pkgconfig(glew)
+BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
@@ -312,6 +312,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-ppc64-do-not-use-asm-block-to-retrieve-args.patch
+Patch18: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

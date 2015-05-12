@@ -328,6 +328,7 @@ Patch28: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
 Patch29: 0001-use-a-sizegroup-to-stop-area-panel-jumping.patch
 Patch30: 0001-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
 Patch31: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
+Patch32: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

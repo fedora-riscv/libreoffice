@@ -188,7 +188,7 @@ BuildRequires: firebird-libfbembed
 BuildRequires: glm-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
-BuildRequires: pkgconfig(glew)
+BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libe-book-0.1)

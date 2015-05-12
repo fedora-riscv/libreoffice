@@ -1,4 +1,4 @@
-From d8eee8e4d1a303044bf34b28c2e95bd6da23fd79 Mon Sep 17 00:00:00 2001
+From 337e7e62285ff90978438173a2ba8899eabc3955 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Tue, 12 May 2015 12:10:16 +0200
 Subject: [PATCH] java dir for powepc64 and powepc64le can differ
@@ -10,9 +10,9 @@ This is a follow-up to commit 7a66dbe982623be620ad6ac426fe689a434e5f51.
 
 Change-Id: I685f76d51e9775788a7fb225c6a5e2309a45ceb7
 ---
- config_host/config_java.h.in | 6 ++++++
- configure.ac                 | 3 +++
- jvmfwk/inc/vendorbase.hxx    | 6 +++++-
+ config_host/config_java.h.in                     | 6 ++++++
+ configure.ac                                     | 3 +++
+ jvmfwk/plugins/sunmajor/pluginlib/vendorbase.hxx | 6 +++++-
  3 files changed, 14 insertions(+), 1 deletion(-)
  create mode 100644 config_host/config_java.h.in
 
@@ -29,10 +29,10 @@ index 0000000..8b23de9
 +
 +#endif
 diff --git a/configure.ac b/configure.ac
-index 55157a9..5414754 100644
+index d8266b4..d764c33 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7002,6 +7002,7 @@ then
+@@ -7259,6 +7259,7 @@ then
              ;;
          powerpc64le)
              AS_IF([test -d "$JAVA_HOME/jre/lib/ppc64le"], [my_java_arch=ppc64le], [my_java_arch=ppc64])
@@ -40,7 +40,7 @@ index 55157a9..5414754 100644
              ;;
          x86_64)
              my_java_arch=amd64
-@@ -7011,6 +7012,7 @@ then
+@@ -7268,6 +7269,7 @@ then
              ;;
          esac
          JAWTLIB="-L$JAVA_HOME/jre/lib/$my_java_arch -ljawt"
@@ -48,18 +48,18 @@ index 55157a9..5414754 100644
      fi
      AC_MSG_RESULT([$JAWTLIB])
  fi
-@@ -12988,6 +12990,7 @@ AC_CONFIG_HEADERS([config_host/config_folders.h])
+@@ -13042,6 +13044,7 @@ AC_CONFIG_HEADERS([config_host/config_folders.h])
  AC_CONFIG_HEADERS([config_host/config_gcc.h])
  AC_CONFIG_HEADERS([config_host/config_global.h])
  AC_CONFIG_HEADERS([config_host/config_graphite.h])
 +AC_CONFIG_HEADERS([config_host/config_java.h])
  AC_CONFIG_HEADERS([config_host/config_lgpl.h])
- AC_CONFIG_HEADERS([config_host/config_liblangtag.h])
  AC_CONFIG_HEADERS([config_host/config_locales.h])
-diff --git a/jvmfwk/inc/vendorbase.hxx b/jvmfwk/inc/vendorbase.hxx
-index 2ecd01f..a01db56 100644
---- a/jvmfwk/inc/vendorbase.hxx
-+++ b/jvmfwk/inc/vendorbase.hxx
+ AC_CONFIG_HEADERS([config_host/config_mpl.h])
+diff --git a/jvmfwk/plugins/sunmajor/pluginlib/vendorbase.hxx b/jvmfwk/plugins/sunmajor/pluginlib/vendorbase.hxx
+index 29f2641..ffc05c1 100644
+--- a/jvmfwk/plugins/sunmajor/pluginlib/vendorbase.hxx
++++ b/jvmfwk/plugins/sunmajor/pluginlib/vendorbase.hxx
 @@ -20,6 +20,8 @@
  #ifndef INCLUDED_JVMFWK_PLUGINS_SUNMAJOR_PLUGINLIB_VENDORBASE_HXX
  #define INCLUDED_JVMFWK_PLUGINS_SUNMAJOR_PLUGINLIB_VENDORBASE_HXX

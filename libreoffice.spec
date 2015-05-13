@@ -1221,16 +1221,16 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 # make segfaults on parallel build
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer-1.0 --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
 %else # rhel7
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer-1.0 --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer --with-system-mythes --with-system-opencollada %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-eot --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer-1.0 --with-system-mythes --with-system-opencollada %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
 export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif

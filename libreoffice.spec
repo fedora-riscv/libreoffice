@@ -88,7 +88,7 @@ Source16:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.ta
 Source17:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source18:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
 Source19:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
-Source20:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
+Source20:       %{external_url}/10d61fbaa6a06348823651b1bd7940fe-libexttextcat-3.4.4.tar.bz2
 Source21:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source22:       %{external_url}/lcms2-2.6.tar.gz
 Source23:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
@@ -316,7 +316,17 @@ BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
 %endif
+
+%if 0%{?rhel} && 0%{?rhel} < 7
+%ifarch %{ix86} x86_64 s390 s390x
+BuildRequires: java-devel >= 1:1.6.0
+%else
 BuildRequires: java-devel
+%endif
+%else
+BuildRequires: java-devel
+%endif
+
 BuildRequires: jakarta-commons-httpclient
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: junit
@@ -1265,7 +1275,7 @@ rm -f gcc48-*.rpm
 cd -
 PATH=%{_rpmdir}/usr/bin:$PATH
 export PATH
-export CXX=g++
+export CXX="%{_rpmdir}/usr/bin/g++ -pthread"
 %endif  # bundled gcc
 
 

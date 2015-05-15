@@ -133,6 +133,8 @@ BuildRequires: binutils
 BuildRequires: bison
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: chrpath
+BuildRequires: devtoolset-2-binutils
+BuildRequires: devtoolset-2-gcc-c++
 %endif
 BuildRequires: desktop-file-utils
 BuildRequires: doxygen
@@ -1239,8 +1241,11 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
+%global devtoolset_path /opt/rh/devtoolset-2/root
 # make segfaults on parallel build
 %define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer-1.0 --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
+export PATH=%{devtoolset_path}%{_bindir}:$PATH
+export LD_LIBRARY_PATH=%{devtoolset_path}%{_libdir}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth

@@ -84,7 +84,7 @@ Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
 %if 0%{?rhel} < 7
 Source15:       gcc48-%{gcc_version}.el6.src.rpm
-Source16:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
+Source16:       %{external_url}/a8c2c5b8f09e7ede322d5c602ff6a4b6-mythes-1.2.4.tar.gz
 Source17:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
 Source18:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
 Source19:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz

@@ -9,7 +9,6 @@
 %define vendoroption --with-vendor="Red Hat, Inc."
 %define libo_python3 %{nil}
 %define libo_python_sitearch %{python_sitearch}
-%define gcc_version             4.8.2-15
 %endif
 %if 0%{?fedora}
 %define libo_python3 1
@@ -83,39 +82,38 @@ Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.
 Source14:       %{external_url}/cb4207cb913c7a5a8bfa5b91234618ee-mdds_0.11.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
 %if 0%{?rhel} < 7
-Source15:       gcc48-%{gcc_version}.el6.src.rpm
-Source16:       %{external_url}/a8c2c5b8f09e7ede322d5c602ff6a4b6-mythes-1.2.4.tar.gz
-Source17:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
-Source18:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
-Source19:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
-Source20:       %{external_url}/10d61fbaa6a06348823651b1bd7940fe-libexttextcat-3.4.4.tar.bz2
-Source21:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source22:       %{external_url}/lcms2-2.6.tar.gz
-Source23:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source24:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
-Source25:       %{external_url}/harfbuzz-0.9.23.tar.bz2
-Source26:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+Source15:       %{external_url}/a8c2c5b8f09e7ede322d5c602ff6a4b6-mythes-1.2.4.tar.gz
+Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
+Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
+Source18:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
+Source19:       %{external_url}/10d61fbaa6a06348823651b1bd7940fe-libexttextcat-3.4.4.tar.bz2
+Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
+Source21:       %{external_url}/lcms2-2.6.tar.gz
+Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
+Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
+Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
-Source27:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
-Source28:       %{external_url}/libcdr-0.1.1.tar.bz2
-Source29:       %{external_url}/libwpg-0.3.0.tar.bz2
-Source30:       %{external_url}/libwpd-0.10.0.tar.bz2
-Source31:       %{external_url}/libwps-0.3.1.tar.bz2
-Source32:       %{external_url}/libvisio-0.1.1.tar.bz2
-Source33:       %{external_url}/libmspub-0.1.2.tar.bz2
-Source34:       %{external_url}/libodfgen-0.1.3.tar.bz2
-Source35:       %{external_url}/libmwaw-0.3.4.tar.bz2
-Source36:       %{external_url}/libetonyek-0.1.1.tar.bz2
-Source37:       %{external_url}/libfreehand-0.1.0.tar.bz2
-Source38:       %{external_url}/libabw-0.1.1.tar.bz2
-Source39:       %{external_url}/librevenge-0.0.2.tar.bz2
-Source40:       %{external_url}/libpagemaker-0.0.2.tar.bz2
+Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
+Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
+Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
+Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
+Source30:       %{external_url}/libwps-0.3.1.tar.bz2
+Source31:       %{external_url}/libvisio-0.1.1.tar.bz2
+Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
+Source33:       %{external_url}/libodfgen-0.1.3.tar.bz2
+Source34:       %{external_url}/libmwaw-0.3.4.tar.bz2
+Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
+Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
+Source37:       %{external_url}/libabw-0.1.1.tar.bz2
+Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
+Source39:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libpagemaker
 %endif
 
 %if 0%{?fedora}
-Source41:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
+Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 %endif
 
 # symbolic icons
@@ -234,59 +232,6 @@ BuildRequires: postgresql-devel
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: gstreamer-devel
 BuildRequires: gstreamer-plugins-base-devel
-
-# start bundled gcc BuildRequires
-
-%ifarch s390x
-%global multilib_32_arch s390
-%endif
-%ifarch sparc64
-%global multilib_32_arch sparcv9
-%endif
-%ifarch ppc64
-%global multilib_32_arch ppc
-%endif
-%ifarch x86_64
-%global multilib_32_arch i686
-%endif
-
-%global multilib_64_archs sparc64 ppc64 s390x x86_64
-
-# Need binutils which support --build-id >= 2.17.50.0.17-3
-# Need binutils which support %gnu_unique_object >= 2.19.51.0.14
-# Need binutils which support .cfi_sections >= 2.19.51.0.14-33
-BuildRequires: binutils >= 2.19.51.0.14-33
-# While gcc doesn't include statically linked binaries, during testing
-# -static is used several times.
-BuildRequires: glibc-static
-BuildRequires: zlib-devel, gettext, dejagnu, bison, flex, texinfo, sharutils
-BuildRequires: /usr/bin/pod2man
-#BuildRequires: systemtap-sdt-devel >= 1.3
-# For VTA guality testing
-BuildRequires: gdb
-# Make sure pthread.h doesn't contain __thread tokens
-# Make sure glibc supports stack protector
-# Make sure glibc supports DT_GNU_HASH
-BuildRequires: glibc-devel >= 2.4.90-13
-BuildRequires: elfutils-devel >= 0.147
-BuildRequires: elfutils-libelf-devel >= 0.147
-%ifarch ppc ppc64 s390 s390x sparc sparcv9 alpha
-# Make sure glibc supports TFmode long double
-BuildRequires: glibc >= 2.3.90-35
-%endif
-%ifarch %{multilib_64_archs} sparcv9 ppc
-# Ensure glibc{,-devel} is installed for both multilib arches
-BuildRequires: /lib/libc.so.6 /usr/lib/libc.so /lib64/libc.so.6 /usr/lib64/libc.so
-%endif
-%ifarch ia64
-BuildRequires: libunwind >= 0.98
-%endif
-BuildRequires: gmp-devel >= 4.1.2-8
-BuildRequires: mpfr-devel >= 2.2.1
-
-# end bundled gcc BuildRequires
-
-
 %else
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
@@ -1267,27 +1212,6 @@ mv .git .git-rpm
 %build
 echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}
-
-#on rhel-6 build our own gcc, copy and pasted from the firefox solution
-%if 0%{?rhel} && 0%{?rhel} < 7
-GCC_FILE="gcc48-%{gcc_version}*.rpm"
-GCC_PATH="%{_rpmdir}"
-
-rpmbuild --nodeps --rebuild %{SOURCE15}
-cd %{_rpmdir}
-if [ ! -f $GCC_PATH/$GCC_FILE ]; then
-    GCC_PATH="$GCC_PATH/%{_arch}"
-fi
-rpm2cpio $GCC_PATH/$GCC_FILE | cpio -iduv
-# Clean gcc48 rpms to avoid including them to package
-rm -f gcc48-*.rpm
-cd -
-PATH=%{_rpmdir}/usr/bin:$PATH
-export PATH
-export CXX="%{_rpmdir}/usr/bin/g++ -pthread"
-%endif  # bundled gcc
-
-
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 

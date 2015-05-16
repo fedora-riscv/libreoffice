@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -115,6 +115,15 @@ Source39:       %{external_url}/libpagemaker-0.0.2.tar.bz2
 %if 0%{?fedora}
 Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 %endif
+
+# symbolic icons
+Source42:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-base-symbolic.svg
+Source43:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-calc-symbolic.svg
+Source44:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-draw-symbolic.svg
+Source45:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-impress-symbolic.svg
+Source46:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-main-symbolic.svg
+Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-math-symbolic.svg
+Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
 
 # build tools
 BuildRequires: autoconf
@@ -1541,6 +1550,16 @@ mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{
 install -m 0755 -d %{buildroot}%{_datadir}/appdata
 install -m 0644 -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
 
+# rhbz#1215800 install symbolic icons
+install -m 0755 -d %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE42} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE43} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE44} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE45} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE46} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE47} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+install -m 0644 -p %{SOURCE48} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
+
 # install man pages
 install -m 0755 -d %{buildroot}%{_mandir}/man1
 install -m 0644 -p sysui/desktop/man/*.1 %{buildroot}%{_mandir}/man1
@@ -2404,6 +2423,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat May 16 2015 Kalev Lember <kalevlember@gmail.com> - 1:5.0.0.0-2.alpha1
+- Resolves: rhbz#1215800 install symbolic icons
+
 * Sun Apr 19 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-1.alpha1
 - update to 5.0.0 alpha1
 

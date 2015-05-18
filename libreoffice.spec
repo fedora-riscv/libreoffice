@@ -327,6 +327,7 @@ Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 Patch17: 0001-ppc64-do-not-use-asm-block-to-retrieve-args.patch
 Patch18: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch19: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch20: 0001-add-missing-includes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

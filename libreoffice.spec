@@ -351,6 +351,7 @@ Patch30: 0001-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
 Patch31: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 Patch32: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch33: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch34: 0001-add-missing-includes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -386,6 +386,7 @@ Patch74: 0001-Resolves-tdf-91078-check-also-DBData-modified-not-on.patch
 Patch75: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 Patch76: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch77: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch78: 0001-rulers-Make-the-numbers-a-bit-smaller-and-always-wit.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2362,6 +2363,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue May 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-6
+- Resolves: rhbz#1219137 tweak ruler for happenchance side-effect
+
 * Sat May 09 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-5
 - Resolves: rhbz#1213173 Calc database driver: prevent document being disposed
 - Resolves: tdf#90757 ensure start row / end row order makes sense

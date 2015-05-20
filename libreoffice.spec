@@ -3,7 +3,8 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .alpha1
+%define libo__prerelease beta1
+%define libo_prerelease .%{?libo__prerelease}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -51,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -91,7 +92,7 @@ Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.
 Source21:       %{external_url}/lcms2-2.6.tar.gz
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
-Source24:       %{external_url}/harfbuzz-0.9.23.tar.bz2
+Source24:       %{external_url}/harfbuzz-0.9.40.tar.bz2
 Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
@@ -99,12 +100,12 @@ Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.t
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
-Source30:       %{external_url}/libwps-0.3.1.tar.bz2
+Source30:       %{external_url}/libwps-0.4.0.tar.bz2
 Source31:       %{external_url}/libvisio-0.1.1.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
-Source33:       %{external_url}/libodfgen-0.1.3.tar.bz2
-Source34:       %{external_url}/libmwaw-0.3.4.tar.bz2
-Source35:       %{external_url}/libetonyek-0.1.1.tar.bz2
+Source33:       %{external_url}/libodfgen-0.1.4.tar.bz2
+Source34:       %{external_url}/libmwaw-0.3.5.tar.bz2
+Source35:       %{external_url}/libetonyek-0.1.2.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
@@ -213,7 +214,7 @@ BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
 BuildRequires: pkgconfig(libwpg-0.3)
-BuildRequires: pkgconfig(libwps-0.3)
+BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds) >= 0.12.0
 %endif
 
@@ -324,10 +325,6 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-ppc64-do-not-use-asm-block-to-retrieve-args.patch
-Patch18: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
-Patch19: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
-Patch20: 0001-add-missing-includes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1159,7 +1156,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
+%setup -q -n %{name}-%{version}%{?libo__prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 
 # set up git repo
@@ -2431,6 +2428,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed May 20 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-3.beta1
+- update to 5.0.0 beta1
+
 * Sat May 16 2015 Kalev Lember <kalevlember@gmail.com> - 1:5.0.0.0-2.alpha1
 - Resolves: rhbz#1215800 install symbolic icons
 

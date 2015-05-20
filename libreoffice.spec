@@ -1186,6 +1186,9 @@ cp -r translations/source/en-GB translations/source/ms
 cp -r translations/source/en-GB translations/source/ur
 git add -A
 git commit -q -a -m 'fix translations'
+
+sed -i -e /CppunitTest_lotuswordpro_test_lotuswordpro/d lotuswordpro/Module_lotuswordpro.mk
+git commit -q -a -m 'disable hanging test'
 %endif
 
 # Seeing .git dir makes some of the build tools change their behavior.

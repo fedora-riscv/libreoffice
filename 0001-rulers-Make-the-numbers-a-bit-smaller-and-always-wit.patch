@@ -1,4 +1,4 @@
-From 9f3ce795c2ecf5f8ca41b9b4bd24f001fcad59aa Mon Sep 17 00:00:00 2001
+From e17e162d0d61a3320b7d69e1a505eed3732c1a6d Mon Sep 17 00:00:00 2001
 From: Jan Holesovsky <kendy@collabora.com>
 Date: Wed, 3 Dec 2014 11:07:18 +0100
 Subject: [PATCH] rulers: Make the numbers a bit smaller, and always with odd
@@ -10,10 +10,10 @@ Change-Id: Id27bb0435d00f2026ff8c82ed246ca67947e9e42
  1 file changed, 14 insertions(+)
 
 diff --git a/svtools/source/control/ruler.cxx b/svtools/source/control/ruler.cxx
-index b49421c..1656813 100644
+index 29655de..c9727cb 100644
 --- a/svtools/source/control/ruler.cxx
 +++ b/svtools/source/control/ruler.cxx
-@@ -991,6 +991,15 @@ void Ruler::ImplDrawTabs( long nMin, long nMax, long nVirTop, long nVirBottom )
+@@ -992,6 +992,15 @@ void Ruler::ImplDrawTabs( long nMin, long nMax, long nVirTop, long nVirBottom )
      }
  }
  
@@ -29,9 +29,9 @@ index b49421c..1656813 100644
  void Ruler::ImplInitSettings( bool bFont, bool bForeground, bool bBackground )
  {
      const StyleSettings& rStyleSettings = GetSettings().GetStyleSettings();
-@@ -999,6 +1008,11 @@ void Ruler::ImplInitSettings( bool bFont, bool bForeground, bool bBackground )
+@@ -1000,6 +1009,11 @@ void Ruler::ImplInitSettings( bool bFont, bool bForeground, bool bBackground )
      {
-         vcl::Font aFont;
+         Font aFont;
          aFont = rStyleSettings.GetToolFont();
 +
 +        // make the font a bit smaller than default
@@ -42,5 +42,5 @@ index b49421c..1656813 100644
              aFont.Merge( GetControlFont() );
          SetZoomedPointFont( aFont );
 -- 
-2.1.0
+2.4.0
 

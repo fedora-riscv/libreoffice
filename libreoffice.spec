@@ -396,7 +396,7 @@ Patch78: 0001-rulers-Make-the-numbers-a-bit-smaller-and-always-wit.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common GLEW\\|mwaw\\|odfgen\\|revenge\\|wps
+%global libo_bundled_libs_common GLEW\\|mwaw-0.3\\|odfgen-0.1\\|revenge-0.0\\|wps-0.3
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d

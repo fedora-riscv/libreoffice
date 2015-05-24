@@ -333,7 +333,7 @@ Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common etonyek-0.1\\|GLEW\\|mwaw\\|odfgen\\|revenge\\|wpd\\|wpg\\|wps
+%global libo_bundled_libs_common etonyek-0.1\\|GLEW\\|mwaw-0.3\\|odfgen-0.1\\|revenge-0.0\\|wpd-0.10\\|wpg-0.3\\|wps-0.4
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d

@@ -1726,7 +1726,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/librevenge-0.0.so.*
 %{baseinstdir}/program/libwpd-0.10.so.*
 %{baseinstdir}/program/libwpg-0.3.so.*
-%{baseinstdir}/program/libwps-0.3.so.*
+%{baseinstdir}/program/libwps-0.4.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so

@@ -36,7 +36,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -359,6 +359,7 @@ Patch100: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch101: 0002-propagate-user-set-CFLAGS-to-build.patch
 Patch102: 0001-Resolves-tdf-89958-filter-ends-with-does-not-end-wit.patch
 Patch103: 0001-check-if-reads-were-successful.patch
+Patch104: 0001-merge-missing-translation.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2301,6 +2302,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 25 2015 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-9-UNBUILT
+- Resolves: rhbz#1223696 some labels in print dialog are not translated, even
+  though the translations exist
+
 * Tue Apr 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.2.8.2-8
 - Resolves: rhbz#1216044 CVE-2015-1774 hwp filter fix
 - Resolves: rhbz#1204244 group sdb windows together as 'base'

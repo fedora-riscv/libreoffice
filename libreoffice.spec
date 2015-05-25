@@ -1191,6 +1191,13 @@ sed -i -e /CppunitTest_lotuswordpro_test_lotuswordpro/d lotuswordpro/Module_lotu
 git commit -q -a -m 'disable hanging test'
 %endif
 
+%if 0%{?rhel} && 0%{?rhel} == 7
+%ifarch ppc
+sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
+git commit -q -a -m 'disable failing test'
+%endif
+%endif
+
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm

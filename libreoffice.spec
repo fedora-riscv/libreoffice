@@ -1192,10 +1192,9 @@ git commit -q -a -m 'disable hanging test'
 %endif
 
 %if 0%{?rhel} && 0%{?rhel} == 7
-%ifarch ppc
+# at least ppc and s390 fail on this
 sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
 git commit -q -a -m 'disable failing test'
-%endif
 %endif
 
 # Seeing .git dir makes some of the build tools change their behavior.

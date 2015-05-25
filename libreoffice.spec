@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -352,6 +352,7 @@ Patch31: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 Patch32: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch33: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch34: 0001-add-missing-includes.patch
+Patch35: 0001-impress-right-click-to-insert-image.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2411,6 +2412,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 25 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-5
+- right click in impress to add graphic
+
 * Sat May 16 2015 Kalev Lember <kalevlember@gmail.com> - 1:4.4.3.2-4
 - Resolves: rhbz#1215800 install symbolic icons
 

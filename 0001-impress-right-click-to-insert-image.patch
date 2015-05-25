@@ -1,0 +1,53 @@
+From f7822fdd22af2e189dcbd156055d6ef64efe83e2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 25 May 2015 15:00:47 +0100
+Subject: [PATCH] impress: right click to insert image
+
+Change-Id: I521f074bbd500b81d74be7e0e771bd49efc29c9c
+---
+ include/svx/svxcommands.h         | 1 +
+ sd/source/ui/app/menuids_tmpl.src | 9 +++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/include/svx/svxcommands.h b/include/svx/svxcommands.h
+index 3f31dd1..273de64 100644
+--- a/include/svx/svxcommands.h
++++ b/include/svx/svxcommands.h
+@@ -84,6 +84,7 @@
+ #define CMD_SID_GRID_USE                            ".uno:GridUse"
+ #define CMD_SID_GRID_VISIBLE                        ".uno:GridVisible"
+ #define CMD_SID_OUTLINE_MAKE                        ".uno:Group"
++#define CMD_SID_INSERT_GRAPHIC                      ".uno:InsertGraphic"
+ #define CMD_SID_INSERT_POSTIT                       ".uno:InsertAnnotation"
+ #define CMD_SID_REPLYTO_POSTIT                      ".uno:ReplyToAnnotation"
+ #define CMD_SID_RULER                               ".uno:ShowRuler"
+diff --git a/sd/source/ui/app/menuids_tmpl.src b/sd/source/ui/app/menuids_tmpl.src
+index 7944b1c..36bdaeb 100644
+--- a/sd/source/ui/app/menuids_tmpl.src
++++ b/sd/source/ui/app/menuids_tmpl.src
+@@ -35,6 +35,14 @@
+         Text [ en-US ] = "~Distribution..." ; \
+     };
+ 
++#define MN_INSERT_GRAPHIC \
++    MenuItem\
++    {\
++        Identifier = SID_INSERT_GRAPHIC; \
++        HelpId = CMD_SID_INSERT_GRAPHIC; \
++        Text [ en-US ] = "Insert I~mage..." ; \
++    };
++
+ #define MN_CAPTUREPOINT \
+     MenuItem\
+     {\
+@@ -151,6 +159,7 @@
+ 
+ #define MN_SLIDE_MENU \
+     MN_SELECT_BACKGROUND\
++    MN_INSERT_GRAPHIC\
+     MN_FORMAT_PAGE\
+     MenuItem\
+     {\
+-- 
+2.4.0
+

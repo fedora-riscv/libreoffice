@@ -1,0 +1,97 @@
+From c6636037418341eb84119271461970bb73ecaa36 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 26 May 2015 13:58:05 +0100
+Subject: [PATCH] Resolves: tdf#89904 allow the options color page to load/save
+ palettes
+
+Change-Id: I02c5d57db9ffb854b096c9382d740923e9cc3b89
+(cherry picked from commit 0f98a035806aed03ba56e292bc7ee17b242ff2a0)
+
+dynamic_cast of this to the type is already is
+
+(cherry picked from commit 004b026865839a044fb9cd2e08e5eca46a64c8fe)
+---
+ cui/source/inc/cuitabarea.hxx   |  1 -
+ cui/source/tabpages/tpcolor.cxx | 23 ++++++-----------------
+ 2 files changed, 6 insertions(+), 18 deletions(-)
+
+diff --git a/cui/source/inc/cuitabarea.hxx b/cui/source/inc/cuitabarea.hxx
+index 20d4ed2..38d6f99 100644
+--- a/cui/source/inc/cuitabarea.hxx
++++ b/cui/source/inc/cuitabarea.hxx
+@@ -652,7 +652,6 @@ private:
+     DECL_LINK( ClickSaveHdl_Impl, void * );
+ 
+     XPropertyListRef GetList();
+-    void HideLoadSaveEmbed();
+     bool GetEmbed();
+     void SetEmbed( bool bEmbed );
+     void UpdateTableName();
+diff --git a/cui/source/tabpages/tpcolor.cxx b/cui/source/tabpages/tpcolor.cxx
+index 7dbda37..ac26329 100644
+--- a/cui/source/tabpages/tpcolor.cxx
++++ b/cui/source/tabpages/tpcolor.cxx
+@@ -69,9 +69,7 @@ XPropertyListRef SvxColorTabPage::GetList()
+ 
+     // URGH - abstract this nicely ... for re-using SvxLoadSaveEmbed
+     if( !pList.is() ) {
+-        SvxColorTabPage *pPage = dynamic_cast< SvxColorTabPage *>( this );
+-        if( pPage )
+-            pList = pPage->GetColorList();
++        pList = GetColorList();
+     }
+ 
+     return XPropertyListRef( static_cast< XPropertyList * >( pList.get() ) );
+@@ -97,13 +95,6 @@ IMPL_LINK_NOARG(SvxColorTabPage, EmbedToggleHdl_Impl)
+     return 0;
+ }
+ 
+-void SvxColorTabPage::HideLoadSaveEmbed()
+-{
+-    m_pBtnLoad->Hide();
+-    m_pBtnSave->Hide();
+-    m_pBoxEmbed->Hide();
+-}
+-
+ void SvxColorTabPage::UpdateTableName()
+ {
+     // Truncate the name if necessary ...
+@@ -167,9 +158,11 @@ IMPL_LINK_NOARG(SvxColorTabPage, ClickLoadHdl_Impl)
+ 
+                 // FIXME: want to have a generic set and get method by type ...
+                 if( pArea )
+-                    pArea->SetNewColorList( pList );
++                    pArea->SetNewColorList(pList);
+                 else if( pLine )
+-                    pLine->SetNewColorList( pList );
++                    pLine->SetNewColorList(pList);
++                else
++                    SetColorList(pList);
+ 
+                 bLoaded = true;
+                 UpdateTableName();
+@@ -422,8 +415,6 @@ void SvxColorTabPage::Construct()
+     }
+ }
+ 
+-
+-
+ void SvxColorTabPage::ActivatePage( const SfxItemSet& )
+ {
+     if( nDlgType == 0 ) // area dialog
+@@ -473,11 +464,9 @@ void SvxColorTabPage::ActivatePage( const SfxItemSet& )
+         }
+     }
+     else
+-        HideLoadSaveEmbed();
++        m_pBoxEmbed->Hide();
+ }
+ 
+-
+-
+ int SvxColorTabPage::DeactivatePage( SfxItemSet* _pSet )
+ {
+     if ( CheckChanges_Impl() == -1L )
+-- 
+2.4.0
+

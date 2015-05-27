@@ -354,6 +354,7 @@ Patch33: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch34: 0001-add-missing-includes.patch
 Patch35: 0001-impress-right-click-to-insert-image.patch
 Patch36: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
+Patch37: 0001-wrong-comparison-in-letter-wizard.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2413,8 +2414,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue May 26 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6-UNBUILT
+* Wed May 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6-UNBUILT
 - tdf#89904 allow the options color page to load/save palettes
+- wrong comparison in letter wizard
 
 * Mon May 25 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-5
 - right click in impress to add graphic

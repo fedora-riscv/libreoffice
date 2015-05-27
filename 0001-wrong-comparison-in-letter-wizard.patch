@@ -1,0 +1,56 @@
+From a3727ad62b7c1a30f9b0531042cce5ce5b8c6089 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 27 May 2015 15:39:12 +0100
+Subject: [PATCH] wrong comparison in letter wizard
+
+the file name widget is empty when it shouldn't be.
+the other wizards get this right
+
+Change-Id: Icdb629e676a73fcf8d8be4352818abbef455bbaf
+---
+ wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py b/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
+index d8598ff..f4a16e2 100644
+--- a/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
++++ b/wizards/com/sun/star/wizards/letter/LetterWizardDialogImpl.py
+@@ -123,7 +123,7 @@ class LetterWizardDialogImpl(LetterWizardDialog):
+                 self.myConfig.cp_PrivateLetter.cp_Salutation = \
+                     self.resources.SalutationLabels[2]
+ 
+-            if self.myPathSelection.xSaveTextBox.Text.lower():
++            if self.myPathSelection.xSaveTextBox.Text.lower() == "":
+                 self.myPathSelection.initializePath()
+ 
+             xContainerWindow = self.myLetterDoc.xFrame.ContainerWindow
+@@ -256,7 +256,7 @@ class LetterWizardDialogImpl(LetterWizardDialog):
+         self.lstBusinessStyleItemChanged()
+         self.enableSenderReceiver()
+         self.setPossibleFooter(True)
+-        if self.myPathSelection.xSaveTextBox.Text.lower():
++        if self.myPathSelection.xSaveTextBox.Text.lower() == "":
+             self.myPathSelection.initializePath()
+ 
+     def optPrivOfficialLetterItemChanged(self):
+@@ -273,7 +273,7 @@ class LetterWizardDialogImpl(LetterWizardDialog):
+         self.disableBusinessPaper()
+         self.disableSenderReceiver()
+         self.setPossibleFooter(True)
+-        if self.myPathSelection.xSaveTextBox.Text.lower():
++        if self.myPathSelection.xSaveTextBox.Text.lower() == "":
+             self.myPathSelection.initializePath()
+         self.myLetterDoc.fillSenderWithUserData()
+ 
+@@ -291,7 +291,7 @@ class LetterWizardDialogImpl(LetterWizardDialog):
+         self.disableBusinessPaper()
+         self.disableSenderReceiver()
+         self.setPossibleFooter(False)
+-        if self.myPathSelection.xSaveTextBox.Text.lower():
++        if self.myPathSelection.xSaveTextBox.Text.lower() == "":
+             self.myPathSelection.initializePath()
+ 
+     def optSenderPlaceholderItemChanged(self):
+-- 
+2.4.0
+

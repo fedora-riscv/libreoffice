@@ -122,7 +122,7 @@ diff --git a/translations/source/af/sw/source/ui/config.po b/translations/source
 index af38628..55ec875 100644
 --- a/translations/source/af/sw/source/ui/config.po
 +++ b/translations/source/af/sw/source/ui/config.po
-@@ -324,6 +324,16 @@ msgctxt ""
+@@ -324,6 +324,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleksie"
  
@@ -130,7 +130,6 @@ index af38628..55ec875 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -143,7 +142,7 @@ diff --git a/translations/source/am/sw/source/ui/config.po b/translations/source
 index d0c0d39..668a131 100644
 --- a/translations/source/am/sw/source/ui/config.po
 +++ b/translations/source/am/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~ምርጫዎች"
  
@@ -151,7 +150,6 @@ index d0c0d39..668a131 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -164,7 +162,7 @@ diff --git a/translations/source/an/sw/source/ui/config.po b/translations/source
 index a80bf4e..674917a 100644
 --- a/translations/source/an/sw/source/ui/config.po
 +++ b/translations/source/an/sw/source/ui/config.po
-@@ -316,6 +316,16 @@ msgctxt ""
+@@ -316,6 +316,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Selección"
  
@@ -172,7 +170,6 @@ index a80bf4e..674917a 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -185,7 +182,7 @@ diff --git a/translations/source/ar/sw/source/ui/config.po b/translations/source
 index ac10522..f34ff39 100644
 --- a/translations/source/ar/sw/source/ui/config.po
 +++ b/translations/source/ar/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "تح~ديد"
  
@@ -193,7 +190,6 @@ index ac10522..f34ff39 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -206,7 +202,7 @@ diff --git a/translations/source/as/sw/source/ui/config.po b/translations/source
 index 10014af..4070a8c 100644
 --- a/translations/source/as/sw/source/ui/config.po
 +++ b/translations/source/as/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "নিৰ্বাচন (~S)"
  
@@ -214,7 +210,6 @@ index 10014af..4070a8c 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -227,7 +222,7 @@ diff --git a/translations/source/ast/sw/source/ui/config.po b/translations/sourc
 index 895d58a..aaabb4f 100644
 --- a/translations/source/ast/sw/source/ui/config.po
 +++ b/translations/source/ast/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleición"
  
@@ -235,7 +230,6 @@ index 895d58a..aaabb4f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -248,7 +242,7 @@ diff --git a/translations/source/be/sw/source/ui/config.po b/translations/source
 index b50d2c5..e6735f4 100644
 --- a/translations/source/be/sw/source/ui/config.po
 +++ b/translations/source/be/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Пазначанае"
  
@@ -256,7 +250,6 @@ index b50d2c5..e6735f4 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -269,7 +262,7 @@ diff --git a/translations/source/bg/sw/source/ui/config.po b/translations/source
 index 03ef040..8f3a63e 100644
 --- a/translations/source/bg/sw/source/ui/config.po
 +++ b/translations/source/bg/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Избрано"
  
@@ -277,7 +270,6 @@ index 03ef040..8f3a63e 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -290,7 +282,7 @@ diff --git a/translations/source/bn-IN/sw/source/ui/config.po b/translations/sou
 index faebfcb..3de1db9 100644
 --- a/translations/source/bn-IN/sw/source/ui/config.po
 +++ b/translations/source/bn-IN/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "নির্বাচন (~S)"
  
@@ -298,7 +290,6 @@ index faebfcb..3de1db9 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -311,7 +302,7 @@ diff --git a/translations/source/bn/sw/source/ui/config.po b/translations/source
 index f58fb11..1771655 100644
 --- a/translations/source/bn/sw/source/ui/config.po
 +++ b/translations/source/bn/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "নির্বাচন (~S)"
  
@@ -319,7 +310,6 @@ index f58fb11..1771655 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -332,7 +322,7 @@ diff --git a/translations/source/bo/sw/source/ui/config.po b/translations/source
 index 774cbee..2e978cd 100644
 --- a/translations/source/bo/sw/source/ui/config.po
 +++ b/translations/source/bo/sw/source/ui/config.po
-@@ -339,6 +339,16 @@ msgstr ""
+@@ -339,6 +339,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "འདེམས་པ།(~S)"
  
@@ -340,7 +330,6 @@ index 774cbee..2e978cd 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -353,7 +342,7 @@ diff --git a/translations/source/br/sw/source/ui/config.po b/translations/source
 index 8c53a02..a5b15e4 100644
 --- a/translations/source/br/sw/source/ui/config.po
 +++ b/translations/source/br/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Diuzad"
  
@@ -361,7 +350,6 @@ index 8c53a02..a5b15e4 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -374,7 +362,7 @@ diff --git a/translations/source/brx/sw/source/ui/config.po b/translations/sourc
 index c50d25f..b174adb 100644
 --- a/translations/source/brx/sw/source/ui/config.po
 +++ b/translations/source/brx/sw/source/ui/config.po
-@@ -334,6 +334,16 @@ msgctxt ""
+@@ -334,6 +334,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~सायखनाय"
  
@@ -382,7 +370,6 @@ index c50d25f..b174adb 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -395,7 +382,7 @@ diff --git a/translations/source/bs/sw/source/ui/config.po b/translations/source
 index a938778..948b113 100644
 --- a/translations/source/bs/sw/source/ui/config.po
 +++ b/translations/source/bs/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Izbor"
  
@@ -403,7 +390,6 @@ index a938778..948b113 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -416,7 +402,7 @@ diff --git a/translations/source/ca-valencia/sw/source/ui/config.po b/translatio
 index 31dfb1a..4352e66 100644
 --- a/translations/source/ca-valencia/sw/source/ui/config.po
 +++ b/translations/source/ca-valencia/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selecció"
  
@@ -424,7 +410,6 @@ index 31dfb1a..4352e66 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -437,7 +422,7 @@ diff --git a/translations/source/ca/sw/source/ui/config.po b/translations/source
 index 01fc2de..fa153be 100644
 --- a/translations/source/ca/sw/source/ui/config.po
 +++ b/translations/source/ca/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selecció"
  
@@ -445,7 +430,6 @@ index 01fc2de..fa153be 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -458,7 +442,7 @@ diff --git a/translations/source/cs/sw/source/ui/config.po b/translations/source
 index dff9433..d85f212 100644
 --- a/translations/source/cs/sw/source/ui/config.po
 +++ b/translations/source/cs/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Výběr"
  
@@ -466,7 +450,6 @@ index dff9433..d85f212 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -479,7 +462,7 @@ diff --git a/translations/source/cy/sw/source/ui/config.po b/translations/source
 index 436cd10..d885f44 100644
 --- a/translations/source/cy/sw/source/ui/config.po
 +++ b/translations/source/cy/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Dewis"
  
@@ -487,7 +470,6 @@ index 436cd10..d885f44 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -500,7 +482,7 @@ diff --git a/translations/source/da/sw/source/ui/config.po b/translations/source
 index a601fcb..115c258 100644
 --- a/translations/source/da/sw/source/ui/config.po
 +++ b/translations/source/da/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Markeri~ng"
  
@@ -508,7 +490,6 @@ index a601fcb..115c258 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -521,7 +502,7 @@ diff --git a/translations/source/de/sw/source/ui/config.po b/translations/source
 index 2b1a563..fd86c19 100644
 --- a/translations/source/de/sw/source/ui/config.po
 +++ b/translations/source/de/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Aus~wahl"
  
@@ -529,7 +510,6 @@ index 2b1a563..fd86c19 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -542,7 +522,7 @@ diff --git a/translations/source/dgo/sw/source/ui/config.po b/translations/sourc
 index 85ad409..1270666 100644
 --- a/translations/source/dgo/sw/source/ui/config.po
 +++ b/translations/source/dgo/sw/source/ui/config.po
-@@ -354,6 +354,16 @@ msgstr ""
+@@ -354,6 +354,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~ चोन"
  
@@ -550,7 +530,6 @@ index 85ad409..1270666 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -563,7 +542,7 @@ diff --git a/translations/source/dz/sw/source/ui/config.po b/translations/source
 index 02971d4..e9fb04e 100644
 --- a/translations/source/dz/sw/source/ui/config.po
 +++ b/translations/source/dz/sw/source/ui/config.po
-@@ -339,6 +339,16 @@ msgstr ""
+@@ -339,6 +339,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "སེལ་འཐུ་འབད་ནི།(~S)"
  
@@ -571,7 +550,6 @@ index 02971d4..e9fb04e 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -584,7 +562,7 @@ diff --git a/translations/source/el/sw/source/ui/config.po b/translations/source
 index 271eeef..d4430e7 100644
 --- a/translations/source/el/sw/source/ui/config.po
 +++ b/translations/source/el/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Επιλογή"
  
@@ -592,7 +570,6 @@ index 271eeef..d4430e7 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -605,7 +582,7 @@ diff --git a/translations/source/en-GB/sw/source/ui/config.po b/translations/sou
 index a34db48..0508a8f 100644
 --- a/translations/source/en-GB/sw/source/ui/config.po
 +++ b/translations/source/en-GB/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selection"
  
@@ -613,7 +590,6 @@ index a34db48..0508a8f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -626,7 +602,7 @@ diff --git a/translations/source/en-ZA/sw/source/ui/config.po b/translations/sou
 index e357a49..93365ac 100644
 --- a/translations/source/en-ZA/sw/source/ui/config.po
 +++ b/translations/source/en-ZA/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selection"
  
@@ -634,7 +610,6 @@ index e357a49..93365ac 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -647,7 +622,7 @@ diff --git a/translations/source/eo/sw/source/ui/config.po b/translations/source
 index 334d13e..793e88f 100644
 --- a/translations/source/eo/sw/source/ui/config.po
 +++ b/translations/source/eo/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Agordo"
  
@@ -655,7 +630,6 @@ index 334d13e..793e88f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -668,7 +642,7 @@ diff --git a/translations/source/es/sw/source/ui/config.po b/translations/source
 index 7ef5bdd..a3dc83f 100644
 --- a/translations/source/es/sw/source/ui/config.po
 +++ b/translations/source/es/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selección"
  
@@ -676,7 +650,6 @@ index 7ef5bdd..a3dc83f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -689,7 +662,7 @@ diff --git a/translations/source/et/sw/source/ui/config.po b/translations/source
 index 02e0dd6..a59ea1b 100644
 --- a/translations/source/et/sw/source/ui/config.po
 +++ b/translations/source/et/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Valik"
  
@@ -697,7 +670,6 @@ index 02e0dd6..a59ea1b 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -710,7 +682,7 @@ diff --git a/translations/source/eu/sw/source/ui/config.po b/translations/source
 index 8ef8223..941ac32 100644
 --- a/translations/source/eu/sw/source/ui/config.po
 +++ b/translations/source/eu/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Hautapena"
  
@@ -718,7 +690,6 @@ index 8ef8223..941ac32 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -731,7 +702,7 @@ diff --git a/translations/source/fa/sw/source/ui/config.po b/translations/source
 index c141add..922f64d 100644
 --- a/translations/source/fa/sw/source/ui/config.po
 +++ b/translations/source/fa/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~انتخاب"
  
@@ -739,7 +710,6 @@ index c141add..922f64d 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -752,7 +722,7 @@ diff --git a/translations/source/fi/sw/source/ui/config.po b/translations/source
 index cd36d9d..d87bb3d 100644
 --- a/translations/source/fi/sw/source/ui/config.po
 +++ b/translations/source/fi/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Valinta"
  
@@ -760,7 +730,6 @@ index cd36d9d..d87bb3d 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -773,7 +742,7 @@ diff --git a/translations/source/fr/sw/source/ui/config.po b/translations/source
 index 8715af1..8e3d938 100644
 --- a/translations/source/fr/sw/source/ui/config.po
 +++ b/translations/source/fr/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Sélection"
  
@@ -781,7 +750,6 @@ index 8715af1..8e3d938 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -794,7 +762,7 @@ diff --git a/translations/source/ga/sw/source/ui/config.po b/translations/source
 index 1a4aff5..d0b49de 100644
 --- a/translations/source/ga/sw/source/ui/config.po
 +++ b/translations/source/ga/sw/source/ui/config.po
-@@ -308,6 +308,16 @@ msgctxt ""
+@@ -308,6 +308,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Roghnúchán"
  
@@ -802,7 +770,6 @@ index 1a4aff5..d0b49de 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -815,7 +782,7 @@ diff --git a/translations/source/gd/sw/source/ui/config.po b/translations/source
 index 8720fc9..59d6300 100644
 --- a/translations/source/gd/sw/source/ui/config.po
 +++ b/translations/source/gd/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "An ~taghadh"
  
@@ -823,7 +790,6 @@ index 8720fc9..59d6300 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -836,7 +802,7 @@ diff --git a/translations/source/gl/sw/source/ui/config.po b/translations/source
 index df3d467..18c0ba4 100644
 --- a/translations/source/gl/sw/source/ui/config.po
 +++ b/translations/source/gl/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selección"
  
@@ -844,7 +810,6 @@ index df3d467..18c0ba4 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -857,7 +822,7 @@ diff --git a/translations/source/gu/sw/source/ui/config.po b/translations/source
 index f7deccd..e1566ed 100644
 --- a/translations/source/gu/sw/source/ui/config.po
 +++ b/translations/source/gu/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "પસંદગી (~S)"
  
@@ -865,7 +830,6 @@ index f7deccd..e1566ed 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -878,7 +842,7 @@ diff --git a/translations/source/he/sw/source/ui/config.po b/translations/source
 index c428505..c6184a6 100644
 --- a/translations/source/he/sw/source/ui/config.po
 +++ b/translations/source/he/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "בחירה"
  
@@ -886,7 +850,6 @@ index c428505..c6184a6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -899,7 +862,7 @@ diff --git a/translations/source/hi/sw/source/ui/config.po b/translations/source
 index db04a17..14cce59 100644
 --- a/translations/source/hi/sw/source/ui/config.po
 +++ b/translations/source/hi/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "चुनाव (~S)"
  
@@ -907,7 +870,6 @@ index db04a17..14cce59 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -920,7 +882,7 @@ diff --git a/translations/source/hr/sw/source/ui/config.po b/translations/source
 index 216cf96..7a1c076 100644
 --- a/translations/source/hr/sw/source/ui/config.po
 +++ b/translations/source/hr/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Odabir"
  
@@ -928,7 +890,6 @@ index 216cf96..7a1c076 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -941,7 +902,7 @@ diff --git a/translations/source/hu/sw/source/ui/config.po b/translations/source
 index 3a5d24b..0c458d6 100644
 --- a/translations/source/hu/sw/source/ui/config.po
 +++ b/translations/source/hu/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Kijelölés"
  
@@ -949,7 +910,6 @@ index 3a5d24b..0c458d6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -962,7 +922,7 @@ diff --git a/translations/source/id/sw/source/ui/config.po b/translations/source
 index 48e62c8..78b1fe2 100644
 --- a/translations/source/id/sw/source/ui/config.po
 +++ b/translations/source/id/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleksi"
  
@@ -970,7 +930,6 @@ index 48e62c8..78b1fe2 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -983,7 +942,7 @@ diff --git a/translations/source/is/sw/source/ui/config.po b/translations/source
 index fc082ee..5c77c39 100644
 --- a/translations/source/is/sw/source/ui/config.po
 +++ b/translations/source/is/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Val"
  
@@ -991,7 +950,6 @@ index fc082ee..5c77c39 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1004,7 +962,7 @@ diff --git a/translations/source/it/sw/source/ui/config.po b/translations/source
 index 3f5415b..bc4b652 100644
 --- a/translations/source/it/sw/source/ui/config.po
 +++ b/translations/source/it/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Selezione"
  
@@ -1012,7 +970,6 @@ index 3f5415b..bc4b652 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1025,7 +982,7 @@ diff --git a/translations/source/ja/sw/source/ui/config.po b/translations/source
 index 0363a31..4428fca 100644
 --- a/translations/source/ja/sw/source/ui/config.po
 +++ b/translations/source/ja/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "選択した部分(~S)"
  
@@ -1033,7 +990,6 @@ index 0363a31..4428fca 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1046,7 +1002,7 @@ diff --git a/translations/source/ka/sw/source/ui/config.po b/translations/source
 index fa2c38e..e313112 100644
 --- a/translations/source/ka/sw/source/ui/config.po
 +++ b/translations/source/ka/sw/source/ui/config.po
-@@ -318,6 +318,16 @@ msgstr ""
+@@ -318,6 +318,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~მონიშვნა"
  
@@ -1054,7 +1010,6 @@ index fa2c38e..e313112 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1067,7 +1022,7 @@ diff --git a/translations/source/kk/sw/source/ui/config.po b/translations/source
 index 30bf34c..b46cb2b 100644
 --- a/translations/source/kk/sw/source/ui/config.po
 +++ b/translations/source/kk/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Таңдау"
  
@@ -1075,7 +1030,6 @@ index 30bf34c..b46cb2b 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1088,7 +1042,7 @@ diff --git a/translations/source/kl/sw/source/ui/config.po b/translations/source
 index 769aa8c..ce88082 100644
 --- a/translations/source/kl/sw/source/ui/config.po
 +++ b/translations/source/kl/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr ""
  
@@ -1096,7 +1050,6 @@ index 769aa8c..ce88082 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1109,7 +1062,7 @@ diff --git a/translations/source/km/sw/source/ui/config.po b/translations/source
 index f4009fa..e876ff6 100644
 --- a/translations/source/km/sw/source/ui/config.po
 +++ b/translations/source/km/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "ជ្រើស "
  
@@ -1117,7 +1070,6 @@ index f4009fa..e876ff6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1130,7 +1082,7 @@ diff --git a/translations/source/kmr-Latn/sw/source/ui/config.po b/translations/
 index de02717..ad4f780 100644
 --- a/translations/source/kmr-Latn/sw/source/ui/config.po
 +++ b/translations/source/kmr-Latn/sw/source/ui/config.po
-@@ -316,6 +316,16 @@ msgctxt ""
+@@ -316,6 +316,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Hilbijartin"
  
@@ -1138,7 +1090,6 @@ index de02717..ad4f780 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1151,7 +1102,7 @@ diff --git a/translations/source/kn/sw/source/ui/config.po b/translations/source
 index e043170..7c14ca9 100644
 --- a/translations/source/kn/sw/source/ui/config.po
 +++ b/translations/source/kn/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "ಆಯ್ಕೆ(~S)"
  
@@ -1159,7 +1110,6 @@ index e043170..7c14ca9 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1172,7 +1122,7 @@ diff --git a/translations/source/ko/sw/source/ui/config.po b/translations/source
 index d64380d..76235ee 100644
 --- a/translations/source/ko/sw/source/ui/config.po
 +++ b/translations/source/ko/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "선택(~S)"
  
@@ -1180,7 +1130,6 @@ index d64380d..76235ee 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1193,7 +1142,7 @@ diff --git a/translations/source/kok/sw/source/ui/config.po b/translations/sourc
 index 9e12c1c..72c00af 100644
 --- a/translations/source/kok/sw/source/ui/config.po
 +++ b/translations/source/kok/sw/source/ui/config.po
-@@ -324,6 +324,16 @@ msgctxt ""
+@@ -324,6 +324,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "निवड"
  
@@ -1201,7 +1150,6 @@ index 9e12c1c..72c00af 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1214,7 +1162,7 @@ diff --git a/translations/source/ks/sw/source/ui/config.po b/translations/source
 index 9d4410d..70abeb5 100644
 --- a/translations/source/ks/sw/source/ui/config.po
 +++ b/translations/source/ks/sw/source/ui/config.po
-@@ -364,6 +364,16 @@ msgstr ""
+@@ -364,6 +364,15 @@ msgstr ""
  "#-#-#-#-#  dialog.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "۔ ژار"
  
@@ -1222,7 +1170,6 @@ index 9d4410d..70abeb5 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1235,7 +1182,7 @@ diff --git a/translations/source/ky/sw/source/ui/config.po b/translations/source
 index c21b849..827f1fd 100644
 --- a/translations/source/ky/sw/source/ui/config.po
 +++ b/translations/source/ky/sw/source/ui/config.po
-@@ -308,6 +308,16 @@ msgctxt ""
+@@ -308,6 +308,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr ""
  
@@ -1243,7 +1190,6 @@ index c21b849..827f1fd 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1256,7 +1202,7 @@ diff --git a/translations/source/lb/sw/source/ui/config.po b/translations/source
 index 46955b0..e2b8c9a 100644
 --- a/translations/source/lb/sw/source/ui/config.po
 +++ b/translations/source/lb/sw/source/ui/config.po
-@@ -317,6 +317,16 @@ msgctxt ""
+@@ -317,6 +317,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Auswiel"
  
@@ -1264,7 +1210,6 @@ index 46955b0..e2b8c9a 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1277,7 +1222,7 @@ diff --git a/translations/source/lo/sw/source/ui/config.po b/translations/source
 index fc145d7..521cf66 100644
 --- a/translations/source/lo/sw/source/ui/config.po
 +++ b/translations/source/lo/sw/source/ui/config.po
-@@ -337,6 +337,16 @@ msgstr ""
+@@ -337,6 +337,15 @@ msgstr ""
  "#-#-#-#-#  office.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "ການເລືອກ"
  
@@ -1285,7 +1230,6 @@ index fc145d7..521cf66 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1298,7 +1242,7 @@ diff --git a/translations/source/lt/sw/source/ui/config.po b/translations/source
 index 0b741d5..6999762 100644
 --- a/translations/source/lt/sw/source/ui/config.po
 +++ b/translations/source/lt/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "At~ranka"
  
@@ -1306,7 +1250,6 @@ index 0b741d5..6999762 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1319,7 +1262,7 @@ diff --git a/translations/source/lv/sw/source/ui/config.po b/translations/source
 index 0aed198..484cc24 100644
 --- a/translations/source/lv/sw/source/ui/config.po
 +++ b/translations/source/lv/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Izvēlētai~s"
  
@@ -1327,7 +1270,6 @@ index 0aed198..484cc24 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1340,7 +1282,7 @@ diff --git a/translations/source/mai/sw/source/ui/config.po b/translations/sourc
 index 7bbc29c..d236e83 100644
 --- a/translations/source/mai/sw/source/ui/config.po
 +++ b/translations/source/mai/sw/source/ui/config.po
-@@ -364,6 +364,16 @@ msgstr ""
+@@ -364,6 +364,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "चुनाव (~S)"
  
@@ -1348,7 +1290,6 @@ index 7bbc29c..d236e83 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1361,7 +1302,7 @@ diff --git a/translations/source/mk/sw/source/ui/config.po b/translations/source
 index 030b997..2e00989 100644
 --- a/translations/source/mk/sw/source/ui/config.po
 +++ b/translations/source/mk/sw/source/ui/config.po
-@@ -344,6 +344,16 @@ msgstr ""
+@@ -344,6 +344,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "И~збор"
  
@@ -1369,7 +1310,6 @@ index 030b997..2e00989 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1382,7 +1322,7 @@ diff --git a/translations/source/ml/sw/source/ui/config.po b/translations/source
 index 1b8a2b8..e25db97 100644
 --- a/translations/source/ml/sw/source/ui/config.po
 +++ b/translations/source/ml/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~തെരഞ്ഞെടുക്കല്‍"
  
@@ -1390,7 +1330,6 @@ index 1b8a2b8..e25db97 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1403,7 +1342,7 @@ diff --git a/translations/source/mn/sw/source/ui/config.po b/translations/source
 index 7318b20..d4c1954 100644
 --- a/translations/source/mn/sw/source/ui/config.po
 +++ b/translations/source/mn/sw/source/ui/config.po
-@@ -348,6 +348,16 @@ msgctxt ""
+@@ -348,6 +348,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Сонголт"
  
@@ -1411,7 +1350,6 @@ index 7318b20..d4c1954 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1424,7 +1362,7 @@ diff --git a/translations/source/mni/sw/source/ui/config.po b/translations/sourc
 index b3de3b6..9b88b21 100644
 --- a/translations/source/mni/sw/source/ui/config.po
 +++ b/translations/source/mni/sw/source/ui/config.po
-@@ -354,6 +354,16 @@ msgstr ""
+@@ -354,6 +354,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~খনবা"
  
@@ -1432,7 +1370,6 @@ index b3de3b6..9b88b21 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1445,7 +1382,7 @@ diff --git a/translations/source/mr/sw/source/ui/config.po b/translations/source
 index 04b825c..bc9f902 100644
 --- a/translations/source/mr/sw/source/ui/config.po
 +++ b/translations/source/mr/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "निवड (~S)"
  
@@ -1453,7 +1390,6 @@ index 04b825c..bc9f902 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1466,7 +1402,7 @@ diff --git a/translations/source/my/sw/source/ui/config.po b/translations/source
 index f502f3c..d861996 100644
 --- a/translations/source/my/sw/source/ui/config.po
 +++ b/translations/source/my/sw/source/ui/config.po
-@@ -334,6 +334,16 @@ msgstr ""
+@@ -334,6 +334,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~ရွေးချယ်မှုများ"
  
@@ -1474,7 +1410,6 @@ index f502f3c..d861996 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1487,7 +1422,7 @@ diff --git a/translations/source/nb/sw/source/ui/config.po b/translations/source
 index 1d4380a..c7b7d42 100644
 --- a/translations/source/nb/sw/source/ui/config.po
 +++ b/translations/source/nb/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Utvalg"
  
@@ -1495,7 +1430,6 @@ index 1d4380a..c7b7d42 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1508,7 +1442,7 @@ diff --git a/translations/source/ne/sw/source/ui/config.po b/translations/source
 index f3ca627..3105898 100644
 --- a/translations/source/ne/sw/source/ui/config.po
 +++ b/translations/source/ne/sw/source/ui/config.po
-@@ -320,6 +320,16 @@ msgctxt ""
+@@ -320,6 +320,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "चयन"
  
@@ -1516,7 +1450,6 @@ index f3ca627..3105898 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1529,7 +1462,7 @@ diff --git a/translations/source/nl/sw/source/ui/config.po b/translations/source
 index 6e7eef2..1392256 100644
 --- a/translations/source/nl/sw/source/ui/config.po
 +++ b/translations/source/nl/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selectie"
  
@@ -1537,7 +1470,6 @@ index 6e7eef2..1392256 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1550,7 +1482,7 @@ diff --git a/translations/source/nn/sw/source/ui/config.po b/translations/source
 index c0ba508..905ffd7 100644
 --- a/translations/source/nn/sw/source/ui/config.po
 +++ b/translations/source/nn/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Utval"
  
@@ -1558,7 +1490,6 @@ index c0ba508..905ffd7 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1571,7 +1502,7 @@ diff --git a/translations/source/nr/sw/source/ui/config.po b/translations/source
 index 030f8a1..188bb42 100644
 --- a/translations/source/nr/sw/source/ui/config.po
 +++ b/translations/source/nr/sw/source/ui/config.po
-@@ -330,6 +330,16 @@ msgctxt ""
+@@ -330,6 +330,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Ukukhetha"
  
@@ -1579,7 +1510,6 @@ index 030f8a1..188bb42 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1592,7 +1522,7 @@ diff --git a/translations/source/nso/sw/source/ui/config.po b/translations/sourc
 index 15d2d33..04d812f 100644
 --- a/translations/source/nso/sw/source/ui/config.po
 +++ b/translations/source/nso/sw/source/ui/config.po
-@@ -325,6 +325,16 @@ msgctxt ""
+@@ -325,6 +325,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Kgetho"
  
@@ -1600,7 +1530,6 @@ index 15d2d33..04d812f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1613,7 +1542,7 @@ diff --git a/translations/source/oc/sw/source/ui/config.po b/translations/source
 index e2824a1..7efdd11 100644
 --- a/translations/source/oc/sw/source/ui/config.po
 +++ b/translations/source/oc/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleccion"
  
@@ -1621,7 +1550,6 @@ index e2824a1..7efdd11 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1634,7 +1562,7 @@ diff --git a/translations/source/om/sw/source/ui/config.po b/translations/source
 index f734262..c237c10 100644
 --- a/translations/source/om/sw/source/ui/config.po
 +++ b/translations/source/om/sw/source/ui/config.po
-@@ -335,6 +335,16 @@ msgctxt ""
+@@ -335,6 +335,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Filannoo"
  
@@ -1642,7 +1570,6 @@ index f734262..c237c10 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1655,7 +1582,7 @@ diff --git a/translations/source/or/sw/source/ui/config.po b/translations/source
 index bfaca8d..7827127 100644
 --- a/translations/source/or/sw/source/ui/config.po
 +++ b/translations/source/or/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "ମନୋନଯନ"
  
@@ -1663,7 +1590,6 @@ index bfaca8d..7827127 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1676,7 +1602,7 @@ diff --git a/translations/source/pa-IN/sw/source/ui/config.po b/translations/sou
 index d3633da..342fe9a 100644
 --- a/translations/source/pa-IN/sw/source/ui/config.po
 +++ b/translations/source/pa-IN/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "ਚੋਣ(~S)"
  
@@ -1684,7 +1610,6 @@ index d3633da..342fe9a 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1697,7 +1622,7 @@ diff --git a/translations/source/pl/sw/source/ui/config.po b/translations/source
 index e90043c..1b63952 100644
 --- a/translations/source/pl/sw/source/ui/config.po
 +++ b/translations/source/pl/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Zaznaczenie"
  
@@ -1705,7 +1630,6 @@ index e90043c..1b63952 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1718,7 +1642,7 @@ diff --git a/translations/source/pt-BR/sw/source/ui/config.po b/translations/sou
 index 52067ae..ec97536 100644
 --- a/translations/source/pt-BR/sw/source/ui/config.po
 +++ b/translations/source/pt-BR/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleção"
  
@@ -1726,7 +1650,6 @@ index 52067ae..ec97536 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1739,7 +1662,7 @@ diff --git a/translations/source/pt/sw/source/ui/config.po b/translations/source
 index c61e8de..c289cb5 100644
 --- a/translations/source/pt/sw/source/ui/config.po
 +++ b/translations/source/pt/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seleção"
  
@@ -1747,7 +1670,6 @@ index c61e8de..c289cb5 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1760,7 +1682,7 @@ diff --git a/translations/source/ro/sw/source/ui/config.po b/translations/source
 index f99132b..a66f20e 100644
 --- a/translations/source/ro/sw/source/ui/config.po
 +++ b/translations/source/ro/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Selecție"
  
@@ -1768,7 +1690,6 @@ index f99132b..a66f20e 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1781,7 +1702,7 @@ diff --git a/translations/source/ru/sw/source/ui/config.po b/translations/source
 index 6f14a7d..f7b6c26 100644
 --- a/translations/source/ru/sw/source/ui/config.po
 +++ b/translations/source/ru/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Выделение"
  
@@ -1789,7 +1710,6 @@ index 6f14a7d..f7b6c26 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1802,7 +1722,7 @@ diff --git a/translations/source/rw/sw/source/ui/config.po b/translations/source
 index 7a67ea7..1761e15 100644
 --- a/translations/source/rw/sw/source/ui/config.po
 +++ b/translations/source/rw/sw/source/ui/config.po
-@@ -333,6 +333,16 @@ msgctxt ""
+@@ -333,6 +333,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Ihitamo"
  
@@ -1810,7 +1730,6 @@ index 7a67ea7..1761e15 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1823,7 +1742,7 @@ diff --git a/translations/source/sa-IN/sw/source/ui/config.po b/translations/sou
 index 45e44ed..5fc22e0 100644
 --- a/translations/source/sa-IN/sw/source/ui/config.po
 +++ b/translations/source/sa-IN/sw/source/ui/config.po
-@@ -351,6 +351,16 @@ msgstr ""
+@@ -351,6 +351,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "निर्वाचनम् (~S)"
  
@@ -1831,7 +1750,6 @@ index 45e44ed..5fc22e0 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1844,7 +1762,7 @@ diff --git a/translations/source/sat/sw/source/ui/config.po b/translations/sourc
 index 9fb5f57..e00d001 100644
 --- a/translations/source/sat/sw/source/ui/config.po
 +++ b/translations/source/sat/sw/source/ui/config.po
-@@ -345,6 +345,16 @@ msgstr ""
+@@ -345,6 +345,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "बाछाव (~S)"
  
@@ -1852,7 +1770,6 @@ index 9fb5f57..e00d001 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1865,7 +1782,7 @@ diff --git a/translations/source/sd/sw/source/ui/config.po b/translations/source
 index 050733c..d443157 100644
 --- a/translations/source/sd/sw/source/ui/config.po
 +++ b/translations/source/sd/sw/source/ui/config.po
-@@ -364,6 +364,16 @@ msgstr ""
+@@ -364,6 +364,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "چونڊ (~S)"
  
@@ -1873,7 +1790,6 @@ index 050733c..d443157 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1886,7 +1802,7 @@ diff --git a/translations/source/si/sw/source/ui/config.po b/translations/source
 index e8794c2..c217df5 100644
 --- a/translations/source/si/sw/source/ui/config.po
 +++ b/translations/source/si/sw/source/ui/config.po
-@@ -319,6 +319,16 @@ msgctxt ""
+@@ -319,6 +319,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "තේරීම (~S)"
  
@@ -1894,7 +1810,6 @@ index e8794c2..c217df5 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1907,7 +1822,7 @@ diff --git a/translations/source/sid/sw/source/ui/config.po b/translations/sourc
 index d0a0f78..546ff92 100644
 --- a/translations/source/sid/sw/source/ui/config.po
 +++ b/translations/source/sid/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Doorsha"
  
@@ -1915,7 +1830,6 @@ index d0a0f78..546ff92 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1928,7 +1842,7 @@ diff --git a/translations/source/sk/sw/source/ui/config.po b/translations/source
 index 1c184bf..3b6ec77 100644
 --- a/translations/source/sk/sw/source/ui/config.po
 +++ b/translations/source/sk/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Výber"
  
@@ -1936,7 +1850,6 @@ index 1c184bf..3b6ec77 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1949,7 +1862,7 @@ diff --git a/translations/source/sl/sw/source/ui/config.po b/translations/source
 index d64a465..e00c650 100644
 --- a/translations/source/sl/sw/source/ui/config.po
 +++ b/translations/source/sl/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "I~zbor"
  
@@ -1957,7 +1870,6 @@ index d64a465..e00c650 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1970,7 +1882,7 @@ diff --git a/translations/source/sq/sw/source/ui/config.po b/translations/source
 index 356528f..87ac24d 100644
 --- a/translations/source/sq/sw/source/ui/config.po
 +++ b/translations/source/sq/sw/source/ui/config.po
-@@ -321,6 +321,16 @@ msgctxt ""
+@@ -321,6 +321,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Zgjedhja"
  
@@ -1978,7 +1890,6 @@ index 356528f..87ac24d 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -1991,7 +1902,7 @@ diff --git a/translations/source/sr-Latn/sw/source/ui/config.po b/translations/s
 index 54a24de..ad285f6 100644
 --- a/translations/source/sr-Latn/sw/source/ui/config.po
 +++ b/translations/source/sr-Latn/sw/source/ui/config.po
-@@ -322,6 +322,16 @@ msgctxt ""
+@@ -322,6 +322,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Izbor"
  
@@ -1999,7 +1910,6 @@ index 54a24de..ad285f6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2012,7 +1922,7 @@ diff --git a/translations/source/sr/sw/source/ui/config.po b/translations/source
 index 3e7d121..4a310a6 100644
 --- a/translations/source/sr/sw/source/ui/config.po
 +++ b/translations/source/sr/sw/source/ui/config.po
-@@ -322,6 +322,16 @@ msgctxt ""
+@@ -322,6 +322,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Избор"
  
@@ -2020,7 +1930,6 @@ index 3e7d121..4a310a6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2033,7 +1942,7 @@ diff --git a/translations/source/ss/sw/source/ui/config.po b/translations/source
 index 0d94972..a0dc97b 100644
 --- a/translations/source/ss/sw/source/ui/config.po
 +++ b/translations/source/ss/sw/source/ui/config.po
-@@ -332,6 +332,16 @@ msgstr ""
+@@ -332,6 +332,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~Kukhetsa"
  
@@ -2041,7 +1950,6 @@ index 0d94972..a0dc97b 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2054,7 +1962,7 @@ diff --git a/translations/source/st/sw/source/ui/config.po b/translations/source
 index 17587dc..f190a72 100644
 --- a/translations/source/st/sw/source/ui/config.po
 +++ b/translations/source/st/sw/source/ui/config.po
-@@ -343,6 +343,16 @@ msgctxt ""
+@@ -343,6 +343,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Kgetho"
  
@@ -2062,7 +1970,6 @@ index 17587dc..f190a72 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2075,7 +1982,7 @@ diff --git a/translations/source/sv/sw/source/ui/config.po b/translations/source
 index e7a2e88..b0b183a 100644
 --- a/translations/source/sv/sw/source/ui/config.po
 +++ b/translations/source/sv/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Markering"
  
@@ -2083,7 +1990,6 @@ index e7a2e88..b0b183a 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2096,7 +2002,7 @@ diff --git a/translations/source/sw-TZ/sw/source/ui/config.po b/translations/sou
 index 1690eae..2b55c72 100644
 --- a/translations/source/sw-TZ/sw/source/ui/config.po
 +++ b/translations/source/sw-TZ/sw/source/ui/config.po
-@@ -327,6 +327,16 @@ msgctxt ""
+@@ -327,6 +327,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Uteuzi"
  
@@ -2104,7 +2010,6 @@ index 1690eae..2b55c72 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2117,7 +2022,7 @@ diff --git a/translations/source/ta/sw/source/ui/config.po b/translations/source
 index 1790fbb..66c4d90 100644
 --- a/translations/source/ta/sw/source/ui/config.po
 +++ b/translations/source/ta/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "தெரிவு (~s)"
  
@@ -2125,7 +2030,6 @@ index 1790fbb..66c4d90 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2138,7 +2042,7 @@ diff --git a/translations/source/te/sw/source/ui/config.po b/translations/source
 index a970930..7aa1c6c 100644
 --- a/translations/source/te/sw/source/ui/config.po
 +++ b/translations/source/te/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "ఎంపిక(~S)"
  
@@ -2146,7 +2050,6 @@ index a970930..7aa1c6c 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2159,7 +2062,7 @@ diff --git a/translations/source/tg/sw/source/ui/config.po b/translations/source
 index e20ac28..d227364 100644
 --- a/translations/source/tg/sw/source/ui/config.po
 +++ b/translations/source/tg/sw/source/ui/config.po
-@@ -356,6 +356,16 @@ msgstr ""
+@@ -356,6 +356,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~Интихоб"
  
@@ -2167,7 +2070,6 @@ index e20ac28..d227364 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2180,7 +2082,7 @@ diff --git a/translations/source/th/sw/source/ui/config.po b/translations/source
 index c7d0b46..22aefb7 100644
 --- a/translations/source/th/sw/source/ui/config.po
 +++ b/translations/source/th/sw/source/ui/config.po
-@@ -312,6 +312,16 @@ msgctxt ""
+@@ -312,6 +312,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~สิ่งที่เลือก"
  
@@ -2188,7 +2090,6 @@ index c7d0b46..22aefb7 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2201,7 +2102,7 @@ diff --git a/translations/source/tn/sw/source/ui/config.po b/translations/source
 index f254897..c44e06c 100644
 --- a/translations/source/tn/sw/source/ui/config.po
 +++ b/translations/source/tn/sw/source/ui/config.po
-@@ -343,6 +343,16 @@ msgctxt ""
+@@ -343,6 +343,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Kgetho"
  
@@ -2209,7 +2110,6 @@ index f254897..c44e06c 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2222,7 +2122,7 @@ diff --git a/translations/source/tr/sw/source/ui/config.po b/translations/source
 index 2881a06..011c2e4 100644
 --- a/translations/source/tr/sw/source/ui/config.po
 +++ b/translations/source/tr/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Seçim"
  
@@ -2230,7 +2130,6 @@ index 2881a06..011c2e4 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2243,7 +2142,7 @@ diff --git a/translations/source/ts/sw/source/ui/config.po b/translations/source
 index 765b9c0..119e88e 100644
 --- a/translations/source/ts/sw/source/ui/config.po
 +++ b/translations/source/ts/sw/source/ui/config.po
-@@ -372,6 +372,16 @@ msgstr ""
+@@ -372,6 +372,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~Nhlawulo"
  
@@ -2251,7 +2150,6 @@ index 765b9c0..119e88e 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2264,7 +2162,7 @@ diff --git a/translations/source/tt/sw/source/ui/config.po b/translations/source
 index 8770065..7d0288b 100644
 --- a/translations/source/tt/sw/source/ui/config.po
 +++ b/translations/source/tt/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Сайланган өлешен генә"
  
@@ -2272,7 +2170,6 @@ index 8770065..7d0288b 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2285,7 +2182,7 @@ diff --git a/translations/source/ug/sw/source/ui/config.po b/translations/source
 index b2ecef6..6ae250b 100644
 --- a/translations/source/ug/sw/source/ui/config.po
 +++ b/translations/source/ug/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "تاللا(~S)"
  
@@ -2293,7 +2190,6 @@ index b2ecef6..6ae250b 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2306,7 +2202,7 @@ diff --git a/translations/source/uk/sw/source/ui/config.po b/translations/source
 index ed67647..d51d186 100644
 --- a/translations/source/uk/sw/source/ui/config.po
 +++ b/translations/source/uk/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "Виділення"
  
@@ -2314,7 +2210,6 @@ index ed67647..d51d186 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2327,7 +2222,7 @@ diff --git a/translations/source/uz/sw/source/ui/config.po b/translations/source
 index 271dff9..cd4dc87 100644
 --- a/translations/source/uz/sw/source/ui/config.po
 +++ b/translations/source/uz/sw/source/ui/config.po
-@@ -326,6 +326,16 @@ msgstr ""
+@@ -326,6 +326,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "Tanlan~gan"
  
@@ -2335,7 +2230,6 @@ index 271dff9..cd4dc87 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2348,7 +2242,7 @@ diff --git a/translations/source/ve/sw/source/ui/config.po b/translations/source
 index 41d0516..23b9673 100644
 --- a/translations/source/ve/sw/source/ui/config.po
 +++ b/translations/source/ve/sw/source/ui/config.po
-@@ -374,6 +374,16 @@ msgstr ""
+@@ -374,6 +374,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~Khetho"
  
@@ -2356,7 +2250,6 @@ index 41d0516..23b9673 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2369,7 +2262,7 @@ diff --git a/translations/source/vi/sw/source/ui/config.po b/translations/source
 index 5c148d6..8ff416f 100644
 --- a/translations/source/vi/sw/source/ui/config.po
 +++ b/translations/source/vi/sw/source/ui/config.po
-@@ -309,6 +309,16 @@ msgctxt ""
+@@ -309,6 +309,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Phần chọn"
  
@@ -2377,7 +2270,6 @@ index 5c148d6..8ff416f 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2390,7 +2282,7 @@ diff --git a/translations/source/xh/sw/source/ui/config.po b/translations/source
 index ba4598e..3a6dc1c 100644
 --- a/translations/source/xh/sw/source/ui/config.po
 +++ b/translations/source/xh/sw/source/ui/config.po
-@@ -348,6 +348,16 @@ msgstr ""
+@@ -348,6 +348,15 @@ msgstr ""
  "#-#-#-#-#  pdf.po (PACKAGE VERSION)  #-#-#-#-#\n"
  "~Okukhethwayo"
  
@@ -2398,7 +2290,6 @@ index ba4598e..3a6dc1c 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2411,7 +2302,7 @@ diff --git a/translations/source/zh-CN/sw/source/ui/config.po b/translations/sou
 index 9878710..f93dbb6 100644
 --- a/translations/source/zh-CN/sw/source/ui/config.po
 +++ b/translations/source/zh-CN/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "选项(~S)"
  
@@ -2419,7 +2310,6 @@ index 9878710..f93dbb6 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2432,7 +2322,7 @@ diff --git a/translations/source/zh-TW/sw/source/ui/config.po b/translations/sou
 index c58caa5..38108fe 100644
 --- a/translations/source/zh-TW/sw/source/ui/config.po
 +++ b/translations/source/zh-TW/sw/source/ui/config.po
-@@ -310,6 +310,16 @@ msgctxt ""
+@@ -310,6 +310,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "選取(~S)"
  
@@ -2440,7 +2330,6 @@ index c58caa5..38108fe 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"
@@ -2453,7 +2342,7 @@ diff --git a/translations/source/zu/sw/source/ui/config.po b/translations/source
 index 189c048..bd7ffac 100644
 --- a/translations/source/zu/sw/source/ui/config.po
 +++ b/translations/source/zu/sw/source/ui/config.po
-@@ -311,6 +311,16 @@ msgctxt ""
+@@ -311,6 +311,15 @@ msgctxt ""
  msgid "~Selection"
  msgstr "~Ukhetho"
  
@@ -2461,7 +2350,6 @@ index 189c048..bd7ffac 100644
 +msgctxt ""
 +"optdlg.src\n"
 +"STR_PRINTOPTUI\n"
-+"Place in margins\n"
 +"31\n"
 +"itemlist.text"
 +msgid "Place in margins"

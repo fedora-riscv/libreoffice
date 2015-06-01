@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -387,6 +387,7 @@ Patch75: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
 Patch76: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch77: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch78: 0001-rulers-Make-the-numbers-a-bit-smaller-and-always-wit.patch
+Patch79: 0001-Resolves-tdf-91420-Jan1-2015-is-a-valid-date.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2363,6 +2364,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 01 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7-UNBUILT
+- Resolves: tdf#91420 "Jan1, 2015" is a valid date
+
 * Tue May 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-6
 - Resolves: rhbz#1219137 tweak ruler for happenchance side-effect
 

@@ -388,6 +388,7 @@ Patch76: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch77: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch78: 0001-rulers-Make-the-numbers-a-bit-smaller-and-always-wit.patch
 Patch79: 0001-Resolves-tdf-91420-Jan1-2015-is-a-valid-date.patch
+Patch80: 0001-tdf-91425-CRASH-Calc-Insert-Columns-Left.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2366,6 +2367,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Jun 01 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7-UNBUILT
 - Resolves: tdf#91420 "Jan1, 2015" is a valid date
+- Resolves: tdf#91425 CRASH - Calc Insert Columns Left
 
 * Tue May 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-6
 - Resolves: rhbz#1219137 tweak ruler for happenchance side-effect

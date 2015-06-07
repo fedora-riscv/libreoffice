@@ -325,6 +325,8 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+# upstreamed
+Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

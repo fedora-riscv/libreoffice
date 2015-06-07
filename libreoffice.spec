@@ -1957,6 +1957,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 # UI translations go into langpacks
 %exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res
 %endif
+%{baseinstdir}/share/palette
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd

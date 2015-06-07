@@ -1,0 +1,605 @@
+From d0175eb6b4c727477ad266027e8692e8e0eb2125 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 6 Jun 2015 14:24:46 +0100
+Subject: [PATCH] Resolves: tdf#89905 don't copy palettes from shared to user
+
+make this a multi-path element with a shared read-only location
+and a user read/write location and don't copy the presets, instead
+just keep them in the shared location
+
+Now an admin can copy extra palettes into the shared location
+and they magically appear in the user deployments
+
+(cherry picked from commit 29202a16d9f1934684c7d0978112849f2a21fe2f)
+
+Change-Id: I7585789c0c59941094f6128368df94b834d3c2a2
+
+Related: tdf#89905 these PalettePath uses appear to really be UserConfigPath
+
+which is the same path at the moment
+
+(cherry picked from commit 2c3bf6bfc244517a0134e320acaa1f720703d8f2)
+
+Change-Id: Ifdefa478003a2b5cc5c065b1942194dda1275f5e
+---
+ cui/source/tabpages/tabarea.cxx                    |  9 +++-
+ cui/source/tabpages/tabline.cxx                    | 10 +++-
+ cui/source/tabpages/tpbitmap.cxx                   | 23 ++++++--
+ cui/source/tabpages/tpcolor.cxx                    | 23 ++++++--
+ cui/source/tabpages/tpgradnt.cxx                   | 23 ++++++--
+ cui/source/tabpages/tphatch.cxx                    | 23 ++++++--
+ cui/source/tabpages/tplnedef.cxx                   | 23 ++++++--
+ cui/source/tabpages/tplneend.cxx                   | 24 +++++++--
+ extras/Package_palettes.mk                         |  2 +-
+ offapi/com/sun/star/util/XPathSettings.idl         |  3 +-
+ .../registry/data/org/openoffice/Office/Paths.xcu  |  3 ++
+ .../schema/org/openoffice/Office/Common.xcs        |  7 ++-
+ sd/source/ui/dlg/PhotoAlbumDialog.cxx              |  4 +-
+ svx/source/sidebar/nbdtmg.cxx                      |  4 +-
+ svx/source/tbxctrls/PaletteManager.cxx             | 63 +++++++++++++++-------
+ svx/source/xoutdev/xtable.cxx                      | 54 ++++++++++++++-----
+ 16 files changed, 236 insertions(+), 62 deletions(-)
+
+diff --git a/cui/source/tabpages/tabarea.cxx b/cui/source/tabpages/tabarea.cxx
+index cef9253..668a60d 100644
+--- a/cui/source/tabpages/tabarea.cxx
++++ b/cui/source/tabpages/tabarea.cxx
+@@ -146,7 +146,14 @@ void SvxAreaTabDialog::SavePalettes()
+ 
+     // save the tables when they have been changed
+ 
+-    const OUString aPath( SvtPathOptions().GetPalettePath() );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aPath;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aPath = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
+ 
+     if( mnHatchingListState & CT_MODIFIED )
+     {
+diff --git a/cui/source/tabpages/tabline.cxx b/cui/source/tabpages/tabline.cxx
+index be818ba..10c83b7 100644
+--- a/cui/source/tabpages/tabline.cxx
++++ b/cui/source/tabpages/tabline.cxx
+@@ -136,8 +136,14 @@ void SvxLineTabDialog::SavePalettes()
+     }
+ 
+     // Save the tables when they have been changed
+-
+-    const OUString aPath( SvtPathOptions().GetPalettePath() );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aPath;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aPath = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
+ 
+     if( nDashListState & CT_MODIFIED )
+     {
+diff --git a/cui/source/tabpages/tpbitmap.cxx b/cui/source/tabpages/tpbitmap.cxx
+index dbef4d9..7f9a3ed 100644
+--- a/cui/source/tabpages/tpbitmap.cxx
++++ b/cui/source/tabpages/tpbitmap.cxx
+@@ -777,7 +777,16 @@ IMPL_LINK_NOARG(SvxBitmapTabPage, ClickLoadHdl_Impl)
+         ::sfx2::FileDialogHelper aDlg( com::sun::star::ui::dialogs::TemplateDescription::FILEOPEN_SIMPLE, 0 );
+         OUString aStrFilterType( "*.sob" );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if ( aDlg.Execute() == ERRCODE_NONE )
+@@ -857,8 +866,16 @@ IMPL_LINK_NOARG(SvxBitmapTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( "*.sob" );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     if( !pBitmapList->GetName().isEmpty() )
+     {
+diff --git a/cui/source/tabpages/tpcolor.cxx b/cui/source/tabpages/tpcolor.cxx
+index 7dbda37..5423589 100644
+--- a/cui/source/tabpages/tpcolor.cxx
++++ b/cui/source/tabpages/tpcolor.cxx
+@@ -151,7 +151,16 @@ IMPL_LINK_NOARG(SvxColorTabPage, ClickLoadHdl_Impl)
+         OUString aStrFilterType( XPropertyList::GetDefaultExtFilter( meType ) );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if ( aDlg.Execute() == ERRCODE_NONE )
+@@ -209,8 +218,16 @@ IMPL_LINK_NOARG(SvxColorTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( XPropertyList::GetDefaultExtFilter( meType ) );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     XPropertyListRef pList = GetList();
+ 
+diff --git a/cui/source/tabpages/tpgradnt.cxx b/cui/source/tabpages/tpgradnt.cxx
+index a96b218..2ff6150 100644
+--- a/cui/source/tabpages/tpgradnt.cxx
++++ b/cui/source/tabpages/tpgradnt.cxx
+@@ -628,7 +628,16 @@ IMPL_LINK_NOARG(SvxGradientTabPage, ClickLoadHdl_Impl)
+         ::sfx2::FileDialogHelper aDlg( com::sun::star::ui::dialogs::TemplateDescription::FILEOPEN_SIMPLE, 0 );
+         OUString aStrFilterType( "*.sog" );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if( aDlg.Execute() == ERRCODE_NONE )
+@@ -712,8 +721,16 @@ IMPL_LINK_NOARG(SvxGradientTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( "*.sog" );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     if( !pGradientList->GetName().isEmpty() )
+     {
+diff --git a/cui/source/tabpages/tphatch.cxx b/cui/source/tabpages/tphatch.cxx
+index ba6633ed..294e6b3 100644
+--- a/cui/source/tabpages/tphatch.cxx
++++ b/cui/source/tabpages/tphatch.cxx
+@@ -672,7 +672,16 @@ IMPL_LINK_NOARG(SvxHatchTabPage, ClickLoadHdl_Impl)
+         ::sfx2::FileDialogHelper aDlg( com::sun::star::ui::dialogs::TemplateDescription::FILEOPEN_SIMPLE,  0 );
+         OUString aStrFilterType( "*.soh" );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if( aDlg.Execute() == ERRCODE_NONE )
+@@ -745,8 +754,16 @@ IMPL_LINK_NOARG(SvxHatchTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( "*.soh" );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     if( !pHatchingList->GetName().isEmpty() )
+     {
+diff --git a/cui/source/tabpages/tplnedef.cxx b/cui/source/tabpages/tplnedef.cxx
+index 2c446c1..4fc25f9 100644
+--- a/cui/source/tabpages/tplnedef.cxx
++++ b/cui/source/tabpages/tplnedef.cxx
+@@ -738,7 +738,16 @@ IMPL_LINK_NOARG(SvxLineDefTabPage, ClickLoadHdl_Impl)
+         ::sfx2::FileDialogHelper aDlg( com::sun::star::ui::dialogs::TemplateDescription::FILEOPEN_SIMPLE, 0 );
+         OUString aStrFilterType( "*.sod" );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if( aDlg.Execute() == ERRCODE_NONE )
+@@ -798,8 +807,16 @@ IMPL_LINK_NOARG(SvxLineDefTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( "*.sod" );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     if( !pDashList->GetName().isEmpty() )
+     {
+diff --git a/cui/source/tabpages/tplneend.cxx b/cui/source/tabpages/tplneend.cxx
+index ddff877..1e5c27f 100644
+--- a/cui/source/tabpages/tplneend.cxx
++++ b/cui/source/tabpages/tplneend.cxx
+@@ -562,7 +562,17 @@ IMPL_LINK_NOARG(SvxLineEndDefTabPage, ClickLoadHdl_Impl)
+         ::sfx2::FileDialogHelper aDlg(com::sun::star::ui::dialogs::TemplateDescription::FILEOPEN_SIMPLE, 0 );
+         OUString aStrFilterType( "*.soe" );
+         aDlg.AddFilter( aStrFilterType, aStrFilterType );
+-        INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++
++        OUString aPalettePath(SvtPathOptions().GetPalettePath());
++        OUString aLastDir;
++        sal_Int32 nIndex = 0;
++        do
++        {
++            aLastDir = aPalettePath.getToken(0, ';', nIndex);
++        }
++        while (nIndex >= 0);
++
++        INetURLObject aFile(aLastDir);
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+ 
+         if( aDlg.Execute() == ERRCODE_NONE )
+@@ -622,8 +632,16 @@ IMPL_LINK_NOARG(SvxLineEndDefTabPage, ClickSaveHdl_Impl)
+     OUString aStrFilterType( "*.soe" );
+     aDlg.AddFilter( aStrFilterType, aStrFilterType );
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    DBG_ASSERT( aFile.GetProtocol() != INET_PROT_NOT_VALID, "invalid URL" );
++    OUString aPalettePath(SvtPathOptions().GetPalettePath());
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = aPalettePath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aFile(aLastDir);
+ 
+     if( !pLineEndList->GetName().isEmpty() )
+     {
+diff --git a/extras/Package_palettes.mk b/extras/Package_palettes.mk
+index bc317e2..5cf4c61 100644
+--- a/extras/Package_palettes.mk
++++ b/extras/Package_palettes.mk
+@@ -9,7 +9,7 @@
+ 
+ $(eval $(call gb_Package_Package,extras_palettes,$(SRCDIR)/extras/source/palettes))
+ 
+-$(eval $(call gb_Package_add_files,extras_palettes,$(LIBO_SHARE_PRESETS_FOLDER)/config,\
++$(eval $(call gb_Package_add_files,extras_palettes,$(LIBO_SHARE_FOLDER)/palette,\
+ 	arrowhd.soe \
+ 	classic.sog \
+ 	cmyk.soc \
+diff --git a/offapi/com/sun/star/util/XPathSettings.idl b/offapi/com/sun/star/util/XPathSettings.idl
+index 5f202a3..d54c122 100644
+--- a/offapi/com/sun/star/util/XPathSettings.idl
++++ b/offapi/com/sun/star/util/XPathSettings.idl
+@@ -89,7 +89,8 @@ published interface XPathSettings
+   [attribute] string Module;
+ 
+   /** This is the path to the palette files *.SOB to *.SOF containing
+-      user-defined colors and patterns. */
++      user-defined colors and patterns. The value can be more than
++      one path separated by a semicolon.*/
+   [attribute] string Palette;
+ 
+   /** Plugins are saved in these directories. The value can be more than
+diff --git a/officecfg/registry/data/org/openoffice/Office/Paths.xcu b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
+index 6d739e6..965a629 100644
+--- a/officecfg/registry/data/org/openoffice/Office/Paths.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/Paths.xcu
+@@ -124,6 +124,9 @@
+       </node>
+     </node>
+     <node oor:name="Palette" oor:op="fuse" oor:mandatory="true">
++      <node oor:name="InternalPaths">
++        <node oor:name="$(insturl)/@LIBO_SHARE_FOLDER@/palette" oor:op="fuse"/>
++      </node>
+       <prop oor:name="WritePath">
+         <value>$(userurl)/config</value>
+       </prop>
+diff --git a/officecfg/registry/schema/org/openoffice/Office/Common.xcs b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
+index b035168..c883681 100644
+--- a/officecfg/registry/schema/org/openoffice/Office/Common.xcs
++++ b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
+@@ -1630,12 +1630,15 @@
+           </info>
+           <value>$(progpath)</value>
+         </prop>
+-        <prop oor:name="Palette" oor:type="xs:string" oor:nillable="false">
++        <prop oor:name="Palette" oor:type="oor:string-list" oor:nillable="false">
+           <info>
+             <desc>Specifies the path to the palette files *.SOB to *.SOF
+             containing user-defined colors and patterns.</desc>
+           </info>
+-          <value>$(userurl)/config</value>
++          <value>
++            <it>$(insturl)/@LIBO_SHARE_FOLDER@/palette</it>
++            <it>$(userurl)/config</it>
++          </value>
+         </prop>
+         <prop oor:name="Plugin" oor:type="oor:string-list" oor:nillable="false">
+           <info>
+diff --git a/sd/source/ui/dlg/PhotoAlbumDialog.cxx b/sd/source/ui/dlg/PhotoAlbumDialog.cxx
+index 0815c69..d3227cb 100644
+--- a/sd/source/ui/dlg/PhotoAlbumDialog.cxx
++++ b/sd/source/ui/dlg/PhotoAlbumDialog.cxx
+@@ -454,8 +454,8 @@ IMPL_LINK_NOARG(SdPhotoAlbumDialog, FileHdl)
+     // Read configuration
+     OUString sUrl(officecfg::Office::Impress::Pictures::Path::get());
+ 
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
+-    if (sUrl != "")
++    INetURLObject aFile( SvtPathOptions().GetUserConfigPath() );
++    if (!sUrl.isEmpty())
+         aDlg.SetDisplayDirectory(sUrl);
+     else
+         aDlg.SetDisplayDirectory( aFile.GetMainURL( INetURLObject::NO_DECODE ) );
+diff --git a/svx/source/sidebar/nbdtmg.cxx b/svx/source/sidebar/nbdtmg.cxx
+index f77522c..20f7c50 100644
+--- a/svx/source/sidebar/nbdtmg.cxx
++++ b/svx/source/sidebar/nbdtmg.cxx
+@@ -157,7 +157,7 @@ void NBOTypeMgrBase::ImplLoad(const OUString& filename)
+     bIsLoading = true;
+     SfxMapUnit      eOldCoreUnit=eCoreUnit;
+     eCoreUnit = SFX_MAPUNIT_100TH_MM;
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++    INetURLObject aFile( SvtPathOptions().GetUserConfigPath() );
+     aFile.Append( filename);
+     boost::scoped_ptr<SvStream> pIStm(::utl::UcbStreamHelper::CreateStream( aFile.GetMainURL( INetURLObject::NO_DECODE ), STREAM_READ ));
+     if( pIStm ) {
+@@ -196,7 +196,7 @@ void NBOTypeMgrBase::ImplStore(const OUString& filename)
+     if (bIsLoading) return;
+     SfxMapUnit      eOldCoreUnit=eCoreUnit;
+     eCoreUnit = SFX_MAPUNIT_100TH_MM;
+-    INetURLObject aFile( SvtPathOptions().GetPalettePath() );
++    INetURLObject aFile( SvtPathOptions().GetUserConfigPath() );
+     aFile.Append( filename);
+     boost::scoped_ptr<SvStream> pOStm(::utl::UcbStreamHelper::CreateStream( aFile.GetMainURL( INetURLObject::NO_DECODE ), STREAM_WRITE ));
+     if( pOStm ) {
+diff --git a/svx/source/tbxctrls/PaletteManager.cxx b/svx/source/tbxctrls/PaletteManager.cxx
+index 33f346e..fa0538b 100644
+--- a/svx/source/tbxctrls/PaletteManager.cxx
++++ b/svx/source/tbxctrls/PaletteManager.cxx
+@@ -27,6 +27,8 @@
+ #include <svtools/colrdlg.hxx>
+ #include <vcl/svapp.hxx>
+ #include <vcl/settings.hxx>
++#include <stack>
++#include <set>
+ 
+ PaletteManager::PaletteManager() :
+     mnMaxRecentColors(Application::GetSettings().GetStyleSettings().GetColorValueSetColumnCount()),
+@@ -47,29 +49,50 @@ PaletteManager::~PaletteManager()
+ void PaletteManager::LoadPalettes()
+ {
+     maPalettes.clear();
+-    OUString aPalPath = SvtPathOptions().GetPalettePath();
+-
+-    osl::Directory aDir(aPalPath);
+-    osl::DirectoryItem aDirItem;
+-    osl::FileStatus aFileStat( osl_FileStatus_Mask_FileName |
+-                               osl_FileStatus_Mask_FileURL  |
+-                               osl_FileStatus_Mask_Type     );
+-    if( aDir.open() == osl::FileBase::E_None )
++    OUString aPalPaths = SvtPathOptions().GetPalettePath();
++
++    std::stack<OUString> aDirs;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aDirs.push(aPalPaths.getToken(0, ';', nIndex));
++    }
++    while (nIndex >= 0);
++
++    std::set<OUString> aNames;
++    //try all entries palette path list user first, then
++    //system, ignoring duplicate file names
++    while (!aDirs.empty())
+     {
+-        while( aDir.getNextItem(aDirItem) == osl::FileBase::E_None )
++        OUString aPalPath = aDirs.top();
++        aDirs.pop();
++
++        osl::Directory aDir(aPalPath);
++        osl::DirectoryItem aDirItem;
++        osl::FileStatus aFileStat( osl_FileStatus_Mask_FileName |
++                                   osl_FileStatus_Mask_FileURL  |
++                                   osl_FileStatus_Mask_Type     );
++        if( aDir.open() == osl::FileBase::E_None )
+         {
+-            aDirItem.getFileStatus(aFileStat);
+-            if(aFileStat.isRegular() || aFileStat.isLink())
++            while( aDir.getNextItem(aDirItem) == osl::FileBase::E_None )
+             {
+-                OUString aFName = aFileStat.getFileName();
+-                Palette* pPalette = 0;
+-                if( aFName.endsWithIgnoreAsciiCase(".gpl") )
+-                    pPalette = new PaletteGPL( aFileStat.getFileURL(), aFName );
+-                else if( aFName.endsWithIgnoreAsciiCase(".soc") )
+-                    pPalette = new PaletteSOC( aFileStat.getFileURL(), aFName );
+-
+-                if( pPalette && pPalette->IsValid() )
+-                    maPalettes.push_back( pPalette );
++                aDirItem.getFileStatus(aFileStat);
++                if(aFileStat.isRegular() || aFileStat.isLink())
++                {
++                    OUString aFName = aFileStat.getFileName();
++                    if (aNames.find(aFName) == aNames.end())
++                    {
++                        Palette* pPalette = 0;
++                        if( aFName.endsWithIgnoreAsciiCase(".gpl") )
++                            pPalette = new PaletteGPL( aFileStat.getFileURL(), aFName );
++                        else if( aFName.endsWithIgnoreAsciiCase(".soc") )
++                            pPalette = new PaletteSOC( aFileStat.getFileURL(), aFName );
++
++                        if( pPalette && pPalette->IsValid() )
++                            maPalettes.push_back( pPalette );
++                        aNames.insert(aFName);
++                    }
++                }
+             }
+         }
+     }
+diff --git a/svx/source/xoutdev/xtable.cxx b/svx/source/xoutdev/xtable.cxx
+index 166c873..db316ca 100644
+--- a/svx/source/xoutdev/xtable.cxx
++++ b/svx/source/xoutdev/xtable.cxx
+@@ -25,6 +25,7 @@
+ #include <svx/xpool.hxx>
+ #include <svx/svdobj.hxx>
+ #include <svx/svdpool.hxx>
++#include <stack>
+ 
+ using namespace com::sun::star;
+ 
+@@ -224,23 +225,41 @@ bool XPropertyList::Load()
+     if( mbListDirty )
+     {
+         mbListDirty = false;
++        std::stack<OUString> aDirs;
+ 
+-        INetURLObject aURL( maPath );
+-
+-        if( INET_PROT_NOT_VALID == aURL.GetProtocol() )
++        sal_Int32 nIndex = 0;
++        do
+         {
+-            DBG_ASSERT( maPath.isEmpty(), "invalid URL" );
+-            return false;
++            aDirs.push(maPath.getToken(0, ';', nIndex));
+         }
++        while (nIndex >= 0);
++
++        //try all entries palette path list working back to front until one
++        //succeeds
++        while (!aDirs.empty())
++        {
++            OUString aPath(aDirs.top());
++            aDirs.pop();
++
++            INetURLObject aURL(aPath);
++
++            if( INET_PROT_NOT_VALID == aURL.GetProtocol() )
++            {
++                DBG_ASSERT( aPath.isEmpty(), "invalid URL" );
++                return false;
++            }
+ 
+-        aURL.Append( maName );
++            aURL.Append( maName );
+ 
+-        if( aURL.getExtension().isEmpty() )
+-            aURL.setExtension( GetDefaultExt() );
++            if( aURL.getExtension().isEmpty() )
++                aURL.setExtension( GetDefaultExt() );
+ 
+-        return SvxXMLXTableImport::load( aURL.GetMainURL( INetURLObject::NO_DECODE ), maReferer,
+-                                         uno::Reference < embed::XStorage >(),
+-                                         createInstance(), NULL );
++            bool bRet = SvxXMLXTableImport::load(aURL.GetMainURL(INetURLObject::NO_DECODE),
++                                             maReferer, uno::Reference < embed::XStorage >(),
++                                             createInstance(), NULL );
++            if (bRet)
++                return bRet;
++        }
+     }
+     return false;
+ }
+@@ -256,11 +275,20 @@ bool XPropertyList::LoadFrom( const uno::Reference < embed::XStorage > &xStorage
+ 
+ bool XPropertyList::Save()
+ {
+-    INetURLObject aURL( maPath );
++    //save to the last path in the palette path list
++    OUString aLastDir;
++    sal_Int32 nIndex = 0;
++    do
++    {
++        aLastDir = maPath.getToken(0, ';', nIndex);
++    }
++    while (nIndex >= 0);
++
++    INetURLObject aURL(aLastDir);
+ 
+     if( INET_PROT_NOT_VALID == aURL.GetProtocol() )
+     {
+-        DBG_ASSERT( maPath.isEmpty(), "invalid URL" );
++        DBG_ASSERT( aLastDir.isEmpty(), "invalid URL" );
+         return false;
+     }
+ 
+-- 
+2.4.0
+

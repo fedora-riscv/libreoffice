@@ -355,6 +355,7 @@ Patch34: 0001-add-missing-includes.patch
 Patch35: 0001-impress-right-click-to-insert-image.patch
 Patch36: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
 Patch37: 0001-wrong-comparison-in-letter-wizard.patch
+Patch38: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2414,9 +2415,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed May 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6-UNBUILT
-- tdf#89904 allow the options color page to load/save palettes
+* Sun Jun 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6
 - wrong comparison in letter wizard
+- Resolves: tdf#89904 allow the options color page to load/save palettes
+- Resolves: tdf#89905 don't copy palettes from shared location
 
 * Mon May 25 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-5
 - right click in impress to add graphic

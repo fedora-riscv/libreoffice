@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -356,6 +356,7 @@ Patch35: 0001-impress-right-click-to-insert-image.patch
 Patch36: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
 Patch37: 0001-wrong-comparison-in-letter-wizard.patch
 Patch38: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
+Patch39: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2415,6 +2416,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Jun 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-7-UNBUILT
+- Resolves: tdf#79780 accessible after opening properties dialog in template manager
+
 * Sun Jun 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6
 - wrong comparison in letter wizard
 - Resolves: tdf#89904 allow the options color page to load/save palettes

@@ -327,6 +327,7 @@ Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 # upstreamed
 Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
+Patch18: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

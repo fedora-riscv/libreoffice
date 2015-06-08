@@ -358,6 +358,7 @@ Patch37: 0001-wrong-comparison-in-letter-wizard.patch
 Patch38: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
 Patch39: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
 Patch40: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
+Patch41: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2420,6 +2421,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Jun 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-7-UNBUILT
 - Resolves: tdf#49407 enable CaseMap property in impress/draw
+- Resolves: rhbz#1212214 - [abrt] libreoffice-core:
+  SdrObjList::RecalcRects(): soffice.bin killed by SIGSEGV
 
 * Sun Jun 07 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-6
 - wrong comparison in letter wizard

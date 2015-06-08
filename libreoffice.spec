@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2441,6 +2441,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 08 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-4.beta1
+- rebuild for poppler 0.33
+
 * Wed May 20 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-3.beta1
 - update to 5.0.0 beta1
 

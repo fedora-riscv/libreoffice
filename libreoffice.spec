@@ -3,8 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo__prerelease beta1
-%define libo_prerelease .%{?libo__prerelease}
+%define libo_prerelease .beta2
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -52,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1159,7 +1158,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo__prerelease} -b 1 -b 2
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 
 # set up git repo
@@ -2442,6 +2441,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jun 09 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-5.beta2
+- update to 5.0.0 beta2
+
 * Mon Jun 08 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-4.beta1
 - rebuild for poppler 0.33
 

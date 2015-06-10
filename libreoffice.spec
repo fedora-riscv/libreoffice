@@ -2302,7 +2302,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon May 25 2015 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-9-UNBUILT
+* Mon May 25 2015 David Tardon <dtardon@redhat.com> - 1:4.2.8.2-9
 - Resolves: rhbz#1223696 some labels in print dialog are not translated, even
   though the translations exist
 

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.3
+%define libo_version 4.4.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -19,8 +19,8 @@
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 # limit to fedora, as it breaks building of some bundled projects
@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -343,22 +343,18 @@ Patch22: 0001-build-libetonyek-with-no-strict-aliasing.patch
 Patch23: 0002-propagate-user-set-CFLAGS-to-build.patch
 Patch24: 0001-gnome-745909-grab-ungrab-keyboard-for-menus.patch
 Patch25: 0001-negative-after-text-indents-ignored-by-msword-for-ap.patch
-Patch26: 0001-Resolves-tdf-73211-gtk-checkboxes-need-erase-afer-to.patch
-Patch27: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
-Patch28: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
-Patch29: 0001-use-a-sizegroup-to-stop-area-panel-jumping.patch
-Patch30: 0001-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
-Patch31: 0001-misspell-some-words-copy-and-paste-slide-to-gimp.patch
-Patch32: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
-Patch33: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
-Patch34: 0001-add-missing-includes.patch
-Patch35: 0001-impress-right-click-to-insert-image.patch
-Patch36: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
-Patch37: 0001-wrong-comparison-in-letter-wizard.patch
-Patch38: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
-Patch39: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
-Patch40: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
-Patch41: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
+Patch26: 0001-on-using-add-color-button-don-t-frighten-with-an-err.patch
+Patch27: 0001-the-Edit-button-is-a-color-picker-rename-and-move.patch
+Patch28: 0001-Use-new-color-selector-in-the-toolbar-for-area-fills.patch
+Patch29: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch30: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
+Patch31: 0001-impress-right-click-to-insert-image.patch
+Patch32: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
+Patch33: 0001-wrong-comparison-in-letter-wizard.patch
+Patch34: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
+Patch35: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
+Patch36: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
+Patch37: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2419,7 +2415,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jun 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.3.2-7-UNBUILT
+* Wed Jun 10 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-1
+- update to 4.4.4
 - Resolves: tdf#49407 enable CaseMap property in impress/draw
 - Resolves: rhbz#1212214 - [abrt] libreoffice-core:
   SdrObjList::RecalcRects(): soffice.bin killed by SIGSEGV

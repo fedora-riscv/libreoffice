@@ -18,8 +18,8 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 

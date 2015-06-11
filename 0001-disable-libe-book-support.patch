@@ -1,4 +1,4 @@
-From c938bee66b52dd9d72fd0fe8eb4ebda0b6dafd25 Mon Sep 17 00:00:00 2001
+From e7836800ed8edc25284ac690acee2ce0819d5de1 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
@@ -15,10 +15,10 @@ Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
  7 files changed, 33 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 8b8cc34..22a5c3c 100644
+index ed71d8f..32fa8ae 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7573,11 +7573,6 @@ AS_IF([test "$COM" = "MSC"],
+@@ -7583,11 +7583,6 @@ AS_IF([test "$COM" = "MSC"],
  libo_CHECK_SYSTEM_MODULE([librevenge],[REVENGE],[librevenge-0.0 >= 0.0.1],["-I${WORKDIR}/UnpackedTarball/librevenge/inc"],["-L${librevenge_libdir} -lrevenge-0.0"])
  
  dnl ===================================================================
@@ -29,7 +29,7 @@ index 8b8cc34..22a5c3c 100644
 -dnl ===================================================================
  dnl Check for system libetonyek
  dnl ===================================================================
- libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1 >= 0.1.1])
+ libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1 >= 0.1.2])
 diff --git a/external/Module_external.mk b/external/Module_external.mk
 index 6d38fd5..25cb2d9 100644
 --- a/external/Module_external.mk
@@ -43,7 +43,7 @@ index 6d38fd5..25cb2d9 100644
  	$(call gb_Helper_optional,ETONYEK,libetonyek) \
  	$(call gb_Helper_optional,EXPAT,expat) \
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
-index d791909..42a8245 100644
+index 29e672b..213e981 100644
 --- a/filter/Configuration_filter.mk
 +++ b/filter/Configuration_filter.mk
 @@ -362,13 +362,6 @@ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu
@@ -57,10 +57,10 @@ index d791909..42a8245 100644
 -	writer_Plucker_eBook \
 -	writer_TealDoc \
 -	writer_zTXT \
+ 	writer_ApplePages \
  ))
  
- $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters.xcu,filter/source/config/fragments/filters,\
-@@ -424,13 +417,6 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
+@@ -425,13 +418,6 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
  	OOXML_Text \
  	OOXML_Text_Template \
  	writer_layout_dump \
@@ -71,31 +71,31 @@ index d791909..42a8245 100644
 -	Plucker_eBook \
 -	TealDoc \
 -	zTXT \
+ 	ApplePages \
  ))
  
- # fcfg_web
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
-index b47c271..75bdc9e 100644
+index 8557991..288c929 100644
 --- a/writerperfect/Library_wpftwriter.mk
 +++ b/writerperfect/Library_wpftwriter.mk
-@@ -47,7 +47,6 @@ $(eval $(call gb_Library_use_libraries,wpftwriter,\
+@@ -49,7 +49,6 @@ $(eval $(call gb_Library_use_libraries,wpftwriter,\
  $(eval $(call gb_Library_use_externals,wpftwriter,\
  	abw \
  	boost_headers \
 -	ebook \
+ 	etonyek \
  	icui18n \
  	icuuc \
- 	libxml2 \
-@@ -62,7 +61,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
+@@ -65,7 +64,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
  
  $(eval $(call gb_Library_add_exception_objects,wpftwriter,\
  	writerperfect/source/writer/AbiWordImportFilter \
 -	writerperfect/source/writer/EBookImportFilter \
  	writerperfect/source/writer/MSWorksImportFilter \
  	writerperfect/source/writer/MWAWImportFilter \
- 	writerperfect/source/writer/WordPerfectImportFilter \
+ 	writerperfect/source/writer/PagesImportFilter \
 diff --git a/writerperfect/qa/unit/WpftWriterFilterTest.cxx b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
-index 904daab..fb44878 100644
+index f8f9f85..d928f52 100644
 --- a/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 +++ b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 @@ -32,7 +32,6 @@ WpftWriterFilterTest::WpftWriterFilterTest()
@@ -105,12 +105,12 @@ index 904daab..fb44878 100644
 -    doTest("org.libreoffice.comp.Writer.EBookImportFilter", "/writerperfect/qa/unit/data/writer/libe-book/");
      doTest("com.sun.star.comp.Writer.MSWorksImportFilter", "/writerperfect/qa/unit/data/writer/libwps/");
      doTest("com.sun.star.comp.Writer.MWAWImportFilter", "/writerperfect/qa/unit/data/writer/libmwaw/");
-     doTest("com.sun.star.comp.Writer.WordPerfectImportFilter", "/writerperfect/qa/unit/data/writer/libwpd/");
+     doTest("org.libreoffice.comp.Writer.PagesImportFilter", "/writerperfect/qa/unit/data/writer/libetonyek/");
 diff --git a/writerperfect/source/writer/wpftwriter.component b/writerperfect/source/writer/wpftwriter.component
-index 8a204ec..8966bac 100644
+index eaf751a..4b8efbf 100644
 --- a/writerperfect/source/writer/wpftwriter.component
 +++ b/writerperfect/source/writer/wpftwriter.component
-@@ -34,8 +34,4 @@
+@@ -34,10 +34,6 @@
      <service name="com.sun.star.document.ExtendedTypeDetection"/>
      <service name="com.sun.star.document.ImportFilter"/>
    </implementation>
@@ -118,9 +118,11 @@ index 8a204ec..8966bac 100644
 -    <service name="com.sun.star.document.ExtendedTypeDetection"/>
 -    <service name="com.sun.star.document.ImportFilter"/>
 -  </implementation>
- </component>
+   <implementation name="org.libreoffice.comp.Writer.PagesImportFilter">
+     <service name="com.sun.star.document.ExtendedTypeDetection"/>
+     <service name="com.sun.star.document.ImportFilter"/>
 diff --git a/writerperfect/source/writer/wpftwriter_genericfilter.cxx b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
-index cd60fe2..fa2202f 100644
+index 3f508c4..7e10b9e 100644
 --- a/writerperfect/source/writer/wpftwriter_genericfilter.cxx
 +++ b/writerperfect/source/writer/wpftwriter_genericfilter.cxx
 @@ -32,7 +32,6 @@
@@ -131,18 +133,18 @@ index cd60fe2..fa2202f 100644
  #include "WordPerfectImportFilter.hxx"
  #include "MSWorksImportFilter.hxx"
  #include "MWAWImportFilter.hxx"
-@@ -62,11 +61,6 @@ static cppu::ImplementationEntry const services[] =
-         &MWAWImportFilter_getSupportedServiceNames,
+@@ -64,11 +63,6 @@ static cppu::ImplementationEntry const services[] =
          &cppu::createSingleComponentFactory, 0, 0
      },
--    {
+     {
 -        &EBookImportFilter_createInstance, &EBookImportFilter_getImplementationName,
 -        &EBookImportFilter_getSupportedServiceNames,
 -        &cppu::createSingleComponentFactory, 0, 0
 -    },
-     { 0, 0, 0, 0, 0, 0 }
- };
- 
+-    {
+         &PagesImportFilter_createInstance, &PagesImportFilter_getImplementationName,
+         &PagesImportFilter_getSupportedServiceNames,
+         &cppu::createSingleComponentFactory, 0, 0
 -- 
-1.8.3.1
+2.4.2
 

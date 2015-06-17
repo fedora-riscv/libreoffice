@@ -2368,7 +2368,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jun 08 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7-UNBUILT
+* Wed Jun 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7
 - Resolves: tdf#91420 "Jan1, 2015" is a valid date
 - Resolves: tdf#91425 CRASH - Calc Insert Columns Left
 - Resolves: rhbz#1212214 - [abrt] libreoffice-core:

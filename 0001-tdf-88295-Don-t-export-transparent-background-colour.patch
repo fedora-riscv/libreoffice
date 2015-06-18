@@ -1,0 +1,138 @@
+From cf1ea5197ca0d76de23d1d21a4701b38ddec15f1 Mon Sep 17 00:00:00 2001
+From: Katarina Behrens <Katarina.Behrens@cib.de>
+Date: Tue, 9 Jun 2015 11:53:12 +0200
+Subject: [PATCH] tdf#88295: Don't export transparent background colour as
+ white
+
+The fix is twofold:
+1. retrieve transparency from colour in SvxBackgroundColorItem
+(add QueryValue, PutValue methods, use additional memberID to
+retrieve alpha channel as a bool property)
+2. add CharBackTransparent bool property to Draw [text] shapes,
+xmloff needs it to be able to output 'transparent' string instead of
+'#XXYYZZ' colour code in ODF format
+
+Conflicts:
+	include/editeng/colritem.hxx
+
+Change-Id: I6e14b81cc82f6b4d7fdd4756ff2e4f75e9270361
+Reviewed-on: https://gerrit.libreoffice.org/16243
+Reviewed-by: Muthu Subramanian K <muthusuba@gmail.com>
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+Tested-by: Michael Stahl <mstahl@redhat.com>
+---
+ editeng/source/items/textitem.cxx | 45 +++++++++++++++++++++++++++++++++++++++
+ include/editeng/colritem.hxx      |  2 ++
+ include/editeng/unotext.hxx       |  1 +
+ svx/source/unodraw/unoprov.cxx    |  1 +
+ svx/source/unodraw/unoshap2.cxx   |  1 +
+ 5 files changed, 50 insertions(+)
+
+diff --git a/editeng/source/items/textitem.cxx b/editeng/source/items/textitem.cxx
+index b4f5303..b55d9ad 100644
+--- a/editeng/source/items/textitem.cxx
++++ b/editeng/source/items/textitem.cxx
+@@ -1830,6 +1830,51 @@ SfxPoolItem* SvxBackgroundColorItem::Create(SvStream& rStrm, sal_uInt16 ) const
+     return new SvxBackgroundColorItem( rStrm, Which() );
+ }
+ 
++bool SvxBackgroundColorItem::QueryValue( uno::Any& rVal, sal_uInt8 nMemberId ) const
++{
++    nMemberId &= ~CONVERT_TWIPS;
++    Color aColor = SvxColorItem::GetValue();
++
++    switch( nMemberId )
++    {
++        case MID_GRAPHIC_TRANSPARENT:
++        {
++            rVal <<= Bool2Any (aColor.GetTransparency() == 0xff);
++            break;
++        }
++        default:
++        {
++            rVal <<= (sal_Int32)(aColor.GetColor());
++            break;
++        }
++    }
++    return true;
++}
++
++bool SvxBackgroundColorItem::PutValue( const uno::Any& rVal, sal_uInt8 nMemberId )
++{
++    nMemberId &= ~CONVERT_TWIPS;
++    sal_Int32 nColor = 0;
++    Color aColor = SvxColorItem::GetValue();
++
++    switch( nMemberId )
++    {
++        case MID_GRAPHIC_TRANSPARENT:
++        {
++            aColor.SetTransparency( Any2Bool( rVal ) ? 0xff : 0 );
++            SvxColorItem::SetValue( aColor );
++            break;
++        }
++        default:
++        {
++            if(!(rVal >>= nColor))
++                return false;
++            SvxColorItem::SetValue( Color(nColor) );
++            break;
++        }
++    }
++    return true;
++}
+ 
+ // class SvxColorItem ----------------------------------------------------
+ 
+diff --git a/include/editeng/colritem.hxx b/include/editeng/colritem.hxx
+index 31a7af4..bead03e 100644
+--- a/include/editeng/colritem.hxx
++++ b/include/editeng/colritem.hxx
+@@ -94,6 +94,8 @@ class EDITENG_DLLPUBLIC SvxBackgroundColorItem : public SvxColorItem
+         virtual SfxPoolItem*     Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+         virtual SfxPoolItem*     Create(SvStream &, sal_uInt16) const SAL_OVERRIDE;
+ 
++        virtual bool QueryValue(com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0) const SAL_OVERRIDE;
++        virtual bool PutValue(const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0) SAL_OVERRIDE;
+ };
+ 
+ #endif
+diff --git a/include/editeng/unotext.hxx b/include/editeng/unotext.hxx
+index da7708c..71bacb2 100644
+--- a/include/editeng/unotext.hxx
++++ b/include/editeng/unotext.hxx
+@@ -91,6 +91,7 @@ class SvxItemPropertySet;
+     { OUString(UNO_NAME_EDIT_CHAR_LOCALE),      EE_CHAR_LANGUAGE,   ::cppu::UnoType<com::sun::star::lang::Locale>::get(),0, MID_LANG_LOCALE }, \
+     { OUString(UNO_NAME_EDIT_CHAR_COLOR),       EE_CHAR_COLOR,      ::cppu::UnoType<sal_Int32>::get(),        0, 0 }, \
+     { OUString("CharBackColor"),                EE_CHAR_BKGCOLOR,   ::cppu::UnoType<sal_Int32>::get(),        0, 0 }, \
++    { OUString("CharBackTransparent"),          EE_CHAR_BKGCOLOR,   ::cppu::UnoType<bool>::get(),             0, MID_GRAPHIC_TRANSPARENT }, \
+     { OUString(UNO_NAME_EDIT_CHAR_ESCAPEMENT),  EE_CHAR_ESCAPEMENT, ::cppu::UnoType<sal_Int16>::get(),        0, MID_ESC }, \
+     { OUString(UNO_NAME_EDIT_CHAR_UNDERLINE),   EE_CHAR_UNDERLINE,  ::cppu::UnoType<sal_Int16>::get(),        0, MID_TL_STYLE }, \
+     { OUString("CharUnderlineColor"),           EE_CHAR_UNDERLINE,  ::cppu::UnoType<sal_Int32>::get(),        0, MID_TL_COLOR }, \
+diff --git a/svx/source/unodraw/unoprov.cxx b/svx/source/unodraw/unoprov.cxx
+index 4bd4151..7366166 100644
+--- a/svx/source/unodraw/unoprov.cxx
++++ b/svx/source/unodraw/unoprov.cxx
+@@ -588,6 +588,7 @@ SfxItemPropertyMapEntry const * ImplGetSvxControlShapePropertyMap()
+         { OUString(UNO_NAME_EDIT_CHAR_CASEMAP),         0,  cppu::UnoType<sal_Int16>::get(),        0, 0 },
+         { OUString(UNO_NAME_EDIT_CHAR_COLOR),           0,  cppu::UnoType<sal_Int32>::get(),        0, 0 },
+         { OUString("CharBackColor"),                    0,  cppu::UnoType<sal_Int32>::get(),        0, 0 },
++        { OUString("CharBackTransparent"),              0,  cppu::UnoType<bool>::get(),             0, 0 },
+         { OUString("CharRelief"),                       0,  cppu::UnoType<sal_Int16>::get(),        0, 0 },
+         { OUString("CharUnderlineColor"),               0,  cppu::UnoType<sal_Int32>::get(),        0, 0 },
+         { OUString("CharKerning"),                      0,  cppu::UnoType<sal_Int16>::get(),        0, 0 },
+diff --git a/svx/source/unodraw/unoshap2.cxx b/svx/source/unodraw/unoshap2.cxx
+index 3f8c7b7..a4853c5 100644
+--- a/svx/source/unodraw/unoshap2.cxx
++++ b/svx/source/unodraw/unoshap2.cxx
+@@ -669,6 +669,7 @@ SvxShapeControlPropertyMapping[] =
+     { RTL_CONSTASCII_STRINGPARAM("CharWordMode"), RTL_CONSTASCII_STRINGPARAM("FontWordLineMode" ) },
+     { RTL_CONSTASCII_STRINGPARAM(UNO_NAME_EDIT_CHAR_COLOR),   RTL_CONSTASCII_STRINGPARAM("TextColor") },
+     { RTL_CONSTASCII_STRINGPARAM("CharBackColor"), RTL_CONSTASCII_STRINGPARAM("CharBackColor") },
++    { RTL_CONSTASCII_STRINGPARAM("CharBackTransparent"), RTL_CONSTASCII_STRINGPARAM("CharBackTransparent") },
+     { RTL_CONSTASCII_STRINGPARAM("CharRelief"),   RTL_CONSTASCII_STRINGPARAM("FontRelief") },
+     { RTL_CONSTASCII_STRINGPARAM("CharUnderlineColor"),   RTL_CONSTASCII_STRINGPARAM("TextLineColor") },
+     { RTL_CONSTASCII_STRINGPARAM(UNO_NAME_EDIT_PARA_ADJUST), RTL_CONSTASCII_STRINGPARAM("Align") },
+-- 
+2.1.0
+

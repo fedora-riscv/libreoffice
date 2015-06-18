@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -392,6 +392,7 @@ Patch80: 0001-tdf-91425-CRASH-Calc-Insert-Columns-Left.patch
 Patch81: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 Patch82: 0001-do-not-access-token-data-after-token-has-been-destro.patch
 Patch83: 0001-Resolves-tdf-86305-clone-upper-left-of-matrix-result.patch
+Patch84: 0001-Resolves-tdf-83365-push-proper-references-in-INDIREC.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2368,6 +2369,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 18 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8-UNBUILT
+- Resolves: tdf#83365 push proper references in INDIRECT
+
 * Wed Jun 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7
 - Resolves: tdf#91420 "Jan1, 2015" is a valid date
 - Resolves: tdf#91425 CRASH - Calc Insert Columns Left

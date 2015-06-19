@@ -356,6 +356,7 @@ Patch35: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
 Patch36: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
 Patch37: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 Patch38: 0001-tdf-88295-Don-t-export-transparent-background-colour.patch
+Patch39: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2418,6 +2419,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Wed Jun 10 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-2.UNBUILT
 - Resolves: tdf#88295 Don't export transparent background colour as white
+- Resolves: rhbz#1233420 crash on auto-fill
 
 * Wed Jun 10 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-1
 - update to 4.4.4

@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -327,6 +327,7 @@ Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 # upstreamed
 Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
 Patch18: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
+Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2441,6 +2442,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jun 19 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.0-8.beta3
+- Resolves: rhbz#1233420 crash on auto-fill
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:5.0.0.0-7.beta3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 

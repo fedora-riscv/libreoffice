@@ -393,6 +393,7 @@ Patch81: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 Patch82: 0001-do-not-access-token-data-after-token-has-been-destro.patch
 Patch83: 0001-Resolves-tdf-86305-clone-upper-left-of-matrix-result.patch
 Patch84: 0001-Resolves-tdf-83365-push-proper-references-in-INDIREC.patch
+Patch85: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2369,8 +2370,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jun 18 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8-UNBUILT
+* Fri Jun 19 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8-UNBUILT
 - Resolves: tdf#83365 push proper references in INDIRECT
+- Resolves: rhbz#1233420 crash on auto-fill
 
 * Wed Jun 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7
 - Resolves: tdf#91420 "Jan1, 2015" is a valid date

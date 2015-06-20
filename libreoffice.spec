@@ -2417,7 +2417,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jun 10 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-2.UNBUILT
+* Fri Jun 19 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-2
 - Resolves: tdf#88295 Don't export transparent background colour as white
 - Resolves: rhbz#1233420 crash on auto-fill
 

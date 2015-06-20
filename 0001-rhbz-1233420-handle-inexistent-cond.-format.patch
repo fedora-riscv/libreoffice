@@ -18,12 +18,12 @@ index a1bc8ee5..bc8e40e 100644
                              ScConditionalFormat* pCondFormat = mpCondFormatList->GetFormat(*itr);
 -                            ScRangeList aRange = pCondFormat->GetRange();
 -                            aRange.Join(ScRange(nCol, nY1, nTab, nCol, nY2, nTab));
--                            pCondFormat->SetRange(aRange);
+-                            pCondFormat->AddRange(aRange);
 +                            if (pCondFormat)
 +                            {
 +                                ScRangeList aRange = pCondFormat->GetRange();
 +                                aRange.Join(ScRange(nCol, nY1, nTab, nCol, nY2, nTab));
-+                                pCondFormat->SetRange(aRange);
++                                pCondFormat->AddRange(aRange);
 +                            }
                          }
                      }
@@ -34,12 +34,12 @@ index a1bc8ee5..bc8e40e 100644
                          ScConditionalFormat* pCondFormat = mpCondFormatList->GetFormat(*itr);
 -                        ScRangeList aRange = pCondFormat->GetRange();
 -                        aRange.Join(ScRange(nCol, nRow, nTab, nCol, nRow, nTab));
--                        pCondFormat->SetRange(aRange);
+-                        pCondFormat->AddRange(aRange);
 +                        if (pCondFormat)
 +                        {
 +                            ScRangeList aRange = pCondFormat->GetRange();
 +                            aRange.Join(ScRange(nCol, nRow, nTab, nCol, nRow, nTab));
-+                            pCondFormat->SetRange(aRange);
++                            pCondFormat->AddRange(aRange);
 +                        }
                      }
                  }
@@ -50,12 +50,12 @@ index a1bc8ee5..bc8e40e 100644
                          ScConditionalFormat* pCondFormat = mpCondFormatList->GetFormat(*itr);
 -                        ScRangeList aRange = pCondFormat->GetRange();
 -                        aRange.Join(ScRange(nCol, nIMin, nTab, nCol, nIMax, nTab));
--                        pCondFormat->SetRange(aRange);
+-                        pCondFormat->AddRange(aRange);
 +                        if (pCondFormat)
 +                        {
 +                            ScRangeList aRange = pCondFormat->GetRange();
 +                            aRange.Join(ScRange(nCol, nIMin, nTab, nCol, nIMax, nTab));
-+                            pCondFormat->SetRange(aRange);
++                            pCondFormat->AddRange(aRange);
 +                        }
                      }
                  }
@@ -66,12 +66,12 @@ index a1bc8ee5..bc8e40e 100644
                                  ScConditionalFormat* pCondFormat = mpCondFormatList->GetFormat(*itr);
 -                                ScRangeList aRange = pCondFormat->GetRange();
 -                                aRange.Join(ScRange(nCol, nAtRow, nTab, nCol, nAtRow, nTab));
--                                pCondFormat->SetRange(aRange);
+-                                pCondFormat->AddRange(aRange);
 +                                if (pCondFormat)
 +                                {
 +                                    ScRangeList aRange = pCondFormat->GetRange();
 +                                    aRange.Join(ScRange(nCol, nAtRow, nTab, nCol, nAtRow, nTab));
-+                                    pCondFormat->SetRange(aRange);
++                                    pCondFormat->AddRange(aRange);
 +                                }
                              }
                          }
@@ -82,12 +82,12 @@ index a1bc8ee5..bc8e40e 100644
                              ScConditionalFormat* pCondFormat = mpCondFormatList->GetFormat(*itr);
 -                            ScRangeList aRange = pCondFormat->GetRange();
 -                            aRange.Join(ScRange(nAtCol, static_cast<SCROW>(nRow), nTab, nAtCol, static_cast<SCROW>(nRow), nTab));
--                            pCondFormat->SetRange(aRange);
+-                            pCondFormat->AddRange(aRange);
 +                            if (pCondFormat)
 +                            {
 +                                ScRangeList aRange = pCondFormat->GetRange();
 +                                aRange.Join(ScRange(nAtCol, static_cast<SCROW>(nRow), nTab, nAtCol, static_cast<SCROW>(nRow), nTab));
-+                                pCondFormat->SetRange(aRange);
++                                pCondFormat->AddRange(aRange);
 +                            }
                          }
                      }

@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -357,6 +357,7 @@ Patch36: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
 Patch37: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 Patch38: 0001-tdf-88295-Don-t-export-transparent-background-colour.patch
 Patch39: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
+Patch40: 0001-Resolves-tdf-90435-secondary-pool-set-to-that-of-tem.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2417,6 +2418,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jun 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.2-3
+- Resolves: rhbz#1234499 secondary pool set to that of temp doc
+
 * Fri Jun 19 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.2-2
 - Resolves: tdf#88295 Don't export transparent background colour as white
 - Resolves: rhbz#1233420 crash on auto-fill

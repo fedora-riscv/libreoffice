@@ -105,7 +105,7 @@ Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
 Source33:       %{external_url}/libodfgen-0.1.4.tar.bz2
 Source34:       %{external_url}/libmwaw-0.3.5.tar.bz2
 Source35:       %{external_url}/libetonyek-0.1.2.tar.bz2
-Source36:       %{external_url}/libfreehand-0.1.0.tar.bz2
+Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
 Source39:       %{external_url}/libpagemaker-0.0.2.tar.bz2

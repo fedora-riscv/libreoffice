@@ -1,4 +1,4 @@
-From bdd33fda337d37431e6bffb99fb90416884981c9 Mon Sep 17 00:00:00 2001
+From 745aa711cc21660121508dde895dc726d3499df6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 25 Jun 2015 10:33:06 +0100
 Subject: [PATCH] implement equalize width and height for impress/draw
@@ -23,10 +23,10 @@ Change-Id: I7c222a6591112cb674322d310ebd87f04a9198bd
  12 files changed, 171 insertions(+), 5 deletions(-)
 
 diff --git a/include/svx/svdedtv.hxx b/include/svx/svdedtv.hxx
-index cdc2308..b109e0c 100644
+index e29a065..66b43b2 100644
 --- a/include/svx/svdedtv.hxx
 +++ b/include/svx/svdedtv.hxx
-@@ -272,6 +272,11 @@ public:
+@@ -268,6 +268,11 @@ public:
      // for distribution dialog function
      void DistributeMarkedObjects();
  
@@ -35,9 +35,9 @@ index cdc2308..b109e0c 100644
 +    // of the selection
 +    void EqualizeMarkedObjects(bool bWidth);
 +
-     // Decompose marked polypolygon objects into polygons.
-     // Grouped objects are searched and decomposed, if all member objects are PathObjs.
-     // bMakeLines=TRUE:  all polygones are decomposed into single lines resp. bezier segments
+     // Markierte Polypolygonobjekte in Polygone zerlegen
+     // Gruppenobjekte werden durchsucht und zerlegt, wenn es sich bei allen
+     // Memberobjekten um PathObjs handelt.
 diff --git a/include/svx/svdstr.hrc b/include/svx/svdstr.hrc
 index 90ef697..36e8719 100644
 --- a/include/svx/svdstr.hrc
@@ -54,7 +54,7 @@ index 90ef697..36e8719 100644
  #define STR_ExchangeBegin            (STR_EditEnd+1)
  #define STR_ExchangePaste            (STR_ExchangeBegin +0)
 diff --git a/include/svx/svxids.hrc b/include/svx/svxids.hrc
-index 5b8efbc..67ee3da 100644
+index 23a9df5..4389148 100644
 --- a/include/svx/svxids.hrc
 +++ b/include/svx/svxids.hrc
 @@ -113,6 +113,8 @@
@@ -67,10 +67,10 @@ index 5b8efbc..67ee3da 100644
  // Basic IDE-Id's
  
 diff --git a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
-index 1c679bd..d221d56 100644
+index 79553f4..0696cbe 100644
 --- a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
 +++ b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
-@@ -3472,6 +3472,16 @@
+@@ -3345,6 +3345,16 @@
            <value xml:lang="en-US">~Subtract</value>
          </prop>
        </node>
@@ -88,7 +88,7 @@ index 1c679bd..d221d56 100644
          <prop oor:name="Label" oor:type="xs:string">
            <value xml:lang="en-US">Superscript</value>
 diff --git a/sd/sdi/_drvwsh.sdi b/sd/sdi/_drvwsh.sdi
-index 0b5469bf..6b2f17c 100644
+index 38953ca..018360b 100644
 --- a/sd/sdi/_drvwsh.sdi
 +++ b/sd/sdi/_drvwsh.sdi
 @@ -507,6 +507,16 @@ interface DrawView
@@ -109,10 +109,10 @@ index 0b5469bf..6b2f17c 100644
      [
          ExecMethod = FuTemporary ;
 diff --git a/sd/source/ui/view/drviews2.cxx b/sd/source/ui/view/drviews2.cxx
-index ffbb503..90c3d59 100644
+index 7a3655a..9e66801 100644
 --- a/sd/source/ui/view/drviews2.cxx
 +++ b/sd/source/ui/view/drviews2.cxx
-@@ -2272,6 +2272,19 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
+@@ -2273,6 +2273,19 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
          }
          break;
  
@@ -202,10 +202,10 @@ index f12287b..bc8cfee 100644
        </menu:menu>
        <menu:menuseparator/>
 diff --git a/svx/inc/globlmn_tmpl.hrc b/svx/inc/globlmn_tmpl.hrc
-index 9d511c8..8d82489 100644
+index b53f23a..1493f60 100644
 --- a/svx/inc/globlmn_tmpl.hrc
 +++ b/svx/inc/globlmn_tmpl.hrc
-@@ -306,6 +306,20 @@
+@@ -301,6 +301,20 @@
          Command = ".uno:Intersect" ; \
          Text [ en-US ] = "I~ntersect" ; \
              };
@@ -226,7 +226,7 @@ index 9d511c8..8d82489 100644
  
  #define MNSUB_FORMEN \
      MenuItem \
-@@ -320,6 +334,12 @@
+@@ -315,6 +329,12 @@
                  ITEM_POLY_MERGE \
                  ITEM_POLY_SUBSTRACT \
                  ITEM_POLY_INTERSECT \
@@ -240,10 +240,10 @@ index 9d511c8..8d82489 100644
          };\
      };
 diff --git a/svx/sdi/svx.sdi b/svx/sdi/svx.sdi
-index 941f3e8..b301c58 100644
+index 565ee34..30375eb 100644
 --- a/svx/sdi/svx.sdi
 +++ b/svx/sdi/svx.sdi
-@@ -11100,6 +11100,53 @@ SfxVoidItem Substract SID_POLY_SUBSTRACT
+@@ -11025,6 +11025,53 @@ SfxVoidItem Substract SID_POLY_SUBSTRACT
      GroupId = GID_MODIFY;
  ]
  
@@ -298,7 +298,7 @@ index 941f3e8..b301c58 100644
  SfxBoolItem SuperScript SID_SET_SUPER_SCRIPT
  
 diff --git a/svx/source/svdraw/svdedtv2.cxx b/svx/source/svdraw/svdedtv2.cxx
-index 0a60082..ad7dd3f 100644
+index 93eadf8..568066c 100644
 --- a/svx/source/svdraw/svdedtv2.cxx
 +++ b/svx/source/svdraw/svdedtv2.cxx
 @@ -1173,6 +1173,44 @@ void SdrEditView::MergeMarkedObjects(SdrMergeMode eMode)

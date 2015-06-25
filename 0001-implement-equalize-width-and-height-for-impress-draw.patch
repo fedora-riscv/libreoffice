@@ -1,0 +1,370 @@
+From bdd33fda337d37431e6bffb99fb90416884981c9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 25 Jun 2015 10:33:06 +0100
+Subject: [PATCH] implement equalize width and height for impress/draw
+
+Equalize width/height adjusts width/height of selected objects to the
+width/height of the last selected object.
+
+Change-Id: I7c222a6591112cb674322d310ebd87f04a9198bd
+---
+ include/svx/svdedtv.hxx                            |  5 +++
+ include/svx/svdstr.hrc                             |  4 +-
+ include/svx/svxids.hrc                             |  2 +
+ .../org/openoffice/Office/UI/GenericCommands.xcu   | 10 +++++
+ sd/sdi/_drvwsh.sdi                                 | 10 +++++
+ sd/source/ui/view/drviews2.cxx                     | 13 ++++++
+ sd/source/ui/view/drviewsj.cxx                     | 16 ++++++--
+ sd/uiconfig/sdraw/menubar/menubar.xml              |  3 ++
+ svx/inc/globlmn_tmpl.hrc                           | 20 +++++++++
+ svx/sdi/svx.sdi                                    | 47 ++++++++++++++++++++++
+ svx/source/svdraw/svdedtv2.cxx                     | 38 +++++++++++++++++
+ svx/source/svdraw/svdstr.src                       |  8 ++++
+ 12 files changed, 171 insertions(+), 5 deletions(-)
+
+diff --git a/include/svx/svdedtv.hxx b/include/svx/svdedtv.hxx
+index cdc2308..b109e0c 100644
+--- a/include/svx/svdedtv.hxx
++++ b/include/svx/svdedtv.hxx
+@@ -272,6 +272,11 @@ public:
+     // for distribution dialog function
+     void DistributeMarkedObjects();
+ 
++    // for setting either the width or height of all selected
++    // objects to the width/height of the last selected object
++    // of the selection
++    void EqualizeMarkedObjects(bool bWidth);
++
+     // Decompose marked polypolygon objects into polygons.
+     // Grouped objects are searched and decomposed, if all member objects are PathObjs.
+     // bMakeLines=TRUE:  all polygones are decomposed into single lines resp. bezier segments
+diff --git a/include/svx/svdstr.hrc b/include/svx/svdstr.hrc
+index 90ef697..36e8719 100644
+--- a/include/svx/svdstr.hrc
++++ b/include/svx/svdstr.hrc
+@@ -241,7 +241,9 @@
+ #define STR_EditMergeSubstractPoly   (STR_EditBegin  + 55)
+ #define STR_EditMergeIntersectPoly   (STR_EditBegin  + 56)
+ #define STR_DistributeMarkedObjects  (STR_EditBegin  + 57)
+-#define STR_EditEnd                  (STR_DistributeMarkedObjects)
++#define STR_EqualizeWidthMarkedObjects  (STR_EditBegin  + 58)
++#define STR_EqualizeHeightMarkedObjects (STR_EditBegin  + 59)
++#define STR_EditEnd                  (STR_EqualizeHeightMarkedObjects)
+ 
+ #define STR_ExchangeBegin            (STR_EditEnd+1)
+ #define STR_ExchangePaste            (STR_ExchangeBegin +0)
+diff --git a/include/svx/svxids.hrc b/include/svx/svxids.hrc
+index 5b8efbc..67ee3da 100644
+--- a/include/svx/svxids.hrc
++++ b/include/svx/svxids.hrc
+@@ -113,6 +113,8 @@
+ #define SID_POLY_INTERSECT                  (SID_SFX_START + 681)
+ #define SID_POLY_FORMEN                     (SID_SFX_START + 682)
+ #define SID_DISTRIBUTE_DLG                  (SID_SFX_START + 683)
++#define SID_EQUALIZEWIDTH                   (SID_SFX_START + 684)
++#define SID_EQUALIZEHEIGHT                  (SID_SFX_START + 685)
+ 
+ // Basic IDE-Id's
+ 
+diff --git a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
+index 1c679bd..d221d56 100644
+--- a/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/UI/GenericCommands.xcu
+@@ -3472,6 +3472,16 @@
+           <value xml:lang="en-US">~Subtract</value>
+         </prop>
+       </node>
++      <node oor:name=".uno:EqualizeWidth" oor:op="replace">
++        <prop oor:name="Label" oor:type="xs:string">
++          <value xml:lang="en-US">Equalize ~Width</value>
++        </prop>
++      </node>
++      <node oor:name=".uno:EqualizeHeight" oor:op="replace">
++        <prop oor:name="Label" oor:type="xs:string">
++          <value xml:lang="en-US">Equalize ~Height</value>
++        </prop>
++      </node>
+       <node oor:name=".uno:SuperScript" oor:op="replace">
+         <prop oor:name="Label" oor:type="xs:string">
+           <value xml:lang="en-US">Superscript</value>
+diff --git a/sd/sdi/_drvwsh.sdi b/sd/sdi/_drvwsh.sdi
+index 0b5469bf..6b2f17c 100644
+--- a/sd/sdi/_drvwsh.sdi
++++ b/sd/sdi/_drvwsh.sdi
+@@ -507,6 +507,16 @@ interface DrawView
+         ExecMethod = FuTemporary ;
+         StateMethod = GetMenuState ;
+     ]
++    SID_EQUALIZEWIDTH // ole : no, status : ?
++    [
++        ExecMethod = FuTemporary ;
++        StateMethod = GetMenuState ;
++    ]
++    SID_EQUALIZEHEIGHT // ole : no, status : ?
++    [
++        ExecMethod = FuTemporary ;
++        StateMethod = GetMenuState ;
++    ]
+     SID_CONNECT // ole : no, status : ?
+     [
+         ExecMethod = FuTemporary ;
+diff --git a/sd/source/ui/view/drviews2.cxx b/sd/source/ui/view/drviews2.cxx
+index ffbb503..90c3d59 100644
+--- a/sd/source/ui/view/drviews2.cxx
++++ b/sd/source/ui/view/drviews2.cxx
+@@ -2272,6 +2272,19 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
+         }
+         break;
+ 
++        case SID_EQUALIZEWIDTH:
++        case SID_EQUALIZEHEIGHT:
++        {
++            // End text edit to avoid conflicts
++            if(mpDrawView->IsTextEdit())
++                mpDrawView->SdrEndTextEdit();
++
++            mpDrawView->EqualizeMarkedObjects(nSId == SID_EQUALIZEWIDTH);
++            Cancel();
++            rReq.Done ();
++        }
++        break;
++
+         case SID_DISMANTLE:  // BASIC
+         {
+             if ( mpDrawView->IsDismantlePossible(false) )
+diff --git a/sd/source/ui/view/drviewsj.cxx b/sd/source/ui/view/drviewsj.cxx
+index 857601f..10a3f5a 100644
+--- a/sd/source/ui/view/drviewsj.cxx
++++ b/sd/source/ui/view/drviewsj.cxx
+@@ -284,13 +284,15 @@ void DrawViewShell::GetMenuStateSel( SfxItemSet &rSet )
+             rSet.Put(SfxBoolItem(SID_OUTLINE_TEXT_AUTOFIT, bSet));
+         }
+ 
+-        rSet.DisableItem( SID_GROUP );
+-        rSet.DisableItem( SID_COMBINE );
++        rSet.DisableItem(SID_GROUP);
++        rSet.DisableItem(SID_COMBINE);
+         rSet.DisableItem(SID_DISTRIBUTE_DLG);
+         rSet.DisableItem(SID_POLY_MERGE);
+         rSet.DisableItem(SID_POLY_SUBSTRACT);
+         rSet.DisableItem(SID_POLY_INTERSECT);
+-        rSet.DisableItem( SID_CONNECT );
++        rSet.DisableItem(SID_EQUALIZEWIDTH);
++        rSet.DisableItem(SID_EQUALIZEHEIGHT);
++        rSet.DisableItem(SID_CONNECT);
+     }
+     // multi-selection
+     else if( nMarkCount > 1 )
+@@ -377,6 +379,8 @@ void DrawViewShell::GetMenuStateSel( SfxItemSet &rSet )
+                 rSet.DisableItem(SID_POLY_MERGE);
+                 rSet.DisableItem(SID_POLY_SUBSTRACT);
+                 rSet.DisableItem(SID_POLY_INTERSECT);
++                rSet.DisableItem(SID_EQUALIZEWIDTH);
++                rSet.DisableItem(SID_EQUALIZEHEIGHT);
+             }
+ 
+             if (b3dObj                                        ||
+@@ -438,10 +442,12 @@ void DrawViewShell::GetMenuStateSel( SfxItemSet &rSet )
+         }
+         if ( !mpDrawView->IsCombinePossible(false) )
+         {
+-            rSet.DisableItem( SID_COMBINE );
++            rSet.DisableItem(SID_COMBINE);
+             rSet.DisableItem(SID_POLY_MERGE);
+             rSet.DisableItem(SID_POLY_SUBSTRACT);
+             rSet.DisableItem(SID_POLY_INTERSECT);
++            rSet.DisableItem(SID_EQUALIZEWIDTH);
++            rSet.DisableItem(SID_EQUALIZEHEIGHT);
+         }
+         if ( !mpDrawView->IsCombinePossible(true) )
+         {
+@@ -501,6 +507,8 @@ void DrawViewShell::GetMenuStateSel( SfxItemSet &rSet )
+         rSet.DisableItem(SID_POLY_MERGE);
+         rSet.DisableItem(SID_POLY_SUBSTRACT);
+         rSet.DisableItem(SID_POLY_INTERSECT);
++        rSet.DisableItem(SID_EQUALIZEWIDTH);
++        rSet.DisableItem(SID_EQUALIZEHEIGHT);
+         rSet.DisableItem( SID_CONNECT );
+         rSet.DisableItem( SID_ANIMATION_EFFECTS );
+         rSet.DisableItem( SID_MODIFY_FIELD );
+diff --git a/sd/uiconfig/sdraw/menubar/menubar.xml b/sd/uiconfig/sdraw/menubar/menubar.xml
+index f12287b..bc8cfee 100644
+--- a/sd/uiconfig/sdraw/menubar/menubar.xml
++++ b/sd/uiconfig/sdraw/menubar/menubar.xml
+@@ -346,6 +346,9 @@
+           <menu:menuitem menu:id=".uno:Merge"/>
+           <menu:menuitem menu:id=".uno:Substract"/>
+           <menu:menuitem menu:id=".uno:Intersect"/>
++          <menu:menuseparator/>
++          <menu:menuitem menu:id=".uno:EqualizeWidth"/>
++          <menu:menuitem menu:id=".uno:EqualizeHeight"/>
+         </menu:menupopup>
+       </menu:menu>
+       <menu:menuseparator/>
+diff --git a/svx/inc/globlmn_tmpl.hrc b/svx/inc/globlmn_tmpl.hrc
+index 9d511c8..8d82489 100644
+--- a/svx/inc/globlmn_tmpl.hrc
++++ b/svx/inc/globlmn_tmpl.hrc
+@@ -306,6 +306,20 @@
+         Command = ".uno:Intersect" ; \
+         Text [ en-US ] = "I~ntersect" ; \
+             };
++#define ITEM_EQUALIZEWIDTH \
++    MenuItem\
++    {\
++        Identifier = SID_EQUALIZEWIDTH ; \
++        Command = ".uno:EqualizeWidth" ; \
++        Text [ en-US ] = "Equalize ~Width" ; \
++            };
++#define ITEM_EQUALIZEHEIGHT \
++    MenuItem\
++    {\
++        Identifier = SID_EQUALIZEHEIGHT ; \
++        Command = ".uno:EqualizeHeight" ; \
++        Text [ en-US ] = "Equalize ~Height" ; \
++            };
+ 
+ #define MNSUB_FORMEN \
+     MenuItem \
+@@ -320,6 +334,12 @@
+                 ITEM_POLY_MERGE \
+                 ITEM_POLY_SUBSTRACT \
+                 ITEM_POLY_INTERSECT \
++                MenuItem \
++                { \
++                    Separator = TRUE; \
++                }; \
++                ITEM_EQUALIZEWIDTH \
++                ITEM_EQUALIZEHEIGHT \
+             };\
+         };\
+     };
+diff --git a/svx/sdi/svx.sdi b/svx/sdi/svx.sdi
+index 941f3e8..b301c58 100644
+--- a/svx/sdi/svx.sdi
++++ b/svx/sdi/svx.sdi
+@@ -11100,6 +11100,53 @@ SfxVoidItem Substract SID_POLY_SUBSTRACT
+     GroupId = GID_MODIFY;
+ ]
+ 
++SfxVoidItem EqualizeWidth SID_EQUALIZEWIDTH
++()
++[
++    /* flags: */
++    AutoUpdate = FALSE,
++    Cachable = Cachable,
++    FastCall = FALSE,
++    HasCoreId = FALSE,
++    HasDialog = FALSE,
++    ReadOnlyDoc = FALSE,
++    Toggle = FALSE,
++    Container = FALSE,
++    RecordAbsolute = FALSE,
++    RecordPerSet;
++    Synchron;
++
++    /* config: */
++    AccelConfig = TRUE,
++    MenuConfig = TRUE,
++    StatusBarConfig = FALSE,
++    ToolBoxConfig = TRUE,
++    GroupId = GID_MODIFY;
++]
++
++SfxVoidItem EqualizeHeight SID_EQUALIZEHEIGHT
++()
++[
++    /* flags: */
++    AutoUpdate = FALSE,
++    Cachable = Cachable,
++    FastCall = FALSE,
++    HasCoreId = FALSE,
++    HasDialog = FALSE,
++    ReadOnlyDoc = FALSE,
++    Toggle = FALSE,
++    Container = FALSE,
++    RecordAbsolute = FALSE,
++    RecordPerSet;
++    Synchron;
++
++    /* config: */
++    AccelConfig = TRUE,
++    MenuConfig = TRUE,
++    StatusBarConfig = FALSE,
++    ToolBoxConfig = TRUE,
++    GroupId = GID_MODIFY;
++]
+ 
+ SfxBoolItem SuperScript SID_SET_SUPER_SCRIPT
+ 
+diff --git a/svx/source/svdraw/svdedtv2.cxx b/svx/source/svdraw/svdedtv2.cxx
+index 0a60082..ad7dd3f 100644
+--- a/svx/source/svdraw/svdedtv2.cxx
++++ b/svx/source/svdraw/svdedtv2.cxx
+@@ -1173,6 +1173,44 @@ void SdrEditView::MergeMarkedObjects(SdrMergeMode eMode)
+     }
+ }
+ 
++void SdrEditView::EqualizeMarkedObjects(bool bWidth)
++{
++    const SdrMarkList& rMarkList = GetMarkedObjectList();
++    size_t nMarked = rMarkList.GetMarkCount();
++
++    if (nMarked < 2)
++        return;
++
++    SdrObject* pLastSelectedObj = rMarkList.GetMark(nMarked-1)->GetMarkedSdrObj();
++    Size aLastRectSize(pLastSelectedObj->GetLogicRect().GetSize());
++
++    const bool bUndo = IsUndoEnabled();
++
++    if (bUndo)
++        BegUndo();
++
++    for (size_t a = 0; a < nMarked-1; ++a)
++    {
++        SdrMark* pM = rMarkList.GetMark(a);
++        SdrObject* pObj = pM->GetMarkedSdrObj();
++        Rectangle aLogicRect(pObj->GetLogicRect());
++        Size aLogicRectSize(aLogicRect.GetSize());
++        if (bWidth)
++            aLogicRectSize.Width() = aLastRectSize.Width();
++        else
++            aLogicRectSize.Height() = aLastRectSize.Height();
++        aLogicRect.SetSize(aLogicRectSize);
++        pObj->SetLogicRect(aLogicRect);
++    }
++
++    SetUndoComment(
++        ImpGetResStr(bWidth ? STR_EqualizeWidthMarkedObjects : STR_EqualizeHeightMarkedObjects),
++        rMarkList.GetMarkDescription());
++
++    if (bUndo)
++        EndUndo();
++}
++
+ void SdrEditView::CombineMarkedObjects(bool bNoPolyPoly)
+ {
+     // #105899# Start of Combine-Undo put to front, else ConvertMarkedToPolyObj would
+diff --git a/svx/source/svdraw/svdstr.src b/svx/source/svdraw/svdstr.src
+index 364749a..6dc4420 100644
+--- a/svx/source/svdraw/svdstr.src
++++ b/svx/source/svdraw/svdstr.src
+@@ -823,6 +823,14 @@ String STR_DistributeMarkedObjects
+ {
+     Text [ en-US ] = "Distribute selected objects";
+ };
++String STR_EqualizeWidthMarkedObjects
++{
++    Text [ en-US ] = "Equalize Width %1";
++};
++String STR_EqualizeHeightMarkedObjects
++{
++    Text [ en-US ] = "Equalize Height %1";
++};
+ String STR_EditCombine_OnePoly
+ {
+     Text [ en-US ] = "Combine %1" ;
+-- 
+2.4.0
+

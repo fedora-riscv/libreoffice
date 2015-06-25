@@ -329,6 +329,7 @@ Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
 Patch18: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
 Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
+Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

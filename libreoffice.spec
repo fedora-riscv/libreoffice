@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -358,6 +358,7 @@ Patch37: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
 Patch38: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch39: 0001-Resolves-tdf-90435-secondary-pool-set-to-that-of-tem.patch
 Patch40: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
+Patch41: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2418,6 +2419,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 25 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-2-UNBUILT
+- implement equalize width and height for impress/draw
+
 * Wed Jun 24 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.3-1
 - update to 4.4.4 rc3
 - allow slide design to affect multiple standard pages

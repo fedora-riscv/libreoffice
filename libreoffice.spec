@@ -50,7 +50,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.2
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
@@ -79,7 +79,7 @@ Source11:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
 Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 # system mdds 0.10.3 causes a crash in sc_ucalc unit test
-Source14:       %{external_url}/17edb780d4054e4205cd956910672b83-mdds_0.12.0.tar.bz2
+Source14:       %{external_url}/mdds_0.12.1.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
 %if 0%{?rhel} < 7
 Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
@@ -104,7 +104,7 @@ Source31:       %{external_url}/libvisio-0.1.1.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
 Source33:       %{external_url}/libodfgen-0.1.4.tar.bz2
 Source34:       %{external_url}/libmwaw-0.3.5.tar.bz2
-Source35:       %{external_url}/libetonyek-0.1.2.tar.bz2
+Source35:       %{external_url}/libetonyek-0.1.3.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
@@ -2444,6 +2444,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Jun 28 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.2-1
+- update to 5.0.0 rc2
+
 * Sun Jun 21 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.1-1
 - update to 5.0.0 rc1
 

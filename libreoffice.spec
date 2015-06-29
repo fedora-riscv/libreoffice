@@ -396,6 +396,7 @@ Patch84: 0001-Resolves-tdf-83365-push-proper-references-in-INDIREC.patch
 Patch85: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch86: 0001-a-singleton-must-be-fully-parsed-to-be-valid-tdf-444.patch
 Patch87: 0001-tdf-44419-in-second-reference-part-stop-number-parsi.patch
+Patch88: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2372,10 +2373,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jun 25 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8-UNBUILT
+* Mon Jun 29 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8
 - Resolves: tdf#83365 push proper references in INDIRECT
 - Resolves: rhbz#1233420 crash on auto-fill
 - Related: tdf#44419 in second reference part stop number parsing at separator
+- Resolves: tdf#92275 impress grinds to a halt swapping in images
 
 * Wed Jun 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-7
 - Resolves: tdf#91420 "Jan1, 2015" is a valid date

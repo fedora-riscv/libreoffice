@@ -359,6 +359,7 @@ Patch38: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch39: 0001-Resolves-tdf-90435-secondary-pool-set-to-that-of-tem.patch
 Patch40: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch41: 0001-implement-equalize-width-and-height-for-impress-draw.patch
+Patch42: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2419,8 +2420,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jun 25 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-2-UNBUILT
+* Mon Jun 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-2
 - implement equalize width and height for impress/draw
+- Resolves: tdf#92275 impress grinds to a halt swapping in images
 
 * Wed Jun 24 2015 David Tardon <dtardon@redhat.com> - 1:4.4.4.3-1
 - update to 4.4.4 rc3

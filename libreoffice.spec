@@ -903,6 +903,11 @@ package or when debugging this package.
 Summary: Additional support for debugging with gdb
 Group: Development/Debug
 Requires: gdb
+%if 0%{libo_python3}
+Requires: python3-six
+%else
+Requires: python-six
+%endif
 AutoReqProv: 0
 
 %description gdb-debug-support

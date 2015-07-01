@@ -1,0 +1,27 @@
+From e13b0657a3a05139f751124145aa10758c59d1dd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 1 Jul 2015 08:34:58 +0100
+Subject: [PATCH] f22 openjdk for ppc64le has both these dirs, but jawt is only
+ on one
+
+Change-Id: Ie770ecceb8c8f5a6fa882a9f5d5a26806b029589
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index aecbe8f..8964c96 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7058,7 +7058,7 @@ then
+             my_java_arch=ppc64
+             ;;
+         powerpc64le)
+-            AS_IF([test -d "$JAVA_HOME/jre/lib/ppc64le"], [my_java_arch=ppc64le], [my_java_arch=ppc64])
++            AS_IF([test -d "$JAVA_HOME/jre/lib/ppc64le/libjawt.so"], [my_java_arch=ppc64le], [my_java_arch=ppc64])
+             JAVA_ARCH=$my_java_arch
+             ;;
+         x86_64)
+-- 
+2.4.0
+

@@ -360,6 +360,7 @@ Patch39: 0001-Resolves-tdf-90435-secondary-pool-set-to-that-of-tem.patch
 Patch40: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch41: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch42: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
+Patch43: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

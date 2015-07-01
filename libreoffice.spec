@@ -7,11 +7,13 @@
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
-%define libo_python3 %{nil}
+%define libo_use_python3 %{nil}
+%define libo_python python
 %define libo_python_sitearch %{python_sitearch}
 %endif
 %if 0%{?fedora}
-%define libo_python3 1
+%define libo_use_python3 1
+%define libo_python python3
 %define libo_python_sitearch %{python3_sitearch}
 %define vendoroption --with-vendor="The Fedora Project"
 %endif
@@ -247,11 +249,7 @@ BuildRequires: pkgconfig(bluez)
 %endif
 %endif
 
-%if 0%{libo_python3}
-BuildRequires: pkgconfig(python3)
-%else
-BuildRequires: python-devel
-%endif
+BuildRequires: %{libo_python}-devel
 
 # java stuff
 BuildRequires: ant
@@ -496,12 +494,8 @@ Summary: Python support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
-%if 0%{libo_python3}
-Requires: python3
-%else
-Requires: python
+Requires: %{libo_python}
 Obsoletes: openoffice.org-pyuno < 1:3.3.1
-%endif
 %if 0%{?rhel} && 0%{?rhel} < 7
 Provides: openoffice.org-pyuno = 1:3.3.0
 Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
@@ -943,11 +937,7 @@ package or when debugging this package.
 Summary: Additional support for debugging with gdb
 Group: Development/Debug
 Requires: gdb
-%if 0%{libo_python3}
-Requires: python3-six
-%else
-Requires: python-six
-%endif
+Requires: %{libo_python}-six
 AutoReqProv: 0
 
 %description gdb-debug-support
@@ -1319,7 +1309,7 @@ export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOL
 %define with_lang --with-lang='%{langpack_langs}'
 %endif
 
-%if ! 0%{libo_python3}
+%if ! 0%{libo_use_python3}
 export PYTHON=%{_bindir}/python
 %if 0%{?fedora} || 0%{?rhel} >= 7
 export PYTHON_CFLAGS=`pkg-config --cflags python`
@@ -2361,7 +2351,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %{libo_python_sitearch}/officehelper.py*
-%if 0%{libo_python3}
+%if 0%{libo_use_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %{libo_python_sitearch}/__pycache__/officehelper.cpython-*

@@ -1,0 +1,152 @@
+From 3e47ec58717eccb5b7de0d1f62a9eaf2eb19f50c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 3 Jul 2015 15:53:00 +0100
+Subject: [PATCH] fix deselect of textbox on slides with images in underlying
+ master
+
+The original work of tdf#55430 tries to select an object under
+another one on the second click, but these images are unselectable
+so this fails. Red Hat has a whole new shiny bunch of templates which
+have such images in their masters.
+
+Check if the object is selectable before continuing
+
+(cherry picked from commit abbe4f9d64073d77c4be93b7c89c03d0651bacef)
+(cherry picked from commit 4189530530320a82adc785a4426735423a1188c1)
+
+Change-Id: I182abaf50e8bb1084c5819dc9e1ffd8b386a9e93
+---
+ include/svx/svdpagv.hxx       |  5 +++++
+ sd/source/ui/func/fusel.cxx   |  9 +++++---
+ sd/source/ui/func/futext.cxx  |  9 +++++---
+ svx/source/svdraw/svdmrkv.cxx | 51 ++++++++++++++++++++++++-------------------
+ 4 files changed, 45 insertions(+), 29 deletions(-)
+
+diff --git a/include/svx/svdpagv.hxx b/include/svx/svdpagv.hxx
+index 5369616..8bf305f 100644
+--- a/include/svx/svdpagv.hxx
++++ b/include/svx/svdpagv.hxx
+@@ -235,6 +235,11 @@ public:
+     // Beim Gruppenobjekt muss wenigstens ein Member sichtbar sein,
+     // gesperrt sein darf keiner.
+     bool IsObjMarkable(SdrObject* pObj) const;
++    // hmm, selectable is surely the same as markable, now that I
++    // see this as I look for a place to put it. TO-DO,
++    // merge these
++    bool IsObjSelectable(SdrObject *pObj) const;
++
+ 
+     // Betreten (Editieren) einer Objektgruppe. Anschliessend liegen alle
+     // Memberobjekte der Gruppe im direkten Zugriff. Alle anderen Objekte
+diff --git a/sd/source/ui/func/fusel.cxx b/sd/source/ui/func/fusel.cxx
+index 0c15125..71d26ed 100644
+--- a/sd/source/ui/func/fusel.cxx
++++ b/sd/source/ui/func/fusel.cxx
+@@ -667,9 +667,12 @@ bool FuSelection::MouseButtonUp(const MouseEvent& rMEvt)
+                 **************************************************************/
+                 if (mpView->PickObj(aMDPos, mpView->getHitTolLog(), pObj, pPV, SDRSEARCH_ALSOONMASTER | SDRSEARCH_BEFOREMARK))
+                 {
+-                    mpView->UnmarkAllObj();
+-                    mpView->MarkObj(pObj,pPV,false,false);
+-                    return true;
++                    if (pPV->IsObjSelectable(pObj))
++                    {
++                        mpView->UnmarkAllObj();
++                        mpView->MarkObj(pObj,pPV,false,false);
++                        return true;
++                    }
+                 }
+                 /**************************************************************
+                 * Toggle between selection and rotation
+diff --git a/sd/source/ui/func/futext.cxx b/sd/source/ui/func/futext.cxx
+index ace31a3..31d6d07 100644
+--- a/sd/source/ui/func/futext.cxx
++++ b/sd/source/ui/func/futext.cxx
+@@ -656,9 +656,12 @@ bool FuText::MouseButtonUp(const MouseEvent& rMEvt)
+             **************************************************************/
+             if (mpView->PickObj(aMDPos, mpView->getHitTolLog(), pObj, pPV, SDRSEARCH_ALSOONMASTER | SDRSEARCH_BEFOREMARK))
+             {
+-                mpView->UnmarkAllObj();
+-                mpView->MarkObj(pObj,pPV,false,false);
+-                return (bReturn);
++                if (pPV->IsObjSelectable(pObj))
++                {
++                    mpView->UnmarkAllObj();
++                    mpView->MarkObj(pObj,pPV,false,false);
++                    return bReturn;
++                }
+             }
+         }
+     }
+diff --git a/svx/source/svdraw/svdmrkv.cxx b/svx/source/svdraw/svdmrkv.cxx
+index 66adc70..31bebb1 100644
+--- a/svx/source/svdraw/svdmrkv.cxx
++++ b/svx/source/svdraw/svdmrkv.cxx
+@@ -1184,6 +1184,33 @@ void SdrMarkView::SetRef2(const Point& rPt)
+     }
+ }
+ 
++bool SdrPageView::IsObjSelectable(SdrObject *pObj) const
++{
++    SdrLayerID nLay=pObj->GetLayer();
++    bool bRaus=!pObj->IsInserted(); // Obj deleted?
++    if (!pObj->Is3DObj()) {
++        bRaus=bRaus || pObj->GetPage()!=GetPage();   // Obj suddenly in different Page or Group
++    }
++    bRaus=bRaus || GetLockedLayers().IsSet(nLay) ||  // Layer locked?
++                   !GetVisibleLayers().IsSet(nLay);  // Layer invisible?
++
++    if( !bRaus )
++        bRaus = !pObj->IsVisible(); // invisible objects can not be selected
++
++    if (!bRaus) {
++        // Grouped objects can now be selected.
++        // After EnterGroup the higher-level objects,
++        // have to be deselected, though.
++        const SdrObjList* pOOL=pObj->GetObjList();
++        const SdrObjList* pVOL=GetObjList();
++        while (pOOL!=NULL && pOOL!=pVOL) {
++            pOOL=pOOL->GetUpList();
++        }
++        bRaus=pOOL!=pVOL;
++    }
++    return !bRaus;
++}
++
+ void SdrMarkView::CheckMarked()
+ {
+     for (size_t nm=GetMarkedObjectCount(); nm>0;) {
+@@ -1191,29 +1218,7 @@ void SdrMarkView::CheckMarked()
+         SdrMark* pM=GetSdrMarkByIndex(nm);
+         SdrObject* pObj=pM->GetMarkedSdrObj();
+         SdrPageView* pPV=pM->GetPageView();
+-        SdrLayerID nLay=pObj->GetLayer();
+-        bool bRaus=!pObj->IsInserted(); // Obj deleted?
+-        if (!pObj->Is3DObj()) {
+-            bRaus=bRaus || pObj->GetPage()!=pPV->GetPage();   // Obj suddenly in different Page or Group
+-        }
+-        bRaus=bRaus || pPV->GetLockedLayers().IsSet(nLay) ||  // Layer locked?
+-                       !pPV->GetVisibleLayers().IsSet(nLay);  // Layer invisible?
+-
+-        if( !bRaus )
+-            bRaus = !pObj->IsVisible(); // invisible objects can not be selected
+-
+-        if (!bRaus) {
+-            // Grouped objects can now be selected.
+-            // After EnterGroup the higher-level objects,
+-            // have to be deselected, though.
+-            const SdrObjList* pOOL=pObj->GetObjList();
+-            const SdrObjList* pVOL=pPV->GetObjList();
+-            while (pOOL!=NULL && pOOL!=pVOL) {
+-                pOOL=pOOL->GetUpList();
+-            }
+-            bRaus=pOOL!=pVOL;
+-        }
+-
++        bool bRaus=!pPV->IsObjSelectable(pObj);
+         if (bRaus)
+         {
+             GetMarkedObjectListWriteAccess().DeleteMark(nm);
+-- 
+2.4.0
+

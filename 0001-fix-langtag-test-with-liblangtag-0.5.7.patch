@@ -1,0 +1,29 @@
+From b43fde69caf456585004b3e1da5161d76eadf057 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 8 Jul 2015 09:48:46 +0200
+Subject: [PATCH] fix langtag test with liblangtag 0.5.7
+
+Change-Id: Ic8639daa5a32cf98fa17903424b00916cb6d8c6f
+---
+ i18nlangtag/qa/cppunit/test_languagetag.cxx | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/i18nlangtag/qa/cppunit/test_languagetag.cxx b/i18nlangtag/qa/cppunit/test_languagetag.cxx
+index 81ec2df..b76547c 100644
+--- a/i18nlangtag/qa/cppunit/test_languagetag.cxx
++++ b/i18nlangtag/qa/cppunit/test_languagetag.cxx
+@@ -601,7 +601,10 @@ void TestLanguageTag::testAllTags()
+         CPPUNIT_ASSERT( LanguageTag::isValidBcp47( "de-Latn-DE", &aCanonicalized) && aCanonicalized == "de-DE" );
+         /* TODO: at least some (those we know) grandfathered tags should be
+          * recognized by the replacement code. */
+-        CPPUNIT_ASSERT( LanguageTag::isValidBcp47( "en-GB-oed", &aCanonicalized) && aCanonicalized == "en-GB-oed" );
++        CPPUNIT_ASSERT( LanguageTag::isValidBcp47( "en-GB-oed", &aCanonicalized) );
++        // en-GB-oed has become deprecated in updated language-subtag-registry database
++        // (liblangtag 0.5.7)
++        CPPUNIT_ASSERT( ( aCanonicalized == "en-GB-oxendict" ) || ( aCanonicalized == "en-GB-oed" ) );
+ #else
+         CPPUNIT_ASSERT( LanguageTag::isValidBcp47( "de-Latn-DE", &aCanonicalized) && aCanonicalized == "de-Latn-DE" );
+ #endif
+-- 
+2.1.0
+

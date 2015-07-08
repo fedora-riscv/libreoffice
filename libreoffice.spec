@@ -363,7 +363,7 @@ Patch42: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 Patch43: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch44: 0001-fix-deselect-of-textbox-on-slides-with-images-in-und.patch
 Patch45: 0001-ppc64-fix-infinite-loop-with-default-unsigned-char.patch
-Patch46: when skipping hidden pages omit the hidden pages from page
+Patch46: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

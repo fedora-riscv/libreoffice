@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -363,6 +363,7 @@ Patch42: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 Patch43: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch44: 0001-fix-deselect-of-textbox-on-slides-with-images-in-und.patch
 Patch45: 0001-ppc64-fix-infinite-loop-with-default-unsigned-char.patch
+Patch46: when skipping hidden pages omit the hidden pages from page
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2423,6 +2424,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jul 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-4
+- when skipping hidden pages on pdf export omit the hidden pages on calculating page bookmarks
+
 * Fri Jul 03 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-3
 - fix de-selection of selected text frame is master has a bg image at that point
 

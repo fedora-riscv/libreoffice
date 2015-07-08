@@ -1,0 +1,72 @@
+From 74879ff0ef14db47365650819bbe7c9f105b057a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 8 Jul 2015 12:24:46 +0100
+Subject: [PATCH] when skipping hidden pages omit the hidden pages from page
+ bookmarks
+
+three slides, set second to hidden, export to pdf (without toggling
+on include hidden slides), in evince/acroread click on the "slide 3"
+title, and the viewers will not jump to that slide, seeing as the
+index is mis-calculated assuming 1-1 export-import pages
+
+Change-Id: I2f21eb655684ac4cb06384a8e9a17b419f644f3f
+---
+ sd/source/ui/unoidl/unomodel.cxx | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/sd/source/ui/unoidl/unomodel.cxx b/sd/source/ui/unoidl/unomodel.cxx
+index 2d72378..472edac 100644
+--- a/sd/source/ui/unoidl/unomodel.cxx
++++ b/sd/source/ui/unoidl/unomodel.cxx
+@@ -1851,6 +1851,25 @@ bool ImplRenderPaintProc::IsPrintable( const SdrObject* pObj ) const
+     return bPrintable;
+ 
+ }
++
++namespace
++{
++    sal_Int16 CalcOutputPageNum(vcl::PDFExtOutDevData* pPDFExtOutDevData, SdDrawDocument *pDoc, sal_Int16 nPageNumber)
++    {
++        //export all pages, simple one to one case
++        if (pPDFExtOutDevData && pPDFExtOutDevData->GetIsExportHiddenSlides())
++            return nPageNumber-1;
++        //check all preceding pages, and only count non-hidden ones
++        sal_Int16 nRet = 0;
++        for (sal_Int16 i = 0; i < nPageNumber-1; ++i)
++        {
++           if (!(pDoc->GetSdPage(i, PK_STANDARD))->IsExcluded())
++                ++nRet;
++        }
++        return nRet;
++    }
++}
++
+ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& rSelection,
+                                           const uno::Sequence< beans::PropertyValue >& rxOptions )
+     throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception)
+@@ -2135,9 +2154,12 @@ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& r
+                                 OUString aPageName = mpDoc->GetSdPage( (sal_uInt16)nPageNumber - 1 , PK_STANDARD )->GetName();
+                                 if( !aPageName.isEmpty() )
+                                 {
++                                    // Destination PageNum
++                                    const sal_Int32 nDestPageNum = CalcOutputPageNum(pPDFExtOutDevData, mpDoc, nPageNumber);
++
+                                     // insert the bookmark to this page into the NamedDestinations
+                                     if( pPDFExtOutDevData->GetIsExportNamedDestinations() )
+-                                        pPDFExtOutDevData->CreateNamedDest( aPageName, aPageRect,  nPageNumber - 1 );
++                                        pPDFExtOutDevData->CreateNamedDest(aPageName, aPageRect, nDestPageNum);
+ 
+                                     // add the name to the outline, (almost) same code as in sc/source/ui/unoobj/docuno.cxx
+                                     // issue #i40318.
+@@ -2146,7 +2168,7 @@ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& r
+                                     {
+                                         // Destination Export
+                                         const sal_Int32 nDestId =
+-                                            pPDFExtOutDevData->CreateDest( aPageRect , nPageNumber - 1 );
++                                            pPDFExtOutDevData->CreateDest(aPageRect , nDestPageNum);
+ 
+                                         // Create a new outline item:
+                                         pPDFExtOutDevData->CreateOutlineItem( -1 , aPageName, nDestId );
+-- 
+2.4.0
+

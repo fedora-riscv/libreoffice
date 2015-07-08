@@ -397,6 +397,7 @@ Patch85: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch86: 0001-a-singleton-must-be-fully-parsed-to-be-valid-tdf-444.patch
 Patch87: 0001-tdf-44419-in-second-reference-part-stop-number-parsi.patch
 Patch88: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
+Patch89: 0001-Resolves-tdf-31577-volatile-lookup-ranges-must-not-b.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

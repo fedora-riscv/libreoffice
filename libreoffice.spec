@@ -399,6 +399,7 @@ Patch87: 0001-tdf-44419-in-second-reference-part-stop-number-parsi.patch
 Patch88: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 Patch89: 0001-Resolves-tdf-31577-volatile-lookup-ranges-must-not-b.patch
 Patch90: 0001-always-justify-a-referenced-range-in-order-tdf-92468.patch
+Patch91: 0001-Resolves-tdf-84762-collect-all-recalc-always-cells-b.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2375,9 +2376,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jul 08 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9-UNBUILT
+* Thu Jul 09 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9-UNBUILT
 - Resolves: tdf#31577 volatile lookup ranges must not be cached
 - Resolves: tdf#92468 always justify a referenced range in order
+- Resolves: tdf#84762 collect all recalc-always cells before setting any dirty
 
 * Mon Jun 29 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-8
 - Resolves: tdf#83365 push proper references in INDIRECT

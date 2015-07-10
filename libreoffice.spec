@@ -52,7 +52,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.3
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
@@ -94,7 +94,7 @@ Source21:       %{external_url}/lcms2-2.6.tar.gz
 Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
 Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.40.tar.bz2
-Source25:       %{external_url}/language-subtag-registry-2014-12-03.tar.bz2
+Source25:       %{external_url}/language-subtag-registry-2015-06-08.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
@@ -329,8 +329,6 @@ Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch23: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
-Patch24: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2442,6 +2440,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 10 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.3-1
+- update to 5.0.0 rc3
+
 * Sun Jun 28 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.2-1
 - update to 5.0.0 rc2
 

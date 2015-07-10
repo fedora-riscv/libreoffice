@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -364,6 +364,8 @@ Patch43: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch44: 0001-fix-deselect-of-textbox-on-slides-with-images-in-und.patch
 Patch45: 0001-ppc64-fix-infinite-loop-with-default-unsigned-char.patch
 Patch46: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
+Patch47: 0001-ppc64-simplify-this-a-little.patch
+Patch48: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2424,6 +2426,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 10 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-5
+- Related: rhbz#1146058 using a fp register also consumes a gp register slot
+
 * Wed Jul 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-4
 - when skipping hidden pages on pdf export omit the hidden pages on calculating page bookmarks
 

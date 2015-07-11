@@ -400,6 +400,8 @@ Patch88: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
 Patch89: 0001-Resolves-tdf-31577-volatile-lookup-ranges-must-not-b.patch
 Patch90: 0001-always-justify-a-referenced-range-in-order-tdf-92468.patch
 Patch91: 0001-Resolves-tdf-84762-collect-all-recalc-always-cells-b.patch
+Patch92: 0001-ppc64-simplify-this-a-little.patch
+Patch93: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2376,7 +2378,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jul 09 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9-UNBUILT
+* Sat Jul 11 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9
+- Resolves: rhbz#1146058 using a fp register also consumes a gp register slot
 - Resolves: tdf#31577 volatile lookup ranges must not be cached
 - Resolves: tdf#92468 always justify a referenced range in order
 - Resolves: tdf#84762 collect all recalc-always cells before setting any dirty

@@ -2427,7 +2427,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Fri Jul 10 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-5
-- Related: rhbz#1146058 using a fp register also consumes a gp register slot
+- Resolves: rhbz#1146058 using a fp register also consumes a gp register slot
 
 * Wed Jul 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-4
 - when skipping hidden pages on pdf export omit the hidden pages on calculating page bookmarks

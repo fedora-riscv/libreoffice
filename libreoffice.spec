@@ -329,6 +329,8 @@ Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
+Patch23: 0001-ppc64-simplify-this-a-little.patch
+Patch24: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,165 @@
+From f31326f623b0be2392b3846f710df75ea8760446 Mon Sep 17 00:00:00 2001
+From: Caolan McNamara <caolanm@redhat.com>
+Date: Fri, 10 Jul 2015 16:36:41 +0100
+Subject: [PATCH 2/2] ppc64: using a fp register also consumes a gp register
+ slot
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Idf6f40081f4598c0fa9d1e10bdc208eae49e4cd1
+Reviewed-on: https://gerrit.libreoffice.org/16936
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit e8ac3b5bd973054c6fd74db017bb448721e2c3e2)
+Reviewed-on: https://gerrit.libreoffice.org/16946
+Reviewed-by: David Tardon <dtardon@redhat.com>
+Tested-by: David Tardon <dtardon@redhat.com>
+---
+ bridges/source/cpp_uno/gcc3_linux_powerpc64/cpp2uno.cxx |  6 ++++++
+ bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx | 16 ++++++++++------
+ testtools/com/sun/star/comp/bridge/TestComponent.java   |  4 ++++
+ testtools/source/bridgetest/bridgetest.cxx              |  4 ++++
+ testtools/source/bridgetest/cli/cli_cs_testobj.cs       |  5 +++++
+ testtools/source/bridgetest/cppobj.cxx                  |  2 ++
+ testtools/source/bridgetest/idl/bridgetest.idl          |  6 ++++++
+ 7 files changed, 37 insertions(+), 6 deletions(-)
+
+diff --git a/bridges/source/cpp_uno/gcc3_linux_powerpc64/cpp2uno.cxx b/bridges/source/cpp_uno/gcc3_linux_powerpc64/cpp2uno.cxx
+index 6b58246..6ac003b 100644
+--- a/bridges/source/cpp_uno/gcc3_linux_powerpc64/cpp2uno.cxx
++++ b/bridges/source/cpp_uno/gcc3_linux_powerpc64/cpp2uno.cxx
+@@ -133,6 +133,12 @@ static typelib_TypeClass cpp2uno_call(
+                         }
+                         pCppArgs[nPos] = pUnoArgs[nPos] = fpreg++;
+                         nf++;
++
++                        if (ng < ppc64::MAX_GPR_REGS)
++                        {
++                            ng++;
++                            gpreg++;
++                        }
+                     }
+                     else
+                     {
+diff --git a/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx b/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
+index 81d3d5c..28dfaf8 100644
+--- a/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
++++ b/bridges/source/cpp_uno/gcc3_linux_powerpc64/uno2cpp.cxx
+@@ -229,16 +229,20 @@ static void callVirtualMethod(void * pThis, sal_uInt32 nVtableIndex,
+ 
+ // The value in %xmm register is already prepared to be retrieved as a float,
+ // thus we treat float and double the same
+-#define INSERT_FLOAT( pSV, nr, pFPR, pDS, bOverflow ) \
+-        if ( nr < ppc64::MAX_SSE_REGS ) \
++#define INSERT_FLOAT( pSV, nr, pFPR, nGPR, pDS, bOverflow ) \
++        if ( nGPR < ppc64::MAX_GPR_REGS ) \
++                ++nGPR;                   \
++        if ( nr < ppc64::MAX_SSE_REGS )   \
+                 pFPR[nr++] = *reinterpret_cast<float *>( pSV ); \
+         else \
+             bOverflow = true; \
+         if (bOverflow) \
+                 *pDS++ = *reinterpret_cast<sal_uInt64 *>( pSV ); // verbatim!
+ 
+-#define INSERT_DOUBLE( pSV, nr, pFPR, pDS, bOverflow ) \
+-        if ( nr < ppc64::MAX_SSE_REGS ) \
++#define INSERT_DOUBLE( pSV, nr, pFPR, nGPR, pDS, bOverflow ) \
++        if ( nGPR < ppc64::MAX_GPR_REGS ) \
++                ++nGPR;                   \
++        if ( nr < ppc64::MAX_SSE_REGS )   \
+                 pFPR[nr++] = *reinterpret_cast<double *>( pSV ); \
+         else \
+             bOverflow = true; \
+@@ -390,10 +394,10 @@ static void cpp_call(
+                                 INSERT_INT8( pCppArgs[nPos], nGPR, pGPR, pStack, bOverflow );
+                                 break;
+                         case typelib_TypeClass_FLOAT:
+-                                INSERT_FLOAT( pCppArgs[nPos], nFPR, pFPR, pStack, bOverflow );
++                                INSERT_FLOAT( pCppArgs[nPos], nFPR, pFPR, nGPR, pStack, bOverflow );
+                                 break;
+                         case typelib_TypeClass_DOUBLE:
+-                                INSERT_DOUBLE( pCppArgs[nPos], nFPR, pFPR, pStack, bOverflow );
++                                INSERT_DOUBLE( pCppArgs[nPos], nFPR, pFPR, nGPR, pStack, bOverflow );
+                                 break;
+                         default:
+                                 break;
+diff --git a/testtools/com/sun/star/comp/bridge/TestComponent.java b/testtools/com/sun/star/comp/bridge/TestComponent.java
+index bf1524d..8e07d1a 100644
+--- a/testtools/com/sun/star/comp/bridge/TestComponent.java
++++ b/testtools/com/sun/star/comp/bridge/TestComponent.java
+@@ -498,6 +498,10 @@ public class TestComponent {
+             return i2;
+         }
+ 
++        public int testPPC64Alignment( double d1, double d2, double d3, int i1 ) throws com.sun.star.uno.RuntimeException {
++            return i1;
++        }
++
+         public double testTenDoubles( double d1, double d2, double d3, double d4, double d5, double d6, double d7, double d8, double d9, double d10 ) {
+             return d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10;
+         }
+diff --git a/testtools/source/bridgetest/bridgetest.cxx b/testtools/source/bridgetest/bridgetest.cxx
+index ea37b9a..427513f 100644
+--- a/testtools/source/bridgetest/bridgetest.cxx
++++ b/testtools/source/bridgetest/bridgetest.cxx
+@@ -529,6 +529,10 @@ static bool performTest(
+                 bRet &= check(i2 == 0xBEAF, "ppc-style alignment test");
+             }
+             {
++                sal_Int32 i1 = xLBT->testPPC64Alignment(1.0, 2.0, 3.0, 0xBEAF);
++                bRet &= check(i1 == 0xBEAF, "ppc64-style alignment test");
++            }
++            {
+                 double d1 = xLBT->testTenDoubles(0.1, 0.2, 0.3, 0.4, 0.5,
+                     0.6, 0.7, 0.8, 0.9, 1.0);
+                 bRet &= check(d1 == 5.5, "armhf doubles test");
+diff --git a/testtools/source/bridgetest/cli/cli_cs_testobj.cs b/testtools/source/bridgetest/cli/cli_cs_testobj.cs
+index 9d0ac7a..8f396c9 100644
+--- a/testtools/source/bridgetest/cli/cli_cs_testobj.cs
++++ b/testtools/source/bridgetest/cli/cli_cs_testobj.cs
+@@ -255,6 +255,11 @@ public class BridgeTestObject : WeakBase, XRecursiveCall, XBridgeTest2
+         return i2;
+     }
+ 
++    public int testPPC64Alignment( double d1, double d2, double d3, int i1 )
++    {
++        return i1;
++    }
++
+     public double testTenDoubles( double d1, double d2, double d3, double d4, double d5, double d6, double d7, double d8, double d9, double d10 )
+     {
+         return d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10;
+diff --git a/testtools/source/bridgetest/cppobj.cxx b/testtools/source/bridgetest/cppobj.cxx
+index a468d90..30f85f0 100644
+--- a/testtools/source/bridgetest/cppobj.cxx
++++ b/testtools/source/bridgetest/cppobj.cxx
+@@ -220,6 +220,8 @@ public:
+         { return rStruct; }
+     virtual sal_Int32 SAL_CALL testPPCAlignment( sal_Int64, sal_Int64, sal_Int32, sal_Int64, sal_Int32 i2 ) throw(com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+         { return i2; }
++    virtual sal_Int32 SAL_CALL testPPC64Alignment( double , double , double , sal_Int32 i1 ) throw(com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
++        { return i1; }
+     virtual double SAL_CALL testTenDoubles( double d1, double d2, double d3, double d4, double d5, double d6, double d7, double d8, double d9, double d10 ) throw(com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+         { return d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8 + d9 + d10; }
+     virtual sal_Bool SAL_CALL getBool() throw(com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+diff --git a/testtools/source/bridgetest/idl/bridgetest.idl b/testtools/source/bridgetest/idl/bridgetest.idl
+index a11ba28..22612b8 100644
+--- a/testtools/source/bridgetest/idl/bridgetest.idl
++++ b/testtools/source/bridgetest/idl/bridgetest.idl
+@@ -307,6 +307,12 @@ interface XBridgeTestBase : com::sun::star::uno::XInterface
+     long testPPCAlignment( [in] hyper l1, [in] hyper l2, [in] long i1, [in] hyper l3, [in] long i2 );
+ 
+     /**
++     * PPC64 Alignment test
++     */
++    long testPPC64Alignment( [in] double d1, [in] double d2, [in] double d3, [in] long i1 );
++
++
++    /**
+      * VFP ABI (armhf) doubles test
+      */
+     double testTenDoubles( [in] double d1, [in] double d2, [in] double d3, [in] double d4, [in] double d5, [in] double d6, [in] double d7, [in] double d8, [in] double d9, [in] double d10 );
+-- 
+2.1.0
+

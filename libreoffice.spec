@@ -51,7 +51,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -366,6 +366,7 @@ Patch45: 0001-ppc64-fix-infinite-loop-with-default-unsigned-char.patch
 Patch46: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
 Patch47: 0001-ppc64-simplify-this-a-little.patch
 Patch48: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
+Patch49: 0001-tdf-91228-need-to-check-the-format-s-IsLockModified-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2426,6 +2427,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jul 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-6
+- Resolves: rhbz#1234793/tdf#91228 fix crash on certain frame moves
+
 * Fri Jul 10 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-5
 - Resolves: rhbz#1146058 using a fp register also consumes a gp register slot
 

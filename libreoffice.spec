@@ -855,8 +855,10 @@ This plugin is experimental and it is not suggested for normal use.
 Summary: Debug information for package %{name}
 Group: Development/Debug
 AutoReqProv: 0
+%if 0%{?fedora}
 Requires: libreoffice-core = %{epoch}:%{version}-%{release}
 Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+%endif
 
 %description debuginfo
 This package provides debug information for package %{name}.

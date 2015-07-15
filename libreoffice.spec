@@ -927,8 +927,10 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 Summary: Debug information for package %{name}
 Group: Development/Debug
 AutoReqProv: 0
+%if 0%{?fedora}
 Requires: libreoffice-core = %{epoch}:%{version}-%{release}
 Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+%endif
 
 %description debuginfo
 This package provides debug information for package %{name}.

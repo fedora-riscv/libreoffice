@@ -929,7 +929,7 @@ Group: Development/Debug
 AutoReqProv: 0
 %if 0%{?fedora}
 Requires: libreoffice-core = %{epoch}:%{version}-%{release}
-Requires: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
+Recommends: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
 %endif
 
 %description debuginfo

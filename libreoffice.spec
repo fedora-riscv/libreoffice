@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -400,6 +400,7 @@ Patch90: 0001-always-justify-a-referenced-range-in-order-tdf-92468.patch
 Patch91: 0001-Resolves-tdf-84762-collect-all-recalc-always-cells-b.patch
 Patch92: 0001-ppc64-simplify-this-a-little.patch
 Patch93: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
+Patch94: 0001-Resolves-tdf-92767-use-ISO-8601-for-internal-date-st.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2375,6 +2376,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jul 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-10-UNBUILT
+- Resolves: tdf#92767 use ISO 8601 for internal date string representation
+
 * Sat Jul 11 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9
 - Resolves: rhbz#1146058 using a fp register also consumes a gp register slot
 - Resolves: tdf#31577 volatile lookup ranges must not be cached

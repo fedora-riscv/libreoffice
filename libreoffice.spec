@@ -401,6 +401,7 @@ Patch91: 0001-Resolves-tdf-84762-collect-all-recalc-always-cells-b.patch
 Patch92: 0001-ppc64-simplify-this-a-little.patch
 Patch93: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 Patch94: 0001-Resolves-tdf-92767-use-ISO-8601-for-internal-date-st.patch
+Patch95: 0001-check-annotation-caption-pointers-blind-fix-for-rhbz.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2376,8 +2377,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jul 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-10-UNBUILT
+* Mon Jul 20 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-10-UNBUILT
 - Resolves: tdf#92767 use ISO 8601 for internal date string representation
+- check annotation caption pointers, blind fix for rhbz#1242099
 
 * Sat Jul 11 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-9
 - Resolves: rhbz#1146058 using a fp register also consumes a gp register slot

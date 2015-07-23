@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.4
+%define libo_version 4.4.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -348,23 +348,15 @@ Patch29: 0001-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch30: 0002-java-dir-for-powepc64-and-powepc64le-can-differ.patch
 Patch31: 0001-impress-right-click-to-insert-image.patch
 Patch32: 0001-Resolves-tdf-89904-allow-the-options-color-page-to-l.patch
-Patch33: 0001-wrong-comparison-in-letter-wizard.patch
-Patch34: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
-Patch35: 0001-Resolves-tdf-79780-use-SelectHdl-instead-of-ClickHdl.patch
-Patch36: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
-Patch37: 0001-tdf-78854-do-not-crash-when-undoing-layout-change.patch
-Patch38: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
-Patch39: 0001-Resolves-tdf-90435-secondary-pool-set-to-that-of-tem.patch
-Patch40: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
-Patch41: 0001-implement-equalize-width-and-height-for-impress-draw.patch
-Patch42: 0001-Resolves-tdf-92275-impress-grinds-to-a-halt-constant.patch
-Patch43: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch44: 0001-fix-deselect-of-textbox-on-slides-with-images-in-und.patch
-Patch45: 0001-ppc64-fix-infinite-loop-with-default-unsigned-char.patch
-Patch46: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
-Patch47: 0001-ppc64-simplify-this-a-little.patch
-Patch48: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
-Patch49: 0001-tdf-91228-need-to-check-the-format-s-IsLockModified-.patch
+Patch33: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
+Patch34: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
+Patch35: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
+Patch36: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
+Patch37: 0001-implement-equalize-width-and-height-for-impress-draw.patch
+Patch38: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
+Patch39: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
+Patch40: 0001-ppc64-simplify-this-a-little.patch
+Patch41: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2424,6 +2416,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jul 23 2015 David Tardon <dtardon@redhat.com> - 1:4.4.5.2-1
+- update to 4.4.5
+
 * Mon Jul 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.4.3-6
 - Resolves: rhbz#1234793/tdf#91228 fix crash on certain frame moves
 

@@ -331,6 +331,7 @@ Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch23: 0001-ppc64-simplify-this-a-little.patch
 Patch24: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
+Patch25: 0001-gtk3-draw-paint-to-the-fixed-container.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

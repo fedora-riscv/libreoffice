@@ -1,0 +1,133 @@
+From c19e079bc1a2cce977bd0e2bbba5901108180615 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 24 Jul 2015 12:22:14 +0100
+Subject: [PATCH] gtk3: draw/paint to the fixed container
+
+which fills the toplevel window, rather than directly to the toplevel window.
+
+It makes no difference for X, but for wayland the window decorations are part
+of the toplevel window, dropping down a level means we don't draw out menu bar
+under the window decoration space
+
+Change-Id: Icec400efacd16b5d901107c13b6fa90c59cad0e6
+(cherry picked from commit 298c089df77d9afe2cf86bb7a6a8544a0151e8c5)
+---
+ vcl/inc/unx/gtk/gtkframe.hxx       |  2 +-
+ vcl/unx/gtk/window/gtksalframe.cxx | 35 ++++++++++++++++++-----------------
+ 2 files changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 6797ea82..4977a7c 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -173,6 +173,7 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+ 
+     SalX11Screen                    m_nXScreen;
+     GtkWidget*                      m_pWindow;
++    GtkFixed*                       m_pFixedContainer;
+     GdkWindow*                      m_pForeignParent;
+     GdkNativeWindow                 m_aForeignParentWindow;
+     GdkWindow*                      m_pForeignTopLevel;
+@@ -180,7 +181,6 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+     Pixmap                          m_hBackgroundPixmap;
+     sal_uLong                       m_nStyle;
+     SalExtStyle                     m_nExtStyle;
+-    GtkFixed*                       m_pFixedContainer;
+     GtkSalFrame*                    m_pParent;
+     std::list< GtkSalFrame* >       m_aChildren;
+     GdkWindowState                  m_nState;
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index ba2f79b..b99d48d 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -414,7 +414,7 @@ void GtkSalFrame::doKeyCallback( guint state,
+     if (keyval == GDK_0)
+     {
+         fprintf( stderr, "force widget_queue_draw\n");
+-        gtk_widget_queue_draw (m_pWindow);
++        gtk_widget_queue_draw (m_pFixedContainer);
+         return;
+     }
+     else if (keyval == GDK_1)
+@@ -1034,12 +1034,25 @@ void GtkSalFrame::updateScreenNumber()
+ 
+ void GtkSalFrame::InitCommon()
+ {
++    // add the fixed container child,
++    // fixed is needed since we have to position plugin windows
++    m_pFixedContainer = GTK_FIXED(g_object_new( ooo_fixed_get_type(), NULL ));
++    gtk_container_add( GTK_CONTAINER(m_pWindow), GTK_WIDGET(m_pFixedContainer) );
++
++    gtk_widget_set_app_paintable(GTK_WIDGET(m_pFixedContainer), true);
++    /*non-X11 displays won't show anything at all without double-buffering
++      enabled*/
++    if (GDK_IS_X11_DISPLAY(getGdkDisplay()))
++        gtk_widget_set_double_buffered(GTK_WIDGET(m_pFixedContainer), false);
++    gtk_widget_set_redraw_on_allocate(GTK_WIDGET(m_pFixedContainer), false);
++
++
+     // connect signals
+     g_signal_connect( G_OBJECT(m_pWindow), "style-set", G_CALLBACK(signalStyleSet), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "button-press-event", G_CALLBACK(signalButton), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "button-release-event", G_CALLBACK(signalButton), this );
+ #if GTK_CHECK_VERSION(3,0,0)
+-    g_signal_connect( G_OBJECT(m_pWindow), "draw", G_CALLBACK(signalDraw), this );
++    g_signal_connect( G_OBJECT(m_pFixedContainer), "draw", G_CALLBACK(signalDraw), this );
+ //    g_signal_connect( G_OBJECT(m_pWindow), "state-flags-changed", G_CALLBACK(signalFlagsChanged), this );
+ #if GTK_CHECK_VERSION(3,14,0)
+     GtkGesture *pSwipe = gtk_gesture_swipe_new(m_pWindow);
+@@ -1055,7 +1068,7 @@ void GtkSalFrame::InitCommon()
+ #endif
+ 
+ #else
+-    g_signal_connect( G_OBJECT(m_pWindow), "expose-event", G_CALLBACK(signalExpose), this );
++    g_signal_connect( G_OBJECT(m_pFixedContainer), "expose-event", G_CALLBACK(signalExpose), this );
+ #endif
+     g_signal_connect( G_OBJECT(m_pWindow), "focus-in-event", G_CALLBACK(signalFocus), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "focus-out-event", G_CALLBACK(signalFocus), this );
+@@ -1097,24 +1110,12 @@ void GtkSalFrame::InitCommon()
+     m_nAppActionGroupExportId = 0;
+     m_nHudAwarenessId   = 0;
+ 
+-    gtk_widget_set_app_paintable( m_pWindow, TRUE );
+-    /*non-X11 displays won't show anything at all without double-buffering
+-      enabled*/
+-    if (GDK_IS_X11_DISPLAY(getGdkDisplay()))
+-        gtk_widget_set_double_buffered( m_pWindow, FALSE );
+-    gtk_widget_set_redraw_on_allocate( m_pWindow, FALSE );
+-
+     gtk_widget_add_events( m_pWindow,
+                            GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+                            GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK |
+                            GDK_VISIBILITY_NOTIFY_MASK | GDK_SCROLL_MASK
+                            );
+ 
+-    // add the fixed container child,
+-    // fixed is needed since we have to position plugin windows
+-    m_pFixedContainer = GTK_FIXED(g_object_new( ooo_fixed_get_type(), NULL ));
+-    gtk_container_add( GTK_CONTAINER(m_pWindow), GTK_WIDGET(m_pFixedContainer) );
+-
+     // show the widgets
+     gtk_widget_show( GTK_WIDGET(m_pFixedContainer) );
+ 
+@@ -3639,7 +3640,7 @@ void GtkSalFrame::damaged (const basegfx::B2IBox& rDamageRect)
+         cairo_destroy(cr);
+     }
+ 
+-    gtk_widget_queue_draw_area(m_pWindow,
++    gtk_widget_queue_draw_area(GTK_WIDGET(m_pFixedContainer),
+                                rDamageRect.getMinX(),
+                                rDamageRect.getMinY(),
+                                rDamageRect.getWidth(),
+@@ -3702,7 +3703,7 @@ void GtkSalFrame::TriggerPaintEvent()
+     SAL_INFO("vcl.gtk3", "force painting" << 0 << "," << 0 << " " << maGeometry.nWidth << "x" << maGeometry.nHeight);
+     SalPaintEvent aPaintEvt(0, 0, maGeometry.nWidth, maGeometry.nHeight, true);
+     CallCallback(SALEVENT_PAINT, &aPaintEvt);
+-    gtk_widget_queue_draw(m_pWindow);
++    gtk_widget_queue_draw(GTK_WIDGET(m_pFixedContainer));
+ #endif
+ }
+ 
+-- 
+2.4.3
+

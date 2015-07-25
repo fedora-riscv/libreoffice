@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.4
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -329,8 +329,6 @@ Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch23: 0001-ppc64-simplify-this-a-little.patch
-Patch24: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 Patch25: 0001-gtk3-draw-paint-to-the-fixed-container.patch
 
 %define instdir %{_libdir}
@@ -2445,6 +2443,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Jul 25 2015 David Tardon <dtardon@redhat.com> - 1:5.0.0.4-1
+- update to 5.0.0 rc4
+
 * Fri Jul 24 2015 Adam Williamson <awilliam@redhat.com> - 1:5.0.0.3-3
 - rebuild for Boost 1.58 (for real this time)
 

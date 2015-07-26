@@ -329,7 +329,9 @@ Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch25: 0001-gtk3-draw-paint-to-the-fixed-container.patch
+Patch23: 0001-gtk3-draw-paint-to-the-fixed-container.patch
+Patch24: 0001-wayland-actually-show-something.patch
+Patch25: 0001-fix-linux-buildbot.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,31 @@
+From d9b2105e14b7f84c24ced4faea1795e32d8e21d1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 17 Jul 2015 13:51:16 +0100
+Subject: [PATCH] wayland: actually show something
+
+Change-Id: Icd081c38de1374c6bfd6fb04d7765e07ff5d1aff
+---
+ vcl/unx/gtk/app/gtkdata.cxx        |  2 +-
+ vcl/unx/gtk/window/gtksalframe.cxx | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index 3bedf78..bdb360a 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -105,6 +105,12 @@
+ #define IS_WIDGET_MAPPED   GTK_WIDGET_MAPPED
+ #endif
+ 
++#if !GTK_CHECK_VERSION(3,10,0)
++#define GDK_WINDOWING_X11
++#define GDK_IS_X11_DISPLAY(foo) (true)
++#endif
++
++
+ using namespace com::sun::star;
+ 
+ int GtkSalFrame::m_nFloats = 0;
+-- 
+2.1.0
+

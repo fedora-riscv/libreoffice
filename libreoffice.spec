@@ -156,6 +156,7 @@ BuildRequires: ucpp
 BuildRequires: zip
 
 # libs / headers - common
+BuildRequires: %{libo_python}-devel
 BuildRequires: cups-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
@@ -254,8 +255,6 @@ BuildRequires: pkgconfig(bluez)
 BuildRequires: pkgconfig(bluez)
 %endif
 %endif
-
-BuildRequires: %{libo_python}-devel
 
 # java stuff
 BuildRequires: ant

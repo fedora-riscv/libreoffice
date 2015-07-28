@@ -357,6 +357,7 @@ Patch38: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch39: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
 Patch40: 0001-ppc64-simplify-this-a-little.patch
 Patch41: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
+Patch42: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -358,6 +358,7 @@ Patch39: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
 Patch40: 0001-ppc64-simplify-this-a-little.patch
 Patch41: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 Patch42: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
+Patch43: 0001-tdf-88831-fix-inverted-textures-when-OpenGL-is-enabl.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2417,6 +2418,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Aug 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-2
+- Resolves: rhbz#1242183 checkboxes inverted with opengl enabled
+
 * Thu Jul 23 2015 David Tardon <dtardon@redhat.com> - 1:4.4.5.2-1
 - update to 4.4.5
 

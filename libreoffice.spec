@@ -1989,6 +1989,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/template/common/offimisc
 %{baseinstdir}/share/template/common/personal
 %{baseinstdir}/share/template/common/presnt
+%{baseinstdir}/share/template/common/styles
 %{baseinstdir}/share/template/common/wizard
 %{baseinstdir}/share/template/wizard
 %dir %{baseinstdir}/share/wordbook

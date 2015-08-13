@@ -1,4 +1,4 @@
-From f7f0486376adbabf3ea66bfd8a7b692c335ec3c8 Mon Sep 17 00:00:00 2001
+From b1ee2df8d21df5d4d54427c4dc0bcb58613736a3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Toma=C5=BE=20Vajngerl?= <tomaz.vajngerl@collabora.co.uk>
 Date: Fri, 3 Jul 2015 14:38:24 +0900
 Subject: [PATCH] tdf#88831 fix inverted textures when OpenGL is enabled
@@ -9,20 +9,22 @@ assumes "true" (and this works because most relevant X servers work
 like this). We make this more robust and assume true only if the
 returned value is GLX_DONT_CARE (-1).
 
+(cherry picked from commit f7f0486376adbabf3ea66bfd8a7b692c335ec3c8)
+
 Change-Id: I4800b3364fd00f5f4a8f5a459472bfa8d97827ba
 ---
  vcl/source/opengl/OpenGLHelper.cxx | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/vcl/source/opengl/OpenGLHelper.cxx b/vcl/source/opengl/OpenGLHelper.cxx
-index 5663ccb..3ed6bdd 100644
+index c71380e..6387192 100644
 --- a/vcl/source/opengl/OpenGLHelper.cxx
 +++ b/vcl/source/opengl/OpenGLHelper.cxx
-@@ -539,7 +539,11 @@ GLXFBConfig OpenGLHelper::GetPixmapFBConfig( Display* pDisplay, bool& bInverted
+@@ -507,7 +507,11 @@ GLXFBConfig OpenGLHelper::GetPixmapFBConfig( Display* pDisplay, bool& bInverted
          }
  
          glXGetFBConfigAttrib( pDisplay, aFbConfigs[i], GLX_Y_INVERTED_EXT, &nValue );
--        bInverted = nValue == True;
+-        bInverted = (nValue == True) ? true : false;
 +
 +        // Looks like that X sends GLX_DONT_CARE but this usually means "true" for most
 +        // of the X implementations. Investigation on internet pointed that this could be

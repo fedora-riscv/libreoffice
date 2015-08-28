@@ -361,6 +361,7 @@ Patch42: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
 Patch43: 0001-tdf-88831-fix-inverted-textures-when-OpenGL-is-enabl.patch
 Patch44: 0001-don-t-write-SvxBackgroundColorItem-via-inherited-Svx.patch
 Patch45: 0001-implement-undo-for-equalize-marked-objects.patch
+Patch46: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2420,8 +2421,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4-UNBUILT
+* Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4
 - implement undo for equalize objects
+- time stamp object selections and use newest as ref for equalization
 
 * Thu Aug 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-3
 - cut and paste of notes contents results in black char background

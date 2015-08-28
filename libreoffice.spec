@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -360,6 +360,7 @@ Patch41: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
 Patch42: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
 Patch43: 0001-tdf-88831-fix-inverted-textures-when-OpenGL-is-enabl.patch
 Patch44: 0001-don-t-write-SvxBackgroundColorItem-via-inherited-Svx.patch
+Patch45: 0001-implement-undo-for-equalize-marked-objects.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2419,6 +2420,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4-UNBUILT
+- implement undo for equalize objects
+
 * Thu Aug 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-3
 - cut and paste of notes contents results in black char background
 

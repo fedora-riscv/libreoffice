@@ -1,4 +1,4 @@
-From aff2d164a982917c57be5e8a18c6c1366b836c09 Mon Sep 17 00:00:00 2001
+From 162519d87f426a928257b58db99f8f4941997f2d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 28 Aug 2015 15:13:41 +0100
 Subject: [PATCH] time stamp object selections and use newest as ref for
@@ -12,11 +12,11 @@ Change-Id: I1bf22ddbaf263b240288f70d03d6949611f86b69
  3 files changed, 33 insertions(+), 5 deletions(-)
 
 diff --git a/include/svx/svdmark.hxx b/include/svx/svdmark.hxx
-index cba0a75..aee9dd7 100644
+index 7c5181f..817dc4f 100644
 --- a/include/svx/svdmark.hxx
 +++ b/include/svx/svdmark.hxx
-@@ -42,7 +42,10 @@ typedef std::set<sal_uInt16> SdrUShortCont;
-  */
+@@ -40,7 +40,10 @@ typedef std::set<sal_uInt16> SdrUShortCont;
+ // Everything a View needs to know about a selected object
  class SVX_DLLPUBLIC SdrMark : public sdr::ObjectUser
  {
 +private:
@@ -26,7 +26,7 @@ index cba0a75..aee9dd7 100644
      SdrObject*                                          mpSelectedSdrObject; // the selected object
      SdrPageView*                                        mpPageView;
      SdrUShortCont*                                      mpPoints;     // Selected Points
-@@ -145,6 +148,11 @@ public:
+@@ -161,6 +164,11 @@ public:
  
          return mpGluePoints;
      }
@@ -39,7 +39,7 @@ index cba0a75..aee9dd7 100644
  
  class SVX_DLLPUBLIC SdrMarkList
 diff --git a/svx/source/svdraw/svdedtv2.cxx b/svx/source/svdraw/svdedtv2.cxx
-index 719355d..090efa7 100644
+index fae7266..cea4c23 100644
 --- a/svx/source/svdraw/svdedtv2.cxx
 +++ b/svx/source/svdraw/svdedtv2.cxx
 @@ -1181,7 +1181,19 @@ void SdrEditView::EqualizeMarkedObjects(bool bWidth)
@@ -76,7 +76,7 @@ index 719355d..090efa7 100644
          SdrObject* pObj = pM->GetMarkedSdrObj();
          Rectangle aLogicRect(pObj->GetLogicRect());
 diff --git a/svx/source/svdraw/svdmark.cxx b/svx/source/svdraw/svdmark.cxx
-index 7ddde61..8b7f3e09c 100644
+index 6922193..6f0598b 100644
 --- a/svx/source/svdraw/svdmark.cxx
 +++ b/svx/source/svdraw/svdmark.cxx
 @@ -38,8 +38,12 @@

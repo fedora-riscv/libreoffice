@@ -1,0 +1,124 @@
+From aff2d164a982917c57be5e8a18c6c1366b836c09 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 28 Aug 2015 15:13:41 +0100
+Subject: [PATCH] time stamp object selections and use newest as ref for
+ equalization
+
+Change-Id: I1bf22ddbaf263b240288f70d03d6949611f86b69
+---
+ include/svx/svdmark.hxx        |  8 ++++++++
+ svx/source/svdraw/svdedtv2.cxx | 18 ++++++++++++++++--
+ svx/source/svdraw/svdmark.cxx  | 12 +++++++++---
+ 3 files changed, 33 insertions(+), 5 deletions(-)
+
+diff --git a/include/svx/svdmark.hxx b/include/svx/svdmark.hxx
+index cba0a75..aee9dd7 100644
+--- a/include/svx/svdmark.hxx
++++ b/include/svx/svdmark.hxx
+@@ -42,7 +42,10 @@ typedef std::set<sal_uInt16> SdrUShortCont;
+  */
+ class SVX_DLLPUBLIC SdrMark : public sdr::ObjectUser
+ {
++private:
++    void setTime();
+ protected:
++    sal_Int64                                           mnTimeStamp;
+     SdrObject*                                          mpSelectedSdrObject; // the selected object
+     SdrPageView*                                        mpPageView;
+     SdrUShortCont*                                      mpPoints;     // Selected Points
+@@ -145,6 +148,11 @@ public:
+ 
+         return mpGluePoints;
+     }
++
++    sal_Int64 getTimeStamp() const
++    {
++        return mnTimeStamp;
++    }
+ };
+ 
+ class SVX_DLLPUBLIC SdrMarkList
+diff --git a/svx/source/svdraw/svdedtv2.cxx b/svx/source/svdraw/svdedtv2.cxx
+index 719355d..090efa7 100644
+--- a/svx/source/svdraw/svdedtv2.cxx
++++ b/svx/source/svdraw/svdedtv2.cxx
+@@ -1181,7 +1181,19 @@ void SdrEditView::EqualizeMarkedObjects(bool bWidth)
+     if (nMarked < 2)
+         return;
+ 
+-    SdrObject* pLastSelectedObj = rMarkList.GetMark(nMarked-1)->GetMarkedSdrObj();
++    size_t nLastSelected = 0;
++    sal_Int64 nLastSelectedTime = rMarkList.GetMark(0)->getTimeStamp();
++    for (size_t a = 1; a < nMarked; ++a)
++    {
++        sal_Int64 nCandidateTime = rMarkList.GetMark(a)->getTimeStamp();
++        if (nCandidateTime > nLastSelectedTime)
++        {
++            nLastSelectedTime = nCandidateTime;
++            nLastSelected = a;
++        }
++    }
++
++    SdrObject* pLastSelectedObj = rMarkList.GetMark(nLastSelected)->GetMarkedSdrObj();
+     Size aLastRectSize(pLastSelectedObj->GetLogicRect().GetSize());
+ 
+     const bool bUndo = IsUndoEnabled();
+@@ -1189,8 +1201,10 @@ void SdrEditView::EqualizeMarkedObjects(bool bWidth)
+     if (bUndo)
+         BegUndo();
+ 
+-    for (size_t a = 0; a < nMarked-1; ++a)
++    for (size_t a = 0; a < nMarked; ++a)
+     {
++        if (a == nLastSelected)
++            continue;
+         SdrMark* pM = rMarkList.GetMark(a);
+         SdrObject* pObj = pM->GetMarkedSdrObj();
+         Rectangle aLogicRect(pObj->GetLogicRect());
+diff --git a/svx/source/svdraw/svdmark.cxx b/svx/source/svdraw/svdmark.cxx
+index 7ddde61..8b7f3e09c 100644
+--- a/svx/source/svdraw/svdmark.cxx
++++ b/svx/source/svdraw/svdmark.cxx
+@@ -38,8 +38,12 @@
+ #include <svl/SfxBroadcaster.hxx>
+ #include <svx/svdoedge.hxx>
+ 
+-
+-
++void SdrMark::setTime()
++{
++    TimeValue aNow;
++    osl_getSystemTime(&aNow);
++    mnTimeStamp = sal_Int64(aNow.Seconds) * 1000000000L + aNow.Nanosec;
++}
+ 
+ SdrMark::SdrMark(SdrObject* pNewObj, SdrPageView* pNewPageView)
+ :   mpSelectedSdrObject(pNewObj),
+@@ -55,10 +59,12 @@ SdrMark::SdrMark(SdrObject* pNewObj, SdrPageView* pNewPageView)
+     {
+         mpSelectedSdrObject->AddObjectUser( *this );
+     }
++    setTime();
+ }
+ 
+ SdrMark::SdrMark(const SdrMark& rMark)
+ :   ObjectUser(),
++    mnTimeStamp(0),
+     mpSelectedSdrObject(0L),
+     mpPageView(0L),
+     mpPoints(0L),
+@@ -117,10 +123,10 @@ void SdrMark::SetMarkedSdrObj(SdrObject* pNewObj)
+     }
+ }
+ 
+-
+ SdrMark& SdrMark::operator=(const SdrMark& rMark)
+ {
+     SetMarkedSdrObj(rMark.mpSelectedSdrObject);
++    mnTimeStamp = rMark.mnTimeStamp;
+     mpPageView = rMark.mpPageView;
+     mbCon1 = rMark.mbCon1;
+     mbCon2 = rMark.mbCon2;
+-- 
+2.4.0
+

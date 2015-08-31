@@ -367,6 +367,7 @@ Patch48: 0002-tdf-92379-svx-don-t-overwrite-fo-background-color-on.patch
 Patch49: 0003-tdf-92379-sw-ODF-import-fix-fo-background-color-tran.patch
 Patch50: 0004-related-tdf-92379-sw-backward-compatible-ODF-export-.patch
 Patch51: 0005-ODF-import-workaround-dubious-draw-fill-solid-on-fra.patch
+Patch52: 0001-xmloff-ODF-export-actually-ODF-1.2-does-not-allow-gr.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

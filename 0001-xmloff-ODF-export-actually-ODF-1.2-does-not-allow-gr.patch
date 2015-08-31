@@ -1,0 +1,136 @@
+From c8adaefafe8bce0920f801f294c2c89077e6659c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 27 Aug 2015 15:14:20 +0200
+Subject: [PATCH] xmloff: ODF export: actually ODF 1.2 does not allow
+ graphic-properties
+
+... in a style with family "paragraph", as detected by a
+--with-export-validation build due to the unit test added yesterday.
+
+So use the loext namespace for the style:graphic-properties element,
+and also omit it entirely (and rely on the style:paragraph-properties
+attributes fo:background-*) if the ODF version is set to 1.2 or 1.1.
+
+Also adapt a previous check that was missing the "drawing-page" style
+family, where the style:graphic-properties is allowed (commit
+9746dc9ad62e7f3a39961733f2ac204e90289034)
+
+(regression from 7d9bb549d498d6beed2c4050c402d09643febdfa)
+
+(cherry picked from commit b1922eecb55b233de3e6abaaa644fe9f313cf0f1)
+
+Change-Id: Iedd66483f63020328bd61e1c1e19c62787b8ff6b
+Reviewed-on: https://gerrit.libreoffice.org/18063
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Tested-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ include/xmloff/xmlexppr.hxx      |  3 ++-
+ xmloff/source/style/impastpl.cxx |  1 +
+ xmloff/source/style/styleexp.cxx |  8 +++++++-
+ xmloff/source/style/xmlexppr.cxx | 23 ++++++++++++++++-------
+ 4 files changed, 26 insertions(+), 9 deletions(-)
+
+diff --git a/include/xmloff/xmlexppr.hxx b/include/xmloff/xmlexppr.hxx
+index 97d0500..09acc00 100644
+--- a/include/xmloff/xmlexppr.hxx
++++ b/include/xmloff/xmlexppr.hxx
+@@ -143,7 +143,8 @@ public:
+     void exportXML(
+             SvXMLExport& rExport,
+             const ::std::vector< XMLPropertyState >& rProperties,
+-            sal_uInt16 nFlags = 0 ) const;
++            sal_uInt16 nFlags = 0,
++            bool bUseExtensionNamespaceForGraphicProperties = false ) const;
+ 
+     /** like above but only properties whose property map index is within the
+      *  specified range are exported
+diff --git a/xmloff/source/style/impastpl.cxx b/xmloff/source/style/impastpl.cxx
+index 365fd5e..326cc8f 100644
+--- a/xmloff/source/style/impastpl.cxx
++++ b/xmloff/source/style/impastpl.cxx
+@@ -706,6 +706,7 @@ void SvXMLAutoStylePoolP_Impl::exportXML(
+                 GetExport().AddAttribute(
+                     XML_NAMESPACE_STYLE, XML_FAMILY, aStrFamilyName );
+                 if(aStrFamilyName != "graphic" &&
++                        aStrFamilyName != "drawing-page" &&
+                         aStrFamilyName != "presentation" &&
+                         aStrFamilyName != "chart" )
+                     bExtensionNamespace = true;
+diff --git a/xmloff/source/style/styleexp.cxx b/xmloff/source/style/styleexp.cxx
+index bba0263..2bc3a0e 100644
+--- a/xmloff/source/style/styleexp.cxx
++++ b/xmloff/source/style/styleexp.cxx
+@@ -320,8 +320,14 @@ bool XMLStyleExport::exportStyle(
+         // <style:properties>
+         ::std::vector< XMLPropertyState > xPropStates =
+             rPropMapper->Filter( xPropSet, true );
++        bool const bUseExtensionNamespaceForGraphicProperties(
++                rXMLFamily != "drawing-page" &&
++                rXMLFamily != "graphic" &&
++                rXMLFamily != "presentation" &&
++                rXMLFamily != "chart");
+         rPropMapper->exportXML( GetExport(), xPropStates,
+-                                XML_EXPORT_FLAG_IGN_WS );
++                                static_cast<sal_uInt16>(XML_EXPORT_FLAG_IGN_WS),
++                                bUseExtensionNamespaceForGraphicProperties );
+ 
+         rPropMapper->SetStyleName( OUString() );
+ 
+diff --git a/xmloff/source/style/xmlexppr.cxx b/xmloff/source/style/xmlexppr.cxx
+index 22cfe8a..5f55ffe 100644
+--- a/xmloff/source/style/xmlexppr.cxx
++++ b/xmloff/source/style/xmlexppr.cxx
+@@ -749,16 +749,18 @@ void SvXMLExportPropertyMapper::exportXML( SvXMLAttributeList& rAttrList,
+ void SvXMLExportPropertyMapper::exportXML(
+         SvXMLExport& rExport,
+         const ::std::vector< XMLPropertyState >& rProperties,
+-        sal_uInt16 nFlags ) const
++        sal_uInt16 nFlags,
++        bool bUseExtensionNamespaceForGraphicProperties) const
+ {
+-    exportXML( rExport, rProperties, -1, -1,  nFlags );
++    exportXML(rExport, rProperties, -1, -1,  nFlags, bUseExtensionNamespaceForGraphicProperties);
+ }
+ 
++
+ void SvXMLExportPropertyMapper::exportXML(
+         SvXMLExport& rExport,
+         const ::std::vector< XMLPropertyState >& rProperties,
+         sal_Int32 nPropMapStartIdx, sal_Int32 nPropMapEndIdx,
+-        sal_uInt16 nFlags, bool bExtensionNamespace ) const
++        sal_uInt16 nFlags, bool bUseExtensionNamespaceForGraphicProperties ) const
+ {
+     sal_uInt16 nPropTypeFlags = 0;
+     for( sal_uInt16 i=0; i<MAX_PROP_TYPES; ++i )
+@@ -766,6 +768,17 @@ void SvXMLExportPropertyMapper::exportXML(
+         sal_uInt16 nPropType = aPropTokens[i].nType;
+         if( 0==i || (nPropTypeFlags & (1 << nPropType)) != 0 )
+         {
++            sal_uInt16 nNamespace = XML_NAMESPACE_STYLE;
++            if (bUseExtensionNamespaceForGraphicProperties &&
++                aPropTokens[i].eToken == xmloff::token::XML_GRAPHIC_PROPERTIES)
++            {
++                nNamespace = XML_NAMESPACE_LO_EXT;
++                if (rExport.getDefaultVersion() <= SvtSaveOptions::ODFVER_012)
++                {
++                    continue; // don't write for ODF <= 1.2
++                }
++            }
++
+             std::vector<sal_uInt16> aIndexArray;
+ 
+             _exportXML( nPropType, nPropTypeFlags,
+@@ -779,10 +792,6 @@ void SvXMLExportPropertyMapper::exportXML(
+                 (nFlags & XML_EXPORT_FLAG_EMPTY) != 0 ||
+                 !aIndexArray.empty() )
+             {
+-                sal_uInt16 nNamespace = XML_NAMESPACE_STYLE;
+-                if(bExtensionNamespace && aPropTokens[i].eToken ==
+-                        xmloff::token::XML_GRAPHIC_PROPERTIES)
+-                    nNamespace = XML_NAMESPACE_LO_EXT;
+                 SvXMLElementExport aElem( rExport, nNamespace,
+                                   aPropTokens[i].eToken,
+                                   (nFlags & XML_EXPORT_FLAG_IGN_WS) != 0,
+-- 
+2.4.3
+

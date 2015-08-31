@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -362,6 +362,11 @@ Patch43: 0001-tdf-88831-fix-inverted-textures-when-OpenGL-is-enabl.patch
 Patch44: 0001-don-t-write-SvxBackgroundColorItem-via-inherited-Svx.patch
 Patch45: 0001-implement-undo-for-equalize-marked-objects.patch
 Patch46: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
+Patch47: 0001-sw-Flat-ODF-import-set-the-InReading-and-InXMLImport.patch
+Patch48: 0002-tdf-92379-svx-don-t-overwrite-fo-background-color-on.patch
+Patch49: 0003-tdf-92379-sw-ODF-import-fix-fo-background-color-tran.patch
+Patch50: 0004-related-tdf-92379-sw-backward-compatible-ODF-export-.patch
+Patch51: 0005-ODF-import-workaround-dubious-draw-fill-solid-on-fra.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2421,6 +2426,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-5.UNBUILT
+- Resolves: tdf#92379 Writer ODF style import background compatibility
+
 * Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4
 - implement undo for equalize objects
 - time stamp object selections and use newest as ref for equalization

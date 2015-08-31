@@ -1,0 +1,160 @@
+From c1f4c6db1fff37496b9b954ca21e958865078d2d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 26 Aug 2015 19:04:50 +0200
+Subject: [PATCH 5/5] ODF import: workaround dubious draw:fill="solid" on frame
+ styles
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Since the gradient frame backgrounds were added in LO 4.1, we export
+this:
+
+ fo:background-color="transparent" draw:fill="solid"
+
+Which doesn't make a whole lot of sense as this is really a "none" fill,
+and now with the backward compatibility stuff in the style import code
+we get the pool default color added when setting the BackTransparent
+property, and with the draw:fill="solid" it becomes visible and the
+background color is now Sky Blue 1.
+
+So try to detect draw:fill="solid" without draw:fill-color attribute
+and contradicting transparent legacy attribute and nerf it.  This way
+we also export draw:fill="none" again, although still with a bogus
+draw:fill-color but that shouldn't cause any harm.
+
+(cherry picked from commit 68efa6f5128abf4cd097ae81a4cfd7fecbcb2a80)
+
+Change-Id: I1c2bea46ba7d9a3f042b875df0ca12c7f6037909
+Reviewed-on: https://gerrit.libreoffice.org/18045
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ include/xmloff/txtprmap.hxx               |  2 ++
+ sw/qa/extras/odfexport/data/tdf92379.fodt |  5 +++++
+ sw/qa/extras/odfexport/odfexport.cxx      | 17 +++++++++++++++++
+ xmloff/source/draw/sdpropls.cxx           |  4 ++--
+ xmloff/source/text/txtimppr.cxx           | 14 ++++++++++++++
+ 5 files changed, 40 insertions(+), 2 deletions(-)
+
+diff --git a/include/xmloff/txtprmap.hxx b/include/xmloff/txtprmap.hxx
+index dc8de70..c473f15 100644
+--- a/include/xmloff/txtprmap.hxx
++++ b/include/xmloff/txtprmap.hxx
+@@ -196,6 +196,8 @@
+ #define CTF_CHARBOTTOMBORDER                (XML_TEXT_CTF_START + 167)
+ #define CTF_RELWIDTHREL                     (XML_TEXT_CTF_START + 168)
+ #define CTF_RELHEIGHTREL                    (XML_TEXT_CTF_START + 169)
++#define CTF_FILLSTYLE                       (XML_TEXT_CTF_START + 172)
++#define CTF_FILLCOLOR                       (XML_TEXT_CTF_START + 173)
+ 
+ 
+ #define TEXT_PROP_MAP_TEXT 0
+diff --git a/sw/qa/extras/odfexport/data/tdf92379.fodt b/sw/qa/extras/odfexport/data/tdf92379.fodt
+index 8aeb9c4..762a04d 100644
+--- a/sw/qa/extras/odfexport/data/tdf92379.fodt
++++ b/sw/qa/extras/odfexport/data/tdf92379.fodt
+@@ -36,6 +36,11 @@
+         <style:columns fo:column-count="1" fo:column-gap="0in"/>
+       </style:graphic-properties>
+     </style:style>
++    <style:style style:name="Untitled1" style:family="graphic" style:parent-style-name="encarts">
++      <style:graphic-properties fo:background-color="transparent" style:background-transparency="100%" draw:fill="solid">
++        <style:background-image/>
++      </style:graphic-properties>
++    </style:style>
+ 
+     <!-- "Titre Avis expert" and derived styles from bugdoc -->
+     <style:style style:name="Titre_20_Avis_20_expert" style:display-name="Titre Avis expert" style:family="paragraph" style:parent-style-name="Standard" style:master-page-name="">
+diff --git a/sw/qa/extras/odfexport/odfexport.cxx b/sw/qa/extras/odfexport/odfexport.cxx
+index d3ee3ee..22083c7 100644
+--- a/sw/qa/extras/odfexport/odfexport.cxx
++++ b/sw/qa/extras/odfexport/odfexport.cxx
+@@ -84,6 +84,23 @@ DECLARE_ODFEXPORT_TEST(testTdf92379, "tdf92379.fodt")
+     CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffcc99), getProperty<sal_Int32>(xStyle, "FillColor"));
+     CPPUNIT_ASSERT_EQUAL(sal_Int16(0), getProperty<sal_Int16>(xStyle, "FillTransparence"));
+ 
++    uno::Reference<beans::XPropertySet> xFrameStyle2(xStyles->getByName("Untitled1"),
++            uno::UNO_QUERY);
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffffff), getProperty<sal_Int32>(xFrameStyle2, "BackColorRGB"));
++    CPPUNIT_ASSERT_EQUAL(true, getProperty<bool>(xFrameStyle2, "BackTransparent"));
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(100), getProperty<sal_Int32>(xFrameStyle2, "BackColorTransparency"));
++    CPPUNIT_ASSERT_EQUAL(drawing::FillStyle_NONE, getProperty<drawing::FillStyle>(xFrameStyle2, "FillStyle"));
++// unfortunately this is actually the pool default value, which would be hard to fix - but it isn't a problem because style is NONE
++//    CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffffff), getProperty<sal_Int32>(xFrameStyle2, "FillColor"));
++//    CPPUNIT_ASSERT_EQUAL(sal_Int16(100), getProperty<sal_Int16>(xFrameStyle2, "FillTransparence"));
++
++    if (xmlDocPtr pXmlDoc = parseExport("styles.xml"))
++    {
++        // check that fo:background-color attribute is exported properly
++        assertXPath(pXmlDoc, "//style:style[@style:family='graphic' and @style:name='encarts']/style:graphic-properties[@fo:background-color='#ffcc99']", 1);
++        assertXPath(pXmlDoc, "//style:style[@style:family='graphic' and @style:name='Untitled1']/style:graphic-properties[@fo:background-color='transparent']", 1);
++    }
++
+     // paragraph style fo:background-color was wrongly inherited despite being
+     // overridden in derived style
+     uno::Reference<container::XNameAccess> xParaStyles(getStyles("ParagraphStyles"));
+diff --git a/xmloff/source/draw/sdpropls.cxx b/xmloff/source/draw/sdpropls.cxx
+index 27b2de0..065d3dd 100644
+--- a/xmloff/source/draw/sdpropls.cxx
++++ b/xmloff/source/draw/sdpropls.cxx
+@@ -106,8 +106,8 @@ const XMLPropertyMapEntry aXMLSDProperties[] =
+     GMAP( "LineCap",                        XML_NAMESPACE_SVG , XML_STROKE_LINECAP,         XML_SD_TYPE_LINECAP, 0 ),
+ 
+     // fill attributes
+-    GMAP( "FillStyle",                      XML_NAMESPACE_DRAW, XML_FILL,                   XML_SD_TYPE_FILLSTYLE, 0 ),
+-    GMAP_D("FillColor",                     XML_NAMESPACE_DRAW, XML_FILL_COLOR,             XML_TYPE_COLOR, 0),
++    GMAP( "FillStyle",                      XML_NAMESPACE_DRAW, XML_FILL,                   XML_SD_TYPE_FILLSTYLE, CTF_FILLSTYLE ),
++    GMAP_D("FillColor",                     XML_NAMESPACE_DRAW, XML_FILL_COLOR,             XML_TYPE_COLOR, CTF_FILLCOLOR ),
+     GMAP_D("FillColor2",                    XML_NAMESPACE_DRAW, XML_SECONDARY_FILL_COLOR,   XML_TYPE_COLOR, 0),
+     GMAP( "FillGradientName",               XML_NAMESPACE_DRAW, XML_FILL_GRADIENT_NAME,     XML_TYPE_STYLENAME|MID_FLAG_NO_PROPERTY_IMPORT, CTF_FILLGRADIENTNAME ),
+     GMAP( "FillGradientStepCount",          XML_NAMESPACE_DRAW, XML_GRADIENT_STEP_COUNT,    XML_TYPE_NUMBER16, 0 ),
+diff --git a/xmloff/source/text/txtimppr.cxx b/xmloff/source/text/txtimppr.cxx
+index 11b00e4..9278950 100644
+--- a/xmloff/source/text/txtimppr.cxx
++++ b/xmloff/source/text/txtimppr.cxx
+@@ -22,6 +22,7 @@
+ #include <osl/thread.h>
+ #include <com/sun/star/awt/FontFamily.hpp>
+ #include <com/sun/star/awt/FontPitch.hpp>
++#include <com/sun/star/drawing/FillStyle.hpp>
+ #include <com/sun/star/table/BorderLine2.hpp>
+ #include <com/sun/star/text/VertOrientation.hpp>
+ #include <com/sun/star/text/SizeType.hpp>
+@@ -399,6 +400,8 @@ void XMLTextImportPropertyMapper::finished(
+     XMLPropertyState* pAllMargin = 0;
+     XMLPropertyState* pMargins[4] = { 0, 0, 0, 0 };
+     ::std::unique_ptr<XMLPropertyState> pNewMargins[4];
++    XMLPropertyState* pFillStyle(nullptr);
++    XMLPropertyState* pFillColor(nullptr);
+ 
+     for( ::std::vector< XMLPropertyState >::iterator aIter = rProperties.begin();
+          aIter != rProperties.end();
+@@ -482,6 +485,8 @@ void XMLTextImportPropertyMapper::finished(
+                                         bHasAnyWidth = true; break;
+         case CTF_BACKGROUND_TRANSPARENCY: pBackTransparency = property; break;
+         case CTF_BACKGROUND_TRANSPARENT:  pBackTransparent = property; break;
++        case CTF_FILLSTYLE:             pFillStyle = property; break;
++        case CTF_FILLCOLOR:             pFillColor = property; break;
+         case CTF_PARAMARGINALL:
+         case CTF_PARAMARGINALL_REL:
+                 pAllParaMargin = property; break;
+@@ -646,6 +651,15 @@ void XMLTextImportPropertyMapper::finished(
+                        pFontStyleNameCTL, pFontFamilyCTL, pFontPitchCTL, pFontCharSetCTL,
+                        &pNewFontStyleNameCTL, &pNewFontFamilyCTL, &pNewFontPitchCTL, &pNewFontCharSetCTL );
+ 
++    if (pFillStyle && !pFillColor && pBackTransparent
++        && drawing::FillStyle_SOLID == pFillStyle->maValue.get<drawing::FillStyle>()
++        && pBackTransparent->maValue.get<bool>())
++    {
++        // fo:background="transparent", draw:fill="solid" without draw:fill-color
++        // prevent getSvxBrushItemFromSourceSet from adding bogus default color
++        pFillStyle->mnIndex = -1;
++    }
++
+     // #i5775# don't overwrite %transparency with binary transparency
+     if( ( pBackTransparency != NULL ) && ( pBackTransparent != NULL ) )
+     {
+-- 
+2.4.3
+

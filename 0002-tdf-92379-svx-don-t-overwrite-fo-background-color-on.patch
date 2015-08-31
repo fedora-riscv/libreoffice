@@ -1,0 +1,206 @@
+From 89e2e2f59738adee91282c19e7d43e98784fdacb Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Fri, 21 Aug 2015 18:28:23 +0200
+Subject: [PATCH 2/5] tdf#92379: svx: don't overwrite fo:background-color on
+ ODF import
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+getSvxBrushItemFromSourceSet() is called once for each property of a
+frame style that is set, and the "solid" fill-style is set by first
+applying the BackColorRGB and then BackTransparency property.  So there
+is an intermediate state that has fill-style NONE but a XFillColorItem
+set - don't reset the color to white in that case!
+
+Apparently writerfilter generally relies on the current reset-to-AUTO
+implementation (loads of test failures), so for now limit the fix for
+when we know that a frame style is imported from ODF.
+
+(regression from 3d399b0e45720354fc64dc3d121ee486e01eff89)
+
+(cherry picked from commit 79fb61efb847405fa47235002b52ee8efad5e339)
+
+tdf#92379: sw: unit test for frame style background color
+
+(cherry picked from commit 982537d77c2db463cc053cfdcd522530a3834c9e)
+
+Change-Id: Ia987fe586ec819a1f3cd85acdbfb03c74ca0ec2c
+Reviewed-on: https://gerrit.libreoffice.org/18042
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ include/svx/unobrushitemhelper.hxx        |  3 +-
+ svx/source/unodraw/unobrushitemhelper.cxx |  6 ++--
+ sw/CppunitTest_sw_odfexport.mk            |  3 ++
+ sw/qa/extras/odfexport/data/tdf92379.fodt | 58 +++++++++++++++++++++++++++++++
+ sw/qa/extras/odfexport/odfexport.cxx      | 13 +++++++
+ sw/source/core/unocore/unostyle.cxx       |  4 +--
+ 6 files changed, 81 insertions(+), 6 deletions(-)
+ create mode 100644 sw/qa/extras/odfexport/data/tdf92379.fodt
+
+diff --git a/include/svx/unobrushitemhelper.hxx b/include/svx/unobrushitemhelper.hxx
+index eea95b6..4055c45 100644
+--- a/include/svx/unobrushitemhelper.hxx
++++ b/include/svx/unobrushitemhelper.hxx
+@@ -46,7 +46,8 @@ SVX_DLLPUBLIC void setSvxBrushItemAsFillAttributesToTargetSet(
+ SVX_DLLPUBLIC SvxBrushItem getSvxBrushItemFromSourceSet(
+     const SfxItemSet& rSourceSet,
+     sal_uInt16 nBackgroundID,
+-    bool bSearchInParents = true);
++    bool bSearchInParents = true,
++    bool bXMLImportHack = false);
+ 
+ #endif // _UNOBRUSHITEMHELPER_HXX
+ 
+diff --git a/svx/source/unodraw/unobrushitemhelper.cxx b/svx/source/unodraw/unobrushitemhelper.cxx
+index d10aab6..fb6728d 100644
+--- a/svx/source/unodraw/unobrushitemhelper.cxx
++++ b/svx/source/unodraw/unobrushitemhelper.cxx
+@@ -192,7 +192,7 @@ SvxBrushItem getSvxBrushItemForSolid(const SfxItemSet& rSourceSet, bool bSearchI
+ }
+ 
+ //UUUU
+-SvxBrushItem getSvxBrushItemFromSourceSet(const SfxItemSet& rSourceSet, sal_uInt16 nBackgroundID, bool bSearchInParents)
++SvxBrushItem getSvxBrushItemFromSourceSet(const SfxItemSet& rSourceSet, sal_uInt16 nBackgroundID, bool bSearchInParents, bool bXMLImportHack)
+ {
+     const XFillStyleItem* pXFillStyleItem(static_cast< const XFillStyleItem*  >(rSourceSet.GetItem(XATTR_FILLSTYLE, bSearchInParents)));
+ 
+@@ -201,8 +201,8 @@ SvxBrushItem getSvxBrushItemFromSourceSet(const SfxItemSet& rSourceSet, sal_uInt
+         // no fill, still need to rescue the evtl. set RGB color, but use as transparent color (we have drawing::FillStyle_NONE)
+         Color aFillColor(static_cast< const XFillColorItem& >(rSourceSet.Get(XATTR_FILLCOLOR, bSearchInParents)).GetColorValue());
+ 
+-        // when fill style is none, then don't allow anything other than 0 or auto.
+-        if (aFillColor.GetColor() != 0)
++        // for writerfilter: when fill style is none, then don't allow anything other than 0 or auto.
++        if (!bXMLImportHack && aFillColor.GetColor() != 0)
+             aFillColor.SetColor(COL_AUTO);
+ 
+         aFillColor.SetTransparency(0xff);
+diff --git a/sw/CppunitTest_sw_odfexport.mk b/sw/CppunitTest_sw_odfexport.mk
+index 7bc7ed8..c6ec626 100644
+--- a/sw/CppunitTest_sw_odfexport.mk
++++ b/sw/CppunitTest_sw_odfexport.mk
+@@ -56,6 +56,9 @@ $(eval $(call gb_CppunitTest_use_components,sw_odfexport,\
+     embeddedobj/util/embobj \
+     filter/source/config/cache/filterconfig1 \
+     filter/source/storagefilterdetect/storagefd \
++	filter/source/odfflatxml/odfflatxml \
++	filter/source/xmlfilterdetect/xmlfd \
++	filter/source/xmlfilteradaptor/xmlfa \
+     framework/util/fwk \
+     i18npool/util/i18npool \
+     linguistic/source/lng \
+diff --git a/sw/qa/extras/odfexport/data/tdf92379.fodt b/sw/qa/extras/odfexport/data/tdf92379.fodt
+new file mode 100644
+index 0000000..280dc5a
+--- /dev/null
++++ b/sw/qa/extras/odfexport/data/tdf92379.fodt
+@@ -0,0 +1,58 @@
++<?xml version="1.0" encoding="UTF-8"?>
++
++<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
++ <office:meta><meta:initial-creator>ms </meta:initial-creator><meta:creation-date>2015-08-24T21:49:45.305718699</meta:creation-date><meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="0" meta:word-count="0" meta:character-count="0" meta:non-whitespace-character-count="0"/><meta:generator>LibreOfficeDev/4.3.7.2$Linux_X86_64 LibreOffice_project/8a35821d8636a03b8bf4e15b48f59794652c68ba</meta:generator></office:meta>
++ <office:font-face-decls>
++  <style:font-face style:name="Lohit Devanagari1" svg:font-family="&apos;Lohit Devanagari&apos;"/>
++  <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
++  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
++  <style:font-face style:name="Lohit Devanagari" svg:font-family="&apos;Lohit Devanagari&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
++  <style:font-face style:name="Source Han Sans CN Regular" svg:font-family="&apos;Source Han Sans CN Regular&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
++ </office:font-face-decls>
++ <office:styles>
++  <style:default-style style:family="graphic">
++   <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.3cm" draw:shadow-offset-y="0.3cm" draw:start-line-spacing-horizontal="0.283cm" draw:start-line-spacing-vertical="0.283cm" draw:end-line-spacing-horizontal="0.283cm" draw:end-line-spacing-vertical="0.283cm" style:flow-with-text="false"/>
++   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:writing-mode="lr-tb" style:font-independent-line-spacing="false">
++    <style:tab-stops/>
++   </style:paragraph-properties>
++   <style:text-properties style:use-window-font-color="true" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="de" fo:country="DE" style:letter-kerning="true" style:font-name-asian="Source Han Sans CN Regular" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
++  </style:default-style>
++  <style:default-style style:family="paragraph">
++   <style:paragraph-properties fo:hyphenation-ladder-count="no-limit" style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:tab-stop-distance="1.251cm" style:writing-mode="page"/>
++   <style:text-properties style:use-window-font-color="true" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="de" fo:country="DE" style:letter-kerning="true" style:font-name-asian="Source Han Sans CN Regular" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN" fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2"/>
++  </style:default-style>
++  <style:default-style style:family="table">
++   <style:table-properties table:border-model="collapsing"/>
++  </style:default-style>
++  <style:default-style style:family="table-row">
++   <style:table-row-properties fo:keep-together="auto"/>
++  </style:default-style>
++  <style:style style:name="Standard" style:family="paragraph" style:class="text"/>
++
++    <!-- "encarts" from bugdoc -->
++    <style:style style:name="encarts" style:family="graphic">
++      <style:graphic-properties svg:width="3.9701in" svg:height="0.1402in" text:anchor-type="paragraph" fo:background-color="#ffcc99" style:background-transparency="0%" draw:fill="solid" fo:padding="0.0193in" fo:border="0.79pt solid #661900" style:shadow="none" draw:shadow-opacity="100%">
++        <style:background-image/>
++        <style:columns fo:column-count="1" fo:column-gap="0in"/>
++      </style:graphic-properties>
++    </style:style>
++
++ </office:styles>
++ <office:automatic-styles>
++  <style:page-layout style:name="pm1">
++   <style:page-layout-properties fo:page-width="21.001cm" fo:page-height="29.7cm" style:num-format="1" style:print-orientation="portrait" fo:margin-top="2cm" fo:margin-bottom="2cm" fo:margin-left="2cm" fo:margin-right="2cm" style:writing-mode="lr-tb" style:footnote-max-height="0cm">
++    <style:footnote-sep style:width="0.018cm" style:distance-before-sep="0.101cm" style:distance-after-sep="0.101cm" style:line-style="solid" style:adjustment="left" style:rel-width="25%" style:color="#000000"/>
++   </style:page-layout-properties>
++   <style:header-style/>
++   <style:footer-style/>
++  </style:page-layout>
++ </office:automatic-styles>
++ <office:master-styles>
++  <style:master-page style:name="Standard" style:page-layout-name="pm1"/>
++ </office:master-styles>
++ <office:body>
++  <office:text>
++   <text:p text:style-name="Standard"/>
++  </office:text>
++ </office:body>
++</office:document>
+diff --git a/sw/qa/extras/odfexport/odfexport.cxx b/sw/qa/extras/odfexport/odfexport.cxx
+index a7c1a18..c1dc7ab 100644
+--- a/sw/qa/extras/odfexport/odfexport.cxx
++++ b/sw/qa/extras/odfexport/odfexport.cxx
+@@ -72,6 +72,19 @@ DECLARE_ODFEXPORT_TEST(testFdo38244, "fdo38244.odt")
+     CPPUNIT_ASSERT_EQUAL(OUString("M"), getProperty<OUString>(xPropertySet, "Initials"));
+ }
+ 
++DECLARE_ODFEXPORT_TEST(testTdf92379, "tdf92379.fodt")
++{
++    // frame style fo:background-color was not imported
++    uno::Reference<container::XNameAccess> xStyles(getStyles("FrameStyles"));
++    uno::Reference<beans::XPropertySet> xStyle(xStyles->getByName("encarts"),
++            uno::UNO_QUERY);
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffcc99), getProperty<sal_Int32>(xStyle, "BackColorRGB"));
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(0), getProperty<sal_Int32>(xStyle, "BackColorTransparency"));
++    CPPUNIT_ASSERT_EQUAL(drawing::FillStyle_SOLID, getProperty<drawing::FillStyle>(xStyle, "FillStyle"));
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffcc99), getProperty<sal_Int32>(xStyle, "FillColor"));
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(0), getProperty<sal_Int32>(xStyle, "FillTransparence"));
++}
++
+ DECLARE_ODFEXPORT_TEST(testFdo79358, "fdo79358.odt")
+ {
+     // the boolean properties of the index were not exported properly
+diff --git a/sw/source/core/unocore/unostyle.cxx b/sw/source/core/unocore/unostyle.cxx
+index 2329c74..a4c670b 100644
+--- a/sw/source/core/unocore/unostyle.cxx
++++ b/sw/source/core/unocore/unostyle.cxx
+@@ -1759,7 +1759,7 @@ static void lcl_SetStyleProperty(const SfxItemPropertySimpleEntry& rEntry,
+         {
+             //UUUU
+             SfxItemSet& rStyleSet = rBase.GetItemSet();
+-            const SvxBrushItem aOriginalBrushItem(getSvxBrushItemFromSourceSet(rStyleSet, RES_BACKGROUND));
++            const SvxBrushItem aOriginalBrushItem(getSvxBrushItemFromSourceSet(rStyleSet, RES_BACKGROUND, true, pDoc->IsInXMLImport()));
+             SvxBrushItem aChangedBrushItem(aOriginalBrushItem);
+ 
+             aChangedBrushItem.PutValue(aValue, nMemberId);
+@@ -4298,7 +4298,7 @@ uno::Reference< style::XAutoStyle > SwXAutoStyleFamily::insertStyle(
+                 case RES_BACKGROUND:
+                 {
+                     //UUUU
+-                    const SvxBrushItem aOriginalBrushItem(getSvxBrushItemFromSourceSet(aSet, RES_BACKGROUND));
++                    const SvxBrushItem aOriginalBrushItem(getSvxBrushItemFromSourceSet(aSet, RES_BACKGROUND, true, pDocShell->GetDoc()->IsInXMLImport()));
+                     SvxBrushItem aChangedBrushItem(aOriginalBrushItem);
+ 
+                     aChangedBrushItem.PutValue(aValue, nMemberId);
+-- 
+2.4.3
+

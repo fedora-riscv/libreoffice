@@ -1,0 +1,81 @@
+From b77b0c467ae55e3368b33d9dc248d86853e4510c Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 25 Aug 2015 23:29:18 +0200
+Subject: [PATCH 4/5] related: tdf#92379: sw: backward compatible ODF export of
+ overriding
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+... frame/paragraph backgrounds.
+
+If a style is set to have draw:fill="solid" and a derived style to
+draw:fill="none" then the derived one must have
+fo:background-color="transparent" to override the parent for old
+consumers like LO <= 4.3/AOO <= 4.1 that don't understand draw:fill.
+
+Change-Id: I5b56c7ace927338239195c6bfcfef1950544c8d2
+(cherry picked from commit 25c50a71ffdf7c43f8f3dd10736188271cc75ef0)
+Reviewed-on: https://gerrit.libreoffice.org/18044
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sw/qa/extras/odfexport/odfexport.cxx   |  9 +++++++++
+ sw/source/core/unocore/swunohelper.cxx | 14 +++++++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/sw/qa/extras/odfexport/odfexport.cxx b/sw/qa/extras/odfexport/odfexport.cxx
+index 308a83d..d3ee3ee 100644
+--- a/sw/qa/extras/odfexport/odfexport.cxx
++++ b/sw/qa/extras/odfexport/odfexport.cxx
+@@ -124,6 +124,15 @@ DECLARE_ODFEXPORT_TEST(testTdf92379, "tdf92379.fodt")
+ //    CPPUNIT_ASSERT_EQUAL(sal_Int32(0xffffff), getProperty<sal_Int32>(xStyle32, "FillColor"));
+ //    CPPUNIT_ASSERT_EQUAL(sal_Int16(100), getProperty<sal_Int16>(xStyle32, "FillTransparence"));
+     CPPUNIT_ASSERT_EQUAL(sal_Int32(0x461900), getProperty<sal_Int32>(xStyle32, "CharColor"));
++
++    if (xmlDocPtr pXmlDoc = parseExport("styles.xml"))
++    {
++        // check that fo:background-color attribute is exported properly
++        assertXPath(pXmlDoc, "//style:style[@style:family='paragraph' and @style:display-name='Titre Avis expert']/style:paragraph-properties[@fo:background-color='#661900']", 1);
++        assertXPath(pXmlDoc, "//style:style[@style:family='paragraph' and @style:display-name='Avis expert questions']/style:paragraph-properties[@fo:background-color='transparent']", 1);
++        assertXPath(pXmlDoc, "//style:style[@style:family='paragraph' and @style:display-name='avis expert questions non cadres']/style:paragraph-properties[@fo:background-color='#801900']", 1);
++        assertXPath(pXmlDoc, "//style:style[@style:family='paragraph' and @style:display-name='Avis expert rXponses']/style:paragraph-properties[@fo:background-color='transparent']", 1);
++    }
+ }
+ 
+ DECLARE_ODFEXPORT_TEST(testFdo79358, "fdo79358.odt")
+diff --git a/sw/source/core/unocore/swunohelper.cxx b/sw/source/core/unocore/swunohelper.cxx
+index c6f6729..a20caab 100644
+--- a/sw/source/core/unocore/swunohelper.cxx
++++ b/sw/source/core/unocore/swunohelper.cxx
+@@ -286,7 +286,18 @@ bool needToMapFillItemsToSvxBrushItemTypes(const SfxItemSet& rSet,
+     switch (eFill)
+     {
+         case drawing::FillStyle_NONE:
+-            return false; // ignoring some extremely limited XFillColorItem eval
++            // claim that BackColor and BackTransparent are available so that
++            // fo:background="transparent" attribute is exported to override
++            // the parent style in case it is != NONE
++            switch (nMID)
++            {
++                case MID_BACK_COLOR:
++                case MID_BACK_COLOR_R_G_B:
++                case MID_GRAPHIC_TRANSPARENT: // this is *BackTransparent
++                    return true;
++                default:
++                    return false;
++            }
+             break;
+         case drawing::FillStyle_SOLID:
+         case drawing::FillStyle_GRADIENT: // gradient and hatch don't exist in
+@@ -294,6 +305,7 @@ bool needToMapFillItemsToSvxBrushItemTypes(const SfxItemSet& rSet,
+             switch (nMID)
+             {
+                 case MID_BACK_COLOR:
++                case MID_GRAPHIC_TRANSPARENT: // this is *BackTransparent
+                     // Gradient/Hatch always have emulated color
+                     return (drawing::FillStyle_SOLID != eFill)
+                         || SfxItemState::SET == rSet.GetItemState(XATTR_FILLCOLOR)
+-- 
+2.4.3
+

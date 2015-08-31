@@ -1,0 +1,56 @@
+From e75609a450394e1fea11e6ab888247e92c9559ea Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Mon, 24 Aug 2015 22:56:17 +0200
+Subject: [PATCH 1/5] sw: Flat ODF import: set the InReading and InXMLImport
+ flags
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Flat ODF Import does not use SwReader but uses
+SwXMLImport::startDocument() and SwXMLImport::endDocument() to set up
+the document, so make sure those set the import relevant SwDoc flags.
+
+(cherry picked from commit 27a02d1708be7812668a84ea956edc8ecb312246)
+
+Change-Id: Ife3e58eeebd73ad895fe328662822b847cf9bfec
+Reviewed-on: https://gerrit.libreoffice.org/18041
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sw/source/filter/xml/xmlimp.cxx | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/sw/source/filter/xml/xmlimp.cxx b/sw/source/filter/xml/xmlimp.cxx
+index f59c732..7913153 100644
+--- a/sw/source/filter/xml/xmlimp.cxx
++++ b/sw/source/filter/xml/xmlimp.cxx
+@@ -651,6 +651,13 @@ void SwXMLImport::startDocument()
+     if( !pDoc )
+         return;
+ 
++    if (IMPORT_ALL == getImportFlags())
++    {
++        // for flat ODF - this is done in SwReader::Read() for package ODF
++        pDoc->SetInReading(true);
++        pDoc->SetInXMLImport(true);
++    }
++
+     if( (getImportFlags() & IMPORT_CONTENT) != 0 && !IsStylesOnlyMode() )
+     {
+         pSttNdIdx = new SwNodeIndex( pDoc->GetNodes() );
+@@ -875,6 +882,11 @@ void SwXMLImport::endDocument( void )
+                 pDoc->PrtOLENotify( false );
+             else if ( pDoc->IsOLEPrtNotifyPending() )
+                 pDoc->PrtOLENotify( true );
++
++            assert(pDoc->IsInReading());
++            assert(pDoc->IsInXMLImport());
++            pDoc->SetInReading(false);
++            pDoc->SetInXMLImport(false);
+         }
+ 
+         SwDrawModel* pDrawModel = pDoc->getIDocumentDrawModelAccess().GetDrawModel();
+-- 
+2.4.3
+

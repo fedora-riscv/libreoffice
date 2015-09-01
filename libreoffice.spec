@@ -370,6 +370,7 @@ Patch51: 0005-ODF-import-workaround-dubious-draw-fill-solid-on-fra.patch
 Patch52: 0001-xmloff-ODF-export-actually-ODF-1.2-does-not-allow-gr.patch
 Patch53: 0001-tdf-89245-xmloff-fix-Calc-header-background-image-sa.patch
 Patch54: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
+Patch55: 0001-implement-undo-of-delete-impress-cell-contents.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2434,6 +2435,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: tdf#89245 Calc ODF header/footer export background image loss
 - Resolves: rhbz#1256843 no obvious means to close template dialog
 - Related: rhbz#1255200 apparent missing stylesheet
+- implement undo of delete impress cell contents
 
 * Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4
 - implement undo for equalize objects

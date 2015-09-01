@@ -2433,6 +2433,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: tdf#92379 Writer ODF style import background compatibility
 - Resolves: tdf#89245 Calc ODF header/footer export background image loss
 - Resolves: rhbz#1256843 no obvious means to close template dialog
+- Related: rhbz#1255200 apparent missing stylesheet
 
 * Fri Aug 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-4
 - implement undo for equalize objects

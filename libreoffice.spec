@@ -407,6 +407,7 @@ Patch97: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
 Patch98: 0001-support-en-GB-oxendict-additionally-to-now-deprecate.patch
 Patch99: 0001-Resolves-rhbz-1255811-implement-Edit-modify-handler.patch
 Patch100: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
+Patch101: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2382,8 +2383,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11-UNBUILT
+* Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11
 - Resolves: rhbz#1256843 no obvious means to close template dialog
+- Related: rhbz#1255200 apparent missing stylesheet
 
 * Wed Aug 26 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-10
 - Resolves: tdf#92767 use ISO 8601 for internal date string representation

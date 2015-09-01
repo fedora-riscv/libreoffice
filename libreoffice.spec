@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -406,6 +406,7 @@ Patch96: 0001-Resolves-tdf-86024-do-not-attempt-to-shorten-numeric.patch
 Patch97: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
 Patch98: 0001-support-en-GB-oxendict-additionally-to-now-deprecate.patch
 Patch99: 0001-Resolves-rhbz-1255811-implement-Edit-modify-handler.patch
+Patch100: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2381,6 +2382,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11-UNBUILT
+- Resolves: rhbz#1256843 no obvious means to close template dialog
+
 * Wed Aug 26 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-10
 - Resolves: tdf#92767 use ISO 8601 for internal date string representation
 - check annotation caption pointers, blind fix for rhbz#1242099

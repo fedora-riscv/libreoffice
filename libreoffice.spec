@@ -330,6 +330,7 @@ Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
 Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
+Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

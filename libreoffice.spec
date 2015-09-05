@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.1
+%define libo_version 5.0.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,7 +52,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
@@ -331,8 +331,7 @@ Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
 Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
 Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
 Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
-Patch26: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
-Patch27: 0001-implement-undo-of-delete-impress-cell-contents.patch
+Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2447,6 +2446,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Sep 05 2015 David Tardon <dtardon@redhat.com> - 1:5.0.2.1-1
+- update to 5.0.2 rc1
+
 * Sat Aug 22 2015 David Tardon <dtardon@redhat.com> - 1:5.0.1.2-1
 - update to 5.0.1 rc2
 

@@ -16,7 +16,7 @@ index cba0a75..aee9dd7 100644
 --- a/include/svx/svdmark.hxx
 +++ b/include/svx/svdmark.hxx
 @@ -42,7 +42,10 @@ typedef std::set<sal_uInt16> SdrUShortCont;
-  */
+ // Everything a View needs to know about a selected object
  class SVX_DLLPUBLIC SdrMark : public sdr::ObjectUser
  {
 +private:

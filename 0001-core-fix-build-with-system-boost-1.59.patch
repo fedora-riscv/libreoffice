@@ -1,0 +1,133 @@
+From 7d49b9384ddb864231f7fa609f7bda097d734498 Mon Sep 17 00:00:00 2001
+From: David Ostrovsky <david@ostrovsky.org>
+Date: Mon, 31 Aug 2015 19:53:49 +0200
+Subject: [PATCH] core: fix build with system boost 1.59
+
+9a6cdce37e601b1406c71fef16ad9b315045c9da was trying to fix the problem
+with exposing deprecated vars and functions in system's error_code.hpp
+include file by patching bundled boost version.  This approach would
+only make sense, when upstream version is going to be fixed ASAP. Apply
+another approach, and follow the same pattern as applied in external
+libraries, by defining
+
+  -DBOOST_ERROR_CODE_HEADER_ONLY \
+  -DBOOST_SYSTEM_NO_DEPRECATED
+
+instead of patching bundled boost version.  This way, the code would
+work with unpatched system boost 1.59 final as well.
+
+Reviewed-on: https://gerrit.libreoffice.org/18201
+Reviewed-by: David Ostrovsky <david@ostrovsky.org>
+Tested-by: David Ostrovsky <david@ostrovsky.org>
+(cherry picked from commit e00a3a684e22f45f36b4002ce726cb2975cb36ae)
+
+Change-Id: I8684ca458ea4a5b7d7c3c3acfe7c14a6d19bc665
+---
+ external/libebook/ExternalProject_libebook.mk         | 3 ++-
+ external/libmspub/ExternalProject_libmspub.mk         | 3 ++-
+ external/liborcus/ExternalProject_liborcus.mk         | 2 +-
+ external/libpagemaker/ExternalProject_libpagemaker.mk | 3 ++-
+ external/librevenge/ExternalProject_librevenge.mk     | 3 ++-
+ solenv/gbuild/platform/com_GCC_defs.mk                | 2 ++
+ solenv/gbuild/platform/com_MSC_defs.mk                | 3 +++
+ 7 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/external/libebook/ExternalProject_libebook.mk b/external/libebook/ExternalProject_libebook.mk
+index 5e7f2b0..24244909 100644
+--- a/external/libebook/ExternalProject_libebook.mk
++++ b/external/libebook/ExternalProject_libebook.mk
+@@ -38,7 +38,8 @@ $(call gb_ExternalProject_get_state_target,libebook,build) :
+ 			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+ 			--disable-werror \
+ 			--disable-weffc \
+-			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost))" \
++			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost)) \
++				-DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED" \
+ 			XML_CFLAGS="$(LIBXML_CFLAGS)" \
+ 			XML_LIBS="$(LIBXML_LIBS)" \
+ 			REVENGE_GENERATORS_CFLAGS=' ' REVENGE_GENERATORS_LIBS=' ' REVENGE_STREAM_CFLAGS=' ' REVENGE_STREAM_LIBS=' ' \
+diff --git a/external/libmspub/ExternalProject_libmspub.mk b/external/libmspub/ExternalProject_libmspub.mk
+index 644fc42..6157320 100644
+--- a/external/libmspub/ExternalProject_libmspub.mk
++++ b/external/libmspub/ExternalProject_libmspub.mk
+@@ -35,7 +35,8 @@ $(call gb_ExternalProject_get_state_target,libmspub,build) :
+ 			--disable-werror \
+ 			--disable-weffc \
+ 			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+-			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost))" \
++			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost)) \
++				-DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED" \
+ 			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
+ 		&& $(MAKE) \
+ 	)
+diff --git a/external/liborcus/ExternalProject_liborcus.mk b/external/liborcus/ExternalProject_liborcus.mk
+index 90d453c..ee890cd 100644
+--- a/external/liborcus/ExternalProject_liborcus.mk
++++ b/external/liborcus/ExternalProject_liborcus.mk
+@@ -63,7 +63,7 @@ liborcus_CPPFLAGS+=-D_GLIBCXX_DEBUG
+ endif
+ endif
+ 
+-liborcus_CXXFLAGS=$(CXXFLAGS) $(gb_VISIBILITY_FLAGS) $(gb_VISIBILITY_FLAGS_CXX)
++liborcus_CXXFLAGS=$(CXXFLAGS) $(gb_VISIBILITY_FLAGS) $(gb_VISIBILITY_FLAGS_CXX) $(CXXFLAGS_CXX11) -DBOOST_SYSTEM_NO_DEPRECATED
+ liborcus_LDFLAGS=$(LDFLAGS) $(gb_LTOFLAGS)
+ ifeq ($(COM),MSC)
+ liborcus_CXXFLAGS+=$(BOOST_CXXFLAGS)
+diff --git a/external/libpagemaker/ExternalProject_libpagemaker.mk b/external/libpagemaker/ExternalProject_libpagemaker.mk
+index f892d42..7ec8d7a 100644
+--- a/external/libpagemaker/ExternalProject_libpagemaker.mk
++++ b/external/libpagemaker/ExternalProject_libpagemaker.mk
+@@ -33,7 +33,8 @@ $(call gb_ExternalProject_get_state_target,libpagemaker,build) :
+ 			--disable-werror \
+ 			--disable-weffc \
+ 			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+-			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost))" \
++			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost)) \
++				-DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED" \
+ 			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
+ 		&& $(MAKE) \
+ 	)
+diff --git a/external/librevenge/ExternalProject_librevenge.mk b/external/librevenge/ExternalProject_librevenge.mk
+index 861a47c..702a495 100644
+--- a/external/librevenge/ExternalProject_librevenge.mk
++++ b/external/librevenge/ExternalProject_librevenge.mk
+@@ -34,7 +34,8 @@ $(call gb_ExternalProject_get_state_target,librevenge,build) :
+ 			--disable-generators \
+ 			--without-docs \
+ 			$(if $(VERBOSE)$(verbose),--disable-silent-rules,--enable-silent-rules) \
+-			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost))" \
++			CXXFLAGS="$(if $(SYSTEM_BOOST),$(BOOST_CPPFLAGS),-I$(call gb_UnpackedTarball_get_dir,boost)) \
++				-DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED" \
+ 			$(if $(CROSS_COMPILING),--build=$(BUILD_PLATFORM) --host=$(HOST_PLATFORM)) \
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+ 		&& $(MAKE) \
+diff --git a/solenv/gbuild/platform/com_GCC_defs.mk b/solenv/gbuild/platform/com_GCC_defs.mk
+index 5b5a2bd..93b35a4 100644
+--- a/solenv/gbuild/platform/com_GCC_defs.mk
++++ b/solenv/gbuild/platform/com_GCC_defs.mk
+@@ -47,6 +47,8 @@ gb_CPPU_ENV := gcc3
+ gb_AFLAGS := $(AFLAGS)
+ 
+ gb_COMPILERDEFS := \
++	-DBOOST_ERROR_CODE_HEADER_ONLY \
++	-DBOOST_SYSTEM_NO_DEPRECATED \
+ 	-DCPPU_ENV=$(gb_CPPU_ENV) \
+ 
+ gb_CFLAGS_COMMON := \
+diff --git a/solenv/gbuild/platform/com_MSC_defs.mk b/solenv/gbuild/platform/com_MSC_defs.mk
+index e02b581..aa82a93 100644
+--- a/solenv/gbuild/platform/com_MSC_defs.mk
++++ b/solenv/gbuild/platform/com_MSC_defs.mk
+@@ -44,6 +44,9 @@ endif
+ # like std::copy, std::transform (when MSVC_USE_DEBUG_RUNTIME is enabled)
+ 
+ gb_COMPILERDEFS := \
++	-DBOOST_ERROR_CODE_HEADER_ONLY \
++	-DBOOST_OPTIONAL_USE_OLD_DEFINITION_OF_NONE \
++	-DBOOST_SYSTEM_NO_DEPRECATED \
+ 	-D_CRT_NON_CONFORMING_SWPRINTFS \
+ 	-D_CRT_NONSTDC_NO_DEPRECATE \
+ 	-D_CRT_SECURE_NO_DEPRECATE \
+-- 
+2.5.0
+

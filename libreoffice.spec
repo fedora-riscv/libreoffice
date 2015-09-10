@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -408,6 +408,7 @@ Patch98: 0001-support-en-GB-oxendict-additionally-to-now-deprecate.patch
 Patch99: 0001-Resolves-rhbz-1255811-implement-Edit-modify-handler.patch
 Patch100: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch101: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
+Patch102: 0001-Resolves-tdf-92995-do-not-delete-caption-objects-tha.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2383,6 +2384,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Sep 10 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12-UNBUILT
+- Resolves: tdf#92995 do not delete caption objects that are held by Undo
+
 * Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11
 - Resolves: rhbz#1256843 no obvious means to close template dialog
 - Related: rhbz#1255200 apparent missing stylesheet

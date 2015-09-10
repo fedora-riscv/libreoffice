@@ -1825,6 +1825,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmsformslo.so
 %dir %{baseinstdir}/program/opengl
+%{baseinstdir}/program/opengl/areaHashCRC64TFragmentShader.glsl
 %{baseinstdir}/program/opengl/areaScaleFragmentShader.glsl
 %{baseinstdir}/program/opengl/areaScaleFastFragmentShader.glsl
 %{baseinstdir}/program/opengl/backgroundFragmentShader.glsl
@@ -1843,6 +1844,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/maskedTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/maskedTextureVertexShader.glsl
 %{baseinstdir}/program/opengl/maskFragmentShader.glsl
 %{baseinstdir}/program/opengl/pickingFragmentShader.glsl
 %{baseinstdir}/program/opengl/pickingVertexShader.glsl

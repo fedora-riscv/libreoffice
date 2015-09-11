@@ -334,6 +334,7 @@ Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
 Patch27: 0001-core-fix-build-with-system-boost-1.59.patch
 Patch28: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
+Patch29: 0001-default-to-as-character-caption-contents.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

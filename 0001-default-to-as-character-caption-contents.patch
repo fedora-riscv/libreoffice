@@ -1,0 +1,817 @@
+From 91739f2ca569b30383fe2f1cef8816fa8bf0554a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Sep 2015 11:07:55 +0100
+Subject: [PATCH] default to as-character caption contents
+
+this FindFlyFrm variant returns the Selected FlyFrm
+
+the other one actively searches for the FlyFrm that
+matches the XEmbeddedObject argument
+
+Change-Id: I2f9271c01337b4a32d7b644f82d16d85c2dc5b51
+(cherry picked from commit d9729bc06d676a36120f3da252d1a4fa39d103d8)
+
+GetCurrFlyFrm just forwards to GetSelectedFlyFrm
+
+Change-Id: Ia0b83a3aad71a72ae2135c5d7f6ddb6d9644b10b
+(cherry picked from commit 8df51f799bb830db52c7be2d04b575b0443b76ec)
+
+bundle duplicate pattern into a GetCurrFlyFrm method
+
+Change-Id: Ib12b825ef9cc6e2b57e9320d435e3863d319cf0f
+(cherry picked from commit 7473aacc73f8572e20f6f2a3a1d10001c5cc477d)
+
+GetSelectedFlyFrm+GetCurrFlyFrm -> GetSelectedOrCurrFlyFrm
+
+Change-Id: I4348c4cf54dcd5504c52cf8ab550572257eef50b
+(cherry picked from commit a5aab0cce45309afae81b3ec0be8ace1ca0ca17d)
+
+GetCurFrameFormat->GetSelectedFrameFormat
+
+Change-Id: I2f1eb4567b6e073991d95dbcecdc79b24010f2c1
+(cherry picked from commit 4e6194fe8357efc5afa8d094e209ea94335b5923)
+
+split out useful code as standalone makeItemSetFromFormatAnchor
+
+Change-Id: I385549b4841dfc715aa984bcc257d78c9f1c3ed4
+(cherry picked from commit d961c9273104f552a8207e63c33e33f1e265565d)
+
+Related: tdf#93676 default to as-char inside captions
+
+This will (hopefull) improve round-tripping to doc[x] for new documents because
+word can only have as-char elements inside frames so we get a like-for-like
+conversion if the defaults are used.
+
+Change-Id: I3913b9b624dd5ba57ed07140bced8e3dca289cf5
+(cherry picked from commit 93ab0ff24cb71c36c9e7958046e96d7472b5af90)
+---
+ sw/inc/fesh.hxx                              |  14 +++-
+ sw/source/core/access/accframebase.cxx       |   2 +-
+ sw/source/core/access/accmap.cxx             |   2 +-
+ sw/source/core/access/accselectionhelper.cxx |  10 +--
+ sw/source/core/frmedt/fecopy.cxx             |   8 +-
+ sw/source/core/frmedt/fefly1.cxx             | 118 ++++++++++++---------------
+ sw/source/core/frmedt/feflyole.cxx           |   2 +-
+ sw/source/core/frmedt/feshview.cxx           |   6 +-
+ sw/source/core/frmedt/fews.cxx               |  60 +++++++++++---
+ sw/source/core/inc/UndoInsert.hxx            |   1 +
+ sw/source/core/undo/unins.cxx                |  16 +++-
+ sw/source/uibase/app/docst.cxx               |   8 +-
+ sw/source/uibase/ribbar/drawbase.cxx         |   2 +-
+ sw/source/uibase/shells/basesh.cxx           |  18 ++--
+ sw/source/uibase/shells/frmsh.cxx            |   8 +-
+ sw/source/uibase/shells/grfsh.cxx            |   2 +-
+ sw/source/uibase/wrtsh/wrtsh1.cxx            |   2 +-
+ 17 files changed, 159 insertions(+), 120 deletions(-)
+
+diff --git a/sw/inc/fesh.hxx b/sw/inc/fesh.hxx
+index b3bbfcd..efc9b3d 100644
+--- a/sw/inc/fesh.hxx
++++ b/sw/inc/fesh.hxx
+@@ -187,7 +187,6 @@ private:
+     std::unique_ptr<SdrDropMarkerOverlay> m_pChainFrom;
+     bool m_bCheckForOLEInCaption;
+ 
+-    SAL_DLLPRIVATE SwFlyFrm *FindFlyFrm() const;
+     SAL_DLLPRIVATE SwFlyFrm *FindFlyFrm( const ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >&  ) const;
+ 
+     /// Terminate actions for all shells and call ChangeLink.
+@@ -362,6 +361,7 @@ public:
+     bool IsFrmSelected() const;
+     bool GetFlyFrmAttr( SfxItemSet &rSet ) const;
+     bool SetFlyFrmAttr( SfxItemSet &rSet );
++    SfxItemSet makeItemSetFromFormatAnchor(SfxItemPool& rPool, const SwFormatAnchor &rAnchor) const;
+     bool ResetFlyFrmAttr( sal_uInt16 nWhich, const SfxItemSet* pSet = 0 );
+     const SwFrameFormat *NewFlyFrm( const SfxItemSet &rSet, bool bAnchValid = false,
+                          SwFrameFormat *pParent = 0 );
+@@ -373,9 +373,17 @@ public:
+      - add output parameter <bVertL2R> */
+     bool IsFrmVertical(const bool bEnvironment, bool& bRightToLeft, bool& bVertL2R) const;
+ 
+-    SwFrameFormat* GetCurFrameFormat() const; ///< If frame then frame style, else 0.
++    SwFrameFormat* GetSelectedFrameFormat() const; ///< If frame then frame style, else 0.
+     void SetFrameFormat( SwFrameFormat *pFormat, bool bKeepOrient = false, Point* pDocPos = 0 ); ///< If frame then set frame style.
+-    const SwFlyFrm *GetCurrFlyFrm() const { return FindFlyFrm(); }
++
++    // Get selected fly
++    SwFlyFrm* GetSelectedFlyFrm() const;
++
++    // Get current fly in which the cursor is positioned
++    SwFlyFrm* GetCurrFlyFrm(const bool bCalcFrm = true) const;
++
++    // Get selected fly, but if none Get current fly in which the cursor is positioned
++    SwFlyFrm* GetSelectedOrCurrFlyFrm(const bool bCalcFrm = true) const;
+ 
+     /// Find/delete fly containing the cursor.
+     SwFrameFormat* WizzardGetFly();
+diff --git a/sw/source/core/access/accframebase.cxx b/sw/source/core/access/accframebase.cxx
+index bfffd2d..bfe07b4 100644
+--- a/sw/source/core/access/accframebase.cxx
++++ b/sw/source/core/access/accframebase.cxx
+@@ -53,7 +53,7 @@ bool SwAccessibleFrameBase::IsSelected()
+     if( pVSh->ISA( SwFEShell ) )
+     {
+         const SwFEShell *pFESh = static_cast< const SwFEShell * >( pVSh );
+-        const SwFrm *pFlyFrm = pFESh->GetCurrFlyFrm();
++        const SwFrm *pFlyFrm = pFESh->GetSelectedFlyFrm();
+         if( pFlyFrm == GetFrm() )
+             bRet = true;
+     }
+diff --git a/sw/source/core/access/accmap.cxx b/sw/source/core/access/accmap.cxx
+index 7e47ad3..18d9ce5 100644
+--- a/sw/source/core/access/accmap.cxx
++++ b/sw/source/core/access/accmap.cxx
+@@ -2598,7 +2598,7 @@ void SwAccessibleMap::InvalidateCursorPosition( const SwFrm *pFrm )
+         else if( pVSh->ISA( SwFEShell ) )
+         {
+             const SwFEShell *pFESh = static_cast< const SwFEShell * >( pVSh );
+-            const SwFrm *pFlyFrm = pFESh->GetCurrFlyFrm();
++            const SwFrm *pFlyFrm = pFESh->GetSelectedFlyFrm();
+             if( pFlyFrm )
+             {
+                 OSL_ENSURE( !pFrm || pFrm->FindFlyFrm() == pFlyFrm,
+diff --git a/sw/source/core/access/accselectionhelper.cxx b/sw/source/core/access/accselectionhelper.cxx
+index cec0612..5269503 100644
+--- a/sw/source/core/access/accselectionhelper.cxx
++++ b/sw/source/core/access/accselectionhelper.cxx
+@@ -156,12 +156,12 @@ bool SwAccessibleSelectionHelper::isAccessibleChildSelected(
+ 
+     // ... and compare to the currently selected frame
+     bool bRet = false;
+-    SwFEShell* pFEShell = GetFEShell();
++    const SwFEShell* pFEShell = GetFEShell();
+     if( pFEShell )
+     {
+         if ( aChild.GetSwFrm() != 0 )
+         {
+-            bRet = (pFEShell->GetCurrFlyFrm() == aChild.GetSwFrm());
++            bRet = (pFEShell->GetSelectedFlyFrm() == aChild.GetSwFrm());
+         }
+         else if ( aChild.GetDrawObject() )
+         {
+@@ -218,10 +218,10 @@ sal_Int32 SwAccessibleSelectionHelper::getSelectedAccessibleChildCount(  )
+     sal_Int32 nCount = 0;
+     // Only one frame can be selected at a time, and we only frames
+     // for selectable children.
+-    SwFEShell* pFEShell = GetFEShell();
++    const SwFEShell* pFEShell = GetFEShell();
+     if( pFEShell != 0 )
+     {
+-        const SwFlyFrm* pFlyFrm = pFEShell->GetCurrFlyFrm();
++        const SwFlyFrm* pFlyFrm = pFEShell->GetSelectedFlyFrm();
+         if( pFlyFrm )
+         {
+             nCount = 1;
+@@ -290,7 +290,7 @@ Reference<XAccessible> SwAccessibleSelectionHelper::getSelectedAccessibleChild(
+         throwIndexOutOfBoundsException();
+ 
+     SwAccessibleChild aChild;
+-    const SwFlyFrm *pFlyFrm = pFEShell->GetCurrFlyFrm();
++    const SwFlyFrm *pFlyFrm = pFEShell->GetSelectedFlyFrm();
+     if( pFlyFrm )
+     {
+         if( 0 == nSelectedChildIndex )
+diff --git a/sw/source/core/frmedt/fecopy.cxx b/sw/source/core/frmedt/fecopy.cxx
+index 987625d..ab55d84 100644
+--- a/sw/source/core/frmedt/fecopy.cxx
++++ b/sw/source/core/frmedt/fecopy.cxx
+@@ -126,7 +126,7 @@ bool SwFEShell::Copy( SwDoc* pClpDoc, const OUString* pNewClpText )
+     if( IsFrmSelected() )
+     {
+         // get the FlyFormat
+-        SwFlyFrm* pFly = FindFlyFrm();
++        SwFlyFrm* pFly = GetSelectedFlyFrm();
+         SwFrameFormat* pFlyFormat = pFly->GetFormat();
+         SwFormatAnchor aAnchor( pFlyFormat->GetAnchor() );
+ 
+@@ -467,7 +467,7 @@ bool SwFEShell::Copy( SwFEShell* pDestShell, const Point& rSttPt,
+ 
+     if( IsFrmSelected() )
+     {
+-        SwFlyFrm* pFly = FindFlyFrm();
++        SwFlyFrm* pFly = GetSelectedFlyFrm();
+         SwFrameFormat* pFlyFormat = pFly->GetFormat();
+         SwFormatAnchor aAnchor( pFlyFormat->GetAnchor() );
+         bRet = true;
+@@ -1264,10 +1264,10 @@ bool SwFEShell::GetDrawObjGraphic( SotClipboardFormatId nFormat, Graphic& rGrf )
+                     }
+                     else
+                     {
+-                        // fix(23806): not the origial size, but the current one.
++                        // Not the original size, but the current one.
+                         // Otherwise it could happen that for vector graphics
+                         // many MB's of memory are allocated.
+-                        const Size aSz( FindFlyFrm()->Prt().SSize() );
++                        const Size aSz( GetSelectedFlyFrm()->Prt().SSize() );
+                         ScopedVclPtrInstance< VirtualDevice > pVirtDev(*GetWin());
+ 
+                         MapMode aTmp( MAP_TWIP );
+diff --git a/sw/source/core/frmedt/fefly1.cxx b/sw/source/core/frmedt/fefly1.cxx
+index 2937f04..e35b98e 100644
+--- a/sw/source/core/frmedt/fefly1.cxx
++++ b/sw/source/core/frmedt/fefly1.cxx
+@@ -236,7 +236,7 @@ void SwFEShell::SelectFlyFrm( SwFlyFrm& rFrm, bool bNew )
+         OSL_ENSURE( rFrm.IsFlyFrm(), "SelectFlyFrm will einen Fly" );
+ 
+        // nothing to be done if the Fly already was selected
+-        if ( FindFlyFrm() == &rFrm )
++        if (GetSelectedFlyFrm() == &rFrm)
+             return;
+ 
+         // assure the anchor is drawn
+@@ -254,8 +254,8 @@ void SwFEShell::SelectFlyFrm( SwFlyFrm& rFrm, bool bNew )
+     }
+ }
+ 
+-// returns a Fly if one is selected
+-SwFlyFrm *SwFEShell::FindFlyFrm() const
++// Get selected fly
++SwFlyFrm* SwFEShell::GetSelectedFlyFrm() const
+ {
+     if ( Imp()->HasDrawView() )
+     {
+@@ -270,6 +270,22 @@ SwFlyFrm *SwFEShell::FindFlyFrm() const
+     return 0;
+ }
+ 
++// Get current fly in which the cursor is positioned
++SwFlyFrm* SwFEShell::GetCurrFlyFrm(const bool bCalcFrm) const
++{
++    SwContentFrm *pContent = GetCurrFrm(bCalcFrm);
++    return pContent ? pContent->FindFlyFrm() : 0;
++}
++
++// Get selected fly, but if none Get current fly in which the cursor is positioned
++SwFlyFrm* SwFEShell::GetSelectedOrCurrFlyFrm(const bool bCalcFrm) const
++{
++    SwFlyFrm *pFly = GetSelectedFlyFrm();
++    if (pFly)
++        return pFly;
++    return GetCurrFlyFrm(bCalcFrm);
++}
++
+ // Returns non-null pointer, if the current Fly could be anchored to another one (so it is inside)
+ const SwFrameFormat* SwFEShell::IsFlyInFly()
+ {
+@@ -281,11 +297,8 @@ const SwFrameFormat* SwFEShell::IsFlyInFly()
+     const SdrMarkList &rMrkList = Imp()->GetDrawView()->GetMarkedObjectList();
+     if ( !rMrkList.GetMarkCount() )
+     {
+-        SwContentFrm *pContent = GetCurrFrm( false );
+-        if( !pContent )
+-            return NULL;
+-        SwFlyFrm *pFly = pContent->FindFlyFrm();
+-        if ( !pFly )
++        SwFlyFrm *pFly = GetCurrFlyFrm(false);
++        if (!pFly)
+             return NULL;
+         return pFly->GetFormat();
+     }
+@@ -332,11 +345,8 @@ void SwFEShell::SetFlyPos( const Point& rAbsPos )
+     SET_CURR_SHELL( this );
+ 
+     // Determine reference point in document coordinates
+-    SwContentFrm *pContent = GetCurrFrm( false );
+-    if( !pContent )
+-        return;
+-    SwFlyFrm *pFly = pContent->FindFlyFrm();
+-    if ( !pFly )
++    SwFlyFrm *pFly = GetCurrFlyFrm(false);
++    if (!pFly)
+         return;
+ 
+     //SwSaveHdl aSaveX( Imp() );
+@@ -968,21 +978,11 @@ void SwFEShell::SetPageObjsNewPage( std::vector<SwFrameFormat*>& rFillArr, int n
+ // wrong place or which are ambiguous (multiple selections) will be removed.
+ bool SwFEShell::GetFlyFrmAttr( SfxItemSet &rSet ) const
+ {
+-    SwFlyFrm *pFly = FindFlyFrm();
+-    if ( !pFly )
++    SwFlyFrm *pFly = GetSelectedOrCurrFlyFrm();
++    if (!pFly)
+     {
+-        SwFrm* pCurrFrm( GetCurrFrm() );
+-        if ( !pCurrFrm )
+-        {
+-            OSL_FAIL( "<SwFEShell::GetFlyFrmAttr(..)> - missing current frame. This is a serious defect, please inform OD." );
+-            return false;
+-        }
+-        pFly = GetCurrFrm()->FindFlyFrm();
+-        if ( !pFly )
+-        {
+-            OSL_ENSURE( false, "GetFlyFrmAttr, no Fly selected." );
+-            return false;
+-        }
++        OSL_ENSURE( false, "GetFlyFrmAttr, no Fly selected." );
++        return false;
+     }
+ 
+     SET_CURR_SHELL( (SwViewShell*)this );
+@@ -1026,13 +1026,8 @@ bool SwFEShell::SetFlyFrmAttr( SfxItemSet& rSet )
+ 
+     if( rSet.Count() )
+     {
+-        SwFlyFrm *pFly = FindFlyFrm();
+-        if( !pFly )
+-        {
+-            OSL_ENSURE( GetCurrFrm(), "Crsr in parking zone" );
+-            pFly = GetCurrFrm()->FindFlyFrm();
+-            OSL_ENSURE( pFly, "SetFlyFrmAttr, no Fly selected." );
+-        }
++        SwFlyFrm *pFly = GetSelectedOrCurrFlyFrm();
++        OSL_ENSURE( pFly, "SetFlyFrmAttr, no Fly selected." );
+         if( pFly )
+         {
+             StartAllAction();
+@@ -1058,6 +1053,16 @@ bool SwFEShell::SetFlyFrmAttr( SfxItemSet& rSet )
+     return bRet;
+ }
+ 
++SfxItemSet SwFEShell::makeItemSetFromFormatAnchor(SfxItemPool& rPool, const SwFormatAnchor &rAnchor) const
++{
++    // The set also includes VERT/HORI_ORIENT, because the align
++    // shall be changed in FEShell::SetFlyFrmAttr/SetFlyFrmAnchor,
++    // possibly as a result of the anchor change.
++    SfxItemSet aSet(rPool, RES_VERT_ORIENT, RES_ANCHOR);
++    aSet.Put(rAnchor);
++    return aSet;
++}
++
+ bool SwFEShell::SetDrawingAttr( SfxItemSet& rSet )
+ {
+     bool bRet = false;
+@@ -1106,14 +1111,8 @@ bool SwFEShell::ResetFlyFrmAttr( sal_uInt16 nWhich, const SfxItemSet* pSet )
+     {
+         SET_CURR_SHELL( this );
+ 
+-        SwFlyFrm *pFly = FindFlyFrm();
+-        if( !pFly )
+-        {
+-            OSL_ENSURE( GetCurrFrm(), "Crsr in parking zone" );
+-            pFly = GetCurrFrm()->FindFlyFrm();
+-            OSL_ENSURE( pFly, "SetFlyFrmAttr, no Fly selected." );
+-        }
+-
++        SwFlyFrm *pFly = GetSelectedOrCurrFlyFrm();
++        OSL_ENSURE( pFly, "SetFlyFrmAttr, no Fly selected." );
+         if( pFly )
+         {
+             StartAllAction();
+@@ -1143,10 +1142,10 @@ bool SwFEShell::ResetFlyFrmAttr( sal_uInt16 nWhich, const SfxItemSet* pSet )
+ }
+ 
+ // Returns frame-format if frame, otherwise 0
+-SwFrameFormat* SwFEShell::GetCurFrameFormat() const
++SwFrameFormat* SwFEShell::GetSelectedFrameFormat() const
+ {
+     SwFrameFormat* pRet = 0;
+-    SwLayoutFrm *pFly = FindFlyFrm();
++    SwLayoutFrm *pFly = GetSelectedFlyFrm();
+     if( pFly && ( pRet = static_cast<SwFrameFormat*>(pFly->GetFormat()->DerivedFrom()) ) ==
+                                             GetDoc()->GetDfltFrameFormat() )
+         pRet = 0;
+@@ -1164,7 +1163,7 @@ void SwFEShell::SetFrameFormat( SwFrameFormat *pNewFormat, bool bKeepOrient, Poi
+             pFly = static_cast<const SwFlyFrameFormat*>(pFormat)->GetFrm();
+     }
+     else
+-        pFly = FindFlyFrm();
++        pFly = GetSelectedFlyFrm();
+     OSL_ENSURE( pFly, "SetFrameFormat: no frame" );
+     if( pFly )
+     {
+@@ -1200,35 +1199,24 @@ void SwFEShell::SetFrameFormat( SwFrameFormat *pNewFormat, bool bKeepOrient, Poi
+ 
+ const SwFrameFormat* SwFEShell::GetFlyFrameFormat() const
+ {
+-    const SwFlyFrm* pFly = FindFlyFrm();
+-    if ( !pFly )
+-    {
+-        SwFrm* pCurrFrm = GetCurrFrm();
+-        pFly = pCurrFrm ? pCurrFrm->FindFlyFrm() : 0;
+-    }
+-    if( pFly )
++    const SwFlyFrm* pFly = GetSelectedOrCurrFlyFrm();
++    if (pFly)
+         return pFly->GetFormat();
+     return 0;
+ }
+ 
+ SwFrameFormat* SwFEShell::GetFlyFrameFormat()
+ {
+-    SwFlyFrm* pFly = FindFlyFrm();
+-    if ( !pFly )
+-    {
+-        SwFrm* pCurrFrm = GetCurrFrm();
+-        pFly = pCurrFrm ? pCurrFrm->FindFlyFrm() : 0;
+-    }
+-    if( pFly )
++    SwFlyFrm* pFly = GetSelectedOrCurrFlyFrm();
++    if (pFly)
+         return pFly->GetFormat();
+     return 0;
+ }
+ 
+ SwRect SwFEShell::GetFlyRect() const
+ {
+-    SwContentFrm *pContent = GetCurrFrm( false );
+-    SwFlyFrm *pFly = pContent ? pContent->FindFlyFrm() : 0;
+-    if ( !pFly )
++    SwFlyFrm *pFly = GetCurrFlyFrm(false);
++    if (!pFly)
+     {
+         SwRect aRect;
+         return aRect;
+@@ -1416,7 +1404,7 @@ SwFrameFormat* SwFEShell::WizzardGetFly()
+ 
+ void SwFEShell::SetFlyName( const OUString& rName )
+ {
+-    SwLayoutFrm *pFly = FindFlyFrm();
++    SwLayoutFrm *pFly = GetSelectedFlyFrm();
+     if( pFly )
+         GetDoc()->SetFlyName( *static_cast<SwFlyFrameFormat*>(pFly->GetFormat()), rName );
+     else {
+@@ -1426,7 +1414,7 @@ void SwFEShell::SetFlyName( const OUString& rName )
+ 
+ OUString SwFEShell::GetFlyName() const
+ {
+-    SwLayoutFrm *pFly = FindFlyFrm();
++    SwLayoutFrm *pFly = GetSelectedFlyFrm();
+     if( pFly )
+         return pFly->GetFormat()->GetName();
+ 
+@@ -1437,7 +1425,7 @@ OUString SwFEShell::GetFlyName() const
+ const uno::Reference < embed::XEmbeddedObject > SwFEShell::GetOleRef() const
+ {
+     uno::Reference < embed::XEmbeddedObject > xObj;
+-    SwFlyFrm * pFly = FindFlyFrm();
++    SwFlyFrm * pFly = GetSelectedFlyFrm();
+     if (pFly && pFly->Lower() && pFly->Lower()->IsNoTextFrm())
+     {
+         SwOLENode *pNd = static_cast<SwNoTextFrm*>(pFly->Lower())->GetNode()->GetOLENode();
+diff --git a/sw/source/core/frmedt/feflyole.cxx b/sw/source/core/frmedt/feflyole.cxx
+index cd9804a..4d17b2a 100644
+--- a/sw/source/core/frmedt/feflyole.cxx
++++ b/sw/source/core/frmedt/feflyole.cxx
+@@ -43,7 +43,7 @@ using namespace com::sun::star;
+ 
+ SwFlyFrm *SwFEShell::FindFlyFrm( const uno::Reference < embed::XEmbeddedObject >& xObj ) const
+ {
+-    SwFlyFrm *pFly = FindFlyFrm();
++    SwFlyFrm *pFly = GetSelectedFlyFrm();
+     if ( pFly && pFly->Lower() && pFly->Lower()->IsNoTextFrm() )
+     {
+         SwOLENode *pNd = static_cast<SwNoTextFrm*>(pFly->Lower())->GetNode()->GetOLENode();
+diff --git a/sw/source/core/frmedt/feshview.cxx b/sw/source/core/frmedt/feshview.cxx
+index fe38a22..54d79fb 100644
+--- a/sw/source/core/frmedt/feshview.cxx
++++ b/sw/source/core/frmedt/feshview.cxx
+@@ -1772,7 +1772,7 @@ bool SwFEShell::ImpEndCreate()
+         SwFlyFrm* pFlyFrm;
+         if( NewFlyFrm( aSet, true ) &&
+             ::GetHtmlMode( GetDoc()->GetDocShell() ) &&
+-            0 != ( pFlyFrm = FindFlyFrm() ))
++            0 != ( pFlyFrm = GetSelectedFlyFrm() ))
+         {
+             SfxItemSet aHtmlSet( GetDoc()->GetAttrPool(), RES_VERT_ORIENT, RES_HORI_ORIENT );
+             // horizontal orientation:
+@@ -2083,7 +2083,7 @@ Point SwFEShell::GetAnchorObjDiff() const
+ 
+     if ( IsFrmSelected() )
+     {
+-        SwFlyFrm *pFly = FindFlyFrm();
++        SwFlyFrm *pFly = GetSelectedFlyFrm();
+         aRet -= pFly->GetAnchorFrm()->Frm().Pos();
+     }
+     else
+@@ -2631,7 +2631,7 @@ void SwFEShell::SetChainMarker()
+          bDelTo   = true;
+     if ( IsFrmSelected() )
+     {
+-        SwFlyFrm *pFly = FindFlyFrm();
++        SwFlyFrm *pFly = GetSelectedFlyFrm();
+ 
+         if ( pFly->GetPrevLink() )
+         {
+diff --git a/sw/source/core/frmedt/fews.cxx b/sw/source/core/frmedt/fews.cxx
+index db791c8..a850f62 100644
+--- a/sw/source/core/frmedt/fews.cxx
++++ b/sw/source/core/frmedt/fews.cxx
+@@ -48,6 +48,7 @@
+ #include <ndtxt.hxx>
+ #include <dflyobj.hxx>
+ #include <dcontact.hxx>
++#include <UndoInsert.hxx>
+ 
+ using namespace com::sun::star;
+ 
+@@ -395,14 +396,18 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
+     if( LTYPE_DRAW==eType || pCnt )
+     {
+         StartAllAction();
++        SwRewriter aRewriter(SwUndoInsertLabel::CreateRewriter(rText));
++        StartUndo(UNDO_INSERTLABEL, &aRewriter);
+ 
+         sal_uLong nIdx = 0;
++        bool bInnerCntIsFly = false;
+         SwFlyFrameFormat* pFlyFormat = 0;
+         switch( eType )
+         {
+         case LTYPE_OBJECT:
+         case LTYPE_FLY:
+-            if( pCnt->IsInFly() )
++            bInnerCntIsFly = pCnt->IsInFly();
++            if (bInnerCntIsFly)
+             {
+                 // pass down index to the startnode for flys
+                 nIdx = pCnt->FindFlyFrm()->
+@@ -423,7 +428,6 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
+             {
+                 SwDrawView *pDView = Imp()->GetDrawView();
+                 const SdrMarkList& rMrkList = pDView->GetMarkedObjectList();
+-                StartUndo();
+ 
+                 // copy marked drawing objects to
+                 // local list to perform the corresponding action for each object
+@@ -452,7 +456,6 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
+                     aDrawObjs.pop_back();
+                 }
+ 
+-                EndUndo();
+             }
+             break;
+         default:
+@@ -460,14 +463,49 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
+         }
+ 
+         if( nIdx )
+-            pFlyFormat = GetDoc()->InsertLabel( eType, rText, rSeparator, rNumberSeparator, bBefore, nId,
+-                                             nIdx, rCharacterStyle, bCpyBrd );
++        {
++            pFlyFormat = GetDoc()->InsertLabel(eType, rText, rSeparator,
++                                               rNumberSeparator, bBefore, nId,
++                                               nIdx, rCharacterStyle, bCpyBrd);
++
++            //if we succeeded in putting a caption on the content, and the
++            //content was a frame/graphic, then set the contained element
++            //to as-char anchoring because that's all msword is able to
++            //do when inside a frame, and in writer for freshly captioned
++            //elements it's largely irrelevent what the anchor of the contained
++            //type is but making it as-char by default results in very
++            //good roundtripping
++            if (pFlyFormat && bInnerCntIsFly)
++            {
++                SwNodeIndex aAnchIdx(*pFlyFormat->GetContent().GetContentIdx(), 1);
++                SwTextNode *pTxtNode = aAnchIdx.GetNode().GetTextNode();
++
++                SwFormatAnchor aAnc(FLY_AS_CHAR);
++                sal_Int32 nInsertPos = bBefore ? pTxtNode->Len() : 0;
++                SwPosition aPos(*pTxtNode, nInsertPos);
++
++                aAnc.SetAnchor(&aPos);
++
++                SfxItemSet aSet(makeItemSetFromFormatAnchor(GetDoc()->GetAttrPool(), aAnc));
+ 
+-        SwFlyFrm* pFrm;
+-        const Point aPt( GetCrsrDocPos() );
+-        if( pFlyFormat && 0 != ( pFrm = pFlyFormat->GetFrm( &aPt )))
+-            SelectFlyFrm( *pFrm, true );
++                SwFlyFrm *pFly = GetSelectedOrCurrFlyFrm();
++                SwFlyFrameFormat* pInnerFlyFormat = pFly->GetFormat();
++                GetDoc()->SetFlyFrmAttr(*pInnerFlyFormat, aSet);
+ 
++                //put a hard-break after the graphic to keep it separated
++                //from the caption text if the outer frame is resized
++                SwIndex aIdx(pTxtNode, bBefore ? nInsertPos : 1);
++                pTxtNode->InsertText(OUString("\n"), aIdx);
++            }
++        }
++
++        if (pFlyFormat)
++        {
++            const Point aPt(GetCrsrDocPos());
++            if (SwFlyFrm* pFrm = pFlyFormat->GetFrm(&aPt))
++                SelectFlyFrm(*pFrm, true);
++        }
++        EndUndo();
+         EndAllActionAndCall();
+     }
+ }
+@@ -649,7 +687,7 @@ void SwFEShell::CalcBoundRect( SwRect& _orRect,
+     }
+     else
+     {
+-        pFly = FindFlyFrm();
++        pFly = GetSelectedFlyFrm();
+         pFrm = pFly ? pFly->GetAnchorFrm() : GetCurrFrm();
+     }
+ 
+@@ -1167,7 +1205,7 @@ void SwFEShell::CalcBoundRect( SwRect& _orRect,
+ Size SwFEShell::GetGraphicDefaultSize() const
+ {
+     Size aRet;
+-    SwFlyFrm *pFly = FindFlyFrm();
++    SwFlyFrm *pFly = GetSelectedFlyFrm();
+     if ( pFly )
+     {
+         // #i32951# - due to issue #i28701# no format of a
+diff --git a/sw/source/core/inc/UndoInsert.hxx b/sw/source/core/inc/UndoInsert.hxx
+index 8ef9263..f99783a 100644
+--- a/sw/source/core/inc/UndoInsert.hxx
++++ b/sw/source/core/inc/UndoInsert.hxx
+@@ -203,6 +203,7 @@ public:
+        @return the rewriter of this undo object
+      */
+     virtual SwRewriter GetRewriter() const SAL_OVERRIDE;
++    static SwRewriter CreateRewriter(const OUString &rStr);
+ 
+     void SetNodePos( sal_uLong nNd )
+         { if( LTYPE_OBJECT != eType ) NODE.nNode = nNd; }
+diff --git a/sw/source/core/undo/unins.cxx b/sw/source/core/undo/unins.cxx
+index 58bdcf4..64541bd 100644
+--- a/sw/source/core/undo/unins.cxx
++++ b/sw/source/core/undo/unins.cxx
+@@ -1014,14 +1014,22 @@ void SwUndoInsertLabel::RepeatImpl(::sw::RepeatContext & rContext)
+ // #111827#
+ SwRewriter SwUndoInsertLabel::GetRewriter() const
+ {
++    return CreateRewriter(sText);
++}
++
++SwRewriter SwUndoInsertLabel::CreateRewriter(const OUString &rStr)
++{
+     SwRewriter aRewriter;
+ 
+     OUString aTmpStr;
+ 
+-    aTmpStr += SW_RES(STR_START_QUOTE);
+-    aTmpStr += ShortenString(sText, nUndoStringLength,
+-                             OUString(SW_RES(STR_LDOTS)));
+-    aTmpStr += SW_RES(STR_END_QUOTE);
++    if (!rStr.isEmpty())
++    {
++        aTmpStr += SW_RES(STR_START_QUOTE);
++        aTmpStr += ShortenString(rStr, nUndoStringLength,
++                                 OUString(SW_RES(STR_LDOTS)));
++        aTmpStr += SW_RES(STR_END_QUOTE);
++    }
+ 
+     aRewriter.AddRule(UndoArg1, aTmpStr);
+ 
+diff --git a/sw/source/uibase/app/docst.cxx b/sw/source/uibase/app/docst.cxx
+index 77e79af..381fe8b 100644
+--- a/sw/source/uibase/app/docst.cxx
++++ b/sw/source/uibase/app/docst.cxx
+@@ -129,7 +129,7 @@ void  SwDocShell::StateStyleSheet(SfxItemSet& rSet, SwWrtShell* pSh)
+              // so that this family is being showed
+                 if(pShell->IsFrmSelected())
+                 {
+-                    SwFrameFormat* pFormat = pShell->GetCurFrameFormat();
++                    SwFrameFormat* pFormat = pShell->GetSelectedFrameFormat();
+                     if( pFormat )
+                         aName = pFormat->GetName();
+                 }
+@@ -195,7 +195,7 @@ void  SwDocShell::StateStyleSheet(SfxItemSet& rSet, SwWrtShell* pSh)
+                     rSet.DisableItem( nWhich );
+                 else
+                 {
+-                    SwFrameFormat* pFormat = pShell->GetCurFrameFormat();
++                    SwFrameFormat* pFormat = pShell->GetSelectedFrameFormat();
+                     if(pFormat && pShell->IsFrmSelected())
+                     {
+                         aName = pFormat->GetName();
+@@ -429,7 +429,7 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
+                         break;
+                         case SFX_STYLE_FAMILY_FRAME:
+                         {
+-                            SwFrameFormat* pFrm = m_pWrtShell->GetCurFrameFormat();
++                            SwFrameFormat* pFrm = m_pWrtShell->GetSelectedFrameFormat();
+                             if( pFrm )
+                                 aParam = pFrm->GetName();
+                         }
+@@ -1177,7 +1177,7 @@ sal_uInt16 SwDocShell::MakeByExample( const OUString &rName, sal_uInt16 nFamily,
+                 SfxItemSet aSet(GetPool(), aFrameFormatSetRange );
+                 pCurrWrtShell->GetFlyFrmAttr( aSet );
+ 
+-                SwFrameFormat* pFFormat = pCurrWrtShell->GetCurFrameFormat();
++                SwFrameFormat* pFFormat = pCurrWrtShell->GetSelectedFrameFormat();
+                 pFrm->SetDerivedFrom( pFFormat );
+ 
+                 pFrm->SetFormatAttr( aSet );
+diff --git a/sw/source/uibase/ribbar/drawbase.cxx b/sw/source/uibase/ribbar/drawbase.cxx
+index 0cbea13..55b6d44 100644
+--- a/sw/source/uibase/ribbar/drawbase.cxx
++++ b/sw/source/uibase/ribbar/drawbase.cxx
+@@ -287,7 +287,7 @@ bool SwDrawBase::MouseButtonUp(const MouseEvent& rMEvt)
+                     aCol.Init(m_pWin->GetFrmColCount(), aCol.GetGutterWidth(), aCol.GetWishWidth());
+                     aSet.Put(aCol);
+                     // Template AutoUpdate
+-                    SwFrameFormat* pFormat = m_pSh->GetCurFrameFormat();
++                    SwFrameFormat* pFormat = m_pSh->GetSelectedFrameFormat();
+                     if(pFormat && pFormat->IsAutoUpdateFormat())
+                         m_pSh->AutoUpdateFrame(pFormat, aSet);
+                     else
+diff --git a/sw/source/uibase/shells/basesh.cxx b/sw/source/uibase/shells/basesh.cxx
+index 0a9c64f..360d7c3 100644
+--- a/sw/source/uibase/shells/basesh.cxx
++++ b/sw/source/uibase/shells/basesh.cxx
+@@ -1008,16 +1008,12 @@ void SwBaseShell::Execute(SfxRequest &rReq)
+                                             ? FLY_AS_CHAR
+                                             : FLY_AT_CHAR;
+             rSh.StartUndo();
+-            if( rSh.IsObjSelected() )
+-                rSh.ChgAnchor( eSet );
+-            else if( rSh.IsFrmSelected() )
+-            {
+-                // The set also includes VERT/HORI_ORIENT, because the align
+-                // shall be changed in FEShell::SetFlyFrmAttr/SetFlyFrmAnchor,
+-                // possibly as a result of the anchor change.
+-                SfxItemSet aSet( GetPool(), RES_VERT_ORIENT, RES_ANCHOR );
+-                SwFormatAnchor aAnc( eSet, rSh.GetPhyPageNum() );
+-                aSet.Put( aAnc );
++            if (rSh.IsObjSelected())
++                rSh.ChgAnchor(eSet);
++            else if (rSh.IsFrmSelected())
++            {
++                SwFormatAnchor aAnc(eSet, rSh.GetPhyPageNum());
++                SfxItemSet aSet(rSh.makeItemSetFromFormatAnchor(GetPool(), aAnc));
+                 rSh.SetFlyFrmAttr(aSet);
+             }
+             // if new anchor is 'as char' and it is a Math object and the usual
+@@ -2284,7 +2280,7 @@ void SwBaseShell::ExecBckCol(SfxRequest& rReq)
+         if((nsSelectionType::SEL_FRM & nSelType) || (nsSelectionType::SEL_GRF & nSelType))
+         {
+             // Template autoupdate
+-            SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++            SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+ 
+             if(pFormat && pFormat->IsAutoUpdateFormat())
+             {
+diff --git a/sw/source/uibase/shells/frmsh.cxx b/sw/source/uibase/shells/frmsh.cxx
+index 4868fdf..3a4e956 100644
+--- a/sw/source/uibase/shells/frmsh.cxx
++++ b/sw/source/uibase/shells/frmsh.cxx
+@@ -176,7 +176,7 @@ void SwFrameShell::Execute(SfxRequest &rReq)
+                 aCol.Init(nCols, nGutterWidth, aCol.GetWishWidth());
+                 aSet.Put(aCol);
+                 // Template AutoUpdate
+-                SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++                SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+                 if(pFormat && pFormat->IsAutoUpdateFormat())
+                 {
+                     rSh.AutoUpdateFrame(pFormat, aSet);
+@@ -498,7 +498,7 @@ void SwFrameShell::Execute(SfxRequest &rReq)
+                             rSh.SetObjTitle(static_cast<const SfxStringItem*>(pItem)->GetValue());
+                         }
+                         // Template AutoUpdate
+-                        SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++                        SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+                         if(pFormat && pFormat->IsAutoUpdateFormat())
+                         {
+                             rSh.AutoUpdateFrame(pFormat, *pOutSet);
+@@ -644,7 +644,7 @@ void SwFrameShell::Execute(SfxRequest &rReq)
+     }
+     if ( bUpdateMgr )
+     {
+-        SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++        SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+         if ( bCopyToFormat && pFormat && pFormat->IsAutoUpdateFormat() )
+         {
+             rSh.AutoUpdateFrame(pFormat, aMgr.GetAttrSet());
+@@ -1111,7 +1111,7 @@ void SwFrameShell::ExecFrameStyle(SfxRequest& rReq)
+     }
+     aFrameSet.Put( aBoxItem );
+     // Template AutoUpdate
+-    SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++    SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+     if(pFormat && pFormat->IsAutoUpdateFormat())
+     {
+         rSh.AutoUpdateFrame(pFormat, aFrameSet);
+diff --git a/sw/source/uibase/shells/grfsh.cxx b/sw/source/uibase/shells/grfsh.cxx
+index 39e18fd..60e95f3 100644
+--- a/sw/source/uibase/shells/grfsh.cxx
++++ b/sw/source/uibase/shells/grfsh.cxx
+@@ -381,7 +381,7 @@ void SwGrfShell::Execute(SfxRequest &rReq)
+                 }
+ 
+                 // Templates AutoUpdate
+-                SwFrameFormat* pFormat = rSh.GetCurFrameFormat();
++                SwFrameFormat* pFormat = rSh.GetSelectedFrameFormat();
+                 if(pFormat && pFormat->IsAutoUpdateFormat())
+                 {
+                     pFormat->SetFormatAttr(*pSet);
+diff --git a/sw/source/uibase/wrtsh/wrtsh1.cxx b/sw/source/uibase/wrtsh/wrtsh1.cxx
+index 37f0553..ead7e47 100644
+--- a/sw/source/uibase/wrtsh/wrtsh1.cxx
++++ b/sw/source/uibase/wrtsh/wrtsh1.cxx
+@@ -1709,7 +1709,7 @@ OUString SwWrtShell::GetSelDescr() const
+         break;
+     case nsSelectionType::SEL_FRM:
+         {
+-            const SwFrameFormat * pFrameFormat = GetCurFrameFormat();
++            const SwFrameFormat * pFrameFormat = GetSelectedFrameFormat();
+ 
+             if (pFrameFormat)
+                 aResult = pFrameFormat->GetDescription();
+-- 
+2.4.0
+

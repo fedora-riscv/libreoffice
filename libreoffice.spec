@@ -343,7 +343,7 @@ Patch29: 0001-default-to-as-character-caption-contents.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common etonyek-0.1\\|GLEW\\|mwaw-0.3\\|odfgen-0.1\\|revenge-0.0\\|wpd-0.10\\|wpg-0.3\\|wps-0.4
+%global libo_bundled_libs_common GLEW
 %if 0%{?rhel} < 7
 # redland libs are already suffixed -> no need to filter them too
 %global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d
@@ -1738,14 +1738,14 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
-%{baseinstdir}/program/libetonyek-0.1.so.*
+%{baseinstdir}/program/libetonyek-0.1-lo.so.*
 %{baseinstdir}/program/libGLEW.so.*
-%{baseinstdir}/program/libmwaw-0.3.so.*
-%{baseinstdir}/program/libodfgen-0.1.so.*
-%{baseinstdir}/program/librevenge-0.0.so.*
-%{baseinstdir}/program/libwpd-0.10.so.*
-%{baseinstdir}/program/libwpg-0.3.so.*
-%{baseinstdir}/program/libwps-0.4.so.*
+%{baseinstdir}/program/libmwaw-0.3-lo.so.*
+%{baseinstdir}/program/libodfgen-0.1-lo.so.*
+%{baseinstdir}/program/librevenge-0.0-lo.so.*
+%{baseinstdir}/program/libwpd-0.10-lo.so.*
+%{baseinstdir}/program/libwpg-0.3-lo.so.*
+%{baseinstdir}/program/libwps-0.4-lo.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so

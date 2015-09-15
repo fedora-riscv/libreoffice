@@ -1392,6 +1392,8 @@ pushd %{buildroot}%{sdkinstdir}
         -e "s,@OO_SDK_MAKE_HOME@,/usr/bin," \
         -e "s,@OO_SDK_ZIP_HOME@,/usr/bin," \
         -e "s,@OO_SDK_CPP_HOME@,/usr/bin," \
+        -e "s,@OO_SDK_CAT_HOME@,/usr/bin," \
+        -e "s,@OO_SDK_SED_HOME@,/usr/bin," \
         -e "s,@OO_SDK_CC_55_OR_HIGHER@,," \
         -e "s,@OO_SDK_JAVA_HOME@,$JAVA_HOME," \
         -e "s,@OO_SDK_OUTPUT_DIR@,\$HOME," \

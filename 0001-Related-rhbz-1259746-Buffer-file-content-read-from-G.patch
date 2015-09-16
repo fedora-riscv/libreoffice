@@ -1,0 +1,147 @@
+From 7e37f50d06e29230bf0686ef1c0c665a5da6d3de Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Wed, 16 Sep 2015 10:17:56 +0200
+Subject: [PATCH] Related rhbz#1259746: Buffer file content read from GIO UCP
+
+...for one, this avoids sending seek requests down the GIO/GVFS stack, which can
+silently fail with corrupt data read from certain broken servers for current
+versions of the GIO/GVFS stack; for another, it should considerably speed up
+loading documents via the GIO UCP, as LO's document type detection is notorious
+for issuing lots of seek and (small-chunk and/or re-) read operations on a file.
+
+(This issue has become more relevant after
+51e0d789c344547956764c3b5f0ef5a304f4e0aa "rhbz#1134285: Access dav, davs URLs
+via GVFS," where the old route via the WebDAV UCP was apparently not affected by
+those broken servers, so happened to start affecting opening certain remote
+files in LO via Nautilus.)
+
+(cherry picked from commit 93a0696e74e96e5a5ca821f33cb791b87e876f49)
+Conflicts:
+	ucb/source/ucp/gio/gio_inputstream.hxx
+
+Change-Id: I91f91128b2d1a16f976eafeacf216a91747f4df1
+---
+ ucb/source/ucp/gio/gio_content.cxx     |  7 ++++---
+ ucb/source/ucp/gio/gio_inputstream.cxx | 25 ++++++-------------------
+ ucb/source/ucp/gio/gio_inputstream.hxx | 16 +++-------------
+ 3 files changed, 13 insertions(+), 35 deletions(-)
+
+diff --git a/ucb/source/ucp/gio/gio_content.cxx b/ucb/source/ucp/gio/gio_content.cxx
+index 2eb2219..00f3fab 100644
+--- a/ucb/source/ucp/gio/gio_content.cxx
++++ b/ucb/source/ucp/gio/gio_content.cxx
+@@ -59,6 +59,7 @@
+ #include <com/sun/star/ucb/XContentCreator.hpp>
+ 
+ #include <comphelper/processfactory.hxx>
++#include <comphelper/seekableinput.hxx>
+ #include <cppuhelper/exc_hlp.hxx>
+ #include <ucbhelper/contentidentifier.hxx>
+ #include <ucbhelper/propertyvalueset.hxx>
+@@ -852,9 +853,9 @@ bool Content::feedSink( uno::Reference< uno::XInterface > xSink,
+     if (!pStream)
+        convertToException(pError, static_cast< cppu::OWeakObject * >(this));
+ 
+-    uno::Reference< io::XInputStream > xIn = new ::gio::InputStream(pStream);
+-    if ( !xIn.is() )
+-        return false;
++    uno::Reference< io::XInputStream > xIn(
++        new comphelper::OSeekableInputWrapper(
++            new ::gio::InputStream(pStream), m_xContext));
+ 
+     if ( xOut.is() )
+         copyData( xIn, xOut );
+diff --git a/ucb/source/ucp/gio/gio_inputstream.cxx b/ucb/source/ucp/gio/gio_inputstream.cxx
+index 4a14f22..e443277 100644
+--- a/ucb/source/ucp/gio/gio_inputstream.cxx
++++ b/ucb/source/ucp/gio/gio_inputstream.cxx
+@@ -29,7 +29,7 @@ using namespace com::sun::star;
+ namespace gio
+ {
+ 
+-InputStream::InputStream(GFileInputStream *pStream) : Seekable(G_SEEKABLE(pStream)), mpStream(pStream)
++InputStream::InputStream(GFileInputStream *pStream): mpStream(pStream)
+ {
+     if (!mpStream)
+         throw io::NotConnectedException();
+@@ -57,16 +57,11 @@ void SAL_CALL InputStream::skipBytes( sal_Int32 nBytesToSkip )
+     throw( io::NotConnectedException, io::BufferSizeExceededException,
+       io::IOException, uno::RuntimeException, std::exception )
+ {
+-    if (!mpStream)
+-        throw io::NotConnectedException();
+-
+-    if (!g_seekable_can_seek(G_SEEKABLE(mpStream)))
+-        throw io::IOException("Seek unsupported",
+-            static_cast< cppu::OWeakObject * >(this));
+-
+-    GError *pError=NULL;
+-    if (!g_seekable_seek(G_SEEKABLE(mpStream), nBytesToSkip, G_SEEK_CUR, NULL, &pError))
+-        convertToIOException(pError, static_cast< cppu::OWeakObject * >(this));
++    // Conservatively call readBytes and discard the read data, but given this
++    // InputStream will always be wrapped in comphelper::OSeekableInputWrapper,
++    // this function will never be called anyway:
++    css::uno::Sequence<sal_Int8> data;
++    readBytes(data, nBytesToSkip);
+ }
+ 
+ sal_Int32 SAL_CALL InputStream::readBytes( uno::Sequence< sal_Int8 >& aData, sal_Int32 nBytesToRead )
+@@ -100,14 +95,6 @@ sal_Int32 SAL_CALL InputStream::readSomeBytes( uno::Sequence< sal_Int8 >& aData,
+     return readBytes(aData, nMaxBytesToRead);
+ }
+ 
+-uno::Any InputStream::queryInterface( const uno::Type &type ) throw( uno::RuntimeException, std::exception )
+-{
+-    uno::Any aRet = ::cppu::queryInterface ( type,
+-        static_cast< XInputStream * >( this ) );
+-
+-    return aRet.hasValue() ? aRet : Seekable::queryInterface( type );
+-}
+-
+ }
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/ucb/source/ucp/gio/gio_inputstream.hxx b/ucb/source/ucp/gio/gio_inputstream.hxx
+index d469787..a0ffb1f 100644
+--- a/ucb/source/ucp/gio/gio_inputstream.hxx
++++ b/ucb/source/ucp/gio/gio_inputstream.hxx
+@@ -22,20 +22,16 @@
+ 
+ #include <sal/types.h>
+ #include <rtl/ustring.hxx>
+-#include <cppuhelper/weak.hxx>
++#include <cppuhelper/implbase1.hxx>
+ 
+ #include <com/sun/star/io/XInputStream.hpp>
+-#include <com/sun/star/io/XTruncate.hpp>
+-#include <com/sun/star/io/XSeekable.hpp>
+ 
+-#include "gio_seekable.hxx"
++#include <gio/gio.h>
+ 
+ namespace gio
+ {
+ 
+-class InputStream :
+-    public ::com::sun::star::io::XInputStream,
+-    public Seekable
++class InputStream: public cppu::WeakImplHelper1<css::io::XInputStream>
+ {
+ private:
+     GFileInputStream *mpStream;
+@@ -44,12 +40,6 @@ public:
+     InputStream ( GFileInputStream *pStream );
+     virtual ~InputStream();
+ 
+-    // XInterface
+-    virtual com::sun::star::uno::Any SAL_CALL queryInterface(const ::com::sun::star::uno::Type & type )
+-            throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+-    virtual void SAL_CALL acquire( void ) throw () SAL_OVERRIDE { OWeakObject::acquire(); }
+-    virtual void SAL_CALL release( void ) throw() SAL_OVERRIDE { OWeakObject::release(); }
+-
+     // XInputStream
+     virtual sal_Int32 SAL_CALL readBytes( ::com::sun::star::uno::Sequence< sal_Int8 > & aData,
+         sal_Int32 nBytesToRead )
+-- 
+2.4.3
+

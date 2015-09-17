@@ -1399,6 +1399,8 @@ pushd %{buildroot}%{sdkinstdir}
         -e "s,@OO_SDK_OUTPUT_DIR@,\$HOME," \
         -e "s,@SDK_AUTO_DEPLOYMENT@,NO," \
         setsdkenv_unix.sh.in > setsdkenv_unix.sh
+    # ensure no unexpanded vars sneaked in
+    grep '@[A_Z0-9_]\+@' setsdkenv_unix.sh && exit 1
     chmod 755 setsdkenv_unix.sh
     # we don't want to install the input file
     rm -f setsdkenv_unix.sh.in

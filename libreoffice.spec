@@ -409,6 +409,7 @@ Patch99: 0001-Resolves-rhbz-1255811-implement-Edit-modify-handler.patch
 Patch100: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch101: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
 Patch102: 0001-Resolves-tdf-92995-do-not-delete-caption-objects-tha.patch
+Patch103: 0001-Resolves-tdf-85979-TextToColumns-is-overwriting-so-s.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2384,8 +2385,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Sep 10 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12-UNBUILT
+* Thu Sep 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12-UNBUILT
 - Resolves: tdf#92995 do not delete caption objects that are held by Undo
+- Resolves: tdf#85979 TextToColumns is overwriting, so set at ScImportExport
 
 * Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11
 - Resolves: rhbz#1256843 no obvious means to close template dialog

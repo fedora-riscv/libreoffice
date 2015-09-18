@@ -336,6 +336,7 @@ Patch27: 0001-core-fix-build-with-system-boost-1.59.patch
 Patch28: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
 Patch29: 0001-default-to-as-character-caption-contents.patch
 Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
+Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -410,6 +410,7 @@ Patch100: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch101: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
 Patch102: 0001-Resolves-tdf-92995-do-not-delete-caption-objects-tha.patch
 Patch103: 0001-Resolves-tdf-85979-TextToColumns-is-overwriting-so-s.patch
+Patch104: 0001-Resolves-rhbz-1264585-check-data-pilot-field-name-av.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2385,9 +2386,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Sep 17 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12-UNBUILT
+* Mon Sep 21 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12
 - Resolves: tdf#92995 do not delete caption objects that are held by Undo
 - Resolves: tdf#85979 TextToColumns is overwriting, so set at ScImportExport
+- Resolves: rhbz#1264585 check data pilot field name availability
 
 * Tue Sep 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-11
 - Resolves: rhbz#1256843 no obvious means to close template dialog

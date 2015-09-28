@@ -1,0 +1,59 @@
+From 5317248c9e7dae167ba865e585c702354798da7a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 28 Sep 2015 13:28:13 +0100
+Subject: [PATCH] Resolves: tdf#93461 captions laid out behind images
+
+regression from...
+
+commit 8a08f68669f9acfe98dadcca4af6519164a17000
+Author: Mike <mikekaganski@hotmail.com>
+Date:   Mon Apr 27 01:27:05 2015 +1000
+
+    tdf#66141: SwTxtFrm::FormatQuick(bool) endless loop
+
+    If a line happens to be invisible (e.g. in too thin cell of a table)
+    then aLine.FormatLine(nStart) returns nStart, and
+    aLine.Insert( new SwLineLayout() ) is executed until OOM.
+
+keep the zero advance loop detection attempt, but allow the first
+insertion and disallow subsequent inserts
+
+Change-Id: I16380588220149cfd0ed0f835f08d2849180fece
+(cherry picked from commit f06508e2cfa7e833862b7e9ff3b2f79181672275)
+---
+ sw/source/core/text/frmform.cxx | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/sw/source/core/text/frmform.cxx b/sw/source/core/text/frmform.cxx
+index 263c05f..b8958bc 100644
+--- a/sw/source/core/text/frmform.cxx
++++ b/sw/source/core/text/frmform.cxx
+@@ -1909,14 +1909,21 @@ bool SwTextFrm::FormatQuick( bool bForceQuickFormat )
+     sal_Int32 nStart = GetOfst();
+     const sal_Int32 nEnd = GetFollow()
+                       ? GetFollow()->GetOfst() : aInf.GetText().getLength();
++
++    bool bPreviousLayoutWasZeroWidth = false;
+     do
+     {
+-        sal_Int32 nShift = aLine.FormatLine(nStart) - nStart;
+-        nStart += nShift;
+-        if ((nShift != 0) // Check for special case: line is invisible,
+-                          // like in too thin table cell: tdf#66141
++        sal_Int32 nNewStart = aLine.FormatLine(nStart);
++        // Check for special case: line is invisible,
++        // like in too thin table cell: tdf#66141
++        bool bThisLayoutIsZeroWidth = (nNewStart == nStart);
++        nStart = nNewStart;
++        bool bWillEndlessInsert = (bPreviousLayoutWasZeroWidth && bThisLayoutIsZeroWidth);
++        if ((!bWillEndlessInsert) // Check for special case: line is invisible,
++                                  // like in too thin table cell: tdf#66141
+          && (aInf.IsNewLine() || (!aInf.IsStop() && nStart < nEnd)))
+             aLine.Insert( new SwLineLayout() );
++        bPreviousLayoutWasZeroWidth = bThisLayoutIsZeroWidth;
+     } while( aLine.Next() );
+ 
+     // Last exit: the heights need to match
+-- 
+2.4.3
+

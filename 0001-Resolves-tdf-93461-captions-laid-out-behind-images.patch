@@ -1,4 +1,4 @@
-From 5317248c9e7dae167ba865e585c702354798da7a Mon Sep 17 00:00:00 2001
+From 880298e4e7850d0b1af0b53e6e0ec3e769af782d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 28 Sep 2015 13:28:13 +0100
 Subject: [PATCH] Resolves: tdf#93461 captions laid out behind images
@@ -21,19 +21,19 @@ insertion and disallow subsequent inserts
 Change-Id: I16380588220149cfd0ed0f835f08d2849180fece
 (cherry picked from commit f06508e2cfa7e833862b7e9ff3b2f79181672275)
 ---
- sw/source/core/text/frmform.cxx | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ sw/source/core/text/frmform.cxx | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/sw/source/core/text/frmform.cxx b/sw/source/core/text/frmform.cxx
-index 263c05f..b8958bc 100644
+index 263c05f..7f863c6 100644
 --- a/sw/source/core/text/frmform.cxx
 +++ b/sw/source/core/text/frmform.cxx
-@@ -1909,14 +1909,21 @@ bool SwTextFrm::FormatQuick( bool bForceQuickFormat )
+@@ -1909,12 +1909,20 @@ bool SwTextFrm::FormatQuick( bool bForceQuickFormat )
      sal_Int32 nStart = GetOfst();
      const sal_Int32 nEnd = GetFollow()
                        ? GetFollow()->GetOfst() : aInf.GetText().getLength();
 +
-+    bool bPreviousLayoutWasZeroWidth = false;
++    int nLoopProtection = 0;
      do
      {
 -        sal_Int32 nShift = aLine.FormatLine(nStart) - nStart;
@@ -41,19 +41,18 @@ index 263c05f..b8958bc 100644
 -        if ((nShift != 0) // Check for special case: line is invisible,
 -                          // like in too thin table cell: tdf#66141
 +        sal_Int32 nNewStart = aLine.FormatLine(nStart);
-+        // Check for special case: line is invisible,
-+        // like in too thin table cell: tdf#66141
-+        bool bThisLayoutIsZeroWidth = (nNewStart == nStart);
++        if (nNewStart == nStart)
++            ++nLoopProtection;
++        else
++            nLoopProtection = 0;
 +        nStart = nNewStart;
-+        bool bWillEndlessInsert = (bPreviousLayoutWasZeroWidth && bThisLayoutIsZeroWidth);
++        const bool bWillEndlessInsert = nLoopProtection > 2;
++        SAL_WARN_IF(bWillEndlessInsert, "sw", "loop detection triggered");
 +        if ((!bWillEndlessInsert) // Check for special case: line is invisible,
 +                                  // like in too thin table cell: tdf#66141
           && (aInf.IsNewLine() || (!aInf.IsStop() && nStart < nEnd)))
              aLine.Insert( new SwLineLayout() );
-+        bPreviousLayoutWasZeroWidth = bThisLayoutIsZeroWidth;
      } while( aLine.Next() );
- 
-     // Last exit: the heights need to match
 -- 
 2.4.3
 

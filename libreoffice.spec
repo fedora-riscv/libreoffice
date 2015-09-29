@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        13%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -411,6 +411,7 @@ Patch101: 0001-Related-rhbz-1255200-apparent-missing-stylesheet.patch
 Patch102: 0001-Resolves-tdf-92995-do-not-delete-caption-objects-tha.patch
 Patch103: 0001-Resolves-tdf-85979-TextToColumns-is-overwriting-so-s.patch
 Patch104: 0001-Resolves-rhbz-1264585-check-data-pilot-field-name-av.patch
+Patch105: 0001-fix-IterateMatrix-for-ifPRODUCT-and-ifSUMSQ.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2386,6 +2387,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Sep 25 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-13-UNBUILT
+- fix IterateMatrix for ifPRODUCT and ifSUMSQ
+
 * Mon Sep 21 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12
 - Resolves: tdf#92995 do not delete caption objects that are held by Undo
 - Resolves: tdf#85979 TextToColumns is overwriting, so set at ScImportExport

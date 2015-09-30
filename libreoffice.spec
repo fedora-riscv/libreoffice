@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -338,6 +338,7 @@ Patch29: 0001-default-to-as-character-caption-contents.patch
 Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch32: 0001-Resolves-tdf-93461-captions-laid-out-behind-images.patch
+Patch33: 0001-implement-save-slide-background-for-impress.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2461,6 +2462,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Sep 30 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.2.2-3
+- implement save slide background for impress
+
 * Mon Sep 28 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.2.2-2
 - Resolves: tdf#93461 captions laid out behind images
 

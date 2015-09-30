@@ -373,6 +373,7 @@ Patch54: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch55: 0001-implement-undo-of-delete-impress-cell-contents.patch
 Patch56: 0001-Revert-Fix-single-node-CopyRange.patch
 Patch57: 0001-Related-rhbz-1259746-Buffer-file-content-read-from-G.patch
+Patch58: 0001-implement-save-slide-background-for-impress.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2432,8 +2433,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Sep 16 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.5.2-7-UNBUILT
+* Wed Sep 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.5.2-7
 - Resolves: rhbz#1259746 Cannot open documents from certain WebDAV servers
+- implement save slide background for impress
 
 * Sat Sep 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-6
 - fix duplicate of graphics in certain red-lined documents

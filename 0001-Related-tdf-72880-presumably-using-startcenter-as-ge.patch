@@ -1,0 +1,29 @@
+From ac33ef3a4abe73c65600e1f199d25e1a1f0080db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 8 Oct 2015 12:38:06 +0100
+Subject: [PATCH] Related: tdf#72880 presumably using startcenter as generic LO
+ target will work
+
+for the gnome case
+
+Change-Id: Icb5ad2d50d672b35783720c100a408fa3e5cb63e
+---
+ sysui/desktop/menus/startcenter.desktop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sysui/desktop/menus/startcenter.desktop b/sysui/desktop/menus/startcenter.desktop
+index ed333b6..f0d2b63 100644
+--- a/sysui/desktop/menus/startcenter.desktop
++++ b/sysui/desktop/menus/startcenter.desktop
+@@ -23,7 +23,7 @@ Icon=startcenter
+ Type=Application
+ Categories=Office;X-Red-Hat-Base;X-SuSE-Core-Office;X-MandrivaLinux-Office-Other;
+ Exec=${UNIXBASISROOTNAME} %%FILE%%
+-MimeType=application/vnd.openofficeorg.extension;
++MimeType=application/vnd.openofficeorg.extension;x-scheme-handler/vnd.libreoffice.cmis;
+ Name=%PRODUCTNAME
+ GenericName=Office
+ Comment=The office productivity suite compatible to the open and standardized ODF document format. Supported by The Document Foundation.
+-- 
+2.4.3
+

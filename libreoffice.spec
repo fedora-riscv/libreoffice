@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -374,6 +374,7 @@ Patch55: 0001-implement-undo-of-delete-impress-cell-contents.patch
 Patch56: 0001-Revert-Fix-single-node-CopyRange.patch
 Patch57: 0001-Related-rhbz-1259746-Buffer-file-content-read-from-G.patch
 Patch58: 0001-implement-save-slide-background-for-impress.patch
+Patch59: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2433,6 +2434,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Oct 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-8
+- Resolves: rhbz#1269593 Declare support for vnd.libreoffice.cmis:// URLs
+
 * Wed Sep 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.5.2-7
 - Resolves: rhbz#1259746 Cannot open documents from certain WebDAV servers
 - implement save slide background for impress

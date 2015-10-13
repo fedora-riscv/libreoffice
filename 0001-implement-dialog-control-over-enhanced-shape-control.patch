@@ -1,4 +1,4 @@
-From 80d78f1ff0ac37d4e1413b1da6454517234d5cd9 Mon Sep 17 00:00:00 2001
+From 5181f093a8792b17fb4192770f2e968849e6f015 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 13 Oct 2015 13:16:31 +0100
 Subject: [PATCH] implement dialog control over enhanced shape control points
@@ -11,9 +11,9 @@ Change-Id: I7e6a4db0699076950adf5869a61825159766c46a
 ---
  cui/source/inc/transfrm.hxx           |   6 +
  cui/source/tabpages/transfrm.cxx      | 137 +++++++++++++-
- cui/uiconfig/ui/slantcornertabpage.ui | 335 +++++++++++++++++++++++++++++-----
+ cui/uiconfig/ui/slantcornertabpage.ui | 334 +++++++++++++++++++++++++++++-----
  include/svx/EnhancedCustomShape2d.hxx |   1 +
- 4 files changed, 429 insertions(+), 50 deletions(-)
+ 4 files changed, 429 insertions(+), 49 deletions(-)
 
 diff --git a/cui/source/inc/transfrm.hxx b/cui/source/inc/transfrm.hxx
 index 2945d28..2fe2524 100644
@@ -225,10 +225,10 @@ index 950a4b2..43375c2 100644
      get(m_pMtrPosX, "MTR_FLD_POS_X");
      get(m_pMtrPosY, "MTR_FLD_POS_Y");
 diff --git a/cui/uiconfig/ui/slantcornertabpage.ui b/cui/uiconfig/ui/slantcornertabpage.ui
-index 37b7b0e..05262d7 100644
+index 37b7b0e..27814a5 100644
 --- a/cui/uiconfig/ui/slantcornertabpage.ui
 +++ b/cui/uiconfig/ui/slantcornertabpage.ui
-@@ -2,23 +2,131 @@
+@@ -2,23 +2,132 @@
  <!-- Generated with glade 3.18.3 -->
  <interface>
    <requires lib="gtk+" version="3.0"/>
@@ -247,7 +247,7 @@ index 37b7b0e..05262d7 100644
 +  <object class="GtkGrid" id="SlantAndCornerRadius">
      <property name="visible">True</property>
      <property name="can_focus">False</property>
--    <property name="border_width">6</property>
+     <property name="border_width">6</property>
 -    <property name="orientation">vertical</property>
 -    <property name="spacing">12</property>
 +    <property name="row_spacing">24</property>
@@ -375,7 +375,7 @@ index 37b7b0e..05262d7 100644
      <child>
        <object class="GtkFrame" id="FL_RADIUS">
          <property name="visible">True</property>
-@@ -32,37 +140,36 @@
+@@ -32,37 +141,36 @@
              <property name="top_padding">6</property>
              <property name="left_padding">12</property>
              <child>
@@ -422,7 +422,7 @@ index 37b7b0e..05262d7 100644
                    </packing>
                  </child>
                </object>
-@@ -73,8 +180,8 @@
+@@ -73,8 +181,8 @@
            <object class="GtkLabel" id="label1">
              <property name="visible">True</property>
              <property name="can_focus">False</property>
@@ -432,7 +432,7 @@ index 37b7b0e..05262d7 100644
              <attributes>
                <attribute name="weight" value="bold"/>
              </attributes>
-@@ -82,9 +189,8 @@
+@@ -82,9 +190,8 @@
          </child>
        </object>
        <packing>
@@ -444,7 +444,7 @@ index 37b7b0e..05262d7 100644
        </packing>
      </child>
      <child>
-@@ -100,37 +206,36 @@
+@@ -100,37 +207,36 @@
              <property name="top_padding">6</property>
              <property name="left_padding">12</property>
              <child>
@@ -491,7 +491,7 @@ index 37b7b0e..05262d7 100644
                    </packing>
                  </child>
                </object>
-@@ -141,8 +246,128 @@
+@@ -141,8 +247,128 @@
            <object class="GtkLabel" id="label2">
              <property name="visible">True</property>
              <property name="can_focus">False</property>
@@ -621,7 +621,7 @@ index 37b7b0e..05262d7 100644
              <attributes>
                <attribute name="weight" value="bold"/>
              </attributes>
-@@ -150,12 +375,36 @@
+@@ -150,12 +376,36 @@
          </child>
        </object>
        <packing>

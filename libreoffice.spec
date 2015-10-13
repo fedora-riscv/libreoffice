@@ -340,6 +340,7 @@ Patch33: 0001-implement-save-slide-background-for-impress.patch
 Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 Patch35: 0001-tdf-94804-prefix-to-save-cross-reference-bookmark-fi.patch
 Patch36: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
+Patch37: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

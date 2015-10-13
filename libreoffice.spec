@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.2
+%define libo_version 5.0.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -332,12 +332,10 @@ Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
 Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
 Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
-Patch27: 0001-core-fix-build-with-system-boost-1.59.patch
 Patch28: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
 Patch29: 0001-default-to-as-character-caption-contents.patch
 Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch32: 0001-Resolves-tdf-93461-captions-laid-out-behind-images.patch
 Patch33: 0001-implement-save-slide-background-for-impress.patch
 Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 
@@ -2463,6 +2461,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-1
+- update to 5.0.3 rc1
+
 * Thu Oct 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.2.2-4
 - Resolves: rhbz#1269593 declare support for vnd.libreoffice.cmis:// URLs
 

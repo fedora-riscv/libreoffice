@@ -338,6 +338,7 @@ Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch33: 0001-implement-save-slide-background-for-impress.patch
 Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
+Patch35: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

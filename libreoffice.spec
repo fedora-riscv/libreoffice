@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 4.4.5
+%define libo_version 4.4.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -354,30 +354,16 @@ Patch35: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
 Patch36: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
 Patch37: 0001-implement-equalize-width-and-height-for-impress-draw.patch
 Patch38: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch39: 0001-when-skipping-hidden-pages-omit-the-hidden-pages-fro.patch
-Patch40: 0001-ppc64-simplify-this-a-little.patch
-Patch41: 0002-ppc64-using-a-fp-register-also-consumes-a-gp-registe.patch
-Patch42: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
-Patch43: 0001-tdf-88831-fix-inverted-textures-when-OpenGL-is-enabl.patch
-Patch44: 0001-don-t-write-SvxBackgroundColorItem-via-inherited-Svx.patch
-Patch45: 0001-implement-undo-for-equalize-marked-objects.patch
-Patch46: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
-Patch47: 0001-sw-Flat-ODF-import-set-the-InReading-and-InXMLImport.patch
-Patch48: 0002-tdf-92379-svx-don-t-overwrite-fo-background-color-on.patch
-Patch49: 0003-tdf-92379-sw-ODF-import-fix-fo-background-color-tran.patch
-Patch50: 0004-related-tdf-92379-sw-backward-compatible-ODF-export-.patch
-Patch51: 0005-ODF-import-workaround-dubious-draw-fill-solid-on-fra.patch
-Patch52: 0001-xmloff-ODF-export-actually-ODF-1.2-does-not-allow-gr.patch
-Patch53: 0001-tdf-89245-xmloff-fix-Calc-header-background-image-sa.patch
-Patch54: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
-Patch55: 0001-implement-undo-of-delete-impress-cell-contents.patch
-Patch56: 0001-Revert-Fix-single-node-CopyRange.patch
-Patch57: 0001-Related-rhbz-1259746-Buffer-file-content-read-from-G.patch
-Patch58: 0001-implement-save-slide-background-for-impress.patch
-Patch59: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
-Patch60: 0001-implement-dialog-control-over-enhanced-shape-control.patch
-Patch61: 0001-afl-eventtesting-crash-on-undoing-insert-new-page-in.patch
-Patch62: 0001-tdf-94871-sw-fix-a-frame-formatting-regression-that-.patch
+Patch39: 0001-fix-langtag-test-with-liblangtag-0.5.7.patch
+Patch40: 0001-implement-undo-for-equalize-marked-objects.patch
+Patch41: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
+Patch42: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
+Patch43: 0001-implement-undo-of-delete-impress-cell-contents.patch
+Patch44: 0001-implement-save-slide-background-for-impress.patch
+Patch45: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
+Patch46: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch47: 0001-afl-eventtesting-crash-on-undoing-insert-new-page-in.patch
+Patch48: 0001-tdf-94871-sw-fix-a-frame-formatting-regression-that-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2437,7 +2423,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Oct 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-12.UNBUILT
+* Fri Oct 30 2015 David Tardon <dtardon@redhat.com> - 1:4.4.6.2-1
+- update to 4.4.6
 - Resolves: tdf#94871 Writer frame formatting regression that affects help
 
 * Fri Oct 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-11

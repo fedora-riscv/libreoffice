@@ -1,4 +1,4 @@
-From 4ee0775161d44acc5089aeec2013d461fe592e23 Mon Sep 17 00:00:00 2001
+From 43b718b8687d087cd6cc28991efb3b7f507e6e3a Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Mon, 3 Feb 2014 20:24:50 +0100
 Subject: [PATCH] i#86080 unopkg bodge
@@ -8,12 +8,12 @@ Subject: [PATCH] i#86080 unopkg bodge
  1 file changed, 51 insertions(+), 2 deletions(-)
 
 diff --git a/desktop/scripts/unopkg.sh b/desktop/scripts/unopkg.sh
-index ca1e3bc..6393e99 100755
+index 18d0a73..6bab04f 100755
 --- a/desktop/scripts/unopkg.sh
 +++ b/desktop/scripts/unopkg.sh
-@@ -78,6 +78,53 @@ if [ "$(id -u)" -eq "0" ]; then
-     fi
- fi
+@@ -61,6 +61,53 @@ do
+   esac
+ done
  
 +if [ $isnotuser -eq 1 ]; then
 +    echo $@ | grep -q env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY
@@ -65,7 +65,7 @@ index ca1e3bc..6393e99 100755
  # extend the ld_library_path for java: javaldx checks the sofficerc for us
  if [ -x "${sd_prog}/javaldx" ] ; then
      my_path=`"${sd_prog}/javaldx" $BOOTSTRAPVARS \
-@@ -106,6 +153,8 @@ unset XENVIRONMENT
+@@ -89,6 +136,8 @@ unset XENVIRONMENT
  # SAL_NO_XINITTHREADS=true; export SAL_NO_XINITTHREADS
  
  # execute binary
@@ -77,5 +77,5 @@ index ca1e3bc..6393e99 100755
 +   rm -rf $INSTDIR
 +fi
 -- 
-2.4.2
+2.1.0
 

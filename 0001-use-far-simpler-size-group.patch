@@ -1,0 +1,51 @@
+From ab6d77264008cb94ff387b4011961f82fcd5754c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 20 Oct 2015 10:10:16 +0100
+Subject: [PATCH] use far simpler size group
+
+Change-Id: I54d658951fb90892d006b265e3d35d91991e73d8
+---
+ cui/uiconfig/ui/slantcornertabpage.ui | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/cui/uiconfig/ui/slantcornertabpage.ui b/cui/uiconfig/ui/slantcornertabpage.ui
+index 2751144..b3ce646 100644
+--- a/cui/uiconfig/ui/slantcornertabpage.ui
++++ b/cui/uiconfig/ui/slantcornertabpage.ui
+@@ -394,8 +394,12 @@
+   </object>
+   <object class="GtkSizeGroup" id="sizegroup1">
+     <widgets>
++      <widget name="label5"/>
++      <widget name="label6"/>
+       <widget name="FT_RADIUS"/>
+       <widget name="FT_ANGLE"/>
++      <widget name="label4"/>
++      <widget name="label7"/>
+     </widgets>
+   </object>
+   <object class="GtkSizeGroup" id="sizegroup2">
+@@ -404,20 +408,6 @@
+       <widget name="MTR_FLD_ANGLE:0.00degrees"/>
+     </widgets>
+   </object>
+-  <object class="GtkSizeGroup" id="sizegroup3">
+-    <widgets>
+-      <widget name="label5"/>
+-      <widget name="label6"/>
+-      <widget name="FT_RADIUS"/>
+-    </widgets>
+-  </object>
+-  <object class="GtkSizeGroup" id="sizegroup4">
+-    <widgets>
+-      <widget name="FT_ANGLE"/>
+-      <widget name="label4"/>
+-      <widget name="label7"/>
+-    </widgets>
+-  </object>
+   <object class="GtkSizeGroup" id="sizegroup5">
+     <widgets>
+       <widget name="controlx1:0.00cm"/>
+-- 
+2.5.0
+

@@ -1,4 +1,4 @@
-From 820efe20886e41fdea8353f54e8a54bba7fccd84 Mon Sep 17 00:00:00 2001
+From 3b80333b8d98e74bef22e5484b9db2b79310303f Mon Sep 17 00:00:00 2001
 From: rpmbuild <rpmbuild@fedoraproject.org>
 Date: Thu, 20 Feb 2014 19:44:49 +0100
 Subject: [PATCH] never run autogen.sh
@@ -8,11 +8,11 @@ Subject: [PATCH] never run autogen.sh
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index 206f5ed..14620da 100644
+index 41479bd..a5d7368 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -14,7 +14,7 @@ MAKECMDGOALS?=all
- SHELL := @SHELL_BASH@
+@@ -19,7 +19,7 @@ build_goal:=$(if $(filter build check,$(MAKECMDGOALS)),all)\
+ 
  SRCDIR := @SRC_ROOT@
  BUILDDIR := @BUILDDIR@
 -GIT_BUILD := $(if $(wildcard $(SRCDIR)/.git),T)
@@ -21,5 +21,5 @@ index 206f5ed..14620da 100644
  # Run autogen.sh if needed and force make to restart itself.
  # ... but there are several cases where we do not want to run
 -- 
-1.8.5.3
+2.1.0
 

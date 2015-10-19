@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.3
+%define libo_version 5.1.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .alpha1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -52,7 +52,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.0
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
@@ -77,9 +77,9 @@ Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zi
 
 %if 0%{?rhel}
 Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source11:       %{external_url}/594eb47b4b1210e25438d51825404d5a-glew-1.10.0.zip
+Source11:       %{external_url}/3941e9cab2f4f9d8faee3e8d57ae7664-glew-1.12.0.zip
 Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
-Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
+Source13:       %{external_url}/liborcus-0.9.2.tar.gz
 # system mdds 0.10.3 causes a crash in sc_ucalc unit test
 Source14:       %{external_url}/mdds_0.12.1.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
@@ -91,8 +91,8 @@ Source18:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.t
 Source19:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
 Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source21:       %{external_url}/lcms2-2.6.tar.gz
-Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
+Source22:       %{external_url}/80d063d6db4c010e18c606af8aed6231-liblangtag-0.5.7.tar.bz2
+Source23:       %{external_url}/boost_1_59_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.40.tar.bz2
 Source25:       %{external_url}/language-subtag-registry-2015-06-08.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
@@ -101,11 +101,11 @@ Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.t
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
 Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
-Source30:       %{external_url}/libwps-0.4.0.tar.bz2
-Source31:       %{external_url}/libvisio-0.1.1.tar.bz2
+Source30:       %{external_url}/libwps-0.4.2.tar.bz2
+Source31:       %{external_url}/libvisio-0.1.3.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
 Source33:       %{external_url}/libodfgen-0.1.4.tar.bz2
-Source34:       %{external_url}/libmwaw-0.3.5.tar.bz2
+Source34:       %{external_url}/libmwaw-0.3.6.tar.bz2
 Source35:       %{external_url}/libetonyek-0.1.3.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
@@ -169,7 +169,6 @@ BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
-BuildRequires: pkgconfig(gconf-2.0)
 BuildRequires: pkgconfig(glu)
 BuildRequires: pkgconfig(gtk+-2.0)
 BuildRequires: pkgconfig(hunspell)
@@ -210,7 +209,7 @@ BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
-BuildRequires: pkgconfig(liborcus-0.8)
+BuildRequires: pkgconfig(liborcus-0.10)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
@@ -258,13 +257,6 @@ BuildRequires: pkgconfig(bluez)
 
 # java stuff
 BuildRequires: ant
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: jakarta-commons-codec
-BuildRequires: jakarta-commons-lang
-%else
-BuildRequires: apache-commons-codec
-BuildRequires: apache-commons-lang
-%endif
 BuildRequires: bsh
 %if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires: hsqldb
@@ -321,24 +313,7 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-# upstreamed
-Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
-Patch18: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
-Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
-Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
-Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
-Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
-Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
-Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
-Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
-Patch28: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
-Patch29: 0001-default-to-as-character-caption-contents.patch
-Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch33: 0001-implement-save-slide-background-for-impress.patch
-Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
-Patch35: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch17: 0001-use-far-simpler-size-group.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1295,6 +1270,7 @@ touch autogen.lastrun
  --disable-coinmp \
  --disable-fetch-external \
  --disable-gnome-vfs \
+ --disable-introspection \
  --disable-openssl \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
@@ -2027,7 +2003,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libconfigmgrlo.so
 %{baseinstdir}/program/libdesktopbe1lo.so
 %{baseinstdir}/program/libfsstoragelo.so
-%{baseinstdir}/program/libgconfbe1lo.so
 %{baseinstdir}/program/libi18npoollo.so
 %{baseinstdir}/program/libbasegfxlo.so
 # TODO: shouldn't it have lo suffix?
@@ -2462,6 +2437,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Oct 19 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-1.alpha1
+- update to 5.1.0 alpha1
+
 * Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-1
 - update to 5.0.3 rc1
 

@@ -1,4 +1,4 @@
-From f472c21268383a06cf594681b0a88cc287296747 Mon Sep 17 00:00:00 2001
+From e5faac4ef25728509d23d028bbc32cf3a9a281b1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 13 Oct 2015 13:16:31 +0100
 Subject: [PATCH] implement dialog control over enhanced shape control points
@@ -11,10 +11,10 @@ to an exact known value
 Change-Id: I7e6a4db0699076950adf5869a61825159766c46a
 ---
  cui/source/inc/transfrm.hxx           |   6 +
- cui/source/tabpages/transfrm.cxx      | 129 ++++++++++++-
- cui/uiconfig/ui/slantcornertabpage.ui | 334 +++++++++++++++++++++++++++++-----
+ cui/source/tabpages/transfrm.cxx      | 129 ++++++++++++++-
+ cui/uiconfig/ui/slantcornertabpage.ui | 302 ++++++++++++++++++++++++++++++----
  include/svx/EnhancedCustomShape2d.hxx |   1 +
- 4 files changed, 421 insertions(+), 49 deletions(-)
+ 4 files changed, 400 insertions(+), 38 deletions(-)
 
 diff --git a/cui/source/inc/transfrm.hxx b/cui/source/inc/transfrm.hxx
 index f4f6925..6aa3935 100644
@@ -212,24 +212,13 @@ index e1193c1..4716ed6 100644
      get(m_pMtrPosX, "MTR_FLD_POS_X");
      get(m_pMtrPosY, "MTR_FLD_POS_Y");
 diff --git a/cui/uiconfig/ui/slantcornertabpage.ui b/cui/uiconfig/ui/slantcornertabpage.ui
-index 37b7b0e..27814a5 100644
+index 37b7b0e..7e365d8 100644
 --- a/cui/uiconfig/ui/slantcornertabpage.ui
 +++ b/cui/uiconfig/ui/slantcornertabpage.ui
-@@ -2,23 +2,132 @@
- <!-- Generated with glade 3.18.3 -->
- <interface>
-   <requires lib="gtk+" version="3.0"/>
--  <object class="GtkAdjustment" id="adjustmentRADIUS">
--    <property name="upper">500</property>
--    <property name="step_increment">10</property>
--    <property name="page_increment">10</property>
--  </object>
--  <object class="GtkAdjustment" id="adjustmentSLANT">
--    <property name="lower">-89</property>
--    <property name="upper">89</property>
--    <property name="step_increment">1</property>
--    <property name="page_increment">10</property>
--  </object>
+@@ -13,12 +13,132 @@
+     <property name="step_increment">1</property>
+     <property name="page_increment">10</property>
+   </object>
 -  <object class="GtkBox" id="SlantAndCornerRadius">
 +  <object class="GtkGrid" id="SlantAndCornerRadius">
      <property name="visible">True</property>
@@ -362,7 +351,7 @@ index 37b7b0e..27814a5 100644
      <child>
        <object class="GtkFrame" id="FL_RADIUS">
          <property name="visible">True</property>
-@@ -32,37 +141,36 @@
+@@ -32,37 +152,36 @@
              <property name="top_padding">6</property>
              <property name="left_padding">12</property>
              <child>
@@ -409,7 +398,7 @@ index 37b7b0e..27814a5 100644
                    </packing>
                  </child>
                </object>
-@@ -73,8 +181,8 @@
+@@ -73,8 +192,8 @@
            <object class="GtkLabel" id="label1">
              <property name="visible">True</property>
              <property name="can_focus">False</property>
@@ -419,7 +408,7 @@ index 37b7b0e..27814a5 100644
              <attributes>
                <attribute name="weight" value="bold"/>
              </attributes>
-@@ -82,9 +190,8 @@
+@@ -82,9 +201,8 @@
          </child>
        </object>
        <packing>
@@ -431,7 +420,7 @@ index 37b7b0e..27814a5 100644
        </packing>
      </child>
      <child>
-@@ -100,37 +207,36 @@
+@@ -100,37 +218,36 @@
              <property name="top_padding">6</property>
              <property name="left_padding">12</property>
              <child>
@@ -478,7 +467,7 @@ index 37b7b0e..27814a5 100644
                    </packing>
                  </child>
                </object>
-@@ -141,8 +247,128 @@
+@@ -141,8 +258,128 @@
            <object class="GtkLabel" id="label2">
              <property name="visible">True</property>
              <property name="can_focus">False</property>
@@ -608,7 +597,7 @@ index 37b7b0e..27814a5 100644
              <attributes>
                <attribute name="weight" value="bold"/>
              </attributes>
-@@ -150,12 +376,36 @@
+@@ -150,16 +387,19 @@
          </child>
        </object>
        <packing>
@@ -620,34 +609,17 @@ index 37b7b0e..27814a5 100644
        </packing>
      </child>
    </object>
-+  <object class="GtkSizeGroup" id="sizegroup3">
-+    <widgets>
-+      <widget name="label5"/>
-+      <widget name="label6"/>
-+      <widget name="FT_RADIUS"/>
-+    </widgets>
-+  </object>
-+  <object class="GtkSizeGroup" id="sizegroup4">
-+    <widgets>
-+      <widget name="FT_ANGLE"/>
-+      <widget name="label4"/>
-+      <widget name="label7"/>
-+    </widgets>
-+  </object>
-+  <object class="GtkAdjustment" id="adjustmentRADIUS">
-+    <property name="upper">500</property>
-+    <property name="step_increment">10</property>
-+    <property name="page_increment">10</property>
-+  </object>
-+  <object class="GtkAdjustment" id="adjustmentSLANT">
-+    <property name="lower">-89</property>
-+    <property name="upper">89</property>
-+    <property name="step_increment">1</property>
-+    <property name="page_increment">10</property>
-+  </object>
    <object class="GtkSizeGroup" id="sizegroup1">
      <widgets>
++      <widget name="label5"/>
++      <widget name="label6"/>
        <widget name="FT_RADIUS"/>
+       <widget name="FT_ANGLE"/>
++      <widget name="label4"/>
++      <widget name="label7"/>
+     </widgets>
+   </object>
+   <object class="GtkSizeGroup" id="sizegroup2">
 diff --git a/include/svx/EnhancedCustomShape2d.hxx b/include/svx/EnhancedCustomShape2d.hxx
 index 8ab32cf..58bf76d 100644
 --- a/include/svx/EnhancedCustomShape2d.hxx

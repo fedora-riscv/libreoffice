@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2435,6 +2435,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Oct 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-10
+- multiple size groups are unreliable in 4-4, fix shape control dlg crash
+
 * Tue Oct 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-9
 - implement dialog control over enhanced shape control points
 

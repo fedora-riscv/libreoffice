@@ -414,6 +414,8 @@ Patch104: 0001-Resolves-rhbz-1264585-check-data-pilot-field-name-av.patch
 Patch105: 0001-fix-IterateMatrix-for-ifPRODUCT-and-ifSUMSQ.patch
 Patch106: 0001-use-exponential-E-format-for-General-when-appropriat.patch
 Patch107: 0001-tdf-94173-Calc-doesn-t-save-your-own-created-autofor.patch
+Patch108: 0001-xmloff-fix-ODF-import-of-gradient-draw-angle-attribu.patch
+Patch109: 0002-tdf-94804-prefix-to-save-cross-reference-bookmark-fi.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2393,6 +2395,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - fix IterateMatrix for ifPRODUCT and ifSUMSQ
 - use exponential 'E' format for General when appropriate
 - Resolves: tdf#94173: Calc doesn't save your own created autoformat presets
+- fix ODF import of gradient draw:angle attribute a bit
+- Resolves: tdf#94804: Writer prefix of cross reference bookmark fixed
 
 * Mon Sep 21 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-12
 - Resolves: tdf#92995 do not delete caption objects that are held by Undo

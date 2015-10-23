@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -376,6 +376,7 @@ Patch57: 0001-Related-rhbz-1259746-Buffer-file-content-read-from-G.patch
 Patch58: 0001-implement-save-slide-background-for-impress.patch
 Patch59: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 Patch60: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch61: 0001-afl-eventtesting-crash-on-undoing-insert-new-page-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2435,6 +2436,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Oct 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-11
+- afl-eventtesting: fix crash on undoing insert new slide in impress
+
 * Tue Oct 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.5.2-10
 - multiple size groups are unreliable in 4-4, fix shape control dlg crash
 

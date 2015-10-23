@@ -1,0 +1,59 @@
+From 7103ffd27a00f784e77bee56b036d25bb4fdc341 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 23 Oct 2015 11:38:43 +0100
+Subject: [PATCH] afl-eventtesting: crash on undoing insert new page in impress
+
+this is an intermittent crash in the real world but under event testing we can
+see that the PaintView is informed that the page has been deleted, but doesn't
+clear its use of the page if it so happens that there was earlier modification
+events that caused the fire-modification-timer to be launched
+
+If there happens to be no such events then the page is correctly cleared
+
+If the timer is active, then the page is not cleared, but eventually the
+timer will fire and access the deleted page and fall over and die
+
+minimal change for backporting ease, follow ups now
+
+(cherry picked from commit f8b975995c5d0dc6a9fc8febba0667fe24542ad2)
+
+Change-Id: I090ad62cc175545902574c93dec7082225d97ab7
+---
+ svx/source/svdraw/svdpntv.cxx                        |   4 ++--
+ vcl/qa/afl-eventtesting/eventtesting.impress.crash-3 | Bin 0 -> 196 bytes
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ create mode 100644 vcl/qa/afl-eventtesting/eventtesting.impress.crash-3
+
+diff --git a/svx/source/svdraw/svdpntv.cxx b/svx/source/svdraw/svdpntv.cxx
+index 4ea0087..7c97827 100644
+--- a/svx/source/svdraw/svdpntv.cxx
++++ b/svx/source/svdraw/svdpntv.cxx
+@@ -261,12 +261,12 @@ void SdrPaintView::Notify(SfxBroadcaster& rBC, const SfxHint& rHint)
+         return;
+     }
+ 
+-    bool bObjChg=!bSomeObjChgdFlag; // if true, evaluate for ComeBack timer
+-    if (bObjChg) {
++    {
+         const SdrHint* pSdrHint = dynamic_cast<const SdrHint*>(&rHint);
+         if (pSdrHint) {
+             SdrHintKind eKind=pSdrHint->GetKind();
+             if (eKind==HINT_OBJCHG || eKind==HINT_OBJINSERTED || eKind==HINT_OBJREMOVED) {
++                bool bObjChg=!bSomeObjChgdFlag; // if true, evaluate for ComeBack timer
+                 if (bObjChg) {
+                     bSomeObjChgdFlag=true;
+                     aComeBackIdle.Start();
+diff --git a/vcl/qa/afl-eventtesting/eventtesting.impress.crash-3 b/vcl/qa/afl-eventtesting/eventtesting.impress.crash-3
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6639bab1b851739a974c8ef1f4f9df05bcf769a
+GIT binary patch
+literal 196
+zcmWd@3Sr=2%485`Dq-Me%3)w(N@ZYVm1baK<zx^B%7OUeOch{xkT|y!L=8xsft44m
+o2A6(DrX&Utrc$uEFtdf3{^J0tU^_r&N-9-hU<MWj3^ABG0I;kp>Hq)$
+
+literal 0
+HcmV?d00001
+
+-- 
+2.4.3
+

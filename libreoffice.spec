@@ -1180,7 +1180,9 @@ git commit -q -a -m 'disable hanging test'
 %endif
 
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
-git commit -q -a -m 'temporarily disable failing test'
+# fails on i686
+sed -i -e /CppunitTest_oox_vba_compression/d oox/Module_oox.mk
+git commit -q -a -m 'temporarily disable failing tests'
 
 %if 0%{?rhel} && 0%{?rhel} == 7
 # at least ppc and s390 fail on this

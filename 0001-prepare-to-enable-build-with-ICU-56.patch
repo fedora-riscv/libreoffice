@@ -1,0 +1,70 @@
+From b8cb34279feea2d6e8cc0f58f4478f068488f268 Mon Sep 17 00:00:00 2001
+Message-Id: <b8cb34279feea2d6e8cc0f58f4478f068488f268.1445967354.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 27 Oct 2015 16:43:38 +0100
+Subject: [PATCH] prepare to enable build with ICU 56
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Accept new UBlockCode enum values.
+Just make it compile, without adding resource strings and blocks.
+Excerpt of 5b7e8efbf4d73e385c8fb3469a23c0b2592bfb57
+
+Change-Id: Ia14e4c1c85f8be3e7bae0eb6f5bec1ae33f1a0bf
+---
+ svx/source/dialog/charmap.cxx | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-prepare-to-enable-build-with-ICU-56.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-prepare-to-enable-build-with-ICU-56.patch"
+
+diff --git a/svx/source/dialog/charmap.cxx b/svx/source/dialog/charmap.cxx
+index 3d616e9..a65fefc 100644
+--- a/svx/source/dialog/charmap.cxx
++++ b/svx/source/dialog/charmap.cxx
+@@ -1574,6 +1574,32 @@ void SubsetMap::InitList()
+                     aAllSubsets.push_back( Subset( 0x118A0, 0x118FF, RID_SUBSETSTR_WARANG_CITI ) );
+                     break;
+ #endif
++#if U_ICU_VERSION_MAJOR_NUM >= 56
++                    /* FIXME: add RID_... to include/svx/ucsubset.hrc and
++                     * strings to svx/source/dialog/ucsubset.src and Unicode
++                     * block ranges to aAllSubsets, for now this only
++                     * compiles.. */
++                case UBLOCK_AHOM:
++                    break;
++                case UBLOCK_ANATOLIAN_HIEROGLYPHS:
++                    break;
++                case UBLOCK_CHEROKEE_SUPPLEMENT:
++                    break;
++                case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E:
++                    break;
++                case UBLOCK_EARLY_DYNASTIC_CUNEIFORM:
++                    break;
++                case UBLOCK_HATRAN:
++                    break;
++                case UBLOCK_MULTANI:
++                    break;
++                case UBLOCK_OLD_HUNGARIAN:
++                    break;
++                case UBLOCK_SUPPLEMENTAL_SYMBOLS_AND_PICTOGRAPHS:
++                    break;
++                case UBLOCK_SUTTON_SIGNWRITING:
++                    break;
++#endif
+ 
+             }
+ 
+
+--------------erAck-patch-parts--
+
+

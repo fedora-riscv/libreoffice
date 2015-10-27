@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -338,6 +338,8 @@ Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch33: 0001-implement-save-slide-background-for-impress.patch
 Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
+Patch35: 0001-tdf-94804-prefix-to-save-cross-reference-bookmark-fi.patch
+Patch36: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2461,6 +2463,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-2.UNBUILT
+- Resolves: tdf#94804 Writer cross reference bookmark duplication
+
 * Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-1
 - update to 5.0.3 rc1
 

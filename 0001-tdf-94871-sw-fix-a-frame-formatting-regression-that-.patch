@@ -1,0 +1,49 @@
+From 99c4cb290e054fe160dc87d4ae31c24cc2cb140d Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 28 Oct 2015 14:15:01 +0100
+Subject: [PATCH] tdf#94871: sw: fix a frame formatting regression that affects
+ help
+
+The early return must also be taken if the anchor is neither AT_CHAR nor
+AT_PARA.
+
+(regression from a219bbb62f974020fac0799143fbc51c385bb460)
+
+(cherry picked from commit 9092f96c63c05833ee5319935da1078afe216b55)
+
+Change-Id: I4eccb1f80401ba620ef87342f40c1a896918f3d3
+---
+ sw/source/core/text/itratr.cxx | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sw/source/core/text/itratr.cxx b/sw/source/core/text/itratr.cxx
+index 2a97c44..4ee3b7f 100644
+--- a/sw/source/core/text/itratr.cxx
++++ b/sw/source/core/text/itratr.cxx
+@@ -435,15 +435,17 @@ static void lcl_MinMaxNode( SwFrmFmt* pNd, SwMinMaxNodeArgs* pIn )
+ {
+     const SwFmtAnchor& rFmtA = pNd->GetAnchor();
+ 
+-    if ((FLY_AT_PARA == rFmtA.GetAnchorId()) ||
+-        (FLY_AT_CHAR == rFmtA.GetAnchorId()))
++    if ((FLY_AT_PARA != rFmtA.GetAnchorId()) &&
++        (FLY_AT_CHAR != rFmtA.GetAnchorId()))
+     {
+-        const SwPosition *pPos = rFmtA.GetCntntAnchor();
+-        OSL_ENSURE(pPos && pIn, "Unexpected NULL arguments");
+-        if (!pPos || !pIn || pIn->nIndx != pPos->nNode.GetIndex())
+-            return;
++        return;
+     }
+ 
++    const SwPosition *pPos = rFmtA.GetCntntAnchor();
++    OSL_ENSURE(pPos && pIn, "Unexpected NULL arguments");
++    if (!pPos || !pIn || pIn->nIndx != pPos->nNode.GetIndex())
++        return;
++
+     long nMin, nMax;
+     SwHTMLTableLayout *pLayout = 0;
+     const bool bIsDrawFrmFmt = pNd->Which()==RES_DRAWFRMFMT;
+-- 
+2.4.3
+

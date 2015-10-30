@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -332,15 +332,14 @@ Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
 Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
 Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
 Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
-Patch28: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
-Patch29: 0001-default-to-as-character-caption-contents.patch
-Patch30: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch31: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch33: 0001-implement-save-slide-background-for-impress.patch
-Patch34: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
-Patch35: 0001-tdf-94804-prefix-to-save-cross-reference-bookmark-fi.patch
-Patch36: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
-Patch37: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch27: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
+Patch28: 0001-default-to-as-character-caption-contents.patch
+Patch29: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
+Patch30: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
+Patch31: 0001-implement-save-slide-background-for-impress.patch
+Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
+Patch33: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
+Patch34: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2464,7 +2463,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-2.UNBUILT
+* Fri Oct 30 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.2-1
+- update to 5.0.3 rc2
 - Resolves: tdf#94804 Writer cross reference bookmark duplication
 
 * Mon Oct 12 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.1-1

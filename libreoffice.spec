@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1183,13 +1183,9 @@ git commit -q -a -m 'disable hanging test'
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
 # fails on i686
 sed -i -e /CppunitTest_oox_vba_compression/d oox/Module_oox.mk
-git commit -q -a -m 'temporarily disable failing tests'
-
-%if 0%{?rhel} && 0%{?rhel} == 7
-# at least ppc and s390 fail on this
+# fails on all secondary platforms
 sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
-git commit -q -a -m 'disable failing test'
-%endif
+git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
@@ -2440,6 +2436,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 03 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-4.alpha1
+- Resolves: rhbz#1276061 build failure on ppc64
+
 * Wed Oct 28 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-3.alpha1
 - rebuild for ICU 56.1
 

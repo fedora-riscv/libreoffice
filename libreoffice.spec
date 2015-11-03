@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -340,6 +340,7 @@ Patch31: 0001-implement-save-slide-background-for-impress.patch
 Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 Patch33: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
 Patch34: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch35: 0001-tdf-94936-Update-the-button-removal-hack-to-3.18.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2459,6 +2460,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 03 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-3
+- Resolves: rhbz#1277090 crash in gtk3 vclplug on file save
+
 * Tue Nov 03 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.2-2
 - Resolves: rhbz#1276061 build failure on ppc64
 

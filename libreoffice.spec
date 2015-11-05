@@ -341,6 +341,7 @@ Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 Patch33: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
 Patch34: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 Patch35: 0001-tdf-94936-Update-the-button-removal-hack-to-3.18.patch
+Patch36: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

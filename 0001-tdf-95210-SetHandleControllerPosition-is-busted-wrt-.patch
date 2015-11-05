@@ -1,0 +1,64 @@
+From eafd3ee3f01bceef0eb3327be3139a8eee2a2b2e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 5 Nov 2015 13:42:13 +0000
+Subject: [PATCH] tdf#95210 SetHandleControllerPosition is busted wrt
+ HandleFlags::REFX
+
+so instead of saving the initial pos and trying to restore the pos, instead use
+a bigger hammer and save the entire geometry and restore that instead.
+
+Change-Id: Id06ea8f205f30771987089c5dc949bb52adc7a27
+---
+ cui/source/tabpages/transfrm.cxx | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/cui/source/tabpages/transfrm.cxx b/cui/source/tabpages/transfrm.cxx
+index f6b1f26..0db63db 100644
+--- a/cui/source/tabpages/transfrm.cxx
++++ b/cui/source/tabpages/transfrm.cxx
+@@ -633,10 +633,15 @@ void SvxSlantTabPage::Reset(const SfxItemSet* rAttrs)
+         SdrObjKind eKind = (SdrObjKind) pObj->GetObjIdentifier();
+         if (eKind == OBJ_CUSTOMSHAPE)
+         {
++            //save geometry
++            SdrCustomShapeGeometryItem aInitialGeometry =
++                static_cast<const SdrCustomShapeGeometryItem&>(pObj->GetMergedItem(SDRATTR_CUSTOMSHAPE_GEOMETRY));
++
+             EnhancedCustomShape2d aShape(pObj);
+-            Point aInitialPosition;
++
+             for (int i = 0; i < 2; ++i)
+             {
++                Point aInitialPosition;
+                 if (!aShape.GetHandlePosition(i, aInitialPosition))
+                     break;
+                 m_aControlGroups[i]->Enable();
+@@ -655,14 +660,10 @@ void SvxSlantTabPage::Reset(const SfxItemSet* rAttrs)
+                 aShape.GetHandlePosition(i, aMinPosition);
+ 
+                 Rectangle aLogicRect = aShape.GetLogicRect();
++                aInitialPosition.Move(-aLogicRect.Left(), -aLogicRect.Top());
+                 aMaxPosition.Move(-aLogicRect.Left(), -aLogicRect.Top());
+                 aMinPosition.Move(-aLogicRect.Left(), -aLogicRect.Top());
+ 
+-                aPosition.X = aInitialPosition.X();
+-                aPosition.Y = aInitialPosition.Y();
+-                aInitialPosition.Move(-aLogicRect.Left(), -aLogicRect.Top());
+-                aShape.SetHandleControllerPosition(i, aPosition);
+-
+                 SetMetricValue(*m_aControlX[i], aInitialPosition.X(), ePoolUnit);
+                 SetMetricValue(*m_aControlY[i], aInitialPosition.Y(), ePoolUnit);
+ 
+@@ -681,6 +682,9 @@ void SvxSlantTabPage::Reset(const SfxItemSet* rAttrs)
+                     m_aControlY[i]->SetMax(aMaxPosition.Y(), FUNIT_MM);
+                 }
+             }
++
++            //restore geometry
++            pObj->SetMergedItem(aInitialGeometry);
+         }
+     }
+     for (int i = 0; i < 2; ++i)
+-- 
+2.5.0
+

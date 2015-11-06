@@ -1,8 +1,8 @@
-From 2b23c9c3d39667a740b8dc83326875d84454ab93 Mon Sep 17 00:00:00 2001
+From 6c096a5966abb942a6c8f8c9b665c211efa48853 Mon Sep 17 00:00:00 2001
 From: Michael Stahl <mstahl@redhat.com>
 Date: Sat, 25 Apr 2015 21:25:00 +0200
-Subject: [PATCH 3/4] rhbz#1205072: sw: resource mangement SNAFU caused by
- SwPaM copy ctor
+Subject: [PATCH] rhbz#1205072: sw: resource mangement SNAFU caused by SwPaM
+ copy ctor
 
 SwPaM copy ctor has the surprising habit of linking the new one into the
 old one's Ring.  If you copy a shell cursor, *this* epic fail happens:
@@ -75,15 +75,30 @@ Conflicts:
 
 Change-Id: I3d0a288a83b4719dda7977b4898dea656ea67388
 ---
- sw/source/core/edit/eddel.cxx  | 2 +-
+ sw/source/core/edit/eddel.cxx  | 6 ++++--
  sw/source/core/edit/edglss.cxx | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/sw/source/core/edit/eddel.cxx b/sw/source/core/edit/eddel.cxx
-index 9e2c7b2..c5ed1e9 100644
+index 7802643..88eca5f 100644
 --- a/sw/source/core/edit/eddel.cxx
 +++ b/sw/source/core/edit/eddel.cxx
-@@ -94,7 +94,7 @@ void SwEditShell::DeleteSel( SwPaM& rPam, bool* pUndo )
+@@ -33,6 +33,8 @@
+ #include <comcore.hrc>
+ #include <list>
+ 
++#include <boost/scoped_ptr.hpp>
++
+ void SwEditShell::DeleteSel( SwPaM& rPam, bool* pUndo )
+ {
+     bool bSelectAll = StartsWithTable() && ExtendedSelectedAll(/*bFootnotes =*/ false);
+@@ -89,12 +91,12 @@ void SwEditShell::DeleteSel( SwPaM& rPam, bool* pUndo )
+     }
+     else
+     {
+-        std::unique_ptr<SwPaM> pNewPam;
++        boost::scoped_ptr<SwPaM> pNewPam;
+         SwPaM * pPam = &rPam;
          if (bSelectAll)
          {
              assert(dynamic_cast<SwShellCrsr*>(&rPam)); // must be corrected pam
@@ -93,7 +108,7 @@ index 9e2c7b2..c5ed1e9 100644
              // want to delete the table node before the first cell as well.
              pNewPam->Start()->nNode = pNewPam->Start()->nNode.GetNode().FindTableNode()->GetIndex();
 diff --git a/sw/source/core/edit/edglss.cxx b/sw/source/core/edit/edglss.cxx
-index 7a17737..084c221 100644
+index 7a17737..230fc83 100644
 --- a/sw/source/core/edit/edglss.cxx
 +++ b/sw/source/core/edit/edglss.cxx
 @@ -235,12 +235,15 @@ bool SwEditShell::_CopySelToDoc( SwDoc* pInsDoc, SwNodeIndex* pSttNd )
@@ -108,11 +123,11 @@ index 7a17737..084c221 100644
                      // but we want to copy the table and the start node before
                      // the first cell as well.
                      aPaM.Start()->nNode = aPaM.Start()->nNode.GetNode().FindTableNode()->GetIndex();
-+                    aPaM.Start()->nContent.Assign(nullptr, 0);
++                    aPaM.Start()->nContent.Assign(0, 0);
 +                }
                  bRet = GetDoc()->CopyRange( aPaM, aPos, false ) || bRet;
              }
  
 -- 
-2.1.0
+2.5.0
 

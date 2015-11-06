@@ -1,4 +1,4 @@
-From 6c1edf136cd358f4488b0c9f16557c5aea36d7c5 Mon Sep 17 00:00:00 2001
+From 4ac417bce7257beae894ac770e20055b1b377d35 Mon Sep 17 00:00:00 2001
 From: Michael Stahl <mstahl@redhat.com>
 Date: Wed, 29 Apr 2015 15:49:46 +0200
 Subject: [PATCH] rhbz#1213173: connectivity: Calc driver: prevent document
@@ -23,10 +23,10 @@ Tested-by: Caolán McNamara <caolanm@redhat.com>
 (cherry picked from commit e8777783db81279a6b0e9cc7b308f10719bd8a7b)
 ---
  connectivity/source/drivers/calc/CConnection.cxx | 10 ++++++++--
- connectivity/source/inc/calc/CConnection.hxx     | 12 +++++++++---
+ connectivity/source/inc/calc/CConnection.hxx     | 13 ++++++++++---
  include/unotools/closeveto.hxx                   |  3 ++-
  unotools/source/misc/closeveto.cxx               | 17 +++++++++--------
- 4 files changed, 28 insertions(+), 14 deletions(-)
+ 4 files changed, 29 insertions(+), 14 deletions(-)
 
 diff --git a/connectivity/source/drivers/calc/CConnection.cxx b/connectivity/source/drivers/calc/CConnection.cxx
 index b81a585..731c4a3 100644
@@ -70,17 +70,19 @@ index b81a585..731c4a3 100644
      OConnection::disposing();
  }
 diff --git a/connectivity/source/inc/calc/CConnection.hxx b/connectivity/source/inc/calc/CConnection.hxx
-index b66d892..d5e7b20 100644
+index b66d892..5ca8aac 100644
 --- a/connectivity/source/inc/calc/CConnection.hxx
 +++ b/connectivity/source/inc/calc/CConnection.hxx
-@@ -23,9 +23,13 @@
+@@ -22,10 +22,15 @@
+ 
  #include "file/FConnection.hxx"
  #include <com/sun/star/uno/DeploymentException.hpp>
++#include <unotools/closeveto.hxx>
  
 -namespace com { namespace sun { namespace star { namespace sheet {
 -    class XSpreadsheetDocument;
 -} } } }
-+#include <boost/interprocess/smart_ptr/unique_ptr.hpp>
++#include <boost/scoped_ptr.hpp>
 +
 +namespace com { namespace sun { namespace star {
 +    namespace sheet { class XSpreadsheetDocument; }
@@ -90,12 +92,12 @@ index b66d892..d5e7b20 100644
  
  
  namespace connectivity
-@@ -37,6 +41,8 @@ namespace connectivity
+@@ -37,6 +42,8 @@ namespace connectivity
          {
              // the spreadsheet document:
              ::com::sun::star::uno::Reference< ::com::sun::star::sheet::XSpreadsheetDocument > m_xDoc;
 +            /// close listener that vetoes so nobody disposes m_xDoc
-+            boost::interprocess::unique_ptr<utl::CloseVeto> m_pCloseListener;
++            boost::scoped_ptr<utl::CloseVeto> m_pCloseListener;
              OUString m_sPassword;
              OUString m_aFileName;
              oslInterlockedCount m_nDocCount;

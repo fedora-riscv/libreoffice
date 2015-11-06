@@ -93,7 +93,7 @@ index 13855e6..3961186 100644
 +                if (nSet == LM_ALWAYS
 +                    && !(SvtSecurityOptions()
 +                         .isTrustedLocationUriForUpdatingLinks(
-+                             GetMedium() == nullptr
++                             GetMedium() == 0
 +                             ? OUString() : GetMedium()->GetName())))
 +                {
 +                    nSet = LM_ON_DEMAND;
@@ -119,7 +119,7 @@ index d42dd9f..6f0e94e 100644
 +            {
 +                SfxMedium * medium = m_rDoc.GetDocShell()->GetMedium();
 +                if (!SvtSecurityOptions().isTrustedLocationUriForUpdatingLinks(
-+                        medium == nullptr ? OUString() : medium->GetName()))
++                        medium == 0 ? OUString() : medium->GetName()))
 +                {
 +                    bAskUpdate = true;
 +                }

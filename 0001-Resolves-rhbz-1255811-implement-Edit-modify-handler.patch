@@ -97,7 +97,7 @@ index 35b72f8..2571dba 100644
 +{
 +    ScRangeList aRangeList;
 +    bool bValid = ParseWithNames( aRangeList, mpInputRangeEdit->GetText(), mpDoc);
-+    const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++    const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +    if (pRange)
 +    {
 +        maInputRange = *pRange;
@@ -171,7 +171,7 @@ index 4c2529b..64acad5 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpInputRangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mInputRange = *pRange;
@@ -187,7 +187,7 @@ index 4c2529b..64acad5 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpOutputRangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mOutputAddress = pRange->aStart;
@@ -281,7 +281,7 @@ index d8e835a..2fb463a 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpInputRangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mInputRange = *pRange;
@@ -297,7 +297,7 @@ index d8e835a..2fb463a 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpOutputRangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mOutputAddress = pRange->aStart;
@@ -389,7 +389,7 @@ index a55da6d..1d47458 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpVariable1RangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mVariable1Range = *pRange;
@@ -405,7 +405,7 @@ index a55da6d..1d47458 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpVariable2RangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mVariable2Range = *pRange;
@@ -421,7 +421,7 @@ index a55da6d..1d47458 100644
 +        {
 +            ScRangeList aRangeList;
 +            bool bValid = ParseWithNames( aRangeList, mpOutputRangeEdit->GetText(), mDocument);
-+            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : nullptr;
++            const ScRange* pRange = (bValid && aRangeList.size() == 1) ? aRangeList[0] : 0;
 +            if (pRange)
 +            {
 +                mOutputAddress = pRange->aStart;

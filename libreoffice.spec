@@ -416,6 +416,10 @@ Patch106: 0001-use-exponential-E-format-for-General-when-appropriat.patch
 Patch107: 0001-tdf-94173-Calc-doesn-t-save-your-own-created-autofor.patch
 Patch108: 0001-xmloff-fix-ODF-import-of-gradient-draw-angle-attribu.patch
 Patch109: 0002-tdf-94804-prefix-to-save-cross-reference-bookmark-fi.patch
+Patch110: 0001-LinkUpdateMode-is-a-global-setting.patch
+Patch111: 0002-coverity-1266485-Untrusted-value-as-argument.patch
+Patch112: 0003-ww8-make-sure-we-don-t-wrap-around.patch
+Patch113: 0004-convert-pStatus-to-vector-and-use-at-to-check-offset.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2391,7 +2395,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Oct 05 2015 Eike Rathke <erack@redhat.com> - 1:4.3.7.2-13-UNBUILT
+* Fri Nov 06 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.3.7.2-13
+- Resolves: rhbz#1278813 CVE-2015-4551
+- Resolves: rhbz#1278821 CVE-2015-5212
+- Resolves: rhbz#1278825 CVE-2015-5213
+- Resolves: rhbz#1278829 CVE-2015-5214
 - fix IterateMatrix for ifPRODUCT and ifSUMSQ
 - use exponential 'E' format for General when appropriate
 - Resolves: tdf#94173: Calc doesn't save your own created autoformat presets

@@ -1661,6 +1661,7 @@ make cmd cmd="install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c
 
 
 %check
+%ifnarch armv7hl
 ulimit -c unlimited
 unset WITH_LANG
 # work around flawed accessibility check
@@ -1670,6 +1671,7 @@ export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
 timeout 2h make smoketest.subsequentcheck
 %else
 timeout -k 5m 3h make smoketest.subsequentcheck
+%endif
 %endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

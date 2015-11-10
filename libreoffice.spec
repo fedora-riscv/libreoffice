@@ -420,6 +420,7 @@ Patch110: 0001-LinkUpdateMode-is-a-global-setting.patch
 Patch111: 0002-coverity-1266485-Untrusted-value-as-argument.patch
 Patch112: 0003-ww8-make-sure-we-don-t-wrap-around.patch
 Patch113: 0004-convert-pStatus-to-vector-and-use-at-to-check-offset.patch
+Patch114: 0001-ppc64-do-not-use-asm-block-to-retrieve-args.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

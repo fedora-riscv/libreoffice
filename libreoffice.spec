@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -342,6 +342,7 @@ Patch33: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
 Patch34: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 Patch35: 0001-tdf-94936-Update-the-button-removal-hack-to-3.18.patch
 Patch36: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
+Patch37: 0001-Resolves-rhbz-1278885-gtk3-allocated-size-doesn-t-ma.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2462,6 +2463,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
+- Resolves: rhbz#1278885 gtk3 allocated size doesn't match configure event size
+
 * Thu Nov 05 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.2-4
 - Related: rhbz#1276061 build failure on ppc64
 

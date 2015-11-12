@@ -2463,7 +2463,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 23 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
+* Thu Nov 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
 - Resolves: rhbz#1278885 gtk3 allocated size doesn't match configure event size
 
 * Thu Nov 05 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.2-4

@@ -1,4 +1,4 @@
-From 04bfcf97a642f9707bc16a0378390bcb93cbee43 Mon Sep 17 00:00:00 2001
+From f46860e84df8548daa12f180f27deef7a1d708d3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 13 Nov 2015 09:56:01 +0000
 Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
@@ -12,14 +12,19 @@ Related: tdf#95682 set edit to modified after insert symbol/paste
 
 Change-Id: If5892931649bde3d1fc00c0e5817149d0623cb1e
 (cherry picked from commit de0a391137080a18e73f315b6dc5342b5b078574)
+
+clear VclPtr warning
+
+Change-Id: I13f08989034a656bc6f0ae6b556272802f4b8fc2
+(cherry picked from commit 9c7d3345b02bcf69f28bdbc956a7cedaabe894a0)
 ---
- cui/source/dialogs/SpellDialog.cxx |  49 +++++++++++--
- cui/source/inc/SpellDialog.hxx     |   7 ++
+ cui/source/dialogs/SpellDialog.cxx |  54 ++++++++++++--
+ cui/source/inc/SpellDialog.hxx     |   8 +++
  cui/uiconfig/ui/spellingdialog.ui  | 143 ++++++++++++++++++++-----------------
- 3 files changed, 129 insertions(+), 70 deletions(-)
+ 3 files changed, 135 insertions(+), 70 deletions(-)
 
 diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
-index f8952df..bc9737e 100644
+index f8952df..7f09b7f 100644
 --- a/cui/source/dialogs/SpellDialog.cxx
 +++ b/cui/source/dialogs/SpellDialog.cxx
 @@ -222,6 +222,8 @@ SpellDialog::SpellDialog(SpellDialogChildWindow* pChildWindow,
@@ -65,7 +70,19 @@ index f8952df..bc9737e 100644
      SetUpdateMode( false );
      //show or hide AutoCorrect depending on the modules abilities
      m_pAutoCorrPB->Show(rParent.HasAutoCorrection());
-@@ -1559,9 +1559,50 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
+@@ -1219,6 +1219,11 @@ SentenceEditWindow_Impl::SentenceEditWindow_Impl(vcl::Window * pParent, WinBits
+     DisableSelectionOnFocus();
+ }
+ 
++SentenceEditWindow_Impl::~SentenceEditWindow_Impl()
++{
++    disposeOnce();
++}
++
+ VCL_BUILDER_DECL_FACTORY(SentenceEditWindow)
+ {
+     (void)rMap;
+@@ -1559,9 +1564,50 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
          else
              bChange = false;
      }
@@ -117,7 +134,7 @@ index f8952df..bc9737e 100644
  bool SentenceEditWindow_Impl::MarkNextError( bool bIgnoreCurrentError, com::sun::star::uno::Reference<com::sun::star::linguistic2::XSpellChecker1> xSpell )
  {
 diff --git a/cui/source/inc/SpellDialog.hxx b/cui/source/inc/SpellDialog.hxx
-index 38a08cf..4146b68 100644
+index 38a08cf..543581c 100644
 --- a/cui/source/inc/SpellDialog.hxx
 +++ b/cui/source/inc/SpellDialog.hxx
 @@ -29,6 +29,7 @@
@@ -136,7 +153,7 @@ index 38a08cf..4146b68 100644
      sal_uInt16          m_nErrorStart;
      sal_uInt16          m_nErrorEnd;
      bool            m_bIsUndoEditMode;
-@@ -71,6 +73,8 @@ private:
+@@ -71,13 +73,17 @@ private:
      void            CallModifyLink() {m_aModifyLink.Call(this);}
  
      inline SpellDialog* GetSpellDialog() const;
@@ -145,15 +162,16 @@ index 38a08cf..4146b68 100644
  protected:
      virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
  
-@@ -78,6 +82,7 @@ public:
+ public:
      SentenceEditWindow_Impl(vcl::Window* pParent, WinBits nBits);
++    ~SentenceEditWindow_Impl();
  
      void            SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE { m_aModifyLink = rLink;}
 +    void            Init(VclPtr<ToolBox> &rToolbar);
  
      void            SetAttrib( const TextAttrib& rAttr, sal_uLong nPara, sal_uInt16 nStart, sal_uInt16 nEnd );
      void            SetText( const OUString& rStr ) SAL_OVERRIDE;
-@@ -96,6 +101,7 @@ public:
+@@ -96,6 +102,7 @@ public:
  
      void            ResetModified()   { GetTextEngine()->SetModified(false); m_bIsUndoEditMode = false;}
      virtual bool    IsModified() const SAL_OVERRIDE { return GetTextEngine()->IsModified(); }
@@ -161,7 +179,7 @@ index 38a08cf..4146b68 100644
  
      bool            IsUndoEditMode() const { return m_bIsUndoEditMode;}
      void            SetUndoEditMode(bool bSet);
-@@ -151,6 +157,7 @@ private:
+@@ -151,6 +158,7 @@ private:
      VclPtr<PushButton>     m_pOptionsPB;
      VclPtr<PushButton>     m_pUndoPB;
      VclPtr<CloseButton>    m_pClosePB;

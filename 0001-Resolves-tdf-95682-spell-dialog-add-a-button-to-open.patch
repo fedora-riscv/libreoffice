@@ -1,4 +1,4 @@
-From 19d79e867f05fdfac6624d3c84091656c9eb1cac Mon Sep 17 00:00:00 2001
+From 04bfcf97a642f9707bc16a0378390bcb93cbee43 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 13 Nov 2015 09:56:01 +0000
 Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
@@ -7,14 +7,19 @@ Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
 (cherry picked from commit b08b76774fbd253cba587207d471f9bf0c0b0a82)
 
 Change-Id: I0d070dee9e940b93b294c6b2de180005a5c2248e
+
+Related: tdf#95682 set edit to modified after insert symbol/paste
+
+Change-Id: If5892931649bde3d1fc00c0e5817149d0623cb1e
+(cherry picked from commit de0a391137080a18e73f315b6dc5342b5b078574)
 ---
- cui/source/dialogs/SpellDialog.cxx |  43 +++++++++--
+ cui/source/dialogs/SpellDialog.cxx |  49 +++++++++++--
  cui/source/inc/SpellDialog.hxx     |   7 ++
  cui/uiconfig/ui/spellingdialog.ui  | 143 ++++++++++++++++++++-----------------
- 3 files changed, 123 insertions(+), 70 deletions(-)
+ 3 files changed, 129 insertions(+), 70 deletions(-)
 
 diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
-index f8952df..8d3ce58 100644
+index f8952df..bc9737e 100644
 --- a/cui/source/dialogs/SpellDialog.cxx
 +++ b/cui/source/dialogs/SpellDialog.cxx
 @@ -222,6 +222,8 @@ SpellDialog::SpellDialog(SpellDialogChildWindow* pChildWindow,
@@ -60,7 +65,7 @@ index f8952df..8d3ce58 100644
      SetUpdateMode( false );
      //show or hide AutoCorrect depending on the modules abilities
      m_pAutoCorrPB->Show(rParent.HasAutoCorrection());
-@@ -1559,9 +1559,44 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
+@@ -1559,9 +1559,50 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
          else
              bChange = false;
      }
@@ -85,14 +90,20 @@ index f8952df..8d3ce58 100644
 +{
 +    const sal_uInt16 nCurItemId = m_xToolbar->GetCurItemId();
 +    if (nCurItemId == m_xToolbar->GetItemId("paste"))
++    {
 +        Paste();
++        CallModifyLink();
++    }
 +    else if (nCurItemId == m_xToolbar->GetItemId("insert"))
 +    {
 +        if (Edit::GetGetSpecialCharsFunction())
 +        {
 +            OUString aChars = Edit::GetGetSpecialCharsFunction()( this, GetFont() );
 +            if (!aChars.isEmpty())
++            {
 +                ReplaceSelected(aChars);
++                CallModifyLink();
++            }
 +        }
 +    }
 +}

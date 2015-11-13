@@ -1,0 +1,438 @@
+From b099ff5ce086c641897c23f5ba5e02ee8afbd3bf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 13 Nov 2015 09:56:01 +0000
+Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
+ special character
+
+(cherry picked from commit b08b76774fbd253cba587207d471f9bf0c0b0a82)
+
+Change-Id: I0d070dee9e940b93b294c6b2de180005a5c2248e
+---
+ cui/source/dialogs/SpellDialog.cxx |  39 ++++++++--
+ cui/source/inc/SpellDialog.hxx     |   5 ++
+ cui/uiconfig/ui/spellingdialog.ui  | 143 ++++++++++++++++++++-----------------
+ 3 files changed, 115 insertions(+), 72 deletions(-)
+
+diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
+index 745fbd0..e021809 100644
+--- a/cui/source/dialogs/SpellDialog.cxx
++++ b/cui/source/dialogs/SpellDialog.cxx
+@@ -220,6 +220,8 @@ SpellDialog::SpellDialog(SpellDialogChildWindow* pChildWindow,
+     get(m_pOptionsPB, "options");
+     get(m_pUndoPB, "undo");
+     get(m_pClosePB, "close");
++    get(m_pToolbar, "toolbar");
++    m_pSentenceED->Init(m_pToolbar);
+     xSpell = LinguMgr::GetSpellChecker();
+     pImpl = new SpellDialog_Impl;
+ 
+@@ -241,8 +243,6 @@ SpellDialog::SpellDialog(SpellDialogChildWindow* pChildWindow,
+                         this, SpellDialog, InitHdl ) );
+ }
+ 
+-
+-
+ SpellDialog::~SpellDialog()
+ {
+     // save possibly modified user-dictionaries
+@@ -255,8 +255,6 @@ SpellDialog::~SpellDialog()
+     delete pImpl;
+ }
+ 
+-
+-
+ void SpellDialog::Init_Impl()
+ {
+     // initialize handler
+@@ -290,8 +288,6 @@ void SpellDialog::Init_Impl()
+     SvxGetChangeAllList()->clear();
+ }
+ 
+-
+-
+ void SpellDialog::UpdateBoxes_Impl()
+ {
+     sal_Int32 i;
+@@ -415,6 +411,7 @@ void SpellDialog::SpellContinue_Impl(bool bUseSavedSentence, bool bIgnoreCurrent
+  */
+ IMPL_STATIC_LINK( SpellDialog, InitHdl, SpellDialog *, EMPTYARG )
+ {
++    pThis->m_pToolbar->Disable();
+     pThis->SetUpdateMode( false );
+     //show or hide AutoCorrect depending on the modules abilities
+     pThis->m_pAutoCorrPB->Show(pThis->rParent.HasAutoCorrection());
+@@ -1535,9 +1532,39 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
+         else
+             bChange = false;
+     }
++    else if (rNEvt.GetType() == EVENT_GETFOCUS)
++    {
++        m_pToolbar->Enable();
++    }
++    else if(rNEvt.GetType() == EVENT_LOSEFOCUS)
++    {
++        m_pToolbar->Disable();
++    }
+     return bChange || VclMultiLineEdit::PreNotify(rNEvt);
+ }
+ 
++void SentenceEditWindow_Impl::Init(ToolBox* pToolbar)
++{
++    m_pToolbar = pToolbar;
++    m_pToolbar->SetSelectHdl(LINK(this,SentenceEditWindow_Impl,ToolbarHdl));
++}
++
++IMPL_LINK(SentenceEditWindow_Impl, ToolbarHdl, ToolBox *, pToolbar)
++{
++    const sal_uInt16 nCurItemId = pToolbar->GetCurItemId();
++    if (nCurItemId == pToolbar->GetItemId("paste"))
++        Paste();
++    else if (nCurItemId == pToolbar->GetItemId("insert"))
++    {
++        if (Edit::GetGetSpecialCharsFunction())
++        {
++            OUString aChars = Edit::GetGetSpecialCharsFunction()( this, GetFont() );
++            if (!aChars.isEmpty())
++                ReplaceSelected(aChars);
++        }
++    }
++    return 0;
++}
+ 
+ bool SentenceEditWindow_Impl::MarkNextError( bool bIgnoreCurrentError, com::sun::star::uno::Reference<com::sun::star::linguistic2::XSpellChecker1> xSpell )
+ {
+diff --git a/cui/source/inc/SpellDialog.hxx b/cui/source/inc/SpellDialog.hxx
+index 5bbe67a..c11b916 100644
+--- a/cui/source/inc/SpellDialog.hxx
++++ b/cui/source/inc/SpellDialog.hxx
+@@ -29,6 +29,7 @@
+ #include <vcl/group.hxx>
+ #include <vcl/decoview.hxx>
+ #include <vcl/image.hxx>
++#include <vcl/toolbox.hxx>
+ #include <com/sun/star/uno/Reference.hxx>
+ 
+ 
+@@ -62,6 +63,7 @@ class SentenceEditWindow_Impl : public VclMultiLineEdit
+ 
+ private:
+     std::set< sal_uInt16 >      m_aIgnoreErrorsAt;
++    ToolBox*        m_pToolbar;
+     sal_uInt16          m_nErrorStart;
+     sal_uInt16          m_nErrorEnd;
+     bool            m_bIsUndoEditMode;
+@@ -71,6 +73,7 @@ private:
+     void            CallModifyLink() {m_aModifyLink.Call(this);}
+ 
+     SpellDialog*    GetSpellDialog() const {return (SpellDialog*)GetParentDialog();}
++    DECL_LINK(ToolbarHdl, ToolBox*);
+ protected:
+     virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+ 
+@@ -78,6 +81,7 @@ public:
+     SentenceEditWindow_Impl(vcl::Window* pParent, WinBits nBits);
+     virtual ~SentenceEditWindow_Impl();
+ 
++    void            Init(ToolBox *pToolbar);
+     void            SetModifyHdl(const Link& rLink) SAL_OVERRIDE { m_aModifyLink = rLink;}
+ 
+     void            SetAttrib( const TextAttrib& rAttr, sal_uLong nPara, sal_uInt16 nStart, sal_uInt16 nEnd );
+@@ -152,6 +156,7 @@ private:
+     PushButton*     m_pOptionsPB;
+     PushButton*     m_pUndoPB;
+     CloseButton*    m_pClosePB;
++    ToolBox*        m_pToolbar;
+ 
+     OUString        m_sResumeST;
+     OUString        m_sIgnoreOnceST;
+diff --git a/cui/uiconfig/ui/spellingdialog.ui b/cui/uiconfig/ui/spellingdialog.ui
+index 5d89284..94b5307 100644
+--- a/cui/uiconfig/ui/spellingdialog.ui
++++ b/cui/uiconfig/ui/spellingdialog.ui
+@@ -1,8 +1,8 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!-- Generated with glade 3.16.1 -->
++<!-- Generated with glade 3.19.0 -->
+ <interface>
+   <requires lib="gtk+" version="3.0"/>
+-  <!-- interface-requires LibreOffice 1.0 -->
++  <requires lib="LibreOffice" version="1.0"/>
+   <object class="GtkDialog" id="SpellingDialog">
+     <property name="can_focus">False</property>
+     <property name="border_width">6</property>
+@@ -103,24 +103,6 @@
+               <packing>
+                 <property name="left_attach">1</property>
+                 <property name="top_attach">0</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkLabel" id="notindictft">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="xalign">0</property>
+-                <property name="label" translatable="yes">_Not in dictionary</property>
+-                <property name="use_underline">True</property>
+-                <property name="mnemonic_widget">sentence</property>
+-              </object>
+-              <packing>
+-                <property name="left_attach">0</property>
+-                <property name="top_attach">2</property>
+-                <property name="width">3</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -135,8 +117,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">3</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -154,22 +134,6 @@
+               </packing>
+             </child>
+             <child>
+-              <object class="GtkLabel" id="suggestionsft">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="xalign">0</property>
+-                <property name="label" translatable="yes">_Suggestions</property>
+-                <property name="use_underline">True</property>
+-                <property name="mnemonic_widget">suggestionslb</property>
+-              </object>
+-              <packing>
+-                <property name="left_attach">0</property>
+-                <property name="top_attach">8</property>
+-                <property name="width">3</property>
+-                <property name="height">1</property>
+-              </packing>
+-            </child>
+-            <child>
+               <object class="GtkButton" id="change">
+                 <property name="label" translatable="yes">Co_rrect</property>
+                 <property name="visible">True</property>
+@@ -181,8 +145,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">9</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -197,8 +159,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">10</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -213,8 +173,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">11</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -231,7 +189,6 @@
+                 <property name="left_attach">0</property>
+                 <property name="top_attach">12</property>
+                 <property name="width">3</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -246,8 +203,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">4</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -262,39 +217,34 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">5</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+               <object class="GtkLabel" id="languageft">
+                 <property name="visible">True</property>
+                 <property name="can_focus">False</property>
+-                <property name="xalign">0</property>
+                 <property name="label" translatable="yes">Text languag_e:</property>
+                 <property name="use_underline">True</property>
+                 <property name="mnemonic_widget">languagelb</property>
++                <property name="xalign">0</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+                 <property name="top_attach">0</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+               <object class="GtkLabel" id="explain">
+                 <property name="can_focus">False</property>
+                 <property name="no_show_all">True</property>
+-                <property name="xalign">0</property>
+                 <property name="use_underline">True</property>
+                 <property name="wrap">True</property>
++                <property name="xalign">0</property>
+               </object>
+               <packing>
+                 <property name="left_attach">0</property>
+                 <property name="top_attach">1</property>
+                 <property name="width">2</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -309,8 +259,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">1</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -323,8 +271,6 @@
+               <packing>
+                 <property name="left_attach">0</property>
+                 <property name="top_attach">13</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -337,8 +283,6 @@
+               <packing>
+                 <property name="left_attach">1</property>
+                 <property name="top_attach">13</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -351,8 +295,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">13</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -384,8 +326,6 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">6</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
+@@ -400,11 +340,82 @@
+               <packing>
+                 <property name="left_attach">2</property>
+                 <property name="top_attach">7</property>
+-                <property name="width">1</property>
+-                <property name="height">1</property>
+               </packing>
+             </child>
+             <child>
++              <object class="GtkLabel" id="suggestionsft">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="label" translatable="yes">_Suggestions</property>
++                <property name="use_underline">True</property>
++                <property name="mnemonic_widget">suggestionslb</property>
++                <property name="xalign">0</property>
++              </object>
++              <packing>
++                <property name="left_attach">0</property>
++                <property name="top_attach">8</property>
++                <property name="width">3</property>
++              </packing>
++            </child>
++            <child>
++              <object class="GtkLabel" id="notindictft">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="hexpand">True</property>
++                <property name="label" translatable="yes">_Not in dictionary</property>
++                <property name="use_underline">True</property>
++                <property name="mnemonic_widget">sentence</property>
++                <property name="xalign">0</property>
++              </object>
++              <packing>
++                <property name="left_attach">0</property>
++                <property name="top_attach">2</property>
++              </packing>
++            </child>
++            <child>
++              <object class="GtkToolbar" id="toolbar">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="halign">end</property>
++                <property name="toolbar_style">icons</property>
++                <child>
++                  <object class="GtkToolButton" id="paste">
++                    <property name="visible">True</property>
++                    <property name="can_focus">False</property>
++                    <property name="action_name">paste</property>
++                    <property name="label" translatable="yes">Paste</property>
++                    <property name="use_underline">True</property>
++                    <property name="icon_name">cmd/sc_paste.png</property>
++                  </object>
++                  <packing>
++                    <property name="expand">False</property>
++                    <property name="homogeneous">True</property>
++                  </packing>
++                </child>
++                <child>
++                  <object class="GtkToolButton" id="insert">
++                    <property name="visible">True</property>
++                    <property name="can_focus">False</property>
++                    <property name="action_name">insert</property>
++                    <property name="label" translatable="yes">Special Character</property>
++                    <property name="use_underline">True</property>
++                    <property name="icon_name">cmd/sc_insertsymbol.png</property>
++                  </object>
++                  <packing>
++                    <property name="expand">False</property>
++                    <property name="homogeneous">True</property>
++                  </packing>
++                </child>
++              </object>
++              <packing>
++                <property name="left_attach">1</property>
++                <property name="top_attach">2</property>
++              </packing>
++            </child>
++            <child>
++              <placeholder/>
++            </child>
++            <child>
+               <placeholder/>
+             </child>
+           </object>
+-- 
+2.5.0
+

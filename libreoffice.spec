@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -365,6 +365,7 @@ Patch46: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 Patch47: 0001-afl-eventtesting-crash-on-undoing-insert-new-page-in.patch
 Patch48: 0001-tdf-94871-sw-fix-a-frame-formatting-regression-that-.patch
 Patch49: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
+Patch50: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2424,6 +2425,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.2-3
+- Resolves: tdf#95682 add insert special character to spelling dialog
+
 * Thu Nov 05 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.2-2
 - Resolves: tdf#95210 SetHandleControllerPosition is busted
 

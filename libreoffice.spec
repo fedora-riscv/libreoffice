@@ -345,6 +345,7 @@ Patch36: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
 Patch37: 0001-Resolves-rhbz-1278885-gtk3-allocated-size-doesn-t-ma.patch
 Patch38: 0001-Resolves-tdf-93847-gtk3-paint-blocking-is-unnecessar.patch
 Patch39: 0001-Resolves-tdf-93317-Modified-Document-Dialog-misses-f.patch
+Patch40: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2465,10 +2466,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 12 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
+* Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
 - Resolves: rhbz#1278885 gtk3 allocated size doesn't match configure event size
 - Resolves: tdf#93847 gtk3 repaint problems
 - Resolves: tdf#93317 gtk3 Modified Document Dialog from alt+f4 doesn't get focus
+- Resolves: tdf#95682 add insert symbol button to spell checking dialog
 
 * Thu Nov 05 2015 David Tardon <dtardon@redhat.com> - 1:5.0.3.2-4
 - Related: rhbz#1276061 build failure on ppc64

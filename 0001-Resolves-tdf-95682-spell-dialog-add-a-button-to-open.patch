@@ -1,4 +1,4 @@
-From b099ff5ce086c641897c23f5ba5e02ee8afbd3bf Mon Sep 17 00:00:00 2001
+From 61c2e1eb0c5c79fe8a1fae4f366a2d86540f86e1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 13 Nov 2015 09:56:01 +0000
 Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
@@ -8,13 +8,13 @@ Subject: [PATCH] Resolves: tdf#95682 spell dialog: add a button to open
 
 Change-Id: I0d070dee9e940b93b294c6b2de180005a5c2248e
 ---
- cui/source/dialogs/SpellDialog.cxx |  39 ++++++++--
+ cui/source/dialogs/SpellDialog.cxx |  45 ++++++++++--
  cui/source/inc/SpellDialog.hxx     |   5 ++
  cui/uiconfig/ui/spellingdialog.ui  | 143 ++++++++++++++++++++-----------------
- 3 files changed, 115 insertions(+), 72 deletions(-)
+ 3 files changed, 121 insertions(+), 72 deletions(-)
 
 diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
-index 745fbd0..e021809 100644
+index 745fbd0..2320324 100644
 --- a/cui/source/dialogs/SpellDialog.cxx
 +++ b/cui/source/dialogs/SpellDialog.cxx
 @@ -220,6 +220,8 @@ SpellDialog::SpellDialog(SpellDialogChildWindow* pChildWindow,
@@ -61,7 +61,7 @@ index 745fbd0..e021809 100644
      pThis->SetUpdateMode( false );
      //show or hide AutoCorrect depending on the modules abilities
      pThis->m_pAutoCorrPB->Show(pThis->rParent.HasAutoCorrection());
-@@ -1535,9 +1532,39 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
+@@ -1535,9 +1532,45 @@ bool SentenceEditWindow_Impl::PreNotify( NotifyEvent& rNEvt )
          else
              bChange = false;
      }
@@ -86,14 +86,20 @@ index 745fbd0..e021809 100644
 +{
 +    const sal_uInt16 nCurItemId = pToolbar->GetCurItemId();
 +    if (nCurItemId == pToolbar->GetItemId("paste"))
++    {
 +        Paste();
++        CallModifyLink();
++    }
 +    else if (nCurItemId == pToolbar->GetItemId("insert"))
 +    {
 +        if (Edit::GetGetSpecialCharsFunction())
 +        {
 +            OUString aChars = Edit::GetGetSpecialCharsFunction()( this, GetFont() );
 +            if (!aChars.isEmpty())
++            {
 +                ReplaceSelected(aChars);
++                CallModifyLink();
++            }
 +        }
 +    }
 +    return 0;

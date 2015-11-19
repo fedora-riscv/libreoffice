@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -346,6 +346,7 @@ Patch37: 0001-Resolves-rhbz-1278885-gtk3-allocated-size-doesn-t-ma.patch
 Patch38: 0001-Resolves-tdf-93847-gtk3-paint-blocking-is-unnecessar.patch
 Patch39: 0001-Resolves-tdf-93317-Modified-Document-Dialog-misses-f.patch
 Patch40: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
+Patch41: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2466,6 +2467,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-6.UNBUILT
+- Incredible slowness and crashes with specific odt document with duped frames
+
 * Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
 - Resolves: rhbz#1278885 gtk3 allocated size doesn't match configure event size
 - Resolves: tdf#93847 gtk3 repaint problems

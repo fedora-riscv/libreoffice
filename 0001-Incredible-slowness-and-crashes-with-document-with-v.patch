@@ -1,0 +1,55 @@
+From 282340e1e7b9e847c2de9873b038417d0904f9b0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 11 Nov 2015 13:34:43 +0000
+Subject: [PATCH] Incredible slowness and crashes with document with vast num
+ of frame dups
+
+it looks like draw:name values are supposed to be unique in ODF, even
+if it's not spelled out explicitly, since it exists so the frame can be
+referenced, which sort of implies that it has to be unique, so a
+document where the values aren't unique can be considered invalid
+
+    19.197.10 <draw:frame>
+    The draw:name attribute specifies a name by which a <draw:frame>
+element can be referenced.
+
+So reject duplicate frames
+
+Change-Id: I83f6d72fd969f667f0a8c2c85d2ffeeed672387a
+(cherry picked from commit de0432a9256188c7b5cd1a83858311e68c890ebf)
+---
+ xmloff/source/text/XMLTextFrameContext.cxx | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/xmloff/source/text/XMLTextFrameContext.cxx b/xmloff/source/text/XMLTextFrameContext.cxx
+index baf62f6..99747df 100644
+--- a/xmloff/source/text/XMLTextFrameContext.cxx
++++ b/xmloff/source/text/XMLTextFrameContext.cxx
+@@ -593,6 +593,7 @@ void XMLTextFrameContext_Impl::Create( bool /*bHRefOrBase64*/ )
+             (!sName.isEmpty() && sOrigName != sName) )
+         {
+             OUString sOldName( sName );
++
+             sal_Int32 i = 0;
+             while( xTextImportHelper->HasFrameByName( sName ) )
+             {
+@@ -601,8 +602,15 @@ void XMLTextFrameContext_Impl::Create( bool /*bHRefOrBase64*/ )
+             }
+             xNamed->setName( sName );
+             if( sName != sOldName )
+-                xTextImportHelper->GetRenameMap().Add( XML_TEXT_RENAME_TYPE_FRAME,
++            {
++                bool bSuccess = xTextImportHelper->GetRenameMap().Add( XML_TEXT_RENAME_TYPE_FRAME,
+                                              sOldName, sName );
++                if (!bSuccess)
++                {
++                    bCreateFailed = true;
++                    return;
++                }
++            }
+         }
+     }
+ 
+-- 
+2.5.0
+

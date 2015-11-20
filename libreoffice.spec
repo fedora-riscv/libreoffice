@@ -347,6 +347,7 @@ Patch38: 0001-Resolves-tdf-93847-gtk3-paint-blocking-is-unnecessar.patch
 Patch39: 0001-Resolves-tdf-93317-Modified-Document-Dialog-misses-f.patch
 Patch40: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 Patch41: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
+Patch42: 0001-Resolves-tdf-92687-implement-drawPolyPolygon-via-cai.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2467,8 +2468,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-6.UNBUILT
+* Fri Nov 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-6
 - Incredible slowness and crashes with specific odt document with duped frames
+- tdf#92687 implement drawPolyPolygon via cairo to get non-horrible rotated gtk3 text
 
 * Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-5
 - Resolves: rhbz#1278885 gtk3 allocated size doesn't match configure event size

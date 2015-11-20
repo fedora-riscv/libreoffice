@@ -2426,16 +2426,16 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.2-4
+* Thu Nov 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.3-4
 - Incredible slowness and crashes with odt document with multiple bogus frames
 
-* Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.2-3
+* Fri Nov 13 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.3-3
 - Resolves: tdf#95682 add insert special character to spelling dialog
 
-* Thu Nov 05 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.2-2
+* Thu Nov 05 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.3-2
 - Resolves: tdf#95210 SetHandleControllerPosition is busted
 
-* Fri Oct 30 2015 David Tardon <dtardon@redhat.com> - 1:4.4.6.2-1
+* Fri Oct 30 2015 David Tardon <dtardon@redhat.com> - 1:4.4.6.3-1
 - update to 4.4.6
 - Resolves: tdf#94871 Writer frame formatting regression that affects help
 

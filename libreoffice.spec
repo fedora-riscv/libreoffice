@@ -1188,6 +1188,9 @@ sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
 sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk
 git commit -q -a -m 'temporarily disable failing tests'
 
+git mv writerperfect/qa/unit/data/impress/libetonyek/fail/v6.zip writerperfect/qa/unit/data/impress/libetonyek/pass/v6.zip
+git commit -am 'update for libetonyek 0.1.4'
+
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm

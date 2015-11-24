@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -367,6 +367,7 @@ Patch48: 0001-tdf-94871-sw-fix-a-frame-formatting-regression-that-.patch
 Patch49: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
 Patch50: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 Patch51: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
+Patch52: 0001-Resolves-tdf-89907-do-not-modify-original-ScViewData.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2426,6 +2427,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Nov 24 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.3-6
+- Resolves: tdf#89907 text to columns only affects first line
+
 * Fri Nov 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.6.3-5
 - bump n-v-r
 

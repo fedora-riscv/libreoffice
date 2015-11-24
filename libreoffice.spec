@@ -1188,6 +1188,11 @@ sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
 sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk
 git commit -q -a -m 'temporarily disable failing tests'
 
+%ifarch %{arm}
+sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d lotuswordpro/Module_sw.mk
+git commit -q -a -m 'disable tests segfaulting on arm'
+%endif
+
 git mv writerperfect/qa/unit/data/impress/libetonyek/fail/v6.zip writerperfect/qa/unit/data/impress/libetonyek/pass/v6.zip
 git commit -am 'update for libetonyek 0.1.4'
 

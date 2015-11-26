@@ -3,7 +3,9 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .alpha1
+%define libo_prerelease .beta1
+# Should contain any postfix of release tarball name, e.g., -buildfix1.
+%define libo_src_postfix -buildfix1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -53,14 +55,14 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
 
-Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}.tar.xz
-Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}.tar.xz
-Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}.tar.xz
+Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
+Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
+Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
 Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
@@ -91,10 +93,10 @@ Source18:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.t
 Source19:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
 Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
 Source21:       %{external_url}/lcms2-2.6.tar.gz
-Source22:       %{external_url}/80d063d6db4c010e18c606af8aed6231-liblangtag-0.5.7.tar.bz2
+Source22:       %{external_url}/aa899eff126216dafe721149fbdb511b-liblangtag-0.5.8.tar.bz2
 Source23:       %{external_url}/boost_1_59_0.tar.bz2
 Source24:       %{external_url}/harfbuzz-0.9.40.tar.bz2
-Source25:       %{external_url}/language-subtag-registry-2015-06-08.tar.bz2
+Source25:       %{external_url}/language-subtag-registry-2015-08-04.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
 %endif
 Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
@@ -104,9 +106,9 @@ Source29:       %{external_url}/libwpd-0.10.0.tar.bz2
 Source30:       %{external_url}/libwps-0.4.2.tar.bz2
 Source31:       %{external_url}/libvisio-0.1.3.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
-Source33:       %{external_url}/libodfgen-0.1.4.tar.bz2
+Source33:       %{external_url}/libodfgen-0.1.5.tar.bz2
 Source34:       %{external_url}/libmwaw-0.3.6.tar.bz2
-Source35:       %{external_url}/libetonyek-0.1.3.tar.bz2
+Source35:       %{external_url}/libetonyek-0.1.4.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
@@ -313,8 +315,6 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch17: 0001-use-far-simpler-size-group.patch
-Patch18: 0001-prepare-to-enable-build-with-ICU-56.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1145,7 +1145,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
+%setup -q -n %{name}-%{version}%{?libo_prerelease}%{?libo_src_postfix} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 
 # set up git repo
@@ -1192,9 +1192,6 @@ git commit -q -a -m 'temporarily disable failing tests'
 sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d sw/Module_sw.mk
 git commit -q -a -m 'disable tests segfaulting on arm'
 %endif
-
-git mv writerperfect/qa/unit/data/impress/libetonyek/fail/v6.zip writerperfect/qa/unit/data/impress/libetonyek/pass/v6.zip
-git commit -am 'update for libetonyek 0.1.4'
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
@@ -2445,6 +2442,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Nov 26 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-7.beta1
+- update to 5.1.0 beta1
+
 * Tue Nov 10 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:5.1.0.0-6.alpha1
 - Rebuilt for https://fedoraproject.org/wiki/Changes/python3.5
 

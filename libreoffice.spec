@@ -4,8 +4,8 @@
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
 %define libo_prerelease .beta1
-# Should contain any postfix of release tarball name, e.g., -buildfix1.
-%define libo_src_postfix -buildfix1
+# Should contain any suffix of release tarball name, e.g., -buildfix1.
+%define libo_buildfix -buildfix1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -60,9 +60,9 @@ License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
 
-Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
-Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
-Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_src_postfix}.tar.xz
+Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
+Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
+Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
 Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip

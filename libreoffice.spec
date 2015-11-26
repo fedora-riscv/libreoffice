@@ -1145,7 +1145,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease}%{?libo_src_postfix} -b 1 -b 2
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 
 # set up git repo

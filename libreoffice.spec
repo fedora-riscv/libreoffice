@@ -1904,6 +1904,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucpcmis1lo.so
 %{baseinstdir}/program/libucpexpand1lo.so
 %{baseinstdir}/program/libucpextlo.so
+%{baseinstdir}/program/libucpimagelo.so
 %{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/lounorc
 %{baseinstdir}/program/libupdatefeedlo.so
@@ -2155,9 +2156,17 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files ogltrans
 %{baseinstdir}/program/libOGLTranslo.so
+%{baseinstdir}/program/opengl/basicFragmentShader.glsl
 %{baseinstdir}/program/opengl/basicVertexShader.glsl
 %{baseinstdir}/program/opengl/dissolveFragmentShader.glsl
+%{baseinstdir}/program/opengl/fadeBlackFragmentShader.glsl
+%{baseinstdir}/program/opengl/fadeFragmentShader.glsl
+%{baseinstdir}/program/opengl/rippleFragmentShader.glsl
+%{baseinstdir}/program/opengl/reflectionFragmentShader.glsl
+%{baseinstdir}/program/opengl/reflectionVertexShader.glsl
 %{baseinstdir}/program/opengl/staticFragmentShader.glsl
+%{baseinstdir}/program/opengl/vortexFragmentShader.glsl
+%{baseinstdir}/program/opengl/vortexVertexShader.glsl
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 

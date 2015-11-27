@@ -1,0 +1,112 @@
+From 174e8fa6803799b30c1db2c44115eb88f2ae4181 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 27 Nov 2015 16:10:10 +0000
+Subject: [PATCH] Resolves: rhbz#1283426 using vdevs based on now dead physical
+ devs is unsafe
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is the same problem that
+
+commit 133e04fc1a870c0aad207e82eefeeeceaba5dc6d
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Wed Jun 17 09:23:32 2015 +0100
+
+    Resolves: tdf#91880 Invalidate graphics when the gtk window is destroyed
+
+    not just when the GtkSalFrame is dtored
+
+tried to fix, but that just made it more unlikely to fail
+
+(cherry picked from commit 26c32cfee9fc9a769adba19f455e4d6c13b6d89d)
+(cherry picked from commit aab8bed7c0c0cf4d72af7d8a9d84316280887417)
+
+Change-Id: Icba750c787adb6cd5c5ed0874ef07e6201c4cf25
+---
+ .../source/processor2d/vclhelperbufferdevice.cxx   | 33 ++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
+
+diff --git a/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx b/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
+index 93919c0..ba55f41 100644
+--- a/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
++++ b/drawinglayer/source/processor2d/vclhelperbufferdevice.cxx
+@@ -43,6 +43,11 @@ namespace
+         // allocated/used buffers (remembered to allow deleting them in destructor)
+         aBuffers            maUsedBuffers;
+ 
++        // remember what outputdevice was the template passed to VirtualDevice::Create
++        // so we can test if that OutputDevice was disposed before reusing a
++        // virtualdevice because that isn't safe to do at least for Gtk2
++        std::map< VclPtr<VirtualDevice>, VclPtr<OutputDevice> > maDeviceTemplates;
++
+     public:
+         VDevBuffer();
+         virtual ~VDevBuffer();
+@@ -88,14 +93,14 @@ namespace
+         if (nBits == 0)
+             nBits = rOutDev.GetBitCount();
+ 
++        bool bOkay(false);
+         if(!maFreeBuffers.empty())
+         {
+-            bool bOkay(false);
+             aBuffers::iterator aFound(maFreeBuffers.end());
+ 
+             for(aBuffers::iterator a(maFreeBuffers.begin()); a != maFreeBuffers.end(); ++a)
+             {
+-                OSL_ENSURE(*a, "Empty pointer in VDevBuffer (!)");
++                assert(*a && "Empty pointer in VDevBuffer (!)");
+ 
+                 if(nBits == (*a)->GetBitCount())
+                 {
+@@ -145,10 +150,25 @@ namespace
+             {
+                 pRetval = *aFound;
+                 maFreeBuffers.erase(aFound);
++            }
++        }
+ 
+-                if(bOkay)
++        if (pRetval)
++        {
++            // found a suitable cached virtual device, but the
++            // outputdevice it was based on has been disposed,
++            // drop it and create a new one instead as reusing
++            // such devices is unsafe under at least Gtk2
++            if (maDeviceTemplates[pRetval]->isDisposed())
++            {
++                maDeviceTemplates.erase(pRetval);
++                pRetval = nullptr;
++            }
++            else
++            {
++                if (bOkay)
+                 {
+-                    if(bClear)
++                    if (bClear)
+                     {
+                         pRetval->Erase(Rectangle(0, 0, rSizePixel.getWidth(), rSizePixel.getHeight()));
+                     }
+@@ -164,6 +184,7 @@ namespace
+         if(!pRetval)
+         {
+             pRetval = VclPtr<VirtualDevice>::Create(rOutDev, nBits);
++            maDeviceTemplates[pRetval] = &rOutDev;
+             pRetval->SetOutputSizePixel(rSizePixel, bClear);
+         }
+         else
+@@ -197,7 +218,9 @@ namespace
+ 
+         while(!maFreeBuffers.empty())
+         {
+-            (*(maFreeBuffers.end() - 1)).disposeAndClear();
++            aBuffers::iterator aLastOne(maFreeBuffers.end() - 1);
++            maDeviceTemplates.erase(*aLastOne);
++            aLastOne->disposeAndClear();
+             maFreeBuffers.pop_back();
+         }
+     }
+-- 
+2.5.0
+

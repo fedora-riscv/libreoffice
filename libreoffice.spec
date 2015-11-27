@@ -349,6 +349,7 @@ Patch40: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 Patch41: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
 Patch42: 0001-Resolves-tdf-92687-implement-drawPolyPolygon-via-cai.patch
 Patch43: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
+Patch44: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2469,8 +2470,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Nov 26 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-7-UNBUILT
+* Fri Nov 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-7
 - tdf#92687 implement drawPolyLine via cairo to get pretty rotated gtk3 text outlines
+- Resolves: rhbz#1283426 crash with cached virtualdevices based on now dead windows
 
 * Fri Nov 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-6
 - Incredible slowness and crashes with specific odt document with duped frames

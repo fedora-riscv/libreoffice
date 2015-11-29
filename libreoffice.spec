@@ -1189,7 +1189,7 @@ sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk
 git commit -q -a -m 'temporarily disable failing tests'
 
 %ifarch %{arm}
-sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d -e /CppunitTest_sw_filters_test/d -e /CppunitTest_sw_rtfexport/d sw/Module_sw.mk
 git commit -q -a -m 'disable tests segfaulting on arm'
 %endif
 

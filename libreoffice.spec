@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -350,6 +350,7 @@ Patch41: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
 Patch42: 0001-Resolves-tdf-92687-implement-drawPolyPolygon-via-cai.patch
 Patch43: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
 Patch44: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
+Patch45: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2470,6 +2471,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Nov 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-8
+- Related: rhbz#1277445 backport 5-1 idle + timers + mainloop to 5.0
+
 * Fri Nov 27 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-7
 - tdf#92687 implement drawPolyLine via cairo to get pretty rotated gtk3 text outlines
 - Resolves: rhbz#1283426 crash with cached virtualdevices based on now dead windows

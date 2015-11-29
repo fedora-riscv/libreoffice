@@ -1,0 +1,1763 @@
+From f28a08c3c80e7017a62f698560640b173ddfe887 Mon Sep 17 00:00:00 2001
+From: Michael Meeks <michael.meeks@collabora.com>
+Date: Fri, 13 Nov 2015 09:56:53 +0000
+Subject: [PATCH] backport 5-1 idle/timers loop to 5-0
+
+slideshow: cleanup main-loop usage, post-yield listeners, etc.
+
+    This removes several attempts at reducing jitter in slideshow
+animations. Now we have high-resolution (ie. not clamped to 10ms)
+timers on Windows and a cleaner and simpler main-loop, we should
+be able to use generic timer code-paths for all of this.
+
+    This also allows us to further cleanup and simplify the main-loop
+removing the now redundent post-yield handler concept. If there is a
+short enough timeout, we will take just 1ms of delay before executing
+a short timer anyway.
+
+    Also removed some lingering comments from an old attempt to boost
+priorities which broken audio playback.
+
+    Tested: tdf#32861 - still works, audio still plays, no new jitter
+            in animations that I tested.
+
+Reviewed-on: https://gerrit.libreoffice.org/19947
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Michael Meeks <michael.meeks@collabora.com>
+(cherry picked from commit 12dcf5e6e770b1933252a1f919663ba45ded4cdf)
+
+Change-Id: Iadc5e2a48828a18a599a86a8df14cb2b75dd425e
+---
+ .../source/primitive2d/textlayoutdevice.cxx        |   5 +-
+ framework/source/services/autorecovery.cxx         |   1 +
+ include/sal/log-areas.dox                          |   1 +
+ include/vcl/idle.hxx                               |   5 +-
+ include/vcl/scheduler.hxx                          |  48 +++---
+ include/vcl/svapp.hxx                              |  74 +---------
+ include/vcl/timer.hxx                              |   9 +-
+ sd/source/ui/slideshow/slideshowimpl.cxx           |  47 +-----
+ sd/source/ui/slideshow/slideshowimpl.hxx           |   3 +-
+ toolkit/source/awt/vclxtoolkit.cxx                 |   2 +-
+ vcl/headless/svpinst.cxx                           |   7 +-
+ vcl/inc/headless/svpinst.hxx                       |   2 +-
+ vcl/inc/osx/salinst.h                              |   2 +-
+ vcl/inc/salinst.hxx                                |  13 +-
+ vcl/inc/saltimer.hxx                               |  17 +++
+ vcl/inc/svdata.hxx                                 |   4 -
+ vcl/inc/unx/gtk/gtkdata.hxx                        |   2 +-
+ vcl/inc/unx/gtk/gtkinst.hxx                        |   2 +-
+ vcl/inc/unx/saldisp.hxx                            |   4 +-
+ vcl/inc/unx/salinst.h                              |   2 +-
+ vcl/inc/win/salinst.h                              |   2 +-
+ vcl/osx/salinst.cxx                                |  13 +-
+ vcl/qa/cppunit/timer.cxx                           |   2 +-
+ vcl/source/app/idle.cxx                            |  26 ++--
+ vcl/source/app/scheduler.cxx                       | 164 +++++++++++++++------
+ vcl/source/app/svapp.cxx                           |  99 +++++++------
+ vcl/source/app/svmain.cxx                          |   5 -
+ vcl/source/app/timer.cxx                           |  84 ++++-------
+ vcl/unx/generic/app/saldata.cxx                    |  13 +-
+ vcl/unx/generic/app/saldisp.cxx                    |   9 +-
+ vcl/unx/generic/app/salinst.cxx                    |   6 +-
+ vcl/unx/gtk/a11y/atkwrapper.cxx                    |   2 +-
+ vcl/unx/gtk/app/gtkdata.cxx                        |  14 +-
+ vcl/unx/gtk/app/gtkinst.cxx                        |   6 +-
+ vcl/unx/kde4/KDEXLib.cxx                           |  16 +-
+ vcl/unx/kde4/KDEXLib.hxx                           |   4 +-
+ vcl/win/source/app/salinst.cxx                     |  19 ++-
+ 37 files changed, 384 insertions(+), 350 deletions(-)
+
+diff --git a/drawinglayer/source/primitive2d/textlayoutdevice.cxx b/drawinglayer/source/primitive2d/textlayoutdevice.cxx
+index 2eefc3f..99dad74 100644
+--- a/drawinglayer/source/primitive2d/textlayoutdevice.cxx
++++ b/drawinglayer/source/primitive2d/textlayoutdevice.cxx
+@@ -72,8 +72,9 @@ namespace
+     };
+ 
+     ImpTimedRefDev::ImpTimedRefDev(scoped_timed_RefDev& rOwnerOfMe)
+-    :   mrOwnerOfMe(rOwnerOfMe),
+-        mpVirDev(0L),
++    :   Timer( "Timer to destroy drawinglayer reference device" ),
++        mrOwnerOfMe(rOwnerOfMe),
++        mpVirDev(nullptr),
+         mnUseCount(0L)
+     {
+         SetTimeout(3L * 60L * 1000L); // three minutes
+diff --git a/framework/source/services/autorecovery.cxx b/framework/source/services/autorecovery.cxx
+index 8b75271..36adb9b 100644
+--- a/framework/source/services/autorecovery.cxx
++++ b/framework/source/services/autorecovery.cxx
+@@ -1261,6 +1261,7 @@ AutoRecovery::AutoRecovery(const css::uno::Reference< css::uno::XComponentContex
+     , m_bListenForConfigChanges (false                                          )
+     , m_nAutoSaveTimeIntervall  (0                                                  )
+     , m_eJob                    (AutoRecovery::E_NO_JOB                             )
++    , m_aTimer                  ( "Auto save timer" )
+     , m_aAsyncDispatcher        ( LINK( this, AutoRecovery, implts_asyncDispatch )  )
+     , m_eTimerType              (E_DONT_START_TIMER                                 )
+     , m_nIdPool                 (0                                                  )
+diff --git a/include/sal/log-areas.dox b/include/sal/log-areas.dox
+index d734876..6cb1348 100644
+--- a/include/sal/log-areas.dox
++++ b/include/sal/log-areas.dox
+@@ -403,6 +403,7 @@ certain functionality.
+ @li @c vcl.osx
+ @li @c vcl.osx.print
+ @li @c vcl.quartz
++@li @c vcl.schedule - scheduler / main-loop information
+ @li @c vcl.scrollbar - Scroll Bars
+ @li @c vcl.sm - Session Manager
+ @li @c vcl.unity
+diff --git a/include/vcl/idle.hxx b/include/vcl/idle.hxx
+index 2e853b7..ba892a9 100644
+--- a/include/vcl/idle.hxx
++++ b/include/vcl/idle.hxx
+@@ -39,8 +39,9 @@ public:
+     void            SetIdleHdl( const Link<Idle *, void>& rLink ) { maIdleHdl = rLink; }
+     const Link<Idle *, void>& GetIdleHdl() const { return maIdleHdl; }
+     virtual void Invoke() SAL_OVERRIDE;
+-    virtual bool ReadyForSchedule( bool bTimer ) SAL_OVERRIDE;
+-    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) SAL_OVERRIDE;
++    virtual bool ReadyForSchedule( bool bTimerOnly, sal_uInt64 nTimeNow ) const SAL_OVERRIDE;
++    virtual bool IsIdle() const SAL_OVERRIDE;
++    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) const SAL_OVERRIDE;
+     Idle&           operator=( const Idle& rIdle );
+ };
+ 
+diff --git a/include/vcl/scheduler.hxx b/include/vcl/scheduler.hxx
+index 973565b..d9a8678 100644
+--- a/include/vcl/scheduler.hxx
++++ b/include/vcl/scheduler.hxx
+@@ -22,21 +22,9 @@
+ 
+ #include <vcl/dllapi.h>
+ 
+-struct ImplSVData;
+ class Scheduler;
+-struct ImplSchedulerData
+-{
+-    ImplSchedulerData*  mpNext;      // Pointer to the next element in list
+-    Scheduler*          mpScheduler;      // Pointer to VCL Scheduler instance
+-    bool                mbDelete;    // Destroy this scheduler?
+-    bool                mbInScheduler;    // Scheduler currently processed?
+-    sal_uInt64          mnUpdateTime;   // Last Update Time
+-    sal_uInt32          mnUpdateStack;  // Update Stack
+-
+-    void Invoke();
+-
+-    static ImplSchedulerData *GetMostImportantTask( bool bTimer );
+-};
++struct ImplSVData;
++struct ImplSchedulerData;
+ 
+ enum class SchedulerPriority {
+     HIGHEST   = 0,
+@@ -51,23 +39,39 @@ enum class SchedulerPriority {
+ 
+ class VCL_DLLPUBLIC Scheduler
+ {
++private:
++    static void InitSystemTimer(ImplSVData* pSVData);
++
+ protected:
+     ImplSchedulerData*  mpSchedulerData;    /// Pointer to element in scheduler list
+     const sal_Char     *mpDebugName;        /// Useful for debugging
+     SchedulerPriority   mePriority;         /// Scheduler priority
+     bool                mbActive;           /// Currently in the scheduler
+ 
++    // These should be constexpr static, when supported.
++    static const sal_uInt64 ImmediateTimeoutMs = 1;
++    static const sal_uInt64 MaximumTimeoutMs = 1000 * 60; // 1 minute
++
++    static void ImplStartTimer(sal_uInt64 nMS, bool bForce = false);
++
+     friend struct ImplSchedulerData;
+     virtual void SetDeletionFlags();
+-    virtual bool ReadyForSchedule( bool bTimer ) = 0;
+-    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) = 0;
++    /// Is this item ready to be dispatched at @nTimeNow
++    virtual bool ReadyForSchedule( bool bTimerOnly, sal_uInt64 nTimeNow ) const = 0;
++    /// Schedule only when other timers and events are processed
++    virtual bool IsIdle() const = 0;
++    /**
++     * Adjust @nMinPeriod downwards if we want to be notified before
++     * then, @nTimeNow is the current time.
++     */
++    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTimeNow ) const = 0;
+ 
+ public:
+     Scheduler( const sal_Char *pDebugName = NULL );
+     Scheduler( const Scheduler& rScheduler );
+     virtual ~Scheduler();
+ 
+-    void SetPriority( SchedulerPriority ePriority );
++    void SetPriority(SchedulerPriority ePriority) { mePriority = ePriority; }
+     SchedulerPriority GetPriority() const { return mePriority; }
+ 
+     void            SetDebugName( const sal_Char *pDebugName ) { mpDebugName = pDebugName; }
+@@ -82,13 +86,17 @@ public:
+     bool            IsActive() const { return mbActive; }
+     void            SetInActive() { mbActive = false; }
+ 
+-    Scheduler&          operator=( const Scheduler& rScheduler );
++    Scheduler&      operator=( const Scheduler& rScheduler );
+     static void ImplDeInitScheduler();
+ 
+     // Process one pending Timer with highhest priority
+     static void CallbackTaskScheduling( bool ignore );
+-    /// Process one pending task ahead of time with highhest priority.
+-    static void ProcessTaskScheduling( bool bTimer );
++    /// Calculate minimum timeout - and return its value.
++    static sal_uInt64 CalculateMinimumTimeout( bool &bHasActiveIdles );
++    /// Process one pending task ahead of time with highest priority.
++    static bool       ProcessTaskScheduling( bool bTimerOnly );
++    /// Process all events until we are idle
++    static void       ProcessEventsToIdle();
+ };
+ 
+ #endif // INCLUDED_VCL_SCHEDULER_HXX
+diff --git a/include/vcl/svapp.hxx b/include/vcl/svapp.hxx
+index 78f758c..716a987 100644
+--- a/include/vcl/svapp.hxx
++++ b/include/vcl/svapp.hxx
+@@ -459,8 +459,6 @@ public:
+ 
+      @see Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static void                 Execute();
+ 
+@@ -468,8 +466,6 @@ public:
+ 
+      @see Execute, Reschedule, Yield, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static void                 Quit();
+ 
+@@ -481,8 +477,6 @@ public:
+ 
+      @see Execute, Quit, Yield, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+      */
+     static void                 Reschedule( bool bAllEvents = false );
+ 
+@@ -490,8 +484,6 @@ public:
+ 
+      @see Execute, Quit, Reschedule, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static void                 Yield();
+ 
+@@ -499,11 +491,15 @@ public:
+ 
+      @see Execute, Quit, Reschedule, Yield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static void                 EndYield();
+ 
++    /** Acquire SolarMutex after it has been temporarily dropped completely.
++
++        This will Reschedule() on WNT and just acquire on other platforms.
++    */
++    static void                 ReAcquireSolarMutex(sal_uLong nReleased);
++
+     /** @brief Get the Solar Mutex for this thread.
+ 
+      Get the Solar Mutex that prevents other threads from accessing VCL
+@@ -513,8 +509,6 @@ public:
+ 
+      @see Execute, Quit, Reschedule, Yield, EndYield,
+           GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static comphelper::SolarMutex& GetSolarMutex();
+ 
+@@ -524,8 +518,6 @@ public:
+ 
+      @see Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+           ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static oslThreadIdentifier  GetMainThreadIdentifier();
+ 
+@@ -538,8 +530,6 @@ public:
+ 
+      @see Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static sal_uLong            ReleaseSolarMutex();
+ 
+@@ -550,59 +540,9 @@ public:
+ 
+      @see Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+           GetMainThreadIdentifier, ReleaseSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, AddPostYieldListener,
+-          RemovePostYieldListener
+     */
+     static void                 AcquireSolarMutex( sal_uLong nCount );
+ 
+-    /** @brief Enables "no yield" mode
+-
+-     "No yield" mode prevents Yield() from waiting for events.
+-
+-     @remarks This was originally implemented in OOo bug 98792 to improve
+-        Impress slideshows.
+-
+-     @see DisableNoYieldMode, Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+-          GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          DisableNoYield, AddPostYieldListener, RemovePostYieldListener
+-    */
+-    static void                 EnableNoYieldMode();
+-
+-    /** @brief Disables "no yield" mode
+-
+-     "No yield" mode prevents Yield() from waiting for events.
+-
+-     @remarks This was originally implemented in OOo bug 98792 to improve
+-        Impress slideshows.
+-
+-     @see EnableNoYieldMode, Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+-          GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYield, AddPostYieldListener, RemovePostYieldListener
+-    */
+-
+-    static void                 DisableNoYieldMode();
+-
+-    /** Add a listener for yield events
+-
+-     @param  i_rListener     Listener to add
+-
+-     @see Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+-          GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          EnableNoYieldMode, DisableNoYieldMode, RemovePostYieldListener
+-    */
+-    static void                 AddPostYieldListener( const Link<>& i_rListener );
+-
+-    /** Remove listener for yield events
+-
+-     @param  i_rListener     Listener to remove
+-
+-     @see Execute, Quit, Reschedule, Yield, EndYield, GetSolarMutex,
+-          GetMainThreadIdentifier, ReleaseSolarMutex, AcquireSolarMutex,
+-          AddPostYieldListener, EnableNoYieldMode, DisableNoYieldMode
+-    */
+-    static void                 RemovePostYieldListener( const Link<>& i_rListener );
+-
+-
+     /** Queries whether the application is in "main", i.e. not yet in
+         the event loop
+ 
+@@ -1687,7 +1627,7 @@ public:
+ 
+     ~SolarMutexReleaser()
+     {
+-        Application::AcquireSolarMutex( mnReleased );
++        Application::ReAcquireSolarMutex(mnReleased);
+     }
+ };
+ 
+diff --git a/include/vcl/timer.hxx b/include/vcl/timer.hxx
+index 8835291..d3abf1f 100644
+--- a/include/vcl/timer.hxx
++++ b/include/vcl/timer.hxx
+@@ -31,11 +31,9 @@ protected:
+     bool            mbAuto;
+ 
+     virtual void SetDeletionFlags() SAL_OVERRIDE;
+-    virtual bool ReadyForSchedule( bool bTimer ) SAL_OVERRIDE;
+-    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) SAL_OVERRIDE;
+-
+-private:
+-    static void InitSystemTimer();
++    virtual bool ReadyForSchedule( bool bTimerOnly, sal_uInt64 nTimeNow ) const SAL_OVERRIDE;
++    virtual bool IsIdle() const SAL_OVERRIDE;
++    virtual sal_uInt64 UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) const SAL_OVERRIDE;
+ 
+ public:
+     Timer( const sal_Char *pDebugName = NULL );
+@@ -51,7 +49,6 @@ public:
+     void            Timeout() { Invoke(); }
+     Timer&          operator=( const Timer& rTimer );
+     virtual void    Start() SAL_OVERRIDE;
+-    static void     ImplStartTimer( ImplSVData* pSVData, sal_uInt64 nMS );
+ };
+ 
+ /// An auto-timer is a multi-shot timer re-emitting itself at
+diff --git a/sd/source/ui/slideshow/slideshowimpl.cxx b/sd/source/ui/slideshow/slideshowimpl.cxx
+index bf61d37..c1e1064 100644
+--- a/sd/source/ui/slideshow/slideshowimpl.cxx
++++ b/sd/source/ui/slideshow/slideshowimpl.cxx
+@@ -538,6 +538,8 @@ SlideshowImpl::SlideshowImpl( const Reference< XPresentation2 >& xPresentation,
+         mpOldActiveWindow = mpViewShell->GetActiveWindow();
+ 
+     maUpdateTimer.SetTimeoutHdl(LINK(this, SlideshowImpl, updateHdl));
++    // Priority must not be too high or we'll starve input handling etc.
++    maUpdateTimer.SetPriority(SchedulerPriority::REPAINT);
+ 
+     maDeactivateTimer.SetTimeoutHdl(LINK(this, SlideshowImpl, deactivateHdl));
+     maDeactivateTimer.SetTimeout( 20 );
+@@ -746,9 +748,6 @@ void SAL_CALL SlideshowImpl::disposing()
+ 
+     setActiveXToolbarsVisible( true );
+ 
+-    Application::DisableNoYieldMode();
+-    Application::RemovePostYieldListener(LINK(this, SlideshowImpl, PostYieldListener));
+-
+     mbDisposed = true;
+ }
+ 
+@@ -1789,22 +1788,6 @@ IMPL_LINK_NOARG_TYPED(SlideshowImpl, updateHdl, Timer *, void)
+     updateSlideShow();
+ }
+ 
+-IMPL_LINK_NOARG(SlideshowImpl, PostYieldListener)
+-{
+-    // prevent me from deletion when recursing (App::Reschedule does)
+-    const rtl::Reference<SlideshowImpl> this_(this);
+-
+-    Application::DisableNoYieldMode();
+-    Application::RemovePostYieldListener(LINK(this, SlideshowImpl, PostYieldListener));
+-    Application::Reschedule(true); // fix for fdo#32861 - process
+-                                   // *all* outstanding events after
+-                                   // yield is done.
+-    if (mbDisposed)
+-        return 0;
+-    Application::Reschedule(true);
+-    return updateSlideShow();
+-}
+-
+ sal_Int32 SlideshowImpl::updateSlideShow()
+ {
+     // prevent me from deletion when recursing (App::EnableYieldMode does)
+@@ -1816,26 +1799,13 @@ sal_Int32 SlideshowImpl::updateSlideShow()
+ 
+     try
+     {
+-        // TODO(Q3): Evaluate under various systems and setups,
+-        // whether this is really necessary. Under WinXP and Matrox
+-        // G550, the frame rates were much more steadier with this
+-        // tweak, although.
+-
+-        // currently no solution, because this kills sound (at least on Windows)
+-
+         double fUpdate = 0.0;
+         if( !xShow->update(fUpdate) )
+             fUpdate = -1.0;
+ 
+         if (mxShow.is() && (fUpdate >= 0.0))
+         {
+-            if (::basegfx::fTools::equalZero(fUpdate))
+-            {
+-                // Use post yield listener for short update intervalls.
+-                Application::EnableNoYieldMode();
+-                Application::AddPostYieldListener(LINK(this, SlideshowImpl, PostYieldListener));
+-            }
+-            else
++            if (!::basegfx::fTools::equalZero(fUpdate))
+             {
+                 // Avoid busy loop when the previous call to update()
+                 // returns a small positive number but not 0 (which is
+@@ -1852,14 +1822,11 @@ sal_Int32 SlideshowImpl::updateSlideShow()
+                 // too high (only then conversion to milliseconds and long
+                 // integer may lead to zero value.)
+                 OSL_ASSERT(static_cast<sal_uLong>(fUpdate * 1000.0) > 0);
+-
+-                Application::DisableNoYieldMode();
+-                Application::RemovePostYieldListener(LINK(this, SlideshowImpl, PostYieldListener));
+-
+-                // Use a timer for the asynchronous callback.
+-                maUpdateTimer.SetTimeout(static_cast<sal_uLong>(fUpdate * 1000.0));
+-                maUpdateTimer.Start();
+             }
++
++            // Use our high resolution timers for the asynchronous callback.
++            maUpdateTimer.SetTimeout(static_cast<sal_uLong>(fUpdate * 1000.0));
++            maUpdateTimer.Start();
+         }
+     }
+     catch( Exception& )
+diff --git a/sd/source/ui/slideshow/slideshowimpl.hxx b/sd/source/ui/slideshow/slideshowimpl.hxx
+index 3e8f00f..f75b1b7 100644
+--- a/sd/source/ui/slideshow/slideshowimpl.hxx
++++ b/sd/source/ui/slideshow/slideshowimpl.hxx
+@@ -275,7 +275,6 @@ private:
+     void setActiveXToolbarsVisible( bool bVisible );
+ 
+     DECL_LINK_TYPED(updateHdl, Timer *, void);
+-    DECL_LINK( PostYieldListener, void* );
+     DECL_LINK_TYPED(ReadyForNextInputHdl, Timer *, void);
+     DECL_LINK( endPresentationHdl, void* );
+     DECL_LINK( ContextMenuSelectHdl, Menu * );
+@@ -311,7 +310,7 @@ private:
+     static void setAutoSaveState( bool bOn );
+     void gotoPreviousSlide (const bool bSkipAllMainSequenceEffects);
+ 
+-    /** Called by PostYieldListener and updateHdl handlers this method is
++    /** Called by our maUpdateTimer's updateHdl handler this method is
+         responsible to call the slideshow update() method and, depending on
+         its return value, wait for a certain amount of time before another
+         call to update() is scheduled.
+diff --git a/toolkit/source/awt/vclxtoolkit.cxx b/toolkit/source/awt/vclxtoolkit.cxx
+index ee1f9b8..f11e167 100644
+--- a/toolkit/source/awt/vclxtoolkit.cxx
++++ b/toolkit/source/awt/vclxtoolkit.cxx
+@@ -1892,7 +1892,7 @@ void SAL_CALL VCLXToolkit::processEventsToIdle()
+     throw (::com::sun::star::uno::RuntimeException, std::exception)
+ {
+     SolarMutexGuard aSolarGuard;
+-    Scheduler::ProcessTaskScheduling(false);
++    Scheduler::ProcessEventsToIdle();
+ }
+ 
+ }
+diff --git a/vcl/headless/svpinst.cxx b/vcl/headless/svpinst.cxx
+index 7c94f66..39dfe25 100644
+--- a/vcl/headless/svpinst.cxx
++++ b/vcl/headless/svpinst.cxx
+@@ -259,8 +259,10 @@ SalBitmap* SvpSalInstance::CreateSalBitmap()
+ #endif
+ }
+ 
+-void SvpSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult SvpSalInstance::DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong const nReleased)
+ {
++    (void) nReleased;
++    assert(nReleased == 0); // not implemented
+     // first, check for already queued events.
+ 
+     // release yield mutex
+@@ -324,6 +326,9 @@ void SvpSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+ 
+         DoReleaseYield(nTimeoutMS);
+     }
++
++    return bEvent ? SalYieldResult::EVENT :
++                    SalYieldResult::TIMEOUT;
+ }
+ 
+ void SvpSalInstance::DoReleaseYield( int nTimeoutMS )
+diff --git a/vcl/inc/headless/svpinst.hxx b/vcl/inc/headless/svpinst.hxx
+index 44795d5..0d11b1d 100644
+--- a/vcl/inc/headless/svpinst.hxx
++++ b/vcl/inc/headless/svpinst.hxx
+@@ -157,7 +157,7 @@ public:
+     // wait next event and dispatch
+     // must returned by UserEvent (SalFrame::PostEvent)
+     // and timer
+-    virtual void            Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++    virtual SalYieldResult  DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) SAL_OVERRIDE;
+     virtual bool            AnyInput( VclInputFlags nType ) SAL_OVERRIDE;
+ 
+     // may return NULL to disable session management
+diff --git a/vcl/inc/osx/salinst.h b/vcl/inc/osx/salinst.h
+index b2d6133..9df7d02 100644
+--- a/vcl/inc/osx/salinst.h
++++ b/vcl/inc/osx/salinst.h
+@@ -109,7 +109,7 @@ public:
+     virtual sal_uLong       ReleaseYieldMutex() SAL_OVERRIDE;
+     virtual void            AcquireYieldMutex( sal_uLong nCount ) SAL_OVERRIDE;
+     virtual bool            CheckYieldMutex() SAL_OVERRIDE;
+-    virtual void            Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++    virtual +SalYieldResult DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) SAL_OVERRIDE;
+     virtual bool            AnyInput( VclInputFlags nType ) SAL_OVERRIDE;
+     virtual SalMenu*        CreateMenu( bool bMenuBar, Menu* pVCLMenu ) SAL_OVERRIDE;
+     virtual void            DestroyMenu( SalMenu* ) SAL_OVERRIDE;
+diff --git a/vcl/inc/salinst.hxx b/vcl/inc/salinst.hxx
+index eb53177..f49bb4c 100644
+--- a/vcl/inc/salinst.hxx
++++ b/vcl/inc/salinst.hxx
+@@ -58,6 +58,8 @@ struct SystemWindowData;
+ class Menu;
+ enum class VclInputFlags;
+ 
++enum SalYieldResult { EVENT, TIMEOUT };
++
+ class VCL_PLUGIN_PUBLIC SalInstance
+ {
+ private:
+@@ -124,10 +126,13 @@ public:
+     // return true, if yield mutex is owned by this thread, else false
+     virtual bool            CheckYieldMutex() = 0;
+ 
+-    // wait next event and dispatch
+-    // must returned by UserEvent (SalFrame::PostEvent)
+-    // and timer
+-    virtual void            Yield( bool bWait, bool bHandleAllCurrentEvents ) = 0;
++    /**
++     * Wait for the next event (if @bWait) and dispatch it,
++     * includes posted events, and timers.
++     * If @bHandleAllCurrentEvents - dispatch multiple posted
++     * user events. Returns true if events needed processing.
++     */
++    virtual SalYieldResult  DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) = 0;
+     virtual bool            AnyInput( VclInputFlags nType ) = 0;
+ 
+     // menus
+diff --git a/vcl/inc/saltimer.hxx b/vcl/inc/saltimer.hxx
+index 1e1a941..3907ec1 100644
+--- a/vcl/inc/saltimer.hxx
++++ b/vcl/inc/saltimer.hxx
+@@ -54,6 +54,23 @@ public:
+     }
+ };
+ 
++class Scheduler;
++
++// Internal scheduler record holding intrusive linked list pieces
++struct ImplSchedulerData
++{
++    ImplSchedulerData*  mpNext;        // Pointer to the next element in list
++    Scheduler*          mpScheduler;   // Pointer to VCL Scheduler instance
++    bool                mbDelete;      // Destroy this scheduler?
++    bool                mbInScheduler; // Scheduler currently processed?
++    sal_uInt64          mnUpdateTime;  // Last Update Time
++
++    void Invoke();
++
++    const char *GetDebugName() const;
++    static ImplSchedulerData *GetMostImportantTask( bool bTimer );
++};
++
+ #endif // INCLUDED_VCL_INC_SALTIMER_HXX
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
+index 5e3282a..99cb2e3 100644
+--- a/vcl/inc/svdata.hxx
++++ b/vcl/inc/svdata.hxx
+@@ -125,7 +125,6 @@ struct ImplSVAppData
+     VclPtr<ImplWheelWindow> mpWheelWindow;                  // WheelWindow
+     ImplHotKey*             mpFirstHotKey;                  // HotKey-Verwaltung
+     ImplEventHook*          mpFirstEventHook;               // Event-Hooks
+-    VclEventListeners2*     mpPostYieldListeners;           // post yield listeners
+     sal_uInt64              mnLastInputTime;                // GetLastInputTime()
+     sal_uInt16              mnDispatchLevel;                // DispatchLevel
+     sal_uInt16              mnModalMode;                    // ModalMode Count
+@@ -137,8 +136,6 @@ struct ImplSVAppData
+     bool                    mbInAppExecute;                 // is Application::Execute() on stack
+     bool                    mbAppQuit;                      // is Application::Quit() called
+     bool                    mbSettingsInit;                 // true: Settings are initialized
+-    bool                    mbNoYield;                      // Application::Yield will not wait for events if the queue is empty
+-                                                            // essentially that makes it the same as Application::Reschedule
+     Application::DialogCancelMode meDialogCancel;           // true: All Dialog::Execute() calls will be terminated immediately with return false
+ 
+     /** Controls whether showing any IME status window is toggled on or off.
+@@ -321,7 +318,6 @@ struct ImplSVData
+     SalSystem*              mpSalSystem;                    // SalSystem interface
+     ResMgr*                 mpResMgr;                       // SV-Resource-Manager
+     sal_uInt64              mnTimerPeriod;                  // current timer period
+-    sal_uInt32              mnUpdateStack;                  // Scheduler on stack
+     ImplSVAppData           maAppData;                      // indepen data for class Application
+     ImplSVGDIData           maGDIData;                      // indepen data for Output classes
+     ImplSVWinData           maWinData;                      // indepen data for Windows classes
+diff --git a/vcl/inc/unx/gtk/gtkdata.hxx b/vcl/inc/unx/gtk/gtkdata.hxx
+index 697fece..3a800b3 100644
+--- a/vcl/inc/unx/gtk/gtkdata.hxx
++++ b/vcl/inc/unx/gtk/gtkdata.hxx
+@@ -115,7 +115,7 @@ public:
+     static gboolean userEventFn( gpointer data );
+ 
+     void PostUserEvent();
+-    void Yield( bool bWait, bool bHandleAllCurrentEvents );
++    SalYieldResult Yield( bool bWait, bool bHandleAllCurrentEvents );
+     inline GdkDisplay *GetGdkDisplay();
+ 
+     virtual void ErrorTrapPush() SAL_OVERRIDE;
+diff --git a/vcl/inc/unx/gtk/gtkinst.hxx b/vcl/inc/unx/gtk/gtkinst.hxx
+index 28bca36..189b6900 100644
+--- a/vcl/inc/unx/gtk/gtkinst.hxx
++++ b/vcl/inc/unx/gtk/gtkinst.hxx
+@@ -80,7 +80,7 @@ public:
+                                                      const SystemGraphicsData* ) SAL_OVERRIDE;
+     virtual SalBitmap*          CreateSalBitmap() SAL_OVERRIDE;
+ 
+-    virtual void                Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++    virtual SalYieldResult                DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) SAL_OVERRIDE;
+     virtual bool                AnyInput( VclInputFlags nType ) SAL_OVERRIDE;
+ 
+     virtual GenPspGraphics     *CreatePrintGraphics() SAL_OVERRIDE;
+diff --git a/vcl/inc/unx/saldisp.hxx b/vcl/inc/unx/saldisp.hxx
+index a304a4b..776cb64 100644
+--- a/vcl/inc/unx/saldisp.hxx
++++ b/vcl/inc/unx/saldisp.hxx
+@@ -155,7 +155,7 @@ public:
+     virtual         ~SalXLib();
+     virtual void    Init();
+ 
+-    virtual void    Yield( bool bWait, bool bHandleAllCurrentEvents );
++    virtual SalYieldResult Yield( bool bWait, bool bHandleAllCurrentEvents );
+     virtual void    Wakeup();
+     virtual void    PostUserEvent();
+ 
+@@ -382,7 +382,7 @@ public:
+     virtual ~SalX11Display();
+ 
+     virtual bool        Dispatch( XEvent *pEvent ) SAL_OVERRIDE;
+-    virtual void        Yield();
++    virtual bool        Yield();
+     virtual void        PostUserEvent() SAL_OVERRIDE;
+ 
+     bool                IsEvent();
+diff --git a/vcl/inc/unx/salinst.h b/vcl/inc/unx/salinst.h
+index 381ddda..72939e8 100644
+--- a/vcl/inc/unx/salinst.h
++++ b/vcl/inc/unx/salinst.h
+@@ -71,7 +71,7 @@ public:
+     virtual SalBitmap*          CreateSalBitmap() SAL_OVERRIDE;
+     virtual SalSession*         CreateSalSession() SAL_OVERRIDE;
+ 
+-    virtual void                Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++    virtual SalYieldResult                DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) SAL_OVERRIDE;
+     virtual bool                AnyInput( VclInputFlags nType ) SAL_OVERRIDE;
+ 
+     virtual void*               GetConnectionIdentifier( ConnectionIdentifierType& rReturnedType, int& rReturnedBytes ) SAL_OVERRIDE;
+diff --git a/vcl/inc/win/salinst.h b/vcl/inc/win/salinst.h
+index 450d07c..0c9c759 100644
+--- a/vcl/inc/win/salinst.h
++++ b/vcl/inc/win/salinst.h
+@@ -62,7 +62,7 @@ public:
+     virtual void                AcquireYieldMutex( sal_uIntPtr nCount ) SAL_OVERRIDE;
+     virtual bool                CheckYieldMutex() SAL_OVERRIDE;
+ 
+-    virtual void                Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++    virtual SalYieldResult      DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong nReleased) SAL_OVERRIDE;
+     virtual bool                AnyInput( VclInputFlags nType ) SAL_OVERRIDE;
+     virtual SalMenu*            CreateMenu( bool bMenuBar, Menu* ) SAL_OVERRIDE;
+     virtual void                DestroyMenu( SalMenu* ) SAL_OVERRIDE;
+diff --git a/vcl/osx/salinst.cxx b/vcl/osx/salinst.cxx
+index 58a52d5..e20bbdd 100644
+--- a/vcl/osx/salinst.cxx
++++ b/vcl/osx/salinst.cxx
+@@ -554,8 +554,11 @@ class ReleasePoolHolder
+     ~ReleasePoolHolder() { [mpPool release]; }
+ };
+ 
+-void AquaSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult AquaSalInstance::DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong const nReleased)
+ {
++    (void) nReleased;
++    assert(nReleased == 0); // not implemented
++
+     // ensure that the per thread autorelease pool is top level and
+     // will therefore not be destroyed by cocoa implicitly
+     SalData::ensureThreadAutoreleasePool();
+@@ -592,12 +595,13 @@ void AquaSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+             osl_setCondition( maWaitingYieldCond );
+             // return if only one event is asked for
+             if( ! bHandleAllCurrentEvents )
+-                return;
++                return SalYieldResult::EVENT;
+         }
+     }
+ 
+     // handle cocoa event queue
+-    // cocoa events mye be only handled in the thread the NSApp was created
++    // cocoa events may be only handled in the thread the NSApp was created
++    bool bHadEvent = false;
+     if( isNSAppThread() && mnActivePrintJobs == 0 )
+     {
+         // we need to be woken up by a cocoa-event
+@@ -607,7 +611,6 @@ void AquaSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+ 
+         // handle available events
+         NSEvent* pEvent = nil;
+-        bool bHadEvent = false;
+         do
+         {
+             sal_uLong nCount = ReleaseYieldMutex();
+@@ -702,6 +705,8 @@ void AquaSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+             bInAppEvent = false;
+         }
+     }
++
++    return bHadEvent ? SalYieldResult::EVENT : SalYieldResult::TIMEOUT;
+ }
+ 
+ bool AquaSalInstance::AnyInput( VclInputFlags nType )
+diff --git a/vcl/qa/cppunit/timer.cxx b/vcl/qa/cppunit/timer.cxx
+index 144d626..bac8a62 100644
+--- a/vcl/qa/cppunit/timer.cxx
++++ b/vcl/qa/cppunit/timer.cxx
+@@ -126,7 +126,7 @@ void TimerTest::testIdleMainloop()
+         // can't test this via Application::Yield since this
+         // also processes all tasks directly via the scheduler.
+         pSVData->maAppData.mnDispatchLevel++;
+-        pSVData->mpDefInst->Yield( true, false );
++        pSVData->mpDefInst->DoYield(true, false, 0);
+         pSVData->maAppData.mnDispatchLevel--;
+     }
+     CPPUNIT_ASSERT_MESSAGE("mainloop idle triggered", bTriggered);
+diff --git a/vcl/source/app/idle.cxx b/vcl/source/app/idle.cxx
+index 901c44e..8f475de 100644
+--- a/vcl/source/app/idle.cxx
++++ b/vcl/source/app/idle.cxx
+@@ -18,8 +18,7 @@
+  */
+ 
+ #include <vcl/idle.hxx>
+-#include <vcl/timer.hxx>
+-#include "svdata.hxx"
++#include "saltimer.hxx"
+ 
+ void Idle::Invoke()
+ {
+@@ -45,35 +44,36 @@ Idle::Idle( const Idle& rIdle ) : Scheduler(rIdle)
+ void Idle::Start()
+ {
+     Scheduler::Start();
+-    ImplSVData* pSVData = ImplGetSVData();
+-    Timer::ImplStartTimer( pSVData, 0 );
++    Scheduler::ImplStartTimer(Scheduler::ImmediateTimeoutMs);
+ }
+ 
+-bool Idle::ReadyForSchedule( bool bTimer )
++bool Idle::ReadyForSchedule( bool bTimerOnly, sal_uInt64 /* nTimeNow */ ) const
+ {
+-    // tdf#91727 - We need to re-work this to allow only UI idle handlers
+-    //             and not timeouts to be processed in some limited scenarios
+-    (void)bTimer;
+-    return true; // !bTimer
++    // always ready if not only looking for timers.
++    return !bTimerOnly;
+ }
+ 
+-sal_uInt64 Idle::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 /* nTime */ )
++bool Idle::IsIdle() const
++{
++    return true;
++}
++
++sal_uInt64 Idle::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 /* nTime */ ) const
+ {
+     switch (mePriority) {
+     case SchedulerPriority::HIGHEST:
+     case SchedulerPriority::HIGH:
+     case SchedulerPriority::RESIZE:
+     case SchedulerPriority::REPAINT:
+-        nMinPeriod = 1; // don't wait.
++        nMinPeriod = ImmediateTimeoutMs; // don't wait.
+         break;
+     default:
+         // FIXME: tdf#92036 workaround, I should be 1 too - wait 5ms
+-        if (nMinPeriod > 5)
++        if (nMinPeriod < 5)
+             nMinPeriod = 5;
+         break;
+     }
+     return nMinPeriod;
+ }
+ 
+-
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/source/app/scheduler.cxx b/vcl/source/app/scheduler.cxx
+index c3cea78..dd004fb 100644
+--- a/vcl/source/app/scheduler.cxx
++++ b/vcl/source/app/scheduler.cxx
+@@ -20,10 +20,9 @@
+ #include <svdata.hxx>
+ #include <tools/time.hxx>
+ #include <vcl/scheduler.hxx>
+-#include <vcl/timer.hxx>
+ #include <saltimer.hxx>
+-
+-#define MAX_TIMER_PERIOD    SAL_MAX_UINT64
++#include <svdata.hxx>
++#include <salinst.hxx>
+ 
+ void ImplSchedulerData::Invoke()
+ {
+@@ -39,15 +38,17 @@ void ImplSchedulerData::Invoke()
+     mbInScheduler = false;
+ }
+ 
+-ImplSchedulerData *ImplSchedulerData::GetMostImportantTask( bool bTimer )
++ImplSchedulerData *ImplSchedulerData::GetMostImportantTask( bool bTimerOnly )
+ {
+     ImplSVData*     pSVData = ImplGetSVData();
+     ImplSchedulerData *pMostUrgent = NULL;
+ 
++    sal_uInt64 nTimeNow = tools::Time::GetSystemTicks();
+     for ( ImplSchedulerData *pSchedulerData = pSVData->mpFirstSchedulerData; pSchedulerData; pSchedulerData = pSchedulerData->mpNext )
+     {
+-        if ( !pSchedulerData->mpScheduler || pSchedulerData->mbDelete || pSchedulerData->mnUpdateStack >= pSVData->mnUpdateStack
+-            || !pSchedulerData->mpScheduler->ReadyForSchedule( bTimer ) || !pSchedulerData->mpScheduler->IsActive())
++        if ( !pSchedulerData->mpScheduler || pSchedulerData->mbDelete ||
++             !pSchedulerData->mpScheduler->ReadyForSchedule( bTimerOnly, nTimeNow ) ||
++             !pSchedulerData->mpScheduler->IsActive())
+             continue;
+         if (!pMostUrgent)
+             pMostUrgent = pSchedulerData;
+@@ -94,22 +95,88 @@ void Scheduler::ImplDeInitScheduler()
+         }
+         while ( pSchedulerData );
+ 
+-        pSVData->mpFirstSchedulerData   = NULL;
+-        pSVData->mnTimerPeriod      = 0;
++        pSVData->mpFirstSchedulerData = NULL;
++        pSVData->mnTimerPeriod = 0;
+     }
+ 
+     delete pSVData->mpSalTimer;
+     pSVData->mpSalTimer = 0;
+ }
+ 
++/**
++ * Start a new timer if we need to for @nMS duration.
++ *
++ * if this is longer than the existing duration we're
++ * waiting for, do nothing - unless @bForce - which means
++ * to reset the minimum period; used by the scheduled itself.
++ */
++void Scheduler::ImplStartTimer(sal_uInt64 nMS, bool bForce)
++{
++    ImplSVData* pSVData = ImplGetSVData();
++    InitSystemTimer(pSVData);
++
++    // only if smaller timeout, to avoid skipping.
++    if (bForce || nMS < pSVData->mnTimerPeriod)
++    {
++        pSVData->mnTimerPeriod = nMS;
++        pSVData->mpSalTimer->Start(nMS);
++    }
++}
++
++/**
++* Initialize the platform specific timer on which all the
++* platform independent timers are built
++*/
++void Scheduler::InitSystemTimer(ImplSVData* pSVData)
++{
++    assert(pSVData != nullptr);
++    if (!pSVData->mpSalTimer)
++    {
++        pSVData->mnTimerPeriod = MaximumTimeoutMs;
++        pSVData->mpSalTimer = pSVData->mpDefInst->CreateSalTimer();
++        pSVData->mpSalTimer->SetCallback(CallbackTaskScheduling);
++    }
++}
++
+ void Scheduler::CallbackTaskScheduling(bool ignore)
+ {
+     // this function is for the saltimer callback
+     (void)ignore;
+-    Scheduler::ProcessTaskScheduling( true );
++    Scheduler::ProcessTaskScheduling( false );
++}
++
++bool Scheduler::ProcessTaskScheduling( bool bTimerOnly )
++{
++    ImplSchedulerData* pSchedulerData;
++
++    // tdf#91727 - NB. bTimerOnly is ultimately not used
++    if ((pSchedulerData = ImplSchedulerData::GetMostImportantTask(bTimerOnly)))
++    {
++        SAL_INFO("vcl.schedule", "Invoke task " << pSchedulerData->GetDebugName());
++
++        pSchedulerData->mnUpdateTime = tools::Time::GetSystemTicks();
++        pSchedulerData->Invoke();
++        return true;
++    }
++    else
++        return false;
++}
++
++void Scheduler::ProcessEventsToIdle()
++{
++    // FIXME: really we should process incoming OS events too ...
++    int nSanity = 1000;
++    while (Scheduler::ProcessTaskScheduling(false))
++    {
++        if (nSanity-- < 0)
++        {
++            SAL_WARN("vcl.schedule", "Unexpected volume of events to process");
++            break;
++        }
++    }
+ }
+ 
+-void Scheduler::ProcessTaskScheduling( bool bTimer )
++sal_uInt64 Scheduler::CalculateMinimumTimeout( bool &bHasActiveIdles )
+ {
+     // process all pending Tasks
+     // if bTimer True, only handle timer
+@@ -117,63 +184,70 @@ void Scheduler::ProcessTaskScheduling( bool bTimer )
+     ImplSchedulerData* pPrevSchedulerData = NULL;
+     ImplSVData*        pSVData = ImplGetSVData();
+     sal_uInt64         nTime = tools::Time::GetSystemTicks();
+-    sal_uInt64         nMinPeriod = MAX_TIMER_PERIOD;
+-    pSVData->mnUpdateStack++;
+-
+-    // tdf#91727 - NB. bTimer is ultimately not used
+-    if ((pSchedulerData = ImplSchedulerData::GetMostImportantTask(bTimer)))
+-    {
+-        pSchedulerData->mnUpdateTime = nTime;
+-        pSchedulerData->Invoke();
+-    }
++    sal_uInt64         nMinPeriod = MaximumTimeoutMs;
+ 
++    SAL_INFO("vcl.schedule", "Calculating minimum timeout:");
+     pSchedulerData = pSVData->mpFirstSchedulerData;
+     while ( pSchedulerData )
+     {
+-        if( pSchedulerData->mbInScheduler )
+-        {
+-            pPrevSchedulerData = pSchedulerData;
+-            pSchedulerData = pSchedulerData->mpNext;
+-        }
++        ImplSchedulerData *pNext = pSchedulerData->mpNext;
++
+         // Should Task be released from scheduling?
+-        else if ( pSchedulerData->mbDelete )
++        if ( !pSchedulerData->mbInScheduler &&
++              pSchedulerData->mbDelete )
+         {
+             if ( pPrevSchedulerData )
+                 pPrevSchedulerData->mpNext = pSchedulerData->mpNext;
+             else
+                 pSVData->mpFirstSchedulerData = pSchedulerData->mpNext;
+             if ( pSchedulerData->mpScheduler )
+-                pSchedulerData->mpScheduler->mpSchedulerData = NULL;
+-            ImplSchedulerData* pTempSchedulerData = pSchedulerData;
+-            pSchedulerData = pSchedulerData->mpNext;
+-            delete pTempSchedulerData;
++                pSchedulerData->mpScheduler->mpSchedulerData = nullptr;
++            pNext = pSchedulerData->mpNext;
++            delete pSchedulerData;
+         }
+         else
+         {
+-            pSchedulerData->mnUpdateStack = 0;
+-            nMinPeriod = pSchedulerData->mpScheduler->UpdateMinPeriod( nMinPeriod, nTime );
++            if (!pSchedulerData->mbInScheduler)
++            {
++                if ( !pSchedulerData->mpScheduler->IsIdle() )
++                {
++                    sal_uInt64 nOldMinPeriod = nMinPeriod;
++                    nMinPeriod = pSchedulerData->mpScheduler->UpdateMinPeriod(
++                                                                nOldMinPeriod, nTime );
++                    SAL_INFO("vcl.schedule", "Have active timer " <<
++                             pSchedulerData->GetDebugName() <<
++                             "update min period from " << nOldMinPeriod <<
++                             " to " << nMinPeriod);
++                }
++                else
++                {
++                    SAL_INFO("vcl.schedule", "Have active idle " <<
++                             pSchedulerData->GetDebugName());
++                    bHasActiveIdles = true;
++                }
++            }
+             pPrevSchedulerData = pSchedulerData;
+-            pSchedulerData = pSchedulerData->mpNext;
+         }
++        pSchedulerData = pNext;
+     }
+ 
+-    // delete clock if no more timers available
++    // delete clock if no more timers available,
+     if ( !pSVData->mpFirstSchedulerData )
+     {
+         if ( pSVData->mpSalTimer )
+             pSVData->mpSalTimer->Stop();
+-        pSVData->mnTimerPeriod = MAX_TIMER_PERIOD;
++        nMinPeriod = MaximumTimeoutMs;
++        pSVData->mnTimerPeriod = nMinPeriod;
++        SAL_INFO("vcl.schedule", "Unusual - no more timers available - stop timer");
+     }
+     else
+     {
+-        Timer::ImplStartTimer( pSVData, nMinPeriod );
++        Scheduler::ImplStartTimer(nMinPeriod, true);
++        SAL_INFO("vcl.schedule", "Calculated minimum timeout as " << nMinPeriod << " and " <<
++                 (const char *)(bHasActiveIdles ? "has active idles" : "no idles"));
+     }
+-    pSVData->mnUpdateStack--;
+-}
+ 
+-void Scheduler::SetPriority( SchedulerPriority ePriority )
+-{
+-    mePriority = ePriority;
++    return nMinPeriod;
+ }
+ 
+ void Scheduler::Start()
+@@ -205,7 +279,6 @@ void Scheduler::Start()
+     }
+     mpSchedulerData->mbDelete      = false;
+     mpSchedulerData->mnUpdateTime  = tools::Time::GetSystemTicks();
+-    mpSchedulerData->mnUpdateStack = pSVData->mnUpdateStack;
+ }
+ 
+ void Scheduler::Stop()
+@@ -221,7 +294,7 @@ Scheduler& Scheduler::operator=( const Scheduler& rScheduler )
+     if ( IsActive() )
+         Stop();
+ 
+-    mbActive          = false;
++    mbActive = false;
+     mePriority = rScheduler.mePriority;
+ 
+     if ( rScheduler.IsActive() )
+@@ -257,3 +330,10 @@ Scheduler::~Scheduler()
+     }
+ }
+ 
++const char *ImplSchedulerData::GetDebugName() const
++{
++    return mpScheduler && mpScheduler->GetDebugName() ?
++        mpScheduler->GetDebugName() : "unknown";
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/source/app/svapp.cxx b/vcl/source/app/svapp.cxx
+index c261a37..302c4a7 100644
+--- a/vcl/source/app/svapp.cxx
++++ b/vcl/source/app/svapp.cxx
+@@ -338,48 +338,86 @@ void Application::Execute()
+     pSVData->maAppData.mbInAppExecute = false;
+ }
+ 
+-inline void ImplYield( bool i_bWait, bool i_bAllEvents )
++inline void ImplYield(bool i_bWait, bool i_bAllEvents, sal_uLong const nReleased)
+ {
+     ImplSVData* pSVData = ImplGetSVData();
+ 
+-    //Process all Tasks
+-    Scheduler::ProcessTaskScheduling(false);
++    SAL_INFO("vcl.schedule", "Enter ImplYield: " << (i_bWait ? "wait" : "no wait") <<
++             ": " << (i_bAllEvents ? "all events" : "one event") << ": " << nReleased);
+ 
++    bool bHasActiveIdles = false;
++    sal_uInt64 nMinTimeout = 0;
++    if (nReleased == 0) // else thread doesn't have SolarMutex so avoid race
++        nMinTimeout = Scheduler::CalculateMinimumTimeout(bHasActiveIdles);
++
++    // FIXME: should use returned value as param to DoYield
++    (void)nMinTimeout;
++
++    // If we have idles, don't wait for the timeout; check for events
++    // and come back as quick as possible.
++    if (bHasActiveIdles)
++        i_bWait = false;
++
++    // TODO: there's a data race here on WNT only because ImplYield may be
++    // called without SolarMutex; if we can get rid of LazyDelete (with VclPtr)
++    // then the only remaining use of mnDispatchLevel is in OSX specific code
++    // so that would effectively eliminate the race on WNT
+     pSVData->maAppData.mnDispatchLevel++;
++
+     // do not wait for events if application was already quit; in that
+     // case only dispatch events already available
+     // do not wait for events either if the app decided that it is too busy for timers
+     // (feature added for the slideshow)
+-    pSVData->mpDefInst->Yield( i_bWait && !pSVData->maAppData.mbAppQuit && !pSVData->maAppData.mbNoYield, i_bAllEvents );
++    SalYieldResult eResult =
++        pSVData->mpDefInst->DoYield(
++            i_bWait && !pSVData->maAppData.mbAppQuit,
++            i_bAllEvents, nReleased);
++
++    SAL_INFO("vcl.schedule", "DoYield with " << (bHasActiveIdles ? "active idles" : "no ides") <<
++             " returns: " << (eResult == SalYieldResult::EVENT ? "processed event" : "timeout"));
++
+     pSVData->maAppData.mnDispatchLevel--;
+ 
+     DBG_TESTSOLARMUTEX(); // must be locked on return from Yield
+ 
++    // Process all Tasks
++    Scheduler::ProcessTaskScheduling(eResult == SalYieldResult::EVENT);
++
+     // flush lazy deleted objects
+     if( pSVData->maAppData.mnDispatchLevel == 0 )
+         vcl::LazyDelete::flush();
+ 
+-    // the system timer events will not necessarily come in non waiting mode
+-    // e.g. on OS X; need to trigger timer checks manually
+-    if( pSVData->maAppData.mbNoYield )
+-    {
+-        //Process all timers
+-        Scheduler::ProcessTaskScheduling(true);
+-    }
+-
+-    // call post yield listeners
+-    if( pSVData->maAppData.mpPostYieldListeners )
+-        pSVData->maAppData.mpPostYieldListeners->callListeners( NULL );
++    SAL_INFO("vcl.schedule", "Leave ImplYield");
+ }
+ 
+ void Application::Reschedule( bool i_bAllEvents )
+ {
+-    ImplYield( false, i_bAllEvents );
++    ImplYield(false, i_bAllEvents, 0);
+ }
+ 
+ void Application::Yield()
+ {
+-    ImplYield( true, false );
++    ImplYield(true, false, 0);
++}
++
++void Application::ReAcquireSolarMutex(sal_uLong const nReleased)
++{
++    // 0 would mean that events/timers will be handled without locking
++    // SolarMutex (racy)
++    assert(nReleased != 0);
++#ifdef WNT
++    if (ImplGetSVData()->mbDeInit) // do not Yield in DeInitVCL
++        AcquireSolarMutex(nReleased);
++    else
++        ImplYield(false, false, nReleased);
++#else
++    // a) Yield is not needed on non-WNT platforms
++    // b) some Yield implementations for X11 (e.g. kde4) make it non-obvious
++    //    how to use nReleased
++    // c) would require a review of what all Yield implementations do
++    //    currently _before_ releasing SolarMutex that would run without lock
++    AcquireSolarMutex(nReleased);
++#endif
+ }
+ 
+ IMPL_STATIC_LINK_NOARG( ImplSVAppData, ImplQuitMsg )
+@@ -965,33 +1003,6 @@ void Application::RemoveIdleHdl( const Link<>& rLink )
+         pSVData->maAppData.mpIdleMgr->RemoveIdleHdl( rLink );
+ }
+ 
+-void Application::EnableNoYieldMode()
+-{
+-    ImplSVData* pSVData = ImplGetSVData();
+-    pSVData->maAppData.mbNoYield = true;
+-}
+-
+-void Application::DisableNoYieldMode()
+-{
+-    ImplSVData* pSVData = ImplGetSVData();
+-    pSVData->maAppData.mbNoYield = false;
+-}
+-
+-void Application::AddPostYieldListener( const Link<>& i_rListener )
+-{
+-    ImplSVData* pSVData = ImplGetSVData();
+-    if( ! pSVData->maAppData.mpPostYieldListeners )
+-        pSVData->maAppData.mpPostYieldListeners = new VclEventListeners2();
+-    pSVData->maAppData.mpPostYieldListeners->addListener( i_rListener );
+-}
+-
+-void Application::RemovePostYieldListener( const Link<>& i_rListener )
+-{
+-    ImplSVData* pSVData = ImplGetSVData();
+-    if( pSVData->maAppData.mpPostYieldListeners )
+-        pSVData->maAppData.mpPostYieldListeners->removeListener( i_rListener );
+-}
+-
+ WorkWindow* Application::GetAppWindow()
+ {
+     return ImplGetSVData()->maWinData.mpAppWin;
+diff --git a/vcl/source/app/svmain.cxx b/vcl/source/app/svmain.cxx
+index 72881a6..23757e8 100644
+--- a/vcl/source/app/svmain.cxx
++++ b/vcl/source/app/svmain.cxx
+@@ -508,11 +508,6 @@ void DeInitVCL()
+         delete pSVData->maAppData.mpKeyListeners;
+         pSVData->maAppData.mpKeyListeners = NULL;
+     }
+-    if ( pSVData->maAppData.mpPostYieldListeners )
+-    {
+-        delete pSVData->maAppData.mpPostYieldListeners;
+-        pSVData->maAppData.mpPostYieldListeners = NULL;
+-    }
+ 
+     if ( pSVData->maAppData.mpFirstHotKey )
+         ImplFreeHotKeyData();
+diff --git a/vcl/source/app/timer.cxx b/vcl/source/app/timer.cxx
+index 7d92283..1766d7f 100644
+--- a/vcl/source/app/timer.cxx
++++ b/vcl/source/app/timer.cxx
+@@ -19,46 +19,30 @@
+ 
+ #include <tools/time.hxx>
+ #include <vcl/timer.hxx>
+-#include <saltimer.hxx>
+-#include <svdata.hxx>
+-#include <salinst.hxx>
++#include "saltimer.hxx"
+ 
+-#define MAX_TIMER_PERIOD   SAL_MAX_UINT64
+-
+-void Timer::ImplStartTimer( ImplSVData* pSVData, sal_uInt64 nMS )
++void Timer::SetDeletionFlags()
+ {
+-    InitSystemTimer();
+-
+-    if ( !nMS )
+-        nMS = 1;
+-
+-    // Assume underlying timers are recurring timers, if same period - just wait.
+-    if ( nMS != pSVData->mnTimerPeriod )
++    // If no AutoTimer, then stop.
++    if ( !mbAuto )
+     {
+-        pSVData->mnTimerPeriod = nMS;
+-        pSVData->mpSalTimer->Start( nMS );
++        mpSchedulerData->mbDelete = true;
++        mbActive = false;
+     }
+ }
+ 
+-void Timer::SetDeletionFlags()
++bool Timer::ReadyForSchedule( bool /* bTimerOnly */, sal_uInt64 nTimeNow ) const
+ {
+-        // if no AutoTimer than stop
+-        if ( !mbAuto )
+-        {
+-            mpSchedulerData->mbDelete = true;
+-            mbActive = false;
+-        }
++    return (mpSchedulerData->mnUpdateTime + mnTimeout) <= nTimeNow;
+ }
+ 
+-bool Timer::ReadyForSchedule( bool bTimer )
++bool Timer::IsIdle() const
+ {
+-    (void)bTimer;
+-    return (mpSchedulerData->mnUpdateTime + mnTimeout) <= tools::Time::GetSystemTicks();
++    return false;
+ }
+ 
+-sal_uInt64 Timer::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime )
++sal_uInt64 Timer::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime ) const
+ {
+-    sal_uInt64 nNewTime = tools::Time::GetSystemTicks();
+     sal_uInt64 nDeltaTime;
+     //determine smallest time slot
+     if( mpSchedulerData->mnUpdateTime == nTime )
+@@ -70,11 +54,11 @@ sal_uInt64 Timer::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime )
+     else
+     {
+         nDeltaTime = mpSchedulerData->mnUpdateTime + mnTimeout;
+-        if( nDeltaTime < nNewTime )
+-            nMinPeriod = 1;
++        if( nDeltaTime < nTime )
++            nMinPeriod = ImmediateTimeoutMs;
+         else
+         {
+-            nDeltaTime -= nNewTime;
++            nDeltaTime -= nTime;
+             if( nDeltaTime < nMinPeriod )
+                 nMinPeriod = nDeltaTime;
+         }
+@@ -83,32 +67,19 @@ sal_uInt64 Timer::UpdateMinPeriod( sal_uInt64 nMinPeriod, sal_uInt64 nTime )
+     return nMinPeriod;
+ }
+ 
+-/**
+- * Initialize the platform specific timer on which all the
+- * platform independent timers are built
+- */
+-void Timer::InitSystemTimer()
+-{
+-    ImplSVData* pSVData = ImplGetSVData();
+-    if( ! pSVData->mpSalTimer )
+-    {
+-        pSVData->mnTimerPeriod = MAX_TIMER_PERIOD;
+-        pSVData->mpSalTimer = pSVData->mpDefInst->CreateSalTimer();
+-        pSVData->mpSalTimer->SetCallback( CallbackTaskScheduling );
+-    }
+-}
+-
+-Timer::Timer(const sal_Char *pDebugName) : Scheduler(pDebugName)
++Timer::Timer(const sal_Char *pDebugName) :
++    Scheduler(pDebugName),
++    mnTimeout(ImmediateTimeoutMs),
++    mbAuto(false)
+ {
+-    mnTimeout = 1;
+-    mbAuto = false;
+     mePriority = SchedulerPriority::HIGHEST;
+ }
+ 
+-Timer::Timer( const Timer& rTimer ) : Scheduler(rTimer)
++Timer::Timer( const Timer& rTimer ) :
++    Scheduler(rTimer),
++    mnTimeout(rTimer.mnTimeout),
++    mbAuto(rTimer.mbAuto)
+ {
+-    mnTimeout = rTimer.mnTimeout;
+-    mbAuto = rTimer.mbAuto;
+     maTimeoutHdl = rTimer.maTimeoutHdl;
+ }
+ 
+@@ -120,21 +91,16 @@ void Timer::Invoke()
+ void Timer::Start()
+ {
+     Scheduler::Start();
+-
+-    ImplSVData* pSVData = ImplGetSVData();
+-    if ( mnTimeout < pSVData->mnTimerPeriod )
+-        Timer::ImplStartTimer( pSVData, mnTimeout );
++    Scheduler::ImplStartTimer(mnTimeout);
+ }
+ 
+ void Timer::SetTimeout( sal_uInt64 nNewTimeout )
+ {
+     mnTimeout = nNewTimeout;
+-    // if timer is active then renew clock
++    // If timer is active, then renew clock.
+     if ( mbActive )
+     {
+-        ImplSVData* pSVData = ImplGetSVData();
+-        if ( !pSVData->mnUpdateStack && (mnTimeout < pSVData->mnTimerPeriod) )
+-            Timer::ImplStartTimer( pSVData, mnTimeout );
++        Scheduler::ImplStartTimer(mnTimeout);
+     }
+ }
+ 
+diff --git a/vcl/unx/generic/app/saldata.cxx b/vcl/unx/generic/app/saldata.cxx
+index b2212a4..ac872b7 100644
+--- a/vcl/unx/generic/app/saldata.cxx
++++ b/vcl/unx/generic/app/saldata.cxx
+@@ -619,7 +619,8 @@ bool SalXLib::CheckTimeout( bool bExecuteTimers )
+     return bRet;
+ }
+ 
+-void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult
++SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+ {
+     blockIdleTimeout = !bWait;
+     // check for timeouts here if you want to make screenshots
+@@ -642,7 +643,7 @@ void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+                 if( ! bHandleAllCurrentEvents )
+                 {
+                     blockIdleTimeout = false;
+-                    return;
++                    return SalYieldResult::EVENT;
+                 }
+             }
+         }
+@@ -657,6 +658,8 @@ void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+     timeval  Timeout      = noyield__;
+     timeval *pTimeout     = &Timeout;
+ 
++    bool bHandledEvent = false;
++
+     if (bWait)
+     {
+         pTimeout = 0;
+@@ -717,7 +720,7 @@ void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+         if (nFound == 0)
+         {
+             blockIdleTimeout = false;
+-            return;
++            return SalYieldResult::TIMEOUT;
+         }
+ 
+         for ( int nFD = 0; nFD < nFDs_; nFD++ )
+@@ -736,6 +739,7 @@ void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+                     for( int i = 0; pEntry->IsEventQueued() && i < nMaxEvents; i++ )
+                     {
+                         pEntry->HandleNextEvent();
++                        bHandledEvent = true;
+                         // if a recursive call has done the job
+                         // so abort here
+                     }
+@@ -745,6 +749,9 @@ void SalXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+         }
+     }
+     blockIdleTimeout = false;
++
++    return bHandledEvent ? SalYieldResult::EVENT
++                         : SalYieldResult::TIMEOUT;
+ }
+ 
+ void SalXLib::Wakeup()
+diff --git a/vcl/unx/generic/app/saldisp.cxx b/vcl/unx/generic/app/saldisp.cxx
+index ff71bc6..c039ee2 100644
+--- a/vcl/unx/generic/app/saldisp.cxx
++++ b/vcl/unx/generic/app/saldisp.cxx
+@@ -1878,10 +1878,10 @@ bool SalX11Display::IsEvent()
+     return false;
+ }
+ 
+-void SalX11Display::Yield()
++bool SalX11Display::Yield()
+ {
+     if( DispatchInternalEvent() )
+-        return;
++        return true;
+ 
+     XEvent aEvent;
+     DBG_ASSERT( static_cast<SalYieldMutex*>(GetSalData()->m_pInstance->GetYieldMutex())->GetThreadId() ==
+@@ -1890,7 +1890,8 @@ void SalX11Display::Yield()
+ 
+     XNextEvent( pDisp_, &aEvent );
+ 
+-    Dispatch( &aEvent );
++    // FIXME: under-convinced by Dispatch boolean return value vs. salframe.
++    bool bProcessedEvent = Dispatch( &aEvent );
+ 
+ #ifdef DBG_UTIL
+     if( GetX11SalData()->HasXErrorOccurred() )
+@@ -1900,6 +1901,8 @@ void SalX11Display::Yield()
+     }
+ #endif
+     GetX11SalData()->ResetXErrorOccurred();
++
++    return bProcessedEvent;
+ }
+ 
+ bool SalX11Display::Dispatch( XEvent *pEvent )
+diff --git a/vcl/unx/generic/app/salinst.cxx b/vcl/unx/generic/app/salinst.cxx
+index 9c00f6d..7ac0789 100644
+--- a/vcl/unx/generic/app/salinst.cxx
++++ b/vcl/unx/generic/app/salinst.cxx
+@@ -151,9 +151,11 @@ bool X11SalInstance::AnyInput(VclInputFlags nType)
+     return bRet;
+ }
+ 
+-void X11SalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult X11SalInstance::DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong const nReleased)
+ {
+-    mpXLib->Yield( bWait, bHandleAllCurrentEvents );
++    (void) nReleased;
++    assert(nReleased == 0); // not implemented
++    return mpXLib->Yield( bWait, bHandleAllCurrentEvents );
+ }
+ 
+ void* X11SalInstance::GetConnectionIdentifier( ConnectionIdentifierType& rReturnedType,
+diff --git a/vcl/unx/gtk/a11y/atkwrapper.cxx b/vcl/unx/gtk/a11y/atkwrapper.cxx
+index 30cfa9c..006df49 100644
+--- a/vcl/unx/gtk/a11y/atkwrapper.cxx
++++ b/vcl/unx/gtk/a11y/atkwrapper.cxx
+@@ -872,7 +872,7 @@ atk_object_wrapper_new( const ::com::sun::star::uno::Reference< ::com::sun::star
+             uno::Reference< accessibility::XAccessibleEventBroadcaster > xBroadcaster(xContext, uno::UNO_QUERY);
+             if( xBroadcaster.is() )
+                 xBroadcaster->addAccessibleEventListener( static_cast< accessibility::XAccessibleEventListener * > ( new AtkListener(pWrap) ) );
+-        else
++            else
+                 OSL_ASSERT( false );
+         }
+ 
+diff --git a/vcl/unx/gtk/app/gtkdata.cxx b/vcl/unx/gtk/app/gtkdata.cxx
+index 2d8e26c..b59b962 100644
+--- a/vcl/unx/gtk/app/gtkdata.cxx
++++ b/vcl/unx/gtk/app/gtkdata.cxx
+@@ -566,9 +566,11 @@ void GtkData::Dispose()
+     deInitNWF();
+ }
+ 
+-void GtkData::Yield( bool bWait, bool bHandleAllCurrentEvents )
++/// Allows events to be processed, returns true if we processed an event.
++SalYieldResult GtkData::Yield( bool bWait, bool bHandleAllCurrentEvents )
+ {
+     blockIdleTimeout = !bWait;
++
+     /* #i33212# only enter g_main_context_iteration in one thread at any one
+      * time, else one of them potentially will never end as long as there is
+      * another thread in there. Having only one yieldin thread actually dispatch
+@@ -584,7 +586,7 @@ void GtkData::Yield( bool bWait, bool bHandleAllCurrentEvents )
+         else if( ! bWait )
+         {
+             blockIdleTimeout = false;
+-            return; // someone else is waiting already, return
++            return SalYieldResult::TIMEOUT; // someone else is waiting already, return
+         }
+ 
+         if( bDispatchThread )
+@@ -618,6 +620,9 @@ void GtkData::Yield( bool bWait, bool bHandleAllCurrentEvents )
+             osl_setCondition( m_aDispatchCondition ); // trigger non dispatch thread yields
+     }
+     blockIdleTimeout = false;
++
++    return bWasEvent ? SalYieldResult::EVENT
++                     : SalYieldResult::TIMEOUT;
+ }
+ 
+ void GtkData::Init()
+@@ -885,6 +890,9 @@ create_sal_gtk_timeout( GtkSalTimer *pTimer )
+                          /* unused dummy */ g_idle_remove_by_data,
+                          NULL, NULL );
+   g_source_attach( pSource, g_main_context_default() );
++#ifdef DBG_UTIL
++  g_source_set_name( pSource, "VCL timeout source" );
++#endif
+ 
+   sal_gtk_timeout_defer( pTSource );
+ 
+@@ -917,6 +925,8 @@ bool GtkSalTimer::Expired()
+ 
+ void GtkSalTimer::Start( sal_uLong nMS )
+ {
++    // glib is not 64bit safe in this regard.
++    assert( nMS <= G_MAXINT );
+     m_nTimeoutMS = nMS; // for restarting
+     Stop(); // FIXME: ideally re-use an existing m_pTimeout
+     m_pTimeout = create_sal_gtk_timeout( this );
+diff --git a/vcl/unx/gtk/app/gtkinst.cxx b/vcl/unx/gtk/app/gtkinst.cxx
+index 601fd21..9242b88 100644
+--- a/vcl/unx/gtk/app/gtkinst.cxx
++++ b/vcl/unx/gtk/app/gtkinst.cxx
+@@ -401,10 +401,12 @@ void GtkInstance::RemoveTimer (SalTimer *pTimer)
+         m_aTimers.erase( it );
+ }
+ 
+-void GtkInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult GtkInstance::DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong const nReleased)
+ {
++    (void) nReleased;
++    assert(nReleased == 0); // not implemented
+     EnsureInit();
+-    GetGtkSalData()->Yield( bWait, bHandleAllCurrentEvents );
++    return GetGtkSalData()->Yield( bWait, bHandleAllCurrentEvents );
+ }
+ 
+ bool GtkInstance::IsTimerExpired()
+diff --git a/vcl/unx/kde4/KDEXLib.cxx b/vcl/unx/kde4/KDEXLib.cxx
+index 3101d37..c758e18 100644
+--- a/vcl/unx/kde4/KDEXLib.cxx
++++ b/vcl/unx/kde4/KDEXLib.cxx
+@@ -281,22 +281,25 @@ void KDEXLib::socketNotifierActivated( int fd )
+     sdata.handle( fd, sdata.data );
+ }
+ 
+-void KDEXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult KDEXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+ {
+     if( !m_isGlibEventLoopType )
+     {
++        bool wasEvent = false;
+         if( qApp->thread() == QThread::currentThread())
+         {
+             // even if we use the LO event loop, still process Qt's events,
+             // otherwise they can remain unhandled for quite a long while
+-            processYield( false, bHandleAllCurrentEvents );
++            wasEvent = processYield( false, bHandleAllCurrentEvents );
+         }
+-        return SalXLib::Yield( bWait, bHandleAllCurrentEvents );
++        SalYieldResult aResult = SalXLib::Yield(bWait, bHandleAllCurrentEvents);
++        return (aResult == SalYieldResult::EVENT || wasEvent) ?
++            SalYieldResult::EVENT : SalYieldResult::TIMEOUT;
+     }
+     // if we are the main thread (which is where the event processing is done),
+     // good, just do it
+     if( qApp->thread() == QThread::currentThread())
+-        processYield( bWait, bHandleAllCurrentEvents );
++        return processYield( bWait, bHandleAllCurrentEvents );
+     else
+     {
+         // we were called from another thread;
+@@ -305,10 +308,11 @@ void KDEXLib::Yield( bool bWait, bool bHandleAllCurrentEvents )
+         // temporarily do it while checking for new events)
+         SalYieldMutexReleaser aReleaser;
+         Q_EMIT processYieldSignal( bWait, bHandleAllCurrentEvents );
++        return SalYieldResult::TIMEOUT;
+     }
+ }
+ 
+-void KDEXLib::processYield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult KDEXLib::processYield( bool bWait, bool bHandleAllCurrentEvents )
+ {
+     blockIdleTimeout = !bWait;
+     QAbstractEventDispatcher* dispatcher = QAbstractEventDispatcher::instance( qApp->thread());
+@@ -324,6 +328,8 @@ void KDEXLib::processYield( bool bWait, bool bHandleAllCurrentEvents )
+     if( bWait && !wasEvent )
+         dispatcher->processEvents( QEventLoop::WaitForMoreEvents );
+     blockIdleTimeout = false;
++    return wasEvent ? SalYieldResult::EVENT
++                    : SalYieldResult::TIMEOUT;
+ }
+ 
+ void KDEXLib::StartTimer( sal_uLong nMS )
+diff --git a/vcl/unx/kde4/KDEXLib.hxx b/vcl/unx/kde4/KDEXLib.hxx
+index 0a1aec3..7e432e5 100644
+--- a/vcl/unx/kde4/KDEXLib.hxx
++++ b/vcl/unx/kde4/KDEXLib.hxx
+@@ -65,7 +65,7 @@ class KDEXLib : public QObject, public SalXLib
+         void userEventActivated();
+         void startTimeoutTimer();
+         void startUserEventTimer();
+-        void processYield( bool bWait, bool bHandleAllCurrentEvents );
++        SalYieldResult processYield( bool bWait, bool bHandleAllCurrentEvents );
+     Q_SIGNALS:
+         void startTimeoutTimerSignal();
+         void startUserEventTimerSignal();
+@@ -80,7 +80,7 @@ class KDEXLib : public QObject, public SalXLib
+         virtual ~KDEXLib();
+ 
+         virtual void Init() SAL_OVERRIDE;
+-        virtual void Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
++        virtual SalYieldResult Yield( bool bWait, bool bHandleAllCurrentEvents ) SAL_OVERRIDE;
+         virtual void Insert( int fd, void* data, YieldFunc pending, YieldFunc queued, YieldFunc handle ) SAL_OVERRIDE;
+         virtual void Remove( int fd ) SAL_OVERRIDE;
+         virtual void StartTimer( sal_uLong nMS ) SAL_OVERRIDE;
+diff --git a/vcl/win/source/app/salinst.cxx b/vcl/win/source/app/salinst.cxx
+index 1c21246..d61060f 100644
+--- a/vcl/win/source/app/salinst.cxx
++++ b/vcl/win/source/app/salinst.cxx
+@@ -602,7 +602,8 @@ static void ImplSalDispatchMessage( MSG* pMsg )
+         ImplSalPostDispatchMsg( pMsg, lResult );
+ }
+ 
+-void ImplSalYield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult
++ImplSalYield( bool bWait, bool bHandleAllCurrentEvents )
+ {
+     MSG aMsg;
+     bool bWasMsg = false, bOneEvent = false;
+@@ -629,15 +630,22 @@ void ImplSalYield( bool bWait, bool bHandleAllCurrentEvents )
+             ImplSalDispatchMessage( &aMsg );
+         }
+     }
++    return bWasMsg ? SalYieldResult::EVENT :
++                     SalYieldResult::TIMEOUT;
+ }
+ 
+-void WinSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
++SalYieldResult WinSalInstance::DoYield(bool bWait, bool bHandleAllCurrentEvents, sal_uLong const nReleased)
+ {
++    SalYieldResult eDidWork = SalYieldResult::TIMEOUT;
++    // NOTE: if nReleased != 0 this will be called without SolarMutex
++    //       so don't do anything dangerous before releasing it here
+     SalYieldMutex*  pYieldMutex = mpSalYieldMutex;
+     SalData*        pSalData = GetSalData();
+     DWORD           nCurThreadId = GetCurrentThreadId();
+-    sal_uLong           nCount = pYieldMutex->GetAcquireCount( nCurThreadId );
+-    sal_uLong           n = nCount;
++    sal_uLong const nCount = (nReleased != 0)
++                                ? nReleased
++                                : pYieldMutex->GetAcquireCount(nCurThreadId);
++    sal_uLong       n = (nReleased != 0) ? 0 : nCount;
+     while ( n )
+     {
+         pYieldMutex->release();
+@@ -669,7 +677,7 @@ void WinSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+     }
+     else
+     {
+-        ImplSalYield( bWait, bHandleAllCurrentEvents );
++        eDidWork = ImplSalYield( bWait, bHandleAllCurrentEvents );
+ 
+         n = nCount;
+         while ( n )
+@@ -678,6 +686,7 @@ void WinSalInstance::Yield( bool bWait, bool bHandleAllCurrentEvents )
+             n--;
+         }
+     }
++    return eDidWork;
+ }
+ 
+ LRESULT CALLBACK SalComWndProc( HWND hWnd, UINT nMsg, WPARAM wParam, LPARAM lParam, int& rDef )
+-- 
+2.5.0
+

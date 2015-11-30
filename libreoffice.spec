@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -355,6 +355,7 @@ Patch46: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
 Patch47: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
 Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
 Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
+Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2475,6 +2476,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Nov 30 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-10
+- Resolves: rhbz#1285380 get menus working under wayland
+
 * Mon Nov 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:5.0.3.2-9
 - Related: rhbz#1286416 Be more resilient during auto-recovery attempts
 - Related: rhbz#1281906 wayland toolbar drawn over menus etc

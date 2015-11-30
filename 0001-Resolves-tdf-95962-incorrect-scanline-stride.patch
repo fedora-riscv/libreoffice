@@ -1,0 +1,794 @@
+From beaba7e2e7a3248cbe87870c84b2c0df0a25503d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 25 Nov 2015 10:32:33 +0000
+Subject: [PATCH] Resolves: tdf#95962 incorrect scanline stride
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+gtk3: it's the *Original* device we care about, not the temp clip hack devices
+
+Change-Id: I2ac61cd2a99da25122165af692154fdbc2ac6d2e
+(cherry picked from commit 872c1b7654510daa4a6974150490623745d931bf)
+
+we were reusing the stride of the surface we were cloning,
+but the new surface has a different underlying size.
+
+remove the custom stride argument and just change our stride
+calculation to use the same scheme that cairo and GDI uses, which
+remove another platform/drawing-system variable
+
+Reviewed-on: https://gerrit.libreoffice.org/20149
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 9b52b8999be86e5c6e5f5901b2640b16f08a2323)
+
+Change-Id: I257dac9757b121642e9ccfde7db0911edc9f3fb1
+---
+ basebmp/source/bitmapdevice.cxx          | 25 +++++++------------------
+ basebmp/test/basictest.cxx               | 30 +++++++++++++-----------------
+ basebmp/test/bmpmasktest.cxx             | 24 +++++++-----------------
+ basebmp/test/bmptest.cxx                 | 12 ++++--------
+ basebmp/test/cliptest.cxx                | 12 ++++--------
+ basebmp/test/filltest.cxx                |  6 ++----
+ basebmp/test/linetest.cxx                | 12 ++++--------
+ basebmp/test/masktest.cxx                |  9 +++------
+ basebmp/test/polytest.cxx                |  6 ++----
+ include/basebmp/bitmapdevice.hxx         |  9 +++------
+ sw/qa/extras/ooxmlimport/ooxmlimport.cxx |  2 +-
+ vcl/headless/svpbmp.cxx                  |  6 ++----
+ vcl/headless/svpframe.cxx                |  3 +--
+ vcl/headless/svpgdi.cxx                  | 31 ++++++++++++++++---------------
+ vcl/headless/svptextrender.cxx           |  2 +-
+ vcl/headless/svpvd.cxx                   |  7 +++----
+ vcl/qa/cppunit/BitmapTest.cxx            | 15 +++++----------
+ vcl/unx/gtk/window/gtksalframe.cxx       |  3 +--
+ 18 files changed, 79 insertions(+), 135 deletions(-)
+
+diff --git a/basebmp/source/bitmapdevice.cxx b/basebmp/source/bitmapdevice.cxx
+index 04d4892..1517f05 100644
+--- a/basebmp/source/bitmapdevice.cxx
++++ b/basebmp/source/bitmapdevice.cxx
+@@ -1956,7 +1956,6 @@ namespace
+ BitmapDeviceSharedPtr createBitmapDeviceImplInner( const basegfx::B2IVector&                  rSize,
+                                                    bool                                       bTopDown,
+                                                    Format                                     nScanlineFormat,
+-                                                   sal_Int32                                  nScanlineStride,
+                                                    boost::shared_array< sal_uInt8 >           pMem,
+                                                    PaletteMemorySharedVector                  pPal,
+                                                    const basegfx::B2IBox*                     pSubset,
+@@ -1977,6 +1976,8 @@ BitmapDeviceSharedPtr createBitmapDeviceImplInner( const basegfx::B2IVector&
+         return BitmapDeviceSharedPtr();
+     }
+ 
++    sal_Int32 nScanlineStride = getBitmapDeviceStrideForWidth(nScanlineFormat, rSize.getX());
++
+     // factor in bottom-up scanline order case
+     nScanlineStride *= bTopDown ? 1 : -1;
+ 
+@@ -2139,14 +2140,13 @@ BitmapDeviceSharedPtr createBitmapDeviceImplInner( const basegfx::B2IVector&
+ BitmapDeviceSharedPtr createBitmapDeviceImpl( const basegfx::B2IVector&                  rSize,
+                                               bool                                       bTopDown,
+                                               Format                                     nScanlineFormat,
+-                                              sal_Int32                                  nScanlineStride,
+                                               boost::shared_array< sal_uInt8 >           pMem,
+                                               PaletteMemorySharedVector                  pPal,
+                                               const basegfx::B2IBox*                     pSubset,
+                                               const IBitmapDeviceDamageTrackerSharedPtr& rDamage,
+                                               bool bBlack = true)
+ {
+-    BitmapDeviceSharedPtr result( createBitmapDeviceImplInner( rSize, bTopDown, nScanlineFormat, nScanlineStride, pMem, pPal, pSubset, rDamage, bBlack ) );
++    BitmapDeviceSharedPtr result( createBitmapDeviceImplInner( rSize, bTopDown, nScanlineFormat, pMem, pPal, pSubset, rDamage, bBlack ) );
+ 
+ #ifdef SAL_LOG_INFO
+     std::ostringstream subset;
+@@ -2172,24 +2172,20 @@ sal_Int32 getBitmapDeviceStrideForWidth(Format nScanlineFormat, sal_Int32 nWidth
+     // round up to full 8 bit, divide by 8
+     sal_Int32 nScanlineStride = (nWidth*nBitsPerPixel + 7) >> 3;
+ 
+-    // rounded up to next full power-of-two number of bytes
+-    const sal_uInt32 bytesPerPixel = nextPow2(
+-        (bitsPerPixel[nScanlineFormat] + 7) >> 3);
++    // pixman (cairo) and GDI (windows) pad to multiples of 32bits
++    // so do the same to be easily compatible
++    nScanlineStride = (nScanlineStride + 3) & ~0x3;
+ 
+-    // now make nScanlineStride a multiple of bytesPerPixel
+-    nScanlineStride = (nScanlineStride + bytesPerPixel - 1) / bytesPerPixel * bytesPerPixel;
+     return nScanlineStride;
+ }
+ 
+ BitmapDeviceSharedPtr createBitmapDevice( const basegfx::B2IVector& rSize,
+                                           bool                      bTopDown,
+-                                          Format                    nScanlineFormat,
+-                                          sal_Int32                 nScanlineStride )
++                                          Format                    nScanlineFormat )
+ {
+     return createBitmapDeviceImpl( rSize,
+                                    bTopDown,
+                                    nScanlineFormat,
+-                                   nScanlineStride,
+                                    boost::shared_array< sal_uInt8 >(),
+                                    PaletteMemorySharedVector(),
+                                    NULL,
+@@ -2199,13 +2195,11 @@ BitmapDeviceSharedPtr createBitmapDevice( const basegfx::B2IVector& rSize,
+ BitmapDeviceSharedPtr createBitmapDevice( const basegfx::B2IVector&        rSize,
+                                           bool                             bTopDown,
+                                           Format                           nScanlineFormat,
+-                                          sal_Int32                        nScanlineStride,
+                                           const PaletteMemorySharedVector& rPalette )
+ {
+     return createBitmapDeviceImpl( rSize,
+                                    bTopDown,
+                                    nScanlineFormat,
+-                                   nScanlineStride,
+                                    boost::shared_array< sal_uInt8 >(),
+                                    rPalette,
+                                    NULL,
+@@ -2215,14 +2209,12 @@ BitmapDeviceSharedPtr createBitmapDevice( const basegfx::B2IVector&        rSize
+ BitmapDeviceSharedPtr createBitmapDevice( const basegfx::B2IVector&        rSize,
+                                           bool                             bTopDown,
+                                           Format                           nScanlineFormat,
+-                                          sal_Int32                        nScanlineStride,
+                                           const RawMemorySharedArray&      rMem,
+                                           const PaletteMemorySharedVector& rPalette )
+ {
+     return createBitmapDeviceImpl( rSize,
+                                    bTopDown,
+                                    nScanlineFormat,
+-                                   nScanlineStride,
+                                    rMem,
+                                    rPalette,
+                                    NULL,
+@@ -2235,7 +2227,6 @@ BitmapDeviceSharedPtr createClipDevice( const basegfx::B2IVector&        rSize )
+              createBitmapDeviceImpl( rSize,
+                                      false, /* bTopDown */
+                                      basebmp::FORMAT_ONE_BIT_MSB_GREY,
+-                                     getBitmapDeviceStrideForWidth(basebmp::FORMAT_ONE_BIT_MSB_GREY, rSize.getX()),
+                                      boost::shared_array< sal_uInt8 >(),
+                                      PaletteMemorySharedVector(),
+                                      NULL,
+@@ -2251,7 +2242,6 @@ BitmapDeviceSharedPtr subsetBitmapDevice( const BitmapDeviceSharedPtr& rProto,
+     return createBitmapDeviceImpl( rProto->getSize(),
+                                    rProto->isTopDown(),
+                                    rProto->getScanlineFormat(),
+-                                   rProto->getScanlineStride(),
+                                    rProto->getBuffer(),
+                                    rProto->getPalette(),
+                                    &rSubset,
+@@ -2264,7 +2254,6 @@ BitmapDeviceSharedPtr cloneBitmapDevice( const basegfx::B2IVector&    rSize,
+     return createBitmapDeviceImpl( rSize,
+                                    rProto->isTopDown(),
+                                    rProto->getScanlineFormat(),
+-                                   rProto->getScanlineStride(),
+                                    boost::shared_array< sal_uInt8 >(),
+                                    rProto->getPalette(),
+                                    NULL,
+diff --git a/basebmp/test/basictest.cxx b/basebmp/test/basictest.cxx
+index 293fbe5..671320d 100644
+--- a/basebmp/test/basictest.cxx
++++ b/basebmp/test/basictest.cxx
+@@ -83,16 +83,19 @@ public:
+         basegfx::B2ISize       aSize2(aSize);
+         BitmapDeviceSharedPtr pDevice( createBitmapDevice( aSize,
+                                                            true,
+-                                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX())));
++                                                           FORMAT_ONE_BIT_MSB_PAL
++                                                           ) );
+         CPPUNIT_ASSERT_MESSAGE("right size",
+                                pDevice->getSize() == aSize2 );
+         CPPUNIT_ASSERT_MESSAGE("Top down format",
+                                pDevice->isTopDown() );
+         CPPUNIT_ASSERT_MESSAGE("Scanline format",
+                                pDevice->getScanlineFormat() == FORMAT_ONE_BIT_MSB_PAL );
++        sal_Int32 nExpectedStride = (aSize2.getY() + 7)/8;
++        sal_Int32 nAlign = sizeof(sal_uInt32);
++        nExpectedStride = ((nExpectedStride + nAlign-1) / nAlign) * nAlign;
+         CPPUNIT_ASSERT_MESSAGE("Scanline len",
+-                               pDevice->getScanlineStride() == (aSize2.getY() + 7)/8 );
++                               pDevice->getScanlineStride() == nExpectedStride );
+         CPPUNIT_ASSERT_MESSAGE("Palette existence",
+                                pDevice->getPalette() );
+         CPPUNIT_ASSERT_MESSAGE("Palette entry 0 is black",
+@@ -107,8 +110,7 @@ public:
+         basegfx::B2ISize       aSize2(3,3);
+         BitmapDeviceSharedPtr  pDevice( createBitmapDevice( aSize,
+                                                             true,
+-                                                            FORMAT_ONE_BIT_MSB_PAL,
+-                                                            basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX())));
++                                                            FORMAT_ONE_BIT_MSB_PAL) );
+ 
+         BitmapDeviceSharedPtr  pClone( cloneBitmapDevice(
+                                            aSize2,
+@@ -123,8 +125,7 @@ public:
+         const basegfx::B2ISize aSize(64,64);
+         BitmapDeviceSharedPtr pDevice( createBitmapDevice( aSize,
+                                                            true,
+-                                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX())));
++                                                           FORMAT_ONE_BIT_MSB_PAL) );
+ 
+         const basegfx::B2IPoint aPt(3,3);
+         CPPUNIT_ASSERT_MESSAGE("getPixelData for virgin device",
+@@ -171,8 +172,7 @@ public:
+         {
+             pDevice = createBitmapDevice( aSize,
+                                           true,
+-                                          FORMAT_ONE_BIT_LSB_PAL,
+-                                          basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_LSB_PAL, aSize.getX()));
++                                          FORMAT_ONE_BIT_LSB_PAL);
+ 
+             pDevice->setPixel( aPt2, aCol, DrawMode_PAINT );
+             CPPUNIT_ASSERT_MESSAGE("get/setPixel roundtrip #4",
+@@ -197,8 +197,7 @@ public:
+         {
+             pDevice = createBitmapDevice( aSize,
+                                           true,
+-                                          FORMAT_EIGHT_BIT_GREY,
+-                                          basebmp::getBitmapDeviceStrideForWidth(FORMAT_EIGHT_BIT_GREY, aSize.getX()));
++                                          FORMAT_EIGHT_BIT_GREY);
+ 
+             const Color aCol4(0x010101);
+             pDevice->setPixel( aPt, aCol4, DrawMode_PAINT );
+@@ -220,8 +219,7 @@ public:
+         {
+             pDevice = createBitmapDevice( aSize,
+                                           true,
+-                                          FORMAT_SIXTEEN_BIT_LSB_TC_MASK,
+-                                          basebmp::getBitmapDeviceStrideForWidth(FORMAT_SIXTEEN_BIT_LSB_TC_MASK, aSize.getX()));
++                                          FORMAT_SIXTEEN_BIT_LSB_TC_MASK);
+             const Color aCol7(0);
+             pDevice->clear( aCol7 );
+ 
+@@ -245,8 +243,7 @@ public:
+         {
+             pDevice = createBitmapDevice( aSize,
+                                           true,
+-                                          FORMAT_TWENTYFOUR_BIT_TC_MASK,
+-                                          basebmp::getBitmapDeviceStrideForWidth(FORMAT_TWENTYFOUR_BIT_TC_MASK, aSize.getX()));
++                                          FORMAT_TWENTYFOUR_BIT_TC_MASK);
+ 
+             const Color aCol4(0x01010101);
+             pDevice->setPixel( aPt, aCol4, DrawMode_PAINT );
+@@ -273,8 +270,7 @@ public:
+         {
+             pDevice = createBitmapDevice( aSize,
+                                           true,
+-                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                          basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()));
++                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA);
+ 
+             const Color aCol4(0x01010101);
+             pDevice->setPixel( aPt, aCol4, DrawMode_PAINT );
+diff --git a/basebmp/test/bmpmasktest.cxx b/basebmp/test/bmpmasktest.cxx
+index 611e189..ded87f8 100644
+--- a/basebmp/test/bmpmasktest.cxx
++++ b/basebmp/test/bmpmasktest.cxx
+@@ -91,26 +91,21 @@ public:
+         const basegfx::B2ISize aSize(10,10);
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()));
++                                           FORMAT_ONE_BIT_MSB_PAL);
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                             true,
+-                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                            basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()));
++                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA);
+ 
+         mpMaskBmp1bpp = createBitmapDevice( aSize,
+                                             true,
+-                                            FORMAT_ONE_BIT_MSB_GREY,
+-                                            basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_GREY, aSize.getX()));
++                                            FORMAT_ONE_BIT_MSB_GREY);
+ 
+         mpBmp1bpp = createBitmapDevice( aSize,
+                                         true,
+-                                        FORMAT_ONE_BIT_MSB_PAL,
+-                                        basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()));
++                                        FORMAT_ONE_BIT_MSB_PAL);
+         mpBmp32bpp = createBitmapDevice( aSize,
+                                          true,
+-                                         FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                         basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()));
++                                         FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA);
+ 
+         OUString aSvg( "m 0 0h5v10h5v-5h-10z" );
+ 
+@@ -169,7 +164,6 @@ public:
+ //            nFormat = Format::OneBitMsbGrey; // FIXME - un-comment me to crash hard.
+             xMask = createBitmapDevice( aSize, false /* bTopDown */,
+                                         nFormat,
+-                                         basebmp::getBitmapDeviceStrideForWidth( nFormat, aSize.getX()),
+                                          PaletteMemorySharedVector(
+                                                 new std::vector< basebmp::Color >(aDevPal) ) );
+             // wipe to copy everything.
+@@ -183,17 +177,13 @@ public:
+                                     DrawMode::DrawMode_PAINT );
+ 
+             xBitmap = createBitmapDevice( aSize, false,
+-                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX,
+-                                          basebmp::getBitmapDeviceStrideForWidth(
+-                                                FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX, aSize.getX() ) );
++                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX );
+             xBitmap->clear(Color(0x80808080));
+         }
+         { // mpOutput & mpBitmap
+             const basegfx::B2ISize aSize(9, 9);
+             xOutput = createBitmapDevice( aSize, false,
+-                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX,
+-                                          basebmp::getBitmapDeviceStrideForWidth(
+-                                                FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX, aSize.getX()) );
++                                          FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX);
+             xOutput->clear(Color(0xffffffff));
+         }
+ 
+diff --git a/basebmp/test/bmptest.cxx b/basebmp/test/bmptest.cxx
+index 30644fb..f6ea0b6 100644
+--- a/basebmp/test/bmptest.cxx
++++ b/basebmp/test/bmptest.cxx
+@@ -148,23 +148,19 @@ public:
+     void setUp() SAL_OVERRIDE
+     {
+         const basegfx::B2ISize aSize(10,10);
+-        sal_Int32 nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX());
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL, nStride );
+-        nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX());
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                             true,
+-                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, nStride );
++                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA);
+ 
+-        nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX());
+         mpBmp1bpp = createBitmapDevice( aSize,
+                                         true,
+-                                        FORMAT_ONE_BIT_MSB_PAL, nStride );
+-        nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX());
++                                        FORMAT_ONE_BIT_MSB_PAL);
+         mpBmp32bpp = createBitmapDevice( aSize,
+                                          true,
+-                                         FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, nStride );
++                                         FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+ 
+         OUString aSvg( "m 0 0h5v10h5v-5h-10z" );
+ 
+diff --git a/basebmp/test/cliptest.cxx b/basebmp/test/cliptest.cxx
+index 13ad48c..8526964 100644
+--- a/basebmp/test/cliptest.cxx
++++ b/basebmp/test/cliptest.cxx
+@@ -154,10 +154,9 @@ private:
+ 
+     void implTestMaskColorClip(const BitmapDeviceSharedPtr& rDevice)
+     {
+-        sal_Int32 nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_EIGHT_BIT_GREY, rDevice->getSize().getX());
+         BitmapDeviceSharedPtr pBmp( createBitmapDevice( rDevice->getSize(),
+                                                         true,
+-                                                        FORMAT_EIGHT_BIT_GREY, nStride ));
++                                                        FORMAT_EIGHT_BIT_GREY ));
+ 
+         OUString aSvg( "m 0 0h5v10h5v-5h-10z" );
+ 
+@@ -189,18 +188,15 @@ public:
+     void setUp() SAL_OVERRIDE
+     {
+         const basegfx::B2ISize aSize(11,11);
+-        sal_Int32 nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_GREY, aSize.getX());
+         mpClipMask = createBitmapDevice( aSize,
+                                          true,
+-                                         FORMAT_ONE_BIT_MSB_GREY, nStride );
+-        nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX());
++                                         FORMAT_ONE_BIT_MSB_GREY );
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL, nStride );
+-        nStride = basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX());
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, nStride );
++                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+ 
+         OUString aSvg( "m 0 0 h5 l5 5 v5 h-5 l-5-5 z" );
+         basegfx::B2DPolyPolygon aPoly;
+diff --git a/basebmp/test/filltest.cxx b/basebmp/test/filltest.cxx
+index 875a27d..067ec24 100644
+--- a/basebmp/test/filltest.cxx
++++ b/basebmp/test/filltest.cxx
+@@ -211,12 +211,10 @@ public:
+         const basegfx::B2ISize aSize(11,11);
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()));
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()));
++                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+     }
+ 
+     void testRectFill()
+diff --git a/basebmp/test/linetest.cxx b/basebmp/test/linetest.cxx
+index 731158e..f6a3909 100644
+--- a/basebmp/test/linetest.cxx
++++ b/basebmp/test/linetest.cxx
+@@ -151,12 +151,10 @@ public:
+         const basegfx::B2ISize aSize(11,11);
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()) );
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()) );
++                                           FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+     }
+ 
+     void testCornerCases()
+@@ -165,8 +163,7 @@ public:
+         BitmapDeviceSharedPtr pDevice = createBitmapDevice(
+             aSize,
+             true,
+-            FORMAT_ONE_BIT_MSB_PAL,
+-            basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()) );
++            FORMAT_ONE_BIT_MSB_PAL );
+ 
+         const basegfx::B2IPoint aPt1(0,0);
+         const basegfx::B2IPoint aPt2(10,10);
+@@ -182,8 +179,7 @@ public:
+         pDevice = createBitmapDevice(
+             aSize2,
+             true,
+-            FORMAT_ONE_BIT_MSB_PAL,
+-            basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()));
++            FORMAT_ONE_BIT_MSB_PAL );
+ 
+         CPPUNIT_ASSERT_MESSAGE("only pixel cleared",
+                                 pDevice->getPixelData(aPt1) == 0);
+diff --git a/basebmp/test/masktest.cxx b/basebmp/test/masktest.cxx
+index 7b4559c..d53ba72 100644
+--- a/basebmp/test/masktest.cxx
++++ b/basebmp/test/masktest.cxx
+@@ -104,17 +104,14 @@ public:
+         const basegfx::B2ISize aSize(10,10);
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()) );
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                             true,
+-                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                            basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()) );
++                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+ 
+         mpMask = createBitmapDevice( aSize,
+                                      true,
+-                                     FORMAT_EIGHT_BIT_GREY,
+-                                     basebmp::getBitmapDeviceStrideForWidth(FORMAT_EIGHT_BIT_GREY, aSize.getX()) );
++                                     FORMAT_EIGHT_BIT_GREY );
+ 
+         OUString aSvg( "m 0 0h5v10h5v-5h-10z" );
+ 
+diff --git a/basebmp/test/polytest.cxx b/basebmp/test/polytest.cxx
+index 60746d7..a0371eb 100644
+--- a/basebmp/test/polytest.cxx
++++ b/basebmp/test/polytest.cxx
+@@ -296,12 +296,10 @@ public:
+         const basegfx::B2ISize aSize(10,10);
+         mpDevice1bpp = createBitmapDevice( aSize,
+                                            true,
+-                                           FORMAT_ONE_BIT_MSB_PAL,
+-                                           basebmp::getBitmapDeviceStrideForWidth(FORMAT_ONE_BIT_MSB_PAL, aSize.getX()));
++                                           FORMAT_ONE_BIT_MSB_PAL );
+         mpDevice32bpp = createBitmapDevice( aSize,
+                                             true,
+-                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA,
+-                                            basebmp::getBitmapDeviceStrideForWidth(FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA, aSize.getX()));
++                                            FORMAT_THIRTYTWO_BIT_TC_MASK_BGRA );
+     }
+ 
+     void testEmpty()
+diff --git a/include/basebmp/bitmapdevice.hxx b/include/basebmp/bitmapdevice.hxx
+index 5953741..6071c79 100644
+--- a/include/basebmp/bitmapdevice.hxx
++++ b/include/basebmp/bitmapdevice.hxx
+@@ -668,8 +668,7 @@ sal_Int32 BASEBMP_DLLPUBLIC getBitmapDeviceStrideForWidth(Format nScanlineFormat
+  */
+ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC createBitmapDevice( const basegfx::B2IVector& rSize,
+                                                             bool                      bTopDown,
+-                                                            Format                    nScanlineFormat,
+-                                                            sal_Int32                 nScanlineStride );
++                                                            Format                    nScanlineFormat );
+ 
+ /** Function to create a BitmapDevice for given scanline format
+     with the given palette
+@@ -681,7 +680,6 @@ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC createBitmapDevice( const basegfx::B2IVe
+ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC createBitmapDevice( const basegfx::B2IVector&        rSize,
+                                                             bool                             bTopDown,
+                                                             Format                           nScanlineFormat,
+-                                                            sal_Int32                        nScanlineStride,
+                                                             const PaletteMemorySharedVector& rPalette );
+ 
+ /** Function to create a BitmapDevice for given scanline format
+@@ -693,7 +691,6 @@ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC createBitmapDevice( const basegfx::B2IVe
+ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC createBitmapDevice( const basegfx::B2IVector&        rSize,
+                                                             bool                             bTopDown,
+                                                             Format                           nScanlineFormat,
+-                                                            sal_Int32                        nScanlineStride,
+                                                             const RawMemorySharedArray&      rMem,
+                                                             const PaletteMemorySharedVector& rPalette );
+ 
+@@ -725,8 +722,8 @@ BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC subsetBitmapDevice( const BitmapDeviceSh
+     copied, only the size can be varied. Note that the prototype's
+     bitmap content is <em>not</em> copied, only a palette (if any).
+  */
+-BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC cloneBitmapDevice( const basegfx::B2IVector&    rSize,
+-                                                           const BitmapDeviceSharedPtr& rProto );
++BitmapDeviceSharedPtr BASEBMP_DLLPUBLIC cloneBitmapDevice(const basegfx::B2IVector& rSize,
++                                                          const BitmapDeviceSharedPtr& rProto);
+ 
+ }
+ 
+diff --git a/sw/qa/extras/ooxmlimport/ooxmlimport.cxx b/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
+index 87435f5..b535187 100644
+--- a/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
++++ b/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
+@@ -771,7 +771,7 @@ DECLARE_OOXMLIMPORT_TEST(testN777345, "n777345.docx")
+     Graphic aGraphic(xGraphic);
+     // If this changes later, feel free to update it, but make sure it's not
+     // the checksum of a white/transparent placeholder rectangle.
+-    CPPUNIT_ASSERT_EQUAL(BitmapChecksum(3652741777587093783), aGraphic.GetChecksum());
++    CPPUNIT_ASSERT_EQUAL(BitmapChecksum(SAL_CONST_UINT64(12149824012634930130)), aGraphic.GetChecksum());
+ #endif
+ }
+ 
+diff --git a/vcl/headless/svpbmp.cxx b/vcl/headless/svpbmp.cxx
+index 901526e..92c2835 100644
+--- a/vcl/headless/svpbmp.cxx
++++ b/vcl/headless/svpbmp.cxx
+@@ -52,9 +52,8 @@ bool SvpSalBitmap::Create( const Size& rSize,
+         aSize.setX( 1 );
+     if( aSize.getY() == 0 )
+         aSize.setY( 1 );
+-    sal_Int32 nStride = getBitmapDeviceStrideForWidth(nFormat, aSize.getX());
+     if( nBitCount > 8 )
+-        m_aBitmap = createBitmapDevice( aSize, false, nFormat, nStride );
++        m_aBitmap = createBitmapDevice( aSize, false, nFormat );
+     else
+     {
+         // prepare palette
+@@ -67,7 +66,7 @@ bool SvpSalBitmap::Create( const Size& rSize,
+             const BitmapColor& rCol = rPalette[i];
+             (*pPalette)[i] = basebmp::Color( rCol.GetRed(), rCol.GetGreen(), rCol.GetBlue() );
+         }
+-        m_aBitmap = createBitmapDevice( aSize, false, nFormat, nStride,
++        m_aBitmap = createBitmapDevice( aSize, false, nFormat,
+                                         basebmp::RawMemorySharedArray(),
+                                         basebmp::PaletteMemorySharedVector( pPalette )
+                                         );
+@@ -336,7 +335,6 @@ void SvpSalBitmap::ReleaseBuffer( BitmapBuffer* pBuffer, BitmapAccessMode nMode
+             m_aBitmap = basebmp::createBitmapDevice( m_aBitmap->getSize(),
+                                                      m_aBitmap->isTopDown(),
+                                                      m_aBitmap->getScanlineFormat(),
+-                                                     m_aBitmap->getScanlineStride(),
+                                                      m_aBitmap->getBuffer(),
+                                                      pPal );
+         }
+diff --git a/vcl/headless/svpframe.cxx b/vcl/headless/svpframe.cxx
+index e1218d7..22ffaef 100644
+--- a/vcl/headless/svpframe.cxx
++++ b/vcl/headless/svpframe.cxx
+@@ -292,8 +292,7 @@ void SvpSalFrame::SetPosSize( long nX, long nY, long nWidth, long nHeight, sal_u
+             aFrameSize.setX( 1 );
+         if( aFrameSize.getY() == 0 )
+             aFrameSize.setY( 1 );
+-        sal_Int32 nStride = basebmp::getBitmapDeviceStrideForWidth(m_nScanlineFormat, aFrameSize.getX());
+-        m_aFrame = createBitmapDevice( aFrameSize, m_bTopDown, m_nScanlineFormat, nStride );
++        m_aFrame = createBitmapDevice( aFrameSize, m_bTopDown, m_nScanlineFormat );
+         if (m_bDamageTracking)
+             m_aFrame->setDamageTracker(
+                 basebmp::IBitmapDeviceDamageTrackerSharedPtr( new DamageTracker ) );
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index 0afce7e..cbe3dc1 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -173,14 +173,14 @@ bool SvpSalGraphics::drawAlphaRect(long nX, long nY, long nWidth, long nHeight,
+         return false;
+     }
+ 
+-    cairo_t* cr = createCairoContext(m_aDevice);
++    cairo_t* cr = createCairoContext(m_aOrigDevice);
+     if (!cr)
+         return bRet;
+ 
+-    if (!m_aDevice->isTopDown())
++    if (!m_aOrigDevice->isTopDown())
+     {
+         cairo_scale(cr, 1, -1.0);
+-        cairo_translate(cr, 0.0, -m_aDevice->getSize().getY());
++        cairo_translate(cr, 0.0, -m_aOrigDevice->getSize().getY());
+     }
+ 
+     clipRegion(cr);
+@@ -193,7 +193,7 @@ bool SvpSalGraphics::drawAlphaRect(long nX, long nY, long nWidth, long nHeight,
+     cairo_rectangle(cr, nX, nY, nWidth, nHeight);
+ 
+     cairo_rectangle_int_t extents;
+-    basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aDevice->getDamageTracker());
++    basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+     if (xDamageTracker)
+         extents = getFillDamage(cr);
+ 
+@@ -731,14 +731,14 @@ bool SvpSalGraphics::drawPolyPolygon(const basegfx::B2DPolyPolygon& rPolyPoly, d
+         return false;
+     }
+ 
+-    cairo_t* cr = createCairoContext(m_aDevice);
++    cairo_t* cr = createCairoContext(m_aOrigDevice);
+     if (!cr)
+         return false;
+ 
+-    if (!m_aDevice->isTopDown())
++    if (!m_aOrigDevice->isTopDown())
+     {
+         cairo_scale(cr, 1, -1.0);
+-        cairo_translate(cr, 0.0, -m_aDevice->getSize().getY());
++        cairo_translate(cr, 0.0, -m_aOrigDevice->getSize().getY());
+     }
+ 
+     clipRegion(cr);
+@@ -752,7 +752,7 @@ bool SvpSalGraphics::drawPolyPolygon(const basegfx::B2DPolyPolygon& rPolyPoly, d
+         AddPolygonToPath(cr, *pPoly, true);
+ 
+     cairo_rectangle_int_t extents;
+-    basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aDevice->getDamageTracker());
++    basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+     if (xDamageTracker)
+         extents = getFillDamage(cr);
+ 
+@@ -891,11 +891,12 @@ SalBitmap* SvpSalGraphics::getBitmap( long nX, long nY, long nWidth, long nHeigh
+ {
+     SvpSalBitmap* pBitmap = new SvpSalBitmap();
+ 
+-    if (m_aDevice)
++    if (m_aOrigDevice)
+     {
+         basebmp::BitmapDeviceSharedPtr aCopy;
+         aCopy = cloneBitmapDevice(basegfx::B2IVector(nWidth, nHeight),
+-                                   m_aDevice);
++                                   m_aOrigDevice);
++        basegfx::B2IVector size = aCopy->getSize();
+         basegfx::B2IBox aSrcRect( nX, nY, nX+nWidth, nY+nHeight );
+         basegfx::B2IBox aDestRect( 0, 0, nWidth, nHeight );
+ 
+@@ -941,12 +942,12 @@ void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInv
+     }
+     else if ( nFlags & SAL_INVERT_50 )
+     {
+-        if (cairo_t* cr = createCairoContext(m_aDevice))
++        if (cairo_t* cr = createCairoContext(m_aOrigDevice))
+         {
+-            if (!m_aDevice->isTopDown())
++            if (!m_aOrigDevice->isTopDown())
+             {
+                 cairo_scale(cr, 1, -1.0);
+-                cairo_translate(cr, 0.0, -m_aDevice->getSize().getY());
++                cairo_translate(cr, 0.0, -m_aOrigDevice->getSize().getY());
+             }
+ 
+             clipRegion(cr);
+@@ -954,7 +955,7 @@ void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInv
+             cairo_pattern_t *pattern = create_stipple();
+ 
+             cairo_rectangle_int_t extents;
+-            basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aDevice->getDamageTracker());
++            basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+ 
+             cairo_rectangle(cr, nX, nY, nWidth, nHeight);
+ 
+@@ -1075,7 +1076,7 @@ bool SvpSalGraphics::supportsOperation(OutDevSupportType eType) const
+ #if ENABLE_CAIRO_CANVAS
+     if (m_aDrawMode == basebmp::DrawMode_XOR)
+         return false;
+-    if (!isCairoCompatible(m_aDevice))
++    if (!isCairoCompatible(m_aOrigDevice))
+         return false;
+     switch (eType)
+     {
+diff --git a/vcl/headless/svptextrender.cxx b/vcl/headless/svptextrender.cxx
+index f143da1..2cd51ef 100644
+--- a/vcl/headless/svptextrender.cxx
++++ b/vcl/headless/svptextrender.cxx
+@@ -152,7 +152,7 @@ BitmapDeviceSharedPtr SvpGlyphPeer::GetGlyphBmp( ServerFont& rServerFont,
+                 pGcpHelper->maRawBitmap.mnScanlineSize,
+                 pGcpHelper->maRawBitmap.mnHeight );
+             static PaletteMemorySharedVector aDummyPAL;
+-            pGcpHelper->maBitmapDev = createBitmapDevice( aSize, true, nBmpFormat, aSize.getX(), pGcpHelper->maRawBitmap.mpBits, aDummyPAL );
++            pGcpHelper->maBitmapDev = createBitmapDevice( aSize, true, nBmpFormat, pGcpHelper->maRawBitmap.mpBits, aDummyPAL );
+         }
+ 
+         rGlyphData.ExtDataRef().meInfo = nBmpFormat;
+diff --git a/vcl/headless/svpvd.cxx b/vcl/headless/svpvd.cxx
+index 1e4050a..1c4237b 100644
+--- a/vcl/headless/svpvd.cxx
++++ b/vcl/headless/svpvd.cxx
+@@ -71,21 +71,20 @@ bool SvpSalVirtualDevice::SetSizeUsingBuffer( long nNewDX, long nNewDY,
+         SvpSalInstance* pInst = SvpSalInstance::s_pDefaultInstance;
+         assert( pInst );
+         basebmp::Format nFormat = pInst->getFormatForBitCount( m_nBitCount );
+-        sal_Int32 nStride = basebmp::getBitmapDeviceStrideForWidth(nFormat, aDevSize.getX());
+ 
+         if ( m_nBitCount == 1 )
+         {
+             std::vector< basebmp::Color > aDevPal(2);
+             aDevPal[0] = basebmp::Color( 0, 0, 0 );
+             aDevPal[1] = basebmp::Color( 0xff, 0xff, 0xff );
+-            m_aDevice = createBitmapDevice( aDevSize, bTopDown, nFormat, nStride,
++            m_aDevice = createBitmapDevice( aDevSize, bTopDown, nFormat,
+                                             PaletteMemorySharedVector( new std::vector< basebmp::Color >(aDevPal) ) );
+         }
+         else
+         {
+             m_aDevice = pBuffer ?
+-                          createBitmapDevice( aDevSize, bTopDown, nFormat, nStride, pBuffer, PaletteMemorySharedVector() )
+-                        : createBitmapDevice( aDevSize, bTopDown, nFormat, nStride );
++                          createBitmapDevice( aDevSize, bTopDown, nFormat, pBuffer, PaletteMemorySharedVector() )
++                        : createBitmapDevice( aDevSize, bTopDown, nFormat );
+         }
+ 
+         // update device in existing graphics
+diff --git a/vcl/qa/cppunit/BitmapTest.cxx b/vcl/qa/cppunit/BitmapTest.cxx
+index a5437c1..384afc7 100644
+--- a/vcl/qa/cppunit/BitmapTest.cxx
++++ b/vcl/qa/cppunit/BitmapTest.cxx
+@@ -51,17 +51,12 @@ void BitmapTest::testConvert()
+     {
+         Bitmap::ScopedReadAccess pReadAccess(aBitmap);
+         CPPUNIT_ASSERT_EQUAL(static_cast<sal_uInt16>(8), pReadAccess->GetBitCount());
+-#if defined WNT
+-        if (!OpenGLHelper::isVCLOpenGLEnabled())
+-        {
+-            // GDI Scanlines padded to DWORD multiples, it seems
+-            CPPUNIT_ASSERT_EQUAL(static_cast<sal_uLong>(12), pReadAccess->GetScanlineSize());
+-        }
+-        else
++#if defined MACOSX || defined IOS
++        //it would be nice to find and change the stride for quartz to be the same as everyone else
++        CPPUNIT_ASSERT_EQUAL(static_cast<sal_uLong>(10), pReadAccess->GetScanlineSize());
++#else
++        CPPUNIT_ASSERT_EQUAL(static_cast<sal_uLong>(12), pReadAccess->GetScanlineSize());
+ #endif
+-        {
+-            CPPUNIT_ASSERT_EQUAL(static_cast<sal_uLong>(10), pReadAccess->GetScanlineSize());
+-        }
+         CPPUNIT_ASSERT(pReadAccess->HasPalette());
+         const BitmapColor& rColor = pReadAccess->GetPaletteColor(pReadAccess->GetPixelIndex(1, 1));
+         CPPUNIT_ASSERT_EQUAL(sal_Int32(204), sal_Int32(rColor.GetRed()));
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index a28c144..eef48cd 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -2063,9 +2063,8 @@ void GtkSalFrame::AllocateFrame()
+             aFrameSize.setX( 1 );
+         if( aFrameSize.getY() == 0 )
+             aFrameSize.setY( 1 );
+-        int cairo_stride = cairo_format_stride_for_width(CAIRO_FORMAT_RGB24, aFrameSize.getX());
+         m_aFrame = basebmp::createBitmapDevice(aFrameSize, true,
+-                                               basebmp::FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX, cairo_stride);
++                                               basebmp::FORMAT_THIRTYTWO_BIT_TC_MASK_BGRX);
+         m_aFrame->setDamageTracker(
+             basebmp::IBitmapDeviceDamageTrackerSharedPtr(new DamageTracker(*this)) );
+         SAL_INFO("vcl.gtk3", "allocated m_aFrame size of " << maGeometry.nWidth << " x " << maGeometry.nHeight);
+-- 
+2.5.0
+

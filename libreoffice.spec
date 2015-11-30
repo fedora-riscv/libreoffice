@@ -353,6 +353,7 @@ Patch44: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
 Patch45: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
 Patch46: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
 Patch47: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
+Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

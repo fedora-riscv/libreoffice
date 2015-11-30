@@ -1,0 +1,60 @@
+From d321d863052be950ba1779ccfdcca69bd3ef0f76 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 30 Nov 2015 13:50:16 +0000
+Subject: [PATCH] Resolves: rhbz#1285380 get menus working under wayland
+
+use GDK_WINDOW_TYPE_HINT_POPUP_MENU hint for menus
+
+and set hints after widget is realized
+
+and set gtk_window_set_transient_for menus too
+
+then you get menus and tooltips apparently in the right place
+
+Change-Id: I116d821d4eff480503348b8ff1fb8f4f247b4c1f
+---
+ vcl/unx/gtk/gtksalframe.cxx | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
+index c5c01a4..62b0e06 100644
+--- a/vcl/unx/gtk/gtksalframe.cxx
++++ b/vcl/unx/gtk/gtksalframe.cxx
+@@ -1392,6 +1392,15 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+     if( m_pParent && m_pParent->m_pWindow && ! isChild() )
+         gtk_window_set_screen( GTK_WINDOW(m_pWindow), gtk_window_get_screen( GTK_WINDOW(m_pParent->m_pWindow) ) );
+ 
++    if (m_pParent)
++    {
++        if (!(m_pParent->m_nStyle & SalFrameStyleFlags::PLUG))
++            gtk_window_set_transient_for( GTK_WINDOW(m_pWindow), GTK_WINDOW(m_pParent->m_pWindow) );
++        m_pParent->m_aChildren.push_back( this );
++    }
++
++    InitCommon();
++
+     // set window type
+     bool bDecoHandling =
+         ! isChild() &&
+@@ -1432,17 +1441,9 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+ #endif
+         gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), eType );
+         gtk_window_set_gravity( GTK_WINDOW(m_pWindow), GDK_GRAVITY_STATIC );
+-        if( m_pParent && ! (m_pParent->m_nStyle & SalFrameStyleFlags::PLUG) )
+-            gtk_window_set_transient_for( GTK_WINDOW(m_pWindow), GTK_WINDOW(m_pParent->m_pWindow) );
+     }
+     else if( (nStyle & SalFrameStyleFlags::FLOAT) )
+-    {
+-        gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), GDK_WINDOW_TYPE_HINT_UTILITY );
+-    }
+-    if( m_pParent )
+-        m_pParent->m_aChildren.push_back( this );
+-
+-    InitCommon();
++        gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), GDK_WINDOW_TYPE_HINT_POPUP_MENU );
+ 
+     if( eWinType == GTK_WINDOW_TOPLEVEL )
+     {
+-- 
+2.5.0
+

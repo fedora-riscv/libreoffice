@@ -315,6 +315,8 @@ Patch14: 0001-never-run-autogen.sh.patch
 Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+# backport from master
+Patch17: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

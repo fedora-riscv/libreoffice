@@ -351,6 +351,7 @@ Patch42: 0001-Resolves-tdf-92687-implement-drawPolyPolygon-via-cai.patch
 Patch43: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
 Patch44: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
 Patch45: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
+Patch46: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

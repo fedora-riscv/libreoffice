@@ -1,0 +1,110 @@
+From 63d5cc018d268a8d269cb2353ddaeb68fc74d64c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 30 Nov 2015 10:22:46 +0000
+Subject: [PATCH] gtk3: implement SAL_INVERT_50 rectangle case
+
+missing stipple effect around slides in layout panel
+
+(cherry picked from commit a80dea3e77c2a8465cdd309c5f740fb8102dd826)
+(cherry picked from commit 442d064188a2d50406e485d033accfffe4bd54e9)
+
+Change-Id: I8a55c6bda1e742e105ba22e4566658099ea16f46
+---
+ vcl/headless/svpgdi.cxx | 73 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 71 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index 06030d9..0afce7e 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -913,9 +913,76 @@ SalColor SvpSalGraphics::getPixel( long nX, long nY )
+     return aColor.toInt32();
+ }
+ 
+-void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInvert /*nFlags*/ )
++namespace
+ {
+-    // FIXME: handle SAL_INVERT_50 and SAL_INVERT_TRACKFRAME
++    cairo_pattern_t * create_stipple()
++    {
++        static unsigned char data[16] = { 0xFF, 0xFF, 0x00, 0x00,
++                                          0xFF, 0xFF, 0x00, 0x00,
++                                          0x00, 0x00, 0xFF, 0xFF,
++                                          0x00, 0x00, 0xFF, 0xFF };
++        cairo_surface_t* surface = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_A8, 4, 4, 4);
++        cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface);
++        cairo_surface_destroy(surface);
++        cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
++        cairo_pattern_set_filter(pattern, CAIRO_FILTER_NEAREST);
++        return pattern;
++    }
++}
++
++void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInvert nFlags )
++{
++#if ENABLE_CAIRO_CANVAS
++#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 10, 0)
++    // FIXME: handle SAL_INVERT_TRACKFRAME
++    if ( nFlags & SAL_INVERT_TRACKFRAME )
++    {
++        SAL_WARN("vcl.gdi", "SvpSalGraphics::invert, unhandled SAL_INVERT_TRACKFRAME");
++    }
++    else if ( nFlags & SAL_INVERT_50 )
++    {
++        if (cairo_t* cr = createCairoContext(m_aDevice))
++        {
++            if (!m_aDevice->isTopDown())
++            {
++                cairo_scale(cr, 1, -1.0);
++                cairo_translate(cr, 0.0, -m_aDevice->getSize().getY());
++            }
++
++            clipRegion(cr);
++
++            cairo_pattern_t *pattern = create_stipple();
++
++            cairo_rectangle_int_t extents;
++            basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aDevice->getDamageTracker());
++
++            cairo_rectangle(cr, nX, nY, nWidth, nHeight);
++
++            if (xDamageTracker)
++                extents = getFillDamage(cr);
++
++            cairo_clip(cr);
++
++            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
++            cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
++            cairo_mask(cr, pattern);
++            cairo_pattern_destroy(pattern);
++
++            cairo_surface_flush(cairo_get_target(cr));
++            cairo_destroy(cr); // unref
++
++            return;
++        }
++        else
++            SAL_WARN("vcl.gdi", "SvpSalGraphics::invert unhandled XOR (?)");
++    }
++    else
++    {
++        SAL_WARN("vcl.gdi", "SvpSalGraphics::invert, unhandled SAL_INVERT_TRACKFRAME");
++    }
++#endif
++#endif
++
+     basegfx::B2DPolygon aRect = basegfx::tools::createPolygonFromRect( basegfx::B2DRectangle( nX, nY, nX+nWidth, nY+nHeight ) );
+     basegfx::B2DPolyPolygon aPolyPoly( aRect );
+     basegfx::B2IBox aDestRange( nX, nY, nX + nWidth, nY + nHeight );
+@@ -928,6 +995,8 @@ void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInv
+ 
+ void SvpSalGraphics::invert( sal_uInt32 nPoints, const SalPoint* pPtAry, SalInvert /*nFlags*/ )
+ {
++    SAL_WARN("vcl.gdi", "SvpSalGraphics::invert, unhandled points case");
++
+     // FIXME: handle SAL_INVERT_50 and SAL_INVERT_TRACKFRAME
+     basegfx::B2DPolygon aPoly;
+     aPoly.append( basegfx::B2DPoint( pPtAry->mnX, pPtAry->mnY ), nPoints );
+-- 
+2.5.0
+

@@ -356,6 +356,7 @@ Patch47: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
 Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
 Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
 Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
+Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

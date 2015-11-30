@@ -1,0 +1,35 @@
+From 227fb55bbebf768e8fbab286665e91e299900e3b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 30 Nov 2015 15:29:03 +0000
+Subject: [PATCH] gtk3: glitches because yours truly cannot tell x from y
+
+(cherry picked from commit 2ca429e781cba94608e9838e2c1c50f1e8632b90)
+
+(cherry picked from commit 9401a065d0d53b31427f85a936ef53244ac8a6b8)
+
+Change-Id: I3b8620a4d8bffeb5e0558c35cb3a063238c12ba5
+---
+ vcl/headless/svpgdi.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index cbe3dc1..cc75d7a 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -144,11 +144,11 @@ namespace
+         double x1, y1, x2, y2;
+ 
+         cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
+-        extents.x = x1, extents.y = x2, extents.width = x2-x1, extents.height = y2-y1;
++        extents.x = x1, extents.y = y1, extents.width = x2-x1, extents.height = y2-y1;
+         cairo_region_t *region = cairo_region_create_rectangle(&extents);
+ 
+         cairo_fill_extents(cr, &x1, &y1, &x2, &y2);
+-        extents.x = x1, extents.y = x2, extents.width = x2-x1, extents.height = y2-y1;
++        extents.x = x1, extents.y = y1, extents.width = x2-x1, extents.height = y2-y1;
+         cairo_region_intersect_rectangle(region, &extents);
+ 
+         cairo_region_get_extents(region, &extents);
+-- 
+2.5.0
+

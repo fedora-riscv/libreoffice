@@ -1,0 +1,319 @@
+From 2e071f6dd64561ae173b903a76065e2fab48a266 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 24 Jul 2015 12:22:14 +0100
+Subject: [PATCH] Related: rhbz#1281906 wayland toolbar drawn over menus etc
+
+gtk3: draw/paint to the fixed container
+
+which fills the toplevel window, rather than directly to the toplevel window.
+
+It makes no difference for X, but for wayland the window decorations are part
+of the toplevel window, dropping down a level means we don't draw out menu bar
+under the window decoration space
+
+(cherry picked from commit 298c089df77d9afe2cf86bb7a6a8544a0151e8c5)
+
+Change-Id: Icec400efacd16b5d901107c13b6fa90c59cad0e6
+
+gtk3: insert an event box between toplevel and contents
+
+Change-Id: Ic78aa62baaa4260645a80ffb6704103440339595
+(cherry picked from commit 2796d7f1723d5b45177fe6da7a6e66cb914ae6d2)
+
+gtk3: connect to the eventbox and not toplevel for mouse events
+
+this leaves whatever magic gtk3 under wayland is doing on the toplevel
+alone so the window can be resized and the title bar responds to
+clicks as expected
+
+Change-Id: I9952cb719f3148660e17951b4f66a2525e11a6df
+(cherry picked from commit 10d2467c2532178efe3d672405839bc1d0aab1e5)
+
+attach gestures to event widget instead of toplevel
+
+Change-Id: Id0658cf561570a2ae15fb7fd603e6437da9cfaf2
+(cherry picked from commit 848f685ae8f614ad62d205ef628f259cafb738b3)
+---
+ vcl/inc/unx/gtk/gtkframe.hxx       |  5 +-
+ vcl/unx/gtk/a11y/atkfactory.cxx    | 21 +++++++--
+ vcl/unx/gtk/window/gtksalframe.cxx | 93 +++++++++++++++++++++++++++-----------
+ 3 files changed, 88 insertions(+), 31 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 604f2a6..3531c41 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -173,6 +173,8 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+ 
+     SalX11Screen                    m_nXScreen;
+     GtkWidget*                      m_pWindow;
++    GtkEventBox*                    m_pEventBox;
++    GtkFixed*                       m_pFixedContainer;
+     GdkWindow*                      m_pForeignParent;
+     GdkNativeWindow                 m_aForeignParentWindow;
+     GdkWindow*                      m_pForeignTopLevel;
+@@ -180,7 +182,6 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+     Pixmap                          m_hBackgroundPixmap;
+     sal_uLong                       m_nStyle;
+     SalExtStyle                     m_nExtStyle;
+-    GtkFixed*                       m_pFixedContainer;
+     GtkSalFrame*                    m_pParent;
+     std::list< GtkSalFrame* >       m_aChildren;
+     GdkWindowState                  m_nState;
+@@ -335,6 +336,7 @@ public:
+     guint                           m_nActionGroupExportId;
+     guint                           m_nAppActionGroupExportId;
+     guint                           m_nHudAwarenessId;
++    std::vector<gulong>             m_aMouseSignalIds;
+ 
+     // dispatches an event, returns true if dispatched
+     // and false else; if true was returned the event should
+@@ -347,6 +349,7 @@ public:
+     static GdkDisplay*     getGdkDisplay();
+     GtkWidget*  getWindow() const { return m_pWindow; }
+     GtkFixed*   getFixedContainer() const { return m_pFixedContainer; }
++    GtkWidget*  getMouseEventWidget() const;
+     GdkWindow*  getForeignParent() const { return m_pForeignParent; }
+     GdkNativeWindow getForeignParentWindow() const { return m_aForeignParentWindow; }
+     GdkWindow*  getForeignTopLevel() const { return m_pForeignTopLevel; }
+diff --git a/vcl/unx/gtk/a11y/atkfactory.cxx b/vcl/unx/gtk/a11y/atkfactory.cxx
+index 99ed750..9edc7ab 100644
+--- a/vcl/unx/gtk/a11y/atkfactory.cxx
++++ b/vcl/unx/gtk/a11y/atkfactory.cxx
+@@ -101,14 +101,27 @@ wrapper_factory_get_accessible_type()
+ static AtkObject*
+ wrapper_factory_create_accessible( GObject *obj )
+ {
+-    GtkWidget* parent_widget = gtk_widget_get_parent( GTK_WIDGET( obj ) );
++#if GTK_CHECK_VERSION(3,0,0)
++    GtkWidget* pEventBox = gtk_widget_get_parent(GTK_WIDGET(obj));
+ 
+     // gail_container_real_remove_gtk tries to re-instanciate an accessible
+     // for a widget that is about to vanish ..
+-    if( ! parent_widget )
++    if (!pEventBox)
+         return atk_noop_object_wrapper_new();
+ 
+-    GtkSalFrame* pFrame = GtkSalFrame::getFromWindow( GTK_WINDOW( parent_widget ) );
++    GtkWidget* pTopLevel = gtk_widget_get_parent(pEventBox);
++    if (!pTopLevel)
++        return atk_noop_object_wrapper_new();
++#else
++    GtkWidget* pTopLevel = gtk_widget_get_parent(GTK_WIDGET(obj));
++
++    // gail_container_real_remove_gtk tries to re-instanciate an accessible
++    // for a widget that is about to vanish ..
++    if (!pTopLevel)
++        return atk_noop_object_wrapper_new();
++#endif
++
++    GtkSalFrame* pFrame = GtkSalFrame::getFromWindow(GTK_WINDOW(pTopLevel));
+     g_return_val_if_fail( pFrame != NULL, NULL );
+ 
+     vcl::Window* pFrameWindow = pFrame->GetWindow();
+@@ -130,7 +143,7 @@ wrapper_factory_create_accessible( GObject *obj )
+                 if( accessible )
+                     g_object_ref( G_OBJECT(accessible) );
+                 else
+-                    accessible = atk_object_wrapper_new( xAccessible, gtk_widget_get_accessible(parent_widget) );
++                    accessible = atk_object_wrapper_new( xAccessible, gtk_widget_get_accessible(pTopLevel) );
+ 
+                 return accessible;
+             }
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index eef48cd..8acdf8a 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -414,7 +414,7 @@ void GtkSalFrame::doKeyCallback( guint state,
+     if (keyval == GDK_0)
+     {
+         fprintf( stderr, "force widget_queue_draw\n");
+-        gtk_widget_queue_draw (m_pWindow);
++        gtk_widget_queue_draw (m_pFixedContainer);
+         return;
+     }
+     else if (keyval == GDK_1)
+@@ -894,8 +894,13 @@ GtkSalFrame::~GtkSalFrame()
+     if( m_pIMHandler )
+         delete m_pIMHandler;
+ 
++    GtkWidget *pEventWidget = getMouseEventWidget();
++    for (auto handler_id : m_aMouseSignalIds)
++        g_signal_handler_disconnect(G_OBJECT(pEventWidget), handler_id);
+     if( m_pFixedContainer )
+         gtk_widget_destroy( GTK_WIDGET( m_pFixedContainer ) );
++    if( m_pEventBox )
++        gtk_widget_destroy( GTK_WIDGET(m_pEventBox) );
+     {
+         SolarMutexGuard aGuard;
+ #if defined ENABLE_GMENU_INTEGRATION
+@@ -1036,38 +1041,75 @@ void GtkSalFrame::updateScreenNumber()
+     maGeometry.nDisplayScreenNumber = nScreen;
+ }
+ 
++GtkWidget *GtkSalFrame::getMouseEventWidget() const
++{
++#if GTK_CHECK_VERSION(3,0,0)
++    return GTK_WIDGET(m_pEventBox);
++#else
++    return m_pWindow;
++#endif
++}
++
+ void GtkSalFrame::InitCommon()
+ {
++#if GTK_CHECK_VERSION(3,0,0)
++    m_pEventBox = GTK_EVENT_BOX(gtk_event_box_new());
++    gtk_widget_add_events( GTK_WIDGET(m_pEventBox),
++                           GDK_ALL_EVENTS_MASK );
++    gtk_container_add( GTK_CONTAINER(m_pWindow), GTK_WIDGET(m_pEventBox) );
++
++    // add the fixed container child,
++    // fixed is needed since we have to position plugin windows
++    m_pFixedContainer = GTK_FIXED(g_object_new( ooo_fixed_get_type(), NULL ));
++    gtk_container_add( GTK_CONTAINER(m_pEventBox), GTK_WIDGET(m_pFixedContainer) );
++#else
++    m_pEventBox = 0;
++    // add the fixed container child,
++    // fixed is needed since we have to position plugin windows
++    m_pFixedContainer = GTK_FIXED(g_object_new( ooo_fixed_get_type(), NULL ));
++    gtk_container_add( GTK_CONTAINER(m_pWindow), GTK_WIDGET(m_pFixedContainer) );
++#endif
++
++    GtkWidget *pEventWidget = getMouseEventWidget();
++
++    gtk_widget_set_app_paintable(GTK_WIDGET(m_pFixedContainer), true);
++    /*non-X11 displays won't show anything at all without double-buffering
++      enabled*/
++    if (GDK_IS_X11_DISPLAY(getGdkDisplay()))
++        gtk_widget_set_double_buffered(GTK_WIDGET(m_pFixedContainer), false);
++    gtk_widget_set_redraw_on_allocate(GTK_WIDGET(m_pFixedContainer), false);
++
++
+     // connect signals
+     g_signal_connect( G_OBJECT(m_pWindow), "style-set", G_CALLBACK(signalStyleSet), this );
+-    g_signal_connect( G_OBJECT(m_pWindow), "button-press-event", G_CALLBACK(signalButton), this );
+-    g_signal_connect( G_OBJECT(m_pWindow), "button-release-event", G_CALLBACK(signalButton), this );
++    m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "button-press-event", G_CALLBACK(signalButton), this ));
++    m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "motion-notify-event", G_CALLBACK(signalMotion), this ));
++    m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "button-release-event", G_CALLBACK(signalButton), this ));
+ #if GTK_CHECK_VERSION(3,0,0)
+-    g_signal_connect( G_OBJECT(m_pWindow), "draw", G_CALLBACK(signalDraw), this );
++    g_signal_connect( G_OBJECT(m_pFixedContainer), "draw", G_CALLBACK(signalDraw), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "size-allocate", G_CALLBACK(sizeAllocated), this );
+ //    g_signal_connect( G_OBJECT(m_pWindow), "state-flags-changed", G_CALLBACK(signalFlagsChanged), this );
+ #if GTK_CHECK_VERSION(3,14,0)
+-    GtkGesture *pSwipe = gtk_gesture_swipe_new(m_pWindow);
++    GtkGesture *pSwipe = gtk_gesture_swipe_new(pEventWidget);
+     g_signal_connect(pSwipe, "swipe", G_CALLBACK(gestureSwipe), this);
+     gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER (pSwipe), GTK_PHASE_TARGET);
+-    g_object_weak_ref(G_OBJECT(m_pWindow), reinterpret_cast<GWeakNotify>(g_object_unref), pSwipe);
++    g_object_weak_ref(G_OBJECT(pEventWidget), reinterpret_cast<GWeakNotify>(g_object_unref), pSwipe);
+ 
+-    GtkGesture *pLongPress = gtk_gesture_long_press_new(m_pWindow);
++    GtkGesture *pLongPress = gtk_gesture_long_press_new(pEventWidget);
+     g_signal_connect(pLongPress, "pressed", G_CALLBACK(gestureLongPress), this);
+     gtk_event_controller_set_propagation_phase(GTK_EVENT_CONTROLLER (pLongPress), GTK_PHASE_TARGET);
+-    g_object_weak_ref(G_OBJECT(m_pWindow), reinterpret_cast<GWeakNotify>(g_object_unref), pLongPress);
++    g_object_weak_ref(G_OBJECT(pEventWidget), reinterpret_cast<GWeakNotify>(g_object_unref), pLongPress);
+ 
+ #endif
+ 
+ #else
+-    g_signal_connect( G_OBJECT(m_pWindow), "expose-event", G_CALLBACK(signalExpose), this );
++    g_signal_connect( G_OBJECT(m_pFixedContainer), "expose-event", G_CALLBACK(signalExpose), this );
+ #endif
+     g_signal_connect( G_OBJECT(m_pWindow), "focus-in-event", G_CALLBACK(signalFocus), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "focus-out-event", G_CALLBACK(signalFocus), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "map-event", G_CALLBACK(signalMap), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "unmap-event", G_CALLBACK(signalUnmap), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "configure-event", G_CALLBACK(signalConfigure), this );
+-    g_signal_connect( G_OBJECT(m_pWindow), "motion-notify-event", G_CALLBACK(signalMotion), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "key-press-event", G_CALLBACK(signalKey), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "key-release-event", G_CALLBACK(signalKey), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "delete-event", G_CALLBACK(signalDelete), this );
+@@ -1102,26 +1144,18 @@ void GtkSalFrame::InitCommon()
+     m_nAppActionGroupExportId = 0;
+     m_nHudAwarenessId   = 0;
+ 
+-    gtk_widget_set_app_paintable( m_pWindow, TRUE );
+-    /*non-X11 displays won't show anything at all without double-buffering
+-      enabled*/
+-    if (GDK_IS_X11_DISPLAY(getGdkDisplay()))
+-        gtk_widget_set_double_buffered( m_pWindow, FALSE );
+-    gtk_widget_set_redraw_on_allocate( m_pWindow, FALSE );
+-
+     gtk_widget_add_events( m_pWindow,
+                            GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+                            GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK |
+                            GDK_VISIBILITY_NOTIFY_MASK | GDK_SCROLL_MASK
+                            );
+ 
+-    // add the fixed container child,
+-    // fixed is needed since we have to position plugin windows
+-    m_pFixedContainer = GTK_FIXED(g_object_new( ooo_fixed_get_type(), NULL ));
+-    gtk_container_add( GTK_CONTAINER(m_pWindow), GTK_WIDGET(m_pFixedContainer) );
+-
+     // show the widgets
+-    gtk_widget_show( GTK_WIDGET(m_pFixedContainer) );
++#if GTK_CHECK_VERSION(3,0,0)
++    gtk_widget_show_all( GTK_WIDGET(m_pEventBox) );
++#else
++    gtk_widget_show_all( GTK_WIDGET(m_pFixedContainer) );
++#endif
+ 
+     // realize the window, we need an XWindow id
+     gtk_widget_realize( m_pWindow );
+@@ -2780,7 +2814,7 @@ void GtkSalFrame::grabPointer( bool bGrab, bool bOwnerEvents )
+     GdkDeviceManager* pDeviceManager = gdk_display_get_device_manager(getGdkDisplay());
+     GdkDevice* pPointer = gdk_device_manager_get_client_pointer(pDeviceManager);
+     if (bGrab)
+-        gdk_device_grab(pPointer, widget_get_window(m_pWindow), GDK_OWNERSHIP_NONE, bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, GDK_CURRENT_TIME);
++        gdk_device_grab(pPointer, widget_get_window(getMouseEventWidget()), GDK_OWNERSHIP_NONE, bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, GDK_CURRENT_TIME);
+     else
+         gdk_device_ungrab(pPointer, GDK_CURRENT_TIME);
+ #else
+@@ -3189,8 +3223,14 @@ void GtkSalFrame::createNewWindow( ::Window aNewParent, bool bXEmbed, SalX11Scre
+     {
+         gdk_region_destroy( m_pRegion );
+     }
++
++    GtkWidget *pEventWidget = getMouseEventWidget();
++    for (auto handler_id : m_aMouseSignalIds)
++        g_signal_handler_disconnect(G_OBJECT(pEventWidget), handler_id);
+     if( m_pFixedContainer )
+         gtk_widget_destroy( GTK_WIDGET(m_pFixedContainer) );
++    if( m_pEventBox )
++        gtk_widget_destroy( GTK_WIDGET(m_pEventBox) );
+     if( m_pWindow )
+         gtk_widget_destroy( m_pWindow );
+     if( m_pForeignParent )
+@@ -3651,7 +3691,7 @@ void GtkSalFrame::damaged (const basegfx::B2IBox& rDamageRect)
+         cairo_destroy(cr);
+     }
+ 
+-    gtk_widget_queue_draw_area(m_pWindow,
++    gtk_widget_queue_draw_area(GTK_WIDGET(m_pFixedContainer),
+                                rDamageRect.getMinX(),
+                                rDamageRect.getMinY(),
+                                rDamageRect.getWidth(),
+@@ -3874,7 +3914,7 @@ void GtkSalFrame::TriggerPaintEvent()
+     SAL_INFO("vcl.gtk3", "force painting" << 0 << "," << 0 << " " << maGeometry.nWidth << "x" << maGeometry.nHeight);
+     SalPaintEvent aPaintEvt(0, 0, maGeometry.nWidth, maGeometry.nHeight, true);
+     CallCallback(SALEVENT_PAINT, &aPaintEvt);
+-    gtk_widget_queue_draw(m_pWindow);
++    gtk_widget_queue_draw(GTK_WIDGET(m_pFixedContainer));
+ #endif
+ }
+ 
+@@ -4212,6 +4252,7 @@ void GtkSalFrame::signalDestroy( GtkWidget* pObj, gpointer frame )
+     if( pObj == pThis->m_pWindow )
+     {
+         pThis->m_pFixedContainer = NULL;
++        pThis->m_pEventBox = NULL;
+         pThis->m_pWindow = NULL;
+         pThis->InvalidateGraphics();
+     }
+-- 
+2.5.0
+

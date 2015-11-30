@@ -354,6 +354,7 @@ Patch45: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
 Patch46: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
 Patch47: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
 Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
+Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2474,8 +2475,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:5.0.3.2-9-UNBUILT
+* Mon Nov 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:5.0.3.2-9
 - Related: rhbz#1286416 Be more resilient during auto-recovery attempts
+- Related: rhbz#1281906 wayland toolbar drawn over menus etc
 
 * Sun Nov 29 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-8
 - Related: rhbz#1277445 backport 5-1 idle + timers + mainloop to 5.0

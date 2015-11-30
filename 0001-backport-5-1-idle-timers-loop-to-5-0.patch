@@ -1,4 +1,4 @@
-From f28a08c3c80e7017a62f698560640b173ddfe887 Mon Sep 17 00:00:00 2001
+From de66d2e73cf44d2691d7e2e4ca8df98b46b26c10 Mon Sep 17 00:00:00 2001
 From: Michael Meeks <michael.meeks@collabora.com>
 Date: Fri, 13 Nov 2015 09:56:53 +0000
 Subject: [PATCH] backport 5-1 idle/timers loop to 5-0
@@ -62,10 +62,12 @@ Change-Id: Iadc5e2a48828a18a599a86a8df14cb2b75dd425e
  vcl/unx/gtk/a11y/atkwrapper.cxx                    |   2 +-
  vcl/unx/gtk/app/gtkdata.cxx                        |  14 +-
  vcl/unx/gtk/app/gtkinst.cxx                        |   6 +-
+ vcl/unx/kde4/KDESalDisplay.cxx                     |   9 +-
+ vcl/unx/kde4/KDESalDisplay.hxx                     |   2 +-
  vcl/unx/kde4/KDEXLib.cxx                           |  16 +-
  vcl/unx/kde4/KDEXLib.hxx                           |   4 +-
  vcl/win/source/app/salinst.cxx                     |  19 ++-
- 37 files changed, 384 insertions(+), 350 deletions(-)
+ 39 files changed, 390 insertions(+), 355 deletions(-)
 
 diff --git a/drawinglayer/source/primitive2d/textlayoutdevice.cxx b/drawinglayer/source/primitive2d/textlayoutdevice.cxx
 index 2eefc3f..99dad74 100644
@@ -1623,6 +1625,52 @@ index 601fd21..9242b88 100644
  }
  
  bool GtkInstance::IsTimerExpired()
+diff --git a/vcl/unx/kde4/KDESalDisplay.cxx b/vcl/unx/kde4/KDESalDisplay.cxx
+index 06e7b6d..42f8ebc 100644
+--- a/vcl/unx/kde4/KDESalDisplay.cxx
++++ b/vcl/unx/kde4/KDESalDisplay.cxx
+@@ -46,14 +46,14 @@ SalKDEDisplay::~SalKDEDisplay()
+     pDisp_ = NULL;
+ }
+ 
+-void SalKDEDisplay::Yield()
++bool SalKDEDisplay::Yield()
+ {
+     if( DispatchInternalEvent() )
+-        return;
++        return true;
+ 
+     // Prevent blocking from Drag'n'Drop events, which may have already have processed the event
+     if (XEventsQueued( pDisp_, QueuedAfterReading ) == 0)
+-        return;
++        return false;
+ 
+     DBG_ASSERT( static_cast<SalYieldMutex*>(GetSalData()->m_pInstance->GetYieldMutex())->GetThreadId() ==
+                 osl::Thread::getCurrentIdentifier(),
+@@ -62,8 +62,9 @@ void SalKDEDisplay::Yield()
+     XEvent event;
+     XNextEvent( pDisp_, &event );
+     if( checkDirectInputEvent( &event ))
+-        return;
++        return true;
+     qApp->x11ProcessEvent( &event );
++    return true;
+ }
+ 
+ // HACK: When using Qt event loop, input methods (japanese, etc.) will get broken because
+diff --git a/vcl/unx/kde4/KDESalDisplay.hxx b/vcl/unx/kde4/KDESalDisplay.hxx
+index f4a4146..3e027fd 100644
+--- a/vcl/unx/kde4/KDESalDisplay.hxx
++++ b/vcl/unx/kde4/KDESalDisplay.hxx
+@@ -27,7 +27,7 @@ class SalKDEDisplay : public SalX11Display
+         SalKDEDisplay( Display* pDisp );
+         virtual ~SalKDEDisplay();
+         static SalKDEDisplay* self();
+-        virtual void Yield() SAL_OVERRIDE;
++        virtual bool Yield() SAL_OVERRIDE;
+         bool checkDirectInputEvent( XEvent* ev );
+     private:
+         Atom xim_protocol;
 diff --git a/vcl/unx/kde4/KDEXLib.cxx b/vcl/unx/kde4/KDEXLib.cxx
 index 3101d37..c758e18 100644
 --- a/vcl/unx/kde4/KDEXLib.cxx

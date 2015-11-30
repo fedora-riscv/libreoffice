@@ -1,0 +1,29 @@
+From 7152588cb973f585f620cf9abbb72f4a05037124 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 30 Nov 2015 11:38:21 +0100
+Subject: [PATCH] rhbz#1286416: Be more resilient during auto-recovery attempts
+
+...called from within the signal handler, so any bets are off
+
+Change-Id: Iedb5c7bc8d08350e5f3e3118c6713f5c25b238b6
+(cherry picked from commit 9b3ca276dae6f8d4f337c78e64ed6b7f7e7662ef)
+---
+ framework/source/services/autorecovery.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/framework/source/services/autorecovery.cxx b/framework/source/services/autorecovery.cxx
+index 1bf2f10..3c5302f 100644
+--- a/framework/source/services/autorecovery.cxx
++++ b/framework/source/services/autorecovery.cxx
+@@ -2482,6 +2482,8 @@ void AutoRecovery::implts_registerDocument(const css::uno::Reference< css::frame
+         return;
+ 
+     css::uno::Reference< css::frame::XFrame >   xFrame   = xController->getFrame();
++    if (!xFrame.is())
++        return;
+     css::uno::Reference< css::frame::XDesktop > xDesktop (xFrame->getCreator(), css::uno::UNO_QUERY);
+     if (!xDesktop.is())
+         return;
+-- 
+2.4.3
+

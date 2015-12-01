@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -357,6 +357,7 @@ Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
 Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
 Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
+Patch52: 0001-gtk3-wayland-wrong-dialog-sizes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2477,6 +2478,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-11
+- fix wrong dialog sizes under wayland
+
 * Mon Nov 30 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-10
 - Resolves: rhbz#1285380 get menus working under wayland
 

@@ -300,7 +300,7 @@ Patch2:  libreoffice-installfix.patch
 # not upstreamed
 Patch4: libreoffice-rhel6gcj.patch
 # not upstreamed
-Patch5: libreoffice-rhel6poppler.patch
+# Patch5: libreoffice-rhel6poppler.patch
 # not upstreamed
 Patch6: libreoffice-rhel6langs.patch
 # not upstreamed
@@ -358,6 +358,7 @@ Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
 Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
 Patch52: 0001-gtk3-wayland-wrong-dialog-sizes.patch
+Patch53: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

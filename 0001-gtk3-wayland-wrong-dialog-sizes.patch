@@ -1,4 +1,4 @@
-From 585507a4127ff91d9360ca16938dbd36153aef0d Mon Sep 17 00:00:00 2001
+From 88f9c7f53ad1abc49d8ed4cfc46081d767b0c065 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 1 Dec 2015 13:27:21 +0000
 Subject: [PATCH] gtk3+wayland: wrong dialog sizes
@@ -7,14 +7,14 @@ use inner container, not outer toxic toplevel
 
 Change-Id: I44f2fe1e8e346e51e65158f7864293ef37732345
 ---
- vcl/unx/gtk/gtksalframe.cxx | 10 ++++++----
+ vcl/unx/gtk/window/gtksalframe.cxx | 10 ++++++----
  1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
-index 791e04e..d147b49 100644
---- a/vcl/unx/gtk/gtksalframe.cxx
-+++ b/vcl/unx/gtk/gtksalframe.cxx
-@@ -943,22 +943,24 @@ void GtkSalFrame::moveWindow( long nX, long nY )
+diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
+index dd03073..99624e0 100644
+--- a/vcl/unx/gtk/window/gtksalframe.cxx
++++ b/vcl/unx/gtk/window/gtksalframe.cxx
+@@ -950,22 +950,24 @@ void GtkSalFrame::moveWindow( long nX, long nY )
  
  void GtkSalFrame::widget_set_size_request(long nWidth, long nHeight)
  {
@@ -42,15 +42,15 @@ index 791e04e..d147b49 100644
      if (nWidth > nOrigwidth || nHeight > nOrigheight)
      {
          m_bPaintsBlocked = true;
-@@ -1080,7 +1082,7 @@ void GtkSalFrame::InitCommon()
+@@ -1087,7 +1089,7 @@ void GtkSalFrame::InitCommon()
      m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "button-release-event", G_CALLBACK(signalButton), this ));
  #if GTK_CHECK_VERSION(3,0,0)
      g_signal_connect( G_OBJECT(m_pFixedContainer), "draw", G_CALLBACK(signalDraw), this );
 -    g_signal_connect( G_OBJECT(m_pWindow), "size-allocate", G_CALLBACK(sizeAllocated), this );
 +    g_signal_connect( G_OBJECT(m_pFixedContainer), "size-allocate", G_CALLBACK(sizeAllocated), this );
+ //    g_signal_connect( G_OBJECT(m_pWindow), "state-flags-changed", G_CALLBACK(signalFlagsChanged), this );
  #if GTK_CHECK_VERSION(3,14,0)
      GtkGesture *pSwipe = gtk_gesture_swipe_new(pEventWidget);
-     g_signal_connect(pSwipe, "swipe", G_CALLBACK(gestureSwipe), this);
 -- 
 2.5.0
 

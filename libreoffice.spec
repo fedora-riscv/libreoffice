@@ -1278,7 +1278,6 @@ touch autogen.lastrun
  --disable-coinmp \
  --disable-fetch-external \
  --disable-gnome-vfs \
- --disable-introspection \
  --disable-openssl \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
@@ -1313,12 +1312,13 @@ export GNOME_MIME_THEME=hicolor
 export PREFIXDIR=/usr
 # TODO use empty variables? Should make the renaming hacks in %%install
 # unnecessary.
-. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION WORKDIR
+. ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION SRCDIR WORKDIR PKG_CONFIG INSTDIR
 pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 ./create_tree.sh
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
+cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-0.1.typelib $WORKDIR/os-integration
 
 %if %{with smallbuild}
 # remove the biggest offenders
@@ -1548,6 +1548,8 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 #add our mime-types, e.g. for .oxt extensions
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
+install -m 0755 -d %{buildroot}%{baseinstdir}/girepository-1.0
+install -m 0644 -p LOKDocView-0.1.typelib %{buildroot}%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
@@ -1626,6 +1628,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files core
 %dir %{baseinstdir}
+%dir %{baseinstdir}/girepository-1.0
+%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
 %dir %{baseinstdir}/help
 %docdir %{baseinstdir}/help/en-US
 %dir %{baseinstdir}/help/en-US

@@ -844,6 +844,15 @@ through C/C++, without any need to use UNO.
 For now it only offers document conversion (in addition to an
 experimental tiled rendering API).
 
+%package -n libreofficekit-devel
+Summary: Development files for libreofficekit
+Requires: libreofficekit = %{epoch}:%{version}-%{release}
+License: MPLv2.0
+
+%description -n libreofficekit-devel
+The libreofficekit-devel package contains libraries and header files for
+developing applications that use libreofficekit.
+
 %endif
 
 %if 0%{?_enable_debug_packages}
@@ -1331,7 +1340,7 @@ pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
-cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.typelib $WORKDIR/os-integration
+cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
 
 %if %{with smallbuild}
 # remove the biggest offenders
@@ -1563,6 +1572,8 @@ install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 install -m 0755 -d %{buildroot}%{baseinstdir}/girepository-1.0
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
+install -m 0755 -d %{buildroot}%{baseinstdir}/gir-1.0
+install -m 0644 -p LOKDocView-%{girapiversion}.gir %{buildroot}%{baseinstdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
@@ -2448,6 +2459,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %dir %{baseinstdir}/girepository-1.0
 %{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 %{baseinstdir}/program/liblibreofficekitgtk.so
+
+%files -n libreofficekit-devel
+%dir %{baseinstdir}/girepository-1.0
+%{baseinstdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 
 %endif
 

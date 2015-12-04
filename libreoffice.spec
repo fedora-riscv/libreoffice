@@ -831,6 +831,18 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 This plugin is experimental and it is not suggested for normal use.
 
+%package -n libreofficekit
+Summary: A library providing access to LibreOffice functionality
+Requires: %{name}-core = %{epoch}:%{version}-%{release}
+License: MPLv2.0
+
+%description -n libreofficekit
+LibreOfficeKit can be used to access LibreOffice functionality
+through C/C++, without any need to use UNO.
+
+For now it only offers document conversion (in addition to an
+experimental tiled rendering API).
+
 %endif
 
 %if 0%{?_enable_debug_packages}
@@ -1628,8 +1640,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files core
 %dir %{baseinstdir}
-%dir %{baseinstdir}/girepository-1.0
-%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
 %dir %{baseinstdir}/help
 %docdir %{baseinstdir}/help/en-US
 %dir %{baseinstdir}/help/en-US
@@ -1727,8 +1737,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
 %{baseinstdir}/program/libjdbclo.so
-# TODO: move elsewhere?
-%{baseinstdir}/program/liblibreofficekitgtk.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
 %{baseinstdir}/program/liblocaledata_en.so
@@ -2434,6 +2442,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files gtk3
 %{baseinstdir}/program/libvclplug_gtk3lo.so
+
+%files -n libreofficekit
+%dir %{baseinstdir}/girepository-1.0
+%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
+%{baseinstdir}/program/liblibreofficekitgtk.so
 
 %endif
 

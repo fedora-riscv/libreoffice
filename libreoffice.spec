@@ -3,9 +3,9 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
-%define libo_buildfix -buildfix1
+%define libo_buildfix %{nil}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -108,7 +108,7 @@ Source31:       %{external_url}/libvisio-0.1.3.tar.bz2
 Source32:       %{external_url}/libmspub-0.1.2.tar.bz2
 Source33:       %{external_url}/libodfgen-0.1.5.tar.bz2
 Source34:       %{external_url}/libmwaw-0.3.6.tar.bz2
-Source35:       %{external_url}/libetonyek-0.1.4.tar.bz2
+Source35:       %{external_url}/libetonyek-0.1.5.tar.bz2
 Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
@@ -2438,6 +2438,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Dec 04 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-9.beta2
+- update to 5.1.0 beta2
+
 * Thu Dec 03 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.1.0.0-8.beta1
 - enable and bundle libreofficekit introspection
 

@@ -1571,10 +1571,10 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 #add our mime-types, e.g. for .oxt extensions
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
-install -m 0755 -d %{buildroot}%{baseinstdir}/girepository-1.0
-install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
-install -m 0755 -d %{buildroot}%{baseinstdir}/gir-1.0
-install -m 0644 -p LOKDocView-%{girapiversion}.gir %{buildroot}%{baseinstdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
+install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
+install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
+install -m 0755 -d %{buildroot}%{_libdir}/gir-1.0
+install -m 0644 -p LOKDocView-%{girapiversion}.gir %{buildroot}%{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
@@ -2457,13 +2457,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %files -n libreofficekit
-%dir %{baseinstdir}/girepository-1.0
-%{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
+%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 %{baseinstdir}/program/liblibreofficekitgtk.so
 
 %files -n libreofficekit-devel
-%dir %{baseinstdir}/girepository-1.0
-%{baseinstdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
+%{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 
 %endif
 

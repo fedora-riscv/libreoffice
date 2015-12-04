@@ -32,6 +32,7 @@
 # default for f23 onwards
 %global _hardened_build 1
 %endif
+%global girapiversion 0.1
 
 # get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
@@ -1330,7 +1331,7 @@ pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
-cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-0.1.typelib $WORKDIR/os-integration
+cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.typelib $WORKDIR/os-integration
 
 %if %{with smallbuild}
 # remove the biggest offenders
@@ -1561,7 +1562,7 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 install -m 0755 -d %{buildroot}%{baseinstdir}/girepository-1.0
-install -m 0644 -p LOKDocView-0.1.typelib %{buildroot}%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
+install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
@@ -2445,7 +2446,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files -n libreofficekit
 %dir %{baseinstdir}/girepository-1.0
-%{baseinstdir}/girepository-1.0/LOKDocView-0.1.typelib
+%{baseinstdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 %{baseinstdir}/program/liblibreofficekitgtk.so
 
 %endif

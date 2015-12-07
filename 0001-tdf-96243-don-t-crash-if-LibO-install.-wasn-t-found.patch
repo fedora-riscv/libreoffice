@@ -1,0 +1,27 @@
+From 125382803df6502e467cb25b6ee70c24d5f4dfc0 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 7 Dec 2015 13:09:07 +0100
+Subject: [PATCH] tdf#96243 don't crash if LibO install. wasn't found
+
+Change-Id: I538e7238feb711a7d71faf745033264894f688f4
+(cherry picked from commit 7f73ea2e3975b305e09467eb7980a3d01cd37de9)
+---
+ include/LibreOfficeKit/LibreOfficeKitInit.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/LibreOfficeKit/LibreOfficeKitInit.h b/include/LibreOfficeKit/LibreOfficeKitInit.h
+index e2af109..1a20c8ce 100644
+--- a/include/LibreOfficeKit/LibreOfficeKitInit.h
++++ b/include/LibreOfficeKit/LibreOfficeKitInit.h
+@@ -220,6 +220,8 @@ static LibreOfficeKit *lok_init_2( const char *install_path,  const char *user_p
+     LokHookFunction2 *pSym2;
+ 
+     dlhandle = lok_dlopen(install_path, &imp_lib);
++    if (!dlhandle)
++        return NULL;
+ 
+     pSym2 = (LokHookFunction2 *) lok_dlsym(dlhandle, "libreofficekit_hook_2");
+     if (!pSym2)
+-- 
+2.5.0
+

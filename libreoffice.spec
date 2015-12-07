@@ -324,6 +324,8 @@ Patch17: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 Patch18: 0001-gtk3-wayland-wrong-dialog-sizes.patch
 Patch19: 0001-fix-powerpc-build.patch
 Patch20: 0001-update-the-appstream-files-to-most-recent-version-of.patch
+Patch21: 0001-tdf-96243-don-t-crash-if-LibO-install.-wasn-t-found.patch
+Patch22: 0001-tdf-96246-Make-pRenderingArguments-nullable.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1582,6 +1582,7 @@ install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 install -m 0755 -d %{buildroot}%{_libdir}/gir-1.0
 install -m 0644 -p gir-1.0/LOKDocView-%{girapiversion}.gir %{buildroot}%{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
+mv %{buildroot}%{baseinstdir}/program/liblibreofficekitgtk.so %{buildroot}%{_libdir}
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
@@ -2465,7 +2466,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files -n libreofficekit
 %{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
-%{baseinstdir}/program/liblibreofficekitgtk.so
+%{_libdir}/liblibreofficekitgtk.so
 
 %files -n libreofficekit-devel
 %{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir

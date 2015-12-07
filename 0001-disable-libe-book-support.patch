@@ -29,7 +29,7 @@ index ed71d8f..32fa8ae 100644
 -dnl ===================================================================
  dnl Check for system libetonyek
  dnl ===================================================================
- libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1 >= 0.1.2])
+ libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1 >= 0.1.4])
 diff --git a/external/Module_external.mk b/external/Module_external.mk
 index 6d38fd5..25cb2d9 100644
 --- a/external/Module_external.mk
@@ -134,17 +134,17 @@ index 3f508c4..7e10b9e 100644
  #include "MSWorksImportFilter.hxx"
  #include "MWAWImportFilter.hxx"
 @@ -64,11 +63,6 @@ static cppu::ImplementationEntry const services[] =
-         &cppu::createSingleComponentFactory, 0, 0
+         &cppu::createSingleComponentFactory, nullptr, 0
      },
      {
 -        &EBookImportFilter_createInstance, &EBookImportFilter_getImplementationName,
 -        &EBookImportFilter_getSupportedServiceNames,
--        &cppu::createSingleComponentFactory, 0, 0
+-        &cppu::createSingleComponentFactory, nullptr, 0
 -    },
 -    {
          &PagesImportFilter_createInstance, &PagesImportFilter_getImplementationName,
          &PagesImportFilter_getSupportedServiceNames,
-         &cppu::createSingleComponentFactory, 0, 0
+         &cppu::createSingleComponentFactory, nullptr, 0
 -- 
 2.4.2
 

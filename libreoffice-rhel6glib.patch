@@ -15,13 +15,11 @@ diff --git a/Repository.mk b/Repository.mk
 index 3977ac3..14b01ff 100644
 --- a/Repository.mk
 +++ b/Repository.mk
-@@ -193,7 +193,6 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,gnome, \
+@@ -193,5 +193,4 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,gnome, \
  	$(if $(ENABLE_GTK3),vclplug_gtk3) \
- 	$(if $(ENABLE_GCONF),gconfbe1) \
  	$(if $(ENABLE_SYSTRAY_GTK),qstart_gtk) \
 -	$(if $(ENABLE_GIO),losessioninstall) \
  	$(if $(ENABLE_GIO),ucpgio1) \
- 	$(if $(ENABLE_GNOMEVFS),ucpgvfs1) \
  ))
 diff --git a/postprocess/Rdb_services.mk b/postprocess/Rdb_services.mk
 old mode 100755
@@ -29,14 +27,12 @@ new mode 100644
 index b72f4abc..90e4711
 --- a/postprocess/Rdb_services.mk
 +++ b/postprocess/Rdb_services.mk
-@@ -193,7 +193,6 @@ $(eval $(call gb_Rdb_add_components,services,\
- 		shell/source/backends/gconfbe/gconfbe1 \
+@@ -193,5 +193,4 @@ $(eval $(call gb_Rdb_add_components,services,\
  	) \
  	$(if $(ENABLE_GIO), \
 -		shell/source/sessioninstall/losessioninstall \
  		ucb/source/ucp/gio/ucpgio \
  	) \
- 	$(if $(ENABLE_GNOMEVFS), \
 diff --git a/shell/Module_shell.mk b/shell/Module_shell.mk
 index 3461381..eb74104 100644
 --- a/shell/Module_shell.mk
@@ -61,6 +57,6 @@ index 3461381..eb74104 100644
 -endif
 -endif
 -
- ifeq ($(ENABLE_GCONF),TRUE)
+ ifeq ($(ENABLE_KDE4),TRUE)
  $(eval $(call gb_Module_add_targets,shell,\
- 	Library_gconfbe \
+ 	Library_kde4be \

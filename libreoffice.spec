@@ -322,6 +322,7 @@ Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 # backport from master
 Patch17: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 Patch18: 0001-gtk3-wayland-wrong-dialog-sizes.patch
+Patch19: 0001-fix-powerpc-build.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

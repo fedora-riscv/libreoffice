@@ -1,0 +1,138 @@
+From 2b5d5ab9aeeff082025d25b2bfe897e2aeee4c99 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 7 Dec 2015 12:55:11 +0100
+Subject: [PATCH] update the appstream files to most recent version of the spec
+
+Change-Id: I6b23be2af3ab28431266075da389b62372508961
+(cherry picked from commit 8d7d3469da772d6ffcc0ed4fc69ea28e1813b407)
+---
+ sysui/desktop/appstream-appdata/libreoffice-base.appdata.xml    | 4 ++--
+ sysui/desktop/appstream-appdata/libreoffice-calc.appdata.xml    | 4 ++--
+ sysui/desktop/appstream-appdata/libreoffice-draw.appdata.xml    | 4 ++--
+ sysui/desktop/appstream-appdata/libreoffice-impress.appdata.xml | 4 ++--
+ sysui/desktop/appstream-appdata/libreoffice-writer.appdata.xml  | 4 ++--
+ 5 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/sysui/desktop/appstream-appdata/libreoffice-base.appdata.xml b/sysui/desktop/appstream-appdata/libreoffice-base.appdata.xml
+index 6338a37..2ca8a8f 100644
+--- a/sysui/desktop/appstream-appdata/libreoffice-base.appdata.xml
++++ b/sysui/desktop/appstream-appdata/libreoffice-base.appdata.xml
+@@ -1,9 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <component type="desktop">
+ <id>libreoffice-base.desktop</id>
++<metadata_license>CC0-1.0</metadata_license>
+ <project_license>MPL-2.0</project_license>
+ <name>LibreOffice Base</name>
+-<summary>database manaager part of the LibreOffice productivity suite</summary>
++<summary>Database manaager part of the LibreOffice productivity suite</summary>
+ <description>
+ <p>
+ Base is a powerful database manager, part of the LibreOffice productivity suite.
+@@ -29,7 +30,6 @@ to connect to virtually any other existing database engine as well.
+ <screenshot type="default">http://www.libreoffice.org/assets/Uploads/Screenshots/Base/Screenshot-78.png</screenshot>
+ <screenshot>http://www.libreoffice.org/assets/Uploads/Screenshots/Base/Screenshot-80.png</screenshot>
+ </screenshots>
+-<project_group>The Document Foundation</project_group>
+ <developer_name>The Document Foundation</developer_name>
+ <updatecontact>libreoffice_at_lists.freedesktop.org</updatecontact>
+ </component>
+diff --git a/sysui/desktop/appstream-appdata/libreoffice-calc.appdata.xml b/sysui/desktop/appstream-appdata/libreoffice-calc.appdata.xml
+index b8beb71..836f100 100644
+--- a/sysui/desktop/appstream-appdata/libreoffice-calc.appdata.xml
++++ b/sysui/desktop/appstream-appdata/libreoffice-calc.appdata.xml
+@@ -1,9 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <component type="desktop">
+ <id>libreoffice-calc.desktop</id>
++<metadata_license>CC0-1.0</metadata_license>
+ <project_license>MPL-2.0</project_license>
+ <name>LibreOffice Calc</name>
+-<summary>spreadsheet program of the LibreOffice productivity suite</summary>
++<summary>Spreadsheet program of the LibreOffice productivity suite</summary>
+ <description>
+ <p>
+ Calc is a powerful and extensible spreadsheet program, part of the LibreOffice
+@@ -22,7 +23,6 @@ worrying about compatibility.
+ <screenshots>
+ <screenshot type="default">http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Calc-02-exemple-ods.png</screenshot>
+ </screenshots>
+-<project_group>The Document Foundation</project_group>
+ <developer_name>The Document Foundation</developer_name>
+ <updatecontact>libreoffice_at_lists.freedesktop.org</updatecontact>
+ </component>
+diff --git a/sysui/desktop/appstream-appdata/libreoffice-draw.appdata.xml b/sysui/desktop/appstream-appdata/libreoffice-draw.appdata.xml
+index 2868598..4888653 100644
+--- a/sysui/desktop/appstream-appdata/libreoffice-draw.appdata.xml
++++ b/sysui/desktop/appstream-appdata/libreoffice-draw.appdata.xml
+@@ -1,9 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <component type="desktop">
+ <id>libreoffice-draw.desktop</id>
++<metadata_license>CC0-1.0</metadata_license>
+ <project_license>MPL-2.0</project_license>
+ <name>LibreOffice Draw</name>
+-<summary>graphics editor part of the LibreOffice productivity suite</summary>
++<summary>Graphics editor part of the LibreOffice productivity suite</summary>
+ <description>
+ <p>
+ LibreOffice Draw is an easy-to-use graphics editor, which empowers you to create
+@@ -28,7 +29,6 @@ worrying about compatibility.
+ <screenshot type="default">http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Draw-02-Tiger-fdo82219.png</screenshot>
+ <screenshot>http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Draw-03-Square-fdo75097.png</screenshot>
+ </screenshots>
+-<project_group>The Document Foundation</project_group>
+ <developer_name>The Document Foundation</developer_name>
+ <updatecontact>libreoffice_at_lists.freedesktop.org</updatecontact>
+ </component>
+diff --git a/sysui/desktop/appstream-appdata/libreoffice-impress.appdata.xml b/sysui/desktop/appstream-appdata/libreoffice-impress.appdata.xml
+index ccb0e92..6174a0865 100644
+--- a/sysui/desktop/appstream-appdata/libreoffice-impress.appdata.xml
++++ b/sysui/desktop/appstream-appdata/libreoffice-impress.appdata.xml
+@@ -1,9 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <component type="desktop">
+ <id>libreoffice-impress.desktop</id>
++<metadata_license>CC0-1.0</metadata_license>
+ <project_license>MPL-2.0</project_license>
+ <name>LibreOffice Impress</name>
+-<summary>presentation program of the LibreOffice productivity suite</summary>
++<summary>Presentation program of the LibreOffice productivity suite</summary>
+ <description>
+ <p>
+ Impress is a presentation program and part of the LibreOffice productivity suite.
+@@ -23,7 +24,6 @@ worrying about compatibility.
+ <screenshots>
+ <screenshot type="default">http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Impress-01-Blank.png</screenshot>
+ </screenshots>
+-<project_group>The Document Foundation</project_group>
+ <developer_name>The Document Foundation</developer_name>
+ <updatecontact>libreoffice_at_lists.freedesktop.org</updatecontact>
+ </component>
+diff --git a/sysui/desktop/appstream-appdata/libreoffice-writer.appdata.xml b/sysui/desktop/appstream-appdata/libreoffice-writer.appdata.xml
+index fbd09a7..7e4b07f 100644
+--- a/sysui/desktop/appstream-appdata/libreoffice-writer.appdata.xml
++++ b/sysui/desktop/appstream-appdata/libreoffice-writer.appdata.xml
+@@ -1,9 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <component type="desktop">
+ <id>libreoffice-writer.desktop</id>
++<metadata_license>CC0-1.0</metadata_license>
+ <project_license>MPL-2.0</project_license>
+ <name>LibreOffice Writer</name>
+-<summary>word processor part of the LibreOffice productivity suite</summary>
++<summary>Word processor part of the LibreOffice productivity suite</summary>
+ <description>
+ <p>
+ Writer is the word processor inside LibreOffice productivity suite.
+@@ -30,7 +31,6 @@ worrying about compatibility.
+ <screenshot type="default">http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Writer-02-Table-of-Contents-Getting-Started-Guide-4-2.png</screenshot>
+ <screenshot>http://www.libreoffice.org/assets/Uploads/Discover/Screenshots/_resampled/ResizedImage400300-Writer-03-Technical-Doc-fdo83524.png</screenshot>
+ </screenshots>
+-<project_group>The Document Foundation</project_group>
+ <developer_name>The Document Foundation</developer_name>
+ <updatecontact>libreoffice_at_lists.freedesktop.org</updatecontact>
+ </component>
+-- 
+2.5.0
+

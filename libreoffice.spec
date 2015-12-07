@@ -148,7 +148,9 @@ BuildRequires: gcc-c++
 BuildRequires: gdb
 BuildRequires: git
 BuildRequires: gperf
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: icu
+%endif
 BuildRequires: make
 BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
@@ -164,7 +166,6 @@ BuildRequires: cups-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: hyphen-devel
-BuildRequires: libicu-devel
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
@@ -225,6 +226,7 @@ BuildRequires: pkgconfig(mdds) >= 0.12.0
 
 %if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: boost-devel
+BuildRequires: libicu-devel
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(lcms2)

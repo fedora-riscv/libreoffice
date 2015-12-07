@@ -326,6 +326,7 @@ Patch19: 0001-fix-powerpc-build.patch
 Patch20: 0001-update-the-appstream-files-to-most-recent-version-of.patch
 Patch21: 0001-tdf-96243-don-t-crash-if-LibO-install.-wasn-t-found.patch
 Patch22: 0001-tdf-96246-Make-pRenderingArguments-nullable.patch
+Patch23: 0001-tdf-96250-desktop-empty-str-is-the-same-as-0-str-in-.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

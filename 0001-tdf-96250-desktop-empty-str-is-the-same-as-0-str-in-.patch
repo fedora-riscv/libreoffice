@@ -1,0 +1,28 @@
+From e22f9ae034addbddbb5581cdee6bfd1c39aeedea Mon Sep 17 00:00:00 2001
+From: Miklos Vajna <vmiklos@collabora.co.uk>
+Date: Mon, 7 Dec 2015 14:54:19 +0100
+Subject: [PATCH] tdf#96250 desktop: empty str is the same as 0 str in
+ jsonToPropertyValues()
+
+Change-Id: I77306dc998afc53bb1d5710a8d1ae68717f945d1
+(cherry picked from commit 5cc574fefc8a2ee39db4a4bd843a3ec67dce2f11)
+---
+ desktop/source/lib/init.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/desktop/source/lib/init.cxx b/desktop/source/lib/init.cxx
+index 8682ce8..2bdea80 100644
+--- a/desktop/source/lib/init.cxx
++++ b/desktop/source/lib/init.cxx
+@@ -264,7 +264,7 @@ static OUString getAbsoluteURL(const char* pURL)
+ static void jsonToPropertyValues(const char* pJSON, uno::Sequence<beans::PropertyValue>& rPropertyValues)
+ {
+     std::vector<beans::PropertyValue> aArguments;
+-    if (pJSON)
++    if (pJSON && pJSON[0] != '\0')
+     {
+         boost::property_tree::ptree aTree;
+         std::stringstream aStream(pJSON);
+-- 
+2.5.0
+

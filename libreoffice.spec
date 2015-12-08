@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -359,6 +359,7 @@ Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
 Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
 Patch52: 0001-gtk3-wayland-wrong-dialog-sizes.patch
 Patch53: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
+Patch54: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2479,6 +2480,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-12-unbuilt
+- Resolves: rhbz#1289398 only smooth scrolling available on wayland
+
 * Tue Dec 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-11
 - fix wrong dialog sizes under wayland
 

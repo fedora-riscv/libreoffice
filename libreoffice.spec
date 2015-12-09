@@ -327,6 +327,9 @@ Patch20: 0001-update-the-appstream-files-to-most-recent-version-of.patch
 Patch21: 0001-tdf-96243-don-t-crash-if-LibO-install.-wasn-t-found.patch
 Patch22: 0001-tdf-96246-Make-pRenderingArguments-nullable.patch
 Patch23: 0001-tdf-96250-desktop-empty-str-is-the-same-as-0-str-in-.patch
+Patch24: 0001-tdf-96316-Decouple-view-only-editable-modes.patch
+Patch25: 0002-tdf-96318-Add-searching-API.patch
+Patch26: 0003-lokdocview-Set-a-default-path-for-LOK-init.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

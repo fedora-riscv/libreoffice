@@ -1,0 +1,64 @@
+From dabfa0ce06f605fd0e8de32774b6385fd6ffbd56 Mon Sep 17 00:00:00 2001
+From: Pranav Kant <pranavk@libreoffice.org>
+Date: Tue, 8 Dec 2015 23:14:25 +0530
+Subject: [PATCH 3/3] lokdocview: Set a 'default' path for LOK init
+
+When passed NULL to lok_doc_view_new, use the default path :
+$libdir/libreoffice/program as LOK install path
+
+Change-Id: I1e033c407184b29b1509cfb8c416b514591d67ce
+Reviewed-on: https://gerrit.libreoffice.org/20476
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: David Tardon <dtardon@redhat.com>
+(cherry picked from commit 424c09b10d3d6ba6edfed2dcf560d5ce2c950b9d)
+---
+ include/LibreOfficeKit/LibreOfficeKitGtk.h  | 3 ++-
+ libreofficekit/Library_libreofficekitgtk.mk | 4 ++++
+ libreofficekit/source/gtk/lokdocview.cxx    | 2 +-
+ 3 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/LibreOfficeKit/LibreOfficeKitGtk.h b/include/LibreOfficeKit/LibreOfficeKitGtk.h
+index b2f17f1..1b03e46 100644
+--- a/include/LibreOfficeKit/LibreOfficeKitGtk.h
++++ b/include/LibreOfficeKit/LibreOfficeKitGtk.h
+@@ -42,7 +42,8 @@ GType                          lok_doc_view_get_type               (void) G_GNUC
+ 
+ /**
+  * lok_doc_view_new:
+- * @pPath: LibreOffice install path.
++ * @pPath: (nullable): LibreOffice install path. Pass null to set it to default
++ * path which in most cases would be $libdir/libreoffice/program
+  * @cancellable: The cancellable object that you can use to cancel this
+  * operation.
+  * @error: The error that will be set if the object fails to initialize.
+diff --git a/libreofficekit/Library_libreofficekitgtk.mk b/libreofficekit/Library_libreofficekitgtk.mk
+index 3eba939..fc62e72 100644
+--- a/libreofficekit/Library_libreofficekitgtk.mk
++++ b/libreofficekit/Library_libreofficekitgtk.mk
+@@ -28,6 +28,10 @@ $(eval $(call gb_Library_add_libs,libreofficekitgtk,\
+     $(GTK3_LIBS) \
+ ))
+ 
++$(eval $(call gb_Library_add_defs,libreofficekitgtk,\
++	-DLOK_PATH="\"$(LIBDIR)/libreoffice/$(LIBO_LIB_FOLDER)\"" \
++))
++
+ ifeq ($(OS),$(filter LINUX %BSD SOLARIS, $(OS)))
+ $(eval $(call gb_Library_add_libs,libreofficekitgtk,\
+     $(DLOPEN_LIBS) -lm \
+diff --git a/libreofficekit/source/gtk/lokdocview.cxx b/libreofficekit/source/gtk/lokdocview.cxx
+index 488abc0..f734baa 100644
+--- a/libreofficekit/source/gtk/lokdocview.cxx
++++ b/libreofficekit/source/gtk/lokdocview.cxx
+@@ -2387,7 +2387,7 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
+ SAL_DLLPUBLIC_EXPORT GtkWidget*
+ lok_doc_view_new (const gchar* pPath, GCancellable *cancellable, GError **error)
+ {
+-    return GTK_WIDGET (g_initable_new (LOK_TYPE_DOC_VIEW, cancellable, error, "lopath", pPath, NULL));
++    return GTK_WIDGET (g_initable_new (LOK_TYPE_DOC_VIEW, cancellable, error, "lopath", pPath == NULL ? LOK_PATH : pPath, NULL));
+ }
+ 
+ SAL_DLLPUBLIC_EXPORT GtkWidget* lok_doc_view_new_from_widget(LOKDocView* pOldLOKDocView)
+-- 
+2.5.0
+

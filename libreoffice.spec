@@ -67,13 +67,10 @@ Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zi
 Source6:        %{external_url}/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
 Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-
-%if 0%{?fedora} || 0%{?rhel} >= 7
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
-%endif
 
 %if 0%{?rhel}
 Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
@@ -82,21 +79,6 @@ Source12:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-lib
 Source13:       %{external_url}/7681383be6ce489d84c1c74f4e7f9643-liborcus-0.7.0.tar.bz2
 # system mdds 0.10.3 causes a crash in sc_ucalc unit test
 Source14:       %{external_url}/mdds_0.12.1.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds
-%if 0%{?rhel} < 7
-Source15:       %{external_url}/46e92b68e31e858512b680b3b61dc4c1-mythes-1.2.3.tar.gz
-Source16:       %{external_url}/32f8e1417a64d3c6f2c727f9053f55ea-redland-1.0.16.tar.gz
-Source17:       %{external_url}/4ceb9316488b0ea01acf011023cf7fff-raptor2-2.0.9.tar.gz
-Source18:       %{external_url}/b12c5f9cfdb6b04efce5a4a186b8416b-rasqal-0.9.30.tar.gz
-Source19:       %{external_url}/ae330b9493bd4503ac390106ff6060d7-libexttextcat-3.4.3.tar.bz2
-Source20:       %{external_url}/48d647fbd8ef8889e5a7f422c1bfda94-clucene-core-2.3.3.4.tar.gz
-Source21:       %{external_url}/lcms2-2.6.tar.gz
-Source22:       %{external_url}/36271d3fa0d9dec1632029b6d7aac925-liblangtag-0.5.1.tar.bz2
-Source23:       %{external_url}/d6eef4b4cacb2183f2bf265a5a03a354-boost_1_55_0.tar.bz2
-Source24:       %{external_url}/harfbuzz-0.9.40.tar.bz2
-Source25:       %{external_url}/language-subtag-registry-2015-06-08.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mythes --without-system-redland --without-system-libexttextcat --without-system-clucene --without-system-lcms2 --without-system-liblangtag --without-system-boost --without-system-harfbuzz
-%endif
 Source26:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source27:       %{external_url}/libcdr-0.1.1.tar.bz2
 Source28:       %{external_url}/libwpg-0.3.0.tar.bz2
@@ -111,7 +93,7 @@ Source36:       %{external_url}/libfreehand-0.1.1.tar.bz2
 Source37:       %{external_url}/libabw-0.1.1.tar.bz2
 Source38:       %{external_url}/librevenge-0.0.2.tar.bz2
 Source39:       %{external_url}/libpagemaker-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libpagemaker
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libpagemaker
 %endif
 
 %if 0%{?fedora}
@@ -133,10 +115,6 @@ BuildRequires: automake
 BuildRequires: bc
 BuildRequires: binutils
 BuildRequires: bison
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: devtoolset-2-binutils
-BuildRequires: devtoolset-2-gcc-c++
-%endif
 BuildRequires: desktop-file-utils
 BuildRequires: doxygen
 BuildRequires: findutils
@@ -157,38 +135,53 @@ BuildRequires: zip
 
 # libs / headers - common
 BuildRequires: %{libo_python}-devel
+BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: hyphen-devel
 BuildRequires: libicu-devel
+BuildRequires: libjpeg-turbo-devel
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
+BuildRequires: pkgconfig(bluez)
 BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(gconf-2.0)
 BuildRequires: pkgconfig(glu)
+BuildRequires: pkgconfig(graphite2)
+BuildRequires: pkgconfig(gstreamer-1.0)
+BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires: pkgconfig(gtk+-2.0)
+BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
+BuildRequires: pkgconfig(lcms2)
+BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libcurl)
+BuildRequires: pkgconfig(libexttextcat)
 BuildRequires: pkgconfig(libidn)
+BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libxml-2.0)
 BuildRequires: pkgconfig(libxslt)
+BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(neon)
 BuildRequires: pkgconfig(nss)
 BuildRequires: pkgconfig(poppler)
+BuildRequires: pkgconfig(poppler-cpp)
 BuildRequires: pkgconfig(redland)
 BuildRequires: pkgconfig(sane-backends)
 BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
+BuildRequires: postgresql-devel
 BuildRequires: unixODBC-devel
 BuildRequires: vigra-devel
+
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -220,60 +213,14 @@ BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds) >= 0.12.0
 %endif
 
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: boost-devel
-BuildRequires: pkgconfig(graphite2)
-BuildRequires: pkgconfig(harfbuzz)
-BuildRequires: pkgconfig(lcms2)
-BuildRequires: pkgconfig(libclucene-core)
-BuildRequires: pkgconfig(libexttextcat)
-BuildRequires: pkgconfig(liblangtag)
-BuildRequires: pkgconfig(mythes)
-BuildRequires: pkgconfig(poppler-cpp)
-BuildRequires: postgresql-devel
-%endif
-
-# libs / headers - special cases
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: gstreamer-devel
-BuildRequires: gstreamer-plugins-base-devel
-%else
-BuildRequires: pkgconfig(gstreamer-1.0)
-BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: libjpeg-turbo-devel
-%else
-BuildRequires: libjpeg-devel
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} >= 7
-BuildRequires: pkgconfig(bluez)
-%else
-%ifnarch s390 s390x
-BuildRequires: pkgconfig(bluez)
-%endif
-%endif
-
 # java stuff
 BuildRequires: ant
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: jakarta-commons-codec
-BuildRequires: jakarta-commons-lang
-%else
 BuildRequires: apache-commons-codec
 BuildRequires: apache-commons-lang
-%endif
 BuildRequires: bsh
-%if 0%{?rhel} && 0%{?rhel} < 7
-BuildRequires: hsqldb
-%endif
 BuildRequires: java-devel
 BuildRequires: jakarta-commons-httpclient
-%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: junit
-%endif
 BuildRequires: pentaho-reporting-flow-engine
 
 # fonts needed for unit tests
@@ -296,29 +243,17 @@ Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch2:  libreoffice-installfix.patch
 %if 0%{?rhel}
-%if 0%{?rhel} < 7
 # not upstreamed
-Patch4: libreoffice-rhel6gcj.patch
-# not upstreamed
-# Patch5: libreoffice-rhel6poppler.patch
-# not upstreamed
-Patch6: libreoffice-rhel6langs.patch
-# not upstreamed
-Patch7: libreoffice-rhel6glib.patch
-# not upstreamed
-Patch8: 0001-disable-failing-test-on-rhel-6.patch
+Patch3: 0001-disable-libe-book-support.patch
 %endif
 # not upstreamed
-Patch10: 0001-disable-libe-book-support.patch
-%endif
+Patch4: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch12: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch5: 0001-disable-firebird-unit-test.patch
 # not upstreamed
-Patch13: 0001-disable-firebird-unit-test.patch
+Patch6: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch14: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch15: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch7: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
 # upstreamed
@@ -390,18 +325,9 @@ Patch76: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_common GLEW
-%if 0%{?rhel} < 7
-# redland libs are already suffixed -> no need to filter them too
-%global libo_bundled_libs_filter /^lib\\(clucene\\|lcms2\\|%libo_bundled_libs_common\\)\\.so.*$/d
-%filter_from_provides %{libo_bundled_libs_filter}
-%filter_from_requires %{libo_bundled_libs_filter}
-%filter_setup
-%else
-%global libo_bundled_libs_filter ^lib\\(%libo_bundled_libs_common\\)\\.so.*$
+%global libo_bundled_libs_filter ^libGLEW\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
-%endif
 %endif
 
 %description
@@ -438,13 +364,9 @@ Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberatio
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: hyphen-en, hyphen >= 2.4, autocorr-en
-%if 0%{?rhel} && 0%{?rhel} < 7
-Requires: hunspell-en
-%else
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Requires: hunspell-en-US
-%endif
 Requires(pre):    gtk2 >= 2.9.4
 Requires(post):   gtk2 >= 2.9.4
 Requires(preun):  gtk2 >= 2.9.4
@@ -463,14 +385,6 @@ Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-core = 1:3.3.0
-Provides: openoffice.org-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-brand = 1:3.3.0, broffice.org-brand = 1:3.3.0
-Provides: openoffice.org-brand%{?_isa} = 1:3.3.0, broffice.org-brand%{?_isa} = 1:3.3.0
-Provides: openoffice.org-headless = 1:3.3.0
-Provides: openoffice.org-headless%{?_isa} = 1:3.3.0
-%endif
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -482,10 +396,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{libo_python}
 Obsoletes: openoffice.org-pyuno < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-pyuno = 1:3.3.0
-Provides: openoffice.org-pyuno%{?_isa} = 1:3.3.0
-%endif
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -497,9 +407,6 @@ Summary: Database front-end for LibreOffice
 Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
-%if 0%{?rhel} && 0%{?rhel} < 7
-Requires:  hsqldb
-%endif
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
@@ -508,14 +415,6 @@ Obsoletes: %{name}-report-builder < 1:4.1.0.0
 Obsoletes: openoffice.org-base-core < 1:3.3.1
 Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
 Obsoletes: openoffice.org-report-builder < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-base-core = 1:3.3.0
-Provides: openoffice.org-base-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-base = 1:3.3.0, broffice.org-base = 1:3.3.0
-Provides: openoffice.org-base%{?_isa} = 1:3.3.0, broffice.org-base%{?_isa} = 1:3.3.0
-Provides: openoffice.org-report-builder = 1:3.3.0
-Provides: openoffice.org-report-builder%{?_isa} = 1:3.3.0
-%endif
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
@@ -527,10 +426,6 @@ Group: Development/Libraries
 Requires: bsh
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-bsh < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-bsh = 1:3.3.0
-Provides: openoffice.org-bsh%{?_isa} = 1:3.3.0
-%endif
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
@@ -550,10 +445,6 @@ Summary: JavaScript support for LibreOffice
 Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-rhino < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-rhino = 1:3.3.0
-Provides: openoffice.org-rhino%{?_isa} = 1:3.3.0
-%endif
 
 %description rhino
 Support JavaScript scripts in LibreOffice.
@@ -561,21 +452,12 @@ Support JavaScript scripts in LibreOffice.
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Group: Applications/Productivity
-%if 0%{?rhel} && 0%{?rhel} < 7
-Requires: jakarta-commons-codec, jakarta-commons-httpclient
-Requires: jakarta-commons-lang, jakarta-commons-logging
-%else
 Requires: apache-commons-codec, jakarta-commons-httpclient
 Requires: apache-commons-lang, apache-commons-logging
-%endif
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-wiki-publisher = 1:3.3.0
-Provides: openoffice.org-wiki-publisher%{?_isa} = 1:3.3.0
-%endif
 
 %description wiki-publisher
 The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
@@ -600,10 +482,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-ogltrans < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-ogltrans = 1:3.3.0
-Provides: openoffice.org-ogltrans%{?_isa} = 1:3.3.0
-%endif
 
 %description ogltrans
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
@@ -616,10 +494,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-pdfimport < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-pdfimport = 1:3.3.0
-Provides: openoffice.org-pdfimport%{?_isa} = 1:3.3.0
-%endif
 
 %description pdfimport
 The PDF Importer imports PDF into drawing documents to preserve layout
@@ -632,10 +506,6 @@ Requires: fontpackages-filesystem
 Obsoletes: openoffice.org-fonts < 1:3.3.1
 Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
 BuildArch: noarch
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-fonts = 1:3.3.0
-Provides: openoffice.org-opensymbol-fonts = 1:3.3.0
-%endif
 
 %description %{fontname}-fonts
 A dingbats font, OpenSymbol, suitable for use by LibreOffice for bullets and
@@ -649,12 +519,6 @@ Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
 Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-writer-core = 1:3.3.0
-Provides: openoffice.org-writer-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-writer = 1:3.3.0, broffice.org-writer = 1:3.3.0
-Provides: openoffice.org-writer%{?_isa} = 1:3.3.0, broffice.org-writer%{?_isa} = 1:3.3.0
-%endif
 
 %description writer
 The LibreOffice Word Processor application.
@@ -665,10 +529,6 @@ Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-emailmerge < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-emailmerge = 1:3.3.0
-Provides: openoffice.org-emailmerge%{?_isa} = 1:3.3.0
-%endif
 
 %description emailmerge
 Enables the LibreOffice writer module to mail-merge to email.
@@ -681,12 +541,6 @@ Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
 Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-calc-core = 1:3.3.0
-Provides: openoffice.org-calc-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-calc = 1:3.3.0, broffice.org-calc = 1:3.3.0
-Provides: openoffice.org-calc%{?_isa} = 1:3.3.0, broffice.org-calc%{?_isa} = 1:3.3.0
-%endif
 
 %description calc
 The LibreOffice Spreadsheet application.
@@ -701,12 +555,6 @@ Requires: %{name}-graphicfilter = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-draw-core < 1:3.3.1
 Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-draw-core = 1:3.3.0
-Provides: openoffice.org-draw-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-draw = 1:3.3.0, broffice.org-draw = 1:3.3.0
-Provides: openoffice.org-draw%{?_isa} = 1:3.3.0, broffice.org-draw%{?_isa} = 1:3.3.0
-%endif
 
 %description draw
 The LibreOffice Drawing Application.
@@ -725,16 +573,6 @@ Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
 Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
 Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-impress-core = 1:3.3.0
-Provides: openoffice.org-impress-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-impress = 1:3.3.0, broffice.org-impress = 1:3.3.0
-Provides: openoffice.org-impress%{?_isa} = 1:3.3.0, broffice.org-impress%{?_isa} = 1:3.3.0
-Provides: openoffice.org-presentation-minimizer = 1:3.3.0
-Provides: openoffice.org-presentation-minimizer%{?_isa} = 1:3.3.0
-Provides: openoffice.org-presenter-screen = 1:3.3.0
-Provides: openoffice.org-presenter-screen%{?_isa} = 1:3.3.0
-%endif
 
 %description impress
 The LibreOffice Presentation Application.
@@ -747,12 +585,6 @@ Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-math-core < 1:3.3.1
 Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-math-core = 1:3.3.0
-Provides: openoffice.org-math-core%{?_isa} = 1:3.3.0
-Provides: openoffice.org-math = 1:3.3.0, broffice.org-math = 1:3.3.0
-Provides: openoffice.org-math%{?_isa} = 1:3.3.0, broffice.org-math%{?_isa} = 1:3.3.0
-%endif
 
 %description math 
 The LibreOffice Equation Editor Application.
@@ -763,10 +595,6 @@ Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-graphicfilter = 1:3.3.0
-Provides: openoffice.org-graphicfilter%{?_isa} = 1:3.3.0
-%endif
 
 %description graphicfilter
 The graphicfilter module for LibreOffice provides graphic filters, e.g. svg and
@@ -777,16 +605,11 @@ Summary: Optional xsltfilter module for LibreOffice
 Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-xsltfilter = 1:3.3.0
-Provides: openoffice.org-xsltfilter%{?_isa} = 1:3.3.0
-%endif
 
 %description xsltfilter
 The xsltfilter module for LibreOffice, provides additional docbook and
 xhtml export transforms. Install this to enable docbook export.
 
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %package postgresql
 Summary: PostgreSQL connector for LibreOffice
 Group: Applications/Productivity
@@ -798,7 +621,6 @@ Requires: postgresql-libs
 %description postgresql
 A PostgreSQL connector for the database front-end for LibreOffice. Allows
 creation and management of PostgreSQL databases through a GUI.
-%endif
 
 %package ure
 Summary: UNO Runtime Environment
@@ -809,10 +631,6 @@ Group: Development/Libraries
 %endif
 Requires: unzip, libjvm.so%{?mark64}
 Obsoletes: openoffice.org-ure < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-ure = 1:3.3.0
-Provides: openoffice.org-ure%{?_isa} = 1:3.3.0
-%endif
 
 %description ure
 UNO is the component model of LibreOffice. UNO offers interoperability between
@@ -829,10 +647,6 @@ Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
 Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-sdk = 1:3.3.0, openoffice.org-devel = 1:3.3.0
-Provides: openoffice.org-sdk%{?_isa} = 1:3.3.0, openoffice.org-devel%{?_isa} = 1:3.3.0
-%endif
 
 %description sdk
 The LibreOffice SDK is an add-on for the LibreOffice office suite. It provides
@@ -845,10 +659,6 @@ Summary: Software Development Kit documentation for LibreOffice
 Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
-%if 0%{?rhel} && 0%{?rhel} < 7
-Provides: openoffice.org-sdk-doc = 1:3.3.0
-Provides: openoffice.org-sdk-doc%{?_isa} = 1:3.3.0
-%endif
 
 %description sdk-doc
 This provides documentation for programming using the LibreOffice APIs
@@ -1068,9 +878,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l as -n Assamese -F -H -Y -o as_IN -w as_IN
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X -o bg_BG -V -w bg_BG
 %langpack -l bn -n Bengali -F -H -Y -T -O -v bn_IN -W
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l br -n Breton -F -H
-%endif
 %langpack -l ca -n Catalan -F -H -Y -M -A -T -o ca_ES -V -w ca_ES -X
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X -o cs_CZ -V -w cs_CZ
 %langpack -l cy -n Welsh -F -H -Y -o cy_GB -V -w cy_GB
@@ -1081,14 +889,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X -O -W
 %langpack -l et -n Estonian -F -H -Y -T -o et_EE -V -w et_EE
 %langpack -l eu -n Basque -F -H -Y -T -o eu_ES -V -w eu_ES
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l fa -n Farsi -A -H -Y -s ctl -X
-%endif
-%if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l fi -n Finnish -F -A -T -o fi_FI -V -w fi_FI -X
-%else
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI -V -w fi_FI -X
-%endif
 %langpack -l fr -n French -F -H -Y -M -A -T -X -O -W
 %langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE -w ga_IE
 %langpack -l gl -n Galician -F -H -Y -T -o gl_ES -V -w gl_ES
@@ -1099,19 +901,12 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU -V -w hu_HU
 %langpack -l it -n Italian -F -H -Y -M -A -T -X -O -W
 %langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP -V -w ja_JP
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l kk -n Kazakh -F -H
-%endif
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -w ka_IN
 %langpack -l ko -n Korean -F -H -A -s cjk -T -X -o ko_KR -V -w ko_KR
 %langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -w lt_LT -X
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l lv -n Latvian -F -H -Y -M
-%endif
 %langpack -l mai -n Maithili -F -o mai_IN
-%if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ms -n Malay -F -H -o ms_MY
-%endif
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -w ml_IN
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -w mr_IN
 %langpack -l nb -n Bokmal -F -H -Y -M -T -o nb_NO -V -w nb_NO
@@ -1129,9 +924,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt -o pt_PT -v pt -W
 %langpack -l ro -n Romanian -A -F -H -Y -M -O -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X -O -W
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %langpack -l si -n Sinhalese -F -H -S ctl -T -O
-%endif
 %langpack -l sk -n Slovak -F -H -Y -M -A -T -X -o sk_SK -V -w sk_SK
 %langpack -l sl -n Slovenian -F -H -Y -M -A -T -X -o sl_SI -V -w sl_SI
 %{baseinstdir}/share/wordbook/sl.dic
@@ -1149,9 +942,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l tr -n Turkish -F -A -T -X -o tr_TR -V -W
 %langpack -l ts -n Tsonga -F -H -o ts_ZA -V -w ts_ZA
 %langpack -l uk -n Ukrainian -F -H -Y -M -T -O
-%if 0%{?rhel} && 0%{?rhel} < 7
-%langpack -l ur -n Urdu -F -H -O -W
-%endif
 %langpack -l ve -n Venda -F -H -o ve_ZA
 %langpack -l xh -n Xhosa -F -H -o xh_ZA
 %define langpack_lang Simplified Chinese
@@ -1237,16 +1027,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-%if 0%{?rhel} && 0%{?rhel} < 7
-cp -r translations/source/en-GB translations/source/ms
-cp -r translations/source/en-GB translations/source/ur
-git add -A
-git commit -q -a -m 'fix translations'
-
-sed -i -e /CppunitTest_lotuswordpro_test_lotuswordpro/d lotuswordpro/Module_lotuswordpro.mk
-git commit -q -a -m 'disable hanging test'
-%endif
-
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
 # fails on all secondary platforms
 sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
@@ -1287,21 +1067,9 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%if 0%{?rhel} < 7
-%global devtoolset_path /opt/rh/devtoolset-2/root
-# make segfaults on parallel build
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-graphite --without-junit --enable-gstreamer-0-10 --disable-gstreamer-1-0 --disable-postgresql-sdbc --enable-python=system --with-system-hsqldb --without-doxygen --with-parallelism=-j1
-export PATH=%{devtoolset_path}%{_bindir}:$PATH
-export LD_LIBRARY_PATH=%{devtoolset_path}%{_libdir}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-
-%ifarch s390 s390x
-%define archoptions --disable-sdremote-bluetooth
-%endif
-%else # rhel7
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer-1-0 --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
-%endif
+%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system
 %else # fedora
-%define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --disable-gstreamer-0-10 --enable-gstreamer-1-0 --with-system-mythes --with-system-opencollada %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
+%define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
 export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
@@ -1312,13 +1080,8 @@ export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOL
 
 %if ! 0%{libo_use_python3}
 export PYTHON=%{_bindir}/python
-%if 0%{?fedora} || 0%{?rhel} >= 7
 export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
-%else
-export PYTHON_CFLAGS=`python-config --cflags python`
-export PYTHON_LIBS=`python-config --libs python`
-%endif
 %endif
 
 # %%if 0%%{?rhel} && 0%%{?rhel} < 7
@@ -1332,6 +1095,7 @@ touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
+ %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  --disable-coinmp \
  --disable-fetch-external \
  --disable-gnome-vfs \
@@ -1349,7 +1113,6 @@ touch autogen.lastrun
  --with-help \
  --with-system-dicts \
  --with-system-libs \
- --with-system-ucpp \
  --without-fonts \
  --without-system-npapi-headers \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
@@ -1560,11 +1323,6 @@ chmod a+x libreoffice
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat
 ln -s libreoffice openoffice.org
-%if 0%{?rhel} && 0%{?rhel} < 7
-# rhbz#833512 provide a /usr/bin/openoffice.org-1.9, etc. for backwards compat
-ln -s libreoffice openoffice.org-2.0
-ln -s libreoffice openoffice.org-1.9
-%endif
 popd
 
 pushd %{buildroot}%{baseinstdir}/share/xdg/
@@ -1669,11 +1427,7 @@ unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
 export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
-%if 0%{?rhel} && 0%{?rhel} < 7
-timeout 2h make smoketest.subsequentcheck
-%else
 timeout -k 2m 2h make smoketest.subsequentcheck
-%endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
@@ -1868,10 +1622,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
 %{baseinstdir}/program/libxstor.so
-%if 0%{?fedora} || 0%{?rhel} >= 7
 # TODO how useful this is in Fedora?
 %{baseinstdir}/program/liblosessioninstalllo.so
-%endif
 %{baseinstdir}/program/libmigrationoo2lo.so
 %{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmsformslo.so
@@ -2027,9 +1779,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/gallery
 %dir %{baseinstdir}/share/labels
 %{baseinstdir}/share/labels/labels.xml
-%if 0%{?rhel} && 0%{?rhel} < 7
-%{baseinstdir}/share/liblangtag
-%endif
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
@@ -2131,21 +1880,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 #launchers
 %{_bindir}/libreoffice
 %{_bindir}/openoffice.org
-%if 0%{?rhel} && 0%{?rhel} < 7
-%{_bindir}/openoffice.org-1.9
-%{_bindir}/openoffice.org-2.0
-%endif
 %{_bindir}/soffice
 %{_bindir}/ooffice
 %{_bindir}/ooviewdoc
-%if 0%{?rhel} && 0%{?rhel} < 7
-%{baseinstdir}/program/libraptor2-lo.so.0
-%{baseinstdir}/program/librasqal-lo.so.3
-%{baseinstdir}/program/librdf-lo.so.0
-%{baseinstdir}/program/libclucene.so
-%{baseinstdir}/program/liblcms2.so.2
-%{baseinstdir}/share/fingerprint
-%endif
 %{_mandir}/man1/libreoffice.1*
 %{_mandir}/man1/openoffice.org.1*
 %{_mandir}/man1/soffice.1*
@@ -2179,9 +1916,7 @@ update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 
 %files base
 %{baseinstdir}/help/en-US/sdatabase.*
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %{baseinstdir}/program/classes/hsqldb.jar
-%endif
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
@@ -2391,14 +2126,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/xsltfilter.xcd
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
-%if 0%{?fedora} || 0%{?rhel} >= 7
 %files postgresql
 %{baseinstdir}/program/libpostgresql-sdbclo.so
 %{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
 %{baseinstdir}/program/services/postgresql-sdbc.rdb
 %{baseinstdir}/share/registry/postgresql.xcd
-%endif
 
 %files ure
 %{baseinstdir}/program/classes/java_uno.jar

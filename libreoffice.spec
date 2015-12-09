@@ -1310,7 +1310,6 @@ touch autogen.lastrun
  %{?with_lang} \
  --disable-coinmp \
  --disable-fetch-external \
- --disable-gnome-vfs \
  --disable-openssl \
  --enable-evolution2 \
  --enable-ext-nlpsolver \

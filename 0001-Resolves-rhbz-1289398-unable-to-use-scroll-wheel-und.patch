@@ -1,4 +1,4 @@
-From f964d624f4b01d2521dc336eafbc959b85dedd41 Mon Sep 17 00:00:00 2001
+From ab20ea1d78697aa88dd84b8be4ac385cf295ea20 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 8 Dec 2015 15:52:47 +0000
 Subject: [PATCH] Resolves: rhbz#1289398 unable to use scroll wheel under
@@ -12,14 +12,14 @@ best we can.
 Change-Id: I7701949cf7c9ffdc9d062f75b23db7c6add3c6a9
 ---
  vcl/inc/unx/gtk/gtkframe.hxx       |  1 +
- vcl/unx/gtk/window/gtksalframe.cxx | 68 ++++++++++++++++++++++++++------------
- 2 files changed, 48 insertions(+), 21 deletions(-)
+ vcl/unx/gtk/window/gtksalframe.cxx | 70 +++++++++++++++++++++++++++-----------
+ 2 files changed, 52 insertions(+), 19 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 604f2a6..8466c67 100644
+index 3531c41..4594249 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -210,6 +210,7 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+@@ -211,6 +211,7 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
      Rectangle                       m_aRestorePosSize;
  
  #if GTK_CHECK_VERSION(3,0,0)
@@ -28,50 +28,36 @@ index 604f2a6..8466c67 100644
  #else
      GdkRegion*                      m_pRegion;
 diff --git a/vcl/unx/gtk/window/gtksalframe.cxx b/vcl/unx/gtk/window/gtksalframe.cxx
-index 0e58788..10d6ca7 100644
+index 614974a..616f73f 100644
 --- a/vcl/unx/gtk/window/gtksalframe.cxx
 +++ b/vcl/unx/gtk/window/gtksalframe.cxx
-@@ -1085,6 +1085,7 @@ void GtkSalFrame::InitCommon()
+@@ -1129,6 +1129,9 @@ void GtkSalFrame::InitCommon()
      m_bSpanMonitorsWhenFullscreen = false;
      m_nState            = GDK_WINDOW_STATE_WITHDRAWN;
      m_nVisibility       = GDK_VISIBILITY_FULLY_OBSCURED;
++#if GTK_CHECK_VERSION(3,0,0)
 +    m_nLastScrollEventTime = GDK_CURRENT_TIME;
++#endif
      m_bSendModChangeOnRelease = false;
      m_pIMHandler        = NULL;
      m_hBackgroundPixmap = None;
-@@ -3497,31 +3498,56 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEvent* pEvent, gpointer frame
-     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+@@ -3542,30 +3545,59 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEvent* pEvent, gpointer frame
      GdkEventScroll* pSEvent = reinterpret_cast<GdkEventScroll*>(pEvent);
  
--#if GTK_CHECK_VERSION(3,0,0)
+ #if GTK_CHECK_VERSION(3,0,0)
 -    //TODO: do something less feeble here
 -    if (pSEvent->direction == GDK_SCROLL_SMOOTH)
--        return true;
--#endif
--
--    static sal_uLong        nLines = 0;
--    if( ! nLines )
 +    // gnome#726878 check for duplicate legacy scroll event
 +    if (pSEvent->direction != GDK_SCROLL_SMOOTH &&
 +        pThis->m_nLastScrollEventTime == pSEvent->time)
-     {
--        char* pEnv = getenv( "SAL_WHEELLINES" );
--        nLines = pEnv ? atoi( pEnv ) : 3;
--        if( nLines > 10 )
--            nLines = SAL_WHEELMOUSE_EVENT_PAGESCROLL;
-+        return true;
-     }
++    {
+         return true;
++    }
+ #endif
  
--    bool bNeg = (pSEvent->direction == GDK_SCROLL_DOWN || pSEvent->direction == GDK_SCROLL_RIGHT );
-     SalWheelMouseEvent aEvent;
--    aEvent.mnTime           = pSEvent->time;
--    aEvent.mnX              = (sal_uLong)pSEvent->x;
--    aEvent.mnY              = (sal_uLong)pSEvent->y;
--    aEvent.mnDelta          = bNeg ? -120 : 120;
--    aEvent.mnNotchDelta     = bNeg ? -1 : 1;
--    aEvent.mnScrollLines    = nLines;
--    aEvent.mnCode           = GetMouseModCode( pSEvent->state );
--    aEvent.mbHorz           = (pSEvent->direction == GDK_SCROLL_LEFT || pSEvent->direction == GDK_SCROLL_RIGHT);
+-    static sal_uLong        nLines = 0;
+-    if( ! nLines )
++    SalWheelMouseEvent aEvent;
 +
 +    aEvent.mnTime = pSEvent->time;
 +    aEvent.mnX = (sal_uLong)pSEvent->x;
@@ -80,7 +66,13 @@ index 0e58788..10d6ca7 100644
 +    aEvent.mnScrollLines = 3;
 +
 +    switch (pSEvent->direction)
-+    {
+     {
+-        char* pEnv = getenv( "SAL_WHEELLINES" );
+-        nLines = pEnv ? atoi( pEnv ) : 3;
+-        if( nLines > 10 )
+-            nLines = SAL_WHEELMOUSE_EVENT_PAGESCROLL;
+-    }
++#if GTK_CHECK_VERSION(3,0,0)
 +        case GDK_SCROLL_SMOOTH:
 +        {
 +            double delta_x, delta_y;
@@ -95,6 +87,7 @@ index 0e58788..10d6ca7 100644
 +            pThis->m_nLastScrollEventTime = pSEvent->time;
 +            break;
 +        }
++#endif
 +        case GDK_SCROLL_UP:
 +            aEvent.mnDelta = 120;
 +            aEvent.mbHorz = false;
@@ -105,14 +98,24 @@ index 0e58788..10d6ca7 100644
 +            break;
 +        case GDK_SCROLL_LEFT:
 +            aEvent.mbHorz = true;
-+            aEvent.mnDelta = -120;
++            aEvent.mnDelta = 120;
 +            break;
 +        case GDK_SCROLL_RIGHT:
 +            aEvent.mnDelta = -120;
 +            aEvent.mbHorz = true;
 +            break;
 +    };
-+
+ 
+-    bool bNeg = (pSEvent->direction == GDK_SCROLL_DOWN || pSEvent->direction == GDK_SCROLL_RIGHT );
+-    SalWheelMouseEvent aEvent;
+-    aEvent.mnTime           = pSEvent->time;
+-    aEvent.mnX              = (sal_uLong)pSEvent->x;
+-    aEvent.mnY              = (sal_uLong)pSEvent->y;
+-    aEvent.mnDelta          = bNeg ? -120 : 120;
+-    aEvent.mnNotchDelta     = bNeg ? -1 : 1;
+-    aEvent.mnScrollLines    = nLines;
+-    aEvent.mnCode           = GetMouseModCode( pSEvent->state );
+-    aEvent.mbHorz           = (pSEvent->direction == GDK_SCROLL_LEFT || pSEvent->direction == GDK_SCROLL_RIGHT);
 +    aEvent.mnNotchDelta     = aEvent.mnDelta < 0 ? -1 : 1;
  
      // --- RTL --- (mirror mouse pos)

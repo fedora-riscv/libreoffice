@@ -1,0 +1,209 @@
+From 78c32c11b0911b905fced7519d8881262d6fb4a0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 1 Dec 2015 20:35:28 +0000
+Subject: [PATCH] valgrind: scary warning that the cairo font options were
+ deleted before use
+
+(cherry picked from commit 3520b0f82aa2146958fbc1bda1cf7e9b5beb9a5d)
+
+Change-Id: I58427aafb30eca64a67bcf7dd9a7738d8da3e085
+---
+ include/vcl/settings.hxx                      |  3 ---
+ vcl/inc/salinst.hxx                           |  4 ++++
+ vcl/inc/unx/gtk/gtkinst.hxx                   |  2 ++
+ vcl/source/app/settings.cxx                   | 16 ----------------
+ vcl/unx/generic/gdi/cairotextrender.cxx       | 12 ++++++------
+ vcl/unx/gtk/app/gtkinst.cxx                   |  5 +++++
+ vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx      |  4 ----
+ vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk.cxx |  3 ---
+ 8 files changed, 17 insertions(+), 32 deletions(-)
+
+diff --git a/include/vcl/settings.hxx b/include/vcl/settings.hxx
+index 006e758..6df8b0d 100644
+--- a/include/vcl/settings.hxx
++++ b/include/vcl/settings.hxx
+@@ -442,9 +442,6 @@ public:
+     void                            SetPrimaryButtonWarpsSlider( bool bPrimaryButtonWarpsSlider );
+     bool                            GetPrimaryButtonWarpsSlider() const;
+ 
+-    void                            SetCairoFontOptions( const void *pOptions );
+-    const void*                     GetCairoFontOptions() const;
+-
+     void                            SetAppFont( const vcl::Font& rFont );
+     const vcl::Font&                GetAppFont() const;
+ 
+diff --git a/vcl/inc/salinst.hxx b/vcl/inc/salinst.hxx
+index f49bb4c..d89b1dd 100644
+--- a/vcl/inc/salinst.hxx
++++ b/vcl/inc/salinst.hxx
+@@ -60,6 +60,8 @@ enum class VclInputFlags;
+ 
+ enum SalYieldResult { EVENT, TIMEOUT };
+ 
++typedef struct _cairo_font_options cairo_font_options_t;
++
+ class VCL_PLUGIN_PUBLIC SalInstance
+ {
+ private:
+@@ -181,6 +183,8 @@ public:
+     virtual void            updatePrinterUpdate() {}
+     virtual void            jobStartedPrinterUpdate() {}
+     virtual void            jobEndedPrinterUpdate() {}
++
++    virtual const cairo_font_options_t* GetCairoFontOptions() { return nullptr; }
+ };
+ 
+ // called from SVMain
+diff --git a/vcl/inc/unx/gtk/gtkinst.hxx b/vcl/inc/unx/gtk/gtkinst.hxx
+index 189b6900..1ea6f8e 100644
+--- a/vcl/inc/unx/gtk/gtkinst.hxx
++++ b/vcl/inc/unx/gtk/gtkinst.hxx
+@@ -98,6 +98,8 @@ public:
+     virtual css::uno::Reference< css::uno::XInterface > CreateClipboard( const css::uno::Sequence< css::uno::Any >& i_rArguments ) SAL_OVERRIDE;
+ #endif
+ 
++    virtual const cairo_font_options_t* GetCairoFontOptions() override;
++
+     void                        RemoveTimer (SalTimer *pTimer);
+ 
+     // for managing a mirror of the in-flight un-dispatched gdk event queue
+diff --git a/vcl/source/app/settings.cxx b/vcl/source/app/settings.cxx
+index 664f755..2f457c5 100644
+--- a/vcl/source/app/settings.cxx
++++ b/vcl/source/app/settings.cxx
+@@ -191,7 +191,6 @@ struct ImplStyleData
+     bool                            mbPrimaryButtonWarpsSlider;
+     DialogStyle                     maDialogStyle;
+     FrameStyle                      maFrameStyle;
+-    const void*                     mpFontOptions;
+ 
+     sal_uInt16                      mnEdgeBlending;
+     Color                           maEdgeBlendingTopLeftColor;
+@@ -546,7 +545,6 @@ ImplStyleData::ImplStyleData() :
+     mbAutoMnemonic              = true;
+     mnToolbarIconSize           = ToolbarIconSize::Unknown;
+     meUseImagesInMenus          = TRISTATE_INDET;
+-    mpFontOptions              = NULL;
+     mnEdgeBlending = 35;
+     maEdgeBlendingTopLeftColor = RGB_COLORDATA(0xC0, 0xC0, 0xC0);
+     maEdgeBlendingBottomRightColor = RGB_COLORDATA(0x40, 0x40, 0x40);
+@@ -667,7 +665,6 @@ ImplStyleData::ImplStyleData( const ImplStyleData& rData ) :
+     mnToolbarIconSize           = rData.mnToolbarIconSize;
+     mIconThemeScanner.reset(new vcl::IconThemeScanner(*rData.mIconThemeScanner));
+     mIconThemeSelector.reset(new vcl::IconThemeSelector(*rData.mIconThemeSelector));
+-    mpFontOptions               = rData.mpFontOptions;
+     mnEdgeBlending              = rData.mnEdgeBlending;
+     maEdgeBlendingTopLeftColor  = rData.maEdgeBlendingTopLeftColor;
+     maEdgeBlendingBottomRightColor = rData.maEdgeBlendingBottomRightColor;
+@@ -1547,19 +1544,6 @@ StyleSettings::GetPrimaryButtonWarpsSlider() const
+ }
+ 
+ void
+-StyleSettings::SetCairoFontOptions( const void *pOptions )
+-{
+-    CopyData();
+-    mxData->mpFontOptions = pOptions;
+-}
+-
+-const void*
+-StyleSettings::GetCairoFontOptions() const
+-{
+-    return mxData->mpFontOptions;
+-}
+-
+-void
+ StyleSettings::SetAppFont( const vcl::Font& rFont )
+ {
+     CopyData();
+diff --git a/vcl/unx/generic/gdi/cairotextrender.cxx b/vcl/unx/generic/gdi/cairotextrender.cxx
+index 2e3aa90..4ffddf3 100644
+--- a/vcl/unx/generic/gdi/cairotextrender.cxx
++++ b/vcl/unx/generic/gdi/cairotextrender.cxx
+@@ -214,8 +214,9 @@ void CairoTextRender::DrawServerFontLayout( const ServerFontLayout& rLayout )
+         return;
+     }
+ 
+-    if (const void *pOptions = Application::GetSettings().GetStyleSettings().GetCairoFontOptions())
+-        cairo_set_font_options(cr, static_cast<const cairo_font_options_t*>(pOptions));
++    ImplSVData* pSVData = ImplGetSVData();
++    if (const cairo_font_options_t* pFontOptions = pSVData->mpDefInst->GetCairoFontOptions())
++        cairo_set_font_options(cr, pFontOptions);
+ 
+     double nDX, nDY;
+     getSurfaceOffset(nDX, nDY);
+@@ -462,12 +463,11 @@ void CairoTextRender::GetDevFontList( PhysicalFontCollection* pFontCollection )
+ 
+ void cairosubcallback(void* pPattern)
+ {
+-    const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
+-    const void* pFontOptions = rStyleSettings.GetCairoFontOptions();
++    ImplSVData* pSVData = ImplGetSVData();
++    const cairo_font_options_t* pFontOptions = pSVData->mpDefInst->GetCairoFontOptions();
+     if( !pFontOptions )
+         return;
+-    cairo_ft_font_options_substitute(static_cast<const cairo_font_options_t*>(pFontOptions),
+-        static_cast<FcPattern*>(pPattern));
++    cairo_ft_font_options_substitute(pFontOptions, static_cast<FcPattern*>(pPattern));
+ }
+ 
+ ImplFontOptions* GetFCFontOptions( const ImplFontAttributes& rFontAttributes, int nSize)
+diff --git a/vcl/unx/gtk/app/gtkinst.cxx b/vcl/unx/gtk/app/gtkinst.cxx
+index 9242b88..7d8111c 100644
+--- a/vcl/unx/gtk/app/gtkinst.cxx
++++ b/vcl/unx/gtk/app/gtkinst.cxx
+@@ -473,4 +473,9 @@ GtkInstance::getPrintWrapper() const
+     return m_xPrintWrapper;
+ }
+ 
++const cairo_font_options_t* GtkInstance::GetCairoFontOptions()
++{
++    return gdk_screen_get_font_options(gdk_screen_get_default());
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+index 1220596..aa53b65 100644
+--- a/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk/gdi/salnativewidgets-gtk.cxx
+@@ -3928,7 +3928,6 @@ void GtkSalGraphics::refreshFontconfig( GtkSettings *pSettings )
+ 
+ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
+ {
+-    GdkScreen* pScreen = gtk_widget_get_screen( m_pWindow );
+     gtk_widget_ensure_style( m_pWindow );
+     GtkStyle* pStyle = gtk_widget_get_style( m_pWindow );
+     GtkSettings* pSettings = gtk_widget_get_settings( m_pWindow );
+@@ -4257,9 +4256,6 @@ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
+ 
+     aStyleSet.SetToolbarIconSize( ToolbarIconSize::Large );
+ 
+-    const cairo_font_options_t* pNewOptions = gdk_screen_get_font_options( pScreen );
+-    aStyleSet.SetCairoFontOptions( pNewOptions );
+-
+     // finally update the collected settings
+     rSettings.SetStyleSettings( aStyleSet );
+ }
+diff --git a/vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk.cxx
+index 90d8734..2d639bf 100644
+--- a/vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk.cxx
+@@ -1452,7 +1452,6 @@ static inline ::Color getColorFromColor( const GdkColor& rCol )
+ 
+ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
+ {
+-    GdkScreen* pScreen = gtk_widget_get_screen( mpWindow );
+     GtkStyleContext* pStyle = gtk_widget_get_style_context( mpWindow );
+     GtkSettings* pSettings = gtk_widget_get_settings( mpWindow );
+     StyleSettings aStyleSet = rSettings.GetStyleSettings();
+@@ -1801,8 +1800,6 @@ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
+ 
+     aStyleSet.SetToolbarIconSize( ToolbarIconSize::Large );
+ 
+-    const cairo_font_options_t* pNewOptions = gdk_screen_get_font_options(pScreen);
+-    aStyleSet.SetCairoFontOptions( pNewOptions );
+     // finally update the collected settings
+     rSettings.SetStyleSettings( aStyleSet );
+     gchar* pThemeName = NULL;
+-- 
+2.5.0
+

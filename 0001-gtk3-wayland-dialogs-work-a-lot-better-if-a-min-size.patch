@@ -1,0 +1,31 @@
+From f4ac9a55997efbe9c71b7f87ef138e378d95583c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 8 Dec 2015 15:10:45 +0000
+Subject: [PATCH] gtk3+wayland: dialogs work a lot better if a min size is set
+
+instead of just an initial size, because we can set a size-request for the
+minimum size and that's a reliable thing
+
+Change-Id: I83916715cb9e3dceb6e88f3ca8fc86920677c026
+(cherry picked from commit ebafc4fef20944c9c0ba75fbea064bf285a73735)
+---
+ vcl/source/window/btndlg.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/source/window/btndlg.cxx b/vcl/source/window/btndlg.cxx
+index bb0f0a3..16a695f 100644
+--- a/vcl/source/window/btndlg.cxx
++++ b/vcl/source/window/btndlg.cxx
+@@ -208,7 +208,8 @@ void ButtonDialog::ImplPosControls()
+             nY += maCtrlSize.Height()+IMPL_SEP_BUTTON_Y;
+     }
+ 
+-    SetOutputSizePixel( aDlgSize );
++    SetOutputSizePixel(aDlgSize);
++    SetMinOutputSizePixel(aDlgSize);
+ 
+     mbFormat = false;
+ }
+-- 
+2.5.0
+

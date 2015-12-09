@@ -1,0 +1,37 @@
+From 6d0492047913f14e535caf5488a2fa00c8446156 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 3 Dec 2015 11:36:42 +0000
+Subject: [PATCH] Resolves: tdf#95700 index dialog cut off
+
+queue_resize needs to invalidate the size cache even
+if there is a pending layout idle awaiting
+
+Change-Id: I6dba3d37fbb33125cc3f5d17aff6d2f7a3388654
+(cherry picked from commit d40d756f4079a228035b5db346da50fe7aed0bd2)
+---
+ vcl/source/window/syswin.cxx | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/source/window/syswin.cxx b/vcl/source/window/syswin.cxx
+index dcb455d..9399ffd 100644
+--- a/vcl/source/window/syswin.cxx
++++ b/vcl/source/window/syswin.cxx
+@@ -1004,11 +1004,13 @@ const Link<>& SystemWindow::GetCloseHdl() const
+ 
+ void SystemWindow::queue_resize(StateChangedType /*eReason*/)
+ {
+-    if (hasPendingLayout() || isCalculatingInitialLayoutSize())
+-        return;
+     if (!isLayoutEnabled())
+         return;
++    if (isCalculatingInitialLayoutSize())
++        return;
+     InvalidateSizeCache();
++    if (hasPendingLayout())
++        return;
+     maLayoutIdle.Start();
+ }
+ 
+-- 
+2.5.0
+

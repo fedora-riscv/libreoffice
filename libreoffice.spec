@@ -360,6 +360,12 @@ Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
 Patch52: 0001-gtk3-wayland-wrong-dialog-sizes.patch
 Patch53: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
 Patch54: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
+Patch55: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
+Patch56: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
+Patch57: 0001-Resolves-tdf-95700-index-dialog-cut-off.patch
+Patch58: 0001-move-things-around-a-little-to-make-backporting-easi.patch
+Patch59: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
+Patch60: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2480,8 +2486,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Dec 08 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-12-unbuilt
+* Wed Dec 09 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-12
 - Resolves: rhbz#1289398 only smooth scrolling available on wayland
+- Resolves: rhbz#1278885 backport rework of gtk3 allocation and sizing
 
 * Tue Dec 01 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-11
 - fix wrong dialog sizes under wayland

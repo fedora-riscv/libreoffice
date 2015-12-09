@@ -1,0 +1,83 @@
+From b7c0576a8e8f39171b94d08fddea868da0459597 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 8 Dec 2015 13:09:34 +0000
+Subject: [PATCH] Resolves: tdf#96285 restore bodge for unresizable windows
+ with no min size set
+
+(cherry picked from commit e1df21cfe0318bf287ae8ce29261d4759c49bd5a)
+
+Change-Id: Ia1af11514f6096ac55d561f729bbcba9ee5b0b14
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  2 ++
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 21 ++++++++++++++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 0fb5da7..3bd5353 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -212,6 +212,8 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+ 
+ #if GTK_CHECK_VERSION(3,0,0)
+     guint32                         m_nLastScrollEventTime;
++    long                            m_nWidthRequest;
++    long                            m_nHeightRequest;
+     cairo_region_t*                 m_pRegion;
+ #else
+     GdkRegion*                      m_pRegion;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index dcfebbf..1443054 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -885,6 +885,8 @@ void GtkSalFrame::widget_set_size_request(long nWidth, long nHeight)
+ 
+ void GtkSalFrame::window_resize(long nWidth, long nHeight)
+ {
++    m_nWidthRequest = nWidth;
++    m_nHeightRequest = nHeight;
+     gtk_window_resize(GTK_WINDOW(m_pWindow), nWidth, nHeight);
+ }
+ 
+@@ -1055,6 +1057,9 @@ void GtkSalFrame::InitCommon()
+     m_aSystemData.pAppContext   = NULL;
+     m_aSystemData.pShellWidget  = m_aSystemData.pWidget;
+ 
++    m_nWidthRequest = 0;
++    m_nHeightRequest = 0;
++
+     // fake an initial geometry, gets updated via configure event or SetPosSize
+     if( m_bDefaultPos || m_bDefaultSize )
+     {
+@@ -1592,6 +1597,20 @@ void GtkSalFrame::setMinMaxSize()
+                 aHints |= GDK_HINT_MAX_SIZE;
+             }
+         }
++        else
++        {
++            if (!m_bFullscreen && m_nWidthRequest && m_nHeightRequest)
++            {
++                aGeo.min_width = m_nWidthRequest;
++                aGeo.min_height = m_nHeightRequest;
++                aHints |= GDK_HINT_MIN_SIZE;
++
++                aGeo.max_width = m_nWidthRequest;
++                aGeo.max_height = m_nHeightRequest;
++                aHints |= GDK_HINT_MAX_SIZE;
++            }
++        }
++
+         if( m_bFullscreen && m_aMaxSize.Width() && m_aMaxSize.Height() )
+         {
+             aGeo.max_width = m_aMaxSize.Width();
+@@ -1623,7 +1642,7 @@ void GtkSalFrame::SetMinClientSize( long nWidth, long nHeight )
+         m_aMinSize = Size( nWidth, nHeight );
+         if( m_pWindow )
+         {
+-            widget_set_size_request(nWidth, nHeight );
++            widget_set_size_request(nWidth, nHeight);
+             setMinMaxSize();
+         }
+     }
+-- 
+2.5.0
+

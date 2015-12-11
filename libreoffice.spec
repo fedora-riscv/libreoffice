@@ -58,7 +58,6 @@ Epoch:          1
 Version:        %{libo_version}.0
 Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
-Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -271,7 +270,6 @@ formats, including Microsoft Office File Formats.
 
 %package filters
 Summary: All import / export filters
-Group: Applications/Productivity
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
@@ -288,7 +286,6 @@ filters.
 
 %package core
 Summary: Core modules for LibreOffice
-Group: Applications/Productivity
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
@@ -322,7 +319,6 @@ The shared core libraries and support files for LibreOffice.
 
 %package pyuno
 Summary: Python support for LibreOffice
-Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: %{libo_python}
@@ -335,7 +331,6 @@ to be written in python.
 
 %package base
 Summary: Database front-end for LibreOffice
-Group: Applications/Productivity
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
@@ -353,7 +348,6 @@ databases through a GUI.
 
 %package bsh
 Summary: BeanShell support for LibreOffice
-Group: Development/Libraries
 Requires: bsh
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-bsh < 1:3.3.1
@@ -363,7 +357,6 @@ Support BeanShell scripts in LibreOffice.
 
 %package officebean
 Summary: JavaBean for LibreOffice Components
-Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description officebean
@@ -373,7 +366,6 @@ its visual representation
 
 %package rhino
 Summary: JavaScript support for LibreOffice
-Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-rhino < 1:3.3.1
 
@@ -382,7 +374,6 @@ Support JavaScript scripts in LibreOffice.
 
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
-Group: Applications/Productivity
 Requires: apache-commons-codec, jakarta-commons-httpclient
 Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
@@ -397,7 +388,6 @@ your new and existing documents transparently with writer to a wiki page.
 
 %package nlpsolver
 Summary: Non-linear solver engine for LibreOffice Calc
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -408,7 +398,6 @@ programming model when more complex, nonlinear programming is required.
 
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -420,7 +409,6 @@ Requires good quality 3D support for your graphics card for best experience.
 
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -432,7 +420,6 @@ and enable basic editing of PDF documents.
 
 %package %{fontname}-fonts
 Summary: LibreOffice dingbats font
-Group: User Interface/X
 Requires: fontpackages-filesystem
 Obsoletes: openoffice.org-fonts < 1:3.3.1
 Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
@@ -444,7 +431,6 @@ mathematical symbols.
 
 %package writer
 Summary: LibreOffice Word Processor Application
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -456,7 +442,6 @@ The LibreOffice Word Processor application.
 
 %package emailmerge
 Summary: Email mail-merge component for LibreOffice 
-Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-emailmerge < 1:3.3.1
@@ -466,7 +451,6 @@ Enables the LibreOffice writer module to mail-merge to email.
 
 %package calc
 Summary: LibreOffice Spreadsheet Application
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -478,7 +462,6 @@ The LibreOffice Spreadsheet application.
 
 %package draw
 Summary: LibreOffice Drawing Application
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport = %{epoch}:%{version}-%{release}
@@ -492,7 +475,6 @@ The LibreOffice Drawing Application.
 
 %package impress
 Summary: LibreOffice Presentation Application
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -510,7 +492,6 @@ The LibreOffice Presentation Application.
 
 %package math
 Summary: LibreOffice Equation Editor Application
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -522,7 +503,6 @@ The LibreOffice Equation Editor Application.
 
 %package graphicfilter
 Summary: LibreOffice Extra Graphic filters
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
@@ -533,7 +513,6 @@ flash filters.
 
 %package xsltfilter
 Summary: Optional xsltfilter module for LibreOffice
-Group: Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 
@@ -543,7 +522,6 @@ xhtml export transforms. Install this to enable docbook export.
 
 %package postgresql
 Summary: PostgreSQL connector for LibreOffice
-Group: Applications/Productivity
 Requires: %{name}-base = %{epoch}:%{version}-%{release}
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
@@ -555,7 +533,6 @@ creation and management of PostgreSQL databases through a GUI.
 
 %package ure
 Summary: UNO Runtime Environment
-Group: Development/Libraries
 #rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
 %if 0%{?__isa_bits} == 64
 %global mark64 ()(64bit)
@@ -573,7 +550,6 @@ an appropriate bridge or adapter exists
 
 %package sdk
 Summary: Software Development Kit for LibreOffice
-Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: unzip, java-devel
@@ -587,7 +563,6 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 
 %package sdk-doc
 Summary: Software Development Kit documentation for LibreOffice
-Group: Documentation
 Requires: %{name}-sdk = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 
@@ -597,7 +572,6 @@ and examples of creating extensions (UNO components) for LibreOffice.
 
 %package glade
 Summary: Support for creating LibreOffice dialogs in glade
-Group: Development/Libraries
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure = %{epoch}:%{version}-%{release}
 Requires: glade3-libgladeui
@@ -608,7 +582,6 @@ glade and ui-previewer tool to check the visual appearance of dialogs.
 
 %package librelogo
 Summary: LibreLogo scripting language
-Group: Applications/Productivity
 Requires: %{name}-writer = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno = %{epoch}:%{version}-%{release}
 
@@ -621,7 +594,6 @@ DTP.
 
 %package kde
 Summary: LibreOffice KDE integration plug-in
-Group:   Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description kde
@@ -629,7 +601,6 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
-Group:   Applications/Productivity
 Requires: %{name}-core = %{epoch}:%{version}-%{release}
 
 %description gtk3
@@ -666,7 +637,6 @@ developing applications that use libreofficekit.
 
 %package debuginfo
 Summary: Debug information for package %{name}
-Group: Development/Debug
 AutoReqProv: 0
 %if 0%{?fedora}
 Requires: libreoffice-core = %{epoch}:%{version}-%{release}
@@ -682,7 +652,6 @@ package or when debugging this package.
 
 %package gdb-debug-support
 Summary: Additional support for debugging with gdb
-Group: Development/Debug
 Requires: gdb
 Requires: %{libo_python}-six
 AutoReqProv: 0
@@ -761,7 +730,6 @@ This package provides gdb pretty printers for package %{name}.
 \
 %package %{pkgname} \
 Summary: %{langname} language pack for LibreOffice \
-Group: Applications/Productivity \
 Requires: %{name}-core = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
 %{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
@@ -807,7 +775,6 @@ Provides additional %{langname} translations and resources for LibreOffice. \
 \
 %package -n %{pkgname} \
 Summary: %{langname} auto-correction rules \
-Group: Applications/Text \
 BuildArch: noarch \
 \
 %description -n %{pkgname} \

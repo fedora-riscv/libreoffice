@@ -82,9 +82,8 @@ Source11:       %{external_url}/liborcus-0.9.2.tar.gz
 Source12:       %{external_url}/mdds_0.12.1.tar.bz2
 Source13:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source14:       %{external_url}/libwps-0.4.2.tar.bz2
-Source15:       %{external_url}/libmwaw-0.3.7.tar.bz2
 Source16:       %{external_url}/libetonyek-0.1.5.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libmwaw --without-system-libetonyek
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libetonyek
 %endif
 
 %if 0%{?fedora}
@@ -161,6 +160,7 @@ BuildRequires: pkgconfig(libfreehand-0.1)
 BuildRequires: pkgconfig(libidn)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libmspub-0.1)
+BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(librevenge-0.0)
@@ -198,7 +198,6 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libgltf-0.0)
-BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(liborcus-0.10)
 BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds) >= 0.12.0
@@ -994,6 +993,11 @@ sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d -e /Cp
 git commit -q -a -m 'disable tests segfaulting on arm'
 %endif
 
+%if 0%{?rhel}
+git rm writerperfect/qa/unit/data/draw/libmwaw/pass/MacDraft_5.5.drw writerperfect/qa/unit/data/writer/libmwaw/pass/RagTime_5.5.rag
+git commit -am 'make tests pass with libmwaw 0.3.5'
+%endif
+
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm
@@ -1487,7 +1491,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
 %{baseinstdir}/program/libetonyek-0.1-lo.so.*
-%{baseinstdir}/program/libmwaw-0.3-lo.so.*
 %{baseinstdir}/program/libwps-0.4-lo.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so

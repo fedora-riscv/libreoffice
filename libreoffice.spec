@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.3
+%define libo_version 5.0.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        13%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -338,34 +338,26 @@ Patch29: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch30: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
 Patch31: 0001-implement-save-slide-background-for-impress.patch
 Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
-Patch33: 0001-tdf-94804-sw-allow-duplicate-heading-cross-reference.patch
-Patch34: 0001-implement-dialog-control-over-enhanced-shape-control.patch
-Patch35: 0001-tdf-94936-Update-the-button-removal-hack-to-3.18.patch
-Patch36: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
-Patch37: 0001-Resolves-rhbz-1278885-gtk3-allocated-size-doesn-t-ma.patch
-Patch38: 0001-Resolves-tdf-93847-gtk3-paint-blocking-is-unnecessar.patch
-Patch39: 0001-Resolves-tdf-93317-Modified-Document-Dialog-misses-f.patch
-Patch40: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
-Patch41: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
-Patch42: 0001-Resolves-tdf-92687-implement-drawPolyPolygon-via-cai.patch
-Patch43: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
-Patch44: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
-Patch45: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
-Patch46: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
-Patch47: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
-Patch48: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
-Patch49: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
-Patch50: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
-Patch51: 0001-gtk3-glitches-because-yours-truly-cannot-tell-x-from.patch
-Patch52: 0001-gtk3-wayland-wrong-dialog-sizes.patch
-Patch53: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
-Patch54: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
-Patch55: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
-Patch56: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
-Patch57: 0001-Resolves-tdf-95700-index-dialog-cut-off.patch
-Patch58: 0001-move-things-around-a-little-to-make-backporting-easi.patch
-Patch59: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
-Patch60: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
+Patch33: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch34: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
+Patch35: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
+Patch36: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
+Patch37: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
+Patch38: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
+Patch39: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
+Patch40: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
+Patch41: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
+Patch42: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
+Patch43: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
+Patch44: 0001-gtk3-wayland-wrong-dialog-sizes.patch
+Patch45: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
+Patch46: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
+Patch47: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
+Patch48: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
+Patch49: 0001-Resolves-tdf-95700-index-dialog-cut-off.patch
+Patch50: 0001-move-things-around-a-little-to-make-backporting-easi.patch
+Patch51: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
+Patch52: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1970,6 +1962,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libucpcmis1lo.so
 %{baseinstdir}/program/libucpexpand1lo.so
 %{baseinstdir}/program/libucpextlo.so
+%{baseinstdir}/program/libucpimagelo.so
 %{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/lounorc
 %{baseinstdir}/program/libupdatefeedlo.so
@@ -2489,7 +2482,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Dec 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-13-unbuilt
+* Mon Dec 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-1
+- new bugfix release
 - Related: rhbz#1290014 use gtk_window_set_modal to indicate modal dialogs
 
 * Wed Dec 09 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-12

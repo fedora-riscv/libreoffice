@@ -1,4 +1,4 @@
-From 53c61b709904ebbecc386e9ff160d13d5b20e401 Mon Sep 17 00:00:00 2001
+From f17080780f6240bb813a133f60c43aaad29b2584 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 24 Nov 2015 23:12:49 +0000
 Subject: [PATCH] gtk3: implement drawPolyLine for svp/gtk3 backend
@@ -13,10 +13,10 @@ Change-Id: I548042328144e23c68b83e461a63cdb0d7d8ff2c
  1 file changed, 166 insertions(+), 33 deletions(-)
 
 diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
-index effbeda..41c0d30 100644
+index cc4baab..21efd33 100644
 --- a/vcl/headless/svpgdi.cxx
 +++ b/vcl/headless/svpgdi.cxx
-@@ -155,6 +155,27 @@ namespace
+@@ -156,6 +156,27 @@ namespace
  
          return extents;
      }
@@ -42,9 +42,9 @@ index effbeda..41c0d30 100644
 +        return extents;
 +    }
  }
- 
  #endif
-@@ -622,39 +643,6 @@ void SvpSalGraphics::drawPolyPolygon( sal_uInt32 nPoly,
+ 
+@@ -624,39 +645,6 @@ void SvpSalGraphics::drawPolyPolygon( sal_uInt32 nPoly,
      dbgOut( m_aDevice );
  }
  
@@ -84,7 +84,7 @@ index effbeda..41c0d30 100644
  #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 10, 0)
  static void AddPolygonToPath(cairo_t* cr, const basegfx::B2DPolygon& rPolygon, bool bClosePath)
  {
-@@ -718,6 +706,151 @@ static void AddPolygonToPath(cairo_t* cr, const basegfx::B2DPolygon& rPolygon, b
+@@ -720,6 +708,151 @@ static void AddPolygonToPath(cairo_t* cr, const basegfx::B2DPolygon& rPolygon, b
  }
  #endif
  

@@ -1,0 +1,74 @@
+From 3f13961c45ea9a6f90c0bc268a2274634d9b8033 Mon Sep 17 00:00:00 2001
+From: Pranav Kant <pranavk@libreoffice.org>
+Date: Thu, 10 Dec 2015 21:10:16 +0530
+Subject: [PATCH] tdf#96384: Add a new signal 'text-selection' to lokdocview
+
+To help client know when the user has selected a non-null text.
+
+Change-Id: Ie939612fc5f38e2e50e9ad9792e04e89ae918886
+Reviewed-on: https://gerrit.libreoffice.org/20621
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+(cherry picked from commit ea5c99428f56e1d3a3e782505aa2f56f905038a4)
+Signed-off-by: David Tardon <dtardon@redhat.com>
+---
+ libreofficekit/source/gtk/lokdocview.cxx | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/libreofficekit/source/gtk/lokdocview.cxx b/libreofficekit/source/gtk/lokdocview.cxx
+index d7a72cd..139b5be 100644
+--- a/libreofficekit/source/gtk/lokdocview.cxx
++++ b/libreofficekit/source/gtk/lokdocview.cxx
+@@ -186,6 +186,7 @@ enum
+     SEARCH_RESULT_COUNT,
+     COMMAND_RESULT,
+     FORMULA_CHANGED,
++    TEXT_SELECTION,
+ 
+     LAST_SIGNAL
+ };
+@@ -925,8 +926,9 @@ callback (gpointer pData)
+     case LOK_CALLBACK_TEXT_SELECTION:
+     {
+         priv->m_aTextSelectionRectangles = payloadToRectangles(pDocView, pCallback->m_aPayload.c_str());
++        gboolean bIsTextSelected = !priv->m_aTextSelectionRectangles.empty();
+         // In case the selection is empty, then we get no LOK_CALLBACK_TEXT_SELECTION_START/END events.
+-        if (priv->m_aTextSelectionRectangles.empty())
++        if (!bIsTextSelected)
+         {
+             memset(&priv->m_aTextSelectionStart, 0, sizeof(priv->m_aTextSelectionStart));
+             memset(&priv->m_aHandleStartRect, 0, sizeof(priv->m_aHandleStartRect));
+@@ -935,6 +937,8 @@ callback (gpointer pData)
+         }
+         else
+             memset(&priv->m_aHandleMiddleRect, 0, sizeof(priv->m_aHandleMiddleRect));
++
++        g_signal_emit(pDocView, doc_view_signals[TEXT_SELECTION], 0, bIsTextSelected);
+         gtk_widget_queue_draw(GTK_WIDGET(pDocView));
+     }
+     break;
+@@ -2382,6 +2386,21 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
+                      g_cclosure_marshal_VOID__STRING,
+                      G_TYPE_NONE, 1,
+                      G_TYPE_STRING);
++
++    /**
++     * LOKDocView::text-selection:
++     * @pDocView: the #LOKDocView on which the signal is emitted
++     * @bIsTextSelected: whether text selected is non-null
++     */
++    doc_view_signals[TEXT_SELECTION] =
++        g_signal_new("text-selection",
++                     G_TYPE_FROM_CLASS(pGObjectClass),
++                     G_SIGNAL_RUN_FIRST,
++                     0,
++                     nullptr, nullptr,
++                     g_cclosure_marshal_VOID__BOOLEAN,
++                     G_TYPE_NONE, 1,
++                     G_TYPE_BOOLEAN);
+ }
+ 
+ SAL_DLLPUBLIC_EXPORT GtkWidget*
+-- 
+2.5.0
+

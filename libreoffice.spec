@@ -254,6 +254,7 @@ Patch16: 0001-tdf-96316-Decouple-view-only-editable-modes.patch
 Patch17: 0002-tdf-96318-Add-searching-API.patch
 Patch18: 0003-lokdocview-Set-a-default-path-for-LOK-init.patch
 Patch19: 0001-tdf-96317-Add-API-for-copy-paste-from-to-the-widget.patch
+Patch20: 0001-tdf-96384-Add-a-new-signal-text-selection-to-lokdocv.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

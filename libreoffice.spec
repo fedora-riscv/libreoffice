@@ -81,7 +81,8 @@ Source11:       %{external_url}/liborcus-0.9.2.tar.gz
 Source12:       %{external_url}/mdds_0.12.1.tar.bz2
 Source13:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
 Source14:       %{external_url}/libwps-0.4.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps
+Source15:       %{external_url}/libpagemaker-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
 %endif
 
 %if 0%{?fedora}
@@ -161,7 +162,6 @@ BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
-BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
@@ -197,6 +197,7 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(liborcus-0.10)
+BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds) >= 0.12.0
 %endif

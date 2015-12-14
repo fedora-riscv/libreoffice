@@ -257,6 +257,7 @@ Patch18: 0003-lokdocview-Set-a-default-path-for-LOK-init.patch
 Patch19: 0001-tdf-96317-Add-API-for-copy-paste-from-to-the-widget.patch
 Patch20: 0001-tdf-96384-Add-a-new-signal-text-selection-to-lokdocv.patch
 Patch21: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
+Patch22: 0001-don-t-be-creative-and-use-a-simple-lookup-table.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -950,8 +951,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 git am %{patches}
 
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
-# fails on i686
-sed -i -e /CppunitTest_oox_vba_compression/d oox/Module_oox.mk
 # fails on all secondary platforms
 sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
 sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk

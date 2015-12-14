@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        13%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2486,6 +2486,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Dec 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-13-unbuilt
+- Related: rhbz#1290014 use gtk_window_set_modal to indicate modal dialogs
+
 * Wed Dec 09 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.3.2-12
 - Resolves: rhbz#1289398 only smooth scrolling available on wayland
 - Resolves: rhbz#1278885 backport rework of gtk3 allocation and sizing

@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2163,6 +2163,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Dec 14 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-11.beta2
+- backport more upstream fixes for libreofficekit
+- fix unit test on i686
+
 * Wed Dec 09 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-10.beta2
 - backport upstream fixes for libreofficekit
 

@@ -1,8 +1,8 @@
-From b8ef286781dd107bcb0cbd065979bd53f176db27 Mon Sep 17 00:00:00 2001
+From 8a30dab4e78b42cf3ce587965414b98a50830a78 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 14 Dec 2015 11:36:50 +0000
-Subject: [PATCH] Related: rhbz#1290014 gtk3: use gtk_window_set_modal on modal
- dialogs
+Subject: [PATCH 1/2] Related: rhbz#1290014 gtk3: use gtk_window_set_modal on
+ modal dialogs
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -27,10 +27,10 @@ Reviewed-on: https://gerrit.libreoffice.org/20700
  4 files changed, 17 insertions(+), 1 deletion(-)
 
 diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
-index 14fb2fa..a9c11e4 100644
+index 4e52fe4..484504c 100644
 --- a/vcl/inc/salframe.hxx
 +++ b/vcl/inc/salframe.hxx
-@@ -239,6 +239,10 @@ public:
+@@ -233,6 +233,10 @@ public:
      // done setting up the clipregion
      virtual void            EndSetClipRegion() = 0;
  
@@ -42,12 +42,12 @@ index 14fb2fa..a9c11e4 100644
      // for default message handling return 0
      void                    SetCallback( vcl::Window* pWindow, SALFRAMEPROC pProc );
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 4b09426..dc5cd19 100644
+index 3bd5353..ee19e6c 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -447,6 +447,10 @@ public:
+@@ -465,6 +465,10 @@ public:
      // done setting up the clipregion
-     virtual void                EndSetClipRegion() override;
+     virtual void                EndSetClipRegion() SAL_OVERRIDE;
  
 +#if GTK_CHECK_VERSION(3,0,0)
 +    virtual void                SetModal(bool bModal) override;
@@ -55,9 +55,9 @@ index 4b09426..dc5cd19 100644
 +
      static GtkSalFrame         *getFromWindow( GtkWindow *pWindow );
  
-     virtual Window              GetX11Window() override;
+     virtual Window              GetX11Window() SAL_OVERRIDE;
 diff --git a/vcl/source/window/dialog.cxx b/vcl/source/window/dialog.cxx
-index 9db9b87..1793afdf5 100644
+index 4ce15de..cd1f0da 100644
 --- a/vcl/source/window/dialog.cxx
 +++ b/vcl/source/window/dialog.cxx
 @@ -46,6 +46,7 @@
@@ -68,7 +68,7 @@ index 9db9b87..1793afdf5 100644
  
  #include <iostream>
  
-@@ -1032,7 +1033,6 @@ void Dialog::SetModalInputMode( bool bModal )
+@@ -1001,7 +1002,6 @@ void Dialog::SetModalInputMode( bool bModal )
              mpDialogParent = pParent->mpWindowImpl->mpFrameWindow;
              mpDialogParent->ImplIncModalCount();
          }
@@ -76,7 +76,7 @@ index 9db9b87..1793afdf5 100644
      }
      else
      {
-@@ -1068,6 +1068,7 @@ void Dialog::SetModalInputMode( bool bModal )
+@@ -1037,6 +1037,7 @@ void Dialog::SetModalInputMode( bool bModal )
              }
          }
      }
@@ -85,10 +85,10 @@ index 9db9b87..1793afdf5 100644
  
  void Dialog::SetModalInputMode( bool bModal, bool bSubModalDialogs )
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 5a3efe0..23393d0 100644
+index 1443054..ca9d371 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -2343,6 +2343,13 @@ void GtkSalFrame::EndSetClipRegion()
+@@ -2616,6 +2616,13 @@ void GtkSalFrame::EndSetClipRegion()
          gdk_window_shape_combine_region( widget_get_window(m_pWindow), m_pRegion, 0, 0 );
  }
  

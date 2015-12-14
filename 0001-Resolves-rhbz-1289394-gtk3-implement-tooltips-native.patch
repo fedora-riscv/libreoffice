@@ -1,0 +1,466 @@
+From 420af7714706fe4199388879c0b749d19d1bbc15 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 14 Dec 2015 14:05:53 +0000
+Subject: [PATCH] Resolves: rhbz#1289394 gtk3: implement tooltips natively
+
+side step the whole pile of misery by using native gtk tooltips
+
+also gets transparency and native themeing too by default
+
+Related: rhbz#1289394 always provide the screen area the tip applies to
+
+this will make it easier to implement native help tips
+
+Change-Id: I984dfadaf02e9b7bf542ba82cf070911c89cb699
+(cherry picked from commit 01ef12d173fb2c54a49186c8eb4fa40288b82945)
+
+Change-Id: I59552661cd9dc18a563341885bc40fcdadc5264f
+(cherry picked from commit c96eeb5bf2ef428e7d147258d69825ff97acb226)
+---
+ cui/source/customize/acccfg.cxx           |  2 +-
+ cui/source/customize/selector.cxx         | 10 +++--
+ include/vcl/help.hxx                      |  3 --
+ sfx2/source/dialog/dinfdlg.cxx            |  2 +-
+ sw/source/core/draw/dpage.cxx             |  6 +--
+ sw/source/uibase/docvw/edtwin2.cxx        | 17 +++----
+ vcl/inc/helpwin.hxx                       |  4 +-
+ vcl/inc/salframe.hxx                      |  7 +++
+ vcl/inc/unx/gtk/gtkframe.hxx              |  6 +++
+ vcl/source/app/help.cxx                   | 75 ++++++++++++++-----------------
+ vcl/source/window/menuwindow.cxx          |  2 +-
+ vcl/source/window/window.cxx              |  9 +++-
+ vcl/unx/gtk3/gtk3gtkframe.cxx             | 28 ++++++++++++
+ 14 files changed, 106 insertions(+), 68 deletions(-)
+
+diff --git a/cui/source/customize/acccfg.cxx b/cui/source/customize/acccfg.cxx
+index 2d42b3c..ee07d7e 100644
+--- a/cui/source/customize/acccfg.cxx
++++ b/cui/source/customize/acccfg.cxx
+@@ -1108,7 +1108,7 @@ IMPL_LINK_NOARG_TYPED(SfxAcceleratorConfigPage, RemoveHdl, Button*, void)
+ IMPL_LINK_TYPED( SfxAcceleratorConfigPage, SelectHdl, SvTreeListBox*, pListBox, void )
+ {
+     // disable help
+-    Help::ShowBalloon( this, Point(), OUString() );
++    Help::ShowBalloon( this, Point(), Rectangle(), OUString() );
+     if (pListBox == m_pEntriesBox)
+     {
+         sal_uLong nPos = SvTreeList::GetRelPos( m_pEntriesBox->FirstSelected() );
+diff --git a/cui/source/customize/selector.cxx b/cui/source/customize/selector.cxx
+index 7f4c65e..28fbd87 100644
+--- a/cui/source/customize/selector.cxx
++++ b/cui/source/customize/selector.cxx
+@@ -131,7 +131,8 @@ void SvxConfigFunctionListBox::MouseMove( const MouseEvent& rMEvt )
+         aTimer.Start();
+     else
+     {
+-        Help::ShowBalloon( this, aMousePos, OUString() );
++        Rectangle aRect(GetPosPixel(), GetSizePixel());
++        Help::ShowBalloon( this, aMousePos, aRect, OUString() );
+         aTimer.Stop();
+     }
+ }
+@@ -143,7 +144,10 @@ IMPL_LINK_NOARG_TYPED(SvxConfigFunctionListBox, TimerHdl, Timer *, void)
+     Point aMousePos = GetPointerPosPixel();
+     SvTreeListEntry *pEntry = GetCurEntry();
+     if ( pEntry && GetEntry( aMousePos ) == pEntry && pCurEntry == pEntry )
+-        Help::ShowBalloon( this, OutputToScreenPixel( aMousePos ), GetHelpText( pEntry ) );
++    {
++        Rectangle aRect(GetPosPixel(), GetSizePixel());
++        Help::ShowBalloon( this, OutputToScreenPixel(aMousePos), aRect, GetHelpText( pEntry ) );
++    }
+ }
+ 
+ void SvxConfigFunctionListBox::ClearAll()
+@@ -178,7 +182,7 @@ OUString SvxConfigFunctionListBox::GetHelpText( SvTreeListEntry *pEntry )
+ 
+ void SvxConfigFunctionListBox::FunctionSelected()
+ {
+-    Help::ShowBalloon( this, Point(), OUString() );
++    Help::ShowBalloon( this, Point(), Rectangle(), OUString() );
+ }
+ 
+ // drag and drop support
+diff --git a/include/vcl/help.hxx b/include/vcl/help.hxx
+index 40dfcf2..4d226a8 100644
+--- a/include/vcl/help.hxx
++++ b/include/vcl/help.hxx
+@@ -86,9 +86,6 @@ public:
+     static bool         IsBalloonHelpEnabled();
+     static bool         ShowBalloon( vcl::Window* pParent,
+                                      const Point& rScreenPos,
+-                                     const OUString& rHelpText );
+-    static bool         ShowBalloon( vcl::Window* pParent,
+-                                     const Point& rScreenPos,
+                                      const Rectangle&,
+                                      const OUString& rHelpText );
+ 
+diff --git a/sfx2/source/dialog/dinfdlg.cxx b/sfx2/source/dialog/dinfdlg.cxx
+index 0577ad4..bc3fa4b 100644
+--- a/sfx2/source/dialog/dinfdlg.cxx
++++ b/sfx2/source/dialog/dinfdlg.cxx
+@@ -1366,7 +1366,7 @@ void CustomPropertiesDurationField::RequestHelp( const HelpEvent& rHEvt )
+         Size aSize( GetSizePixel() );
+         Rectangle aItemRect( rHEvt.GetMousePosPixel(), aSize );
+         if (Help::IsBalloonHelpEnabled())
+-            Help::ShowBalloon( this, rHEvt.GetMousePosPixel(), GetText() );
++            Help::ShowBalloon( this, rHEvt.GetMousePosPixel(), aItemRect, GetText() );
+         else
+             Help::ShowQuickHelp( this, aItemRect, GetText(),
+                 QuickHelpFlags::Left|QuickHelpFlags::VCenter );
+diff --git a/sw/source/core/draw/dpage.cxx b/sw/source/core/draw/dpage.cxx
+index f8ad9f6..c8773e8 100644
+--- a/sw/source/core/draw/dpage.cxx
++++ b/sw/source/core/draw/dpage.cxx
+@@ -237,14 +237,14 @@ bool SwDPage::RequestHelp( vcl::Window* pWindow, SdrView* pView,
+                         sText = SwViewShell::GetShellRes()->aLinkClick + ": " + sText;
+                 }
+ 
++                // then display the help:
++                Rectangle aRect( rEvt.GetMousePosPixel(), Size(1,1) );
+                 if( rEvt.GetMode() & HelpEventMode::BALLOON )
+                 {
+-                    Help::ShowBalloon( pWindow, rEvt.GetMousePosPixel(), sText );
++                    Help::ShowBalloon( pWindow, rEvt.GetMousePosPixel(), aRect, sText );
+                 }
+                 else
+                 {
+-                    // then display the help:
+-                    Rectangle aRect( rEvt.GetMousePosPixel(), Size(1,1) );
+                     Help::ShowQuickHelp( pWindow, aRect, sText );
+                 }
+                 bContinue = false;
+diff --git a/sw/source/uibase/docvw/edtwin2.cxx b/sw/source/uibase/docvw/edtwin2.cxx
+index ba05744..a15a681 100644
+--- a/sw/source/uibase/docvw/edtwin2.cxx
++++ b/sw/source/uibase/docvw/edtwin2.cxx
+@@ -364,18 +364,19 @@ void SwEditWin::RequestHelp(const HelpEvent &rEvt)
+             }
+             if (!sText.isEmpty())
+             {
++                Rectangle aRect( aFieldRect.SVRect() );
++                Point aPt( OutputToScreenPixel( LogicToPixel( aRect.TopLeft() )));
++                aRect.Left()   = aPt.X();
++                aRect.Top()    = aPt.Y();
++                aPt = OutputToScreenPixel( LogicToPixel( aRect.BottomRight() ));
++                aRect.Right()  = aPt.X();
++                aRect.Bottom() = aPt.Y();
++
+                 if( bBalloon )
+-                    Help::ShowBalloon( this, rEvt.GetMousePosPixel(), sText );
++                    Help::ShowBalloon( this, rEvt.GetMousePosPixel(), aRect, sText );
+                 else
+                 {
+                     // the show the help
+-                    Rectangle aRect( aFieldRect.SVRect() );
+-                    Point aPt( OutputToScreenPixel( LogicToPixel( aRect.TopLeft() )));
+-                    aRect.Left()   = aPt.X();
+-                    aRect.Top()    = aPt.Y();
+-                    aPt = OutputToScreenPixel( LogicToPixel( aRect.BottomRight() ));
+-                    aRect.Right()  = aPt.X();
+-                    aRect.Bottom() = aPt.Y();
+                     OUString sDisplayText(ClipLongToolTip(sText));
+                     Help::ShowQuickHelp(this, aRect, sDisplayText, nStyle);
+                 }
+diff --git a/vcl/inc/helpwin.hxx b/vcl/inc/helpwin.hxx
+index e372962..cf35423 100644
+--- a/vcl/inc/helpwin.hxx
++++ b/vcl/inc/helpwin.hxx
+@@ -75,10 +75,10 @@ public:
+ 
+ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHelpFlags nStyle,
+         const OUString& rHelpText, const OUString& rStatusText,
+-        const Point& rScreenPos, const Rectangle* pHelpArea = nullptr );
++        const Point& rScreenPos, const Rectangle& rHelpArea );
+ void ImplDestroyHelpWindow( bool bUpdateHideTime );
+ void ImplSetHelpWindowPos( vcl::Window* pHelpWindow, sal_uInt16 nHelpWinStyle, QuickHelpFlags nStyle,
+-                            const Point& rPos, const Rectangle* pHelpArea );
++                            const Point& rPos, const Rectangle& rHelpArea );
+ 
+ #endif // INCLUDED_VCL_INC_HELPWIN_HXX
+ 
+diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
+index a9c11e4..4c7a1bd 100644
+--- a/vcl/inc/salframe.hxx
++++ b/vcl/inc/salframe.hxx
+@@ -243,6 +243,13 @@ public:
+     {
+     }
+ 
++    // return true to indicate tooltips are shown natively, false otherwise
++    virtual bool            ShowTooltip(const OUString& /*rHelpText*/, const Rectangle& /*rHelpArea*/ )
++    {
++        return false;
++    }
++
++
+     // Callbacks (indepent part in vcl/source/window/winproc.cxx)
+     // for default message handling return 0
+     void                    SetCallback( vcl::Window* pWindow, SALFRAMEPROC pProc );
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index dc5cd19..ba6eded 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -199,6 +199,8 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+     Rectangle                       m_aRestorePosSize;
+ 
+ #if GTK_CHECK_VERSION(3,0,0)
++    OUString                        m_aTooltip;
++    Rectangle                       m_aHelpArea;
+     guint32                         m_nLastScrollEventTime;
+     long                            m_nWidthRequest;
+     long                            m_nHeightRequest;
+@@ -231,6 +233,9 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+ #if GTK_CHECK_VERSION(3,0,0)
+     static gboolean     signalDraw( GtkWidget*, cairo_t *cr, gpointer );
+     static void         sizeAllocated(GtkWidget*, GdkRectangle *pAllocation, gpointer frame);
++    static gboolean     signalTooltipQuery(GtkWidget*, gint x, gint y,
++                                     gboolean keyboard_mode, GtkTooltip *tooltip,
++                                     gpointer frame);
+ #if GTK_CHECK_VERSION(3,14,0)
+     static void         gestureSwipe(GtkGestureSwipe* gesture, gdouble velocity_x, gdouble velocity_y, gpointer frame);
+     static void         gestureLongPress(GtkGestureLongPress* gesture, gpointer frame);
+@@ -449,6 +454,7 @@ public:
+ 
+ #if GTK_CHECK_VERSION(3,0,0)
+     virtual void                SetModal(bool bModal) override;
++    virtual bool                ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpArea) override;
+ #endif
+ 
+     static GtkSalFrame         *getFromWindow( GtkWindow *pWindow );
+diff --git a/vcl/source/app/help.cxx b/vcl/source/app/help.cxx
+index 912607d..19570ce 100644
+--- a/vcl/source/app/help.cxx
++++ b/vcl/source/app/help.cxx
+@@ -31,6 +31,7 @@
+ #include "vcl/settings.hxx"
+ 
+ #include "helpwin.hxx"
++#include "salframe.hxx"
+ #include "svdata.hxx"
+ 
+ #define HELPWINSTYLE_QUICK      0
+@@ -147,21 +148,11 @@ bool Help::IsBalloonHelpEnabled()
+ }
+ 
+ bool Help::ShowBalloon( vcl::Window* pParent,
+-                        const Point& rScreenPos,
+-                        const OUString& rHelpText )
+-{
+-    ImplShowHelpWindow( pParent, HELPWINSTYLE_BALLOON, QuickHelpFlags::NONE,
+-                        rHelpText, OUString(), rScreenPos );
+-
+-    return true;
+-}
+-
+-bool Help::ShowBalloon( vcl::Window* pParent,
+                         const Point& rScreenPos, const Rectangle& rRect,
+                         const OUString& rHelpText )
+ {
+     ImplShowHelpWindow( pParent, HELPWINSTYLE_BALLOON, QuickHelpFlags::NONE,
+-                        rHelpText, OUString(), rScreenPos, &rRect );
++                        rHelpText, OUString(), rScreenPos, rRect );
+ 
+     return true;
+ }
+@@ -189,7 +180,7 @@ bool Help::ShowQuickHelp( vcl::Window* pParent,
+ {
+     ImplShowHelpWindow( pParent, HELPWINSTYLE_QUICK, nStyle,
+                         rHelpText, rLongHelpText,
+-                        pParent->OutputToScreenPixel( pParent->GetPointerPosPixel() ), &rScreenRect );
++                        pParent->OutputToScreenPixel( pParent->GetPointerPosPixel() ), rScreenRect );
+     return true;
+ }
+ 
+@@ -221,7 +212,7 @@ void Help::UpdateTip( sal_uIntPtr nId, vcl::Window* pParent, const Rectangle& rS
+     Size aSz = pHelpWin->CalcOutSize();
+     pHelpWin->SetOutputSizePixel( aSz );
+     ImplSetHelpWindowPos( pHelpWin, pHelpWin->GetWinStyle(), pHelpWin->GetStyle(),
+-        pParent->OutputToScreenPixel( pParent->GetPointerPosPixel() ), &rScreenRect );
++        pParent->OutputToScreenPixel( pParent->GetPointerPosPixel() ), rScreenRect );
+ 
+     pHelpWin->SetHelpText( rText );
+     pHelpWin->Invalidate();
+@@ -470,8 +461,14 @@ OUString HelpTextWindow::GetText() const
+ 
+ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHelpFlags nStyle,
+                          const OUString& rHelpText, const OUString& rStatusText,
+-                         const Point& rScreenPos, const Rectangle* pHelpArea )
++                         const Point& rScreenPos, const Rectangle& rHelpArea )
+ {
++    if (pParent->ImplGetFrame()->ShowTooltip(rHelpText, rHelpArea))
++    {
++        //tooltips are handled natively, return early
++        return;
++    }
++
+     ImplSVData* pSVData = ImplGetSVData();
+ 
+     if (rHelpText.isEmpty() && !pSVData->maHelpData.mbRequestingHelp)
+@@ -485,9 +482,7 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
+ 
+         if  (   (   ( pHelpWin->GetHelpText() != rHelpText )
+                 ||  ( pHelpWin->GetWinStyle() != nHelpWinStyle )
+-                ||  (   pHelpArea
+-                    &&  ( pHelpWin->GetHelpArea() != *pHelpArea )
+-                    )
++                ||  ( pHelpWin->GetHelpArea() != rHelpArea )
+                 )
+             &&  pSVData->maHelpData.mbRequestingHelp
+             )
+@@ -512,7 +507,7 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
+ 
+                 pHelpWin->SetHelpText( rHelpText );
+                 // approach mouse position
+-                ImplSetHelpWindowPos( pHelpWin, nHelpWinStyle, nStyle, rScreenPos, pHelpArea );
++                ImplSetHelpWindowPos( pHelpWin, nHelpWinStyle, nStyle, rScreenPos, rHelpArea );
+                 if( pHelpWin->IsVisible() )
+                     pHelpWin->Invalidate();
+             }
+@@ -531,13 +526,12 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
+         pHelpWin = VclPtr<HelpTextWindow>::Create( pParent, rHelpText, nHelpWinStyle, nStyle );
+         pSVData->maHelpData.mpHelpWin = pHelpWin;
+         pHelpWin->SetStatusText( rStatusText );
+-        if ( pHelpArea )
+-            pHelpWin->SetHelpArea( *pHelpArea );
++        pHelpWin->SetHelpArea( rHelpArea );
+ 
+         //  positioning
+         Size aSz = pHelpWin->CalcOutSize();
+         pHelpWin->SetOutputSizePixel( aSz );
+-        ImplSetHelpWindowPos( pHelpWin, nHelpWinStyle, nStyle, rScreenPos, pHelpArea );
++        ImplSetHelpWindowPos( pHelpWin, nHelpWinStyle, nStyle, rScreenPos, rHelpArea );
+         // if not called from Window::RequestHelp, then without delay...
+         if ( !pSVData->maHelpData.mbRequestingHelp )
+             nDelayMode = HELPDELAY_NONE;
+@@ -566,7 +560,7 @@ void ImplDestroyHelpWindow( bool bUpdateHideTime )
+ }
+ 
+ void ImplSetHelpWindowPos( vcl::Window* pHelpWin, sal_uInt16 nHelpWinStyle, QuickHelpFlags nStyle,
+-                           const Point& rPos, const Rectangle* pHelpArea )
++                           const Point& rPos, const Rectangle& rHelpArea )
+ {
+     Point       aPos = rPos;
+     Size        aSz = pHelpWin->GetSizePixel();
+@@ -601,26 +595,23 @@ void ImplSetHelpWindowPos( vcl::Window* pHelpWin, sal_uInt16 nHelpWinStyle, Quic
+ 
+     if ( nStyle & QuickHelpFlags::NoAutoPos )
+     {
+-        if ( pHelpArea )
+-        {
+-            // convert help area to screen coords
+-            Rectangle devHelpArea(
+-                pHelpWin->GetParent()->ImplGetFrameWindow()->OutputToAbsoluteScreenPixel( pHelpArea->TopLeft() ),
+-                pHelpWin->GetParent()->ImplGetFrameWindow()->OutputToAbsoluteScreenPixel( pHelpArea->BottomRight() ) );
+-
+-            // Welche Position vom Rechteck?
+-            aPos = devHelpArea.Center();
+-
+-            if ( nStyle & QuickHelpFlags::Left )
+-                aPos.X() = devHelpArea.Left();
+-            else if ( nStyle & QuickHelpFlags::Right )
+-                aPos.X() = devHelpArea.Right();
+-
+-            if ( nStyle & QuickHelpFlags::Top )
+-                aPos.Y() = devHelpArea.Top();
+-            else if ( nStyle & QuickHelpFlags::Bottom )
+-                aPos.Y() = devHelpArea.Bottom();
+-        }
++        // convert help area to screen coords
++        Rectangle devHelpArea(
++            pHelpWin->GetParent()->ImplGetFrameWindow()->OutputToAbsoluteScreenPixel( rHelpArea.TopLeft() ),
++            pHelpWin->GetParent()->ImplGetFrameWindow()->OutputToAbsoluteScreenPixel( rHelpArea.BottomRight() ) );
++
++        // Welche Position vom Rechteck?
++        aPos = devHelpArea.Center();
++
++        if ( nStyle & QuickHelpFlags::Left )
++            aPos.X() = devHelpArea.Left();
++        else if ( nStyle & QuickHelpFlags::Right )
++            aPos.X() = devHelpArea.Right();
++
++        if ( nStyle & QuickHelpFlags::Top )
++            aPos.Y() = devHelpArea.Top();
++        else if ( nStyle & QuickHelpFlags::Bottom )
++            aPos.Y() = devHelpArea.Bottom();
+ 
+         // which direction?
+         if ( nStyle & QuickHelpFlags::Left )
+diff --git a/vcl/source/window/menuwindow.cxx b/vcl/source/window/menuwindow.cxx
+index 72a1bae..83ca0b6 100644
+--- a/vcl/source/window/menuwindow.cxx
++++ b/vcl/source/window/menuwindow.cxx
+@@ -63,7 +63,7 @@ bool MenuWindow::ImplHandleHelpEvent(vcl::Window* pMenuWindow, Menu* pMenu, sal_
+ 
+         Rectangle aRect( aPos, Size() );
+         if (!pMenu->GetHelpText(nId).isEmpty())
+-            Help::ShowBalloon( pMenuWindow, aPos, pMenu->GetHelpText( nId ) );
++            Help::ShowBalloon( pMenuWindow, aPos, aRect, pMenu->GetHelpText( nId ) );
+         else
+         {
+             // give user a chance to read the full filename
+diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
+index 48be717..800c3f0 100644
+--- a/vcl/source/window/window.cxx
++++ b/vcl/source/window/window.cxx
+@@ -2007,7 +2007,14 @@ void Window::RequestHelp( const HelpEvent& rHEvt )
+         if ( rStr.isEmpty() && ImplGetParent() && !ImplIsOverlapWindow() )
+             ImplGetParent()->RequestHelp( rHEvt );
+         else
+-            Help::ShowBalloon( this, rHEvt.GetMousePosPixel(), rStr );
++        {
++            Point aPos = GetPosPixel();
++            if ( ImplGetParent() && !ImplIsOverlapWindow() )
++                aPos = ImplGetParent()->OutputToScreenPixel( aPos );
++            Rectangle   aRect( aPos, GetSizePixel() );
++
++            Help::ShowBalloon( this, rHEvt.GetMousePosPixel(), aRect, rStr );
++        }
+     }
+     else if ( rHEvt.GetMode() & HelpEventMode::QUICK )
+     {
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 23393d0..c7ea97f 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -972,6 +972,8 @@ void GtkSalFrame::InitCommon()
+ 
+     // connect signals
+     g_signal_connect( G_OBJECT(m_pWindow), "style-set", G_CALLBACK(signalStyleSet), this );
++    gtk_widget_set_has_tooltip(pEventWidget, true);
++    m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "query-tooltip", G_CALLBACK(signalTooltipQuery), this ));
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "button-press-event", G_CALLBACK(signalButton), this ));
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "motion-notify-event", G_CALLBACK(signalMotion), this ));
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "button-release-event", G_CALLBACK(signalButton), this ));
+@@ -2350,6 +2352,32 @@ void GtkSalFrame::SetModal(bool bModal)
+     gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);
+ }
+ 
++gboolean GtkSalFrame::signalTooltipQuery(GtkWidget*, gint /*x*/, gint /*y*/,
++                                     gboolean /*keyboard_mode*/, GtkTooltip *tooltip,
++                                     gpointer frame)
++{
++    GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
++    if (pThis->m_aTooltip.isEmpty())
++        return false;
++    gtk_tooltip_set_text(tooltip,
++        OUStringToOString(pThis->m_aTooltip, RTL_TEXTENCODING_UTF8).getStr());
++    GdkRectangle aHelpArea;
++    aHelpArea.x = pThis->m_aHelpArea.Left();
++    aHelpArea.y = pThis->m_aHelpArea.Top();
++    aHelpArea.width = pThis->m_aHelpArea.GetWidth();
++    aHelpArea.height = pThis->m_aHelpArea.GetHeight();
++    gtk_tooltip_set_tip_area(tooltip, &aHelpArea);
++    return true;
++}
++
++bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpArea)
++{
++    m_aTooltip = rHelpText;
++    m_aHelpArea = rHelpArea;
++    gtk_widget_trigger_tooltip_query(getMouseEventWidget());
++    return true;
++}
++
+ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer frame )
+ {
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);

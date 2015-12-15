@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -361,6 +361,7 @@ Patch52: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
 Patch53: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
 Patch54: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
 Patch55: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
+Patch56: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2485,6 +2486,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3-UNBUILT
+- Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
+
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively
 - Resolves: rhbz#1283420 bodge around cairo text + xrender glitch

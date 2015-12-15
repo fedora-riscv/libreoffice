@@ -1,0 +1,39 @@
+From 5fff6e997d1d2063fff159198fcb2880f3d270eb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 15 Dec 2015 15:14:13 +0000
+Subject: [PATCH] Resolves: rhbz#1285364 urls cannot be opened under wayland
+
+because we're setting DISPLAY always, and under wayland that resolves to
+"wayland", not the original ":0" so the gtk2 gvfs-open eventually called open
+xdg-open cannot open the correct display
+
+(cherry picked from commit 3bb7557d541328194eae928fda32b73650f13360)
+
+Change-Id: I246120f2430b92cd2d3e5003445aa4c9da4f6a68
+---
+ vcl/unx/gtk/app/gtkdata.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vcl/unx/gtk/app/gtkdata.cxx b/vcl/unx/gtk/app/gtkdata.cxx
+index 2d8e26c..445ae0a 100644
+--- a/vcl/unx/gtk/app/gtkdata.cxx
++++ b/vcl/unx/gtk/app/gtkdata.cxx
+@@ -709,6 +709,7 @@ void GtkData::Init()
+         exit(0);
+     }
+ 
++#if !GTK_CHECK_VERSION(3,0,0)
+     /*
+      * if a -display switch was used, we need
+      * to set the environment accoringly since
+@@ -719,6 +720,7 @@ void GtkData::Init()
+     const gchar *name = gdk_display_get_name( pGdkDisp );
+     OUString envValue(name, strlen(name), aEnc);
+     osl_setEnvironment(envVar.pData, envValue.pData);
++#endif
+ 
+     GtkSalDisplay *pDisplay = new GtkSalDisplay( pGdkDisp );
+     SetDisplay( pDisplay );
+-- 
+2.5.0
+

@@ -363,6 +363,7 @@ Patch54: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
 Patch55: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
 Patch56: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
 Patch57: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
+Patch58: 0001-Resolves-rhbz-1285364-urls-cannot-be-opened-under-wa.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2490,6 +2491,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3-UNBUILT
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland
+- Resolves: rhbz#1285364 urls cannot be opened under wayland
 
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively

@@ -360,6 +360,7 @@ Patch51: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
 Patch52: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
 Patch53: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
 Patch54: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
+Patch55: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2484,8 +2485,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Dec 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
+* Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively
+- Resolves: rhbz#1283420 bodge around cairo text + xrender glitch
 
 * Mon Dec 14 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-1
 - new bugfix release

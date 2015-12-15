@@ -1,0 +1,149 @@
+From ea4c75dcc9c3e53e7ef40bd273ea18a48ea9b18d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 15 Dec 2015 14:24:35 +0000
+Subject: [PATCH] gtk3+wayland: enable manual movement of toolbars
+
+via gtk_window_begin_move_drag so add some BYDRAG/ByDrag hints
+to select mechanism to move window by
+
+Change-Id: Icc58653dff752a6d4ee49446647d7ede2af9dd9b
+---
+ include/vcl/window.hxx        |  3 ++-
+ vcl/inc/brdwin.hxx            |  2 ++
+ vcl/inc/salframe.hxx          |  1 +
+ vcl/inc/unx/gtk/gtkframe.hxx  |  5 ++++-
+ vcl/source/window/brdwin.cxx  |  7 ++++++-
+ vcl/source/window/window.cxx  |  2 ++
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 13 ++++++++++++-
+ 7 files changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/include/vcl/window.hxx b/include/vcl/window.hxx
+index 0691427..0e95d02 100644
+--- a/include/vcl/window.hxx
++++ b/include/vcl/window.hxx
+@@ -162,10 +162,11 @@ enum class PosSizeFlags
+     PosSize          = Pos | Size,
+     All              = PosSize,
+     Dropdown         = 0x0010,
++    ByDrag           = 0x0020,
+ };
+ namespace o3tl
+ {
+-    template<> struct typed_flags<PosSizeFlags> : is_typed_flags<PosSizeFlags, 0x001f> {};
++    template<> struct typed_flags<PosSizeFlags> : is_typed_flags<PosSizeFlags, 0x003f> {};
+ }
+ 
+ // Flags for Show()
+diff --git a/vcl/inc/brdwin.hxx b/vcl/inc/brdwin.hxx
+index 430ae04..d5d8fbc 100644
+--- a/vcl/inc/brdwin.hxx
++++ b/vcl/inc/brdwin.hxx
+@@ -169,6 +169,8 @@ public:
+ 
+     Rectangle               GetMenuRect() const;
+ 
++    void                    MoveToByDrag(const Point& rNewPos);
++
+     virtual Size            GetOptimalSize() const override;
+ };
+ 
+diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
+index f9f2d48..dacf3fa 100644
+--- a/vcl/inc/salframe.hxx
++++ b/vcl/inc/salframe.hxx
+@@ -100,6 +100,7 @@ typedef sal_uInt64 SalExtStyle;
+ #define SAL_FRAME_POSSIZE_Y                 ((sal_uInt16)0x0002)
+ #define SAL_FRAME_POSSIZE_WIDTH             ((sal_uInt16)0x0004)
+ #define SAL_FRAME_POSSIZE_HEIGHT            ((sal_uInt16)0x0008)
++#define SAL_FRAME_POSSIZE_BYDRAG            ((sal_uInt16)0x0010)
+ 
+ struct SystemParentData;
+ struct ImplSVEvent;
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index ba6eded..5c59dc8 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -302,7 +302,10 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+     void widget_set_size_request(long nWidth, long nHeight);
+ 
+     void resizeWindow( long nWidth, long nHeight );
+-    void moveWindow( long nX, long nY );
++    void moveWindow(long nX, long nY);
++#if GTK_CHECK_VERSION(3,0,0)
++    void dragWindowTo(long nX, long nY);
++#endif
+ 
+     Size calcDefaultSize();
+ 
+diff --git a/vcl/source/window/brdwin.cxx b/vcl/source/window/brdwin.cxx
+index d46ad02..1d79dd0 100644
+--- a/vcl/source/window/brdwin.cxx
++++ b/vcl/source/window/brdwin.cxx
+@@ -1243,7 +1243,7 @@ bool ImplStdBorderWindowView::Tracking( const TrackingEvent& rTEvt )
+                 aPos.Y() += aMousePos.Y();
+                 if ( maFrameData.mbDragFull )
+                 {
+-                    pBorderWindow->SetPosPixel( aPos );
++                    pBorderWindow->MoveToByDrag(aPos);
+                     pBorderWindow->ImplUpdateAll();
+                     pBorderWindow->ImplGetFrameWindow()->ImplUpdateAll();
+                 }
+@@ -2179,6 +2179,11 @@ Rectangle ImplBorderWindow::GetMenuRect() const
+     return mpBorderView->GetMenuRect();
+ }
+ 
++void ImplBorderWindow::MoveToByDrag(const Point& rNewPos)
++{
++    setPosSizePixel(rNewPos.X(), rNewPos.Y(), 0, 0, PosSizeFlags::Pos | PosSizeFlags::ByDrag);
++}
++
+ Size ImplBorderWindow::GetOptimalSize() const
+ {
+     const vcl::Window* pClientWindow = ImplGetClientWindow();
+diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
+index c988af6..b508ed4 100644
+--- a/vcl/source/window/window.cxx
++++ b/vcl/source/window/window.cxx
+@@ -2909,6 +2909,8 @@ void Window::setPosSizePixel( long nX, long nY,
+             nSysFlags |= SAL_FRAME_POSSIZE_WIDTH;
+         if( nFlags & PosSizeFlags::Height )
+             nSysFlags |= SAL_FRAME_POSSIZE_HEIGHT;
++        if( nFlags & PosSizeFlags::ByDrag )
++            nSysFlags |= SAL_FRAME_POSSIZE_BYDRAG;
+         if( nFlags & PosSizeFlags::X )
+         {
+             nSysFlags |= SAL_FRAME_POSSIZE_X;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 6ae026f..3981a58 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -872,6 +872,14 @@ void GtkSalFrame::moveWindow( long nX, long nY )
+         gtk_window_move( GTK_WINDOW(m_pWindow), nX, nY );
+ }
+ 
++void GtkSalFrame::dragWindowTo(long nX, long nY)
++{
++    if (isChild(false))
++        moveWindow(nX, nY);
++    else
++        gtk_window_begin_move_drag(GTK_WINDOW(m_pWindow), 1, nX, nY, GDK_CURRENT_TIME);
++}
++
+ void GtkSalFrame::widget_set_size_request(long nWidth, long nHeight)
+ {
+     gtk_widget_set_size_request(GTK_WIDGET(m_pFixedContainer), nWidth, nHeight );
+@@ -1579,7 +1587,10 @@ void GtkSalFrame::SetPosSize( long nX, long nY, long nWidth, long nHeight, sal_u
+ 
+         m_bDefaultPos = false;
+ 
+-        moveWindow(nX, nY);
++        if (nFlags & SAL_FRAME_POSSIZE_BYDRAG)
++            dragWindowTo(nX, nY);
++        else
++            moveWindow(nX, nY);
+ 
+         updateScreenNumber();
+     }
+-- 
+2.5.0
+

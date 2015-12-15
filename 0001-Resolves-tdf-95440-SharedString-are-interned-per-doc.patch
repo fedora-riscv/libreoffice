@@ -1,0 +1,162 @@
+From 662f4ebe57af1ca1f0af726f38b3dd5ebbe10d52 Mon Sep 17 00:00:00 2001
+Message-Id: <662f4ebe57af1ca1f0af726f38b3dd5ebbe10d52.1450220065.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 15 Dec 2015 17:44:30 +0100
+Subject: [PATCH] Resolves: tdf#95440 SharedString are interned per document,
+ re-intern
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... if literal strings are copied with formula expression tokens.
+
+(cherry picked from commit dad412e07f805a53ad73ce2e80d187a70c77e8de)
+
+Conflicts:
+	include/formula/token.hxx
+
+Change-Id: I13526907bb6c2c605c6ed9584fa6e3f2b18623b8
+---
+ formula/source/core/api/token.cxx   | 30 ++++++++++++++++++++++++++++++
+ include/formula/token.hxx           |  5 ++++-
+ include/formula/tokenarray.hxx      |  3 +++
+ sc/source/core/data/formulacell.cxx |  4 ++++
+ 4 files changed, 41 insertions(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-95440-SharedString-are-interned-per-doc.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-95440-SharedString-are-interned-per-doc.patch"
+
+diff --git a/formula/source/core/api/token.cxx b/formula/source/core/api/token.cxx
+index a414a4b..76e666d 100644
+--- a/formula/source/core/api/token.cxx
++++ b/formula/source/core/api/token.cxx
+@@ -202,6 +202,11 @@ svl::SharedString FormulaToken::GetString() const
+     return svl::SharedString(); // invalid string
+ }
+ 
++void FormulaToken::SetString( const svl::SharedString& )
++{
++    SAL_WARN( "formula.core", "FormulaToken::SetString: virtual dummy called" );
++}
++
+ sal_uInt16 FormulaToken::GetIndex() const
+ {
+     SAL_WARN( "formula.core", "FormulaToken::GetIndex: virtual dummy called" );
+@@ -1486,6 +1491,21 @@ FormulaToken* FormulaTokenArray::AddOpCode( OpCode eOp )
+     return AddToken( *pRet );
+ }
+ 
++void FormulaTokenArray::ReinternStrings( svl::SharedStringPool& rPool )
++{
++    for (sal_uInt16 i=0; i < nLen; ++i)
++    {
++        switch (pCode[i]->GetType())
++        {
++            case svString:
++                pCode[i]->SetString( rPool.intern( pCode[i]->GetString().getString()));
++                break;
++            default:
++                ;   // nothing
++        }
++    }
++}
++
+ 
+ /*----------------------------------------------------------------------*/
+ 
+@@ -1616,6 +1636,11 @@ svl::SharedString FormulaStringToken::GetString() const
+     return maString;
+ }
+ 
++void FormulaStringToken::SetString( const svl::SharedString& rStr )
++{
++    maString = rStr;
++}
++
+ bool FormulaStringToken::operator==( const FormulaToken& r ) const
+ {
+     return FormulaToken::operator==( r ) && maString == r.GetString();
+@@ -1637,6 +1662,11 @@ svl::SharedString FormulaStringOpToken::GetString() const
+     return maString;
+ }
+ 
++void FormulaStringOpToken::SetString( const svl::SharedString& rStr )
++{
++    maString = rStr;
++}
++
+ bool FormulaStringOpToken::operator==( const FormulaToken& r ) const
+ {
+     return FormulaByteToken::operator==( r ) && maString == r.GetString();
+diff --git a/include/formula/token.hxx b/include/formula/token.hxx
+index 09addbc..07fe5b6 100644
+--- a/include/formula/token.hxx
++++ b/include/formula/token.hxx
+@@ -152,7 +152,8 @@ public:
+     virtual void                SetForceArray( bool b );
+     virtual double              GetDouble() const;
+     virtual double&             GetDoubleAsReference();
+-    virtual svl::SharedString GetString() const;
++    virtual svl::SharedString   GetString() const;
++    virtual void                SetString( const svl::SharedString& rStr );
+     virtual sal_uInt16          GetIndex() const;
+     virtual void                SetIndex( sal_uInt16 n );
+     virtual bool                IsGlobal() const;
+@@ -290,6 +291,7 @@ public:
+ 
+     virtual FormulaToken* Clone() const SAL_OVERRIDE;
+     virtual svl::SharedString GetString() const SAL_OVERRIDE;
++    virtual void SetString( const svl::SharedString& rStr ) SAL_OVERRIDE;
+     virtual bool operator==( const FormulaToken& rToken ) const SAL_OVERRIDE;
+ 
+     DECL_FIXEDMEMPOOL_NEWDEL_DLL( FormulaStringToken )
+@@ -307,6 +309,7 @@ public:
+ 
+     virtual FormulaToken* Clone() const SAL_OVERRIDE;
+     virtual svl::SharedString GetString() const SAL_OVERRIDE;
++    virtual void SetString( const svl::SharedString& rStr ) SAL_OVERRIDE;
+     virtual bool operator==( const FormulaToken& rToken ) const SAL_OVERRIDE;
+ };
+ 
+diff --git a/include/formula/tokenarray.hxx b/include/formula/tokenarray.hxx
+index ceb8425..6f60955 100644
+--- a/include/formula/tokenarray.hxx
++++ b/include/formula/tokenarray.hxx
+@@ -278,6 +278,9 @@ public:
+ 
+     /** Determines if this formula may be followed by a reference. */
+     bool                MayReferenceFollow();
++
++    /** Re-intern SharedString in case the SharedStringPool differs. */
++    void ReinternStrings( svl::SharedStringPool& rPool );
+ };
+ 
+ inline OpCode FormulaTokenArray::GetOuterFuncOpCode()
+diff --git a/sc/source/core/data/formulacell.cxx b/sc/source/core/data/formulacell.cxx
+index 7cc801b..b3bcdec 100644
+--- a/sc/source/core/data/formulacell.cxx
++++ b/sc/source/core/data/formulacell.cxx
+@@ -845,7 +845,11 @@ ScFormulaCell::ScFormulaCell( const ScFormulaCell& rCell, ScDocument& rDoc, cons
+     }
+ 
+     if (!pDocument->IsClipOrUndo())
++    {
++        if (&pDocument->GetSharedStringPool() != &rCell.pDocument->GetSharedStringPool())
++            pCode->ReinternStrings( pDocument->GetSharedStringPool());
+         pCode->AdjustReferenceOnCopy( aPos);
++    }
+ 
+     if ( nCloneFlags & SC_CLONECELL_ADJUST3DREL )
+         pCode->ReadjustRelative3DReferences( rCell.aPos, aPos );
+
+--------------erAck-patch-parts--
+
+

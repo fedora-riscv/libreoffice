@@ -368,6 +368,7 @@ Patch49: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
 Patch50: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
 Patch51: 0001-Resolves-tdf-89907-do-not-modify-original-ScViewData.patch
 Patch52: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
+Patch53: 0001-Resolves-tdf-95440-SharedString-are-interned-per-doc.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2429,6 +2430,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Mon Nov 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.7.2-2-UNBUILT
 - Related: rhbz#1286416 be more resilient during auto-recovery attempts
+- Resolves: tdf#95440 SharedString are interned per document, re-intern
 
 * Thu Nov 26 2015 David Tardon <dtardon@redhat.com> - 1:4.4.7.2-1
 - new bugfix release

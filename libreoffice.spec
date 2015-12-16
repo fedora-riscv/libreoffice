@@ -2489,7 +2489,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3-UNBUILT
+* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3-UNBUILT
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland
 - Resolves: rhbz#1285364 urls cannot be opened under wayland

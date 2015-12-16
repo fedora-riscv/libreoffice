@@ -259,6 +259,7 @@ Patch20: 0001-tdf-96384-Add-a-new-signal-text-selection-to-lokdocv.patch
 Patch21: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
 Patch22: 0001-don-t-be-creative-and-use-a-simple-lookup-table.patch
 Patch23: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch24: 0001-but-only-for-dialog.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

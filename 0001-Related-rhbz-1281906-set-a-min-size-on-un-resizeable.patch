@@ -1,0 +1,35 @@
+From afeddaf7e0d11ad9b1df0c80bcc3f50caa87e21a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 16 Dec 2015 10:46:10 +0000
+Subject: [PATCH] Related: rhbz#1281906 set a min size on un-resizeable
+ non-layout dialogs
+
+a min size equates to a size-request which is reliable under gtk3+wayland
+as the dialog contents size.
+
+a default size equates to the size of the dialog, which includes decorations
+under wayland
+
+Change-Id: I20baf00fb5952ab93628f4dd6891779ce682783c
+---
+ vcl/source/window/syswin.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/vcl/source/window/syswin.cxx b/vcl/source/window/syswin.cxx
+index 8589db6..3f2cde1 100644
+--- a/vcl/source/window/syswin.cxx
++++ b/vcl/source/window/syswin.cxx
+@@ -1135,6 +1135,10 @@ void SystemWindow::DoInitialLayout()
+         mbIsCalculatingInitialLayoutSize = false;
+         mbInitialLayoutDone = true;
+     }
++    else if (!(GetStyle() & WB_SIZEABLE))
++    {
++        SetMinOutputSizePixel(GetSizePixel());
++    }
+ }
+ 
+ void SystemWindow::doDeferredInit(WinBits /*nBits*/)
+-- 
+2.5.0
+

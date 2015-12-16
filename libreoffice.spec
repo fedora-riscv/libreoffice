@@ -366,6 +366,7 @@ Patch57: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
 Patch58: 0001-Resolves-rhbz-1285364-urls-cannot-be-opened-under-wa.patch
 Patch59: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
 Patch60: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
+Patch61: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2490,12 +2491,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3-UNBUILT
+* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland
 - Resolves: rhbz#1285364 urls cannot be opened under wayland
 - wayland: stop the ever shrinking size of toplevel on every restore
 - Resolves: rhbz#1291925 implement SAL_INVERT_TRACKFRAME
+- Related: rhbz#1281906 set a min size on un-resizeable non-layout dialogs
 
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively

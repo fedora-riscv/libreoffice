@@ -1,0 +1,105 @@
+From 3b31d0dc86d75f8283951f3fd6a4f48ff649ed99 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 4 Dec 2015 13:07:57 +0000
+Subject: [PATCH] gtk3: stop the ever shrinking size of toplevel on every
+ restore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+for getting and setting the window state, work on the toplevel m_pWindow. Leave
+the "geometry" alone as its for the purpose of the current known size of the
+toplevel window contents
+
+Change-Id: Idf701aacf4aed4eefbca1bc1ebebaf38d1c82e27
+Reviewed-on: https://gerrit.libreoffice.org/20397
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 7242ed0567297c3c5186b4095496fc01448359f4)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 966dc80..576946f 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1703,6 +1703,28 @@ void GtkSalFrame::SetWindowState( const SalFrameState* pState )
+     TriggerPaintEvent();
+ }
+ 
++namespace
++{
++    void GetPosAndSize(GtkWindow *pWindow, long& rX, long &rY, long &rWidth, long &rHeight)
++    {
++       gint root_x, root_y;
++       gtk_window_get_position(GTK_WINDOW(pWindow), &root_x, &root_y);
++       rX = root_x;
++       rY = root_y;
++       gint width, height;
++       gtk_window_get_size(GTK_WINDOW(pWindow), &width, &height);
++       rWidth = width;
++       rHeight = height;
++    }
++
++    Rectangle GetPosAndSize(GtkWindow *pWindow)
++    {
++        long nX, nY, nWidth, nHeight;
++        GetPosAndSize(pWindow, nX, nY, nWidth, nHeight);
++        return Rectangle(nX, nY, nX + nWidth, nY + nHeight);
++    }
++}
++
+ bool GtkSalFrame::GetWindowState( SalFrameState* pState )
+ {
+     pState->mnState = WINDOWSTATE_STATE_NORMAL;
+@@ -1717,10 +1739,8 @@ bool GtkSalFrame::GetWindowState( SalFrameState* pState )
+         pState->mnY                 = m_aRestorePosSize.Top();
+         pState->mnWidth             = m_aRestorePosSize.GetWidth();
+         pState->mnHeight            = m_aRestorePosSize.GetHeight();
+-        pState->mnMaximizedX        = maGeometry.nX;
+-        pState->mnMaximizedY        = maGeometry.nY;
+-        pState->mnMaximizedWidth    = maGeometry.nWidth;
+-        pState->mnMaximizedHeight   = maGeometry.nHeight;
++        GetPosAndSize(GTK_WINDOW(m_pWindow), pState->mnMaximizedX, pState->mnMaximizedY,
++                                             pState->mnMaximizedWidth, pState->mnMaximizedWidth);
+         pState->mnMask  |= WINDOWSTATE_MASK_MAXIMIZED_X          |
+                            WINDOWSTATE_MASK_MAXIMIZED_Y          |
+                            WINDOWSTATE_MASK_MAXIMIZED_WIDTH      |
+@@ -1728,10 +1748,8 @@ bool GtkSalFrame::GetWindowState( SalFrameState* pState )
+     }
+     else
+     {
+-        pState->mnX         = maGeometry.nX;
+-        pState->mnY         = maGeometry.nY;
+-        pState->mnWidth     = maGeometry.nWidth;
+-        pState->mnHeight    = maGeometry.nHeight;
++        GetPosAndSize(GTK_WINDOW(m_pWindow), pState->mnX, pState->mnY,
++                                             pState->mnWidth, pState->mnHeight);
+     }
+     pState->mnMask  |= WINDOWSTATE_MASK_X            |
+                        WINDOWSTATE_MASK_Y            |
+@@ -1932,8 +1950,7 @@ void GtkSalFrame::ShowFullScreen( bool bFullScreen, sal_Int32 nScreen )
+ 
+     if( bFullScreen )
+     {
+-        m_aRestorePosSize = Rectangle( Point( maGeometry.nX, maGeometry.nY ),
+-                                       Size( maGeometry.nWidth, maGeometry.nHeight ) );
++        m_aRestorePosSize = GetPosAndSize(GTK_WINDOW(m_pWindow));
+         SetScreen( nScreen, SET_FULLSCREEN );
+     }
+     else
+@@ -2963,9 +2980,7 @@ gboolean GtkSalFrame::signalWindowState( GtkWidget*, GdkEvent* pEvent, gpointer
+     if(   (pEvent->window_state.new_window_state & GDK_WINDOW_STATE_MAXIMIZED) &&
+         ! (pThis->m_nState & GDK_WINDOW_STATE_MAXIMIZED) )
+     {
+-        pThis->m_aRestorePosSize =
+-            Rectangle( Point( pThis->maGeometry.nX, pThis->maGeometry.nY ),
+-                       Size( pThis->maGeometry.nWidth, pThis->maGeometry.nHeight ) );
++        pThis->m_aRestorePosSize = GetPosAndSize(GTK_WINDOW(pThis->m_pWindow));
+     }
+     pThis->m_nState = pEvent->window_state.new_window_state;
+ 
+-- 
+2.5.0
+

@@ -1,4 +1,4 @@
-From 5c19ef214f0f96bc304f3b45168143021b782d3d Mon Sep 17 00:00:00 2001
+From 991b9c32e98a924d659dc94923d9e85c8955d17a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 15 Dec 2015 13:47:39 +0000
 Subject: [PATCH] Resolves: rhbz#1287581 explicitly state we don't want
@@ -10,16 +10,16 @@ Change-Id: Ibbf45b44eba9f5f65db0e7ae26cf6946b32f879d
  1 file changed, 1 insertion(+)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 7468300..6ae026f 100644
+index 592c872..7c24d2b 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -1177,6 +1177,7 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+@@ -1180,6 +1180,7 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
          {
              eType = GDK_WINDOW_TYPE_HINT_TOOLBAR;
              gtk_window_set_accept_focus(GTK_WINDOW(m_pWindow), false);
 +            gtk_window_set_decorated(GTK_WINDOW(m_pWindow), false);
          }
-         else if( (nStyle & SalFrameStyleFlags::FLOAT_FOCUSABLE) )
+         else if( (nStyle & SAL_FRAME_STYLE_FLOAT_FOCUSABLE) )
          {
 -- 
 2.5.0

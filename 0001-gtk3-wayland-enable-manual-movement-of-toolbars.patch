@@ -1,4 +1,4 @@
-From ea4c75dcc9c3e53e7ef40bd273ea18a48ea9b18d Mon Sep 17 00:00:00 2001
+From 0f58534c4c3825f569a01774b7f8bb1808b37886 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 15 Dec 2015 14:24:35 +0000
 Subject: [PATCH] gtk3+wayland: enable manual movement of toolbars
@@ -18,10 +18,10 @@ Change-Id: Icc58653dff752a6d4ee49446647d7ede2af9dd9b
  7 files changed, 29 insertions(+), 4 deletions(-)
 
 diff --git a/include/vcl/window.hxx b/include/vcl/window.hxx
-index 0691427..0e95d02 100644
+index ae28940..1f5c0c2 100644
 --- a/include/vcl/window.hxx
 +++ b/include/vcl/window.hxx
-@@ -162,10 +162,11 @@ enum class PosSizeFlags
+@@ -161,10 +161,11 @@ enum class PosSizeFlags
      PosSize          = Pos | Size,
      All              = PosSize,
      Dropdown         = 0x0010,
@@ -35,35 +35,35 @@ index 0691427..0e95d02 100644
  
  // Flags for Show()
 diff --git a/vcl/inc/brdwin.hxx b/vcl/inc/brdwin.hxx
-index 430ae04..d5d8fbc 100644
+index d00ca1b..7e89064 100644
 --- a/vcl/inc/brdwin.hxx
 +++ b/vcl/inc/brdwin.hxx
-@@ -169,6 +169,8 @@ public:
+@@ -170,6 +170,8 @@ public:
  
      Rectangle               GetMenuRect() const;
  
 +    void                    MoveToByDrag(const Point& rNewPos);
 +
-     virtual Size            GetOptimalSize() const override;
+     virtual Size            GetOptimalSize() const SAL_OVERRIDE;
  };
  
 diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
-index f9f2d48..dacf3fa 100644
+index cfd401d..9b3d52e 100644
 --- a/vcl/inc/salframe.hxx
 +++ b/vcl/inc/salframe.hxx
-@@ -100,6 +100,7 @@ typedef sal_uInt64 SalExtStyle;
+@@ -94,6 +94,7 @@ typedef sal_uInt64 SalExtStyle;
  #define SAL_FRAME_POSSIZE_Y                 ((sal_uInt16)0x0002)
  #define SAL_FRAME_POSSIZE_WIDTH             ((sal_uInt16)0x0004)
  #define SAL_FRAME_POSSIZE_HEIGHT            ((sal_uInt16)0x0008)
 +#define SAL_FRAME_POSSIZE_BYDRAG            ((sal_uInt16)0x0010)
  
  struct SystemParentData;
- struct ImplSVEvent;
+ 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index ba6eded..5c59dc8 100644
+index b779d39..a55ff2c 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -302,7 +302,10 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+@@ -316,7 +316,10 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
      void widget_set_size_request(long nWidth, long nHeight);
  
      void resizeWindow( long nWidth, long nHeight );
@@ -76,7 +76,7 @@ index ba6eded..5c59dc8 100644
      Size calcDefaultSize();
  
 diff --git a/vcl/source/window/brdwin.cxx b/vcl/source/window/brdwin.cxx
-index d46ad02..1d79dd0 100644
+index 97dbc5b..f57ab37 100644
 --- a/vcl/source/window/brdwin.cxx
 +++ b/vcl/source/window/brdwin.cxx
 @@ -1243,7 +1243,7 @@ bool ImplStdBorderWindowView::Tracking( const TrackingEvent& rTEvt )
@@ -88,7 +88,7 @@ index d46ad02..1d79dd0 100644
                      pBorderWindow->ImplUpdateAll();
                      pBorderWindow->ImplGetFrameWindow()->ImplUpdateAll();
                  }
-@@ -2179,6 +2179,11 @@ Rectangle ImplBorderWindow::GetMenuRect() const
+@@ -2195,6 +2195,11 @@ Rectangle ImplBorderWindow::GetMenuRect() const
      return mpBorderView->GetMenuRect();
  }
  
@@ -101,10 +101,10 @@ index d46ad02..1d79dd0 100644
  {
      const vcl::Window* pClientWindow = ImplGetClientWindow();
 diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
-index c988af6..b508ed4 100644
+index 20377ac..808d683 100644
 --- a/vcl/source/window/window.cxx
 +++ b/vcl/source/window/window.cxx
-@@ -2909,6 +2909,8 @@ void Window::setPosSizePixel( long nX, long nY,
+@@ -2886,6 +2886,8 @@ void Window::setPosSizePixel( long nX, long nY,
              nSysFlags |= SAL_FRAME_POSSIZE_WIDTH;
          if( nFlags & PosSizeFlags::Height )
              nSysFlags |= SAL_FRAME_POSSIZE_HEIGHT;
@@ -114,10 +114,10 @@ index c988af6..b508ed4 100644
          {
              nSysFlags |= SAL_FRAME_POSSIZE_X;
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 6ae026f..3981a58 100644
+index 7c24d2b..6a69c82 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -872,6 +872,14 @@ void GtkSalFrame::moveWindow( long nX, long nY )
+@@ -878,6 +878,14 @@ void GtkSalFrame::moveWindow( long nX, long nY )
          gtk_window_move( GTK_WINDOW(m_pWindow), nX, nY );
  }
  
@@ -132,7 +132,7 @@ index 6ae026f..3981a58 100644
  void GtkSalFrame::widget_set_size_request(long nWidth, long nHeight)
  {
      gtk_widget_set_size_request(GTK_WIDGET(m_pFixedContainer), nWidth, nHeight );
-@@ -1579,7 +1587,10 @@ void GtkSalFrame::SetPosSize( long nX, long nY, long nWidth, long nHeight, sal_u
+@@ -1717,7 +1725,10 @@ void GtkSalFrame::SetPosSize( long nX, long nY, long nWidth, long nHeight, sal_u
  
          m_bDefaultPos = false;
  

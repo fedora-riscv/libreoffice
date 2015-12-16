@@ -1,0 +1,162 @@
+From d612e4675a65a4309b1ecbf75b9f1049984cfc70 Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Wed, 16 Dec 2015 10:18:52 +0000
+Subject: [PATCH] Resolves: rhbz#1291925 implement SAL_INVERT_TRACKFRAME
+
+---
+ vcl/headless/svpgdi.cxx | 91 +++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 65 insertions(+), 26 deletions(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index a79142c..1c42ca8 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -177,6 +177,28 @@ namespace
+ 
+         return extents;
+     }
++
++    cairo_rectangle_int_t getStrokeDamage(cairo_t* cr)
++    {
++        cairo_rectangle_int_t extents;
++        double x1, y1, x2, y2;
++
++        cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
++        extents.x = x1, extents.y = y1, extents.width = x2-x1, extents.height = y2-y1;
++
++#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 10, 0)
++        cairo_region_t *region = cairo_region_create_rectangle(&extents);
++
++        cairo_stroke_extents(cr, &x1, &y1, &x2, &y2);
++        extents.x = x1, extents.y = y1, extents.width = x2-x1, extents.height = y2-y1;
++        cairo_region_intersect_rectangle(region, &extents);
++
++        cairo_region_get_extents(region, &extents);
++        cairo_region_destroy(region);
++#endif
++
++        return extents;
++    }
+ }
+ #endif
+ 
+@@ -213,7 +235,7 @@ bool SvpSalGraphics::drawAlphaRect(long nX, long nY, long nWidth, long nHeight,
+                               fTransparency);
+     cairo_rectangle(cr, nX, nY, nWidth, nHeight);
+ 
+-    cairo_rectangle_int_t extents;
++    cairo_rectangle_int_t extents = {0, 0, 0, 0};
+     basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+     if (xDamageTracker)
+         extents = getFillDamage(cr);
+@@ -798,7 +820,7 @@ bool SvpSalGraphics::drawPolyLine(
+ 
+     AddPolygonToPath(cr, rPolyLine, rPolyLine.isClosed());
+ 
+-    cairo_rectangle_int_t extents;
++    cairo_rectangle_int_t extents = {0, 0, 0, 0};
+     basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aDevice->getDamageTracker());
+ 
+     cairo_set_source_rgba(cr, m_aLineColor.getRed()/255.0,
+@@ -884,7 +906,7 @@ bool SvpSalGraphics::drawPolyPolygon(const basegfx::B2DPolyPolygon& rPolyPoly, d
+     for (const basegfx::B2DPolygon* pPoly = rPolyPoly.begin(); pPoly != rPolyPoly.end(); ++pPoly)
+         AddPolygonToPath(cr, *pPoly, true);
+ 
+-    cairo_rectangle_int_t extents;
++    cairo_rectangle_int_t extents = {0, 0, 0, 0};
+     basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+     if (xDamageTracker)
+         extents = getFillDamage(cr);
+@@ -1068,14 +1090,10 @@ void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInv
+ {
+ #if ENABLE_CAIRO_CANVAS
+ #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 10, 0)
+-    // FIXME: handle SAL_INVERT_TRACKFRAME
+-    if ( nFlags & SAL_INVERT_TRACKFRAME )
++    if (m_aDrawMode != basebmp::DrawMode::XOR)
+     {
+-        SAL_WARN("vcl.gdi", "SvpSalGraphics::invert, unhandled SAL_INVERT_TRACKFRAME");
+-    }
+-    else if ( nFlags & SAL_INVERT_50 )
+-    {
+-        if (cairo_t* cr = createCairoContext(m_aOrigDevice))
++        cairo_t* cr = createCairoContext(m_aOrigDevice);
++        if (cr && cairo_version() >= CAIRO_VERSION_ENCODE(1, 10, 0))
+         {
+             if (!m_aOrigDevice->isTopDown())
+             {
+@@ -1085,34 +1103,55 @@ void SvpSalGraphics::invert( long nX, long nY, long nWidth, long nHeight, SalInv
+ 
+             clipRegion(cr);
+ 
+-            cairo_pattern_t *pattern = create_stipple();
+-
+-            cairo_rectangle_int_t extents;
++            cairo_rectangle_int_t extents = {0, 0, 0, 0};
+             basebmp::IBitmapDeviceDamageTrackerSharedPtr xDamageTracker(m_aOrigDevice->getDamageTracker());
+ 
+             cairo_rectangle(cr, nX, nY, nWidth, nHeight);
+ 
+-            if (xDamageTracker)
+-                extents = getFillDamage(cr);
+-
+-            cairo_clip(cr);
+-
+             cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+             cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
+-            cairo_mask(cr, pattern);
+-            cairo_pattern_destroy(pattern);
++
++            if (nFlags & SAL_INVERT_TRACKFRAME)
++            {
++                cairo_set_line_width(cr, 2.0);
++                const double dashLengths[2] = { 4.0, 4.0 };
++                cairo_set_dash(cr, dashLengths, 2, 0);
++
++                if (xDamageTracker)
++                    extents = getStrokeDamage(cr);
++
++                cairo_stroke(cr);
++            }
++            else
++            {
++                if (xDamageTracker)
++                    extents = getFillDamage(cr);
++
++                cairo_clip(cr);
++
++                if (nFlags & SAL_INVERT_50)
++                {
++                    cairo_pattern_t *pattern = create_stipple();
++                    cairo_mask(cr, pattern);
++                    cairo_pattern_destroy(pattern);
++                }
++                else
++                {
++                    cairo_paint(cr);
++                }
++            }
+ 
+             cairo_surface_flush(cairo_get_target(cr));
+             cairo_destroy(cr); // unref
+ 
++            if (xDamageTracker)
++            {
++                xDamageTracker->damaged(basegfx::B2IBox(extents.x, extents.y, extents.x + extents.width,
++                                                        extents.y + extents.height));
++            }
++
+             return;
+         }
+-        else
+-            SAL_WARN("vcl.gdi", "SvpSalGraphics::invert unhandled XOR (?)");
+-    }
+-    else
+-    {
+-        SAL_WARN("vcl.gdi", "SvpSalGraphics::invert, unhandled SAL_INVERT_TRACKFRAME");
+     }
+ #endif
+ #endif
+-- 
+2.5.0
+

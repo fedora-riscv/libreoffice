@@ -40,14 +40,14 @@ index dacf3fa..c08486f 100644
 --- a/vcl/inc/salframe.hxx
 +++ b/vcl/inc/salframe.hxx
 @@ -74,8 +74,6 @@ enum class SalFrameStyleFlags
-     INTRO               = 0x00000100,
-     // partial fullscreen: fullscreen on one monitor of a multimonitor display
-     PARTIAL_FULLSCREEN  = 0x00800000,
+     SYSTEMCHILD         = 0x08000000,
+     // floating window
+     FLOAT               = 0x20000000,
 -    // floating window that needs to be focusable
 -    FLOAT_FOCUSABLE     = 0x04000000,
-     // system child window inside another SalFrame
-     SYSTEMCHILD         = 0x08000000,
-     // plugged system child window
+     // toolwindows should be painted with a smaller decoration
+     TOOLWINDOW          = 0x40000000,
+     // the window containing the intro bitmap, aka splashscreen
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
 index 5c59dc8..972b241 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
@@ -189,8 +189,8 @@ index db75016..17f81a0 100644
      }
 diff --git a/vcl/win/window/salframe.cxx b/vcl/win/window/salframe.cxx
 index 4b873a9..fa53572 100644
---- a/vcl/win/window/salframe.cxx
-+++ b/vcl/win/window/salframe.cxx
+--- a/vcl/win/source/window/salframe.cxx
++++ b/vcl/win/source/window/salframe.cxx
 @@ -371,11 +371,11 @@ SalFrame* ImplSalCreateFrame( WinSalInstance* pInst,
          nExSysStyle |= WS_EX_TOOLWINDOW;
          pFrame->mbFloatWin = TRUE;

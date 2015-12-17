@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -55,8 +55,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        11%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,26 +243,12 @@ Patch6: 0001-never-run-autogen.sh.patch
 Patch7: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch8: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-# backport from master
-Patch9: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
-Patch10: 0001-gtk3-wayland-wrong-dialog-sizes.patch
-Patch11: 0001-fix-powerpc-build.patch
-Patch12: 0001-update-the-appstream-files-to-most-recent-version-of.patch
-Patch13: 0001-tdf-96243-don-t-crash-if-LibO-install.-wasn-t-found.patch
-Patch14: 0001-tdf-96246-Make-pRenderingArguments-nullable.patch
-Patch15: 0001-tdf-96250-desktop-empty-str-is-the-same-as-0-str-in-.patch
-Patch16: 0001-tdf-96316-Decouple-view-only-editable-modes.patch
-Patch17: 0002-tdf-96318-Add-searching-API.patch
-Patch18: 0003-lokdocview-Set-a-default-path-for-LOK-init.patch
-Patch19: 0001-tdf-96317-Add-API-for-copy-paste-from-to-the-widget.patch
-Patch20: 0001-tdf-96384-Add-a-new-signal-text-selection-to-lokdocv.patch
-Patch21: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
-Patch22: 0001-don-t-be-creative-and-use-a-simple-lookup-table.patch
-Patch23: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch24: 0001-but-only-for-dialog.patch
-Patch25: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
-Patch26: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
-Patch27: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch9: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
+Patch10: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch11: 0001-but-only-for-dialog.patch
+Patch12: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
+Patch13: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
+Patch14: 0003-gtk3-wayland-start-floating-windows-hidden.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2168,6 +2154,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 16 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.1-1
+- update to 5.1.0 rc1
+
 * Mon Dec 14 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.0-11.beta2
 - backport more upstream fixes for libreofficekit
 - fix unit test on i686

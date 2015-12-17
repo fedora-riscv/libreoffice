@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -379,6 +379,8 @@ Patch70: 0004-sw-fix-DOCX-export-of-embedded-OOXML-objects.patch
 Patch71: 0005-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
 Patch72: 0006-sw-extend-various-OOXML-export-test-to-check-embedde.patch
 Patch73: 0007-fix-missing-BaseURL-when-loading-embedded-objects.patch
+Patch74: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch75: 0002-disable-tearability-of-color-window.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2503,16 +2505,15 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4.UNBUILT
-- resolves various issues with embedded objects in DOCX export
-
 * Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
+- resolves various issues with embedded objects in DOCX export
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland
 - Resolves: rhbz#1285364 urls cannot be opened under wayland
 - wayland: stop the ever shrinking size of toplevel on every restore
 - Resolves: rhbz#1291925 implement SAL_INVERT_TRACKFRAME
 - Related: rhbz#1281906 set a min size on un-resizeable non-layout dialogs
+- wayland: final popup positioning issues
 
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively

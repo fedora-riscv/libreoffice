@@ -1,0 +1,46 @@
+From 011f42c0c6104228f5c15daae58e432ccf2be69d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Dec 2015 17:04:52 +0000
+Subject: [PATCH 2/2] disable tearability of color window
+
+the new popup controllers take care to destroy the popup
+and recreate a non-popup and move the contents into it
+
+so we should re-implement the color popup as one of those
+in the meantime, turn it into a non-tearable thing
+
+Change-Id: I6ba26bf19badcbf910b7200b7e1b8b2a64ce4eec
+---
+ svx/source/tbxctrls/tbcontrl.cxx | 3 +--
+ svx/uiconfig/ui/colorwindow.ui   | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/svx/source/tbxctrls/tbcontrl.cxx b/svx/source/tbxctrls/tbcontrl.cxx
+index ae696ae..28691dc 100644
+--- a/svx/source/tbxctrls/tbcontrl.cxx
++++ b/svx/source/tbxctrls/tbcontrl.cxx
+@@ -2659,8 +2659,7 @@ VclPtr<SfxPopupWindow> SvxColorToolBoxControl::CreatePopupWindow()
+             break;
+     }
+ 
+-    pColorWin->StartPopupMode( &GetToolBox(),
+-        FloatWinPopupFlags::AllowTearOff|FloatWinPopupFlags::NoAppFocusClose );
++    pColorWin->StartPopupMode( &GetToolBox(), FloatWinPopupFlags::NoAppFocusClose );
+     pColorWin->StartSelection();
+     SetPopupWindow( pColorWin );
+     if ( !bSidebarType )
+diff --git a/svx/uiconfig/ui/colorwindow.ui b/svx/uiconfig/ui/colorwindow.ui
+index 9482562..702bee3 100644
+--- a/svx/uiconfig/ui/colorwindow.ui
++++ b/svx/uiconfig/ui/colorwindow.ui
+@@ -25,7 +25,6 @@
+     <property name="destroy_with_parent">True</property>
+     <property name="type_hint">popup-menu</property>
+     <property name="skip_pager_hint">True</property>
+-    <property name="decorated">False</property>
+     <property name="deletable">False</property>
+     <child>
+       <object class="GtkBox" id="box1">
+-- 
+2.5.0
+

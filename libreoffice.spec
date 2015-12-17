@@ -249,6 +249,7 @@ Patch11: 0001-but-only-for-dialog.patch
 Patch12: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
 Patch13: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
 Patch14: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch15: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -942,9 +943,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 git am %{patches}
 
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
-# fails on all secondary platforms
-sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
-sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk
 git commit -q -a -m 'temporarily disable failing tests'
 
 %ifarch %{arm}

@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -372,6 +372,13 @@ Patch63: disable.arm.test.patch
 Patch64: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
 Patch65: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
 Patch66: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch67: 0001-tdf-92754-Excel-Chart-content-type-is-not-exported-p.patch
+Patch68: 0002-sw-DOCX-export-eliminate-chart-numbering-non-determi.patch
+Patch69: 0003-sw-move-ProgId-parsing-to-DocxExport-WriteOLEObject.patch
+Patch70: 0004-sw-fix-DOCX-export-of-embedded-OOXML-objects.patch
+Patch71: 0005-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
+Patch72: 0006-sw-extend-various-OOXML-export-test-to-check-embedde.patch
+Patch73: 0007-fix-missing-BaseURL-when-loading-embedded-objects.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2496,6 +2503,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4.UNBUILT
+- resolves various issues with embedded objects in DOCX export
+
 * Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland

@@ -1,0 +1,138 @@
+From 7689b7b7011e6712ad4b47875927c0a6b9322319 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 3 Dec 2015 15:58:12 +0100
+Subject: [PATCH 4/6] sw: fix DOCX export of embedded OOXML objects
+
+OOXML embedded objects are converted to ODF during export, which
+prevents the export from working, as it expects a stream, and ODF
+uses a storage.
+
+There is already a unit test in testEmbeddedXlsx, but it wrongly
+succeeds because the components necessary to convert from OOXML to ODF
+are missing in the test environment.
+
+(cherry picked from commit 1dac99e7ea45f90bf39eb95eb7bc01f7d79093ef)
+(cherry picked from commit 290cac714b09cd0eccb02caa03452e35b87ebaae)
+
+sw: un-break DOCX formula export
+
+(regression from 1dac99e7ea45f90bf39eb95eb7bc01f7d79093ef)
+
+(cherry picked from commit 3b63d2b9371baa5f526d0fcd41043ec76abb0d50)
+
+Change-Id: Ib4df346e04ecfb54ec1a728535be876db921b884
+Reviewed-on: https://gerrit.libreoffice.org/20469
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+---
+ sw/ooxmlexport_setup.mk                      |  6 +++++
+ sw/qa/extras/ooxmlexport/ooxmlexport3.cxx    |  3 +++
+ sw/source/filter/ww8/docxattributeoutput.cxx | 38 ++++++++++++++++++----------
+ 3 files changed, 33 insertions(+), 14 deletions(-)
+
+diff --git a/sw/ooxmlexport_setup.mk b/sw/ooxmlexport_setup.mk
+index a3a2182..041ac9e 100644
+--- a/sw/ooxmlexport_setup.mk
++++ b/sw/ooxmlexport_setup.mk
+@@ -33,6 +33,9 @@ define sw_ooxmlexport_components
+ 	dbaccess/util/dba \
+ 	drawinglayer/drawinglayer \
+ 	embeddedobj/util/embobj \
++	$(if $(filter-out WNT,$(OS)), \
++		embeddedobj/source/msole/emboleobj \
++	) \
+ 	filter/source/config/cache/filterconfig1 \
+ 	filter/source/odfflatxml/odfflatxml \
+ 	filter/source/xmlfilterdetect/xmlfd \
+@@ -45,6 +48,9 @@ define sw_ooxmlexport_components
+ 	package/source/xstor/xstor \
+ 	package/util/package2 \
+ 	sax/source/expatwrap/expwrap \
++	sc/util/sc \
++	sc/util/scd \
++	sc/util/scfilt \
+ 	sw/util/sw \
+ 	sw/util/swd \
+ 	sw/util/msword \
+diff --git a/sw/qa/extras/ooxmlexport/ooxmlexport3.cxx b/sw/qa/extras/ooxmlexport/ooxmlexport3.cxx
+index 2f45f74..1dc1c45 100644
+--- a/sw/qa/extras/ooxmlexport/ooxmlexport3.cxx
++++ b/sw/qa/extras/ooxmlexport/ooxmlexport3.cxx
+@@ -984,6 +984,9 @@ DECLARE_OOXMLEXPORT_TEST(testFileOpenInputOutputError,"floatingtbl_with_formula.
+      if (!pXmlDoc)
+          return;
+       assertXPath(pXmlDoc, "/w:document/w:body/w:p[1]/w:pPr/w:pStyle", "val", "Normal");
++
++    // let's also assert that the formula was exported properly
++    assertXPathContent(pXmlDoc, "//wps:txbx/w:txbxContent/w:tbl/w:tr/w:tc[2]/w:p/m:oMath/m:sSubSup/m:e/m:r/m:t", OUString::fromUtf8("\xcf\x83"));
+ }
+ 
+ #endif
+diff --git a/sw/source/filter/ww8/docxattributeoutput.cxx b/sw/source/filter/ww8/docxattributeoutput.cxx
+index 19eb879..297b17b 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx
+@@ -126,6 +126,7 @@
+ #include <com/sun/star/drawing/ShadingPattern.hpp>
+ #include <com/sun/star/text/GraphicCrop.hpp>
+ #include <com/sun/star/drawing/LineStyle.hpp>
++#include <com/sun/star/embed/EmbedStates.hpp>
+ 
+ #include <algorithm>
+ 
+@@ -4330,22 +4331,27 @@ void DocxAttributeOutput::WriteOLE2Obj( const SdrObject* pSdrObj, SwOLENode& rOL
+ 
+ bool DocxAttributeOutput::WriteOLEChart( const SdrObject* pSdrObj, const Size& rSize )
+ {
+-    uno::Reference< chart2::XChartDocument > xChartDoc;
+     uno::Reference< drawing::XShape > xShape( const_cast<SdrObject*>(pSdrObj)->getUnoShape(), uno::UNO_QUERY );
+-    if( xShape.is() )
+-    {
+-        uno::Reference< beans::XPropertySet > xPropSet( xShape, uno::UNO_QUERY );
+-        if( xPropSet.is() )
+-            xChartDoc.set( xPropSet->getPropertyValue( "Model" ), uno::UNO_QUERY );
+-    }
++    if (!xShape.is())
++        return false;
+ 
+-    if( xChartDoc.is() )
+-    {
+-        m_postponedChart = pSdrObj;
+-        m_postponedChartSize = rSize;
+-        return true;
+-    }
+-    return false;
++    uno::Reference<beans::XPropertySet> const xPropSet(xShape, uno::UNO_QUERY);
++    if (!xPropSet.is())
++        return false;
++
++    OUString clsid; // why is the property of type string, not sequence<byte>?
++    xPropSet->getPropertyValue("CLSID") >>= clsid;
++    SAL_WARN_IF(clsid.isEmpty(), "sw.ww8", "OLE without CLSID?");
++    SvGlobalName aClassID;
++    bool const isValid(aClassID.MakeId(clsid));
++    SAL_WARN_IF(!isValid, "sw.ww8", "OLE with invalid CLSID?");
++
++    if (!SotExchange::IsChart(aClassID))
++        return false;
++
++    m_postponedChart = pSdrObj;
++    m_postponedChartSize = rSize;
++    return true;
+ }
+ 
+ /*
+@@ -4444,6 +4450,10 @@ bool DocxAttributeOutput::WriteOLEMath( const SdrObject*, const SwOLENode& rOLEN
+ void DocxAttributeOutput::WritePostponedMath(const SwOLENode* pPostponedMath)
+ {
+     uno::Reference < embed::XEmbeddedObject > xObj(const_cast<SwOLENode*>(pPostponedMath)->GetOLEObj().GetOleRef());
++    if (embed::EmbedStates::LOADED == xObj->getCurrentState())
++    {   // must be running so there is a Component
++        xObj->changeState(embed::EmbedStates::RUNNING);
++    }
+     uno::Reference< uno::XInterface > xInterface( xObj->getComponent(), uno::UNO_QUERY );
+     if (!xInterface.is())
+     {
+-- 
+2.5.0
+

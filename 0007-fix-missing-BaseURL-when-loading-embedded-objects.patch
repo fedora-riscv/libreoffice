@@ -1,0 +1,265 @@
+From fe4c7f20c272cf7a984d0db79199fe74bd31fc86 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Mon, 14 Dec 2015 13:41:57 +0100
+Subject: [PATCH] fix missing BaseURL when loading embedded objects
+
+When the object is edited in the UI, the m_xClient is set to a
+SfxInPlaceClient and the DocumentBaseURL is retrieved from it.  But if
+the object is not edited, it will be loaded during export via the API
+and without a m_xClient; in this case the DocumentBaseURL must have been
+set previously to be available during import.
+
+There appears to be no way to get the URL of the document via the API
+while it is being imported; SfxBaseModel's m_sURL is unfortunately only
+initialized from SfxObjectShell::FinishedLoading().
+
+During ODF import, the SvXMLEmbeddedObjectHelper creates the
+embedded object, so let's make it pass in the parent's BaseURL.
+
+The "DefaultParentBaseURL" parameter already exists but was unused
+previously.
+
+(cherry picked from commit b0fc09daf1086423a9bd457d9a2c043e7ff41451)
+(cherry picked from commit 4118f8f4c20ae711b95ab3052656bde673aa8852)
+
+sw: loading embedded ODF objects requires unordf component
+
+(cherry picked from commit b3b7982f4690f4ac0f0e9680970ba544157c36dc)
+
+Change-Id: I3d1ed29b3a2c0e77ec606a1d09f7bc07e7860733
+Reviewed-on: https://gerrit.libreoffice.org/20761
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+Tested-by: Miklos Vajna <vmiklos@collabora.co.uk>
+---
+ .../source/container/embeddedobjectcontainer.cxx   | 24 ++++++++++++-----
+ include/comphelper/embeddedobjectcontainer.hxx     |  6 +++--
+ include/sfx2/objsh.hxx                             |  2 ++
+ reportdesign/inc/ReportDefinition.hxx              |  1 +
+ reportdesign/source/core/api/ReportDefinition.cxx  |  5 ++++
+ sfx2/source/doc/objstor.cxx                        |  6 +++++
+ svx/source/xml/xmleohlp.cxx                        |  3 ++-
+ sw/ooxmlexport_setup.mk                            |  1 +
+ sw/qa/extras/ooxmlexport/ooxmlexport2.cxx          | 30 +++++++++++++++++++---
+ 9 files changed, 65 insertions(+), 13 deletions(-)
+
+diff --git a/comphelper/source/container/embeddedobjectcontainer.cxx b/comphelper/source/container/embeddedobjectcontainer.cxx
+index 10a7551..34afd6f 100644
+--- a/comphelper/source/container/embeddedobjectcontainer.cxx
++++ b/comphelper/source/container/embeddedobjectcontainer.cxx
+@@ -296,7 +296,9 @@ OUString EmbeddedObjectContainer::GetEmbeddedObjectName( const ::com::sun::star:
+     return OUString();
+ }
+ 
+-uno::Reference < embed::XEmbeddedObject > EmbeddedObjectContainer::GetEmbeddedObject( const OUString& rName )
++uno::Reference< embed::XEmbeddedObject>
++EmbeddedObjectContainer::GetEmbeddedObject(
++        const OUString& rName, OUString const*const pBaseURL)
+ {
+     SAL_WARN_IF( rName.isEmpty(), "comphelper.container", "Empty object name!");
+ 
+@@ -319,12 +321,15 @@ uno::Reference < embed::XEmbeddedObject > EmbeddedObjectContainer::GetEmbeddedOb
+     if ( aIt != pImpl->maObjectContainer.end() )
+         xObj = (*aIt).second;
+     else
+-        xObj = Get_Impl( rName, uno::Reference < embed::XEmbeddedObject >() );
++        xObj = Get_Impl(rName, uno::Reference<embed::XEmbeddedObject>(), pBaseURL);
+ 
+     return xObj;
+ }
+ 
+-uno::Reference < embed::XEmbeddedObject > EmbeddedObjectContainer::Get_Impl( const OUString& rName, const uno::Reference < embed::XEmbeddedObject >& xCopy )
++uno::Reference<embed::XEmbeddedObject> EmbeddedObjectContainer::Get_Impl(
++        const OUString& rName,
++        const uno::Reference<embed::XEmbeddedObject>& xCopy,
++        rtl::OUString const*const pBaseURL)
+ {
+     uno::Reference < embed::XEmbeddedObject > xObj;
+     try
+@@ -344,13 +349,20 @@ uno::Reference < embed::XEmbeddedObject > EmbeddedObjectContainer::Get_Impl( con
+         // object was not added until now - should happen only by calling this method from "inside"
+         //TODO/LATER: it would be good to detect an error when an object should be created already, but isn't (not an "inside" call)
+         uno::Reference < embed::XEmbeddedObjectCreator > xFactory = embed::EmbeddedObjectCreator::create( ::comphelper::getProcessComponentContext() );
+-        uno::Sequence< beans::PropertyValue > aObjDescr( xCopy.is() ? 2 : 1 );
++        uno::Sequence< beans::PropertyValue > aObjDescr(1 + (xCopy.is() ? 1 : 0) + (pBaseURL ? 1 : 0));
+         aObjDescr[0].Name = "Parent";
+         aObjDescr[0].Value <<= pImpl->m_xModel.get();
++        sal_Int32 i = 1;
++        if (pBaseURL)
++        {
++            aObjDescr[i].Name = "DefaultParentBaseURL";
++            aObjDescr[i].Value <<= *pBaseURL;
++            ++i;
++        }
+         if ( xCopy.is() )
+         {
+-            aObjDescr[1].Name = "CloneFrom";
+-            aObjDescr[1].Value <<= xCopy;
++            aObjDescr[i].Name = "CloneFrom";
++            aObjDescr[i].Value <<= xCopy;
+         }
+ 
+         uno::Sequence< beans::PropertyValue > aMediaDescr( 1 );
+diff --git a/include/comphelper/embeddedobjectcontainer.hxx b/include/comphelper/embeddedobjectcontainer.hxx
+index 842a3e7..a689ca6 100644
+--- a/include/comphelper/embeddedobjectcontainer.hxx
++++ b/include/comphelper/embeddedobjectcontainer.hxx
+@@ -43,6 +43,7 @@ namespace comphelper
+         virtual com::sun::star::uno::Reference < com::sun::star::embed::XStorage > getStorage() const = 0;
+         virtual ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > getInteractionHandler() const = 0;
+         virtual bool isEnableSetModified() const = 0;
++        virtual OUString getDocumentBaseURL() const = 0;
+ 
+     protected:
+         ~IEmbeddedHelper() {}
+@@ -54,7 +55,8 @@ class COMPHELPER_DLLPUBLIC EmbeddedObjectContainer
+     EmbedImpl*  pImpl;
+ 
+     ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject > Get_Impl( const OUString&,
+-            const ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >& xCopy);
++            const ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >& xCopy,
++            OUString const* pBaseURL = nullptr);
+ 
+ public:
+     // add an embedded object to the container storage
+@@ -92,7 +94,7 @@ public:
+     OUString     GetEmbeddedObjectName( const ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >& );
+ 
+     // retrieve an embedded object by name that either has been added already or is available in the container storage
+-    ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject > GetEmbeddedObject( const OUString& );
++    ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject > GetEmbeddedObject( const OUString&, OUString const* pBaseURL = nullptr );
+ 
+     // create an object from a ClassId
+     ::com::sun::star::uno::Reference < ::com::sun::star::embed::XEmbeddedObject >
+diff --git a/include/sfx2/objsh.hxx b/include/sfx2/objsh.hxx
+index ce8ab30..58e79f0 100644
+--- a/include/sfx2/objsh.hxx
++++ b/include/sfx2/objsh.hxx
+@@ -582,6 +582,8 @@ public:
+     {
+         return IsEnableSetModified();
+     }
++    virtual OUString getDocumentBaseURL() const SAL_OVERRIDE;
++
+     comphelper::EmbeddedObjectContainer&    GetEmbeddedObjectContainer() const;
+     void    ClearEmbeddedObjects();
+ 
+diff --git a/reportdesign/inc/ReportDefinition.hxx b/reportdesign/inc/ReportDefinition.hxx
+index 18ac1b8..cf3da36 100644
+--- a/reportdesign/inc/ReportDefinition.hxx
++++ b/reportdesign/inc/ReportDefinition.hxx
+@@ -407,6 +407,7 @@ namespace reportdesign
+         virtual ::comphelper::EmbeddedObjectContainer& getEmbeddedObjectContainer() const SAL_OVERRIDE;
+         virtual ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > getInteractionHandler() const SAL_OVERRIDE;
+         virtual bool isEnableSetModified() const SAL_OVERRIDE;
++        virtual OUString getDocumentBaseURL() const SAL_OVERRIDE;
+ 
+         ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext > getContext() const;
+ 
+diff --git a/reportdesign/source/core/api/ReportDefinition.cxx b/reportdesign/source/core/api/ReportDefinition.cxx
+index 42b0baf..a3f4663 100644
+--- a/reportdesign/source/core/api/ReportDefinition.cxx
++++ b/reportdesign/source/core/api/ReportDefinition.cxx
+@@ -2521,6 +2521,11 @@ bool OReportDefinition::isEnableSetModified() const
+     return true;
+ }
+ 
++OUString OReportDefinition::getDocumentBaseURL() const
++{
++    return const_cast<OReportDefinition*>(this)->getURL();
++}
++
+ uno::Reference< frame::XTitle > OReportDefinition::impl_getTitleHelper_throw()
+ {
+     SolarMutexGuard aSolarGuard;
+diff --git a/sfx2/source/doc/objstor.cxx b/sfx2/source/doc/objstor.cxx
+index d431a1e..be8ecd0 100644
+--- a/sfx2/source/doc/objstor.cxx
++++ b/sfx2/source/doc/objstor.cxx
+@@ -3641,6 +3641,7 @@ bool SfxObjectShell::QuerySaveSizeExceededModules_Impl( const uno::Reference< ta
+     return true;
+ }
+ 
++// comphelper::IEmbeddedHelper
+ uno::Reference< task::XInteractionHandler > SfxObjectShell::getInteractionHandler() const
+ {
+     uno::Reference< task::XInteractionHandler > xRet;
+@@ -3649,4 +3650,9 @@ uno::Reference< task::XInteractionHandler > SfxObjectShell::getInteractionHandle
+     return xRet;
+ }
+ 
++OUString SfxObjectShell::getDocumentBaseURL() const
++{
++    return GetMedium()->GetBaseURL();
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/svx/source/xml/xmleohlp.cxx b/svx/source/xml/xmleohlp.cxx
+index 3d69924..ffdb37d 100644
+--- a/svx/source/xml/xmleohlp.cxx
++++ b/svx/source/xml/xmleohlp.cxx
+@@ -444,7 +444,8 @@ bool SvXMLEmbeddedObjectHelper::ImplReadObject(
+     //             server that was used to create the object. pClassId could be used to specify the server that should
+     //             be used for the next opening, but this information seems to be out of the file format responsibility
+     //             area.
+-    rContainer.GetEmbeddedObject( aName );
++    OUString const baseURL(mpDocPersist->getDocumentBaseURL());
++    rContainer.GetEmbeddedObject(aName, &baseURL);
+ 
+     return true;
+ }
+diff --git a/sw/ooxmlexport_setup.mk b/sw/ooxmlexport_setup.mk
+index 041ac9e..7b33349 100644
+--- a/sw/ooxmlexport_setup.mk
++++ b/sw/ooxmlexport_setup.mk
+@@ -66,6 +66,7 @@ define sw_ooxmlexport_components
+ 	ucb/source/ucp/file/ucpfile1 \
+ 	unotools/util/utl \
+ 	unoxml/source/service/unoxml \
++	unoxml/source/rdf/unordf \
+ 	uui/util/uui \
+ 	writerfilter/util/writerfilter \
+ 	xmloff/util/xo
+diff --git a/sw/qa/extras/ooxmlexport/ooxmlexport2.cxx b/sw/qa/extras/ooxmlexport/ooxmlexport2.cxx
+index 224e546..28506e1 100644
+--- a/sw/qa/extras/ooxmlexport/ooxmlexport2.cxx
++++ b/sw/qa/extras/ooxmlexport/ooxmlexport2.cxx
+@@ -475,10 +475,32 @@ DECLARE_OOXMLEXPORT_TEST(testTableBorders, "table-borders.docx")
+ 
+ DECLARE_OOXMLEXPORT_TEST(testFdo51550, "fdo51550.odt")
+ {
+-    // The problem was that we lacked the fallback to export the replacement graphic for OLE objects.
+-    uno::Reference<drawing::XDrawPageSupplier> xDrawPageSupplier(mxComponent, uno::UNO_QUERY);
+-    uno::Reference<container::XIndexAccess> xDraws(xDrawPageSupplier->getDrawPage(), uno::UNO_QUERY);
+-    CPPUNIT_ASSERT_EQUAL(sal_Int32(1), xDraws->getCount());
++    // The problem was that we lacked the fallback to export the replacement
++    // graphic for OLE objects.  But we can actually export the OLE itself now,
++    // so check that instead.
++    uno::Reference<text::XTextEmbeddedObjectsSupplier> xTextEmbeddedObjectsSupplier(mxComponent, uno::UNO_QUERY);
++    uno::Reference<container::XIndexAccess> xEmbeddedObjects(xTextEmbeddedObjectsSupplier->getEmbeddedObjects(), uno::UNO_QUERY);
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(1), xEmbeddedObjects->getCount());
++
++    xmlDocPtr pXmlDocCT = parseExport("[Content_Types].xml");
++
++    if (!pXmlDocCT)
++       return; // initial import
++
++    assertXPath(pXmlDocCT, "/ContentType:Types/ContentType:Override[@PartName='/word/embeddings/oleObject1.xlsx']", "ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
++
++    // check the rels too
++    xmlDocPtr pXmlDocRels = parseExport("word/_rels/document.xml.rels");
++    assertXPath(pXmlDocRels,
++        "/rels:Relationships/rels:Relationship[@Target='embeddings/oleObject1.xlsx']",
++        "Type",
++        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/package");
++    // check the content too
++    xmlDocPtr pXmlDocContent = parseExport("word/document.xml");
++    assertXPath(pXmlDocContent,
++        "/w:document/w:body/w:p/w:r/w:object/o:OLEObject",
++        "ProgID",
++        "Excel.Sheet.12");
+ }
+ 
+ /*
+-- 
+2.5.0
+

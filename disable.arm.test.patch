@@ -1,0 +1,12 @@
+diff --git a/sw/Module_sw.mk b/sw/Module_sw.mk
+index 13453b5..0e1358c 100644
+--- a/sw/Module_sw.mk
++++ b/sw/Module_sw.mk
+@@ -51,7 +51,6 @@ $(eval $(call gb_Module_add_slowcheck_targets,sw,\
+     CppunitTest_sw_htmlexport \
+     CppunitTest_sw_htmlimport \
+     CppunitTest_sw_macros_test \
+-    CppunitTest_sw_ooxmlexport \
+     CppunitTest_sw_ooxmlexport2 \
+     CppunitTest_sw_ooxmlexport3 \
+     CppunitTest_sw_ooxmlexport4 \

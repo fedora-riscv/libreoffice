@@ -368,6 +368,7 @@ Patch59: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
 Patch60: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
 Patch61: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
 Patch62: 0001-but-only-for-dialog.patch
+Patch63: disable.arm.test.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

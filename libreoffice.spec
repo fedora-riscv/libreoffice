@@ -1546,11 +1546,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/diffTextureFragmentShader.glsl
 %{baseinstdir}/program/opengl/dumbVertexShader.glsl
 %{baseinstdir}/program/opengl/dummyVertexShader.glsl
-%{baseinstdir}/program/opengl/glitterFragmentShader.glsl
-%{baseinstdir}/program/opengl/glitterVertexShader.glsl
-%{baseinstdir}/program/opengl/honeycombFragmentShader.glsl
-%{baseinstdir}/program/opengl/honeycombGeometryShader.glsl
-%{baseinstdir}/program/opengl/honeycombVertexShader.glsl
 %{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
@@ -1884,6 +1879,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/opengl/dissolveFragmentShader.glsl
 %{baseinstdir}/program/opengl/fadeBlackFragmentShader.glsl
 %{baseinstdir}/program/opengl/fadeFragmentShader.glsl
+%{baseinstdir}/program/opengl/glitterFragmentShader.glsl
+%{baseinstdir}/program/opengl/glitterVertexShader.glsl
+%{baseinstdir}/program/opengl/honeycombFragmentShader.glsl
+%{baseinstdir}/program/opengl/honeycombGeometryShader.glsl
+%{baseinstdir}/program/opengl/honeycombVertexShader.glsl
 %{baseinstdir}/program/opengl/rippleFragmentShader.glsl
 %{baseinstdir}/program/opengl/reflectionFragmentShader.glsl
 %{baseinstdir}/program/opengl/reflectionVertexShader.glsl

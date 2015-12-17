@@ -1,0 +1,88 @@
+From 3cb0d69ae619a9f74d5341e360ea01a110108ce5 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 18 Dec 2014 12:30:30 +0100
+Subject: [PATCH 2/9] XmlTestTools: fix conversion from UTF-8 xmlChar strings
+ to OUString
+
+...which resolves the mystery of 0ba6360363fb73b5b200bbc486ed8eeac5f3d337
+"Garbage in, garbage out?"
+
+(cherry picked from commit 84a7fa47a548e95892797e9f61d96ae051123121)
+
+Change-Id: I51f102699d0474872c80392b27f71030b5e3fb59
+---
+ sw/qa/extras/ooxmlexport/ooxmlexport4.cxx |  2 +-
+ test/source/xmltesttools.cxx              | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/sw/qa/extras/ooxmlexport/ooxmlexport4.cxx b/sw/qa/extras/ooxmlexport/ooxmlexport4.cxx
+index ea3c6af..d3f5f76 100644
+--- a/sw/qa/extras/ooxmlexport/ooxmlexport4.cxx
++++ b/sw/qa/extras/ooxmlexport/ooxmlexport4.cxx
+@@ -589,7 +589,7 @@ DECLARE_OOXMLEXPORT_TEST(testDateControl, "date-control.docx")
+     assertXPath(pXmlDoc, "/w:document/w:body/w:p/w:sdt/w:sdtPr/w:date", "fullDate", "2014-03-05T00:00:00Z");
+     assertXPath(pXmlDoc, "/w:document/w:body/w:p/w:sdt/w:sdtPr/w:date/w:dateFormat", "val", "dddd, dd' de 'MMMM' de 'yyyy");
+     assertXPath(pXmlDoc, "/w:document/w:body/w:p/w:sdt/w:sdtPr/w:date/w:lid", "val", "es-ES");
+-    assertXPathContent(pXmlDoc, "/w:document/w:body/w:p/w:sdt/w:sdtContent/w:r/w:t", "miércoles, 05 de marzo de 2014");
++    assertXPathContent(pXmlDoc, "/w:document/w:body/w:p/w:sdt/w:sdtContent/w:r/w:t", OUString::fromUtf8("mi\xC3\xA9rcoles, 05 de marzo de 2014"));
+ 
+     // check imported control
+     uno::Reference<drawing::XControlShape> xControl(getShape(1), uno::UNO_QUERY);
+diff --git a/test/source/xmltesttools.cxx b/test/source/xmltesttools.cxx
+index 32908a0..4694570 100644
+--- a/test/source/xmltesttools.cxx
++++ b/test/source/xmltesttools.cxx
+@@ -11,6 +11,23 @@
+ 
+ #include <boost/scoped_array.hpp>
+ 
++namespace {
++
++OUString convert(xmlChar const * string) {
++    OUString s;
++    CPPUNIT_ASSERT_MESSAGE(
++        "xmlChar string is not UTF-8",
++        rtl_convertStringToUString(
++            &s.pData, reinterpret_cast<char const *>(string), xmlStrlen(string),
++            RTL_TEXTENCODING_UTF8,
++            (RTL_TEXTTOUNICODE_FLAGS_UNDEFINED_ERROR
++             | RTL_TEXTTOUNICODE_FLAGS_MBUNDEFINED_ERROR
++             | RTL_TEXTTOUNICODE_FLAGS_INVALID_ERROR)));
++    return s;
++}
++
++}
++
+ XmlTestTools::XmlTestTools()
+ {}
+ 
+@@ -55,7 +72,7 @@ OUString XmlTestTools::getXPath(xmlDocPtr pXmlDoc, const OString& rXPath, const
+         return OUString();
+     xmlNodePtr pXmlNode = pXmlNodes->nodeTab[0];
+     xmlChar * prop = xmlGetProp(pXmlNode, BAD_CAST(rAttribute.getStr()));
+-    OUString s(OUString::createFromAscii((const char*)prop));
++    OUString s(convert(prop));
+     xmlFree(prop);
+     xmlXPathFreeObject(pXmlObj);
+     return s;
+@@ -70,7 +87,7 @@ OUString XmlTestTools::getXPathContent(xmlDocPtr pXmlDoc, const OString& rXPath)
+             xmlXPathNodeSetGetLength(pXmlNodes) > 0);
+ 
+     xmlNodePtr pXmlNode = pXmlNodes->nodeTab[0];
+-    OUString s(OUString::createFromAscii((const char*)((pXmlNode->children[0]).content)));
++    OUString s(convert((pXmlNode->children[0]).content));
+     xmlXPathFreeObject(pXmlObj);
+     return s;
+ }
+@@ -137,7 +154,7 @@ int XmlTestTools::getXPathPosition(xmlDocPtr pXmlDoc, const OString& rXPath, con
+     int nRet = 0;
+     for (xmlNodePtr pChild = pXmlNode->children; pChild; pChild = pChild->next)
+     {
+-        if (OUString::createFromAscii((const char*)pChild->name) == rChildName)
++        if (convert(pChild->name) == rChildName)
+             break;
+         ++nRet;
+     }
+-- 
+2.5.0
+

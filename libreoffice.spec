@@ -369,6 +369,15 @@ Patch50: 0001-Incredible-slowness-and-crashes-with-document-with-v.patch
 Patch51: 0001-Resolves-tdf-89907-do-not-modify-original-ScViewData.patch
 Patch52: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
 Patch53: 0001-Resolves-tdf-95440-SharedString-are-interned-per-doc.patch
+Patch54: 0001-don-t-assert-on-export-of-ooo74510-1.odt-to-.docx.patch
+Patch55: 0002-XmlTestTools-fix-conversion-from-UTF-8-xmlChar-strin.patch
+Patch56: 0003-tdf-92754-Excel-Chart-content-type-is-not-exported-p.patch
+Patch57: 0004-sw-DOCX-export-eliminate-chart-numbering-non-determi.patch
+Patch58: 0005-sw-fix-DOCX-export-of-embedded-OOXML-objects.patch
+Patch59: 0006-sw-move-ProgId-parsing-to-DocxExport-WriteOLEObject.patch
+Patch60: 0007-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
+Patch61: 0008-sw-extend-various-OOXML-export-test-to-check-embedde.patch
+Patch62: 0009-fix-missing-BaseURL-when-loading-embedded-objects.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2428,9 +2437,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Nov 30 2015 Stephan Bergmann <sbergman@redhat.com> - 1:4.4.7.2-2-UNBUILT
+* Thu Dec 17 2015 Michael Stahl <mstahl@redhat.com> - 1:4.4.7.2-2
 - Related: rhbz#1286416 be more resilient during auto-recovery attempts
 - Resolves: tdf#95440 SharedString are interned per document, re-intern
+- resolves various issues with embedded objects in DOCX export
 
 * Thu Nov 26 2015 David Tardon <dtardon@redhat.com> - 1:4.4.7.2-1
 - new bugfix release

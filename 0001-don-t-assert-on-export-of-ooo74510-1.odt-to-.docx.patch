@@ -1,0 +1,33 @@
+From 5fb8d353a99f8e8ee354c3d99fb6bcbff51e7523 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 18 May 2015 14:25:11 +0100
+Subject: [PATCH 1/9] don't assert on export of ooo74510-1.odt to .docx
+
+the math object is broken in the original .odt so we can't export its contents
+as it doesn't have any
+
+Change-Id: I8226cafed65b9e16a4aca6f48a4f711a55532975
+(cherry picked from commit 7cb8d59769d7f37157929a4176a8f16f6d4610e8)
+---
+ sw/source/filter/ww8/docxattributeoutput.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sw/source/filter/ww8/docxattributeoutput.cxx b/sw/source/filter/ww8/docxattributeoutput.cxx
+index ade163e..591f92c 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx
+@@ -4414,6 +4414,11 @@ void DocxAttributeOutput::WritePostponedMath()
+         return;
+     uno::Reference < embed::XEmbeddedObject > xObj(const_cast<SwOLENode*>(m_postponedMath)->GetOLEObj().GetOleRef());
+     uno::Reference< uno::XInterface > xInterface( xObj->getComponent(), uno::UNO_QUERY );
++    if (!xInterface.is())
++    {
++        SAL_WARN("sw.ww8", "Broken math object");
++        return;
++    }
+ // gcc4.4 (and 4.3 and possibly older) have a problem with dynamic_cast directly to the target class,
+ // so help it with an intermediate cast. I'm not sure what exactly the problem is, seems to be unrelated
+ // to RTLD_GLOBAL, so most probably a gcc bug.
+-- 
+2.5.0
+

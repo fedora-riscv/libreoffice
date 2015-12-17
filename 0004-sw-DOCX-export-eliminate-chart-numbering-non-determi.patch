@@ -1,0 +1,63 @@
+From 4f3867766a310141f448a5bbf9ac0661ee0b1328 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 15 Dec 2015 22:45:41 +0100
+Subject: [PATCH 4/9] sw: DOCX export: eliminate chart numbering
+ non-determinism
+
+... that was causing test failures on some but not all platforms.
+
+(cherry picked from commit c56e0858b081b4dfe78745cf80c829f6c3c2e7b8)
+(cherry picked from commit 2263a59aaf6bc1548046fdda422518a6365ffd17)
+
+Reviewed-on: https://gerrit.libreoffice.org/20757
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+Tested-by: Miklos Vajna <vmiklos@collabora.co.uk>
+(cherry picked from commit c7d111b5b238035360b3a866125175f9e285c289)
+
+Change-Id: I0d04cd6e540ea2693a3ec8511d615a9b0fecf456
+---
+ sw/source/filter/ww8/docxattributeoutput.cxx | 6 +++---
+ sw/source/filter/ww8/docxattributeoutput.hxx | 2 ++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/sw/source/filter/ww8/docxattributeoutput.cxx b/sw/source/filter/ww8/docxattributeoutput.cxx
+index 5da7c1c..290ac6f 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.cxx
++++ b/sw/source/filter/ww8/docxattributeoutput.cxx
+@@ -4375,10 +4375,9 @@ void DocxAttributeOutput::WritePostponedChart()
+             FSEND );
+ 
+         OString aRelId;
+-        static sal_Int32 nChartCount = 0;
+-        nChartCount++;
++        m_nChartCount++;
+         uno::Reference< frame::XModel > xModel( xChartDoc, uno::UNO_QUERY );
+-        aRelId = m_rExport.OutputChart( xModel, nChartCount, m_pSerializer );
++        aRelId = m_rExport.OutputChart( xModel, m_nChartCount, m_pSerializer );
+ 
+         m_pSerializer->singleElementNS( XML_c, XML_chart,
+             FSNS( XML_xmlns, XML_c ), "http://schemas.openxmlformats.org/drawingml/2006/chart",
+@@ -8384,6 +8383,7 @@ DocxAttributeOutput::DocxAttributeOutput( DocxExport &rExport, FSHelperPtr pSeri
+       m_postponedCustomShape(NULL),
+       m_postponedOLE( NULL ),
+       m_postponedMath( NULL ),
++      m_nChartCount(0),
+       m_postponedChart( NULL ),
+       pendingPlaceholder( NULL ),
+       m_postitFieldsMaxId( 0 ),
+diff --git a/sw/source/filter/ww8/docxattributeoutput.hxx b/sw/source/filter/ww8/docxattributeoutput.hxx
+index 4206b88..9a0202f 100644
+--- a/sw/source/filter/ww8/docxattributeoutput.hxx
++++ b/sw/source/filter/ww8/docxattributeoutput.hxx
+@@ -859,6 +859,8 @@ private:
+     std::list< PostponedOLE >* m_postponedOLE;
+ 
+     const SwOLENode* m_postponedMath;
++    /// count charts consistently for unit tests
++    unsigned int m_nChartCount;
+     const SdrObject* m_postponedChart;
+     Size m_postponedChartSize;
+     std::vector<const SdrObject*> m_aPostponedFormControls;
+-- 
+2.5.0
+

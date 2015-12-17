@@ -845,7 +845,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn-CS -i sr-Latn-ME -i sr-Latn-RS -O -v sr_CS -w sr_CS
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -O -v sr_CS -w sr_CS
 %langpack -l ss -n Swati -F -H -o ss_ZA
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA
@@ -900,7 +900,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
 #rhbz#452379 clump serbian autocorrections together
-%autocorr -l sr -n Serbian -i sr-Latn
+%autocorr -l sr -n Serbian -i sr-Latn-RS -i sr-Latn-ME -i sr-Latn-CS
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese

@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -844,7 +844,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -O -v sr_CS -w sr_CS
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn-CS -i sr-Latn-ME -i sr-Latn-RS -O -v sr_CS -w sr_CS
 %langpack -l ss -n Swati -F -H -o ss_ZA
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA
@@ -1546,6 +1546,11 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/diffTextureFragmentShader.glsl
 %{baseinstdir}/program/opengl/dumbVertexShader.glsl
 %{baseinstdir}/program/opengl/dummyVertexShader.glsl
+%{baseinstdir}/program/opengl/glitterFragmentShader.glsl
+%{baseinstdir}/program/opengl/glitterVertexShader.glsl
+%{baseinstdir}/program/opengl/honeycombFragmentShader.glsl
+%{baseinstdir}/program/opengl/honeycombGeometryShader.glsl
+%{baseinstdir}/program/opengl/honeycombVertexShader.glsl
 %{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
@@ -2154,6 +2159,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Dec 17 2015 Bastien Nocera <bnocera@redhat.com> 1:5.1.0.1-2
+- Add GLSL files missing from the package
+- Split up inclusion of latin Serbian files to avoid duplicate listing
+
 * Wed Dec 16 2015 David Tardon <dtardon@redhat.com> - 1:5.1.0.1-1
 - update to 5.1.0 rc1
 

@@ -260,6 +260,9 @@ Patch21: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
 Patch22: 0001-don-t-be-creative-and-use-a-simple-lookup-table.patch
 Patch23: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
 Patch24: 0001-but-only-for-dialog.patch
+Patch25: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
+Patch26: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
+Patch27: 0003-gtk3-wayland-start-floating-windows-hidden.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

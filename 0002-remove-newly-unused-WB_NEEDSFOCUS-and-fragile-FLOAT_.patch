@@ -1,0 +1,178 @@
+From b9431532ba696a39e7d35597f4083ea356b63eb3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 16 Dec 2015 21:30:22 +0000
+Subject: [PATCH] remove newly unused WB_NEEDSFOCUS and fragile FLOAT_FOCUSABLE
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Idce03318fbc01039a6c0638879785607970993c0
+Reviewed-on: https://gerrit.libreoffice.org/20746
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ include/tools/wintypes.hxx    |    1 -
+ vcl/inc/salframe.hxx          |    2 -
+ vcl/inc/unx/gtk/gtkframe.hxx  |    3 +-
+ vcl/osx/salframeview.mm       | 1807 -----------------------------------------
+ vcl/source/window/brdwin.cxx  |    2 +-
+ vcl/source/window/window.cxx  |    4 +-
+ vcl/unx/gtk/gtksalframe.cxx   |   11 +-
+ vcl/unx/gtk3/gtk3gtkframe.cxx |    9 +-
+ 8 files changed, 8 insertions(+), 1831 deletions(-)
+ delete mode 100644 vcl/osx/salframeview.mm
+
+diff --git a/include/tools/wintypes.hxx b/include/tools/wintypes.hxx
+index 897e635..3943cc4 100644
+--- a/include/tools/wintypes.hxx
++++ b/include/tools/wintypes.hxx
+@@ -180,7 +180,6 @@ WinBits const WB_NOSHADOW =             SAL_CONST_INT64(0x400000000);
+ WinBits const WB_TOOLTIPWIN =           SAL_CONST_INT64(0x800000000);
+ WinBits const WB_OWNERDRAWDECORATION =  SAL_CONST_INT64(0x2000000000);
+ WinBits const WB_DEFAULTWIN =           SAL_CONST_INT64(0x4000000000);
+-WinBits const WB_NEEDSFOCUS =           SAL_CONST_INT64(0x1000000000);
+ WinBits const WB_POPUP =                SAL_CONST_INT64(0x20000000);
+ 
+ WinBits const WB_HSCROLL =              WB_HORZ;
+diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
+index 9b3d52e..1016d3c 100644
+--- a/vcl/inc/salframe.hxx
++++ b/vcl/inc/salframe.hxx
+@@ -76,8 +76,6 @@ struct SystemEnvData;
+ #define SAL_FRAME_STYLE_SYSTEMCHILD         ((sal_uLong)0x08000000)
+ // floating window
+ #define SAL_FRAME_STYLE_FLOAT               ((sal_uLong)0x20000000)
+-// floating window that needs to be focusable
+-#define SAL_FRAME_STYLE_FLOAT_FOCUSABLE     ((sal_uLong)0x04000000)
+ // toolwindows should be painted with a smaller decoration
+ #define SAL_FRAME_STYLE_TOOLWINDOW          ((sal_uLong)0x40000000)
+ // the window containing the intro bitmap, aka splashscreen
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index a55ff2c..479a41b 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -292,8 +292,7 @@ class GtkSalFrame : public SalFrame, public X11WindowProvider
+         return
+             (m_nStyle & SAL_FRAME_STYLE_FLOAT) &&                // only a float can be floatgrab
+             !(m_nStyle & SAL_FRAME_STYLE_TOOLTIP) &&             // tool tips are not
+-            !(m_nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION) && // toolbars are also not
+-            !(m_nStyle & SAL_FRAME_STYLE_FLOAT_FOCUSABLE);       // focusable floats are not
++            !(m_nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION);   // toolbars are also not
+     }
+ 
+     bool isChild( bool bPlug = true, bool bSysChild = true )
+diff --git a/vcl/source/window/brdwin.cxx b/vcl/source/window/brdwin.cxx
+index f57ab37..0e354bd 100644
+--- a/vcl/source/window/brdwin.cxx
++++ b/vcl/source/window/brdwin.cxx
+@@ -1750,7 +1750,7 @@ void ImplBorderWindow::ImplInit( vcl::Window* pParent,
+ {
+     // remove all unwanted WindowBits
+     WinBits nOrgStyle = nStyle;
+-    WinBits nTestStyle = (WB_MOVEABLE | WB_SIZEABLE | WB_ROLLABLE | WB_PINABLE | WB_CLOSEABLE | WB_STANDALONE | WB_DIALOGCONTROL | WB_NODIALOGCONTROL | WB_SYSTEMFLOATWIN | WB_INTROWIN | WB_DEFAULTWIN | WB_TOOLTIPWIN | WB_NOSHADOW | WB_OWNERDRAWDECORATION | WB_SYSTEMCHILDWINDOW  | WB_NEEDSFOCUS | WB_POPUP);
++    WinBits nTestStyle = (WB_MOVEABLE | WB_SIZEABLE | WB_ROLLABLE | WB_PINABLE | WB_CLOSEABLE | WB_STANDALONE | WB_DIALOGCONTROL | WB_NODIALOGCONTROL | WB_SYSTEMFLOATWIN | WB_INTROWIN | WB_DEFAULTWIN | WB_TOOLTIPWIN | WB_NOSHADOW | WB_OWNERDRAWDECORATION | WB_SYSTEMCHILDWINDOW  | WB_POPUP);
+     if ( nTypeStyle & BORDERWINDOW_STYLE_APP )
+         nTestStyle |= WB_APP;
+     nStyle &= nTestStyle;
+diff --git a/vcl/source/window/window.cxx b/vcl/source/window/window.cxx
+index 808d683..87b8e93 100644
+--- a/vcl/source/window/window.cxx
++++ b/vcl/source/window/window.cxx
+@@ -911,7 +911,7 @@ void Window::ImplInit( vcl::Window* pParent, WinBits nStyle, SystemParentData* p
+             nBorderTypeStyle |= BORDERWINDOW_STYLE_FRAME;
+             nStyle |= WB_BORDER;
+         }
+-        VclPtrInstance<ImplBorderWindow> pBorderWin( pParent, nStyle & (WB_BORDER | WB_DIALOGCONTROL | WB_NODIALOGCONTROL | WB_NEEDSFOCUS), nBorderTypeStyle );
++        VclPtrInstance<ImplBorderWindow> pBorderWin( pParent, nStyle & (WB_BORDER | WB_DIALOGCONTROL | WB_NODIALOGCONTROL), nBorderTypeStyle );
+         ((vcl::Window*)pBorderWin)->mpWindowImpl->mpClientWindow = this;
+         pBorderWin->GetBorder( mpWindowImpl->mnLeftBorder, mpWindowImpl->mnTopBorder, mpWindowImpl->mnRightBorder, mpWindowImpl->mnBottomBorder );
+         mpWindowImpl->mpBorderWindow  = pBorderWin;
+@@ -966,8 +966,6 @@ void Window::ImplInit( vcl::Window* pParent, WinBits nStyle, SystemParentData* p
+             nFrameStyle = SAL_FRAME_STYLE_FLOAT;
+             if( nStyle & WB_OWNERDRAWDECORATION )
+                 nFrameStyle |= (SAL_FRAME_STYLE_OWNERDRAWDECORATION | SAL_FRAME_STYLE_NOSHADOW);
+-            if( nStyle & WB_NEEDSFOCUS )
+-                nFrameStyle |= SAL_FRAME_STYLE_FLOAT_FOCUSABLE;
+         }
+         else if( mpWindowImpl->mbFloatWin )
+             nFrameStyle |= SAL_FRAME_STYLE_TOOLWINDOW;
+diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
+index 03f25dd..bd9662c 100644
+--- a/vcl/unx/gtk/gtksalframe.cxx
++++ b/vcl/unx/gtk/gtksalframe.cxx
+@@ -1373,8 +1373,7 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+     m_nStyle = nStyle;
+ 
+     GtkWindowType eWinType = (  (nStyle & SAL_FRAME_STYLE_FLOAT) &&
+-                              ! (nStyle & (SAL_FRAME_STYLE_OWNERDRAWDECORATION|
+-                                           SAL_FRAME_STYLE_FLOAT_FOCUSABLE))
++                              ! (nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION)
+                               )
+         ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL;
+ 
+@@ -1419,7 +1418,7 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+     bool bDecoHandling =
+         ! isChild() &&
+         ( ! (nStyle & SAL_FRAME_STYLE_FLOAT) ||
+-          (nStyle & (SAL_FRAME_STYLE_OWNERDRAWDECORATION|SAL_FRAME_STYLE_FLOAT_FOCUSABLE) ) );
++          (nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION ) );
+ 
+     if( bDecoHandling )
+     {
+@@ -1441,10 +1440,6 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+             eType = GDK_WINDOW_TYPE_HINT_TOOLBAR;
+             lcl_set_accept_focus( GTK_WINDOW(m_pWindow), false, true );
+         }
+-        else if( (nStyle & SAL_FRAME_STYLE_FLOAT_FOCUSABLE) )
+-        {
+-            eType = GDK_WINDOW_TYPE_HINT_UTILITY;
+-        }
+ #if !GTK_CHECK_VERSION(3,0,0)
+         if( (nStyle & SAL_FRAME_STYLE_PARTIAL_FULLSCREEN )
+             && getDisplay()->getWMAdaptor()->isLegacyPartialFullscreen() )
+@@ -2770,7 +2765,7 @@ void GtkSalFrame::ToTop( sal_uInt16 nFlags )
+              *  to our window - which it of course won't since our input hint
+              *  is set to false.
+              */
+-            if( (m_nStyle & (SAL_FRAME_STYLE_OWNERDRAWDECORATION|SAL_FRAME_STYLE_FLOAT_FOCUSABLE)) )
++            if (m_nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION)
+             {
+                 // sad but true: this can cause an XError, we need to catch that
+                 // to do this we need to synchronize with the XServer
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index d41be9d..4ac3da7 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1121,8 +1121,7 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+     m_nStyle = nStyle;
+ 
+     GtkWindowType eWinType = (  (nStyle & SAL_FRAME_STYLE_FLOAT) &&
+-                              ! (nStyle & (SAL_FRAME_STYLE_OWNERDRAWDECORATION|
+-                                           SAL_FRAME_STYLE_FLOAT_FOCUSABLE))
++                              ! (nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION)
+                               )
+         ? GTK_WINDOW_POPUP : GTK_WINDOW_TOPLEVEL;
+ 
+@@ -1167,7 +1166,7 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+     bool bDecoHandling =
+         ! isChild() &&
+         ( ! (nStyle & SAL_FRAME_STYLE_FLOAT) ||
+-          (nStyle & (SAL_FRAME_STYLE_OWNERDRAWDECORATION|SAL_FRAME_STYLE_FLOAT_FOCUSABLE) ) );
++          (nStyle & SAL_FRAME_STYLE_OWNERDRAWDECORATION ) );
+ 
+     if( bDecoHandling )
+     {
+@@ -1190,10 +1189,6 @@ void GtkSalFrame::Init( SalFrame* pParent, sal_uLong nStyle )
+             gtk_window_set_accept_focus(GTK_WINDOW(m_pWindow), false);
+             gtk_window_set_decorated(GTK_WINDOW(m_pWindow), false);
+         }
+-        else if( (nStyle & SAL_FRAME_STYLE_FLOAT_FOCUSABLE) )
+-        {
+-            eType = GDK_WINDOW_TYPE_HINT_UTILITY;
+-        }
+         gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), eType );
+         gtk_window_set_gravity( GTK_WINDOW(m_pWindow), GDK_GRAVITY_STATIC );
+     }
+-- 
+2.5.0
+

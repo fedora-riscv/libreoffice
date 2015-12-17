@@ -369,6 +369,9 @@ Patch60: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
 Patch61: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
 Patch62: 0001-but-only-for-dialog.patch
 Patch63: disable.arm.test.patch
+Patch64: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
+Patch65: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
+Patch66: 0003-gtk3-wayland-start-floating-windows-hidden.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

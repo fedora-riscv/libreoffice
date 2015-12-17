@@ -1,3 +1,12 @@
+From ab453c0a635471e39607625082cdfd59c26ff455 Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Thu, 17 Dec 2015 09:28:20 +0000
+Subject: [PATCH] disable test for arm for now
+
+---
+ sw/Module_sw.mk | 1 -
+ 1 file changed, 1 deletion(-)
+
 diff --git a/sw/Module_sw.mk b/sw/Module_sw.mk
 index 13453b5..0e1358c 100644
 --- a/sw/Module_sw.mk
@@ -10,3 +19,6 @@ index 13453b5..0e1358c 100644
      CppunitTest_sw_ooxmlexport2 \
      CppunitTest_sw_ooxmlexport3 \
      CppunitTest_sw_ooxmlexport4 \
+-- 
+2.5.0
+

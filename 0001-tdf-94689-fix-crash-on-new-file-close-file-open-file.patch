@@ -1,0 +1,34 @@
+From 0edf8e5147a0fb7e006b1228fc477adb52c21acd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?L=C3=A1szl=C3=B3=20N=C3=A9meth?=
+ <laszlo.nemeth@collabora.com>
+Date: Sat, 28 Nov 2015 02:33:34 +0100
+Subject: [PATCH] tdf#94689 fix crash on new file, close file, open file
+
+partially cherry-picked from the
+commit 187445b2d2885ced92be37ffb11cd2a9bb11f8d6
+
+Change-Id: I9e74fb41448c6be0b8daa6c0f8a0e207be0be6d6
+Reviewed-on: https://gerrit.libreoffice.org/20250
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: jan iversen <jani@documentfoundation.org>
+Reviewed-by: Michael Meeks <michael.meeks@collabora.com>
+(cherry picked from commit 6d101b6296962b444f535eeb2ff37580dc9bb60c)
+---
+ sfx2/source/sidebar/SidebarController.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
+index 9afa3f5..ae82afc 100644
+--- a/sfx2/source/sidebar/SidebarController.cxx
++++ b/sfx2/source/sidebar/SidebarController.cxx
+@@ -229,6 +229,7 @@ void SAL_CALL SidebarController::notifyContextChangeEvent (const css::ui::Contex
+     {
+         maAsynchronousDeckSwitch.CancelRequest();
+         maContextChangeUpdate.RequestCall();
++        UpdateConfigurations();
+     }
+ }
+ 
+-- 
+2.5.0
+

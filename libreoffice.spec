@@ -381,6 +381,7 @@ Patch72: 0006-sw-extend-various-OOXML-export-test-to-check-embedde.patch
 Patch73: 0007-fix-missing-BaseURL-when-loading-embedded-objects.patch
 Patch74: 0001-these-popups-should-start-invisible-and-take-default.patch
 Patch75: 0002-disable-tearability-of-color-window.patch
+Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2505,7 +2506,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Dec 16 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
+* Fri Dec 18 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - resolves various issues with embedded objects in DOCX export
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars
 - enable moving of decoration-less toolbars under wayland
@@ -2514,6 +2515,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - Resolves: rhbz#1291925 implement SAL_INVERT_TRACKFRAME
 - Related: rhbz#1281906 set a min size on un-resizeable non-layout dialogs
 - wayland: final popup positioning issues
+- Resolves: rhbz#1292210 cannot exit from readonly document in writer
 
 * Tue Dec 15 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-2
 - Resolves: rhbz#1289394 implement gtk3 tooltips natively

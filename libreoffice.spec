@@ -250,6 +250,8 @@ Patch12: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
 Patch13: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
 Patch14: 0003-gtk3-wayland-start-floating-windows-hidden.patch
 Patch15: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
+Patch16: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch17: 0002-disable-tearability-of-color-window.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

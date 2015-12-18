@@ -1,24 +1,57 @@
-From ab453c0a635471e39607625082cdfd59c26ff455 Mon Sep 17 00:00:00 2001
+From f4aa046f597593c29f0cd1c5d550e00feedf88fa Mon Sep 17 00:00:00 2001
 From: rpmbuild <rpmbuild@fedoraproject.org>
 Date: Thu, 17 Dec 2015 09:28:20 +0000
 Subject: [PATCH] disable test for arm for now
 
 ---
- sw/Module_sw.mk | 1 -
- 1 file changed, 1 deletion(-)
+ sw/Module_sw.mk | 34 ----------------------------------
+ 1 file changed, 34 deletions(-)
 
 diff --git a/sw/Module_sw.mk b/sw/Module_sw.mk
-index 13453b5..0e1358c 100644
+index 13453b5..1fdd0cc 100644
 --- a/sw/Module_sw.mk
 +++ b/sw/Module_sw.mk
-@@ -51,7 +51,6 @@ $(eval $(call gb_Module_add_slowcheck_targets,sw,\
-     CppunitTest_sw_htmlexport \
-     CppunitTest_sw_htmlimport \
-     CppunitTest_sw_macros_test \
+@@ -45,40 +45,6 @@ $(eval $(call gb_Module_add_targets,sw,\
+ 
+ endif
+ 
+-$(eval $(call gb_Module_add_slowcheck_targets,sw,\
+-	$(if $(and $(filter $(COM),MSC),$(MERGELIBS)),, \
+-		CppunitTest_sw_uwriter) \
+-    CppunitTest_sw_htmlexport \
+-    CppunitTest_sw_htmlimport \
+-    CppunitTest_sw_macros_test \
 -    CppunitTest_sw_ooxmlexport \
-     CppunitTest_sw_ooxmlexport2 \
-     CppunitTest_sw_ooxmlexport3 \
-     CppunitTest_sw_ooxmlexport4 \
+-    CppunitTest_sw_ooxmlexport2 \
+-    CppunitTest_sw_ooxmlexport3 \
+-    CppunitTest_sw_ooxmlexport4 \
+-    CppunitTest_sw_ooxmlexport5 \
+-    CppunitTest_sw_ooxmlexport6 \
+-    CppunitTest_sw_ooxmlexport7 \
+-    CppunitTest_sw_ooxmlfieldexport \
+-    CppunitTest_sw_ooxmlw14export \
+-    CppunitTest_sw_ooxmlimport \
+-    CppunitTest_sw_ww8export \
+-    CppunitTest_sw_ww8import \
+-    CppunitTest_sw_rtfexport \
+-    CppunitTest_sw_rtfimport \
+-    CppunitTest_sw_odfexport \
+-    CppunitTest_sw_odfimport \
+-    CppunitTest_sw_uiwriter \
+-    CppunitTest_sw_tiledrendering \
+-    CppunitTest_sw_mailmerge \
+-    CppunitTest_sw_globalfilter \
+-))
+-
+-ifneq ($(DISABLE_CVE_TESTS),TRUE)
+-$(eval $(call gb_Module_add_slowcheck_targets,sw,\
+-    CppunitTest_sw_filters_test \
+-))
+-endif
+-
+ ifneq ($(OOO_JUNIT_JAR),)
+ $(eval $(call gb_Module_add_subsequentcheck_targets,sw,\
+     JunitTest_sw_complex \
 -- 
 2.5.0
 

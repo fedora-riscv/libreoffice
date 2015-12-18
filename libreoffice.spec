@@ -902,7 +902,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
 #rhbz#452379 clump serbian autocorrections together
-%autocorr -l sr -n Serbian -i sr-Latn-RS -i sr-Latn-ME -i sr-Latn-CS
+%autocorr -l sr -n Serbian -i sr-Latn -i sr
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese

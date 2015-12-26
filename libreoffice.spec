@@ -607,7 +607,7 @@ This plugin is experimental and it is not suggested for normal use.
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
-Requires: %{name}-core = %{epoch}:%{version}-%{release}
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit
@@ -619,7 +619,7 @@ experimental tiled rendering API).
 
 %package -n libreofficekit-devel
 Summary: Development files for libreofficekit
-Requires: libreofficekit = %{epoch}:%{version}-%{release}
+Requires: libreofficekit%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit-devel

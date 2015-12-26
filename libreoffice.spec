@@ -562,7 +562,6 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 
 %package sdk-doc
 Summary: Software Development Kit documentation for LibreOffice
-Requires: %{name}-sdk%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 
 %description sdk-doc

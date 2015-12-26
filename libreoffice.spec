@@ -630,29 +630,12 @@ developing applications that use libreofficekit.
 
 %if 0%{?_enable_debug_packages}
 
-%define debug_package %{nil}
-%global __debug_package 1
-
-%package debuginfo
-Summary: Debug information for package %{name}
-AutoReqProv: 0
-%if 0%{?fedora}
-Requires: libreoffice-core = %{epoch}:%{version}-%{release}
-Recommends: libreoffice-gdb-debug-support = %{epoch}:%{version}-%{release}
-%endif
-
-%description debuginfo
-This package provides debug information for package %{name}.
-Debug information is useful when developing applications that use this
-package or when debugging this package.
-
-%files debuginfo -f debugfiles.list
-
 %package gdb-debug-support
 Summary: Additional support for debugging with gdb
 Requires: gdb
 Requires: %{libo_python}-six
-AutoReqProv: 0
+Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
+Supplements: libreoffice-debuginfo%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description gdb-debug-support
 This package provides gdb pretty printers for package %{name}.

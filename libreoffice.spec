@@ -268,15 +268,15 @@ formats, including Microsoft Office File Formats.
 
 %package filters
 Summary: All import / export filters
-Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description filters
 Metapackage to pull in all subpackages that contain import or export

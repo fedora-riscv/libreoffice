@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -284,7 +284,7 @@ filters.
 
 %package core
 Summary: Core modules for LibreOffice
-Requires: %{name}-%{fontname}-fonts%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
@@ -2142,6 +2142,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Jan 16 2016 Mamoru TASAKA <mtasaka@fedoraproject.org> - 1:5.1.0.2-3
+- Remove arch-specific dependency for font subpackage as it is noarch
+
 * Thu Jan 14 2016 Adam Jackson <ajax@redhat.com> - 1:5.1.0.2-2
 - Rebuild for glew 1.13
 

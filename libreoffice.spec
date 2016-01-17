@@ -635,7 +635,7 @@ developing applications that use libreofficekit.
 Summary: Additional support for debugging with gdb
 Requires: gdb%{?_isa}
 Requires: %{libo_python}-six
-Requires: libreoffice-core%{?_isa}%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
 Supplements: libreoffice-debuginfo%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description gdb-debug-support

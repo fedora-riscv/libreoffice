@@ -1,0 +1,31 @@
+From 50c2d561981d99abad9978811655365ff9884c87 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 12 Jan 2016 09:34:50 +0000
+Subject: [PATCH] fix a crash found in passing
+
+save a spreadsheet with an embedded formula in it to xlsx
+and alt tab away before the save has completed
+
+Change-Id: I9df996d4cb459a2aa688d06a7d53465518bebf5c
+---
+ sfx2/source/doc/objserv.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sfx2/source/doc/objserv.cxx b/sfx2/source/doc/objserv.cxx
+index ce293f4..57946d0 100644
+--- a/sfx2/source/doc/objserv.cxx
++++ b/sfx2/source/doc/objserv.cxx
+@@ -723,7 +723,9 @@ void SfxObjectShell::ExecFile_Impl(SfxRequest &rReq)
+                 const SfxBoolItem* saveTo = rReq.GetArg<SfxBoolItem>(SID_SAVETO);
+                 if (saveTo == nullptr || !saveTo->GetValue())
+                 {
+-                    GetFrame()->RemoveInfoBar("readonly");
++                    SfxViewFrame *pFrame = GetFrame();
++                    if (pFrame)
++                        pFrame->RemoveInfoBar("readonly");
+                     SetReadOnlyUI(false);
+                 }
+             }
+-- 
+2.5.0
+

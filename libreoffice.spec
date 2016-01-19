@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -382,6 +382,7 @@ Patch73: 0007-fix-missing-BaseURL-when-loading-embedded-objects.patch
 Patch74: 0001-these-popups-should-start-invisible-and-take-default.patch
 Patch75: 0002-disable-tearability-of-color-window.patch
 Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
+Patch77: 0001-fix-a-crash-found-in-passing.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2506,6 +2507,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Jan 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
+- Resolves: rhbz#1238413 fix an infobar related crash
+
 * Fri Dec 18 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - resolves various issues with embedded objects in DOCX export
 - Resolves: rhbz#1287581 explicitly state we don't want decorated toolbars

@@ -383,6 +383,7 @@ Patch74: 0001-these-popups-should-start-invisible-and-take-default.patch
 Patch75: 0002-disable-tearability-of-color-window.patch
 Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
 Patch77: 0001-fix-a-crash-found-in-passing.patch
+Patch78: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

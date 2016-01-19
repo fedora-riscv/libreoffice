@@ -1,0 +1,31 @@
+From c0d8f3643a634c062f094e97ea1a4d60e5e64916 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 19 Jan 2016 13:22:10 +0000
+Subject: [PATCH] Resolves: tdf#99604 ungrab modal dialogs
+
+Change-Id: I6735913c371968745da3ad6bf61e6ae3287c19a6
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 6012f58..803542d 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2367,6 +2367,13 @@ void GtkSalFrame::SetModal(bool bModal)
+     if (!m_pWindow)
+         return;
+     gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);
++    if (bModal)
++    {
++        //gtk_window_set_modal bTrue adds a grab, so ungrab here. Quite
++        //possibly we should alternatively call grab_add grab_ungrab on
++        //show/hide of menus ?
++        gtk_grab_remove(m_pWindow);
++    }
+ }
+ 
+ gboolean GtkSalFrame::signalTooltipQuery(GtkWidget*, gint /*x*/, gint /*y*/,
+-- 
+2.5.0
+

@@ -1,0 +1,41 @@
+From e220ba8610f8315af473a230565daa978ca6a16c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 20 Jan 2016 15:17:09 +0000
+Subject: [PATCH] Related: rhbz#1149116 collateEquals was set with
+ OString::boolean
+
+but extracted with toInt32()
+
+since
+
+commit c76cd71fe9bdefaef3f33f8ca193c32e3ab112ed
+
+    fdo#41524: CUPS printing: use "collate" option when PDF is available
+
+though actual reported problem works fine for me with default f23
+configuration already, this looks suspicious however
+
+Change-Id: I6fcb5df8039296c0e8b0fe931cb490396182de38
+Reviewed-on: https://gerrit.libreoffice.org/21629
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+Tested-by: Michael Stahl <mstahl@redhat.com>
+---
+ vcl/unx/generic/printer/jobdata.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/unx/generic/printer/jobdata.cxx b/vcl/unx/generic/printer/jobdata.cxx
+index a9f7c30..309309e 100644
+--- a/vcl/unx/generic/printer/jobdata.cxx
++++ b/vcl/unx/generic/printer/jobdata.cxx
+@@ -251,7 +251,7 @@ bool JobData::constructFromStreamBuffer( void* pData, sal_uInt32 bytes, JobData&
+         }
+         else if (aLine.startsWith(collateEquals))
+         {
+-            rJobData.m_bCollate = aLine.copy(RTL_CONSTASCII_LENGTH(collateEquals)).toInt32();
++            rJobData.m_bCollate = aLine.copy(RTL_CONSTASCII_LENGTH(collateEquals)).toBoolean();
+         }
+         else if (aLine.startsWith(margindajustmentEquals))
+         {
+-- 
+2.5.0
+

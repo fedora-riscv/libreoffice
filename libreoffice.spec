@@ -384,6 +384,7 @@ Patch75: 0002-disable-tearability-of-color-window.patch
 Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
 Patch77: 0001-fix-a-crash-found-in-passing.patch
 Patch78: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
+Patch79: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2508,8 +2509,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Jan 19 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
+* Wed Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
 - Resolves: rhbz#1238413 fix an infobar related crash
+- Related: rhbz#1149116 collation woes
 
 * Fri Dec 18 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - resolves various issues with embedded objects in DOCX export

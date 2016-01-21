@@ -1,0 +1,100 @@
+From 3819b97da3cddb463948c37300c47e804bd66464 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 21 Jan 2016 11:28:50 +0000
+Subject: [PATCH 3/3] Resolves: rhbz#1240591 gtk3: store clipboard when
+ LibreOffice is closed
+
+now contents copied to clipboard persist after LibreOffice exits
+
+Change-Id: I4433543944fb9664f87ade43da1198dcdd4e2a7c
+(cherry picked from commit f1358edf469e70df1fb044bb58cd888fea15173c)
+---
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
+index f1a9ddc..a3f3068 100644
+--- a/vcl/unx/gtk3/gtk3gtkinst.cxx
++++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
+@@ -13,12 +13,12 @@
+ #include "com/sun/star/lang/XServiceInfo.hpp"
+ #include "com/sun/star/lang/XSingleServiceFactory.hpp"
+ #include "com/sun/star/lang/XInitialization.hpp"
+-#include "com/sun/star/lang/DisposedException.hpp"
+ #include "com/sun/star/datatransfer/XTransferable.hpp"
+ #include "com/sun/star/datatransfer/clipboard/XClipboard.hpp"
+ #include "com/sun/star/datatransfer/clipboard/XClipboardEx.hpp"
+ #include "com/sun/star/datatransfer/clipboard/XClipboardNotifier.hpp"
+ #include "com/sun/star/datatransfer/clipboard/XClipboardListener.hpp"
++#include "com/sun/star/datatransfer/clipboard/XFlushableClipboard.hpp"
+ #include "com/sun/star/datatransfer/clipboard/XSystemClipboard.hpp"
+ #include "com/sun/star/datatransfer/dnd/XDragSource.hpp"
+ #include "com/sun/star/datatransfer/dnd/XDropTarget.hpp"
+@@ -275,6 +275,7 @@ static void clipboard_owner_init(ClipboardOwner *)
+ class VclGtkClipboard :
+         public cppu::WeakComponentImplHelper<
+         datatransfer::clipboard::XSystemClipboard,
++        datatransfer::clipboard::XFlushableClipboard,
+         XServiceInfo>
+ {
+     GdkAtom                                                  m_nSelection;
+@@ -326,6 +327,12 @@ public:
+         throw(RuntimeException, std::exception) override;
+ 
+     /*
++     * XFlushableClipboard
++     */
++    virtual void SAL_CALL flushClipboard()
++        throw(RuntimeException, std::exception) override;
++
++    /*
+      * XClipboardNotifier
+      */
+     virtual void SAL_CALL addClipboardListener(
+@@ -502,7 +509,8 @@ namespace
+ }
+ 
+ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
+-    : cppu::WeakComponentImplHelper<datatransfer::clipboard::XSystemClipboard, XServiceInfo>
++    : cppu::WeakComponentImplHelper<datatransfer::clipboard::XSystemClipboard,
++                                    datatransfer::clipboard::XFlushableClipboard, XServiceInfo>
+         (m_aMutex)
+     , m_nSelection(nSelection)
+ {
+@@ -513,6 +521,16 @@ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
+     m_pOwner->m_pThis = this;
+ }
+ 
++void VclGtkClipboard::flushClipboard()
++  throw (RuntimeException, std::exception)
++{
++    if (GDK_SELECTION_CLIPBOARD != m_nSelection)
++        return;
++
++    GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
++    gtk_clipboard_store(clipboard);
++}
++
+ VclGtkClipboard::~VclGtkClipboard()
+ {
+     GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
+@@ -524,7 +542,7 @@ VclGtkClipboard::~VclGtkClipboard()
+ void VclGtkClipboard::setContents(
+         const Reference< css::datatransfer::XTransferable >& xTrans,
+         const Reference< css::datatransfer::clipboard::XClipboardOwner >& xClipboardOwner )
+-    throw( RuntimeException, std::exception )
++    throw(RuntimeException, std::exception)
+ {
+     osl::ClearableMutexGuard aGuard( m_aMutex );
+     Reference< datatransfer::clipboard::XClipboardOwner > xOldOwner( m_aOwner );
+@@ -584,6 +602,7 @@ void VclGtkClipboard::setContents(
+             //if we have gained or lost ownership of the clipboard
+             gtk_clipboard_set_with_owner(clipboard, aGtkTargets.data(), aGtkTargets.size(),
+                                         ClipboardGetFunc, ClipboardClearFunc, G_OBJECT(m_pOwner));
++            gtk_clipboard_set_can_store(clipboard, aGtkTargets.data(), aGtkTargets.size());
+         }
+         m_aGtkTargets = aGtkTargets;
+     }
+-- 
+2.5.0
+

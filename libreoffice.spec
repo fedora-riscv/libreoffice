@@ -385,6 +385,9 @@ Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
 Patch77: 0001-fix-a-crash-found-in-passing.patch
 Patch78: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
 Patch79: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
+Patch80: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
+Patch81: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
+Patch82: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2509,9 +2512,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Jan 20 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
+* Thu Jan 21 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
 - Resolves: rhbz#1238413 fix an infobar related crash
 - Related: rhbz#1149116 collation woes
+- Resolves: rhbz#1240591 gtk3 store clipboard on app exit
 
 * Fri Dec 18 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-3
 - resolves various issues with embedded objects in DOCX export

@@ -39,6 +39,15 @@ diff --git a/vcl/Library_vclplug_gtk3.mk b/vcl/Library_vclplug_gtk3.mk
 index 515a81c..222c9d6 100644
 --- a/vcl/Library_vclplug_gtk3.mk
 +++ b/vcl/Library_vclplug_gtk3.mk
+@@ -99,7 +99,7 @@ $(eval $(call gb_Library_add_exception_objects,vclplug_gtk3,\
+     vcl/unx/gtk3/a11y/gtk3atkwindow \
+     vcl/unx/gtk3/a11y/gtk3atkwrapper \
+     vcl/unx/gtk3/app/gtk3gtkdata \
+-    vcl/unx/gtk3/app/gtk3gtkinst \
++    vcl/unx/gtk3/gtk3gtkinst \
+     vcl/unx/gtk3/app/gtk3gtksys \
+     vcl/unx/gtk3/app/gtk3fpicker \
+     vcl/unx/gtk3/gdi/cairo_gtk3_cairo \
 @@ -107,7 +107,7 @@ $(eval $(call gb_Library_add_exception_objects,vclplug_gtk3,\
      vcl/unx/gtk3/gdi/gtk3gtkprintwrapper \
      vcl/unx/gtk3/gdi/gtk3salnativewidgets-gtk \

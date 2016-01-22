@@ -1,4 +1,4 @@
-From da49acb6cd1f37b03b9f7144e297414996808fd9 Mon Sep 17 00:00:00 2001
+From b12b51dd6aaff754a63881a929cffbb38c6cf7fa Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 22 Jan 2016 10:52:19 +0000
 Subject: [PATCH] Resolves: rhbz#1257635 after httpConnectEncrypt use
@@ -15,12 +15,12 @@ Change-Id: I7ea5b11fbaabbd7ca73e5c94d0757ebdea8445ad
  1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/vcl/unx/generic/printer/cupsmgr.cxx b/vcl/unx/generic/printer/cupsmgr.cxx
-index 5c47442..b46b299 100644
+index 20a27c2..8da8031 100644
 --- a/vcl/unx/generic/printer/cupsmgr.cxx
 +++ b/vcl/unx/generic/printer/cupsmgr.cxx
 @@ -220,10 +220,7 @@ void CUPSManager::runDests()
               ippPort(),
-              cupsEncryption())) != nullptr )
+              cupsEncryption())) != NULL )
      {
 -        // neat, cups is up, clean up the canary
 -        httpClose(p_http);

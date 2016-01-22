@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.4
+%define libo_version 5.0.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -341,53 +341,37 @@ Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
 Patch33: 0001-implement-dialog-control-over-enhanced-shape-control.patch
 Patch34: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
 Patch35: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
-Patch36: 0001-gtk3-implement-drawPolyLine-for-svp-gtk3-backend.patch
-Patch37: 0001-Resolves-rhbz-1283426-using-vdevs-based-on-now-dead-.patch
-Patch38: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
-Patch39: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
-Patch40: 0001-rhbz-1286416-Be-more-resilient-during-auto-recovery-.patch
-Patch41: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
-Patch42: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
-Patch43: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
-Patch44: 0001-gtk3-wayland-wrong-dialog-sizes.patch
-Patch45: 0001-Resolves-rhbz-1277445-CalcOptimalExtraUserWidth-is-a.patch
-Patch46: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
-Patch47: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
-Patch48: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
-Patch49: 0001-Resolves-tdf-95700-index-dialog-cut-off.patch
-Patch50: 0001-move-things-around-a-little-to-make-backporting-easi.patch
-Patch51: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
-Patch52: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
-Patch53: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
-Patch54: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
-Patch55: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
-Patch56: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
-Patch57: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
-Patch58: 0001-Resolves-rhbz-1285364-urls-cannot-be-opened-under-wa.patch
-Patch59: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
-Patch60: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
-Patch61: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch62: 0001-but-only-for-dialog.patch
-Patch63: disable.arm.test.patch
-Patch64: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
-Patch65: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
-Patch66: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch67: 0001-tdf-92754-Excel-Chart-content-type-is-not-exported-p.patch
-Patch68: 0002-sw-DOCX-export-eliminate-chart-numbering-non-determi.patch
-Patch69: 0003-sw-move-ProgId-parsing-to-DocxExport-WriteOLEObject.patch
-Patch70: 0004-sw-fix-DOCX-export-of-embedded-OOXML-objects.patch
-Patch71: 0005-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
-Patch72: 0006-sw-extend-various-OOXML-export-test-to-check-embedde.patch
-Patch73: 0007-fix-missing-BaseURL-when-loading-embedded-objects.patch
-Patch74: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch75: 0002-disable-tearability-of-color-window.patch
-Patch76: 0001-tdf-94689-fix-crash-on-new-file-close-file-open-file.patch
-Patch77: 0001-fix-a-crash-found-in-passing.patch
-Patch78: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
-Patch79: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
-Patch80: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
-Patch81: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
-Patch82: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
+Patch36: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
+Patch37: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
+Patch38: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
+Patch39: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
+Patch40: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
+Patch41: 0001-gtk3-wayland-wrong-dialog-sizes.patch
+Patch42: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
+Patch43: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
+Patch44: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
+Patch45: 0001-move-things-around-a-little-to-make-backporting-easi.patch
+Patch46: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
+Patch47: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
+Patch48: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
+Patch49: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
+Patch50: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
+Patch51: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
+Patch52: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
+Patch53: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
+Patch54: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
+Patch55: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch56: 0001-but-only-for-dialog.patch
+Patch57: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
+Patch58: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
+Patch59: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch60: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch61: 0002-disable-tearability-of-color-window.patch
+Patch62: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
+Patch63: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
+Patch64: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
+Patch65: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
+Patch66: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -1258,9 +1242,6 @@ sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
 sed -i -e /CppunitTest_vcl_outdev/d vcl/Module_vcl.mk
 sed -i -e /CppunitTest_vcl_bitmap_test/d vcl/Module_vcl.mk
 git commit -q -a -m 'temporarily disable failing tests'
-
-git mv writerperfect/qa/unit/data/impress/libetonyek/fail/v6.zip writerperfect/qa/unit/data/impress/libetonyek/pass/v6.zip
-git commit -am 'update for libetonyek 0.1.4'
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
@@ -2512,7 +2493,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jan 21 2015 Caolán McNamara <caolanm@redhat.com> - 1:5.0.4.2-4-UNBUILT
+* Thu Jan 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-1
 - Resolves: rhbz#1238413 fix an infobar related crash
 - Related: rhbz#1149116 collation woes
 - Resolves: rhbz#1240591 gtk3 store clipboard on app exit

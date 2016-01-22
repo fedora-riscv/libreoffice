@@ -1,8 +1,8 @@
-From 3819b97da3cddb463948c37300c47e804bd66464 Mon Sep 17 00:00:00 2001
+From 3f20d5f3b46160c2a5e425bfd50b2e0319cda021 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 21 Jan 2016 11:28:50 +0000
-Subject: [PATCH 3/3] Resolves: rhbz#1240591 gtk3: store clipboard when
- LibreOffice is closed
+Subject: [PATCH] Resolves: rhbz#1240591 gtk3: store clipboard when LibreOffice
+ is closed
 
 now contents copied to clipboard persist after LibreOffice exits
 
@@ -13,7 +13,7 @@ Change-Id: I4433543944fb9664f87ade43da1198dcdd4e2a7c
  1 file changed, 22 insertions(+), 3 deletions(-)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index f1a9ddc..a3f3068 100644
+index f727462..8654b45 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
 @@ -13,12 +13,12 @@
@@ -39,7 +39,7 @@ index f1a9ddc..a3f3068 100644
  {
      GdkAtom                                                  m_nSelection;
 @@ -326,6 +327,12 @@ public:
-         throw(RuntimeException, std::exception) override;
+         throw(RuntimeException, std::exception) SAL_OVERRIDE;
  
      /*
 +     * XFlushableClipboard
@@ -51,7 +51,7 @@ index f1a9ddc..a3f3068 100644
       * XClipboardNotifier
       */
      virtual void SAL_CALL addClipboardListener(
-@@ -502,7 +509,8 @@ namespace
+@@ -503,7 +510,8 @@ namespace
  }
  
  VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
@@ -61,7 +61,7 @@ index f1a9ddc..a3f3068 100644
          (m_aMutex)
      , m_nSelection(nSelection)
  {
-@@ -513,6 +521,16 @@ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
+@@ -514,6 +522,16 @@ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
      m_pOwner->m_pThis = this;
  }
  
@@ -78,7 +78,7 @@ index f1a9ddc..a3f3068 100644
  VclGtkClipboard::~VclGtkClipboard()
  {
      GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
-@@ -524,7 +542,7 @@ VclGtkClipboard::~VclGtkClipboard()
+@@ -525,7 +543,7 @@ VclGtkClipboard::~VclGtkClipboard()
  void VclGtkClipboard::setContents(
          const Reference< css::datatransfer::XTransferable >& xTrans,
          const Reference< css::datatransfer::clipboard::XClipboardOwner >& xClipboardOwner )
@@ -87,7 +87,7 @@ index f1a9ddc..a3f3068 100644
  {
      osl::ClearableMutexGuard aGuard( m_aMutex );
      Reference< datatransfer::clipboard::XClipboardOwner > xOldOwner( m_aOwner );
-@@ -584,6 +602,7 @@ void VclGtkClipboard::setContents(
+@@ -585,6 +603,7 @@ void VclGtkClipboard::setContents(
              //if we have gained or lost ownership of the clipboard
              gtk_clipboard_set_with_owner(clipboard, aGtkTargets.data(), aGtkTargets.size(),
                                          ClipboardGetFunc, ClipboardClearFunc, G_OBJECT(m_pOwner));

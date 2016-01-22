@@ -789,7 +789,7 @@ index 2f0853b..d0fa7dc 100644
      OUString aChartType( xChartType->getChartType());
 @@ -2048,7 +2047,7 @@ void ChartExport::exportSeries( Reference<chart2::XChartType> xChartType,
                      {
-                         sal_Int32 nLocalAttachedAxis;
+                         sal_Int32 nLocalAttachedAxis = 0;
                          mAny >>= nLocalAttachedAxis;
 -                        rAttachedAxis = translateFromChart2AxisIndexToOox(nLocalAttachedAxis);
 +                        rPrimaryAxes = isPrimaryAxes(nLocalAttachedAxis);

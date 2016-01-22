@@ -372,6 +372,7 @@ Patch63: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
 Patch64: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
 Patch65: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
 Patch66: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
+Patch67: 0001-Resolves-rhbz-1257635-after-httpConnectEncrypt-use-c.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2493,6 +2494,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Jan 22 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-2
+- Resolves: rhbz#1257635 after httpConnectEncrypt use cupsGetDests2
+
 * Thu Jan 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-1
 - Resolves: rhbz#1238413 fix an infobar related crash
 - Related: rhbz#1149116 collation woes

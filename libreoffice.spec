@@ -373,6 +373,7 @@ Patch64: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
 Patch65: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
 Patch66: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
 Patch67: 0001-Resolves-rhbz-1257635-after-httpConnectEncrypt-use-c.patch
+Patch68: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

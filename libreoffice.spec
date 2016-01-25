@@ -270,6 +270,7 @@ formats, including Microsoft Office File Formats.
 Summary: All import / export filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} > 7
 Recommends: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
@@ -277,6 +278,15 @@ Recommends: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
+%else
+Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 
 %description filters
 Metapackage to pull in all subpackages that contain import or export
@@ -477,7 +487,9 @@ Summary: LibreOffice Presentation Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} > 7
 Recommends: %{name}-ogltrans%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
 Obsoletes: openoffice.org-impress-core < 1:3.3.1
@@ -636,7 +648,9 @@ Summary: Additional support for debugging with gdb
 Requires: gdb%{?_isa}
 Requires: %{libo_python}-six
 Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} > 7
 Supplements: libreoffice-debuginfo%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 
 %description gdb-debug-support
 This package provides gdb pretty printers for package %{name}.

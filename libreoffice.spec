@@ -377,6 +377,7 @@ Patch68: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
 Patch69: 0001-valgrind-memleak-on-thrown-exception.patch
 Patch70: 0002-valgrind-memleak-on-thrown-exception.patch
 Patch71: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch72: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2498,9 +2499,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jan 25 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.1-3-UNBUILT
+* Wed Jan 27 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.1-3
 - Resolves: rhbz#1168757 Selecting multiple slides is not reflected in Print
   dialog
+- Resolves: rhbz#1294208 trackpad two-finger scroll goes into reverse
 
 * Fri Jan 22 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-2
 - Resolves: rhbz#1257635 after httpConnectEncrypt use cupsGetDests2

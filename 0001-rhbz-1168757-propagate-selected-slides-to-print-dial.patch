@@ -58,7 +58,7 @@ index 734c61a..8924468 100644
 +            SlideSorterViewShell* const pSSViewSh(SlideSorterViewShell::GetSlideSorter(mrBase));
 +            if (pSSViewSh)
 +            {
-+                const std::shared_ptr<SlideSorterViewShell::PageSelection> pPageSelection(pSSViewSh->GetPageSelection());
++                const boost::shared_ptr<SlideSorterViewShell::PageSelection> pPageSelection(pSSViewSh->GetPageSelection());
 +                if (bool(pPageSelection) && pPageSelection->size() > 1)
 +                {
 +                    OUStringBuffer aBuf;

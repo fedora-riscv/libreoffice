@@ -253,6 +253,7 @@ Patch15: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
 Patch16: 0001-these-popups-should-start-invisible-and-take-default.patch
 Patch17: 0002-disable-tearability-of-color-window.patch
 Patch18: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch19: 0001-error-left-operand-of-shift-expression-1-4-is-negati.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,4 +1,4 @@
-From 6fd4be21a553bea645259c6f1c2b4dc99a9a067f Mon Sep 17 00:00:00 2001
+From 7db56619606d7ddf662b796914feaf280987f77a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 3 Feb 2016 12:36:09 +0000
 Subject: [PATCH] Resolves: tdf#96653 distorted images on export to pdf
@@ -19,10 +19,10 @@ Change-Id: Iee54a9f29dd0fdaf3e1f2aeb7b9898cecb453e37
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
-index de67de6..3c20b49 100644
+index e509b1a..f2974a2 100644
 --- a/vcl/source/gdi/pdfwriter_impl.cxx
 +++ b/vcl/source/gdi/pdfwriter_impl.cxx
-@@ -11390,7 +11390,8 @@ bool PDFWriterImpl::writeBitmapObject( BitmapEmit& rObject, bool bMask )
+@@ -11426,7 +11426,8 @@ bool PDFWriterImpl::writeBitmapObject( BitmapEmit& rObject, bool bMask )
          beginCompression();
          if( ! bTrueColor || pAccess->GetScanlineFormat() == BMP_FORMAT_24BIT_TC_RGB )
          {
@@ -30,7 +30,7 @@ index de67de6..3c20b49 100644
 +            //With PDF bitmaps, each row is padded to a BYTE boundary (multiple of 8 bits).
 +            const int nScanLineBytes = ((pAccess->GetBitCount() * pAccess->Width()) + 7U) / 8U;
  
-             for( long i = 0; i < pAccess->Height(); i++ )
+             for( int i = 0; i < pAccess->Height(); i++ )
              {
 -- 
 2.5.0

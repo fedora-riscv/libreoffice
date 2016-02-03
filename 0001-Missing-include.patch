@@ -1,0 +1,26 @@
+From 201793cb2c204475422cd0ee86f4065f03e4b9be Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 28 Jan 2016 15:47:41 +0100
+Subject: [PATCH] Missing include
+
+Change-Id: I4930837c2a5bd78c16a83dcccde34843d3026618
+(cherry picked from commit 63cada47911029cce512f3b8ac0b6a6d2c323032)
+---
+ libreofficekit/qa/gtktiledviewer/gtktiledviewer.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libreofficekit/qa/gtktiledviewer/gtktiledviewer.cxx b/libreofficekit/qa/gtktiledviewer/gtktiledviewer.cxx
+index fb886ef..ebf0559 100644
+--- a/libreofficekit/qa/gtktiledviewer/gtktiledviewer.cxx
++++ b/libreofficekit/qa/gtktiledviewer/gtktiledviewer.cxx
+@@ -11,6 +11,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <pwd.h>
++#include <cmath>
+ #include <string>
+ #include <map>
+ #include <iostream>
+-- 
+2.5.0
+

@@ -257,6 +257,7 @@ Patch19: 0001-error-left-operand-of-shift-expression-1-4-is-negati.patch
 Patch20: 0001-Missing-include.patch
 Patch21: 0001-fix-gcc-build-error.patch
 Patch22: 0001-hack-out-optimization-to-build.patch
+Patch23: 0001-generate-better-unit-test-assert-message.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

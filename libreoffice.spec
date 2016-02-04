@@ -1294,6 +1294,9 @@ export LD_LIBRARY_PATH=%{devtoolset_path}%{_libdir}${LD_LIBRARY_PATH:+:${LD_LIBR
 %ifarch s390 s390x
 %define archoptions --disable-sdremote-bluetooth
 %endif
+%ifarch %{arm}
+%define archoptions --disable-cve-tests
+%endif
 %else # rhel7
 %define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --disable-gstreamer-0-10 --enable-gstreamer-1-0 --with-system-mythes --enable-python=system %{?_smp_mflags:--with-parallelism=%{_smp_mflags}}
 %endif

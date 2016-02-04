@@ -1,0 +1,28 @@
+From c617b8e4b476dc363f12592dae5e8188090ec828 Mon Sep 17 00:00:00 2001
+From: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Date: Tue, 21 Jul 2015 19:01:26 +0200
+Subject: [PATCH] avoid crash with color listbox for now
+
+(cherry picked from commit 5ee0e6ab93ad791f5e79506efafd16cb7364ffb1)
+
+Change-Id: I36ac6513546961ec8d8d1e9437a8ef88574acbf4
+---
+ svx/source/sidebar/area/AreaPropertyPanel.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/svx/source/sidebar/area/AreaPropertyPanel.cxx b/svx/source/sidebar/area/AreaPropertyPanel.cxx
+index 766ba52..05f1af9 100644
+--- a/svx/source/sidebar/area/AreaPropertyPanel.cxx
++++ b/svx/source/sidebar/area/AreaPropertyPanel.cxx
+@@ -236,7 +236,7 @@ IMPL_LINK(AreaPropertyPanel, SelectFillTypeHdl, ListBox *, pToolBox)
+                 mpLbFillAttr->Hide();
+                 mpToolBoxColor->Show();
+                 const OUString aTmpStr;
+-                const Color aColor = mpColorItem->GetColorValue();
++                const Color aColor = mpColorItem ? mpColorItem->GetColorValue() : COL_AUTO;
+                 const XFillColorItem aXFillColorItem( aTmpStr, aColor );
+ 
+                 // #i122676# change FillStyle and Color in one call
+-- 
+2.5.0
+

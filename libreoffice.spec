@@ -380,6 +380,7 @@ Patch71: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
 Patch72: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
 Patch73: 0001-Resolves-tdf-96653-distorted-images-on-export-to-pdf.patch
 Patch74: 0001-avoid-crash-with-color-listbox-for-now.patch
+Patch75: 0001-Resolves-tdf-97375-use-Invalidate-in-all-modes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2505,8 +2506,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-5
+* Fri Feb 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-5
 - avoid crash with color listbox in sidebar
+- Resolves: tdf#97375 use Invalidate in all modes, which fixes large glyphs in impress
 
 * Wed Feb 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-4
 - Resolves: tdf#96653 distorted images on export to pdf

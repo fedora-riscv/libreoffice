@@ -2509,7 +2509,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Fri Feb 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-7
-- Resolves: tdf#97375 use Invalidate in all modes, which fixes large glyphs in impress
+- use the users preferred initials for impress annotations
 - implement using the users preferred initials for impress annotations/comments
 - Resolves: tdf#97465 like wheel ignore swipe for sc input
 

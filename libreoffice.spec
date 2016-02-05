@@ -381,6 +381,7 @@ Patch72: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
 Patch73: 0001-Resolves-tdf-96653-distorted-images-on-export-to-pdf.patch
 Patch74: 0001-avoid-crash-with-color-listbox-for-now.patch
 Patch75: 0001-Resolves-tdf-97375-use-Invalidate-in-all-modes.patch
+Patch76: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

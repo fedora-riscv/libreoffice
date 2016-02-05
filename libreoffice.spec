@@ -258,6 +258,7 @@ Patch20: 0001-Missing-include.patch
 Patch21: 0001-fix-gcc-build-error.patch
 Patch22: 0001-hack-out-optimization-to-build.patch
 Patch23: 0001-generate-better-unit-test-assert-message.patch
+Patch24: 0001-Make-virtual-ScValidationDlg-non-inline.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

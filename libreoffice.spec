@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -382,6 +382,7 @@ Patch73: 0001-Resolves-tdf-96653-distorted-images-on-export-to-pdf.patch
 Patch74: 0001-avoid-crash-with-color-listbox-for-now.patch
 Patch75: 0001-Resolves-tdf-97375-use-Invalidate-in-all-modes.patch
 Patch76: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
+Patch77: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2507,6 +2508,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Feb 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-7
+- Resolves: tdf#97375 use Invalidate in all modes, which fixes large glyphs in impress
+- implement using the users preferred initials for impress annotations/comments
+- Resolves: tdf#97465 like wheel ignore swipe for sc input
+
 * Fri Feb 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.1-6
 - Resolves: tdf#97375 use Invalidate in all modes, which fixes large glyphs in impress
 

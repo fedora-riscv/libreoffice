@@ -1307,10 +1307,6 @@ export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLAD
 export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
 
-%ifarch %{arm}
-%define archoptions --disable-cve-tests
-%endif
-
 %if %{with langpacks}
 %define with_lang --with-lang='%{langpack_langs}'
 %endif
@@ -1364,7 +1360,8 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-make VERBOSE=true
+# make VERBOSE=true
+make verbose=true build-nocheck
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

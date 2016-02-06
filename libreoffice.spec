@@ -1053,8 +1053,7 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-# make verbose=true
- make verbose=true build-nocheck
+ make verbose=true
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

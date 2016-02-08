@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -381,6 +381,7 @@ Patch72: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
 Patch73: 0001-avoid-crash-with-color-listbox-for-now.patch
 Patch74: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
 Patch75: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
+Patch76: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2503,6 +2504,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-2.UNBUILT
+- Resolves: tdf#92720 report builder loses embedded charts
+
 * Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-1
 - update to 5.0.5 rc2
 

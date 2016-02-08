@@ -1,0 +1,65 @@
+From c29bc3305e835d6f32195b4d9528e64b64d4019e Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 3 Feb 2016 22:39:46 +0100
+Subject: [PATCH] reportbuilder: tdf#92720: add loext namespace
+
+... to allow export of paragraphs in shapes.
+
+(regression from 6acc6c011d3afd6834efeee1b2efe43652a86f2e)
+
+Change-Id: I2c23e686a2cfcd997d3393b0f9fb4cdcab7252b7
+(cherry picked from commit 969a760e2bad7f65c28eba425af1751946b09d76)
+Reviewed-on: https://gerrit.libreoffice.org/22090
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ .../java/org/libreoffice/report/pentaho/OfficeNamespaces.java      | 1 +
+ .../report/pentaho/output/OfficeDocumentReportTarget.java          | 1 +
+ reportdesign/source/filter/xml/xmlExport.cxx                       | 7 +++++++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/reportbuilder/java/org/libreoffice/report/pentaho/OfficeNamespaces.java b/reportbuilder/java/org/libreoffice/report/pentaho/OfficeNamespaces.java
+index 2774359..6a7d144 100644
+--- a/reportbuilder/java/org/libreoffice/report/pentaho/OfficeNamespaces.java
++++ b/reportbuilder/java/org/libreoffice/report/pentaho/OfficeNamespaces.java
+@@ -51,6 +51,7 @@ public class OfficeNamespaces
+     public static final String OOREPORT_NS = "http://openoffice.org/2005/report";
+     public static final String GRDDL_NS = "http://www.w3.org/2003/g/data-view#";
+     public static final String CONFIG = "urn:oasis:names:tc:opendocument:xmlns:config:1.0";
++    public static final String LOEXT_NS = "urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0";
+ 
+ 
+     private OfficeNamespaces()
+diff --git a/reportbuilder/java/org/libreoffice/report/pentaho/output/OfficeDocumentReportTarget.java b/reportbuilder/java/org/libreoffice/report/pentaho/output/OfficeDocumentReportTarget.java
+index 8518bc6..beffe31 100644
+--- a/reportbuilder/java/org/libreoffice/report/pentaho/output/OfficeDocumentReportTarget.java
++++ b/reportbuilder/java/org/libreoffice/report/pentaho/output/OfficeDocumentReportTarget.java
+@@ -383,6 +383,7 @@ public abstract class OfficeDocumentReportTarget extends AbstractReportTarget
+             rootAttributes.addNamespaceDeclaration("xsd", OfficeNamespaces.XSD_NS);
+             rootAttributes.addNamespaceDeclaration("xsi", OfficeNamespaces.XSI_NS);
+             rootAttributes.addNamespaceDeclaration("grddl", OfficeNamespaces.GRDDL_NS);
++            rootAttributes.addNamespaceDeclaration("loext", OfficeNamespaces.LOEXT_NS);
+             rootAttributes.setAttribute(OfficeNamespaces.OFFICE_NS, "version",
+                     ODF_VERSION);
+ 
+diff --git a/reportdesign/source/filter/xml/xmlExport.cxx b/reportdesign/source/filter/xml/xmlExport.cxx
+index bf7594e9..99d41fa 100644
+--- a/reportdesign/source/filter/xml/xmlExport.cxx
++++ b/reportdesign/source/filter/xml/xmlExport.cxx
+@@ -251,6 +251,13 @@ ORptExport::ORptExport(const Reference< XComponentContext >& _rxContext, OUStrin
+     if( getExportFlags() & (SvXMLExportFlags::STYLES|SvXMLExportFlags::AUTOSTYLES|SvXMLExportFlags::MASTERSTYLES|SvXMLExportFlags::CONTENT) )
+     {
+         _GetNamespaceMap().Add( GetXMLToken(XML_NP_XHTML),GetXMLToken(XML_N_XHTML), XML_NAMESPACE_XHTML );
++        // loext, needed for paragraphs inside shapes
++        if (getDefaultVersion() > SvtSaveOptions::ODFVER_012)
++        {
++            _GetNamespaceMap().Add(
++                GetXMLToken(XML_NP_LO_EXT), GetXMLToken(XML_N_LO_EXT),
++                XML_NAMESPACE_LO_EXT);
++        }
+     }
+     // GRDDL: to convert RDFa and meta.xml to RDF
+     if( getExportFlags() & (SvXMLExportFlags::META|SvXMLExportFlags::STYLES|SvXMLExportFlags::AUTOSTYLES|SvXMLExportFlags::MASTERSTYLES|SvXMLExportFlags::CONTENT) )
+-- 
+2.5.0
+

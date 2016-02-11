@@ -328,7 +328,9 @@ Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3
 Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
+Provides: libreoffice-appdata = %{epoch}:%{version}-%{release}
 Provides: libreoffice-appdata%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description core
@@ -504,7 +506,9 @@ Obsoletes: openoffice.org-impress-core < 1:3.3.1
 Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
 Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
 Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
+Provides: %{name}-presentation-minimizer = %{epoch}:%{version}-%{release}
 Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
 Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description impress
@@ -744,6 +748,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-o:Obsoletes: openoffice.org-langpack-%{-o*} < 1:3.3.1}%{!-o:%{-O:Obsoletes: openoffice.org-langpack-%{lang} < 1:3.3.1}} \
 %{-w:Obsoletes: openoffice.org2-langpack-%{-x*} < 1:3.0.0}%{!-x:%{-W:Obsoletes: openoffice.org2-langpack-%{lang} < 1:3.0.0}} \
 %{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < 1:2.0.3}} \
+%{-p:Provides: %{name}-langpack-%{-p*}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa}} \
 \
 %description %{pkgname} \

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.0
+%define libo_version 5.1.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -55,8 +55,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,23 +243,16 @@ Patch6: 0001-never-run-autogen.sh.patch
 Patch7: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch8: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch9: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
-Patch10: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch11: 0001-but-only-for-dialog.patch
-Patch12: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
-Patch13: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
-Patch14: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch15: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
-Patch16: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch17: 0002-disable-tearability-of-color-window.patch
-Patch18: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch19: 0001-error-left-operand-of-shift-expression-1-4-is-negati.patch
-Patch20: 0001-Missing-include.patch
-Patch21: 0001-fix-gcc-build-error.patch
-Patch22: 0001-hack-out-optimization-to-build.patch
-Patch23: 0001-generate-better-unit-test-assert-message.patch
-Patch24: 0001-Make-virtual-ScValidationDlg-non-inline.patch
-Patch25: 0001-gtk3-adapt-to-3.20-style-changes.patch
+Patch9: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch10: 0001-but-only-for-dialog.patch
+Patch11: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch12: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
+Patch13: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch14: 0002-disable-tearability-of-color-window.patch
+Patch15: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch16: 0001-hack-out-optimization-to-build.patch
+Patch17: 0001-generate-better-unit-test-assert-message.patch
+Patch18: 0001-gtk3-adapt-to-3.20-style-changes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2169,6 +2162,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 11 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.1-1
+- update to 5.1.1 rc1
+- Resolves: rhbz#1303007 add noarch Provides too
+
 * Thu Feb 11 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.0.3-3
 - rework gtk3 themeing to work with latest gtk
 

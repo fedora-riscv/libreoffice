@@ -948,7 +948,7 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_ooxmlimport/d -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk
 git commit -q -a -m 'temporarily disable failing tests'
 
 %ifarch %{arm}

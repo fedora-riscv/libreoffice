@@ -956,14 +956,6 @@ sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d -e /Cp
 git commit -q -a -m 'disable tests segfaulting on arm'
 %endif
 
-%if 0%{?rhel}
-sed -i -e '/libmwaw/s/0\.3\../0.3.5/' configure.ac
-git rm writerperfect/qa/unit/data/draw/libmwaw/pass/MacDraft_5.5.drw writerperfect/qa/unit/data/writer/libmwaw/pass/RagTime_5.5.rag
-git commit -am 'make tests pass with libmwaw 0.3.5'
-sed -i -e '/libetonyek/s/0\.1\../0.1.2/' configure.ac
-git commit -am 'make tests pass with libetonyek 0.1.2'
-%endif
-
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm

@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -259,6 +259,7 @@ Patch21: 0001-fix-gcc-build-error.patch
 Patch22: 0001-hack-out-optimization-to-build.patch
 Patch23: 0001-generate-better-unit-test-assert-message.patch
 Patch24: 0001-Make-virtual-ScValidationDlg-non-inline.patch
+Patch25: 0001-gtk3-adapt-to-3.20-style-changes.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2163,6 +2164,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 11 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.0.3-3
+- rework gtk3 themeing to work with latest gtk
+
 * Tue Feb 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.0.3-2
 - Resolves: rhbz#1303619 nothing provides java-devel(x86_64)
 

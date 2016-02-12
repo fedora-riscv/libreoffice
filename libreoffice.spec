@@ -1541,6 +1541,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/diffTextureFragmentShader.glsl
 %{baseinstdir}/program/opengl/dumbVertexShader.glsl
 %{baseinstdir}/program/opengl/dummyVertexShader.glsl
+%{baseinstdir}/program/opengl/greyscaleFragmentShader.glsl
 %{baseinstdir}/program/opengl/invert50FragmentShader.glsl
 %{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
@@ -1884,6 +1885,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/opengl/reflectionFragmentShader.glsl
 %{baseinstdir}/program/opengl/reflectionVertexShader.glsl
 %{baseinstdir}/program/opengl/staticFragmentShader.glsl
+%{baseinstdir}/program/opengl/vortexFragmentShader.glsl
+%{baseinstdir}/program/opengl/vortexGeometryShader.glsl
 %{baseinstdir}/program/opengl/vortexVertexShader.glsl
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd

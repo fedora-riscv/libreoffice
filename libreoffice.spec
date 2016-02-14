@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -199,7 +199,7 @@ BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(liborcus-0.10)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
-BuildRequires: pkgconfig(mdds) >= 0.12.0
+BuildRequires: pkgconfig(mdds-1.0)
 %endif
 
 # java stuff
@@ -1005,6 +1005,11 @@ export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOL
 export PYTHON=%{_bindir}/python
 export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
+%endif
+
+%if 0%{?fedora}
+export MDDS_CFLAGS=`pkg-config --cflags mdds-1.0`
+export MDDS_LIBS=' '
 %endif
 
 # %%if 0%%{?rhel} && 0%%{?rhel} < 7
@@ -2157,6 +2162,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sun Feb 14 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.1-2
+- switch to mdds 1.x
+
 * Thu Feb 11 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.1-1
 - update to 5.1.1 rc1
 - Resolves: rhbz#1303007 add noarch Provides too

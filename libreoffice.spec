@@ -258,6 +258,10 @@ Patch21: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
 Patch22: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
 Patch23: 0004-implement-wayland-handle-passing-for-gstreamer.patch
 Patch24: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
+%if 0%{?rhel}
+# not upstreamed
+Patch25: 0001-fix-build-with-gcc-4.8.patch
+%endif
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

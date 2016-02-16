@@ -1,4 +1,4 @@
-From 8ab4035ef1e139386eaa864a35f132e81056e679 Mon Sep 17 00:00:00 2001
+From e75e433e943f7d082e81ea329ec0ca8747120e3b Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
@@ -9,10 +9,11 @@ Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
  external/Module_external.mk                              | 1 -
  filter/Configuration_filter.mk                           | 8 --------
  writerperfect/Library_wpftwriter.mk                      | 2 --
- writerperfect/qa/unit/WpftWriterFilterTest.cxx           | 1 -
+ writerperfect/qa/unit/WpftImportTestBase.hxx             | 3 ---
+ writerperfect/qa/unit/WpftWriterFilterTest.cxx           | 5 -----
  writerperfect/source/writer/wpftwriter.component         | 4 ----
  writerperfect/source/writer/wpftwriter_genericfilter.cxx | 6 ------
- 7 files changed, 28 deletions(-)
+ 8 files changed, 35 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
 index 58a53b5..be1b129 100644
@@ -89,11 +90,36 @@ index 8557991..288c929 100644
  	writerperfect/source/writer/MSWorksImportFilter \
  	writerperfect/source/writer/MWAWImportFilter \
  	writerperfect/source/writer/PagesImportFilter \
+diff --git a/writerperfect/qa/unit/WpftImportTestBase.hxx b/writerperfect/qa/unit/WpftImportTestBase.hxx
+index 7e20987..514561f 100644
+--- a/writerperfect/qa/unit/WpftImportTestBase.hxx
++++ b/writerperfect/qa/unit/WpftImportTestBase.hxx
+@@ -29,9 +29,6 @@
+         ((minor) > (req_minor) \
+          || ((minor) == (req_minor) && ((micro) >= (req_micro)))))
+ 
+-#define REQUIRE_EBOOK_VERSION(major, minor, micro) \
+-    REQUIRE_VERSION(EBOOK_VERSION_MAJOR, EBOOK_VERSION_MINOR, EBOOK_VERSION_MICRO, major, minor, micro)
+-
+ #define REQUIRE_ETONYEK_VERSION(major, minor, micro) \
+     REQUIRE_VERSION(ETONYEK_VERSION_MAJOR, ETONYEK_VERSION_MINOR, ETONYEK_VERSION_MICRO, major, minor, micro)
+ 
 diff --git a/writerperfect/qa/unit/WpftWriterFilterTest.cxx b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
-index 9e8bd02..3c668e4 100644
+index 9e8bd02..5e3a04d 100644
 --- a/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 +++ b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
-@@ -51,7 +51,6 @@ void WpftWriterFilterTest::test()
+@@ -31,10 +31,6 @@ WpftWriterFilterTest::WpftWriterFilterTest()
+ 
+ void WpftWriterFilterTest::test()
+ {
+-    const writerperfect::test::WpftOptionalMap_t aEBookOptional
+-    {
+-        {"FictionBook2.fb2.zip", REQUIRE_EBOOK_VERSION(0, 1, 1)},
+-    };
+     const writerperfect::test::WpftOptionalMap_t aEtonyekOptional
+     {
+         {"Pages_4.pages", REQUIRE_ETONYEK_VERSION(0, 1, 2)},
+@@ -51,7 +47,6 @@ void WpftWriterFilterTest::test()
      };
  
      doTest("com.sun.star.comp.Writer.AbiWordImportFilter", "/writerperfect/qa/unit/data/writer/libabw/");

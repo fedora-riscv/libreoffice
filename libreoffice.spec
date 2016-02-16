@@ -229,38 +229,37 @@ Patch0:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch2:  libreoffice-installfix.patch
+# not upstreamed
+Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+# not upstreamed
+Patch4: 0001-disable-firebird-unit-test.patch
+# not upstreamed
+Patch5: 0001-never-run-autogen.sh.patch
+# not upstreamed
+Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
+# not upstreamed
+Patch7: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+Patch8: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch9: 0001-but-only-for-dialog.patch
+Patch10: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch11: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
+Patch12: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch13: 0002-disable-tearability-of-color-window.patch
+Patch14: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch15: 0001-hack-out-optimization-to-build.patch
+Patch16: 0001-generate-better-unit-test-assert-message.patch
+Patch17: 0001-gtk3-adapt-to-3.20-style-changes.patch
+Patch18: 0001-unused-vcl-IsWindowSystemAvailable.patch
+Patch19: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
+Patch20: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
+Patch21: 0004-implement-wayland-handle-passing-for-gstreamer.patch
+Patch22: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
+
 %if 0%{?rhel}
 # not upstreamed
-Patch3: 0001-disable-libe-book-support.patch
-%endif
+Patch500: 0001-disable-libe-book-support.patch
 # not upstreamed
-Patch4: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-# not upstreamed
-Patch5: 0001-disable-firebird-unit-test.patch
-# not upstreamed
-Patch6: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch7: 0001-add-X-TryExec-entries-to-desktop-files.patch
-# not upstreamed
-Patch8: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch9: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch10: 0001-but-only-for-dialog.patch
-Patch11: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch12: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
-Patch13: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch14: 0002-disable-tearability-of-color-window.patch
-Patch15: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch16: 0001-hack-out-optimization-to-build.patch
-Patch17: 0001-generate-better-unit-test-assert-message.patch
-Patch18: 0001-gtk3-adapt-to-3.20-style-changes.patch
-Patch19: 0001-unused-vcl-IsWindowSystemAvailable.patch
-Patch21: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
-Patch22: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
-Patch23: 0004-implement-wayland-handle-passing-for-gstreamer.patch
-Patch24: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
-%if 0%{?rhel}
-# not upstreamed
-Patch25: 0001-fix-build-with-gcc-4.8.patch
+Patch501: 0001-fix-build-with-gcc-4.8.patch
 %endif
 
 %define instdir %{_libdir}

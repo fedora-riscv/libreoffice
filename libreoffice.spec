@@ -253,6 +253,11 @@ Patch15: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
 Patch16: 0001-hack-out-optimization-to-build.patch
 Patch17: 0001-generate-better-unit-test-assert-message.patch
 Patch18: 0001-gtk3-adapt-to-3.20-style-changes.patch
+Patch19: 0001-unused-vcl-IsWindowSystemAvailable.patch
+Patch21: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
+Patch22: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
+Patch23: 0004-implement-wayland-handle-passing-for-gstreamer.patch
+Patch24: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

@@ -1,0 +1,118 @@
+From 32c6389cceda63391ff372987834fb7b0a25339a Mon Sep 17 00:00:00 2001
+From: Juergen Funk <juergen.funk_ml@cib.de>
+Date: Sat, 5 Dec 2015 01:37:13 +0100
+Subject: [PATCH 1/5] unused vcl::IsWindowSystemAvailable
+
+Change-Id: Ie903a6fe3237319661662c0533c23528766ffd08
+Reviewed-on: https://gerrit.libreoffice.org/20404
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Tor Lillqvist <tml@collabora.com>
+Tested-by: Tor Lillqvist <tml@collabora.com>
+(cherry picked from commit 6ded842ac4a0e06efcfcc312775d25063201eb68)
+---
+ include/vcl/svapp.hxx                     |  7 -------
+ unusedcode.easy                           |  1 -
+ vcl/osx/salinst.cxx                       | 10 ----------
+ vcl/unx/generic/gdi/x11windowprovider.cxx | 16 ----------------
+ vcl/win/source/app/saldata.cxx            |  9 ---------
+ 5 files changed, 43 deletions(-)
+
+diff --git a/include/vcl/svapp.hxx b/include/vcl/svapp.hxx
+index a8b813b..c5b52ca 100644
+--- a/include/vcl/svapp.hxx
++++ b/include/vcl/svapp.hxx
+@@ -1649,13 +1649,6 @@ inline void Application::EndYield()
+     PostUserEvent( Link<void*,void>() );
+ }
+ 
+-namespace vcl
+-{
+-
+-VCL_DLLPUBLIC bool IsWindowSystemAvailable();
+-
+-}
+-
+ #endif // _APP_HXX
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/unusedcode.easy b/unusedcode.easy
+index bce941f..89f4028 100644
+--- a/unusedcode.easy
++++ b/unusedcode.easy
+@@ -93,7 +93,6 @@ sd::LeftDrawPaneShell::RegisterInterface(SfxModule*)
+ sd::LeftImpressPaneShell::RegisterInterface(SfxModule*)
+ std::_Rb_tree<rtl::OUString, std::pair<rtl::OUString const, (anonymous namespace)::TemplateId>, std::_Select1st<std::pair<rtl::OUString const, (anonymous namespace)::TemplateId> >, std::less<rtl::OUString>, std::allocator<std::pair<rtl::OUString const, (anonymous namespace)::TemplateId> > >::_M_move_data(std::_Rb_tree<rtl::OUString, std::pair<rtl::OUString const, (anonymous namespace)::TemplateId>, std::_Select1st<std::pair<rtl::OUString const, (anonymous namespace)::TemplateId> >, std::less<rtl::OUString>, std::allocator<std::pair<rtl::OUString const, (anonymous namespace)::TemplateId> > >&, std::integral_constant<bool, true>)
+ std::__cxx1998::vector<rtl::Reference<oox::xls::(anonymous namespace)::WorkerThread>, std::allocator<rtl::Reference<oox::xls::(anonymous namespace)::WorkerThread> > >::reserve(unsigned long)
+-vcl::IsWindowSystemAvailable()
+ vcl::MapChar(vcl::_TrueTypeFont*, unsigned short, bool)
+ vcl::Region::IsInside(Rectangle const&) const
+ vcl::RenderSettings::PushAndApply(OutputDevice&)
+diff --git a/vcl/osx/salinst.cxx b/vcl/osx/salinst.cxx
+index b7467be..4bfe5bc 100644
+--- a/vcl/osx/salinst.cxx
++++ b/vcl/osx/salinst.cxx
+@@ -1097,15 +1097,5 @@ NSImage* CreateNSImage( const Image& rImage )
+     return pImage;
+ }
+ 
+-namespace vcl
+-{
+-
+-bool IsWindowSystemAvailable()
+-{
+-    // Yes I know the parens are not needed. I like them in cases like this. So sue me.
+-    return ([NSScreen screens] != nil && [[NSScreen screens] count] > 0);
+-}
+-
+-} // namespace vcl
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/unx/generic/gdi/x11windowprovider.cxx b/vcl/unx/generic/gdi/x11windowprovider.cxx
+index 4f507c3..5f7d289 100644
+--- a/vcl/unx/generic/gdi/x11windowprovider.cxx
++++ b/vcl/unx/generic/gdi/x11windowprovider.cxx
+@@ -68,21 +68,5 @@ Display *OpenX11Display(OString& rDisplay)
+     return pDisp;
+ }
+ 
+-namespace vcl
+-{
+-
+-bool IsWindowSystemAvailable()
+-{
+-    Display *pDisp;
+-    OString aDisplay;
+-
+-    pDisp = OpenX11Display(aDisplay);
+-    if (pDisp)
+-        XCloseDisplay(pDisp);
+-
+-    return (pDisp != nullptr);
+-}
+-
+-} // namespace vcl
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/win/source/app/saldata.cxx b/vcl/win/source/app/saldata.cxx
+index 18256ee..2a04b33 100644
+--- a/vcl/win/source/app/saldata.cxx
++++ b/vcl/win/source/app/saldata.cxx
+@@ -74,15 +74,6 @@ int ImplSalWICompareAscii( const wchar_t* pStr1, const char* pStr2 )
+     return nRet;
+ }
+ 
+-namespace vcl
+-{
+-
+-bool IsWindowSystemAvailable()
+-{
+-    return true; // FIXME: we want this to return false if logged in
+-                 // to some Cygwin ssh session for instance
+-}
+ 
+-} // namespace vcl
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+-- 
+2.7.1
+

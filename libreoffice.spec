@@ -998,7 +998,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system
+%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system --disable-introspection
 %else # fedora
 %define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
@@ -1299,10 +1299,12 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
+%if 0%{?fedora}
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 install -m 0755 -d %{buildroot}%{_libdir}/gir-1.0
 install -m 0644 -p gir-1.0/LOKDocView-%{girapiversion}.gir %{buildroot}%{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 mv %{buildroot}%{baseinstdir}/program/liblibreofficekitgtk.so %{buildroot}%{_libdir}
+%endif
 popd
 
 rm -rf %{buildroot}%{baseinstdir}/readmes

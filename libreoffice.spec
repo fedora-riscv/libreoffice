@@ -74,17 +74,6 @@ Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
-%if 0%{?rhel}
-Source10:       %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source11:       %{external_url}/liborcus-0.9.2.tar.gz
-# system mdds 0.10.3 causes a crash in sc_ucalc unit test
-Source12:       %{external_url}/mdds_0.12.1.tar.bz2
-Source13:       %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
-Source14:       %{external_url}/libwps-0.4.2.tar.bz2
-Source15:       %{external_url}/libpagemaker-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
-%endif
-
 %if 0%{?fedora}
 Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
 %endif
@@ -97,6 +86,17 @@ Source45:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 Source46:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-main-symbolic.svg
 Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-math-symbolic.svg
 Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
+
+%if 0%{?rhel}
+Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
+Source101:      %{external_url}/liborcus-0.9.2.tar.gz
+# system mdds 0.10.3 causes a crash in sc_ucalc unit test
+Source102:      %{external_url}/mdds_0.12.1.tar.bz2
+Source103:      %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
+Source104:      %{external_url}/libwps-0.4.2.tar.bz2
+Source105:      %{external_url}/libpagemaker-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
+%endif
 
 # build tools
 BuildRequires: autoconf

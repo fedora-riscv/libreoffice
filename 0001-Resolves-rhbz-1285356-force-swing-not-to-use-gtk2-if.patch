@@ -33,8 +33,8 @@ index c7a061c..64b55f7 100644
  class DetachCurrentThread: private boost::noncopyable {
 diff --git a/vcl/unx/gtk/gtksys.cxx b/vcl/unx/gtk/gtksys.cxx
 index 80153fe..97f2464 100644
---- a/vcl/unx/gtk/gtksys.cxx
-+++ b/vcl/unx/gtk/gtksys.cxx
+--- a/vcl/unx/gtk/app/gtksys.cxx
++++ b/vcl/unx/gtk/app/gtksys.cxx
 @@ -40,6 +40,13 @@ GtkSalSystem::GtkSalSystem() : SalGenericSystem()
  {
      mpDisplay = gdk_display_get_default();

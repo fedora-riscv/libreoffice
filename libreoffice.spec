@@ -300,6 +300,7 @@ Patch65: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
 Patch66: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
 Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 Patch68: 0001-update-graphite-to-1.3.5.patch
+Patch69: 0001-Resolves-rhbz-1285356-force-swing-not-to-use-gtk2-if.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2217,9 +2218,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-2.UNBUILT
+* Wed Feb 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-2
 - Resolves: tdf#92720 report builder loses embedded charts
 - update to graphite 1.3.5 possible behaviour changes
+- Resolves: rhbz#1285356 force swing to not use gtk2 if gtk3 is loaded
 
 * Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-1
 - update to 5.0.5 rc2

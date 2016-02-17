@@ -998,7 +998,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system --disable-introspection
+%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system --disable-introspection --disable-gtk3
 %else # fedora
 %define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'

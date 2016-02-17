@@ -1029,6 +1029,12 @@ EXTSRCDIR=`dirname %{SOURCE0}`
 export QT4DIR=%{_qt4_prefix}
 export KDE4DIR=%{_kde4_prefix}
 export PATH=$QT4DIR/bin:$PATH
+# hack for firebird-2.5.5-26952.0-1 that moved fb_config out of /usr/bin
+if [ -f %{_libdir}/fb_config ]; then
+    mkdir firebird-bin
+    cp -p %{_libdir}/fb_config firebird-bin
+    export PATH=$PATH:`pwd`/firebird-bin
+fi
 %endif
 
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones

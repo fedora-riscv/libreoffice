@@ -299,6 +299,7 @@ Patch64: 0001-avoid-crash-with-color-listbox-for-now.patch
 Patch65: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
 Patch66: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
 Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
+Patch68: 0001-update-graphite-to-1.3.5.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2218,6 +2219,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-2.UNBUILT
 - Resolves: tdf#92720 report builder loses embedded charts
+- update to graphite 1.3.5 possible behaviour changes
 
 * Sun Feb 07 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-1
 - update to 5.0.5 rc2

@@ -228,81 +228,82 @@ Patch0:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
 Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch2:  libreoffice-installfix.patch
+# not upstreamed
+Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+# not upstreamed
+Patch4: 0001-disable-firebird-unit-test.patch
+# not upstreamed
+Patch5: 0001-never-run-autogen.sh.patch
+# not upstreamed
+Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
+# not upstreamed
+Patch7: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
+# upstreamed
+Patch8: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
+Patch9: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
+Patch10: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
+Patch11: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
+Patch12: 0001-implement-equalize-width-and-height-for-impress-draw.patch
+Patch13: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
+Patch14: 0001-implement-undo-for-equalize-marked-objects.patch
+Patch15: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
+Patch16: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
+Patch17: 0001-implement-undo-of-delete-impress-cell-contents.patch
+Patch18: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
+Patch19: 0001-default-to-as-character-caption-contents.patch
+Patch20: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
+Patch21: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
+Patch22: 0001-implement-save-slide-background-for-impress.patch
+Patch23: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
+Patch24: 0001-implement-dialog-control-over-enhanced-shape-control.patch
+Patch25: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
+Patch26: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
+Patch27: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
+Patch28: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
+Patch29: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
+Patch30: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
+Patch31: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
+Patch32: 0001-gtk3-wayland-wrong-dialog-sizes.patch
+Patch33: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
+Patch34: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
+Patch35: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
+Patch36: 0001-move-things-around-a-little-to-make-backporting-easi.patch
+Patch37: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
+Patch38: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
+Patch39: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
+Patch40: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
+Patch41: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
+Patch42: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
+Patch43: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
+Patch44: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
+Patch45: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
+Patch46: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
+Patch47: 0001-but-only-for-dialog.patch
+Patch48: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
+Patch49: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
+Patch50: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch51: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch52: 0002-disable-tearability-of-color-window.patch
+Patch53: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
+Patch54: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
+Patch55: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
+Patch56: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
+Patch57: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
+Patch58: 0001-Resolves-rhbz-1257635-after-httpConnectEncrypt-use-c.patch
+Patch59: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
+Patch60: 0001-valgrind-memleak-on-thrown-exception.patch
+Patch61: 0002-valgrind-memleak-on-thrown-exception.patch
+Patch62: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch63: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
+Patch64: 0001-avoid-crash-with-color-listbox-for-now.patch
+Patch65: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
+Patch66: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
+Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
+
 %if 0%{?rhel}
 # not upstreamed
-Patch3: 0001-disable-libe-book-support.patch
+Patch500: 0001-disable-libe-book-support.patch
 %endif
-# not upstreamed
-Patch4: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
-# not upstreamed
-Patch5: 0001-disable-firebird-unit-test.patch
-# not upstreamed
-Patch6: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch7: 0001-add-X-TryExec-entries-to-desktop-files.patch
-# not upstreamed
-Patch16: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-# upstreamed
-Patch17: 0001-Resolves-tdf-89905-don-t-copy-palettes-from-shared-t.patch
-Patch18: 0001-Resolves-tdf-49407-enable-CaseMap-property-in-impres.patch
-Patch19: 0001-rhbz-1233420-handle-inexistent-cond.-format.patch
-Patch20: 0001-allow-slide-design-to-affect-multiple-standard-pages.patch
-Patch21: 0001-implement-equalize-width-and-height-for-impress-draw.patch
-Patch22: 0001-f22-openjdk-for-ppc64le-has-both-these-dirs-but-jawt.patch
-Patch23: 0001-implement-undo-for-equalize-marked-objects.patch
-Patch24: 0001-time-stamp-object-selections-and-use-newest-as-ref-f.patch
-Patch25: 0001-Resolves-rhbz-1256843-no-obvious-means-to-close-temp.patch
-Patch26: 0001-implement-undo-of-delete-impress-cell-contents.patch
-Patch27: 0001-Fix-export-of-tdf-93675-to-.docx-as-much-as-is-possi.patch
-Patch28: 0001-default-to-as-character-caption-contents.patch
-Patch29: 0001-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch30: 0002-Related-tdf-93676-msword-wraps-slightly-differently-.patch
-Patch31: 0001-implement-save-slide-background-for-impress.patch
-Patch32: 0001-Related-tdf-72880-presumably-using-startcenter-as-ge.patch
-Patch33: 0001-implement-dialog-control-over-enhanced-shape-control.patch
-Patch34: 0001-tdf-95210-SetHandleControllerPosition-is-busted-wrt-.patch
-Patch35: 0001-Resolves-tdf-95682-spell-dialog-add-a-button-to-open.patch
-Patch36: 0001-backport-5-1-idle-timers-loop-to-5-0.patch
-Patch37: 0001-gtk3-implement-SAL_INVERT_50-rectangle-case.patch
-Patch38: 0001-Resolves-tdf-95962-incorrect-scanline-stride.patch
-Patch39: 0001-Related-rhbz-1281906-wayland-toolbar-drawn-over-menu.patch
-Patch40: 0001-Resolves-rhbz-1285380-get-menus-working-under-waylan.patch
-Patch41: 0001-gtk3-wayland-wrong-dialog-sizes.patch
-Patch42: 0001-Resolves-rhbz-1289398-unable-to-use-scroll-wheel-und.patch
-Patch43: 0001-valgrind-scary-warning-that-the-cairo-font-options-w.patch
-Patch44: 0001-gtk3-gtk_gesture_get_point-may-return-false.patch
-Patch45: 0001-move-things-around-a-little-to-make-backporting-easi.patch
-Patch46: 0001-Resolves-tdf-96285-restore-bodge-for-unresizable-win.patch
-Patch47: 0001-gtk3-wayland-dialogs-work-a-lot-better-if-a-min-size.patch
-Patch48: 0001-Related-rhbz-1290014-gtk3-use-gtk_window_set_modal-o.patch
-Patch49: 0001-Resolves-rhbz-1289394-gtk3-implement-tooltips-native.patch
-Patch50: 0001-rhbz-1283420-cairo-text-xrender-bodge.patch
-Patch51: 0001-Resolves-rhbz-1287581-explicitly-state-we-don-t-want.patch
-Patch52: 0001-gtk3-wayland-enable-manual-movement-of-toolbars.patch
-Patch53: 0001-gtk3-stop-the-ever-shrinking-size-of-toplevel-on-eve.patch
-Patch54: 0001-Resolves-rhbz-1291925-implement-SAL_INVERT_TRACKFRAM.patch
-Patch55: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch56: 0001-but-only-for-dialog.patch
-Patch57: 0001-impress-s-AnnotationWindow-is-the-only-user-of-WB_NE.patch
-Patch58: 0002-remove-newly-unused-WB_NEEDSFOCUS-and-fragile-FLOAT_.patch
-Patch59: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch60: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch61: 0002-disable-tearability-of-color-window.patch
-Patch62: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
-Patch63: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
-Patch64: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
-Patch65: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
-Patch66: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
-Patch67: 0001-Resolves-rhbz-1257635-after-httpConnectEncrypt-use-c.patch
-Patch68: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
-Patch69: 0001-valgrind-memleak-on-thrown-exception.patch
-Patch70: 0002-valgrind-memleak-on-thrown-exception.patch
-Patch71: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch72: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
-Patch73: 0001-avoid-crash-with-color-listbox-for-now.patch
-Patch74: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
-Patch75: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
-Patch76: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice

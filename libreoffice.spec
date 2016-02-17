@@ -2441,7 +2441,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Wed Feb 17 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.7.2-3
+* Wed Feb 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:4.4.7.2-3
 - Resolves: rhbz#1309207 CVE-2016-0794 and CVE-2016-0795
 
 * Thu Dec 17 2015 Michael Stahl <mstahl@redhat.com> - 1:4.4.7.2-2

@@ -267,6 +267,13 @@ Patch501: 0001-fix-build-with-gcc-4.8.patch
 %define sdkinstdir %{baseinstdir}/sdk
 %define fontname opensymbol
 
+# rhbz#1085420 make sure we do not provide bundled libraries
+%if 0%{?rhel}
+%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.10\\.so.*$
+%global __provides_exclude %{libo_bundled_libs_filter}
+%global __requires_exclude %{libo_bundled_libs_filter}
+%endif
+
 %description
 LibreOffice is an Open Source, community-developed, office productivity suite.
 It includes the key desktop applications, such as a word processor,
@@ -1925,6 +1932,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
 %{baseinstdir}/program/libopencllo.so
+%if 0%{?rhel}
+%{baseinstdir}/program/liborcus-0.10.so.*
+%{baseinstdir}/program/liborcus-parser-0.10.so.*
+%endif
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so

@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -378,6 +378,7 @@ Patch59: 0006-sw-move-ProgId-parsing-to-DocxExport-WriteOLEObject.patch
 Patch60: 0007-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
 Patch61: 0008-sw-extend-various-OOXML-export-test-to-check-embedde.patch
 Patch62: 0009-fix-missing-BaseURL-when-loading-embedded-objects.patch
+Patch63: 0001-CVE-2016-0794-and-CVE-2016-0795.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2440,6 +2441,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Feb 17 2015 Caolán McNamara <caolanm@redhat.com> - 1:4.4.7.2-3
+- Resolves: rhbz#1309207 CVE-2016-0794 and CVE-2016-0795
+
 * Thu Dec 17 2015 Michael Stahl <mstahl@redhat.com> - 1:4.4.7.2-2
 - Related: rhbz#1286416 be more resilient during auto-recovery attempts
 - Resolves: tdf#95440 SharedString are interned per document, re-intern

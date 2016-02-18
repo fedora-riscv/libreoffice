@@ -1346,7 +1346,11 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
+%ifarch %{arm}
+make VERBOSE=true build-nocheck
+%else
 make VERBOSE=true
+%endif
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

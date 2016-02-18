@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -301,6 +301,7 @@ Patch66: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
 Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 Patch68: 0001-update-graphite-to-1.3.5.patch
 Patch69: 0001-Resolves-rhbz-1285356-force-swing-not-to-use-gtk2-if.patch
+Patch70: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2218,6 +2219,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Feb 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-3.UNBUILT
+- Resolves: tdf#96333 fix gtk3 RTL menu positioning
+
 * Wed Feb 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-2
 - Resolves: tdf#92720 report builder loses embedded charts
 - update to graphite 1.3.5 possible behaviour changes

@@ -56,7 +56,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -757,6 +757,10 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < 1:2.0.3}} \
 %{-p:Provides: %{name}-langpack-%{-p*} = %{epoch}:%{version}-%{release}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
+%if 0%{?fedora} \
+%{-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{-p*})} \
+%{!-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{lang})} \
+%endif \
 \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for LibreOffice. \
@@ -2182,6 +2186,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Feb 22 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.1-5
+- Resolves: rhbz#1310527 add langpack deps
+
 * Tue Feb 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.1.1-4
 - video playback under wayland with gstreamer gtksink
 

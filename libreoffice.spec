@@ -186,7 +186,6 @@ BuildRequires: vigra-devel
 # libs / headers - conditional
 %if 0%{?fedora}
 BuildRequires: firebird-devel
-BuildRequires: firebird-libfbembed
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(gtk+-3.0)

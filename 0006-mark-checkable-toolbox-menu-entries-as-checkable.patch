@@ -1,0 +1,64 @@
+From 7dc5977edb7e34aed68aeb68846dee227f1a32de Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 24 Feb 2016 13:02:40 +0000
+Subject: [PATCH 6/8] mark checkable toolbox menu entries as checkable
+
+e.g. the toplevel toolbars put excess entries in
+menus. If the entry is not marked as checkable then
+a native gtk menu entry will appear to be stateless
+when it actually does have a toggle state
+
+Change-Id: I7168b44d59fd64dfe264ed8ca26355252d697251
+(cherry picked from commit 13917e0755bb864f22d0cf75a43854acbdb1eaec)
+---
+ vcl/source/window/toolbox2.cxx | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/source/window/toolbox2.cxx b/vcl/source/window/toolbox2.cxx
+index 0c916f6..663b7d6 100644
+--- a/vcl/source/window/toolbox2.cxx
++++ b/vcl/source/window/toolbox2.cxx
+@@ -1791,6 +1791,20 @@ bool ToolBox::ImplHasClippedItems()
+     return false;
+ }
+ 
++namespace
++{
++    MenuItemBits ConvertBitsFromToolBoxToMenu(ToolBoxItemBits nToolItemBits)
++    {
++        MenuItemBits nMenuItemBits = MenuItemBits::NONE;
++        if ((nToolItemBits & ToolBoxItemBits::CHECKABLE) ||
++            (nToolItemBits & ToolBoxItemBits::DROPDOWN))
++        {
++            nMenuItemBits |= MenuItemBits::CHECKABLE;
++        }
++        return nMenuItemBits;
++    }
++}
++
+ void ToolBox::UpdateCustomMenu()
+ {
+     // fill clipped items into menu
+@@ -1826,7 +1840,8 @@ void ToolBox::UpdateCustomMenu()
+             if( it->IsClipped() )
+             {
+                 sal_uInt16 id = it->mnId + TOOLBOX_MENUITEM_START;
+-                pMenu->InsertItem( id, it->maText, it->maImageOriginal, MenuItemBits::NONE, OString());
++                MenuItemBits nMenuItemBits = ConvertBitsFromToolBoxToMenu(it->mnBits);
++                pMenu->InsertItem( id, it->maText, it->maImageOriginal, nMenuItemBits, OString());
+                 pMenu->SetItemCommand( id, it->maCommandStr );
+                 pMenu->EnableItem( id, it->mbEnabled );
+                 pMenu->CheckItem ( id, it->meState == TRISTATE_TRUE );
+@@ -1843,7 +1858,8 @@ void ToolBox::UpdateCustomMenu()
+             if( it->IsItemHidden() )
+             {
+                 sal_uInt16 id = it->mnId + TOOLBOX_MENUITEM_START;
+-                pMenu->InsertItem( id, it->maText, it->maImageOriginal, MenuItemBits::NONE, OString() );
++                MenuItemBits nMenuItemBits = ConvertBitsFromToolBoxToMenu(it->mnBits);
++                pMenu->InsertItem( id, it->maText, it->maImageOriginal, nMenuItemBits, OString() );
+                 pMenu->SetItemCommand( id, it->maCommandStr );
+                 pMenu->EnableItem( id, it->mbEnabled );
+                 pMenu->CheckItem( id, it->meState == TRISTATE_TRUE );
+-- 
+2.7.1
+

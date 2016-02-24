@@ -255,6 +255,14 @@ Patch20: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
 Patch21: 0004-implement-wayland-handle-passing-for-gstreamer.patch
 Patch22: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
 Patch23: 0001-gtk3-get-app-menu-working-again-under-gtk3.patch
+Patch24: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
+Patch25: 0002-gtk3-some-changes-towards-enabling-native-gtk3-popup.patch
+Patch26: 0003-gtk3-vcl-popups-flush-any-unexecuted-Select-events-o.patch
+Patch27: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
+Patch28: 0005-gtk3-handle-items-without-commands.patch
+Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
+Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
+Patch21: 0008-gtk3-implement-native-context-menus.patch
 
 %if 0%{?rhel}
 # not upstreamed

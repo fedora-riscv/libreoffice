@@ -254,6 +254,7 @@ Patch19: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
 Patch20: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
 Patch21: 0004-implement-wayland-handle-passing-for-gstreamer.patch
 Patch22: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
+Patch23: 0001-gtk3-get-app-menu-working-again-under-gtk3.patch
 
 %if 0%{?rhel}
 # not upstreamed

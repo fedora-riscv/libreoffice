@@ -295,7 +295,7 @@ formats, including Microsoft Office File Formats.
 Summary: All import / export filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-%if %{?weak_deps}
+%if 0%{?weak_deps}
 Recommends: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
@@ -514,7 +514,7 @@ Summary: LibreOffice Presentation Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-%if %{?weak_deps}
+%if 0%{?weak_deps}
 Recommends: %{name}-ogltrans%{?_isa} = %{epoch}:%{version}-%{release}
 %endif
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
@@ -677,7 +677,7 @@ Summary: Additional support for debugging with gdb
 Requires: gdb%{?_isa}
 Requires: %{libo_python}-six
 Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
-%if %{?weak_deps}
+%if 0%{?weak_deps}
 Supplements: libreoffice-debuginfo%{?_isa} = %{epoch}:%{version}-%{release}
 %endif
 
@@ -767,7 +767,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-v:Obsoletes: openoffice.org-langpack-%{-v*} < 1:2.0.3}%{!-v:%{-V:Obsoletes: openoffice.org-langpack-%{lang} < 1:2.0.3}} \
 %{-p:Provides: %{name}-langpack-%{-p*} = %{epoch}:%{version}-%{release}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
-%if %{?weak_deps} \
+%if 0%{?weak_deps} \
 %{-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{lang})} \
 %endif \

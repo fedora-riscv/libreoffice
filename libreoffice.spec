@@ -262,7 +262,7 @@ Patch27: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
 Patch28: 0005-gtk3-handle-items-without-commands.patch
 Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
 Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
-Patch21: 0008-gtk3-implement-native-context-menus.patch
+Patch31: 0008-gtk3-implement-native-context-menus.patch
 
 %if 0%{?rhel}
 # not upstreamed

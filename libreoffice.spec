@@ -1090,7 +1090,9 @@ pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
+%if 0%{?fedora}
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
+%endif
 
 %if %{with smallbuild}
 # remove the biggest offenders

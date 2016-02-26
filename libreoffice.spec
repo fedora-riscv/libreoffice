@@ -976,15 +976,10 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-sed -i -e /CppunitTest_sw_ooxmlimport/d -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk
 # fails on i686 because of ICU
 rm -f writerperfect/qa/unit/data/writer/libe-book/pass/PeanutPress.pdb
 git commit -q -a -m 'temporarily disable failing tests'
-
-%ifarch %{arm}
-sed -i -e /CppunitTest_sw_ooxmlexport/d -e /CppunitTest_sw_ooxmlexport2/d -e /CppunitTest_sw_filters_test/d -e /CppunitTest_sw_rtfexport/d sw/Module_sw.mk
-git commit -q -a -m 'disable tests segfaulting on arm'
-%endif
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use

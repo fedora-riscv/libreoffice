@@ -301,6 +301,7 @@ Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
 Patch68: 0001-update-graphite-to-1.3.5.patch
 Patch69: 0001-Resolves-rhbz-1285356-force-swing-not-to-use-gtk2-if.patch
 Patch70: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
+Patch71: 0001-xmloff-tdf-97808-allow-empty-draw-marker-start-marke.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2214,6 +2215,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Thu Feb 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-3.UNBUILT
 - Resolves: tdf#96333 fix gtk3 RTL menu positioning
+- Resolves: tdf#97808 ODF import drawing object marker start/end regression
 
 * Wed Feb 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-2
 - Resolves: tdf#92720 report builder loses embedded charts

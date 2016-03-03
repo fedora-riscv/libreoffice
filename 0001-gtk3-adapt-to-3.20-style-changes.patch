@@ -532,7 +532,7 @@ index a28938e..a6b235b 100644
  
      gtk_render_background(context, cr,
                            buttonRect.Left(), buttonRect.Top(),
-@@ -613,11 +607,9 @@ void GtkSalGraphics::PaintOneSpinButton( GtkStyleContext *context,
+@@ -613,8 +607,6 @@ void GtkSalGraphics::PaintOneSpinButton( GtkStyleContext *context,
      gtk_render_icon(context, cr, pixbuf, arrowRect.Left(), arrowRect.Top());
      g_object_unref(pixbuf);
      gtk_icon_info_free(info);
@@ -540,24 +540,7 @@ index a28938e..a6b235b 100644
 -    gtk_style_context_restore(context);
  }
  
--void GtkSalGraphics::PaintSpinButton(GtkStyleContext *context,
-+Rectangle GtkSalGraphics::PaintSpinButton(GtkStyleContext *context,
-                                      cairo_t *cr,
-                                      const Rectangle& rControlRectangle,
-                                      ControlType nType,
-@@ -656,8 +648,10 @@ void GtkSalGraphics::PaintSpinButton(GtkStyleContext *context,
-         areaRect.Union( pSpinVal->maLowerRect );
-     }
- 
--    PaintOneSpinButton(context, cr, nType, upBtnPart, areaRect, upBtnState );
--    PaintOneSpinButton(context, cr, nType, downBtnPart, areaRect, downBtnState );
-+    PaintOneSpinButton(mpSpinUpStyle, cr, nType, upBtnPart, areaRect, upBtnState );
-+    PaintOneSpinButton(mpSpinDownStyle, cr, nType, downBtnPart, areaRect, downBtnState );
-+
-+    return areaRect;
- }
- 
- #define ARROW_SIZE 11 * 0.85
+ void GtkSalGraphics::PaintSpinButton(GtkStyleContext *context,
 @@ -668,14 +662,12 @@ Rectangle GtkSalGraphics::NWGetComboBoxButtonRect( ControlType nType,
      (void)nType;
      (void)nPart;

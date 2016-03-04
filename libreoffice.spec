@@ -1472,6 +1472,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libcached1.so
 %{baseinstdir}/program/libcanvastoolslo.so
 %{baseinstdir}/program/libchart*lo.so
+%{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libcollator_data.so
 %{baseinstdir}/program/libcppcanvaslo.so
 %{baseinstdir}/program/libctllo.so
@@ -1548,6 +1549,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
 %{baseinstdir}/program/libooxlo.so
+%{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libpllo.so
@@ -1968,11 +1970,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en-US/scalc.*
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
-%{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so

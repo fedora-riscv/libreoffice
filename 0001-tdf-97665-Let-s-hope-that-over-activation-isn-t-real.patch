@@ -1,0 +1,328 @@
+From fcab9d2bcef3997790f3ae68521444cbaa0c5b29 Mon Sep 17 00:00:00 2001
+From: Maxim Monastirsky <momonasmon@gmail.com>
+Date: Sun, 7 Feb 2016 17:53:40 +0200
+Subject: [PATCH] tdf#97665 Let's hope that over activation isn't really needed
+
+- MenuBarManager::Activate has a check for duplicate activation,
+  which makes the second activation attempt fail. Removing this
+  check or deactivating after each activation will likely affect
+  performance even more, but on the other hand should solve
+  lp#1296715, which was the main reason of the over activation
+  in the first place. So let's activate only one menu at a time,
+  and do full activation only on the initial update.
+
+- Unfortunately the HUD activation callback doesn't work, so
+  we still have to keep active status listener for all menu
+  items. (Which is BTW against the recommendation in
+  XPopupMenuController::updatePopupMenu IDL doc. Fortunately
+  the performance problem hardly noticeable on modern hw.)
+
+Reviewed-on: https://gerrit.libreoffice.org/22369
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Maxim Monastirsky <momonasmon@gmail.com>
+(cherry picked from commit 2abdcfd641883f246fe78f2fbe38499c9382c059)
+
+Change-Id: I96affa72412f3f38160fdca4b6efd20ca68d059f
+---
+ framework/inc/uielement/menubarmanager.hxx         |  4 +-
+ .../source/uielement/generictoolbarcontroller.cxx  |  2 +-
+ framework/source/uielement/menubarmanager.cxx      | 13 ++---
+ include/vcl/menu.hxx                               |  9 +---
+ vcl/inc/salmenu.hxx                                |  1 +
+ vcl/inc/unx/gtk/gtksalmenu.hxx                     |  4 +-
+ vcl/source/window/menu.cxx                         | 20 +++-----
+ vcl/unx/gtk/window/gloactiongroup.cxx              |  2 +-
+ vcl/unx/gtk/window/gtksalmenu.cxx                  | 59 ++++++----------------
+ 9 files changed, 38 insertions(+), 76 deletions(-)
+
+diff --git a/framework/inc/uielement/menubarmanager.hxx b/framework/inc/uielement/menubarmanager.hxx
+index b72d515..99f0df0 100644
+--- a/framework/inc/uielement/menubarmanager.hxx
++++ b/framework/inc/uielement/menubarmanager.hxx
+@@ -95,7 +95,8 @@ class MenuBarManager : public com::sun::star::frame::XStatusListener
+             const OUString& aModuleIdentifier,
+             Menu* pMenu,
+             bool bDelete,
+-            bool bDeleteChildren );
++            bool bDeleteChildren,
++            bool bHasMenuBar = true );
+ 
+         virtual ~MenuBarManager();
+ 
+@@ -217,6 +218,7 @@ class MenuBarManager : public com::sun::star::frame::XStatusListener
+         bool                                                                               m_bRetrieveImages : 1,
+                                                                                                m_bAcceleratorCfg : 1;
+         bool                                                                               m_bModuleIdentified;
++        bool                                                                            m_bHasMenuBar;
+         OUString                                                                        m_aMenuItemCommand;
+         OUString                                                                        m_aModuleIdentifier;
+         Menu*                                                                                  m_pVCLMenu;
+diff --git a/framework/source/uielement/generictoolbarcontroller.cxx b/framework/source/uielement/generictoolbarcontroller.cxx
+index 183da37..6e83c54 100644
+--- a/framework/source/uielement/generictoolbarcontroller.cxx
++++ b/framework/source/uielement/generictoolbarcontroller.cxx
+@@ -348,7 +348,7 @@ MenuToolbarController::createPopupWindow() throw (::com::sun::star::uno::Runtime
+         Reference< XDispatchProvider > xDispatch;
+         Reference< XURLTransformer > xURLTransformer = URLTransformer::create( m_xContext );
+         pMenu = new Toolbarmenu();
+-        m_xMenuManager.set( new MenuBarManager( m_xContext, m_xFrame, xURLTransformer, xDispatch, m_aModuleIdentifier, pMenu, true, true ) );
++        m_xMenuManager.set( new MenuBarManager( m_xContext, m_xFrame, xURLTransformer, xDispatch, m_aModuleIdentifier, pMenu, true, true, false ) );
+         if (m_xMenuManager.is())
+         {
+             MenuBarManager& rMgr = dynamic_cast<MenuBarManager&>(*m_xMenuManager.get());
+diff --git a/framework/source/uielement/menubarmanager.cxx b/framework/source/uielement/menubarmanager.cxx
+index 13e145f..2096408 100644
+--- a/framework/source/uielement/menubarmanager.cxx
++++ b/framework/source/uielement/menubarmanager.cxx
+@@ -135,12 +135,13 @@ MenuBarManager::MenuBarManager(
+     const Reference< XURLTransformer >& _xURLTransformer,
+     const Reference< XDispatchProvider >& rDispatchProvider,
+     const OUString& rModuleIdentifier,
+-    Menu* pMenu, bool bDelete, bool bDeleteChildren ):
++    Menu* pMenu, bool bDelete, bool bDeleteChildren, bool bHasMenuBar ):
+     OWeakObject()
+     , m_bDisposed( false )
+     , m_bRetrieveImages( false )
+     , m_bAcceleratorCfg( false )
+     , m_bModuleIdentified( false )
++    , m_bHasMenuBar( bHasMenuBar )
+     , m_aListenerContainer( m_mutex )
+     , m_xContext(rxContext)
+     , m_xURLTransformer(_xURLTransformer)
+@@ -163,6 +164,7 @@ MenuBarManager::MenuBarManager(
+     , m_bRetrieveImages( true )
+     , m_bAcceleratorCfg( false )
+     , m_bModuleIdentified( false )
++    , m_bHasMenuBar( true )
+     , m_aListenerContainer( m_mutex )
+     , m_xContext(rxContext)
+     , m_xURLTransformer(_xURLTransformer)
+@@ -392,9 +394,6 @@ throw ( RuntimeException, std::exception )
+ 
+     SolarMutexGuard aSolarGuard;
+     {
+-        vcl::MenuInvalidator::Invalidated();
+-    }
+-    {
+         if ( m_bDisposed )
+             return;
+ 
+@@ -492,6 +491,8 @@ throw ( RuntimeException, std::exception )
+                 pMenuItemHandler->xMenuItemDispatch.clear();
+             }
+         }
++        if ( m_bHasMenuBar && !m_bActive )
++            m_pVCLMenu->UpdateNativeMenu();
+     }
+ }
+ 
+@@ -896,8 +897,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
+                                 if ( !bPopupMenu )
+                                 {
+                                     xMenuItemDispatch->addStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
+-                                    xMenuItemDispatch->removeStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
+-                                    xMenuItemDispatch->addStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
++                                    if ( !m_bHasMenuBar )
++                                        xMenuItemDispatch->removeStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
+                                 }
+                             }
+                             else if ( !bPopupMenu )
+diff --git a/include/vcl/menu.hxx b/include/vcl/menu.hxx
+index 2a4abcf..a44f2a8 100644
+--- a/include/vcl/menu.hxx
++++ b/include/vcl/menu.hxx
+@@ -308,6 +308,8 @@ public:
+     void RemoveDisabledEntries( bool bCheckPopups = true, bool bRemoveEmptyPopups = false );
+     bool HasValidEntries( bool bCheckPopups = true );
+ 
++    void UpdateNativeMenu();
++
+     void SetItemText( sal_uInt16 nItemId, const OUString& rStr );
+     OUString GetItemText( sal_uInt16 nItemId ) const;
+ 
+@@ -413,13 +415,6 @@ public:
+ };
+ 
+ 
+-namespace vcl { namespace MenuInvalidator {
+-
+-VCL_DLLPUBLIC VclEventListeners2* GetMenuInvalidateListeners();
+-VCL_DLLPUBLIC void Invalidated();
+-
+-}}
+-
+ class VCL_DLLPUBLIC MenuBar : public Menu
+ {
+     Link<> maCloseHdl;
+diff --git a/vcl/inc/salmenu.hxx b/vcl/inc/salmenu.hxx
+index aaea364..182958a 100644
+--- a/vcl/inc/salmenu.hxx
++++ b/vcl/inc/salmenu.hxx
+@@ -80,6 +80,7 @@ public:
+     virtual bool ShowNativePopupMenu(FloatingWindow * pWin, const Rectangle& rRect, FloatWinPopupFlags nFlags);
+     virtual bool AddMenuBarButton( const SalMenuButtonItem& ); // return false if not implemented or failure
+     virtual void RemoveMenuBarButton( sal_uInt16 nId );
++    virtual void Update() {}
+ 
+     // TODO: implement show/hide for the Win/Mac VCL native backends
+     virtual void ShowItem( unsigned nPos, bool bShow ) { EnableItem( nPos, bShow ); }
+diff --git a/vcl/inc/unx/gtk/gtksalmenu.hxx b/vcl/inc/unx/gtk/gtksalmenu.hxx
+index e74de22..a8f289c 100644
+--- a/vcl/inc/unx/gtk/gtksalmenu.hxx
++++ b/vcl/inc/unx/gtk/gtksalmenu.hxx
+@@ -97,11 +97,11 @@ public:
+     void                        NativeSetAccelerator( unsigned nSection, unsigned nItemPos, const vcl::KeyCode& rKeyCode, const OUString& rKeyName );
+ 
+     void                        DispatchCommand( gint itemId, const gchar* aCommand );
+-    void                        Activate();
++    void                        Activate( const gchar* aMenuCommand = nullptr );
+     void                        Deactivate( const gchar* aMenuCommand );
+     void                        Display( bool bVisible );
+     bool                        PrepUpdate();
+-    void                        Update();           // Update this menu only.
++    virtual void                Update() override;  // Update this menu only.
+     void                        UpdateFull();       // Update full menu hierarchy from this menu.
+ };
+ 
+diff --git a/vcl/source/window/menu.cxx b/vcl/source/window/menu.cxx
+index cb83637..70e5ea1 100644
+--- a/vcl/source/window/menu.cxx
++++ b/vcl/source/window/menu.cxx
+@@ -2295,6 +2295,12 @@ sal_uLong Menu::DeactivateMenuBar(sal_uLong nFocusId)
+     return nFocusId;
+ }
+ 
++void Menu::UpdateNativeMenu()
++{
++    if ( ImplGetSalMenu() )
++        ImplGetSalMenu()->Update();
++}
++
+ void Menu::MenuBarKeyInput(const KeyEvent&)
+ {
+ }
+@@ -3200,18 +3206,4 @@ ImplMenuDelData::~ImplMenuDelData()
+         const_cast< Menu* >( mpMenu )->ImplRemoveDel( *this );
+ }
+ 
+-namespace vcl { namespace MenuInvalidator {
+-    static VclEventListeners2* pMenuInvalidateListeners = NULL;
+-    VclEventListeners2* GetMenuInvalidateListeners()
+-    {
+-        if(!pMenuInvalidateListeners)
+-            pMenuInvalidateListeners = new VclEventListeners2();
+-        return pMenuInvalidateListeners;
+-    }
+-    void Invalidated()
+-    {
+-        VclSimpleEvent aEvent(0);
+-        GetMenuInvalidateListeners()->callListeners(&aEvent);
+-    };
+-} }
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/unx/gtk/window/gloactiongroup.cxx b/vcl/unx/gtk/window/gloactiongroup.cxx
+index 23307fd..2066abd 100644
+--- a/vcl/unx/gtk/window/gloactiongroup.cxx
++++ b/vcl/unx/gtk/window/gloactiongroup.cxx
+@@ -201,7 +201,7 @@ g_lo_action_group_perform_submenu_action (GLOActionGroup *group,
+         SAL_INFO("vcl.unity", "g_lo_action_group_perform_submenu_action on " << group << " to " << bState);
+ 
+         if (bState)
+-            pSalMenu->Activate();
++            pSalMenu->Activate (action_name);
+         else
+             pSalMenu->Deactivate (action_name);
+     }
+diff --git a/vcl/unx/gtk/window/gtksalmenu.cxx b/vcl/unx/gtk/window/gtksalmenu.cxx
+index 4a18999..b07b8e5 100644
+--- a/vcl/unx/gtk/window/gtksalmenu.cxx
++++ b/vcl/unx/gtk/window/gtksalmenu.cxx
+@@ -371,51 +371,9 @@ void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsig
+     pItem->mpSubMenu = pGtkSubMenu;
+ }
+ 
+-static bool bInvalidMenus = false;
+-static gboolean RefreshMenusUnity(gpointer)
+-{
+-    SolarMutexGuard g;
+-
+-    SalDisplay* pSalDisplay = vcl_sal::getSalDisplay(GetGenericData());
+-    std::list< SalFrame* >::const_iterator pSalFrame = pSalDisplay->getFrames().begin();
+-    std::list< SalFrame* >::const_iterator pEndSalFrame = pSalDisplay->getFrames().end();
+-    for(; pSalFrame != pEndSalFrame; ++pSalFrame) {
+-        const GtkSalFrame* pGtkSalFrame = static_cast< const GtkSalFrame* >( *pSalFrame );
+-        GtkSalFrame* pFrameNonConst = const_cast<GtkSalFrame*>(pGtkSalFrame);
+-        GtkSalMenu* pSalMenu = static_cast<GtkSalMenu*>(pFrameNonConst->GetMenu());
+-        if(pSalMenu) {
+-            pSalMenu->Activate();
+-            pSalMenu->UpdateFull();
+-        }
+-    }
+-    bInvalidMenus = false;
+-    return FALSE;
+-}
+-
+-static long RefreshMenusUnity(void*, void*)
+-{
+-    if(!bInvalidMenus) {
+-        g_timeout_add(10, &RefreshMenusUnity, NULL);
+-        bInvalidMenus = true;
+-    }
+-    return 0;
+-}
+-
+-static Link<>* getRefreshLinkInstance()
+-{
+-    static Link<>* pLink = NULL;
+-    if(!pLink) {
+-        pLink = new Link<>(NULL, &RefreshMenusUnity);
+-    }
+-    return pLink;
+-}
+-
+ void GtkSalMenu::SetFrame( const SalFrame* pFrame )
+ {
+     SolarMutexGuard aGuard;
+-    {
+-        vcl::MenuInvalidator::GetMenuInvalidateListeners()->addListener(*getRefreshLinkInstance());
+-    }
+ 
+     assert(mbMenuBar);
+     SAL_INFO("vcl.unity", "GtkSalMenu set to frame");
+@@ -671,6 +629,7 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
+ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
+ {
+     pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
++    pMenuBar->HandleMenuDeActivateEvent(mpVCLMenu);
+     for ( sal_uInt16 nPos = 0; nPos < maItems.size(); nPos++ )
+     {
+         GtkSalMenuItem *pSalItem = maItems[ nPos ];
+@@ -682,11 +641,23 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
+     }
+ }
+ 
+-void GtkSalMenu::Activate()
++void GtkSalMenu::Activate( const gchar* aMenuCommand )
+ {
+     if ( !mbMenuBar )
+         return;
+-    ActivateAllSubmenus(static_cast<MenuBar*>(mpVCLMenu));
++
++    if ( !aMenuCommand ) {
++        ActivateAllSubmenus( static_cast< MenuBar* >( mpVCLMenu ) );
++        return;
++    }
++
++    GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), TRUE );
++
++    if ( pSalSubMenu != nullptr ) {
++        MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );
++        pMenuBar->HandleMenuActivateEvent( pSalSubMenu->mpVCLMenu );
++        pSalSubMenu->Update();
++    }
+ }
+ 
+ void GtkSalMenu::Deactivate( const gchar* aMenuCommand )
+-- 
+2.7.1
+

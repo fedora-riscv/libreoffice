@@ -2213,7 +2213,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Feb 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-3.UNBUILT
+* Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-3
 - Resolves: tdf#96333 fix gtk3 RTL menu positioning
 - Resolves: tdf#97808 ODF import drawing object marker start/end regression
 

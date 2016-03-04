@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -263,6 +263,7 @@ Patch28: 0005-gtk3-handle-items-without-commands.patch
 Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
 Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
 Patch31: 0008-gtk3-implement-native-context-menus.patch
+Patch32: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2195,8 +2196,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.1.3-2.UNBUILT
+- Resolves: rhbz#1313559 gtk2 menus not kept up to date
+
 * Thu Mar 03 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-1
-- update to 5.0.5 rc3
+- update to 5.1.1 rc3
 
 * Fri Feb 26 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.2-1
 - update to 5.1.1 rc2

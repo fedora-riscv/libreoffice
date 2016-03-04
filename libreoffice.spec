@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -1732,6 +1732,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libcached1.so
 %{baseinstdir}/program/libcanvastoolslo.so
 %{baseinstdir}/program/libchart*lo.so
+%{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libcollator_data.so
 %{baseinstdir}/program/libcppcanvaslo.so
 %{baseinstdir}/program/libctllo.so
@@ -1812,6 +1813,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
 %{baseinstdir}/program/libooxlo.so
+%{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libpllo.so
@@ -2249,11 +2251,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en-US/scalc.*
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
-%{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so
@@ -2445,6 +2445,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Fri Mar 04 2016 David Tardon <dtardon@redhat.com> - 1:4.4.7.2-4
+- remove unintentional dependency of libreoffice-core on libreoffice-calc
+
 * Wed Feb 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:4.4.7.2-3
 - Resolves: rhbz#1309207 CVE-2016-0794 and CVE-2016-0795
 

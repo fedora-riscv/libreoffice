@@ -303,6 +303,7 @@ Patch69: 0001-Resolves-rhbz-1285356-force-swing-not-to-use-gtk2-if.patch
 Patch70: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
 Patch71: 0001-xmloff-tdf-97808-allow-empty-draw-marker-start-marke.patch
 Patch72: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
+Patch73: 0001-Resolves-tdf-98399-RET_USER_CANCEL-is-non-zero-and-r.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2214,8 +2215,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-4.UNBUILT
+* Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-4
 - Resolves: rhbz#1313559 gtk2 menus are not always up to date
+- Resolves: rhbz#1314599 cancel of crop still crops
 
 * Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-3
 - Resolves: tdf#96333 fix gtk3 RTL menu positioning

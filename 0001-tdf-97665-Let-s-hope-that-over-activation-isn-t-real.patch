@@ -1,7 +1,8 @@
-From b92e4c300c54b62309734d91dc128bfa2107448c Mon Sep 17 00:00:00 2001
+From 9e64526a0671b52cdb6b6ad567153402a85d21bf Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
-Subject: [PATCH] tdf#97665 Let's hope that over activation isn't really needed
+Subject: [PATCH 1/8] tdf#97665 Let's hope that over activation isn't really
+ needed
 
 - MenuBarManager::Activate has a check for duplicate activation,
   which makes the second activation attempt fail. Removing this
@@ -35,7 +36,7 @@ Change-Id: I96affa72412f3f38160fdca4b6efd20ca68d059f
  8 files changed, 31 insertions(+), 122 deletions(-)
 
 diff --git a/framework/source/uielement/menubarmanager.cxx b/framework/source/uielement/menubarmanager.cxx
-index 6bb58db..fc80c3e 100644
+index 6a368a9..8ce02c6 100644
 --- a/framework/source/uielement/menubarmanager.cxx
 +++ b/framework/source/uielement/menubarmanager.cxx
 @@ -386,10 +386,6 @@ throw ( RuntimeException, std::exception )
@@ -58,7 +59,7 @@ index 6bb58db..fc80c3e 100644
      }
  }
  
-@@ -893,9 +891,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
+@@ -895,9 +893,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
                                  if ( !bPopupMenu )
                                  {
                                      xMenuItemDispatch->addStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
@@ -230,7 +231,7 @@ index b5c64e0..9ea6dc9 100644
 -
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index 6b977fe..660efa8 100644
+index a0cc977..fd29a25 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -372,54 +372,9 @@ void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsig
@@ -288,7 +289,7 @@ index 6b977fe..660efa8 100644
      assert(mbMenuBar);
      SAL_INFO("vcl.unity", "GtkSalMenu set to frame");
      mpFrame = static_cast< const GtkSalFrame* >( pFrame );
-@@ -680,6 +635,7 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
+@@ -674,6 +629,7 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
  void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
  {
      pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
@@ -296,7 +297,7 @@ index 6b977fe..660efa8 100644
      for ( size_t nPos = 0; nPos < maItems.size(); nPos++ )
      {
          GtkSalMenuItem *pSalItem = maItems[ nPos ];
-@@ -691,11 +647,23 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
+@@ -685,11 +641,23 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
      }
  }
  

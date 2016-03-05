@@ -1215,15 +1215,6 @@ index a28938e..a6b235b 100644
          break;
      case RENDER_TOOLBAR_SEPERATOR:
          gtk_render_line(context, cr,
-@@ -1159,7 +1470,7 @@ bool GtkSalGraphics::drawNativeControl( ControlType nType, ControlPart nPart, co
-         PaintScrollbar(context, cr, rControlRegion, nType, nPart, rValue);
-         break;
-     case RENDER_SPINBUTTON:
--        PaintSpinButton(context, cr, rControlRegion, nType, nPart, rValue);
-+        aDamageRect.Union(PaintSpinButton(context, cr, rControlRegion, nType, nPart, rValue));
-         break;
-     case RENDER_COMBOBOX:
-         PaintCombobox(flags, cr, rControlRegion, nType, nPart, rValue);
 @@ -1188,17 +1499,14 @@ bool GtkSalGraphics::drawNativeControl( ControlType nType, ControlPart nPart, co
      }
      case RENDER_PROGRESS:

@@ -2196,7 +2196,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Thu Mar 03 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-1
-- update to 5.0.5 rc3
+- update to 5.1.1 rc3
 
 * Fri Feb 26 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.2-1
 - update to 5.1.1 rc2

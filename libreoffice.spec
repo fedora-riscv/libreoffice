@@ -1016,8 +1016,8 @@ for i in $RPM_OPT_FLAGS; do
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
-%ifarch s390
-# s390 builders do not have enough memory to link the big libs with -g2
+%ifarch s390 aarch64
+# these builders typically do not have enough memory to link the big libs with -g2
 ARCH_FLAGS="$ARCH_FLAGS -g1"
 %endif
 export ARCH_FLAGS

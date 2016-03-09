@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -304,6 +304,7 @@ Patch70: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
 Patch71: 0001-xmloff-tdf-97808-allow-empty-draw-marker-start-marke.patch
 Patch72: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
 Patch73: 0001-Resolves-tdf-98399-RET_USER_CANCEL-is-non-zero-and-r.patch
+Patch74: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2215,6 +2216,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Mar 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-5
+- Resolves: rhbz#1315385 use preferred-size if widget supports it
+
 * Fri Mar 04 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-4
 - Resolves: rhbz#1313559 gtk2 menus are not always up to date
 - Resolves: rhbz#1314599 cancel of crop still crops

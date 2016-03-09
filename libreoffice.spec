@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -196,7 +196,7 @@ BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libgltf-0.0)
-BuildRequires: pkgconfig(liborcus-0.10)
+BuildRequires: pkgconfig(liborcus-0.11)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds-1.0)
@@ -264,6 +264,14 @@ Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
 Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
 Patch31: 0008-gtk3-implement-native-context-menus.patch
 Patch32: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
+
+%if ! 0%{?rhel}
+Patch400: 0001-Update-liborcus-to-0.11.0.patch
+Patch401: 0001-reorder.patch
+Patch402: 0002-reduce-copypasta.patch
+Patch403: 0003-detect-Boost.Filesystem.patch
+Patch404: 0004-define-boost_filestystem-external-for-system-boost-t.patch
+%endif
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1039,10 +1047,8 @@ export MDDS_CFLAGS=`pkg-config --cflags mdds-1.0`
 export MDDS_LIBS=' '
 %endif
 
-# %%if 0%%{?rhel} && 0%%{?rhel} < 7
 aclocal -I m4
 autoconf
-# %endif
 
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
@@ -2197,6 +2203,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
+- update for liborcus 0.11.0
+
 * Thu Mar 03 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-1
 - update to 5.1.1 rc3
 

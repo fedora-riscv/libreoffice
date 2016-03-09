@@ -263,6 +263,7 @@ Patch28: 0005-gtk3-handle-items-without-commands.patch
 Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
 Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
 Patch31: 0008-gtk3-implement-native-context-menus.patch
+Patch32: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
 
 %if 0%{?rhel}
 # not upstreamed

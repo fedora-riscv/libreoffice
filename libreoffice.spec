@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -331,6 +331,14 @@ filters.
 Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?weak_deps}
+# make gtk2 plugin the default one
+Requires: (%{name}-plugin%{?_isa} or %{name}-gtk2%{?_isa})
+%else
+# these two plugins used to be part of core--keep it that way
+Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -640,11 +648,37 @@ Enables LibreLogo scripting in Writer. LibreLogo is a Logo-like
 programming language with interactive vectorgraphics for education and
 DTP.
 
+%package x11
+Summary: LibreOffice generic X11 support plug-in
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?weak_deps}
+Supplements: (%{name}-core%{?_isa} and Xserver)
+%endif
+
+%description x11
+A plug-in for LibreOffice that enables generic X11 support.
+
+%package gtk2
+Summary: LibreOffice GTK+ 2 integration plug-in
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?weak_deps}
+Supplements: (%{name}-core%{?_isa} and gtk2%{?_isa})
+%endif
+
+%description gtk2
+A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
+
 %if 0%{?fedora}
 
 %package kde
 Summary: LibreOffice KDE integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description kde
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
@@ -652,7 +686,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Supplements: %{name}-core%{?_isa} and fedora-release-workstation
+Supplements: (%{name}-core%{?_isa} and fedora-release-workstation)
 
 %description gtk3
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
@@ -1554,8 +1588,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libunoxmllo.so
 %{baseinstdir}/program/libuuilo.so
 %{baseinstdir}/program/libvbahelperlo.so
-%{baseinstdir}/program/libvclplug_genlo.so
-%{baseinstdir}/program/libvclplug_gtklo.so
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
@@ -2183,6 +2215,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/ui-previewer
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
+%files x11
+%{baseinstdir}/program/libvclplug_genlo.so
+
+%files gtk2
+%{baseinstdir}/program/libvclplug_gtklo.so
+
 %if 0%{?fedora}
 
 %files kde
@@ -2203,6 +2241,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Sat Mar 12 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-3
+- split VCL plugins into subpackages
+
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0
 

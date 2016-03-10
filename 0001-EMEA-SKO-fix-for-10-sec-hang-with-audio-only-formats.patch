@@ -1,0 +1,32 @@
+From a2ece7d315306eb2375fb247e507202333e0c4e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Mar 2016 14:01:36 +0000
+Subject: [PATCH] EMEA SKO fix for 10 sec hang with audio-only formats with
+ gstreamer1
+
+Change-Id: I235d683d511d3b28a2e8accd440bcb5d78ae7b59
+---
+ avmedia/source/gstreamer/gstplayer.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
+index a5a6c2f..310cf9b 100644
+--- a/avmedia/source/gstreamer/gstplayer.cxx
++++ b/avmedia/source/gstreamer/gstplayer.cxx
+@@ -555,11 +555,12 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+ 
+                     SAL_INFO( "avmedia.gstreamer", AVVERSION "queried size: " << mnWidth << "x" << mnHeight );
+ 
+-                    maSizeCondition.set();
+                 }
+                 gst_caps_unref( caps );
+                 g_object_unref( pad );
+             }
++
++            maSizeCondition.set();
+         }
+ #endif
+     } else if (gst_is_missing_plugin_message(message)) {
+-- 
+2.7.1
+

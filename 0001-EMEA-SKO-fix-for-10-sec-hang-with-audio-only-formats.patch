@@ -1,21 +1,24 @@
-From a2ece7d315306eb2375fb247e507202333e0c4e1 Mon Sep 17 00:00:00 2001
+From 95d7c29bdff4847fb039de195f3896264bfad91c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
-Date: Thu, 10 Mar 2016 14:01:36 +0000
-Subject: [PATCH] EMEA SKO fix for 10 sec hang with audio-only formats with
- gstreamer1
+Date: Thu, 10 Mar 2016 14:05:37 +0000
+Subject: [PATCH] fix for 10 sec hang with audio-only formats with gstreamer1
 
-Change-Id: I235d683d511d3b28a2e8accd440bcb5d78ae7b59
+just do the same as we did for gstreamer 0.10 and set the
+size found condition once we get the message even if there is no size
+
+Change-Id: I826d76dd1097432e5bd33d4acc1a187b8e5068da
+(cherry picked from commit 702790258c6b3ec05ce04f7c2839a48776381535)
 ---
  avmedia/source/gstreamer/gstplayer.cxx | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
-index a5a6c2f..310cf9b 100644
+index d12e8e9..b820ae1 100644
 --- a/avmedia/source/gstreamer/gstplayer.cxx
 +++ b/avmedia/source/gstreamer/gstplayer.cxx
-@@ -555,11 +555,12 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+@@ -549,11 +549,12 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
  
-                     SAL_INFO( "avmedia.gstreamer", AVVERSION "queried size: " << mnWidth << "x" << mnHeight );
+                     DBG( "queried size: %d x %d", mnWidth, mnHeight );
  
 -                    maSizeCondition.set();
                  }

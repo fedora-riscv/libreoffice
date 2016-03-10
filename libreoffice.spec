@@ -656,7 +656,6 @@ Supplements: %{name}-core%{?_isa} and fedora-release-workstation
 
 %description gtk3
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
-This plugin is experimental and it is not suggested for normal use.
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality

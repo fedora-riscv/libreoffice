@@ -1,0 +1,48 @@
+From 235411c9d47ecba88e46d859ea93bcecefb0c46e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 11 Mar 2016 13:21:23 +0000
+Subject: [PATCH] gtk3: various bits means different things again
+
+Change-Id: Iafa1e65fb0cc096513cdfe12a09fb0ef4c4d2db0
+---
+ vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+index 403280c..7591f68 100644
+--- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+@@ -1124,6 +1124,12 @@ static GtkStyleContext* createStyleContext(GtkControlPart ePart, GtkStyleContext
+ #   define CHECKED GTK_STATE_FLAG_ACTIVE
+ #endif
+ 
++#if GTK_CHECK_VERSION(3,19,11)
++#   define ACTIVE_TAB GTK_STATE_FLAG_CHECKED
++#else
++#   define ACTIVE_TAB GTK_STATE_FLAG_ACTIVE
++#endif
++
+ void GtkSalGraphics::PaintCheckOrRadio(cairo_t *cr, GtkStyleContext *context,
+                                        const Rectangle& rControlRectangle, bool bIsCheck, bool bInMenu)
+ {
+@@ -1345,7 +1351,7 @@ bool GtkSalGraphics::drawNativeControl( ControlType nType, ControlPart nPart, co
+     case CTRL_TAB_ITEM:
+         context = mpNotebookHeaderTabsTabStyle;
+         if (nState & ControlState::SELECTED)
+-            flags = (GtkStateFlags) (flags | GTK_STATE_FLAG_ACTIVE);
++            flags = (GtkStateFlags) (flags | ACTIVE_TAB);
+         break;
+     case CTRL_WINDOW_BACKGROUND:
+         context = gtk_widget_get_style_context(mpWindow);
+@@ -2030,7 +2036,7 @@ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
+         aTextColor = getColor( text_color );
+         aStyleSet.SetTabRolloverTextColor(aTextColor);
+ 
+-        gtk_style_context_set_state(pCStyle, GTK_STATE_FLAG_ACTIVE);
++        gtk_style_context_set_state(pCStyle, ACTIVE_TAB);
+         gtk_style_context_get_color(pCStyle, gtk_style_context_get_state(pCStyle), &text_color);
+         aTextColor = getColor( text_color );
+         aStyleSet.SetTabHighlightTextColor(aTextColor);
+-- 
+2.7.1
+

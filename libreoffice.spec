@@ -1100,6 +1100,7 @@ touch autogen.lastrun
  --disable-coinmp \
  --disable-fetch-external \
  --disable-openssl \
+ --disable-systray \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
@@ -1558,7 +1559,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libpllo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
-%{baseinstdir}/program/libqstart_gtklo.so
 %{baseinstdir}/program/librecentfile.so
 %{baseinstdir}/program/libreslo.so
 %{baseinstdir}/program/libsaxlo.so
@@ -2253,6 +2253,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - only recommend fonts
 - remove hard dependency on English spell checker and auto-correction
   rules
+- disable quickstarter
 
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0

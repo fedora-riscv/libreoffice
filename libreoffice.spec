@@ -340,15 +340,15 @@ Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 %endif
 %if 0%{?weak_deps}
-Recommends: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
+Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 %else
-Requires: liberation-sans-fonts >= 1.0, liberation-serif-fonts >= 1.0, liberation-mono-fonts >= 1.0
+Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 %endif
-Requires: hyphen-en, hyphen%{?_isa} >= 2.4, autocorr-en
+Requires: hyphen-en, hyphen%{?_isa}, autocorr-en
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Requires: hunspell-en-US

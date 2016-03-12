@@ -343,15 +343,15 @@ Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
+Recommends: libreoffice-langpack-en
 %else
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
+Requires: libreoffice-langpack-en
 %endif
-Requires: hyphen-en, hyphen%{?_isa}, autocorr-en
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
-Requires: hunspell-en-US
 Requires(pre):    gtk2%{?_isa} >= 2.9.4
 Requires(post):   gtk2%{?_isa} >= 2.9.4
 Requires(preun):  gtk2%{?_isa} >= 2.9.4
@@ -2254,6 +2254,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - split VCL plugins into subpackages
 - rename libreoffice-kde to libreoffice-kde4
 - only recommend fonts
+- remove hard dependency on English spell checker and auto-correction
+  rules
 
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0

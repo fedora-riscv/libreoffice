@@ -331,6 +331,7 @@ filters.
 Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-system-data = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
 # make gtk2 plugin the default one
 Requires: (%{name}-plugin%{?_isa} or %{name}-gtk2%{?_isa})
@@ -650,6 +651,14 @@ Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Enables LibreLogo scripting in Writer. LibreLogo is a Logo-like
 programming language with interactive vectorgraphics for education and
 DTP.
+
+%package system-data
+Summary: LibreOffice icons, mime-info etc.
+BuildArch: noarch
+
+%description system-data
+%{name}-system-data contains platform-independent system-integration
+%data. This includes icons, mime-info files and similar.
 
 %package x11
 Summary: LibreOffice generic X11 support plug-in
@@ -1792,11 +1801,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liblnthlo.so
 %{_bindir}/unopkg
 %{_mandir}/man1/unopkg.1*
-#icons and mime
-%{_datadir}/icons/*/*/*/libreoffice*
-%{_datadir}/mime-info/libreoffice.*
 %{baseinstdir}/program/libxmlsecurity.so
-%{_datadir}/mime/packages/libreoffice.xml
 %{baseinstdir}/program/libconfigmgrlo.so
 %{baseinstdir}/program/libdesktopbe1lo.so
 %{baseinstdir}/program/libfsstoragelo.so
@@ -2221,6 +2226,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/ui-previewer
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
+%files system-data
+%{_datadir}/icons/*/*/*/libreoffice*
+%{_datadir}/mime-info/libreoffice.*
+%{_datadir}/mime/packages/libreoffice.xml
+
 %files x11
 %{baseinstdir}/program/libvclplug_genlo.so
 
@@ -2254,6 +2264,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 - remove hard dependency on English spell checker and auto-correction
   rules
 - disable quickstarter
+- move icons and other system-integration stuff to a noarch subpackage
 
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0

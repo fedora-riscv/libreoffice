@@ -350,6 +350,7 @@ Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %endif
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
+# TODO: needed for %post/%postun; move the stuff to %posttrans?
 Requires(pre):    gtk2%{?_isa} >= 2.9.4
 Requires(post):   gtk2%{?_isa} >= 2.9.4
 Requires(preun):  gtk2%{?_isa} >= 2.9.4
@@ -1774,6 +1775,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
+# TODO: GIO UCP depends on gtk2, what to do with that?
 %{baseinstdir}/share/registry/gnome.xcd
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd

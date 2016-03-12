@@ -334,17 +334,14 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
 # make gtk2 plugin the default one
 Requires: (%{name}-plugin%{?_isa} or %{name}-gtk2%{?_isa})
-%else
-# these two plugins used to be part of core--keep it that way
-Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
-%if 0%{?weak_deps}
 Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Recommends: libreoffice-langpack-en
 %else
+# these two plugins used to be part of core--keep it that way
+Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts

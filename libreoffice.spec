@@ -674,13 +674,16 @@ A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
 
 %if 0%{?fedora}
 
-%package kde
+%package kde4
 Summary: LibreOffice KDE integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes: %{name}-kde < 1:5.1.1.3-2
+Provides: %{name}-kde = %{epoch}:%{version}-%{release}
+Provides: %{name}-kde%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 
-%description kde
+%description kde4
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
 %package gtk3
@@ -2223,7 +2226,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %if 0%{?fedora}
 
-%files kde
+%files kde4
 %{baseinstdir}/program/kde4-open-url
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
@@ -2243,6 +2246,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Sat Mar 12 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-3
 - split VCL plugins into subpackages
+- rename libreoffice-kde to libreoffice-kde4
 
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0

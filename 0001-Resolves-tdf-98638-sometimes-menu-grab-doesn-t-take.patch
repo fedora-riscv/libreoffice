@@ -1,0 +1,47 @@
+From 0ee0e8010f986b67d696111ff4ea269ccf904aba Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 14 Mar 2016 12:50:56 +0000
+Subject: [PATCH] Resolves: tdf#98638 sometimes menu grab doesn't take
+
+due to older timestamp vs earlier grab. Which suggests we should probably use
+GDK_CURRENT_TIME everywhere or (probably better) use gtk_get_current_event_time
+everywhere
+
+Change-Id: Ie04ab254b9fea423143cc9a129d2eecb683ed300
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index bdd5499..742f812 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2078,9 +2078,9 @@ void GtkSalFrame::grabPointer( bool bGrab, bool bOwnerEvents )
+     GdkDeviceManager* pDeviceManager = gdk_display_get_device_manager(getGdkDisplay());
+     GdkDevice* pPointer = gdk_device_manager_get_client_pointer(pDeviceManager);
+     if (bGrab)
+-        gdk_device_grab(pPointer, widget_get_window(getMouseEventWidget()), GDK_OWNERSHIP_NONE, bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, GDK_CURRENT_TIME);
++        gdk_device_grab(pPointer, widget_get_window(getMouseEventWidget()), GDK_OWNERSHIP_NONE, bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, gtk_get_current_event_time());
+     else
+-        gdk_device_ungrab(pPointer, GDK_CURRENT_TIME);
++        gdk_device_ungrab(pPointer, gtk_get_current_event_time());
+ }
+ 
+ void GtkSalFrame::grabKeyboard( bool bGrab )
+@@ -2098,11 +2098,11 @@ void GtkSalFrame::grabKeyboard( bool bGrab )
+     if (bGrab)
+     {
+         gdk_device_grab(pKeyboard, widget_get_window(m_pWindow), GDK_OWNERSHIP_NONE,
+-                        true, (GdkEventMask)(GDK_KEY_PRESS | GDK_KEY_RELEASE), nullptr, GDK_CURRENT_TIME);
++                        true, (GdkEventMask)(GDK_KEY_PRESS | GDK_KEY_RELEASE), nullptr, gtk_get_current_event_time());
+     }
+     else
+     {
+-        gdk_device_ungrab(pKeyboard, GDK_CURRENT_TIME);
++        gdk_device_ungrab(pKeyboard, gtk_get_current_event_time());
+     }
+ }
+ 
+-- 
+2.7.1
+

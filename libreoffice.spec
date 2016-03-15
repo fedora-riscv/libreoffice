@@ -1880,28 +1880,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %post core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-for theme in hicolor locolor; do
-    touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
-done
-touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 
 %postun core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
-if [ $1 -eq 0 ] ; then
-    for theme in hicolor locolor; do
-        touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
-        gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
-    done
-    touch --no-create %{_datadir}/mime/packages &> /dev/null || :
-    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-fi
-
-%posttrans core
-for theme in hicolor locolor; do
-    gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
-done
-update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-
 
 %files base
 %{baseinstdir}/help/en-US/sdatabase.*
@@ -2233,6 +2214,28 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/icons/*/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
+
+%post system-data
+touch --no-create %{_datadir}/mime/packages &> /dev/null || :
+for theme in hicolor locolor; do
+    touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
+done
+
+%postun system-data
+if [ $1 -eq 0 ] ; then
+    touch --no-create %{_datadir}/mime/packages &> /dev/null || :
+    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+    for theme in hicolor locolor; do
+        touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
+        gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
+    done
+fi
+
+%posttrans system-data
+update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+for theme in hicolor locolor; do
+    gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
+done
 
 %files x11
 %{baseinstdir}/program/libvclplug_genlo.so

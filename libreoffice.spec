@@ -1129,6 +1129,11 @@ touch autogen.lastrun
  %{?bundling_options} \
  %{?archoptions}
 
+%if ! 0%{?rhel}
+# disable browser plugin
+sed -i -e '/ENABLE_NPAPI_FROM_BROWSER=/s/TRUE//' config_host.mk
+%endif
+
 ulimit -c unlimited
  make verbose=true
 
@@ -1564,7 +1569,11 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
+%if 0%{?rhel}
+# browser plugin
 %{baseinstdir}/program/libpllo.so
+%{baseinstdir}/program/pluginapp.bin
+%endif
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/librecentfile.so
 %{baseinstdir}/program/libreslo.so
@@ -1672,7 +1681,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
-%{baseinstdir}/program/pluginapp.bin
 %dir %{baseinstdir}/program/resource
 %{baseinstdir}/program/resource/avmediaen-US.res
 %{baseinstdir}/program/resource/accen-US.res
@@ -2262,6 +2270,7 @@ done
   rules
 - disable quickstarter
 - move icons and other system-integration stuff to a noarch subpackage
+- disable browser plugin in preparation for its removal in 5.2
 
 * Wed Mar 09 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-2
 - update for liborcus 0.11.0

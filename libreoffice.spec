@@ -351,11 +351,6 @@ Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %endif
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
-# TODO: needed for %post/%postun; move the stuff to %posttrans?
-Requires(pre):    gtk2%{?_isa} >= 2.9.4
-Requires(post):   gtk2%{?_isa} >= 2.9.4
-Requires(preun):  gtk2%{?_isa} >= 2.9.4
-Requires(postun): gtk2%{?_isa} >= 2.9.4
 Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-headless < 1:4.4.0.0

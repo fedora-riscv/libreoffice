@@ -1771,7 +1771,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
-# TODO: GIO UCP depends on gtk2, what to do with that?
 %{baseinstdir}/share/registry/gnome.xcd
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd

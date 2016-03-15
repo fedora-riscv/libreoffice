@@ -108,16 +108,12 @@ index 91b7f35..48520c2 100644
 +
          g_lo_menu_set_command_to_item_in_section( pMenu, nSection, nItemPos, aCommand );
  
-         gchar* aItemCommand = g_strconcat("win.", aCommand, nullptr );
-@@ -865,6 +879,8 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
- 
-     if (pTarget)
-         g_variant_unref(pTarget);
-+
+         gchar* aItemCommand = g_strconcat("win.", aCommand, NULL );
+@@ -865,3 +879,4 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
 +    return bSubMenuAddedOrRemoved;
  }
  
- GtkSalMenu* GtkSalMenu::GetMenuForItemCommand(gchar* aCommand, int& rDupsToSkip, gboolean bGetSubmenu)
+ GtkSalMenu* GtkSalMenu::GetMenuForItemCommand( gchar* aCommand, gboolean bGetSubmenu )
 -- 
 2.7.1
 

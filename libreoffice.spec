@@ -2206,7 +2206,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
 %files system-data
-%{_datadir}/icons/*/*/*/libreoffice*
+%{_datadir}/icons/hicolor/*/*/libreoffice*
+%{_datadir}/icons/locolor/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
 

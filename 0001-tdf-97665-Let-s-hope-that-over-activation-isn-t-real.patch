@@ -1,8 +1,7 @@
-From 9e64526a0671b52cdb6b6ad567153402a85d21bf Mon Sep 17 00:00:00 2001
+From e51b78efcdd8e55727fb3b75165b11a30bf6a83a Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
-Subject: [PATCH 1/8] tdf#97665 Let's hope that over activation isn't really
- needed
+Subject: [PATCH] tdf#97665 Let's hope that over activation isn't really needed
 
 - MenuBarManager::Activate has a check for duplicate activation,
   which makes the second activation attempt fail. Removing this
@@ -29,14 +28,14 @@ Change-Id: I96affa72412f3f38160fdca4b6efd20ca68d059f
  include/vcl/menu.hxx                          |  9 +---
  vcl/inc/salmenu.hxx                           |  1 +
  vcl/inc/unx/gtk/gtksalmenu.hxx                |  4 +-
- vcl/source/window/menu.cxx                    | 46 +++-----------------
+ vcl/source/window/menu.cxx                    | 46 +++----------------
  vcl/unx/gtk/gloactiongroup.cxx                |  2 +-
  vcl/unx/gtk/gtkdata.cxx                       | 18 --------
- vcl/unx/gtk/gtksalmenu.cxx                    | 62 +++++++--------------------
- 8 files changed, 31 insertions(+), 122 deletions(-)
+ vcl/unx/gtk/gtksalmenu.cxx                    | 64 +++++++--------------------
+ 8 files changed, 33 insertions(+), 122 deletions(-)
 
 diff --git a/framework/source/uielement/menubarmanager.cxx b/framework/source/uielement/menubarmanager.cxx
-index 6a368a9..8ce02c6 100644
+index 6bb58db..fc80c3e 100644
 --- a/framework/source/uielement/menubarmanager.cxx
 +++ b/framework/source/uielement/menubarmanager.cxx
 @@ -386,10 +386,6 @@ throw ( RuntimeException, std::exception )
@@ -59,7 +58,7 @@ index 6a368a9..8ce02c6 100644
      }
  }
  
-@@ -895,9 +893,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
+@@ -893,9 +891,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
                                  if ( !bPopupMenu )
                                  {
                                      xMenuItemDispatch->addStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
@@ -111,7 +110,7 @@ index 287e19e..468994a 100644
      // TODO: implement show/hide for the Win/Mac VCL native backends
      virtual void ShowItem( unsigned nPos, bool bShow ) { EnableItem( nPos, bShow ); }
 diff --git a/vcl/inc/unx/gtk/gtksalmenu.hxx b/vcl/inc/unx/gtk/gtksalmenu.hxx
-index 5d9c262..8df2c1d 100644
+index 011c3e4..93259f1 100644
 --- a/vcl/inc/unx/gtk/gtksalmenu.hxx
 +++ b/vcl/inc/unx/gtk/gtksalmenu.hxx
 @@ -96,11 +96,11 @@ public:
@@ -231,7 +230,7 @@ index b5c64e0..9ea6dc9 100644
 -
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index a0cc977..fd29a25 100644
+index b6295fa..5c16c39 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -372,54 +372,9 @@ void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsig
@@ -289,7 +288,7 @@ index a0cc977..fd29a25 100644
      assert(mbMenuBar);
      SAL_INFO("vcl.unity", "GtkSalMenu set to frame");
      mpFrame = static_cast< const GtkSalFrame* >( pFrame );
-@@ -674,6 +629,7 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
+@@ -706,6 +661,7 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
  void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
  {
      pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
@@ -297,7 +296,7 @@ index a0cc977..fd29a25 100644
      for ( size_t nPos = 0; nPos < maItems.size(); nPos++ )
      {
          GtkSalMenuItem *pSalItem = maItems[ nPos ];
-@@ -685,11 +641,23 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
+@@ -717,11 +673,25 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
      }
  }
  
@@ -313,7 +312,9 @@ index a0cc977..fd29a25 100644
 +        return;
 +    }
 +
-+    GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), TRUE );
++    int nDupsToSkip;
++    aMenuCommand = DetermineDupIndex(aMenuCommand, nDupsToSkip);
++    GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), nDupsToSkip, TRUE );
 +
 +    if ( pSalSubMenu != nullptr ) {
 +        MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );
@@ -324,5 +325,5 @@ index a0cc977..fd29a25 100644
  
  void GtkSalMenu::Deactivate( const gchar* aMenuCommand )
 -- 
-2.7.1
+2.5.0
 

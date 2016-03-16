@@ -138,7 +138,7 @@ index 507d529..9b590dd 100644
  {
      pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
      pMenuBar->HandleMenuDeActivateEvent(mpVCLMenu);
-@@ -679,15 +678,14 @@ void GtkSalMenu::Activate( const gchar* aMenuCommand )
+@@ -679,17 +678,16 @@ void GtkSalMenu::Activate( const gchar* aMenuCommand )
          return;
  
      if ( !aMenuCommand ) {
@@ -147,7 +147,9 @@ index 507d529..9b590dd 100644
          return;
      }
  
-     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), TRUE );
+     int nDupsToSkip;
+     aMenuCommand = DetermineDupIndex(aMenuCommand, nDupsToSkip);
+     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), nDupsToSkip, TRUE );
  
      if ( pSalSubMenu != nullptr ) {
 -        MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );

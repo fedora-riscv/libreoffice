@@ -206,7 +206,6 @@ BuildRequires: pkgconfig(mdds-1.0)
 BuildRequires: ant
 BuildRequires: bsh
 BuildRequires: java-devel
-BuildRequires: jakarta-commons-httpclient
 BuildRequires: junit
 BuildRequires: pentaho-reporting-flow-engine
 

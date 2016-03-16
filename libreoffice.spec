@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.1
+%define libo_version 5.1.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -239,34 +239,26 @@ Patch5: 0001-never-run-autogen.sh.patch
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch7: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch8: 0001-Related-rhbz-1281906-set-a-min-size-on-un-resizeable.patch
-Patch9: 0001-but-only-for-dialog.patch
-Patch10: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch11: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
-Patch12: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch13: 0002-disable-tearability-of-color-window.patch
-Patch14: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch15: 0001-hack-out-optimization-to-build.patch
-Patch16: 0001-generate-better-unit-test-assert-message.patch
-Patch17: 0001-gtk3-adapt-to-3.20-style-changes.patch
-Patch18: 0001-unused-vcl-IsWindowSystemAvailable.patch
-Patch19: 0002-split-the-gtk2-and-gtk3-gtkobjects.patch
-Patch20: 0003-rename-X11WindowProvider-to-a-NativeWindowHandle-pro.patch
-Patch21: 0004-implement-wayland-handle-passing-for-gstreamer.patch
-Patch22: 0005-gtk3-wayland-play-video-via-gtksink-gstreamer-elemen.patch
-Patch23: 0001-gtk3-get-app-menu-working-again-under-gtk3.patch
-Patch24: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
-Patch25: 0002-gtk3-some-changes-towards-enabling-native-gtk3-popup.patch
-Patch26: 0003-gtk3-vcl-popups-flush-any-unexecuted-Select-events-o.patch
-Patch27: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
-Patch28: 0005-gtk3-handle-items-without-commands.patch
-Patch29: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
-Patch30: 0007-set-gtk-layout-direction-to-match-ours.patch
-Patch31: 0008-gtk3-implement-native-context-menus.patch
-Patch32: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch33: 0001-gtk3-various-bits-means-different-things-again.patch
-Patch34: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
-Patch35: 0001-Resolves-tdf-98636.patch
+Patch8: 0001-but-only-for-dialog.patch
+Patch9: 0003-gtk3-wayland-start-floating-windows-hidden.patch
+Patch10: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
+Patch11: 0001-these-popups-should-start-invisible-and-take-default.patch
+Patch12: 0002-disable-tearability-of-color-window.patch
+Patch13: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch14: 0001-hack-out-optimization-to-build.patch
+Patch15: 0001-generate-better-unit-test-assert-message.patch
+Patch16: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
+Patch17: 0002-gtk3-some-changes-towards-enabling-native-gtk3-popup.patch
+Patch18: 0003-gtk3-vcl-popups-flush-any-unexecuted-Select-events-o.patch
+Patch19: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
+Patch20: 0005-gtk3-handle-items-without-commands.patch
+Patch21: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
+Patch22: 0007-set-gtk-layout-direction-to-match-ours.patch
+Patch23: 0008-gtk3-implement-native-context-menus.patch
+Patch24: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
+Patch25: 0001-gtk3-various-bits-means-different-things-again.patch
+Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
+Patch27: 0001-Resolves-tdf-98636.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2262,7 +2254,8 @@ done
 %endif
 
 %changelog
-* Sat Mar 12 2016 David Tardon <dtardon@redhat.com> - 1:5.1.1.3-3
+* Wed Mar 16 2016 David Tardon <dtardon@redhat.com> - 1:5.1.2.1-1
+- update to 5.1.2 rc1
 - split VCL plugins into subpackages
 - rename libreoffice-kde to libreoffice-kde4
 - only recommend fonts

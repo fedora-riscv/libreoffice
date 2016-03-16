@@ -1,8 +1,7 @@
-From 684f2191c0010aaa5c802a306bef209660df0968 Mon Sep 17 00:00:00 2001
+From 7e0dcbd97a7ec6e9d39a8b74980421a6b33132ff Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 22 Feb 2016 20:57:52 +0000
-Subject: [PATCH 2/8] gtk3: some changes towards enabling native gtk3 popup
- menus
+Subject: [PATCH] gtk3: some changes towards enabling native gtk3 popup menus
 
 these menubar things can be menu things and can then do
 away with the casting, no logic changes intended
@@ -45,7 +44,7 @@ index 0d6e16a..1dbd85e 100644
  
      void SetCloseButtonClickHdl( const Link<void*,void>& rLink ) { maCloseHdl = rLink; }
 diff --git a/vcl/inc/unx/gtk/gtksalmenu.hxx b/vcl/inc/unx/gtk/gtksalmenu.hxx
-index 8df2c1d..1d58b7a 100644
+index 93259f1..ffda51a 100644
 --- a/vcl/inc/unx/gtk/gtksalmenu.hxx
 +++ b/vcl/inc/unx/gtk/gtksalmenu.hxx
 @@ -42,7 +42,7 @@ class GtkSalMenu : public SalMenu
@@ -59,7 +58,7 @@ index 8df2c1d..1d58b7a 100644
      const GtkSalFrame*              mpFrame;
 @@ -53,7 +53,7 @@ private:
  
-     GtkSalMenu*                 GetMenuForItemCommand( gchar* aCommand, gboolean bGetSubmenu );
+     GtkSalMenu*                 GetMenuForItemCommand( gchar* aCommand, int& rDupsToSkip, gboolean bGetSubmenu );
      void                        ImplUpdate( gboolean bRecurse );
 -    void                        ActivateAllSubmenus(MenuBar* pMenuBar);
 +    void                        ActivateAllSubmenus(Menu* pMenuBar);
@@ -122,11 +121,11 @@ index 4aa7d41..999085e 100644
          return true;
      }
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index fd29a25..6887ade 100644
+index 507d529..9b590dd 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
-@@ -622,11 +622,10 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
-     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aCommand), FALSE );
+@@ -654,11 +654,10 @@ void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
+     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aCommand), nDupsToSkip, FALSE );
      Menu* pSubMenu = ( pSalSubMenu != nullptr ) ? pSalSubMenu->GetMenu() : nullptr;
  
 -    MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );
@@ -139,7 +138,7 @@ index fd29a25..6887ade 100644
  {
      pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
      pMenuBar->HandleMenuDeActivateEvent(mpVCLMenu);
-@@ -647,15 +646,14 @@ void GtkSalMenu::Activate( const gchar* aMenuCommand )
+@@ -679,15 +678,14 @@ void GtkSalMenu::Activate( const gchar* aMenuCommand )
          return;
  
      if ( !aMenuCommand ) {
@@ -157,8 +156,8 @@ index fd29a25..6887ade 100644
          pSalSubMenu->Update();
      }
  }
-@@ -668,8 +666,7 @@ void GtkSalMenu::Deactivate( const gchar* aMenuCommand )
-     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), TRUE );
+@@ -702,8 +700,7 @@ void GtkSalMenu::Deactivate( const gchar* aMenuCommand )
+     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), nDupsToSkip, TRUE );
  
      if ( pSalSubMenu != nullptr ) {
 -        MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );
@@ -168,5 +167,5 @@ index fd29a25..6887ade 100644
  }
  
 -- 
-2.7.1
+2.5.0
 

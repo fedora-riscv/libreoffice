@@ -51,7 +51,7 @@ index 1d58b7a..d95d25c 100644
      GMenuModel*                     mpMenuModel;
      GActionGroup*                   mpActionGroup;
  
-     GtkSalMenu*                 GetMenuForItemCommand( gchar* aCommand, gboolean bGetSubmenu );
+     GtkSalMenu*                 GetMenuForItemCommand( gchar* aCommand, int& rDupsToSkip, gboolean bGetSubmenu );
 -    void                        ImplUpdate( gboolean bRecurse );
 +    void                        ImplUpdate(bool bRecurse, bool bRemoveDisabledEntries);
      void                        ActivateAllSubmenus(Menu* pMenuBar);
@@ -486,7 +486,7 @@ index 346e42d..7bc9232 100644
          UpdateFull();
  
      g_lo_menu_insert_section( pMenuModel, 0, nullptr, mpMenuModel );
-@@ -618,14 +746,9 @@ GtkSalMenu* GtkSalMenu::GetMenuForItemCommand( gchar* aCommand, gboolean bGetSub
+@@ -618,16 +746,11 @@ GtkSalMenu* GtkSalMenu::GetMenuForItemCommand( gchar* aCommand, gboolean bGetSub
  void GtkSalMenu::DispatchCommand( gint itemId, const gchar *aCommand )
  {
      SolarMutexGuard aGuard;
@@ -494,7 +494,9 @@ index 346e42d..7bc9232 100644
 -    if ( !mbMenuBar )
 -        return;
 -
-     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aCommand), FALSE );
+     int nDupsToSkip;
+     aCommand = DetermineDupIndex(aCommand, nDupsToSkip);
+     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aCommand), nDupsToSkip, FALSE );
      Menu* pSubMenu = ( pSalSubMenu != nullptr ) ? pSalSubMenu->GetMenu() : nullptr;
 -
 -    mpVCLMenu->HandleMenuCommandEvent( pSubMenu, itemId );
@@ -519,9 +521,9 @@ index 346e42d..7bc9232 100644
 -    if ( !mbMenuBar )
 -        return;
 -
-     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), TRUE );
- 
-     if ( pSalSubMenu != nullptr ) {
+     int nDupsToSkip;
+     aMenuCommand = DetermineDupIndex(aMenuCommand, nDupsToSkip);
+     GtkSalMenu* pSalSubMenu = GetMenuForItemCommand( const_cast<gchar*>(aMenuCommand), nDupsToSkip, TRUE );
 @@ -675,15 +792,14 @@ void GtkSalMenu::Deactivate( const gchar* aMenuCommand )
  
  void GtkSalMenu::Display( bool bVisible )

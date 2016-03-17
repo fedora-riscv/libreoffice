@@ -692,7 +692,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Supplements: (%{name}-core%{?_isa} and fedora-release-workstation)
+Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.

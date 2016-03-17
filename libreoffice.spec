@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -306,6 +306,7 @@ Patch72: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
 Patch73: 0001-Resolves-tdf-98399-RET_USER_CANCEL-is-non-zero-and-r.patch
 Patch74: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
 Patch75: 0001-EMEA-SKO-fix-for-10-sec-hang-with-audio-only-formats.patch
+Patch76: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2217,6 +2218,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Mar 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-7
+- Resolves: tdf#96989 videos playback at maximum possible volume
+
 * Thu Mar 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-6
 - fix 10 sec lag on playback of audio only formats with gstreamer1
 

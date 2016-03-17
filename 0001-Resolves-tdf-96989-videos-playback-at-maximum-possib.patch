@@ -1,0 +1,192 @@
+From b09dbbfb58d67d1640709f71a7053a7ccea70cec Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Mar 2016 12:21:16 +0000
+Subject: [PATCH] Resolves: tdf#96989 videos playback at maximum possible
+ volume
+
+On systems with flat-volumes then setting the volume directly on the playbin to
+100% results in resetting the global volume to the maximum possible volume.
+
+We expect to set as % of the current system volume. Putting an intermediate
+volume object into the pipeline does the more expected thing.
+
+(cherry picked from commit d4b48e0de7f817c0d4607382724778acf191f9f8)
+
+Change-Id: I911d6fffba0983e4fd7b455e820959a96115de34
+---
+ avmedia/source/gstreamer/gstplayer.cxx | 90 ++++++++++++++++++++--------------
+ avmedia/source/gstreamer/gstplayer.hxx |  1 +
+ 2 files changed, 54 insertions(+), 37 deletions(-)
+
+diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
+index b820ae1..50f54ea 100644
+--- a/avmedia/source/gstreamer/gstplayer.cxx
++++ b/avmedia/source/gstreamer/gstplayer.cxx
+@@ -131,7 +131,7 @@ void MissingPluginInstaller::report(
+ {
+     // assert(gst_is_missing_plugin_message(message));
+     gchar * det = gst_missing_plugin_message_get_installer_detail(message);
+-    if (det == nullptr) {
++    if (det == NULL) {
+         SAL_WARN(
+             "avmedia.gstreamer",
+             "gst_missing_plugin_message_get_installer_detail failed");
+@@ -268,8 +268,8 @@ void MissingPluginInstallerThread::execute() {
+         for (auto const & i: details) {
+             args.push_back(const_cast<char *>(i.getStr()));
+         }
+-        args.push_back(nullptr);
+-        gst_install_plugins_sync(args.data(), nullptr);
++        args.push_back(NULL);
++        gst_install_plugins_sync(args.data(), NULL);
+         {
+             osl::MutexGuard g(inst.mutex_);
+             if (inst.queued_.empty() || inst.launchNewThread_) {
+@@ -290,6 +290,7 @@ Player::Player( const uno::Reference< lang::XMultiServiceFactory >& rxMgr ) :
+     GstPlayer_BASE( m_aMutex ),
+     mxMgr( rxMgr ),
+     mpPlaybin( NULL ),
++    mpVolumeControl( NULL ),
+     mbFakeVideo (false ),
+     mnUnmutedVolume( 0 ),
+     mbPlayPending ( false ),
+@@ -351,6 +352,7 @@ void SAL_CALL Player::disposing()
+             g_object_unref( G_OBJECT( mpPlaybin ) );
+ 
+             mpPlaybin = NULL;
++            mpVolumeControl = NULL;
+         }
+ 
+         if( mpXOverlay ) {
+@@ -576,41 +578,55 @@ GstBusSyncReply Player::processSyncMessage( GstMessage *message )
+ 
+ void Player::preparePlaybin( const OUString& rURL, GstElement *pSink )
+ {
+-        GstBus *pBus;
++    GstBus *pBus;
+ 
+-        if( mpPlaybin != NULL ) {
+-            gst_element_set_state( mpPlaybin, GST_STATE_NULL );
+-            mbPlayPending = false;
+-            g_object_unref( mpPlaybin );
+-        }
++    if( mpPlaybin != NULL ) {
++        gst_element_set_state( mpPlaybin, GST_STATE_NULL );
++        mbPlayPending = false;
++        g_object_unref( mpPlaybin );
++    }
+ 
+-        mpPlaybin = gst_element_factory_make( "playbin", NULL );
+-        if( pSink != NULL ) // used for getting preferred size etc.
+-        {
+-            g_object_set( G_OBJECT( mpPlaybin ), "video-sink", pSink, NULL );
+-            mbFakeVideo = true;
+-        }
+-        else
+-            mbFakeVideo = false;
++    mpPlaybin = gst_element_factory_make( "playbin", NULL );
++
++    //tdf#96989 on systems with flat-volumes setting the volume directly on the
++    //playbin to 100% results in setting the global volums to 100% of the
++    //maximum. We expect to set as % of the current volume.
++    mpVolumeControl = gst_element_factory_make( "volume", NULL );
++    GstElement *pAudioSink = gst_element_factory_make( "autoaudiosink", NULL );
++    GstElement* pAudioOutput = gst_bin_new("audio-output-bin");
++    gst_bin_add_many(GST_BIN(pAudioOutput), mpVolumeControl, pAudioSink, NULL);
++    gst_element_link(mpVolumeControl, pAudioSink);
++    GstPad *pPad = gst_element_get_static_pad(mpVolumeControl, "sink");
++    gst_element_add_pad(GST_ELEMENT(pAudioOutput), gst_ghost_pad_new("sink", pPad));
++    gst_object_unref(GST_OBJECT(pPad));
++    g_object_set(G_OBJECT(mpPlaybin), "audio-sink", pAudioOutput, NULL);
++
++    if( pSink != NULL ) // used for getting preferred size etc.
++    {
++        g_object_set( G_OBJECT( mpPlaybin ), "video-sink", pSink, NULL );
++        mbFakeVideo = true;
++    }
++    else
++        mbFakeVideo = false;
+ 
+-        OString ascURL = OUStringToOString( rURL, RTL_TEXTENCODING_UTF8 );
+-        g_object_set( G_OBJECT( mpPlaybin ), "uri", ascURL.getStr() , NULL );
++    OString ascURL = OUStringToOString( rURL, RTL_TEXTENCODING_UTF8 );
++    g_object_set( G_OBJECT( mpPlaybin ), "uri", ascURL.getStr() , NULL );
+ 
+-        pBus = gst_element_get_bus( mpPlaybin );
+-        if (mbWatchID)
+-        {
+-            g_source_remove(mnWatchID);
+-            mbWatchID = false;
+-        }
+-        mnWatchID = gst_bus_add_watch( pBus, pipeline_bus_callback, this );
+-        mbWatchID = true;
+-        DBG( "%p set sync handler", this );
++    pBus = gst_element_get_bus( mpPlaybin );
++    if (mbWatchID)
++    {
++        g_source_remove(mnWatchID);
++        mbWatchID = false;
++    }
++    mnWatchID = gst_bus_add_watch( pBus, pipeline_bus_callback, this );
++    mbWatchID = true;
++    DBG( "%p set sync handler", this );
+ #ifdef AVMEDIA_GST_0_10
+-        gst_bus_set_sync_handler( pBus, pipeline_bus_sync_handler, this );
++    gst_bus_set_sync_handler( pBus, pipeline_bus_sync_handler, this );
+ #else
+-        gst_bus_set_sync_handler( pBus, pipeline_bus_sync_handler, this, NULL );
++    gst_bus_set_sync_handler( pBus, pipeline_bus_sync_handler, this, NULL );
+ #endif
+-        g_object_unref( pBus );
++    g_object_unref( pBus );
+ }
+ 
+ bool Player::create( const OUString& rURL )
+@@ -784,7 +800,7 @@ void SAL_CALL Player::setMute( sal_Bool bSet )
+             nVolume = 0.0;
+         }
+ 
+-        g_object_set( G_OBJECT( mpPlaybin ), "volume", nVolume, NULL );
++        g_object_set( G_OBJECT( mpVolumeControl ), "volume", nVolume, NULL);
+ 
+         mbMuted = bSet;
+     }
+@@ -812,10 +828,10 @@ void SAL_CALL Player::setVolumeDB( sal_Int16 nVolumeDB )
+     DBG( "set volume: %d gst volume: %lf", nVolumeDB, mnUnmutedVolume );
+ 
+     // change volume
+-     if( !mbMuted && mpPlaybin )
+-     {
+-         g_object_set( G_OBJECT( mpPlaybin ), "volume", (gdouble) mnUnmutedVolume, NULL );
+-     }
++    if( !mbMuted && mpPlaybin )
++    {
++        g_object_set( G_OBJECT( mpVolumeControl ), "volume", mnUnmutedVolume, NULL );
++    }
+ }
+ 
+ 
+@@ -830,7 +846,7 @@ sal_Int16 SAL_CALL Player::getVolumeDB()
+     if( mpPlaybin ) {
+         double nGstVolume = 0.0;
+ 
+-        g_object_get( G_OBJECT( mpPlaybin ), "volume", &nGstVolume, NULL );
++        g_object_get( G_OBJECT( mpVolumeControl ), "volume", &nGstVolume, NULL );
+ 
+         nVolumeDB = (sal_Int16) ( 20.0*log10 ( nGstVolume ) );
+     }
+diff --git a/avmedia/source/gstreamer/gstplayer.hxx b/avmedia/source/gstreamer/gstplayer.hxx
+index c5fc4f6..ed60e79 100644
+--- a/avmedia/source/gstreamer/gstplayer.hxx
++++ b/avmedia/source/gstreamer/gstplayer.hxx
+@@ -83,6 +83,7 @@ protected:
+ 
+     // Add elements and pipeline here
+     GstElement*             mpPlaybin;  // the playbin is also a pipeline
++    GstElement*             mpVolumeControl;  // the playbin is also a pipeline
+     bool                mbFakeVideo;
+ 
+     gdouble                 mnUnmutedVolume;
+-- 
+2.7.1
+

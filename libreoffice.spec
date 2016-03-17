@@ -326,7 +326,7 @@ filters.
 Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-system-data = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
 # make gtk2 plugin the default one
 Requires: (%{name}-plugin%{?_isa} or %{name}-gtk2%{?_isa})
@@ -643,13 +643,12 @@ Enables LibreLogo scripting in Writer. LibreLogo is a Logo-like
 programming language with interactive vectorgraphics for education and
 DTP.
 
-%package system-data
-Summary: LibreOffice icons, mime-info etc.
+%package data
+Summary: LibreOffice data files
 BuildArch: noarch
 
-%description system-data
-%{name}-system-data contains platform-independent system-integration
-data. This includes icons, mime-info files and similar.
+%description data
+%{name}-data contains platform-independent data files.
 
 %package x11
 Summary: LibreOffice generic X11 support plug-in
@@ -2217,13 +2216,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/ui-previewer
 %{_datadir}/glade3/catalogs/libreoffice-catalog.xml
 
-%files system-data
+%files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*
 %{_datadir}/icons/locolor/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
 
-%post system-data
+%post data
 %if ! 0%{?file_triggers}
 touch --no-create %{_datadir}/mime/packages &> /dev/null || :
 %endif
@@ -2231,7 +2230,7 @@ for theme in hicolor locolor; do
     touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
 done
 
-%postun system-data
+%postun data
 if [ $1 -eq 0 ] ; then
 %if ! 0%{?file_triggers}
     touch --no-create %{_datadir}/mime/packages &> /dev/null || :
@@ -2243,7 +2242,7 @@ if [ $1 -eq 0 ] ; then
     done
 fi
 
-%posttrans system-data
+%posttrans data
 %if ! 0%{?file_triggers}
 update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
 %endif

@@ -32,6 +32,7 @@
 # default for f23 onwards
 %global _hardened_build 1
 %global weak_deps 1
+%global file_triggers 1
 %endif
 %global girapiversion 0.1
 
@@ -1870,11 +1871,13 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/ooffice.1*
 %{_mandir}/man1/ooviewdoc.1*
 
+%if ! 0%{?file_triggers}
 %post core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun core
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files base
 %{baseinstdir}/help/en-US/sdatabase.*
@@ -1903,11 +1906,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
 
+%if ! 0%{?file_triggers}
 %post base
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun base
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files bsh
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
@@ -1998,11 +2003,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oocalc
 %{_mandir}/man1/oocalc.1*
 
+%if ! 0%{?file_triggers}
 %post calc
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun calc
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files draw
 %{baseinstdir}/help/en-US/sdraw.*
@@ -2014,11 +2021,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oodraw
 %{_mandir}/man1/oodraw.1*
 
+%if ! 0%{?file_triggers}
 %post draw
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun draw
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files emailmerge
 %{baseinstdir}/program/mailmerge.py*
@@ -2043,11 +2052,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oowriter
 %{_mandir}/man1/oowriter.1*
 
+%if ! 0%{?file_triggers}
 %post writer
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun writer
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files impress
 %{baseinstdir}/help/en-US/simpress.*
@@ -2069,11 +2080,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/ooimpress
 %{_mandir}/man1/ooimpress.1*
 
+%if ! 0%{?file_triggers}
 %post impress
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun impress
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files math
 %{baseinstdir}/help/en-US/smath.*
@@ -2086,11 +2099,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oomath
 %{_mandir}/man1/oomath.1*
 
+%if ! 0%{?file_triggers}
 %post math
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %postun math
 update-desktop-database %{_datadir}/applications &> /dev/null || :
+%endif
 
 %files graphicfilter
 %{baseinstdir}/program/libflashlo.so
@@ -2209,15 +2224,19 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/mime/packages/libreoffice.xml
 
 %post system-data
+%if ! 0%{?file_triggers}
 touch --no-create %{_datadir}/mime/packages &> /dev/null || :
+%endif
 for theme in hicolor locolor; do
     touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
 done
 
 %postun system-data
 if [ $1 -eq 0 ] ; then
+%if ! 0%{?file_triggers}
     touch --no-create %{_datadir}/mime/packages &> /dev/null || :
     update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+%endif
     for theme in hicolor locolor; do
         touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
         gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
@@ -2225,7 +2244,9 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %posttrans system-data
+%if ! 0%{?file_triggers}
 update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
+%endif
 for theme in hicolor locolor; do
     gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
 done

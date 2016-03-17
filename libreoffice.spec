@@ -1281,6 +1281,10 @@ install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
 rm -rf %{buildroot}%{baseinstdir}/share/fonts
 
+# move platform-independent data into shared dir
+install -m 0755 -d %{buildroot}%{datadir}
+rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE* %{buildroot}%{baseinstdir}/NOTICE
+
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through
 pic=0
@@ -1839,11 +1843,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/bootstraprc
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
-%doc %{baseinstdir}/CREDITS.fodt
-%doc %{baseinstdir}/LICENSE
-%doc %{baseinstdir}/LICENSE.html
-%doc %{baseinstdir}/LICENSE.fodt
-%doc %{baseinstdir}/NOTICE
 %{baseinstdir}/program/intro.*
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
@@ -2221,6 +2220,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/icons/locolor/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
+%dir %{datadir}
+%doc instdir/CREDITS.fodt
+%doc instdir/LICENSE.html
+%doc instdir/LICENSE.fodt
+%doc instdir/LICENSE
+%doc instdir/NOTICE
+%license instdir/LICENSE
 
 %post data
 %if ! 0%{?file_triggers}

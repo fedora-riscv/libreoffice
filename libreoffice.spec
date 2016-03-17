@@ -1632,6 +1632,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/dummyVertexShader.glsl
 %{baseinstdir}/program/opengl/greyscaleFragmentShader.glsl
 %{baseinstdir}/program/opengl/invert50FragmentShader.glsl
+%{baseinstdir}/program/opengl/lineFragmentShader.glsl
+%{baseinstdir}/program/opengl/lineVertexShader.glsl
 %{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
 %{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl

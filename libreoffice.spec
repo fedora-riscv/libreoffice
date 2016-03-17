@@ -649,7 +649,7 @@ BuildArch: noarch
 
 %description system-data
 %{name}-system-data contains platform-independent system-integration
-%data. This includes icons, mime-info files and similar.
+data. This includes icons, mime-info files and similar.
 
 %package x11
 Summary: LibreOffice generic X11 support plug-in

@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -328,8 +328,7 @@ Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
-# make gtk2 plugin the default one
-Requires: (%{name}-plugin%{?_isa} or %{name}-gtk2%{?_isa})
+Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -2282,6 +2281,9 @@ done
 %endif
 
 %changelog
+* Mon Mar 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.2.1-2
+- Resolves: rhbz#1319458 avoid rich deps in Requires
+
 * Wed Mar 16 2016 David Tardon <dtardon@redhat.com> - 1:5.1.2.1-1
 - update to 5.1.2 rc1
 - split VCL plugins into subpackages

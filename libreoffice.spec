@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -379,6 +379,7 @@ Patch60: 0007-sw-DOCX-export-convert-ODF-embedded-objects-to-OOXML.patch
 Patch61: 0008-sw-extend-various-OOXML-export-test-to-check-embedde.patch
 Patch62: 0009-fix-missing-BaseURL-when-loading-embedded-objects.patch
 Patch63: 0001-CVE-2016-0794-and-CVE-2016-0795.patch
+Patch64: 0001-disable-means-Enable-false-not-true.-tdf-98389-relat.patch
 
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
@@ -2445,6 +2446,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Mar 21 2016 David Tardon <dtardon@redhat.com> - 1:4.4.7.2-5
+- Resolves: rhbz#1318333 can't open xlsx document
+
 * Fri Mar 04 2016 David Tardon <dtardon@redhat.com> - 1:4.4.7.2-4
 - remove unintentional dependency of libreoffice-core on libreoffice-calc
 

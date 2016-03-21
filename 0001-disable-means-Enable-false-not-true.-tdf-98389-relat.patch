@@ -1,0 +1,36 @@
+From 088ba465d6bb0931c7034d564a3077e21078cb13 Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 7 Mar 2016 13:46:30 +0100
+Subject: [PATCH] disable means Enable(false), not true.. tdf#98389 related
+
+EnableAdjustHeight(true) lead to the side effect that when clearing the
+range of a pivot table during import, formulas in the same rows were
+recalculated with then empty data. Through xSheetOp->clearContents() in
+PivotTable::finalizeImport() of
+sc/source/filter/oox/pivottablebuffer.cxx
+
+In the case of the bugdoc attached to tdf#98389 that lead to all
+VLOOKUP() calls resulting in #N/A errors because an empty string was
+looked up.
+
+Change-Id: Ie629ce871d255cc871671165c4da974f21041cec
+---
+ sc/source/filter/oox/workbookhelper.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sc/source/filter/oox/workbookhelper.cxx b/sc/source/filter/oox/workbookhelper.cxx
+index ec76d54..c21e471 100644
+--- a/sc/source/filter/oox/workbookhelper.cxx
++++ b/sc/source/filter/oox/workbookhelper.cxx
+@@ -604,7 +604,7 @@ void WorkbookGlobals::initialize( bool bWorkbookFile )
+         // #i76026# disable Undo while loading the document
+         mpDoc->EnableUndo(false);
+         // #i79826# disable calculating automatic row height while loading the document
+-        mpDoc->EnableAdjustHeight(true);
++        mpDoc->EnableAdjustHeight(false);
+         // disable automatic update of linked sheets and DDE links
+         mpDoc->EnableExecuteLink(false);
+ 
+-- 
+2.5.0
+

@@ -260,6 +260,7 @@ Patch25: 0001-gtk3-various-bits-means-different-things-again.patch
 Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
 Patch27: 0001-Resolves-tdf-98636.patch
 Patch28: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
+Patch29: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

@@ -1,0 +1,52 @@
+From 0f0cea28c75a6565c7803b54536d4a8720ead160 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 22 Mar 2016 09:03:56 +0100
+Subject: [PATCH] delete hidden pages before deleting unused masters
+
+Change-Id: I40b624c0e6e6cff2c88815f7d16e862f09d79d5c
+---
+ sdext/source/minimizer/impoptimizer.cxx | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sdext/source/minimizer/impoptimizer.cxx b/sdext/source/minimizer/impoptimizer.cxx
+index 03ba917..53600ed 100644
+--- a/sdext/source/minimizer/impoptimizer.cxx
++++ b/sdext/source/minimizer/impoptimizer.cxx
+@@ -518,27 +518,27 @@ bool ImpOptimizer::Optimize()
+     if ( !maCustomShowName.isEmpty() )
+         ImpExtractCustomShow( mxModel, maCustomShowName );
+ 
+-    if ( mbDeleteUnusedMasterPages )
++    if ( mbDeleteHiddenSlides )
+     {
+         SetStatusValue( TK_Progress, Any( static_cast< sal_Int32 >( 40 ) ) );
+         SetStatusValue( TK_Status, Any( OUString("STR_DELETING_SLIDES") ) );
+         DispatchStatus();
+-        ImpDeleteUnusedMasterPages( mxModel );
++        ImpDeleteHiddenSlides( mxModel );
+     }
+ 
+-    if ( mbDeleteHiddenSlides )
++    if ( mbDeleteNotesPages )
+     {
+-        SetStatusValue( TK_Progress, Any( static_cast< sal_Int32 >( 40 ) ) );
+         SetStatusValue( TK_Status, Any( OUString("STR_DELETING_SLIDES") ) );
+         DispatchStatus();
+-        ImpDeleteHiddenSlides( mxModel );
++        ImpDeleteNotesPages( mxModel );
+     }
+ 
+-    if ( mbDeleteNotesPages )
++    if ( mbDeleteUnusedMasterPages )
+     {
++        SetStatusValue( TK_Progress, Any( static_cast< sal_Int32 >( 40 ) ) );
+         SetStatusValue( TK_Status, Any( OUString("STR_DELETING_SLIDES") ) );
+         DispatchStatus();
+-        ImpDeleteNotesPages( mxModel );
++        ImpDeleteUnusedMasterPages( mxModel );
+     }
+ 
+     if ( mbOLEOptimization )
+-- 
+2.5.0
+

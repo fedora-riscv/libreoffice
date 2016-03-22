@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -307,6 +307,7 @@ Patch73: 0001-Resolves-tdf-98399-RET_USER_CANCEL-is-non-zero-and-r.patch
 Patch74: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
 Patch75: 0001-EMEA-SKO-fix-for-10-sec-hang-with-audio-only-formats.patch
 Patch76: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
+Patch77: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2218,6 +2219,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue Mar 22 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-8-UNBUILT
+- delete hidden slides before deleting unused masters
+
 * Thu Mar 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-7
 - Resolves: tdf#96989 videos playback at maximum possible volume
 

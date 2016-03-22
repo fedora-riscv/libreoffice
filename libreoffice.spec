@@ -280,6 +280,7 @@ Patch501: 0001-fix-build-with-gcc-4.8.patch
 %define instdir %{_libdir}
 %define baseinstdir %{instdir}/libreoffice
 %define sdkinstdir %{baseinstdir}/sdk
+%define datadir %{_datadir}/%{name}
 %define fontname opensymbol
 
 # rhbz#1085420 make sure we do not provide bundled libraries

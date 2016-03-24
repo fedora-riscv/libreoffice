@@ -308,6 +308,7 @@ Patch74: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
 Patch75: 0001-EMEA-SKO-fix-for-10-sec-hang-with-audio-only-formats.patch
 Patch76: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
 Patch77: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
+Patch78: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 
 %if 0%{?rhel}
 # not upstreamed

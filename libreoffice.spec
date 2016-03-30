@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1397,6 +1397,8 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 # move glade catalog to system glade dir
 install -m 0755 -d %{buildroot}%{_datadir}/glade/catalogs
 mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade/catalogs
+install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
+ln -sr %{buildroot}%{_datadir}/glade/catalogs/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
 # rhbz#1049543 install appdata
 install -m 0755 -d %{buildroot}%{_datadir}/appdata
@@ -2215,6 +2217,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %files glade
 %{baseinstdir}/program/ui-previewer
 %dir %{_datadir}/glade
+%dir %{_datadir}/glade3
 
 %files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*
@@ -2283,6 +2286,9 @@ done
 %endif
 
 %changelog
+* Wed Mar 30 2016 David Tardon <dtardon@redhat.com> - 1:5.1.2.1-3
+- support both glade and glade3
+
 * Mon Mar 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.2.1-2
 - Resolves: rhbz#1319458 avoid rich deps in Requires
 

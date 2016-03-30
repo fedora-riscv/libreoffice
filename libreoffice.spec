@@ -1367,6 +1367,8 @@ sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-
 # move glade catalog to system glade dir
 install -m 0755 -d %{buildroot}%{_datadir}/glade/catalogs
 mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade/catalogs
+install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
+ln -sr %{buildroot}%{_datadir}/glade/catalogs/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
 # rhbz#1049543 install appdata
 install -m 0755 -d %{buildroot}%{_datadir}/appdata
@@ -2204,7 +2206,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files glade
 %{baseinstdir}/program/ui-previewer
-%dir %{_datadir}/glade
+%{_datadir}/glade
+%{_datadir}/glade3
 
 %if 0%{?fedora}
 
@@ -2221,6 +2224,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %changelog
 * Tue Mar 22 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-8-UNBUILT
 - delete hidden slides before deleting unused masters
+- support both glade and glade3
 
 * Thu Mar 17 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.5.2-7
 - Resolves: tdf#96989 videos playback at maximum possible volume

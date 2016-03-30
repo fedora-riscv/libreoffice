@@ -629,7 +629,6 @@ and examples of creating extensions (UNO components) for LibreOffice.
 Summary: Support for creating LibreOffice dialogs in glade
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: glade3-libgladeui%{?_isa}
 
 %description glade
 %{name}-glade contains a catalog of LibreOffice-specific widgets for
@@ -1396,8 +1395,8 @@ install -m 0644 -p vcl/unx/generic/printer/configuration/ppds/SGENPRT.PS %{build
 sed -i -e "s#URE_MORE_JAVA_CLASSPATH_URLS.*#& file:///usr/share/java/postgresql-jdbc.jar#" %{buildroot}%{baseinstdir}/program/fundamentalrc
 
 # move glade catalog to system glade dir
-install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
-mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
+install -m 0755 -d %{buildroot}%{_datadir}/glade/catalogs
+mv %{buildroot}%{baseinstdir}/share/glade/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade/catalogs
 
 # rhbz#1049543 install appdata
 install -m 0755 -d %{buildroot}%{_datadir}/appdata
@@ -2215,7 +2214,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files glade
 %{baseinstdir}/program/ui-previewer
-%{_datadir}/glade3/catalogs/libreoffice-catalog.xml
+%dir %{_datadir}/glade
 
 %files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*

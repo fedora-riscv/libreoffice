@@ -2216,8 +2216,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files glade
 %{baseinstdir}/program/ui-previewer
-%dir %{_datadir}/glade
-%dir %{_datadir}/glade3
+%{_datadir}/glade
+%{_datadir}/glade3
 
 %files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*

@@ -2222,7 +2222,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue Mar 22 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-8-UNBUILT
+* Fri Apr 08 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-8
 - delete hidden slides before deleting unused masters
 - support both glade and glade3
 

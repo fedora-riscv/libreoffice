@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.0.5
+%define libo_version 5.0.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -52,8 +52,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -284,31 +284,19 @@ Patch50: 0003-gtk3-wayland-start-floating-windows-hidden.patch
 Patch51: 0001-these-popups-should-start-invisible-and-take-default.patch
 Patch52: 0002-disable-tearability-of-color-window.patch
 Patch53: 0001-Resolves-tdf-99604-ungrab-modal-dialogs.patch
-Patch54: 0001-Related-rhbz-1149116-collateEquals-was-set-with-OStr.patch
-Patch55: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
-Patch56: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
-Patch57: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
-Patch58: 0001-Resolves-rhbz-1257635-after-httpConnectEncrypt-use-c.patch
-Patch59: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
-Patch60: 0001-valgrind-memleak-on-thrown-exception.patch
-Patch61: 0002-valgrind-memleak-on-thrown-exception.patch
-Patch62: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch63: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
-Patch64: 0001-avoid-crash-with-color-listbox-for-now.patch
-Patch65: 0001-Resolves-tdf-97465-like-wheel-ignore-swipe-for-sc-in.patch
-Patch66: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
-Patch67: 0001-reportbuilder-tdf-92720-add-loext-namespace.patch
-Patch68: 0001-update-graphite-to-1.3.5.patch
-Patch69: 0001-Resolves-rhbz-1285356-force-swing-not-to-use-gtk2-if.patch
-Patch70: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
-Patch71: 0001-xmloff-tdf-97808-allow-empty-draw-marker-start-marke.patch
-Patch72: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
-Patch73: 0001-Resolves-tdf-98399-RET_USER_CANCEL-is-non-zero-and-r.patch
-Patch74: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch75: 0001-EMEA-SKO-fix-for-10-sec-hang-with-audio-only-formats.patch
-Patch76: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
-Patch77: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
-Patch78: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
+Patch54: 0001-gtk3-avoid-empty-target-clipboard-warning.patch
+Patch55: 0002-Fix-memleak-of-strings-allocated-in-VclGtkClipboard-.patch
+Patch56: 0003-Resolves-rhbz-1240591-gtk3-store-clipboard-when-Libr.patch
+Patch57: 0001-rerun-autoconf-after-remove-BOOST_SYSTEM.patch
+Patch58: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
+Patch59: 0001-Resolves-rhbz-1294208-trackpad-two-finger-scroll-doe.patch
+Patch60: 0001-use-the-users-preferred-initials-for-impress-annotat.patch
+Patch61: 0001-gtk3-Resolves-tdf-96333-fix-RTL-menu-positioning.patch
+Patch62: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
+Patch63: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
+Patch64: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
+Patch65: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
+Patch66: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2222,6 +2210,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Apr 14 2016 David Tardon <dtardon@redhat.com> - 1:5.0.6.1-1
+- update to 5.0.6 rc1
+
 * Fri Apr 08 2016 David Tardon <dtardon@redhat.com> - 1:5.0.5.2-8
 - delete hidden slides before deleting unused masters
 - support both glade and glade3

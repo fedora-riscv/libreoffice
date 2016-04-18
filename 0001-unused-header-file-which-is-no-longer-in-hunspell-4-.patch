@@ -1,0 +1,25 @@
+From c8e26f0e26dd433cf6b745f71ab295847bdf6608 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 18 Apr 2016 14:50:22 +0100
+Subject: [PATCH] unused header file which is no longer in hunspell 4-0
+
+Change-Id: Ia1deaca48d653518cf6f440a833752268c47aaf3
+---
+ lingucomponent/source/spellcheck/spell/sspellimp.cxx | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/lingucomponent/source/spellcheck/spell/sspellimp.cxx b/lingucomponent/source/spellcheck/spell/sspellimp.cxx
+index 928b191..21d811b 100644
+--- a/lingucomponent/source/spellcheck/spell/sspellimp.cxx
++++ b/lingucomponent/source/spellcheck/spell/sspellimp.cxx
+@@ -29,7 +29,6 @@
+ 
+ #include <lingutil.hxx>
+ #include <hunspell.hxx>
+-#include <dictmgr.hxx>
+ #include <sspellimp.hxx>
+ 
+ #include <linguistic/lngprops.hxx>
+-- 
+2.7.3
+

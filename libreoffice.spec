@@ -2288,7 +2288,7 @@ done
 %endif
 
 %changelog
-* Thu Apr 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.2.1-5
+* Mon Apr 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.2.1-5
 - gtk3: rhbz#1328101 scroll bar doesn't redraw correctly since gtk3-3.20.3
 
 * Thu Apr 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.2.1-4

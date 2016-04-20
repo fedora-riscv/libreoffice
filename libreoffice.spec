@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -264,6 +264,7 @@ Patch29: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
 Patch30: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 Patch31: 0001-gtk3-the-list-combo-box-hack-to-get-internal-buttons.patch
 Patch32: 0001-Resolves-tdf-98726-sneaky-transparent-clearlooks-phe.patch
+Patch33: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2288,6 +2289,9 @@ done
 %endif
 
 %changelog
+* Wed Apr 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.2.1-6.UNBUILT
+- Resolves: tdf#91778 drawing the background over an active cursor
+
 * Mon Apr 18 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.2.1-5
 - gtk3: rhbz#1328101 scroll bar doesn't redraw correctly since gtk3-3.20.3
 

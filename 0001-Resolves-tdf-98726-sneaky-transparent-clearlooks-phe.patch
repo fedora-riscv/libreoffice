@@ -1,0 +1,69 @@
+From 1f40773ad663614deec8133eedb80c90834e9b35 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 17 Mar 2016 20:48:23 +0000
+Subject: [PATCH] Resolves: tdf#98726 sneaky transparent clearlooks-phenix
+ scrollbars
+
+(cherry picked from commit e511f962c0b70e0ce0d19c42be1f198b6191fad1)
+
+Change-Id: Idc05d7b6c2b42086eafa9ad8ab8e63116d6f676c
+Reviewed-on: https://gerrit.libreoffice.org/23346
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Lionel Elie Mamane <lionel@mamane.lu>
+---
+ vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+index ff76169..c1117fe 100644
+--- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+@@ -277,6 +277,17 @@ Rectangle GtkSalGraphics::NWGetScrollButtonRect( ControlPart nPart, Rectangle aA
+     return buttonRect;
+ }
+ 
++static GtkWidget* gCacheWindow;
++static GtkWidget* gDumbContainer;
++static GtkWidget* gSpinBox;
++static GtkWidget* gEntryBox;
++static GtkWidget* gComboBox;
++static GtkWidget* gListBox;
++static GtkWidget* gMenuBarWidget;
++static GtkWidget* gMenuItemMenuBarWidget;
++static GtkWidget* gCheckMenuItemWidget;
++static GtkWidget* gTreeViewWidget;
++
+ void GtkSalGraphics::PaintScrollbar(GtkStyleContext *context,
+                                     cairo_t *cr,
+                                     const Rectangle& rControlRectangle,
+@@ -419,6 +430,9 @@ void GtkSalGraphics::PaintScrollbar(GtkStyleContext *context,
+ 
+     bool has_slider = ( thumbRect.GetWidth() > 0 && thumbRect.GetHeight() > 0 );
+ 
++    gtk_render_background(gtk_widget_get_style_context(gCacheWindow), cr, 0, 0,
++                          scrollbarRect.GetWidth(), scrollbarRect.GetHeight() );
++
+     // ----------------- TROUGH
+     GtkStyleContext* pScrollbarTroughStyle = scrollbarOrientation == GTK_ORIENTATION_VERTICAL ?
+                                               mpVScrollbarTroughStyle : mpHScrollbarTroughStyle;
+@@ -1142,17 +1156,6 @@ void GtkSalGraphics::PaintRadio(cairo_t *cr, GtkStyleContext *context,
+     PaintCheckOrRadio(cr, context, rControlRectangle, false, bInMenu);
+ }
+ 
+-static GtkWidget* gCacheWindow;
+-static GtkWidget* gDumbContainer;
+-static GtkWidget* gSpinBox;
+-static GtkWidget* gEntryBox;
+-static GtkWidget* gComboBox;
+-static GtkWidget* gListBox;
+-static GtkWidget* gMenuBarWidget;
+-static GtkWidget* gMenuItemMenuBarWidget;
+-static GtkWidget* gCheckMenuItemWidget;
+-static GtkWidget* gTreeViewWidget;
+-
+ void parent_styles_context_set_state(GtkStyleContext* context, GtkStateFlags flags)
+ {
+     while ((context = gtk_style_context_get_parent(context)))
+-- 
+2.7.3
+

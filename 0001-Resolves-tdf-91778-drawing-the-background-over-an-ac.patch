@@ -1,0 +1,52 @@
+From f34863825fca2002b420d10679d0cdbb9d767a81 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 20 Apr 2016 11:55:01 +0100
+Subject: [PATCH] Resolves: tdf#91778 drawing the background over an active
+ cursor
+
+will overwrite it, which means that when it toggles "off" afterwards, it uses
+invert on the freshly drawn background which will visually make it appear "on"
+and not off
+
+Just explictly turn it off and restore it and avoid the whole potential
+problem.
+
+Change-Id: Ie21d77e9d704124011e43b42c98b26eaf208eef2
+(cherry picked from commit 29a9f433c268414747d8ec7343fc2b5987971738)
+---
+ sc/source/ui/view/gridwin4.cxx | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/sc/source/ui/view/gridwin4.cxx b/sc/source/ui/view/gridwin4.cxx
+index ceaf3d8..5ec4bf0 100644
+--- a/sc/source/ui/view/gridwin4.cxx
++++ b/sc/source/ui/view/gridwin4.cxx
+@@ -902,6 +902,14 @@ void ScGridWindow::DrawContent(OutputDevice &rDevice, const ScTableInfo& rTableI
+         aEnd.X() -= 2 * nLayoutSign;
+         aEnd.Y() -= 2;
+ 
++        // toggle the cursor off if its on to ensure the cursor invert
++        // background logic remains valid after the background is cleared on
++        // the next cursor flash
++        vcl::Cursor* pCrsr = pEditView->GetCursor();
++        const bool bVisCursor = pCrsr && pCrsr->IsVisible();
++        if (bVisCursor)
++            pCrsr->Hide();
++
+         // set the correct mapmode
+         Rectangle aBackground(aStart, aEnd);
+         if (bIsTiledRendering)
+@@ -918,6 +926,10 @@ void ScGridWindow::DrawContent(OutputDevice &rDevice, const ScTableInfo& rTableI
+         // paint the editeng text
+         pEditView->Paint(rDevice.PixelToLogic(Rectangle(Point(nScrX, nScrY), Size(aOutputData.GetScrW(), aOutputData.GetScrH()))), &rDevice);
+         rDevice.SetMapMode(MAP_PIXEL);
++
++        // restore the cursor it it was originally visible
++        if (bVisCursor)
++            pCrsr->Show();
+     }
+ 
+     if (pViewData->HasEditView(eWhich))
+-- 
+2.7.3
+

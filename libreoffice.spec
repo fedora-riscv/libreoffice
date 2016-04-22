@@ -1759,8 +1759,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/*/ui
 # UI translations go into langpacks
+%if %{with langpacks}
 %exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/*
 %exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res/*
+%endif
 %{baseinstdir}/share/palette
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard

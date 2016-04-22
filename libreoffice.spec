@@ -1026,8 +1026,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 git am %{patches}
 
 sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk
-# fails on i686 because of ICU
-rm -f writerperfect/qa/unit/data/writer/libe-book/pass/PeanutPress.pdb
 git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.

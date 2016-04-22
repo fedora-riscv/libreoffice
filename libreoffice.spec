@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.3
+%define libo_version 5.2.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .alpha1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -57,7 +57,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.0
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -68,7 +68,7 @@ Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerele
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
 Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source6:        %{external_url}/1f24ab1d39f4a51faf22244c94a6203f-xmlsec1-1.2.14.tar.gz
+Source6:        %{external_url}/ce12af00283eb90d9281956524250d6e-xmlsec1-1.2.20.tar.gz
 Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
@@ -239,36 +239,8 @@ Patch5: 0001-never-run-autogen.sh.patch
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed
 Patch7: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch8: 0001-but-only-for-dialog.patch
-Patch9: 0003-gtk3-wayland-start-floating-windows-hidden.patch
-Patch10: 0001-tdf-95450-avoid-double-swap-on-big-endian-arches.patch
-Patch11: 0001-these-popups-should-start-invisible-and-take-default.patch
-Patch12: 0002-disable-tearability-of-color-window.patch
-Patch13: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
-Patch14: 0001-hack-out-optimization-to-build.patch
-Patch15: 0001-generate-better-unit-test-assert-message.patch
-Patch16: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
-Patch17: 0002-gtk3-some-changes-towards-enabling-native-gtk3-popup.patch
-Patch18: 0003-gtk3-vcl-popups-flush-any-unexecuted-Select-events-o.patch
-Patch19: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
-Patch20: 0005-gtk3-handle-items-without-commands.patch
-Patch21: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
-Patch22: 0007-set-gtk-layout-direction-to-match-ours.patch
-Patch23: 0008-gtk3-implement-native-context-menus.patch
-Patch24: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch25: 0001-gtk3-various-bits-means-different-things-again.patch
-Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
-Patch27: 0001-Resolves-tdf-98636.patch
-Patch28: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
-Patch29: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
-
-%if ! 0%{?rhel}
-Patch400: 0001-Update-liborcus-to-0.11.0.patch
-Patch401: 0001-reorder.patch
-Patch402: 0002-reduce-copypasta.patch
-Patch403: 0003-detect-Boost.Filesystem.patch
-Patch404: 0004-define-boost_filestystem-external-for-system-boost-t.patch
-%endif
+Patch8: 0001-hack-out-optimization-to-build.patch
+Patch9: 0001-pass-original-CFLAGS.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1256,6 +1228,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
 #remove dummy .dat files
 rm -f %{buildroot}%{baseinstdir}/program/root?.dat
 
+# I don't think we need this...
+rm -f %{buildroot}%{baseinstdir}/share/classification/example.xml
+rmdir %{buildroot}%{baseinstdir}/share/classification
+
 #set standard permissions for rpmlint
 find %{buildroot}%{baseinstdir} -exec chmod +w {} \;
 find %{buildroot}%{baseinstdir} -type d -exec chmod 0755 {} \;
@@ -1496,12 +1472,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
-%{baseinstdir}/program/gnome-open-url
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libavmedia*.so
-%{baseinstdir}/program/libbasebmplo.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbiblo.so
 %{baseinstdir}/program/libcached1.so
@@ -1675,7 +1649,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/textureFragmentShader.glsl
 %{baseinstdir}/program/opengl/textureVertexShader.glsl
 %{baseinstdir}/program/opengl/transformedTextureVertexShader.glsl
-%{baseinstdir}/program/open-url
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
@@ -1717,6 +1690,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/resource/uuien-US.res
 %{baseinstdir}/program/resource/upden-US.res
 %{baseinstdir}/program/resource/vclen-US.res
+%{baseinstdir}/program/resource/writerperfecten-US.res
 %{baseinstdir}/program/resource/wzien-US.res
 %{baseinstdir}/program/resource/xmlsecen-US.res
 %{baseinstdir}/program/resource/xsltdlgen-US.res
@@ -2268,7 +2242,6 @@ done
 %if 0%{?fedora}
 
 %files kde4
-%{baseinstdir}/program/kde4-open-url
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
@@ -2276,6 +2249,7 @@ done
 %{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %files -n libreofficekit
+%{baseinstdir}/share/libreofficekit
 %{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 %{_libdir}/liblibreofficekitgtk.so
 
@@ -2285,6 +2259,9 @@ done
 %endif
 
 %changelog
+* Fri Apr 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-1.alpha1
+- update to 5.2.0 alpha1
+
 * Thu Apr 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.1-1
 - update to 5.1.3 rc1
 - Resolves: tdf#91778 drawing the background over an active cursor

@@ -1,0 +1,26 @@
+From 590d80cea8fcd7c51140cff38392c4c180327330 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Fri, 22 Apr 2016 14:32:07 +0200
+Subject: [PATCH] pass original CFLAGS
+
+Change-Id: Ia37fa1ad21a9411d78b0c30c769b3934d43d1389
+---
+ external/libxmlsec/ExternalProject_xmlsec.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/external/libxmlsec/ExternalProject_xmlsec.mk b/external/libxmlsec/ExternalProject_xmlsec.mk
+index a22b426..6a81306 100644
+--- a/external/libxmlsec/ExternalProject_xmlsec.mk
++++ b/external/libxmlsec/ExternalProject_xmlsec.mk
+@@ -55,7 +55,7 @@ $(call gb_ExternalProject_get_state_target,xmlsec,build) :
+ 		autoreconf \
+ 		&& ./configure \
+ 			--with-pic --disable-shared --disable-crypto-dl --without-libxslt --without-gnutls \
+-			CFLAGS="$(if $(debug),$(gb_COMPILERNOOPTFLAGS) $(gb_DEBUG_CFLAGS),$(gb_COMPILEROPTFLAGS))" \
++			CFLAGS="$(CFLAGS) $(if $(debug),$(gb_COMPILERNOOPTFLAGS) $(gb_DEBUG_CFLAGS),$(gb_COMPILEROPTFLAGS))" \
+ 			$(if $(or $(filter-out ANDROID,$(OS)),$(DISABLE_OPENSSL)),--without-openssl,--with-openssl=$(call gb_UnpackedTarball_get_dir,openssl)) \
+ 			$(if $(filter MACOSX,$(OS)),--prefix=/@.__________________________________________________OOO) \
+ 			$(if $(SYSTEM_NSS),,$(if $(filter MACOSX,$(OS)),--disable-pkgconfig)) \
+-- 
+2.5.0
+

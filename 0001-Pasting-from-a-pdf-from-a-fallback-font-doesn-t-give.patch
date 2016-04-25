@@ -1,0 +1,39 @@
+From 924126df792915092ee6201d1f068e43ffb80b67 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 24 Apr 2016 21:24:41 +0100
+Subject: [PATCH] Pasting -- from a pdf from a fallback font doesn't give -- as
+ output
+
+Type -- into a writer document, on a machine without Courier installed
+set that text to Courier. Export to pdf, select inside e.g. evince and
+paste to a terminal. You don't get --
+
+0x2D is mapped from unicode 0x2D and unicode 0xAD in the adobe
+encoding. So the latter trumps the earlier one and <ADAD> is pasted
+instead of <2D2D>.
+
+Reverse the order that the encoding is mapped from unicode so lower
+more "ascii" options are preferred over the higher more "unlikely"
+unicode options
+
+Change-Id: I8f251253fca468d269493801e668617a935ee15d
+---
+ vcl/source/gdi/pdfwriter_impl.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
+index ee9b0df..4ee0366 100644
+--- a/vcl/source/gdi/pdfwriter_impl.cxx
++++ b/vcl/source/gdi/pdfwriter_impl.cxx
+@@ -3096,7 +3096,7 @@ std::map< sal_Int32, sal_Int32 > PDFWriterImpl::emitEmbeddedFont( const Physical
+         memset( nEncodedCodes, 0, sizeof(nEncodedCodes) );
+         memset( pUnicodesPerGlyph, 0, sizeof(pUnicodesPerGlyph) );
+         memset( pEncToUnicodeIndex, 0, sizeof(pEncToUnicodeIndex) );
+-        for( Ucs2SIntMap::const_iterator it = pEncoding->begin(); it != pEncoding->end(); ++it )
++        for( Ucs2SIntMap::const_reverse_iterator it = pEncoding->rbegin(); it != pEncoding->rend(); ++it )
+         {
+             if(it->second == -1)
+                 continue;
+-- 
+2.7.3
+

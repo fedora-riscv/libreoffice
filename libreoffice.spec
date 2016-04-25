@@ -53,7 +53,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -298,6 +298,7 @@ Patch64: 0001-Resolves-tdf-96989-videos-playback-at-maximum-possib.patch
 Patch65: 0001-delete-hidden-pages-before-deleting-unused-masters.patch
 Patch66: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 Patch67: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
+Patch68: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2211,6 +2212,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Apr 25 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.1-3
+- Pasting "--" from a pdf doesn't always give "--"
+
 * Wed Apr 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.1-2
 - Resolves: tdf#96989 videos playback at maximum possible volume
 

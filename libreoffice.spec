@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -261,6 +261,7 @@ Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
 Patch27: 0001-Resolves-tdf-98636.patch
 Patch28: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 Patch29: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
+Patch30: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2283,6 +2284,9 @@ done
 %endif
 
 %changelog
+* Mon Apr 25 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.1-2.UNBUILT
+- Pasting "--" from a pdf doesn't always give "--"
+
 * Thu Apr 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.1-1
 - update to 5.1.3 rc1
 - Resolves: tdf#91778 drawing the background over an active cursor

@@ -91,12 +91,11 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.9.2.tar.gz
-# system mdds 0.10.3 causes a crash in sc_ucalc unit test
-Source102:      %{external_url}/mdds_0.12.1.tar.bz2
-Source103:      %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
-Source104:      %{external_url}/libwps-0.4.2.tar.bz2
-Source105:      %{external_url}/libpagemaker-0.0.2.tar.bz2
+Source101:      %{external_url}/liborcus-0.11.1.tar.gz
+Source102:      %{external_url}/mdds_1.1.0.tar.bz2
+Source103:      %{external_url}/libcmis-0.5.1.tar.gz
+Source104:      %{external_url}/libwps-0.4.3.tar.bz2
+Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
 %endif
 

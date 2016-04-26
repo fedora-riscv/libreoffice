@@ -1090,11 +1090,6 @@ touch autogen.lastrun
  %{?bundling_options} \
  %{?archoptions}
 
-%if ! 0%{?rhel}
-# disable browser plugin
-sed -i -e '/ENABLE_NPAPI_FROM_BROWSER=/s/TRUE//' config_host.mk
-%endif
-
 ulimit -c unlimited
  make verbose=true
 
@@ -1538,11 +1533,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libopencllo.so
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
-%if 0%{?rhel}
-# browser plugin
-%{baseinstdir}/program/libpllo.so
-%{baseinstdir}/program/pluginapp.bin
-%endif
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/librecentfile.so
 %{baseinstdir}/program/libreslo.so

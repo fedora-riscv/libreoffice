@@ -92,7 +92,7 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source101:      %{external_url}/liborcus-0.11.1.tar.gz
-Source102:      %{external_url}/mdds_1.1.0.tar.bz2
+Source102:      %{external_url}/mdds-1.1.0.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.3.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2

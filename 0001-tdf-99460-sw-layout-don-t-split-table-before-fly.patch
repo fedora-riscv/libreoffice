@@ -55,14 +55,14 @@ index 72bfaef..f73402d 100644
                  pLastTab = pTab;
 +                isValidTableBeforeAnchor = false;
 +                if (PREP_FLY_ARRIVE == eHint
-+                    && pFlyFrame // TODO: do it for draw objects too?
++                    && pFlyFrm // TODO: do it for draw objects too?
 +                    && pTab->IsFollow() // table starts on previous page?
 +                    // "through" means they will actually overlap anyway
-+                    && SURROUND_THROUGHT != pFlyFrame->GetFormat()->GetSurround().GetSurround()
++                    && SURROUND_THROUGHT != pFlyFrm->GetFormat()->GetSurround().GetSurround()
 +                    // if it's anchored in footer it can't move to other page
 +                    && !pAnchor->FindFooterOrHeader())
 +                {
-+                    SwFrame * pTmp(pAnchor->GetPrev());
++                    SwFrm * pTmp(pAnchor->GetPrev());
 +                    while (pTmp)
 +                    {
 +                        if (pTmp == pTab)

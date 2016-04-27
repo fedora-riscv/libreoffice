@@ -233,9 +233,7 @@ Patch4: 0001-disable-firebird-unit-test.patch
 Patch5: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
-# not upstreamed
-Patch7: 0001-disable-PSD-import-test-which-deadlocks-on-ARM.patch
-Patch8: 0001-pass-original-CFLAGS.patch
+Patch7: 0001-pass-original-CFLAGS.patch
 
 %if 0%{?rhel}
 # not upstreamed

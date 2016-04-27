@@ -262,6 +262,8 @@ Patch27: 0001-Resolves-tdf-98636.patch
 Patch28: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 Patch29: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
 Patch30: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
+Patch31: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
+Patch32: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2290,8 +2292,10 @@ done
 %endif
 
 %changelog
-* Mon Apr 25 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.1-2.UNBUILT
+* Wed Apr 27 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.1-2.UNBUILT
 - Pasting "--" from a pdf doesn't always give "--"
+- Resolves: tdf#99460 sw layout don't split table before fly
+- Resolves: tdf#99498 don't overwrite trwWidth values if set already
 
 * Thu Apr 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.1-1
 - update to 5.1.3 rc1

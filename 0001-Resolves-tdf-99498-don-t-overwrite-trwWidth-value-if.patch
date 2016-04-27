@@ -1,0 +1,83 @@
+From edd0439c353ba64d04a689a5daa82ecf622e5c5c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 27 Apr 2016 14:50:05 +0100
+Subject: [PATCH] Resolves: tdf#99498 don't overwrite trwWidth value if set on
+ a table
+
+Change-Id: Ia39da999a2de1ca2b8bec5fc7f35d2f9ffe2dd19
+---
+ sw/qa/extras/rtfimport/data/tdf99498.rtf       |  3 +++
+ sw/qa/extras/rtfimport/rtfimport.cxx           | 10 ++++++++++
+ writerfilter/source/rtftok/rtfdocumentimpl.cxx | 18 ++++++++++++++----
+ 3 files changed, 27 insertions(+), 4 deletions(-)
+ create mode 100644 sw/qa/extras/rtfimport/data/tdf99498.rtf
+
+diff --git a/sw/qa/extras/rtfimport/data/tdf99498.rtf b/sw/qa/extras/rtfimport/data/tdf99498.rtf
+new file mode 100644
+index 0000000..61a3066
+--- /dev/null
++++ b/sw/qa/extras/rtfimport/data/tdf99498.rtf
+@@ -0,0 +1,3 @@
++{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\froman\fcharset0 Times New Roman;}{\f1\froman\fcharset0 Arial;}}{\colortbl\red0\green0\blue0;\red255\green255\blue255;}{\stylesheet {\style\s0 \ql\fi0\li0\ri0\f1\fs24\cf0 Normal;}}
++{\*\generator iText 2.1.7 by 1T3XT}
++\par\par\trowd\trftsWidth3\trwWidth4000\trhdr\trqc\trgaph10\trpaddl0\trpaddr0\trpaddfl3\trpaddfr3\clvertalt\clcbpat1\clftsWidth3\clwWidth0\cellx0\clvertalt\clcbpat1\clftsWidth3\clwWidth0\cellx0\pard\plain\intbl\s0\fi0\li0\ri0\sl280\plain\f1\fs22\cf0 CELLCONTENTS \cell\pard\plain\intbl\s0\fi0\li0\ri0\sl280\plain\cell \row\pard}
+diff --git a/sw/qa/extras/rtfimport/rtfimport.cxx b/sw/qa/extras/rtfimport/rtfimport.cxx
+index 3cc668f..be2b637 100644
+--- a/sw/qa/extras/rtfimport/rtfimport.cxx
++++ b/sw/qa/extras/rtfimport/rtfimport.cxx
+@@ -2518,6 +2518,16 @@ DECLARE_RTFIMPORT_TEST(testTdf97035, "tdf97035.rtf")
+     CPPUNIT_ASSERT_EQUAL(sal_Int16(2299), getProperty< uno::Sequence<text::TableColumnSeparator> >(xTableRows->getByIndex(1), "TableColumnSeparators")[0].Position);
+ }
+ 
++DECLARE_RTFIMPORT_TEST(testTdf99498, "tdf99498.rtf")
++{
++    uno::Reference<text::XTextTablesSupplier> xTextTablesSupplier(mxComponent, uno::UNO_QUERY);
++    uno::Reference<container::XIndexAccess> xTables(xTextTablesSupplier->getTextTables(), uno::UNO_QUERY);
++
++    // Table width should be 7056
++    CPPUNIT_ASSERT_EQUAL(sal_Int32(7056), getProperty<sal_Int32>(xTables->getByIndex(0), "Width"));
++}
++
++
+ DECLARE_RTFIMPORT_TEST(testTdf87034, "tdf87034.rtf")
+ {
+     // This was A1BC34D, i.e. the first "super" text portion was mis-imported,
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index 0d726f4..459f0a1 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -1382,10 +1382,14 @@ void RTFDocumentImpl::prepareProperties(
+     }
+ 
+     // Table width.
+-    auto pUnitValue = std::make_shared<RTFValue>(3);
+-    lcl_putNestedAttribute(rState.aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_type, pUnitValue);
+-    auto pWValue = std::make_shared<RTFValue>(nCurrentCellX);
+-    lcl_putNestedAttribute(rState.aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_w, pWValue);
++    RTFValue::Pointer_t const pTableWidthProps = rState.aTableRowSprms.find(NS_ooxml::LN_CT_TblPrBase_tblW);
++    if (!pTableWidthProps.get())
++    {
++        auto pUnitValue = std::make_shared<RTFValue>(3);
++        lcl_putNestedAttribute(rState.aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_type, pUnitValue);
++        auto pWValue = std::make_shared<RTFValue>(nCurrentCellX);
++        lcl_putNestedAttribute(rState.aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_w, pWValue);
++    }
+ 
+     auto pRowValue = std::make_shared<RTFValue>(1);
+     if (nCells > 0)
+@@ -4846,6 +4850,12 @@ RTFError RTFDocumentImpl::dispatchValue(RTFKeyword nKeyword, int nParam)
+             lcl_putNestedSprm(m_aStates.top().aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblCellMar, NS_ooxml::LN_CT_TblCellMar_right, std::make_shared<RTFValue>(aAttributes));
+         }
+         break;
++    case RTF_TRFTSWIDTH:
++        lcl_putNestedAttribute(m_aStates.top().aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_type, pIntValue);
++        break;
++    case RTF_TRWWIDTH:
++        lcl_putNestedAttribute(m_aStates.top().aTableRowSprms, NS_ooxml::LN_CT_TblPrBase_tblW, NS_ooxml::LN_CT_TblWidth_w, pIntValue);
++        break;
+     case RTF_PROPTYPE:
+     {
+         switch (nParam)
+-- 
+2.7.3
+

@@ -20,9 +20,8 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-# http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 # limit to fedora, as it breaks building of some bundled projects
@@ -52,8 +51,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2212,6 +2211,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Apr 27 2016 David Tardon <dtardon@redhat.com> - 1:5.0.6.2-1
+- update to 5.0.6 rc2
+
 * Mon Apr 25 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.1-3
 - Pasting "--" from a pdf doesn't always give "--"
 

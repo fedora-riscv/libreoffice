@@ -27,10 +27,7 @@
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
-# limit to fedora, as it breaks building of some bundled projects
 %if 0%{?fedora}
-# default for f23 onwards
-%global _hardened_build 1
 %global weak_deps 1
 %global file_triggers 1
 %endif

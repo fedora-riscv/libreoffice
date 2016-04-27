@@ -386,6 +386,7 @@ Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-report-builder < 1:4.1.0.0
@@ -483,6 +484,7 @@ mathematical symbols.
 %package writer
 Summary: LibreOffice Word Processor Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-writer-core < 1:3.3.1
@@ -503,6 +505,7 @@ Enables the LibreOffice writer module to mail-merge to email.
 %package calc
 Summary: LibreOffice Spreadsheet Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-calc-core < 1:3.3.1
@@ -514,6 +517,7 @@ The LibreOffice Spreadsheet application.
 %package draw
 Summary: LibreOffice Drawing Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
@@ -527,6 +531,7 @@ The LibreOffice Drawing Application.
 %package impress
 Summary: LibreOffice Presentation Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
@@ -560,6 +565,7 @@ The LibreOffice Equation Editor Application.
 %package graphicfilter
 Summary: LibreOffice Extra Graphic filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 

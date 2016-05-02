@@ -28,7 +28,7 @@ index 9880947..435e7c5 100644
  
  $(eval $(call gb_UnpackedTarball_add_patches,cmis, \
  						external/libcmis/libcmis-libxml2_compatibility.patch \
-+						external/libcmis/libcmis-fix-google-drive.patch \
++						external/libcmis/libcmis-fix-google-drive.patch.1 \
  ))
  
  ifeq ($(OS)$(COM),WNTMSC)
@@ -36,7 +36,7 @@ diff --git a/external/libcmis/libcmis-fix-google-drive.patch b/external/libcmis/
 new file mode 100644
 index 0000000..77961ce
 --- /dev/null
-+++ b/external/libcmis/libcmis-fix-google-drive.patch
++++ b/external/libcmis/libcmis-fix-google-drive.patch.1
 @@ -0,0 +1,106 @@
 +diff -aru old-src/src/libcmis/oauth2-providers.cxx new-src/src/libcmis/oauth2-providers.cxx
 +--- old-src/src/libcmis/oauth2-providers.cxx	2016-03-01 17:14:26.000000000 +0100

@@ -272,6 +272,7 @@ Patch401: 0001-reorder.patch
 Patch402: 0002-reduce-copypasta.patch
 Patch403: 0003-detect-Boost.Filesystem.patch
 Patch404: 0004-define-boost_filestystem-external-for-system-boost-t.patch
+Patch405: 0001-Related-tdf-98416-Libcmis-add-a-patch-to-fix-Google-.patch
 %endif
 
 %if 0%{?rhel}

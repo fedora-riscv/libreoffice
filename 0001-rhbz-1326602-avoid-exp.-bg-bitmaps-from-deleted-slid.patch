@@ -1,0 +1,303 @@
+From 9a36cf42d6ea424a2ca5c92f8bf1546ab618dc5d Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 26 Apr 2016 09:17:11 +0200
+Subject: [PATCH] rhbz#1326602 avoid exp. bg bitmaps from deleted slides
+
+ODF export uses SvxUnoBitmapTable (impl. of
+com.sun.star.drawing.BitmapTable) to create fill bitmap styles. That
+returns all XATTR_FILLBITMAP items that are in the document's pool. So
+we ensure that bitmaps that are only used on deleted (either explicitly
+or by undoing their insertion) slides are not in the pool.
+
+(cherry picked from commit b876bbe2cacce8af379b10d82da6c7e7d229b361)
+
+Change-Id: I54c594a94989158f22b156fe660c1e716b988b3e
+---
+ include/svx/svdundo.hxx        | 13 ++++++++
+ sd/source/ui/func/undoback.cxx | 44 ++++++++++++++++++++++++--
+ sd/source/ui/inc/undoback.hxx  |  6 ++++
+ svx/source/svdraw/svdundo.cxx  | 70 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 131 insertions(+), 2 deletions(-)
+
+diff --git a/include/svx/svdundo.hxx b/include/svx/svdundo.hxx
+index a6c9f24..6472946 100644
+--- a/include/svx/svdundo.hxx
++++ b/include/svx/svdundo.hxx
+@@ -20,6 +20,11 @@
+ #ifndef INCLUDED_SVX_SVDUNDO_HXX
+ #define INCLUDED_SVX_SVDUNDO_HXX
+ 
++#include <sal/config.h>
++
++#include <memory>
++#include <vector>
++
+ #include <svl/solar.hrc>
+ #include <svl/undo.hxx>
+ #include <svl/style.hxx>
+@@ -29,6 +34,7 @@
+ #include <svx/svxdllapi.h>
+ 
+ class SfxItemSet;
++class SfxPoolItem;
+ class SfxStyleSheet;
+ class SdrView;
+ class SdrPageView;
+@@ -589,6 +595,8 @@ class SVX_DLLPUBLIC SdrUndoDelPage : public SdrUndoPageList
+     // When deleting a MasterPage, we remember all relations of the
+     // Character Page with the MasterPage in this UndoGroup.
+     SdrUndoGroup*               pUndoGroup;
++    std::unique_ptr<SfxPoolItem> mpFillBitmapItem;
++    bool mbHasFillBitmap;
+ 
+ public:
+     SdrUndoDelPage(SdrPage& rNewPg);
+@@ -602,6 +610,11 @@ public:
+ 
+     virtual void SdrRepeat(SdrView& rView) SAL_OVERRIDE;
+     virtual bool CanSdrRepeat(SdrView& rView) const SAL_OVERRIDE;
++
++private:
++    void queryFillBitmap(const SfxItemSet &rItemSet);
++    void clearFillBitmap();
++    void restoreFillBitmap();
+ };
+ 
+ /**
+diff --git a/sd/source/ui/func/undoback.cxx b/sd/source/ui/func/undoback.cxx
+index bfb421b..3e3575a 100644
+--- a/sd/source/ui/func/undoback.cxx
++++ b/sd/source/ui/func/undoback.cxx
+@@ -21,8 +21,15 @@
+ #include "sdpage.hxx"
+ #include "sdresid.hxx"
+ #include "strings.hrc"
++
++#include <com/sun/star/drawing/FillStyle.hpp>
++
++#include <o3tl/make_unique.hxx>
++
+ #include <svl/itemset.hxx>
+ 
++#include <svx/xfillit0.hxx>
++
+ TYPEINIT1( SdBackgroundObjUndoAction, SdUndoAction );
+ 
+ SdBackgroundObjUndoAction::SdBackgroundObjUndoAction(
+@@ -31,10 +38,12 @@ SdBackgroundObjUndoAction::SdBackgroundObjUndoAction(
+     const SfxItemSet& rItenSet)
+ :   SdUndoAction(&rDoc),
+     mrPage(rPage),
+-    mpItemSet(new SfxItemSet(rItenSet))
++    mpItemSet(new SfxItemSet(rItenSet)),
++    mbHasFillBitmap(false)
+ {
+     OUString aString( SdResId( STR_UNDO_CHANGE_PAGEFORMAT ) );
+     SetComment( aString );
++    saveFillBitmap(*mpItemSet);
+ }
+ 
+ SdBackgroundObjUndoAction::~SdBackgroundObjUndoAction()
+@@ -46,9 +55,14 @@ void SdBackgroundObjUndoAction::ImplRestoreBackgroundObj()
+ {
+     SfxItemSet* pNew = new SfxItemSet(mrPage.getSdrPageProperties().GetItemSet());
+     mrPage.getSdrPageProperties().ClearItem();
++    if (bool(mpFillBitmapItem))
++        restoreFillBitmap(*mpItemSet);
++    mpFillBitmapItem.reset();
++    mbHasFillBitmap = false;
+     mrPage.getSdrPageProperties().PutItemSet(*mpItemSet);
+     delete mpItemSet;
+     mpItemSet = pNew;
++    saveFillBitmap(*mpItemSet);
+ 
+     // tell the page that it's visualization has changed
+     mrPage.ActionChanged();
+@@ -66,7 +80,33 @@ void SdBackgroundObjUndoAction::Redo()
+ 
+ SdUndoAction* SdBackgroundObjUndoAction::Clone() const
+ {
+-    return new SdBackgroundObjUndoAction(*mpDoc, mrPage, *mpItemSet);
++    std::unique_ptr<SdBackgroundObjUndoAction> pCopy = o3tl::make_unique<SdBackgroundObjUndoAction>(*mpDoc, mrPage, *mpItemSet);
++    if (mpFillBitmapItem)
++        pCopy->mpFillBitmapItem.reset(mpFillBitmapItem->Clone());
++    pCopy->mbHasFillBitmap = mbHasFillBitmap;
++    return pCopy.release();
++}
++
++void SdBackgroundObjUndoAction::saveFillBitmap(SfxItemSet &rItemSet)
++{
++    const SfxPoolItem *pItem = nullptr;
++    if (rItemSet.GetItemState(XATTR_FILLBITMAP, false, &pItem) == SfxItemState::SET)
++        mpFillBitmapItem.reset(pItem->Clone());
++    if (bool(mpFillBitmapItem))
++    {
++        if (rItemSet.GetItemState(XATTR_FILLSTYLE, false, &pItem) == SfxItemState::SET)
++            mbHasFillBitmap = static_cast<const XFillStyleItem*>(pItem)->GetValue() == css::drawing::FillStyle_BITMAP;
++        rItemSet.ClearItem(XATTR_FILLBITMAP);
++        if (mbHasFillBitmap)
++            rItemSet.ClearItem(XATTR_FILLSTYLE);
++    }
++}
++
++void SdBackgroundObjUndoAction::restoreFillBitmap(SfxItemSet &rItemSet)
++{
++    rItemSet.Put(*mpFillBitmapItem);
++    if (mbHasFillBitmap)
++        rItemSet.Put(XFillStyleItem(css::drawing::FillStyle_BITMAP));
+ }
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sd/source/ui/inc/undoback.hxx b/sd/source/ui/inc/undoback.hxx
+index 360f7f5..4234424 100644
+--- a/sd/source/ui/inc/undoback.hxx
++++ b/sd/source/ui/inc/undoback.hxx
+@@ -20,11 +20,13 @@
+ #ifndef INCLUDED_SD_SOURCE_UI_INC_UNDOBACK_HXX
+ #define INCLUDED_SD_SOURCE_UI_INC_UNDOBACK_HXX
+ 
++#include <memory>
+ #include "sdundo.hxx"
+ 
+ class SdDrawDocument;
+ class SdPage;
+ class SfxItemSet;
++class SfxPoolItem;
+ 
+ // SdBackgroundObjUndoAction
+ class SdBackgroundObjUndoAction : public SdUndoAction
+@@ -33,8 +35,12 @@ private:
+ 
+     SdPage&                 mrPage;
+     SfxItemSet*             mpItemSet;
++    std::unique_ptr<SfxPoolItem> mpFillBitmapItem;
++    bool                    mbHasFillBitmap;
+ 
+     void                    ImplRestoreBackgroundObj();
++    void                    saveFillBitmap(SfxItemSet &rItemSet);
++    void                    restoreFillBitmap(SfxItemSet &rItemSet);
+ 
+ public:
+ 
+diff --git a/svx/source/svdraw/svdundo.cxx b/svx/source/svdraw/svdundo.cxx
+index 7466532..e4dfa12 100644
+--- a/svx/source/svdraw/svdundo.cxx
++++ b/svx/source/svdraw/svdundo.cxx
+@@ -17,6 +17,7 @@
+  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
+  */
+ 
++#include <com/sun/star/drawing/FillStyle.hpp>
+ 
+ #include <svl/lstner.hxx>
+ 
+@@ -27,6 +28,7 @@
+ #include <svx/svdlayer.hxx>
+ #include <svx/svdmodel.hxx>
+ #include <svx/svdview.hxx>
++#include <svx/xfillit0.hxx>
+ #include "svx/svdstr.hrc"
+ #include "svdglob.hxx"
+ #include <svx/scene3d.hxx>
+@@ -1483,9 +1485,24 @@ SdrUndoPageList::~SdrUndoPageList()
+ SdrUndoDelPage::SdrUndoDelPage(SdrPage& rNewPg)
+     : SdrUndoPageList(rNewPg)
+     , pUndoGroup(NULL)
++    , mbHasFillBitmap(false)
+ {
+     bItsMine = true;
+ 
++    // keep fill bitmap separately to remove it from pool if not used elsewhere
++    if (mrPage.IsMasterPage())
++    {
++        SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
++        if (pStyleSheet)
++            queryFillBitmap(pStyleSheet->GetItemSet());
++    }
++    else
++    {
++        queryFillBitmap(mrPage.getSdrPageProperties().GetItemSet());
++    }
++    if (bool(mpFillBitmapItem))
++        clearFillBitmap();
++
+     // now remember the master page relationships
+     if(mrPage.IsMasterPage())
+     {
+@@ -1520,6 +1537,8 @@ SdrUndoDelPage::~SdrUndoDelPage()
+ 
+ void SdrUndoDelPage::Undo()
+ {
++    if (bool(mpFillBitmapItem))
++        restoreFillBitmap();
+     ImpInsertPage(nPageNum);
+     if (pUndoGroup!=NULL)
+     {
+@@ -1533,6 +1552,8 @@ void SdrUndoDelPage::Undo()
+ void SdrUndoDelPage::Redo()
+ {
+     ImpRemovePage(nPageNum);
++    if (bool(mpFillBitmapItem))
++        clearFillBitmap();
+     // master page relations are dissolved automatically
+     DBG_ASSERT(!bItsMine,"RedoDeletePage: mrPage already belongs to UndoAction.");
+     bItsMine=true;
+@@ -1561,6 +1582,55 @@ bool SdrUndoDelPage::CanSdrRepeat(SdrView& /*rView*/) const
+     return false;
+ }
+ 
++void SdrUndoDelPage::queryFillBitmap(const SfxItemSet& rItemSet)
++{
++    const SfxPoolItem *pItem = nullptr;
++    if (rItemSet.GetItemState(XATTR_FILLBITMAP, false, &pItem) == SfxItemState::SET)
++        mpFillBitmapItem.reset(pItem->Clone());
++    if (rItemSet.GetItemState(XATTR_FILLSTYLE, false, &pItem) == SfxItemState::SET)
++        mbHasFillBitmap = static_cast<const XFillStyleItem*>(pItem)->GetValue() == css::drawing::FillStyle_BITMAP;
++}
++
++void SdrUndoDelPage::clearFillBitmap()
++{
++    if (mrPage.IsMasterPage())
++    {
++        SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
++        assert(bool(pStyleSheet)); // who took away my stylesheet?
++        SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
++        rItemSet.ClearItem(XATTR_FILLBITMAP);
++        if (mbHasFillBitmap)
++            rItemSet.ClearItem(XATTR_FILLSTYLE);
++    }
++    else
++    {
++        SdrPageProperties &rPageProps = mrPage.getSdrPageProperties();
++        rPageProps.ClearItem(XATTR_FILLBITMAP);
++        if (mbHasFillBitmap)
++            rPageProps.ClearItem(XATTR_FILLSTYLE);
++    }
++}
++
++void SdrUndoDelPage::restoreFillBitmap()
++{
++    if (mrPage.IsMasterPage())
++    {
++        SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
++        assert(bool(pStyleSheet)); // who took away my stylesheet?
++        SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
++        rItemSet.Put(*mpFillBitmapItem);
++        if (mbHasFillBitmap)
++            rItemSet.Put(XFillStyleItem(css::drawing::FillStyle_BITMAP));
++    }
++    else
++    {
++        SdrPageProperties &rPageProps = mrPage.getSdrPageProperties();
++        rPageProps.PutItem(*mpFillBitmapItem);
++        if (mbHasFillBitmap)
++            rPageProps.PutItem(XFillStyleItem(css::drawing::FillStyle_BITMAP));
++    }
++}
++
+ 
+ 
+ void SdrUndoNewPage::Undo()
+-- 
+2.7.4
+

@@ -305,6 +305,7 @@ Patch71: 0001-rhbz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 %if 0%{?rhel}
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
+Patch501: 0001-Related-tdf-98416-Libcmis-add-a-patch-to-fix-Google-.patch
 %endif
 
 %define instdir %{_libdir}

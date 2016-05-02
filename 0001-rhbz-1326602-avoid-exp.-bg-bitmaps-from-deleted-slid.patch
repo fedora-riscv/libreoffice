@@ -68,14 +68,12 @@ diff --git a/sd/source/ui/func/undoback.cxx b/sd/source/ui/func/undoback.cxx
 index bfb421b..3e3575a 100644
 --- a/sd/source/ui/func/undoback.cxx
 +++ b/sd/source/ui/func/undoback.cxx
-@@ -21,8 +21,15 @@
+@@ -21,8 +21,13 @@
  #include "sdpage.hxx"
  #include "sdresid.hxx"
  #include "strings.hrc"
 +
 +#include <com/sun/star/drawing/FillStyle.hpp>
-+
-+#include <o3tl/make_unique.hxx>
 +
  #include <svl/itemset.hxx>
  
@@ -118,7 +116,7 @@ index bfb421b..3e3575a 100644
  SdUndoAction* SdBackgroundObjUndoAction::Clone() const
  {
 -    return new SdBackgroundObjUndoAction(*mpDoc, mrPage, *mpItemSet);
-+    std::unique_ptr<SdBackgroundObjUndoAction> pCopy = o3tl::make_unique<SdBackgroundObjUndoAction>(*mpDoc, mrPage, *mpItemSet);
++    std::unique_ptr<SdBackgroundObjUndoAction> pCopy(new SdBackgroundObjUndoAction(*mpDoc, mrPage, *mpItemSet));
 +    if (mpFillBitmapItem)
 +        pCopy->mpFillBitmapItem.reset(mpFillBitmapItem->Clone());
 +    pCopy->mbHasFillBitmap = mbHasFillBitmap;

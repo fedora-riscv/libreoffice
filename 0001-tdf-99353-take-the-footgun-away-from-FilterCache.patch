@@ -1,0 +1,44 @@
+From 390ddd3bde617388e481b6747aa7bbea17d5ddf1 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 3 May 2016 14:49:34 +0200
+Subject: [PATCH] tdf#99353 take the footgun away from FilterCache
+
+FilterCache::impl_saveItem changes the properties of a config. item
+one-by-one. But it also listens to the configuration changes and reloads
+the whole item from the configuration on change...
+
+Change-Id: I9e4ed1c6b013925d07f0942717fe3421f924279d
+---
+ filter/source/config/cache/filtercache.cxx | 2 +-
+ filter/source/config/cache/filtercache.hxx | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/filter/source/config/cache/filtercache.cxx b/filter/source/config/cache/filtercache.cxx
+index b9d15cf..6f5616d 100644
+--- a/filter/source/config/cache/filtercache.cxx
++++ b/filter/source/config/cache/filtercache.cxx
+@@ -1786,7 +1786,7 @@ CacheItemList::iterator FilterCache::impl_loadItemOnDemand(      EItemType
+ 
+ void FilterCache::impl_saveItem(const css::uno::Reference< css::container::XNameReplace >& xItem,
+                                       EItemType                                            eType,
+-                                const CacheItem&                                           aItem)
++                                const CacheItem                                            aItem)
+     throw(css::uno::Exception)
+ {
+     CacheItem::const_iterator pIt;
+diff --git a/filter/source/config/cache/filtercache.hxx b/filter/source/config/cache/filtercache.hxx
+index 93c8d78..4f8b063 100644
+--- a/filter/source/config/cache/filtercache.hxx
++++ b/filter/source/config/cache/filtercache.hxx
+@@ -809,7 +809,7 @@ class FilterCache : public BaseLock
+         /** TODO */
+         static void impl_saveItem(const css::uno::Reference< css::container::XNameReplace >& xSet  ,
+                                  EItemType                                            eType ,
+-                           const CacheItem&                                           aValue)
++                           const CacheItem                                           aValue)
+             throw(css::uno::Exception);
+ 
+ 
+-- 
+2.7.4
+

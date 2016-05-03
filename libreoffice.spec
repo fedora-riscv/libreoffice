@@ -265,6 +265,7 @@ Patch30: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
 Patch31: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
 Patch32: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 Patch33: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
+Patch34: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

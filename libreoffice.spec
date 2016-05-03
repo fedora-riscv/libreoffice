@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2249,6 +2249,9 @@ done
 %endif
 
 %changelog
+* Tue May  3 2016 Marek Kasik <mkasik@redhat.com> - 1:5.2.0.0-3.alpha1
+- Rebuild for poppler-0.43.0
+
 * Mon May 02 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-2.alpha1
 - Resolves: rhbz#1326602 leakage of removed background image set in master slide
 

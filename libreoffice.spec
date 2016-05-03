@@ -235,6 +235,7 @@ Patch5: 0001-never-run-autogen.sh.patch
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch7: 0001-pass-original-CFLAGS.patch
 Patch8: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
+Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 
 %if 0%{?rhel}
 # not upstreamed

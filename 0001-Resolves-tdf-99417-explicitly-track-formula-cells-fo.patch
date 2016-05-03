@@ -1,0 +1,56 @@
+From 388129064d30cd28ce9011ca459b19c238b9d005 Mon Sep 17 00:00:00 2001
+Message-Id: <388129064d30cd28ce9011ca459b19c238b9d005.1462273102.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 2 May 2016 16:25:01 +0200
+Subject: [PATCH] Resolves: tdf#99417 explicitly track formula cells for
+ BROADCAST_BROADCASTERS
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I717fc6d1d7c2bc01ed2a256f6fc08a055be24e4b
+(cherry picked from commit a0b9fa819c9193dee1405cee13690adf00e2d9b9)
+Reviewed-on: https://gerrit.libreoffice.org/24592
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sc/source/core/data/column.cxx | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-99417-explicitly-track-formula-cells-fo.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-99417-explicitly-track-formula-cells-fo.patch"
+
+diff --git a/sc/source/core/data/column.cxx b/sc/source/core/data/column.cxx
+index 3a7daf1..48fb280 100644
+--- a/sc/source/core/data/column.cxx
++++ b/sc/source/core/data/column.cxx
+@@ -3165,7 +3165,14 @@ void ScColumn::SetDirty( SCROW nRow1, SCROW nRow2, BroadcastMode eMode )
+                 sc::ProcessFormula(maCells.begin(), maCells, nRow1, nRow2, aHdl);
+                 // Broadcast all broadcasters in range.
+                 ScHint aHint( SC_HINT_DATACHANGED, ScAddress( nCol, nRow1, nTab));
+-                BroadcastBroadcasters( nRow1, nRow2, aHint);
++                if (BroadcastBroadcasters( nRow1, nRow2, aHint))
++                {
++                    // SetDirtyOnRangeHandler implicitly tracks notified
++                    // formulas via ScDocument::Broadcast(), which
++                    // BroadcastBroadcastersHandler doesn't, so explicitly
++                    // track them here.
++                    pDocument->TrackFormulas();
++                }
+             }
+             break;
+     }
+
+--------------erAck-patch-parts--
+
+

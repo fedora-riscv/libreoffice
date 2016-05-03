@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -301,6 +301,7 @@ Patch68: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
 Patch69: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
 Patch70: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 Patch71: 0001-rhbz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
+Patch72: 0001-Resolves-tdf-99417-explicitly-track-formula-cells-fo.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2215,6 +2216,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Tue May 03 2016 Eike Rathke <erack@redhat.com> - 1:5.0.6.2-4-UNBUILT
+- Resolves: tdf#99417 explicitly track formula cells for BROADCAST_BROADCASTERS
+
 * Mon May 02 2016 David Tardon <dtardon@redhat.com> - 1:5.0.6.2-3
 - Resolves: rhbz#1326602 leakage of removed background image set in master slide
 

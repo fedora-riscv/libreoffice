@@ -302,6 +302,7 @@ Patch69: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
 Patch70: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 Patch71: 0001-rhbz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch72: 0001-Resolves-tdf-99417-explicitly-track-formula-cells-fo.patch
+Patch73: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,4 +1,4 @@
-From 3db082a75210bbf0fc657831443c589a4226b997 Mon Sep 17 00:00:00 2001
+From a3a9dd059cb55419a003f5b785ee81db76c76ffe Mon Sep 17 00:00:00 2001
 From: Giuseppe Castagno <giuseppe.castagno@acca-esse.eu>
 Date: Tue, 15 Mar 2016 17:33:29 +0100
 Subject: [PATCH] Related tdf#98416 Libcmis: add a patch to fix Google Drive
@@ -21,10 +21,10 @@ Reviewed-by: David Tardon <dtardon@redhat.com>
  create mode 100644 external/libcmis/libcmis-fix-google-drive.patch
 
 diff --git a/external/libcmis/UnpackedTarball_cmis.mk b/external/libcmis/UnpackedTarball_cmis.mk
-index 9880947..435e7c5 100644
+index 16d4400..976f2bc 100644
 --- a/external/libcmis/UnpackedTarball_cmis.mk
 +++ b/external/libcmis/UnpackedTarball_cmis.mk
-@@ -15,6 +15,7 @@ $(eval $(call gb_UnpackedTarball_set_patchlevel,cmis,1))
+@@ -15,6 +15,7 @@ $(eval $(call gb_UnpackedTarball_set_patchlevel,cmis,0))
  
  $(eval $(call gb_UnpackedTarball_add_patches,cmis, \
  						external/libcmis/libcmis-libxml2_compatibility.patch \
@@ -36,7 +36,7 @@ diff --git a/external/libcmis/libcmis-fix-google-drive.patch b/external/libcmis/
 new file mode 100644
 index 0000000..77961ce
 --- /dev/null
-+++ b/external/libcmis/libcmis-fix-google-drive.patch.1
++++ b/external/libcmis/libcmis-fix-google-drive.patch
 @@ -0,0 +1,106 @@
 +diff -aru old-src/src/libcmis/oauth2-providers.cxx new-src/src/libcmis/oauth2-providers.cxx
 +--- old-src/src/libcmis/oauth2-providers.cxx	2016-03-01 17:14:26.000000000 +0100
@@ -145,5 +145,5 @@ index 0000000..77961ce
 +     catch ( const CurlException& e )
 +Only in new-src/src/libcmis: oauth2-providers.cxx~
 -- 
-2.7.4
+2.7.3
 

@@ -1,4 +1,4 @@
-From a3a9dd059cb55419a003f5b785ee81db76c76ffe Mon Sep 17 00:00:00 2001
+From e9bb20a403828d1917033c7594df2d74aa84f027 Mon Sep 17 00:00:00 2001
 From: Giuseppe Castagno <giuseppe.castagno@acca-esse.eu>
 Date: Tue, 15 Mar 2016 17:33:29 +0100
 Subject: [PATCH] Related tdf#98416 Libcmis: add a patch to fix Google Drive
@@ -21,26 +21,26 @@ Reviewed-by: David Tardon <dtardon@redhat.com>
  create mode 100644 external/libcmis/libcmis-fix-google-drive.patch
 
 diff --git a/external/libcmis/UnpackedTarball_cmis.mk b/external/libcmis/UnpackedTarball_cmis.mk
-index 16d4400..976f2bc 100644
+index 16d4400..24bbda5 100644
 --- a/external/libcmis/UnpackedTarball_cmis.mk
 +++ b/external/libcmis/UnpackedTarball_cmis.mk
 @@ -15,6 +15,7 @@ $(eval $(call gb_UnpackedTarball_set_patchlevel,cmis,0))
  
  $(eval $(call gb_UnpackedTarball_add_patches,cmis, \
  						external/libcmis/libcmis-libxml2_compatibility.patch \
-+						external/libcmis/libcmis-fix-google-drive.patch.1 \
++						external/libcmis/libcmis-fix-google-drive.patch \
  ))
  
  ifeq ($(OS)$(COM),WNTMSC)
 diff --git a/external/libcmis/libcmis-fix-google-drive.patch b/external/libcmis/libcmis-fix-google-drive.patch
 new file mode 100644
-index 0000000..77961ce
+index 0000000..07bb4f3
 --- /dev/null
 +++ b/external/libcmis/libcmis-fix-google-drive.patch
 @@ -0,0 +1,106 @@
-+diff -aru old-src/src/libcmis/oauth2-providers.cxx new-src/src/libcmis/oauth2-providers.cxx
-+--- old-src/src/libcmis/oauth2-providers.cxx	2016-03-01 17:14:26.000000000 +0100
-++++ new-src/src/libcmis/oauth2-providers.cxx	2016-04-28 11:28:25.233803971 +0200
++diff -aru src/libcmis/oauth2-providers.cxx src/libcmis/oauth2-providers.cxx
++--- src/libcmis/oauth2-providers.cxx	2016-03-01 17:14:26.000000000 +0100
+++++ src/libcmis/oauth2-providers.cxx	2016-04-28 11:28:25.233803971 +0200
 +@@ -37,11 +37,28 @@
 + string OAuth2Providers::OAuth2Gdrive( HttpSession* session, const string& authUrl,
 +                                       const string& username, const string& password )

@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -260,12 +260,10 @@ Patch25: 0001-gtk3-various-bits-means-different-things-again.patch
 Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
 Patch27: 0001-Resolves-tdf-98636.patch
 Patch28: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
-Patch29: 0001-Resolves-tdf-91778-drawing-the-background-over-an-ac.patch
 Patch30: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
 Patch31: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
 Patch32: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 Patch33: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
-Patch34: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -273,7 +271,6 @@ Patch401: 0001-reorder.patch
 Patch402: 0002-reduce-copypasta.patch
 Patch403: 0003-detect-Boost.Filesystem.patch
 Patch404: 0004-define-boost_filestystem-external-for-system-boost-t.patch
-Patch405: 0001-Related-tdf-98416-Libcmis-add-a-patch-to-fix-Google-.patch
 %endif
 
 %if 0%{?rhel}
@@ -2295,6 +2292,9 @@ done
 %endif
 
 %changelog
+* Wed May 04 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.2-1
+- update to 5.1.3 rc2
+
 * Wed Apr 27 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.1-2
 - Pasting "--" from a pdf doesn't always give "--"
 - Resolves: tdf#99460 sw layout don't split table before fly

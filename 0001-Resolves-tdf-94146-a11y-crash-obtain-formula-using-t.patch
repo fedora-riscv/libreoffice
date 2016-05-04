@@ -1,0 +1,55 @@
+From 7581b5de05259dfcf65fc0d3b6fa565f74acaf8a Mon Sep 17 00:00:00 2001
+Message-Id: <7581b5de05259dfcf65fc0d3b6fa565f74acaf8a.1462364344.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Wed, 4 May 2016 13:41:59 +0200
+Subject: [PATCH] Resolves: tdf#94146 a11y crash, obtain formula using the
+ correct pointer
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Fallout from IAccessible2 integration. Of the union, wrong string
+pointer instead of formula cell pointer was used.
+
+Change-Id: I1afaf0ffff14a770ab52e8cbf880708bd66b3ef2
+(cherry picked from commit 3a767d91bfa70af4303b905cefa038181d56cc9a)
+---
+ sc/source/ui/view/tabvwsh.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-94146-a11y-crash-obtain-formula-using-t.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-94146-a11y-crash-obtain-formula-using-t.patch"
+
+diff --git a/sc/source/ui/view/tabvwsh.cxx b/sc/source/ui/view/tabvwsh.cxx
+index 632757d..0675e69 100644
+--- a/sc/source/ui/view/tabvwsh.cxx
++++ b/sc/source/ui/view/tabvwsh.cxx
+@@ -39,6 +39,7 @@
+ #include "dwfunctr.hxx"
+ #include "sc.hrc"
+ #include "spelldialog.hxx"
++#include "formulacell.hxx"
+ #include <searchresults.hxx>
+ 
+ #include <sfx2/request.hxx>
+@@ -116,7 +117,7 @@ OUString ScTabViewShell::GetFormula(ScAddress& rAddress)
+     aCell.assign(*pDoc, rAddress);
+     if (!aCell.isEmpty() && aCell.meType == CELLTYPE_FORMULA)
+     {
+-        sFormula = aCell.mpString->getString();
++        aCell.mpFormula->GetFormula( sFormula);
+     }
+     return sFormula;
+ }
+
+--------------erAck-patch-parts--
+
+

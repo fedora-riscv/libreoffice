@@ -265,6 +265,7 @@ Patch31: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
 Patch32: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
 Patch33: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch34: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
+Patch35: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

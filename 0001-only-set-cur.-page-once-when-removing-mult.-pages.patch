@@ -1,0 +1,54 @@
+From fd99dc83659b8c9e4dff9c55ed43c936f9a5b7fd Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 5 May 2016 17:47:03 +0200
+Subject: [PATCH] only set cur. page once when removing mult. pages
+
+Change-Id: Id9da135a91d9591eed04fb25d2891169c45ecaaf
+---
+ .../ui/slidesorter/controller/SlsSelectionManager.cxx    | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx b/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
+index a954aed..c861fbf 100644
+--- a/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
++++ b/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
+@@ -36,6 +36,9 @@
+ #include "view/SlideSorterView.hxx"
+ #include "view/SlsLayouter.hxx"
+ #include "drawdoc.hxx"
++#include "drawview.hxx"
++#include "DrawViewShell.hxx"
++#include "ViewShellBase.hxx"
+ #include "Window.hxx"
+ #include <svx/svxids.hrc>
+ #include <com/sun/star/drawing/XMasterPagesSupplier.hpp>
+@@ -108,6 +111,13 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
+     else
+         --nNewCurrentSlide;
+ 
++    const auto pViewShell = mrSlideSorter.GetViewShell();
++    const auto pDrawViewShell = pViewShell ? std::dynamic_pointer_cast<sd::DrawViewShell>(pViewShell->GetViewShellBase().GetMainViewShell()) : nullptr;
++    const auto pDrawView = pDrawViewShell ? dynamic_cast<sd::DrawView*>(pDrawViewShell->GetDrawView()) : nullptr;
++
++    if (pDrawView)
++        pDrawView->BlockPageOrderChangedHint(true);
++
+     // The actual deletion of the selected pages is done in one of two
+     // helper functions.  They are specialized for normal respectively for
+     // master pages.
+@@ -120,6 +130,12 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
+ 
+     mrController.HandleModelChange();
+     aLock.Release();
++    if (pDrawView)
++    {
++        assert(pDrawViewShell);
++        pDrawView->BlockPageOrderChangedHint(false);
++        pDrawViewShell->ResetActualPage();
++    }
+ 
+     // Show focus and move it to next valid location.
+     if (bIsFocusShowing)
+-- 
+2.7.4
+

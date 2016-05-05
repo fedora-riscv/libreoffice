@@ -1,0 +1,150 @@
+From e0e39b68d72ca4cff95089d923bcba6d173e5003 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 5 May 2016 15:19:24 +0100
+Subject: [PATCH] gtk3: New Folder dialog from Templates dialog doesn't get
+ keyboard focus
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ctrl+shift+N, and click new folder, no keyboard input is accepted.
+
+The dialogs don't get keyboard events, because the keyboard events
+go to the top level window because of...
+
+commit 011ce226e89ecabaf621603d692547c88061eaba
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Tue Jan 19 13:22:10 2016 +0000
+
+    Resolves: tdf#99604 ungrab modal dialogs
+
+(should be tdf#96604) which stripped away the grab from the sub dialog
+
+but I did that because menu dropdowns from comboboxes inside modal
+dialogs didn't receive mouse focus otherwise.
+
+I had set our "modal" dialogs to be truly modal and triggering that
+problem with
+
+commit 8d5822983e9b6a1e04874ce4d2c807fd0cf1ee04
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Mon Dec 14 11:36:50 2015 +0000
+
+    Related: rhbz#1290014 gtk3: use gtk_window_set_modal on modal dialogs
+
+    which makes modal dialogs (which are most of them) place correctly
+    under wayland. Modeless ones are still uselessly shoved far to the
+    left, but this makes things near usable and gives the same "graying
+    into the bg" effect for the main window as other gtk apps
+
+which I still contend is "a good thing"
+
+if we stop removing the grab from the modal dialog, then we still have
+the problem that the menu dropdowns from comboboxes inside modal dialogs
+don't receive mouse focus otherwise.
+
+After trying to add/remove grabs around showing/hiding menus we run
+into another pit of trouble
+
+(commit 72e6a1365cb08986b542a5beb797634bca62d85b
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Wed May 4 16:29:35 2016 +0100)
+
+so, lets save the widget that has the grab before showing our first
+menu, clear the grab, and restore it on hiding the first menu again.
+
+and still ditch that metacity hack around thing at this point too
+
+I truly hate this crap
+
+Change-Id: If10e758585f156b33680b8d40355302cc1ae72f3
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  1 +
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 31 +++++++++----------------------
+ 2 files changed, 10 insertions(+), 22 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 3610add..4739c77 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -303,6 +303,7 @@ class GtkSalFrame : public SalFrame
+     static GdkNativeWindow findTopLevelSystemWindow( GdkNativeWindow aWindow );
+ 
+     static int m_nFloats;
++    static GtkWidget* m_pGrabWidgetBeforeShowFloats;
+ 
+     bool isFloatGrabWindow() const
+     {
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 3dc58af..b06e5c9 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -104,6 +104,7 @@
+ using namespace com::sun::star;
+ 
+ int GtkSalFrame::m_nFloats = 0;
++GtkWidget* GtkSalFrame::m_pGrabWidgetBeforeShowFloats = nullptr;
+ 
+ #if defined ENABLE_GMENU_INTEGRATION
+ static GDBusConnection* pSessionBus = nullptr;
+@@ -1424,21 +1425,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+                 SetDefaultSize();
+             setMinMaxSize();
+ 
+-            if( isFloatGrabWindow() &&
+-                m_pParent &&
+-                m_nFloats == 0 &&
+-                ! getDisplay()->GetCaptureFrame() )
+-            {
+-                /* #i63086#
+-                 * outsmart Metacity's "focus:mouse" mode
+-                 * which insists on taking the focus from the document
+-                 * to the new float. Grab focus to parent frame BEFORE
+-                 * showing the float (cannot grab it to the float
+-                 * before show).
+-                 */
+-                 m_pParent->grabPointer( true, true );
+-            }
+-
+             if( ! bNoActivate && (m_nStyle & SalFrameStyleFlags::TOOLWINDOW) )
+                 m_bSetFocusOnMap = true;
+ 
+@@ -1449,6 +1435,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+                 m_nFloats++;
+                 if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 1 )
+                 {
++                    m_pGrabWidgetBeforeShowFloats = gtk_grab_get_current();
++                    if (m_pGrabWidgetBeforeShowFloats)
++                        gtk_grab_remove(m_pGrabWidgetBeforeShowFloats);
+                     grabPointer(true, true);
+                     GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
+                     pKeyboardFrame->grabKeyboard(true);
+@@ -1470,6 +1459,11 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+                     GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
+                     pKeyboardFrame->grabKeyboard(false);
+                     grabPointer(false);
++                    if (m_pGrabWidgetBeforeShowFloats)
++                    {
++                        gtk_grab_add(m_pGrabWidgetBeforeShowFloats);
++                        m_pGrabWidgetBeforeShowFloats = nullptr;
++                    }
+                 }
+             }
+             gtk_widget_hide( m_pWindow );
+@@ -2414,13 +2408,6 @@ void GtkSalFrame::SetModal(bool bModal)
+     if (!m_pWindow)
+         return;
+     gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);
+-    if (bModal)
+-    {
+-        //gtk_window_set_modal bTrue adds a grab, so ungrab here. Quite
+-        //possibly we should alternatively call grab_add grab_ungrab on
+-        //show/hide of menus ?
+-        gtk_grab_remove(m_pWindow);
+-    }
+ }
+ 
+ gboolean GtkSalFrame::signalTooltipQuery(GtkWidget*, gint /*x*/, gint /*y*/,
+-- 
+2.7.3
+

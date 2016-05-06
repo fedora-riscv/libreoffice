@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -247,25 +247,17 @@ Patch12: 0002-disable-tearability-of-color-window.patch
 Patch13: 0001-rhbz-1168757-propagate-selected-slides-to-print-dial.patch
 Patch14: 0001-hack-out-optimization-to-build.patch
 Patch15: 0001-generate-better-unit-test-assert-message.patch
-Patch16: 0001-tdf-97665-Let-s-hope-that-over-activation-isn-t-real.patch
-Patch17: 0002-gtk3-some-changes-towards-enabling-native-gtk3-popup.patch
-Patch18: 0003-gtk3-vcl-popups-flush-any-unexecuted-Select-events-o.patch
-Patch19: 0004-gtk3-replace-old-action-if-same-command-is-added.patch
-Patch20: 0005-gtk3-handle-items-without-commands.patch
-Patch21: 0006-mark-checkable-toolbox-menu-entries-as-checkable.patch
-Patch22: 0007-set-gtk-layout-direction-to-match-ours.patch
-Patch23: 0008-gtk3-implement-native-context-menus.patch
-Patch24: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch25: 0001-gtk3-various-bits-means-different-things-again.patch
-Patch26: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
-Patch27: 0001-Resolves-tdf-98636.patch
-Patch28: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
-Patch30: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
-Patch31: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
-Patch32: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
-Patch33: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
-Patch34: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
-Patch35: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
+Patch16: 0001-native-gtk-menubars-and-popup-menus.patch
+Patch17: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
+Patch18: 0001-gtk3-various-bits-means-different-things-again.patch
+Patch19: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
+Patch20: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
+Patch21: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
+Patch22: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
+Patch23: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
+Patch24: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
+Patch25: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
+Patch26: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2294,6 +2286,9 @@ done
 %endif
 
 %changelog
+* Fri May 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-3
+- backport native gtk3 menubar and popup menu
+
 * Thu May 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-2
 - focus doesn't work for create subdialog of templates dialog
 

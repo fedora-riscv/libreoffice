@@ -237,6 +237,7 @@ Patch7: 0001-pass-original-CFLAGS.patch
 Patch8: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
+Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 
 %if 0%{?rhel}
 # not upstreamed

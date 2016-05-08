@@ -628,7 +628,7 @@ index 011c3e4..cbc5dad 100644
 -    void                        UpdateFull();       // Update full menu hierarchy from this menu.
 +    virtual void                Update() override;  // Update this menu only.
 +    // Update full menu hierarchy from this menu.
-+    void                        UpdateFull () { if (mbNeedsUpdate) ActivateAllSubmenus(mpVCLMenu); }
++    void                        UpdateFull () { ActivateAllSubmenus(mpVCLMenu); }
 +    GtkSalMenu*                 GetTopLevel();
 +    void                        SetNeedsUpdate();
 +

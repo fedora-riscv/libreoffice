@@ -1,0 +1,75 @@
+From 8727412bd1619f42f0dcd9ea820c2348a9bd8af9 Mon Sep 17 00:00:00 2001
+Message-Id: <8727412bd1619f42f0dcd9ea820c2348a9bd8af9.1462798322.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 6 May 2016 16:56:29 +0200
+Subject: [PATCH] tdf#86575 for OOXML write plain #REF! if deleted parts
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+(cherry picked from commit bb0ef99fb9dce30e99a7e9f7fa295a634d07b423)
+
+write the [#REF!] as defined in ODFF, tdf#86575 related
+
+... if a part of the reference was deleted, instead of [.#REF!A1]
+
+Actually this is a regression that already can be tracked down to
+c54616f62bc70a9d39abf8837a9d7c3031c80a41 which changed things to use
+ValidAddress() only.
+
+(cherry picked from commit eeb203089f2ba6dffba9a2543c9a7e8bf551bbc5)
+
+70f68722d7af02f6da3380c2dd9d54704c20b451
+
+Change-Id: Ie3233d72bdbdd0ab82386c98a46755ce64ef3e7f
+Reviewed-on: https://gerrit.libreoffice.org/24705
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ sc/source/core/tool/compiler.cxx | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch"
+
+diff --git a/sc/source/core/tool/compiler.cxx b/sc/source/core/tool/compiler.cxx
+index 80f37a4..091e2e3 100644
+--- a/sc/source/core/tool/compiler.cxx
++++ b/sc/source/core/tool/compiler.cxx
+@@ -1011,7 +1011,8 @@ struct ConventionOOO_A1_ODF : public ConventionOOO_A1
+         if( !bSingleRef )
+             aAbs2 = rRef.Ref2.toAbs(rPos);
+ 
+-        if (FormulaGrammar::isODFF(eGram) && (!ValidAddress(aAbs1) || !ValidAddress(aAbs2)))
++        if (FormulaGrammar::isODFF(eGram) && (rRef.Ref1.IsDeleted() || !ValidAddress(aAbs1) ||
++                    (!bSingleRef && (rRef.Ref2.IsDeleted() || !ValidAddress(aAbs2)))))
+         {
+             rBuffer.append(rErrRef);
+             // For ODFF write [#REF!], but not for PODF so apps reading ODF
+@@ -1408,6 +1409,14 @@ struct ConventionXL_OOX : public ConventionXL_A1
+             aPos.SetRow(0);
+         }
+ 
++        if (rRef.Ref1.IsDeleted() || (!bSingleRef && rRef.Ref2.IsDeleted()))
++        {
++            // For OOXML write plain "#REF!" instead of detailed sheet/col/row
++            // information.
++            rBuf.append(rErrRef);
++            return;
++        }
++
+         ConventionXL_A1::makeRefStr( rBuf, eGram, aPos, rErrRef, rTabNames, rRef, bSingleRef, bFromRangeName);
+     }
+ 
+
+--------------erAck-patch-parts--
+
+

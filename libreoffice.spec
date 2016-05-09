@@ -305,6 +305,7 @@ Patch72: 0001-Resolves-tdf-99417-explicitly-track-formula-cells-fo.patch
 Patch73: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch74: 0001-Resolves-tdf-94146-a11y-crash-obtain-formula-using-t.patch
 Patch75: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
+Patch76: 0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2219,10 +2220,11 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Tue May 03 2016 Eike Rathke <erack@redhat.com> - 1:5.0.6.2-4-UNBUILT
+* Mon May 09 2016 Eike Rathke <erack@redhat.com> - 1:5.0.6.2-4
 - Resolves: tdf#99417 explicitly track formula cells for BROADCAST_BROADCASTERS
 - Resolves: tdf#94146 a11y crash, obtain formula using the correct pointer
 - improve performance of removal of multiple slides
+- tdf#86575 for OOXML write plain #REF! if deleted parts, ODFF [#REF!]
 
 * Mon May 02 2016 David Tardon <dtardon@redhat.com> - 1:5.0.6.2-3
 - Resolves: rhbz#1326602 leakage of removed background image set in master slide

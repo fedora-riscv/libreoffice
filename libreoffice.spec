@@ -306,6 +306,7 @@ Patch73: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch74: 0001-Resolves-tdf-94146-a11y-crash-obtain-formula-using-t.patch
 Patch75: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch76: 0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch
+Patch77: 0001-improve-perf.-of-VCL-event-dispatch.patch
 
 %if 0%{?rhel}
 # not upstreamed

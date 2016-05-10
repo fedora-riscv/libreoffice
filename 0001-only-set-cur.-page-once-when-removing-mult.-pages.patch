@@ -1,4 +1,4 @@
-From fd99dc83659b8c9e4dff9c55ed43c936f9a5b7fd Mon Sep 17 00:00:00 2001
+From 3643ea7b660a1f8263d05ffa9be47e8180fd2504 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 5 May 2016 17:47:03 +0200
 Subject: [PATCH] only set cur. page once when removing mult. pages
@@ -9,7 +9,7 @@ Change-Id: Id9da135a91d9591eed04fb25d2891169c45ecaaf
  1 file changed, 16 insertions(+)
 
 diff --git a/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx b/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
-index a954aed..c861fbf 100644
+index 0768a1e..1e913b3 100644
 --- a/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
 +++ b/sd/source/ui/slidesorter/controller/SlsSelectionManager.cxx
 @@ -36,6 +36,9 @@
@@ -22,12 +22,12 @@ index a954aed..c861fbf 100644
  #include "Window.hxx"
  #include <svx/svxids.hrc>
  #include <com/sun/star/drawing/XMasterPagesSupplier.hpp>
-@@ -108,6 +111,13 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
+@@ -117,6 +120,13 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
      else
          --nNewCurrentSlide;
  
 +    const auto pViewShell = mrSlideSorter.GetViewShell();
-+    const auto pDrawViewShell = pViewShell ? std::dynamic_pointer_cast<sd::DrawViewShell>(pViewShell->GetViewShellBase().GetMainViewShell()) : nullptr;
++    const auto pDrawViewShell = pViewShell ? dynamic_cast<sd::DrawViewShell*>(pViewShell->GetViewShellBase().GetMainViewShell().get()) : nullptr;
 +    const auto pDrawView = pDrawViewShell ? dynamic_cast<sd::DrawView*>(pDrawViewShell->GetDrawView()) : nullptr;
 +
 +    if (pDrawView)
@@ -36,7 +36,7 @@ index a954aed..c861fbf 100644
      // The actual deletion of the selected pages is done in one of two
      // helper functions.  They are specialized for normal respectively for
      // master pages.
-@@ -120,6 +130,12 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
+@@ -129,6 +139,12 @@ void SelectionManager::DeleteSelectedPages (const bool bSelectFollowingPage)
  
      mrController.HandleModelChange();
      aLock.Release();

@@ -259,6 +259,7 @@ Patch24: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch25: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
 Patch26: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
+Patch28: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2273,9 +2274,10 @@ done
 %endif
 
 %changelog
-* Tue May 10 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.2-5
+* Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.2-5
 - Resolves: rhbz#1333899 recommended pkgs are omitted from default
   installation
+- Resolves: rhbz#1325858 fix build on 64-bit secondary arches
 
 * Sun May 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-4
 - fix more focus after menus issues

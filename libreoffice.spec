@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -88,8 +88,8 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.11.1.tar.gz
-Source102:      %{external_url}/mdds-1.1.0.tar.bz2
+Source101:      %{external_url}/liborcus-0.11.2.tar.gz
+Source102:      %{external_url}/mdds-1.2.0.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.3.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
@@ -196,7 +196,7 @@ BuildRequires: pkgconfig(libgltf-0.0)
 BuildRequires: pkgconfig(liborcus-0.11)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
-BuildRequires: pkgconfig(mdds-1.0)
+BuildRequires: pkgconfig(mdds-1.2)
 %endif
 
 # java stuff
@@ -238,6 +238,10 @@ Patch8: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
+
+%if 0%{?fedora}
+Patch400: 0001-Update-mdds-to-1.2.0.-Note-that-the-API-version-is-a.patch
+%endif
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2238,6 +2242,9 @@ done
 %endif
 
 %changelog
+* Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-5.alpha1
+- rebuild for mdds 1.2.0
+
 * Tue May 10 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-4.alpha1
 - Resolves: rhbz#1333899 recommended pkgs are omitted from default
   installation

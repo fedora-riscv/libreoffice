@@ -238,6 +238,7 @@ Patch8: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
+Patch12: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
 
 %if 0%{?fedora}
 Patch400: 0001-Update-mdds-to-1.2.0.-Note-that-the-API-version-is-a.patch
@@ -2244,6 +2245,7 @@ done
 %changelog
 * Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-5.alpha1
 - rebuild for mdds 1.2.0
+- Resolves: rhbz#1325858 fix build on 64-bit secondary arches
 
 * Tue May 10 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-4.alpha1
 - Resolves: rhbz#1333899 recommended pkgs are omitted from default

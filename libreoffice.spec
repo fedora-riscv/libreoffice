@@ -240,7 +240,7 @@ Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 Patch12: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
 
-%if 0%{?fedora}
+%if ! 0%{?rhel}
 Patch400: 0001-Update-mdds-to-1.2.0.-Note-that-the-API-version-is-a.patch
 %endif
 

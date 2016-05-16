@@ -261,6 +261,7 @@ Patch26: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 Patch28: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
 Patch29: 0001-gtk3-min-slider-size-too-small-since-3.20.0.patch
+Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2277,6 +2278,7 @@ done
 %changelog
 * Mon May 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-6-UNBUILT
 - gtk3 min slider size too small since gtk3 3.20.0
+- Resolves: rhbz#1327847 remove multilib conflicts in .desktop files
 
 * Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.2-5
 - Resolves: rhbz#1333899 recommended pkgs are omitted from default

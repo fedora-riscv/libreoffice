@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -239,6 +239,7 @@ Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
 Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 Patch12: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
+Patch13: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-mdds-to-1.2.0.-Note-that-the-API-version-is-a.patch
@@ -2243,6 +2244,9 @@ done
 %endif
 
 %changelog
+* Mon May 16 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-6.alpha1-UNBUILT
+- Resolves: rhbz#1327847 remove multilib conflicts in .desktop files
+
 * Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-5.alpha1
 - rebuild for mdds 1.2.0
 - Resolves: rhbz#1325858 fix build on 64-bit secondary arches

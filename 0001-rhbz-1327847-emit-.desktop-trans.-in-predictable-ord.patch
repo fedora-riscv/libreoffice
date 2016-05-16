@@ -1,0 +1,26 @@
+From 03701c986cd1082c5cd9aea7b479811c7a079bca Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Mon, 16 May 2016 14:52:47 +0200
+Subject: [PATCH] rhbz#1327847 emit .desktop trans. in predictable order
+
+Change-Id: Ib07e27a9df6a08868ea505e141e2526435d2a0ef
+---
+ solenv/bin/desktop-translate.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/solenv/bin/desktop-translate.pl b/solenv/bin/desktop-translate.pl
+index 0680431..259e7da 100644
+--- a/solenv/bin/desktop-translate.pl
++++ b/solenv/bin/desktop-translate.pl
+@@ -144,7 +144,7 @@ foreach $template (keys %templates) {
+         print OUTFILE $keyline;
+         if (/$key/) {
+             my $translations = $templates{$template}->{'translations'};
+-            foreach my $locale (keys %{$translations}) {
++            foreach my $locale (sort (keys %{$translations})) {
+                 my $value = $translations->{$locale};
+                 # print "locale is $locale\n";
+                 # print "value is $value\n";
+-- 
+2.7.4
+

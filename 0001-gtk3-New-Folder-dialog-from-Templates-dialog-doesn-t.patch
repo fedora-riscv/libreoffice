@@ -1,4 +1,4 @@
-From e0e39b68d72ca4cff95089d923bcba6d173e5003 Mon Sep 17 00:00:00 2001
+From 5403d9619903a7a950838a0870100774ac821ac5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 5 May 2016 15:19:24 +0100
 Subject: [PATCH] gtk3: New Folder dialog from Templates dialog doesn't get
@@ -59,35 +59,113 @@ I truly hate this crap
 
 Change-Id: If10e758585f156b33680b8d40355302cc1ae72f3
 ---
- vcl/inc/unx/gtk/gtkframe.hxx  |  1 +
- vcl/unx/gtk3/gtk3gtkframe.cxx | 31 +++++++++----------------------
- 2 files changed, 10 insertions(+), 22 deletions(-)
+ cui/source/customize/cfg.cxx      |  4 ++--
+ cui/source/customize/selector.cxx | 15 +++------------
+ cui/source/inc/selector.hxx       |  2 +-
+ vcl/inc/unx/gtk/gtkframe.hxx      |  1 +
+ vcl/unx/gtk3/gtk3gtkframe.cxx     | 32 ++++++++++----------------------
+ 5 files changed, 17 insertions(+), 37 deletions(-)
 
+diff --git a/cui/source/customize/cfg.cxx b/cui/source/customize/cfg.cxx
+index 018cf39..72e8af5 100644
+--- a/cui/source/customize/cfg.cxx
++++ b/cui/source/customize/cfg.cxx
+@@ -2816,7 +2816,7 @@ IMPL_LINK_NOARG_TYPED( SvxMenuConfigPage, AddCommandsHdl, Button *, void )
+ 
+     m_pSelectorDlg->SetImageProvider( GetSaveInData() );
+ 
+-    m_pSelectorDlg->Show();
++    m_pSelectorDlg->Execute();
+ }
+ 
+ SaveInData* SvxMenuConfigPage::CreateSaveInData(
+@@ -4702,7 +4702,7 @@ IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, AddCommandsHdl, Button *, void )
+ 
+     m_pSelectorDlg->SetImageProvider( GetSaveInData() );
+ 
+-    m_pSelectorDlg->Show();
++    m_pSelectorDlg->Execute();
+ }
+ 
+ IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, AddFunctionHdl, SvxScriptSelectorDialog&, void )
+diff --git a/cui/source/customize/selector.cxx b/cui/source/customize/selector.cxx
+index 28fbd87..5d76bb9 100644
+--- a/cui/source/customize/selector.cxx
++++ b/cui/source/customize/selector.cxx
+@@ -874,7 +874,7 @@ void SvxConfigGroupListBox::RequestingChildren( SvTreeListEntry *pEntry )
+ 
+ SvxScriptSelectorDialog::SvxScriptSelectorDialog(
+     vcl::Window* pParent, bool bShowSlots, const Reference< frame::XFrame >& xFrame)
+-    : ModelessDialog(pParent, "MacroSelectorDialog", "cui/ui/macroselectordialog.ui")
++    : ModalDialog(pParent, "MacroSelectorDialog", "cui/ui/macroselectordialog.ui")
+     , m_bShowSlots(bShowSlots)
+ {
+     get<FixedText>("libraryft")->Show(!m_bShowSlots);
+@@ -934,7 +934,7 @@ void SvxScriptSelectorDialog::dispose()
+     m_pOKButton.clear();
+     m_pCancelButton.clear();
+     m_pDescriptionText.clear();
+-    ModelessDialog::dispose();
++    ModalDialog::dispose();
+ }
+ 
+ IMPL_LINK_TYPED( SvxScriptSelectorDialog, SelectHdl, SvTreeListBox*, pCtrl, void )
+@@ -982,16 +982,7 @@ IMPL_LINK_TYPED( SvxScriptSelectorDialog, ClickHdl, Button *, pButton, void )
+ {
+     if (pButton == m_pCancelButton)
+     {
+-        // If we are displaying Slot API commands then the dialog is being
+-        // run from Tools/Configure and we should not close it, just hide it
+-        if ( !m_bShowSlots )
+-        {
+-            EndDialog();
+-        }
+-        else
+-        {
+-            Hide();
+-        }
++        EndDialog();
+     }
+     else if (pButton == m_pOKButton)
+     {
+diff --git a/cui/source/inc/selector.hxx b/cui/source/inc/selector.hxx
+index 2f6b194..ad4bfa9 100644
+--- a/cui/source/inc/selector.hxx
++++ b/cui/source/inc/selector.hxx
+@@ -172,7 +172,7 @@ public:
+         { m_pImageProvider = provider; }
+ };
+ 
+-class SvxScriptSelectorDialog : public ModelessDialog
++class SvxScriptSelectorDialog : public ModalDialog
+ {
+     VclPtr<FixedText>                      m_pDialogDescription;
+     VclPtr<SvxConfigGroupListBox>          m_pCategories;
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 3610add..4739c77 100644
+index 6a011cb..d2e9cd5 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -303,6 +303,7 @@ class GtkSalFrame : public SalFrame
+@@ -299,6 +299,7 @@ class GtkSalFrame : public SalFrame
      static GdkNativeWindow findTopLevelSystemWindow( GdkNativeWindow aWindow );
  
      static int m_nFloats;
-+    static GtkWidget* m_pGrabWidgetBeforeShowFloats;
++    static std::vector<GtkWidget*> m_aGrabWidgetsBeforeShowFloat;
  
      bool isFloatGrabWindow() const
      {
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 3dc58af..b06e5c9 100644
+index 2055566..1cf7ddc 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -104,6 +104,7 @@
+@@ -103,6 +103,7 @@
  using namespace com::sun::star;
  
  int GtkSalFrame::m_nFloats = 0;
-+GtkWidget* GtkSalFrame::m_pGrabWidgetBeforeShowFloats = nullptr;
++std::vector<GtkWidget*> GtkSalFrame::m_aGrabWidgetsBeforeShowFloat;
  
  #if defined ENABLE_GMENU_INTEGRATION
  static GDBusConnection* pSessionBus = nullptr;
-@@ -1424,21 +1425,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1435,21 +1436,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  SetDefaultSize();
              setMinMaxSize();
  
@@ -109,29 +187,30 @@ index 3dc58af..b06e5c9 100644
              if( ! bNoActivate && (m_nStyle & SalFrameStyleFlags::TOOLWINDOW) )
                  m_bSetFocusOnMap = true;
  
-@@ -1449,6 +1435,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1460,6 +1446,12 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  m_nFloats++;
                  if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 1 )
                  {
-+                    m_pGrabWidgetBeforeShowFloats = gtk_grab_get_current();
-+                    if (m_pGrabWidgetBeforeShowFloats)
-+                        gtk_grab_remove(m_pGrabWidgetBeforeShowFloats);
++                    GtkWidget* pGrabWidgetBeforeShowFloat;
++                    while ((pGrabWidgetBeforeShowFloat = gtk_grab_get_current()))
++                    {
++                        m_aGrabWidgetsBeforeShowFloat.push_back(pGrabWidgetBeforeShowFloat);
++                        gtk_grab_remove(pGrabWidgetBeforeShowFloat);
++                    }
                      grabPointer(true, true);
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(true);
-@@ -1470,6 +1459,11 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1481,6 +1473,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(false);
                      grabPointer(false);
-+                    if (m_pGrabWidgetBeforeShowFloats)
-+                    {
-+                        gtk_grab_add(m_pGrabWidgetBeforeShowFloats);
-+                        m_pGrabWidgetBeforeShowFloats = nullptr;
-+                    }
++                    for (auto i = m_aGrabWidgetsBeforeShowFloat.rbegin(); i != m_aGrabWidgetsBeforeShowFloat.rend(); ++i)
++                        gtk_grab_add(*i);
++                    m_aGrabWidgetsBeforeShowFloat.clear();
                  }
              }
              gtk_widget_hide( m_pWindow );
-@@ -2414,13 +2408,6 @@ void GtkSalFrame::SetModal(bool bModal)
+@@ -2419,13 +2414,6 @@ void GtkSalFrame::SetModal(bool bModal)
      if (!m_pWindow)
          return;
      gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);

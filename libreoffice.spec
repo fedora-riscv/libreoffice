@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -2221,6 +2221,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon May 23 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-5
+- Resolves: rhbz#1338546 crash after using bullet toolbar dropdown menu
+
 * Mon May 09 2016 Eike Rathke <erack@redhat.com> - 1:5.0.6.2-4
 - Resolves: tdf#99417 explicitly track formula cells for BROADCAST_BROADCASTERS
 - Resolves: tdf#94146 a11y crash, obtain formula using the correct pointer

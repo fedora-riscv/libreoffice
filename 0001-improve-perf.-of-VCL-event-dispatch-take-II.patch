@@ -1,4 +1,4 @@
-From df5dd6ec469ff171247d10a18e7f2be2458269c0 Mon Sep 17 00:00:00 2001
+From a00646aeb9fb75174997f9acb6888c60c68d2551 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Fri, 6 May 2016 09:33:37 +0200
 Subject: [PATCH] improve perf. of VCL event dispatch, take II
@@ -6,9 +6,9 @@ Subject: [PATCH] improve perf. of VCL event dispatch, take II
 Change-Id: I5052f0c3e2c8739b336da52ef9590e5008255247
 ---
  vcl/inc/window.h             |  2 ++
- vcl/source/window/event.cxx  | 17 ++++++++++++++++-
+ vcl/source/window/event.cxx  | 20 +++++++++++++++++++-
  vcl/source/window/window.cxx |  1 +
- 3 files changed, 19 insertions(+), 1 deletion(-)
+ 3 files changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/vcl/inc/window.h b/vcl/inc/window.h
 index 5d792de..d6d4eb9 100644
@@ -24,7 +24,7 @@ index 5d792de..d6d4eb9 100644
  
      // The canvas interface for this VCL window. Is persistent after the first GetCanvas() call
 diff --git a/vcl/source/window/event.cxx b/vcl/source/window/event.cxx
-index c31aa63..95463d6 100644
+index c31aa63..8439c4a 100644
 --- a/vcl/source/window/event.cxx
 +++ b/vcl/source/window/event.cxx
 @@ -27,6 +27,8 @@
@@ -36,7 +36,7 @@ index c31aa63..95463d6 100644
  #include <com/sun/star/awt/MouseEvent.hpp>
  #include <com/sun/star/awt/KeyModifier.hpp>
  #include <com/sun/star/awt/MouseButton.hpp>
-@@ -216,11 +218,22 @@ void Window::CallEventListeners( sal_uLong nEvent, void* pData )
+@@ -216,11 +218,25 @@ void Window::CallEventListeners( sal_uLong nEvent, void* pData )
      {
          // Copy the list, because this can be destroyed when calling a Link...
          std::vector<Link<VclWindowEvent&,void>> aCopy( mpWindowImpl->maEventListeners );
@@ -44,11 +44,14 @@ index c31aa63..95463d6 100644
 +        mpWindowImpl->mnEventListenersIteratingCount++;
 +        auto& rWindowImpl = *mpWindowImpl;
 +        comphelper::ScopeGuard aGuard(
-+            [&rWindowImpl]()
++            [&rWindowImpl, &aDelData]()
 +            {
-+                rWindowImpl.mnEventListenersIteratingCount--;
-+                if (rWindowImpl.mnEventListenersIteratingCount == 0)
-+                    rWindowImpl.maEventListenersDeleted.clear();
++                if (!aDelData.IsDead())
++                {
++                    rWindowImpl.mnEventListenersIteratingCount--;
++                    if (rWindowImpl.mnEventListenersIteratingCount == 0)
++                        rWindowImpl.maEventListenersDeleted.clear();
++                }
 +            }
 +        );
          for ( Link<VclWindowEvent&,void>& rLink : aCopy )
@@ -60,7 +63,7 @@ index c31aa63..95463d6 100644
                  rLink.Call( aEvent );
          }
      }
-@@ -278,6 +291,8 @@ void Window::RemoveEventListener( const Link<VclWindowEvent&,void>& rEventListen
+@@ -278,6 +294,8 @@ void Window::RemoveEventListener( const Link<VclWindowEvent&,void>& rEventListen
      {
          auto& rListeners = mpWindowImpl->maEventListeners;
          rListeners.erase( std::remove(rListeners.begin(), rListeners.end(), rEventListener ), rListeners.end() );
@@ -82,5 +85,5 @@ index bd2a662..1b52ab6 100644
      mpCursor                            = nullptr;                      // cursor
      mpControlFont                       = nullptr;                      // font properties
 -- 
-2.7.4
+2.7.3
 

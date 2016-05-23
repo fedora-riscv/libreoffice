@@ -2276,9 +2276,10 @@ done
 %endif
 
 %changelog
-* Mon May 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-6-UNBUILT
-- gtk3 min slider size too small since gtk3 3.20.0
+* Mon May 23 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-6
+- Resolves: rhbz#1338552 crash after using bullet toolbar dropdown menu
 - Resolves: rhbz#1327847 remove multilib conflicts in .desktop files
+- gtk3 min slider size too small since gtk3 3.20.0
 
 * Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.1.3.2-5
 - Resolves: rhbz#1333899 recommended pkgs are omitted from default

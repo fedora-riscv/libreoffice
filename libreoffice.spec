@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .alpha1
+%define libo_prerelease .beta1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -233,17 +233,6 @@ Patch4: 0001-disable-firebird-unit-test.patch
 Patch5: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch7: 0001-pass-original-CFLAGS.patch
-Patch8: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
-Patch9: 0001-tdf-99353-take-the-footgun-away-from-FilterCache.patch
-Patch10: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
-Patch11: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
-Patch12: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
-Patch13: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
-
-%if ! 0%{?rhel}
-Patch400: 0001-Update-mdds-to-1.2.0.-Note-that-the-API-version-is-a.patch
-%endif
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2244,6 +2233,9 @@ done
 %endif
 
 %changelog
+* Thu May 26 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-7.beta1
+- update to 5.2.0 beta1
+
 * Mon May 16 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-6.alpha1-UNBUILT
 - Resolves: rhbz#1327847 remove multilib conflicts in .desktop files
 

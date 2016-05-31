@@ -1,4 +1,4 @@
-From 5eac2b9ace7c2d2e3360c58d2c32462468916fef Mon Sep 17 00:00:00 2001
+From c4f94e78c507fc26f56e5c0e8847468ee9e0e2ce Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
 Subject: [PATCH] native gtk menubars and popup menus
@@ -27,14 +27,11 @@ Tested-by: Jenkins <ci@libreoffice.org>
 Reviewed-by: Maxim Monastirsky <momonasmon@gmail.com>
 (cherry picked from commit 2abdcfd641883f246fe78f2fbe38499c9382c059)
 
-Change-Id: I96affa72412f3f38160fdca4b6efd20ca68d059f
-
 gtk3: some changes towards enabling native gtk3 popup menus
 
 these menubar things can be menu things and can then do
 away with the casting, no logic changes intended
 
-Change-Id: Ibb1b5354d5e1483327f172d6890e134f1e4b9ee4
 (cherry picked from commit c13a0b1f9e76584a4ffaea0ba754c8f9a01793d8)
 
 gtk3: vcl popups flush any unexecuted Select events on popdown
@@ -44,8 +41,6 @@ on the vcl popup, then the same flush is needed after ShowNativePopupMenu
 
 (cherry picked from commit 3cb62eacae001df546c2a8f39ae4d37c33791d0b)
 
-Change-Id: I59be60de5742d1e382cabefcbf0d8cdd5fc30b00
-
 gtk3: replace old action if same command is added
 
 i.e. originally we preferred the old action, now
@@ -53,7 +48,6 @@ prefer the new action because e.g. wrap items in
 writer only contain their "checkable" state on
 their update
 
-Change-Id: I6a6ce94126253396cc273834a7e8a4fb0a56921d
 (cherry picked from commit 36bddcbaa2d1673c1331c788eae9534aca2c5ec3)
 
 gtk3: handle items without commands
@@ -61,7 +55,6 @@ gtk3: handle items without commands
 e.g. the draw/impress context menus. Handle these like
 MenuManager::Activate does
 
-Change-Id: I02a0e377a2d3a57ac7ac9239aaa75dbb856489d2
 (cherry picked from commit b8ee342576b707dbffe877f5c225b640ee65276d)
 
 mark checkable toolbox menu entries as checkable
@@ -71,12 +64,10 @@ menus. If the entry is not marked as checkable then
 a native gtk menu entry will appear to be stateless
 when it actually does have a toggle state
 
-Change-Id: I7168b44d59fd64dfe264ed8ca26355252d697251
 (cherry picked from commit 13917e0755bb864f22d0cf75a43854acbdb1eaec)
 
 set gtk layout direction to match ours
 
-Change-Id: I27610f28f42368355bef1b3461fc3ccea1b07218
 (cherry picked from commit b50071c817657866f8b22873be26d34970005a2d)
 
 gtk3: implement native context menus
@@ -88,7 +79,6 @@ So to drive popup menus, part of this is a rework that does away with the idea
 that the "menubar" is the controller of the hierarchy, and instead the top
 element becomes the controller
 
-Change-Id: I4336391718844bc73cfc47c1043f99f0e3b812d8
 (cherry picked from commit a0c700b1493c7b51540d1e77b44d1edd9bf920f0)
 
 Resolves: tdf#98636
@@ -102,11 +92,8 @@ not sufficient to unset the G_LO_MENU_ATTRIBUTE_SUBMENU_ACTION attribute
 so remove the submenu-item and add a new non-submenu item to force
 its new type
 
-Change-Id: I2030d9198d6849643a5991ddfffc1cc3425ba72e
-
 gtk3: separate the two different usages of Activate
 
-Change-Id: Ic7442209efac40bd0cd034ff006e87128b0bea35
 (cherry picked from commit d4c7f26971cb20f1a0b8a184cd6a00129a838dac)
 
 gtk3: put all of our existing toplevel stuff inside a GtkGrid
@@ -115,11 +102,8 @@ so we can optionally insert a native menubar above it all
 
 (cherry picked from commit 7f39d6831e03cbea408ff499df1c5b120d825cee)
 
-Change-Id: Ib8486d7164493db79c868715a2aef209d7472c01
-
 gtk3: native gtk menubar
 
-Change-Id: Ibb75aa3eae99e499e1c2026c41b0bf51d7f8cf31
 (cherry picked from commit 800704e0c46f6f86f6a18a477ba4b6f313c5693a)
 
 gtk3: add a menubar close button
@@ -127,22 +111,18 @@ gtk3: add a menubar close button
 the css foo is modeled on the similiar gedit close buttons
 in its tabs
 
-Change-Id: I7af32ad0434a49c52eea215f797c502be7f96dac
 (cherry picked from commit 3ae6c7fcbe14f7a425fa1db2cb388b12848be65b)
 
 gtk3+wayland: gnome#762756 hack around keyboard focus
 
-Change-Id: I6be61592a16660d62be583e082ffcf5b1907770f
 (cherry picked from commit 1724081f6363fb2b97523a2c5edb1424d7959f8b)
 
 shouldn't have to recall gtk_init here
 
-Change-Id: If851dbdb034384395ba590fda61f3383f5ef791a
 (cherry picked from commit 2ba53aee16c32a0979343cddf3ea2538d9bb4732)
 
 gtk3: menubar close button shouldn't get keyboard focus
 
-Change-Id: I6ddd512afa1e41d2dec7c92f61d65ed5bbfa9ace
 (cherry picked from commit 3a4b68260bc6c1e8bcb694f640c70652b830c621)
 
 extra menubar displayed after exiting embedded object edit
@@ -157,24 +137,18 @@ Now with native gtk3 menubars this becomes obvious as the native menubar stays
 behind, while in the non-native case the old menubar is replaced by
 the new one so while it still leaks the menubar you don't see it.
 
-Change-Id: Id732cb66664a71efc471d7bad35f4de890e1017e
 (cherry picked from commit 0c622c988523da4edc68d68ca4f4358c1fef83e4)
 
 refactor these two bizarro positioning things into reusable chunks
 
 (cherry picked from commit fbea89b6b2a4a91fecc4200d59bf03166c3f8908)
 
-Change-Id: I3f89aca650d31658ce17b3b1496a7babba23bdc6
-
 gtk3: position the native popup menus exactly where we want them
 
 (cherry picked from commit daa7754026ba5b025076b90f7a4427cd5820e736)
 
-Change-Id: I2594925cba1f7c9c90178906d9c782024ad1cf4f
-
 Resolves: tdf#98473 replace || with ‖ to avoid illegal gtk3 action names
 
-Change-Id: Ic5098c439ac94d68f881e06378938fab29e8bb3d
 (cherry picked from commit 032cb7ed80a504b4abec479f30c2c03f10e14639)
 
 Resolves: tdf#92067 and tdf#99599, use a foolproof action naming scheme
@@ -185,26 +159,19 @@ menu so knowing which one is which is direct and simple
 
 (cherry picked from commit 27014f563577c3c5da19e37a57d4e73c0ebae140)
 
-Change-Id: I81bb278e73946f864e29aeab884e07e16835dad3
-
 gtk3: getting new entries added after the menu is visible is problematic
 
-Change-Id: Ibc2fc35c3d5315eb7d25181c2c2eba4cb5509a96
 (cherry picked from commit 945064c0b7ad4da6e215668ae7e4edb14945f00c)
 
 reroute UpdateFull through ActivateAllSubmenus
 
 (cherry picked from commit b41a5e899bcb567595f489fab37cbebcc5efacc0)
 
-Change-Id: I8689abacbfc970a9124bb97a3962bcfb0df9c67d
-
 Resolves: tdf#98636 if the menubar hierarchy has been changed
 
 then update the whole thing by re-calling SetFrame
 
 (cherry picked from commit d20e08a3ab819ac24f7ea49a98b4dd3683120857)
-
-Change-Id: Ib16006a76ca04dc104232a056c43fda2b5b24074
 
 Resolves: tdf#99857 missing items from toolbar right click
 
@@ -226,7 +193,6 @@ simpler and more direct anyway
 
 dde83e3cea5b5fc1f91ebd336a2071ce8ff75e75
 
-Change-Id: I56145f6236db1787cc4ee623c513cb927bf2a972
 (cherry picked from commit a30e3ea231dd1a355e616fed33eb7c4c4866c12c)
 
 it would seem safer to update before HandleMenuDeActivateEvent
@@ -235,7 +201,52 @@ i.e. Activate, Update and Deactivate
 
 (cherry picked from commit 8c82dfe085ec0a7c27123927743387ecd8406846)
 
-Change-Id: I707f6801fca39bb767e49d6af0b9b3ceccb25e94
+Related: tdf#92695 gtk3 only activate/deactive submenus, not the toplevel
+
+(cherry picked from commit ba4e50c856e5279c05b90297660b396868a6d815)
+(cherry picked from commit dbf99bb2e092ec5dca6b405e15c507f66ad0bc6d)
+
+Related: tdf#92695 we already have ImplGetItem from mnHighItemId here
+
+no logic change intended
+
+(cherry picked from commit c380f0fc125f50ad8efca2ce032d3d2a67d78f0a)
+(cherry picked from commit df668868917d1dac11d49f1f650c43666fadea54)
+
+Resolves: tdf#92695 protect both branches against missing ToolItem
+
+(cherry picked from commit ab0dc9524a36a394e97df9499bf1f5e4b94cfdca)
+(cherry picked from commit c845c7bf597caa11b1617ab71029c499819028bc)
+
+Change-Id: I96affa72412f3f38160fdca4b6efd20ca68d059f
+bb1b5354d5e1483327f172d6890e134f1e4b9ee4
+59be60de5742d1e382cabefcbf0d8cdd5fc30b00
+6a6ce94126253396cc273834a7e8a4fb0a56921d
+02a0e377a2d3a57ac7ac9239aaa75dbb856489d2
+7168b44d59fd64dfe264ed8ca26355252d697251
+27610f28f42368355bef1b3461fc3ccea1b07218
+4336391718844bc73cfc47c1043f99f0e3b812d8
+2030d9198d6849643a5991ddfffc1cc3425ba72e
+c7442209efac40bd0cd034ff006e87128b0bea35
+b8486d7164493db79c868715a2aef209d7472c01
+bb75aa3eae99e499e1c2026c41b0bf51d7f8cf31
+7af32ad0434a49c52eea215f797c502be7f96dac
+6be61592a16660d62be583e082ffcf5b1907770f
+f851dbdb034384395ba590fda61f3383f5ef791a
+6ddd512afa1e41d2dec7c92f61d65ed5bbfa9ace
+d732cb66664a71efc471d7bad35f4de890e1017e
+3f89aca650d31658ce17b3b1496a7babba23bdc6
+2594925cba1f7c9c90178906d9c782024ad1cf4f
+c5098c439ac94d68f881e06378938fab29e8bb3d
+81bb278e73946f864e29aeab884e07e16835dad3
+bc2fc35c3d5315eb7d25181c2c2eba4cb5509a96
+8689abacbfc970a9124bb97a3962bcfb0df9c67d
+b16006a76ca04dc104232a056c43fda2b5b24074
+56145f6236db1787cc4ee623c513cb927bf2a972
+707f6801fca39bb767e49d6af0b9b3ceccb25e94
+5ce7ae39e7db62551733a005f3163ebfbb027af6
+a53a21db56c857e1274c60f846fc955fef9e3dfb
+de54fddf7b217e65a405bd80853d5302a419f046
 ---
  framework/inc/uielement/toolbarmanager.hxx       |   2 +-
  framework/source/layoutmanager/layoutmanager.cxx |  57 +-
@@ -252,16 +263,17 @@ Change-Id: I707f6801fca39bb767e49d6af0b9b3ceccb25e94
  vcl/source/window/floatwin.cxx                   |  54 +-
  vcl/source/window/menu.cxx                       |  85 +--
  vcl/source/window/menubarwindow.cxx              |   2 +
+ vcl/source/window/toolbox.cxx                    |  15 +-
  vcl/source/window/toolbox2.cxx                   |  20 +-
  vcl/unx/gtk/a11y/atklistener.cxx                 |   1 -
  vcl/unx/gtk/gloactiongroup.cxx                   |  64 +--
  vcl/unx/gtk/glomenu.cxx                          |   1 +
  vcl/unx/gtk/gtkdata.cxx                          |  19 +-
  vcl/unx/gtk/gtksalframe.cxx                      |  21 +-
- vcl/unx/gtk/gtksalmenu.cxx                       | 634 +++++++++++++++--------
+ vcl/unx/gtk/gtksalmenu.cxx                       | 638 +++++++++++++++--------
  vcl/unx/gtk3/gtk3gtkframe.cxx                    |  35 +-
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        |   1 -
- 24 files changed, 644 insertions(+), 481 deletions(-)
+ 25 files changed, 653 insertions(+), 491 deletions(-)
 
 diff --git a/framework/inc/uielement/toolbarmanager.hxx b/framework/inc/uielement/toolbarmanager.hxx
 index f109f14..1efcde3 100644
@@ -424,10 +436,10 @@ index 1c0535f..08cd8bb 100644
                              }
                              else if ( !bPopupMenu )
 diff --git a/framework/source/uielement/toolbarmanager.cxx b/framework/source/uielement/toolbarmanager.cxx
-index f10e042..2de1051 100644
+index 77849d5..1a9f9d3 100644
 --- a/framework/source/uielement/toolbarmanager.cxx
 +++ b/framework/source/uielement/toolbarmanager.cxx
-@@ -1334,19 +1334,11 @@ void ToolBarManager::ImplClearPopupMenu( ToolBox *pToolBar )
+@@ -1349,19 +1349,11 @@ void ToolBarManager::ImplClearPopupMenu( ToolBox *pToolBar )
      }
  }
  
@@ -451,7 +463,7 @@ index f10e042..2de1051 100644
  }
  
  Reference< XModel > ToolBarManager::GetModelFromFrame() const
-@@ -1542,7 +1534,6 @@ IMPL_LINK_TYPED( ToolBarManager, Command, CommandEvent const *, pCmdEvt, void )
+@@ -1557,7 +1549,6 @@ IMPL_LINK_TYPED( ToolBarManager, Command, CommandEvent const *, pCmdEvt, void )
          // when the menu is being used as an overflow menu.
          Menu *pManagerMenu = m_pToolBar->GetMenu();
          pManagerMenu->SetSelectHdl( LINK( this, ToolBarManager, MenuSelect ) );
@@ -459,7 +471,7 @@ index f10e042..2de1051 100644
  
          // make sure all disabled entries will be shown
          pMenu->SetMenuFlags( pMenu->GetMenuFlags() | MenuFlags::AlwaysShowDisabledEntries );
-@@ -1556,7 +1547,7 @@ IMPL_LINK_TYPED( ToolBarManager, Command, CommandEvent const *, pCmdEvt, void )
+@@ -1571,7 +1562,7 @@ IMPL_LINK_TYPED( ToolBarManager, Command, CommandEvent const *, pCmdEvt, void )
          {
              // Unlink our listeners again -- see above for why.
              pManagerMenu->SetSelectHdl( Link<Menu*, bool>() );
@@ -643,7 +655,7 @@ index 1d8334c..6a011cb 100644
      GdkNativeWindow getForeignParentWindow() const { return m_aForeignParentWindow; }
      GdkWindow*  getForeignTopLevel() const { return m_pForeignTopLevel; }
 diff --git a/vcl/inc/unx/gtk/gtksalmenu.hxx b/vcl/inc/unx/gtk/gtksalmenu.hxx
-index 011c3e4..dc629bc 100644
+index 011c3e4..b65f0a5 100644
 --- a/vcl/inc/unx/gtk/gtksalmenu.hxx
 +++ b/vcl/inc/unx/gtk/gtksalmenu.hxx
 @@ -19,6 +19,7 @@
@@ -719,7 +731,7 @@ index 011c3e4..dc629bc 100644
 -    void                        UpdateFull();       // Update full menu hierarchy from this menu.
 +    virtual void                Update() override;  // Update this menu only.
 +    // Update full menu hierarchy from this menu.
-+    void                        UpdateFull () { ActivateAllSubmenus(mpVCLMenu); }
++    void                        UpdateFull () { ActivateAllSubmenus(mpVCLMenu); Update(); }
 +    GtkSalMenu*                 GetTopLevel();
 +    void                        SetNeedsUpdate();
 +
@@ -997,6 +1009,38 @@ index 3209314..24b358e 100644
      aFloatBtn->Show( bFloat );
      aHideBtn->Show( bHide );
      Resize();
+diff --git a/vcl/source/window/toolbox.cxx b/vcl/source/window/toolbox.cxx
+index 140a473..30755ac 100644
+--- a/vcl/source/window/toolbox.cxx
++++ b/vcl/source/window/toolbox.cxx
+@@ -5019,20 +5019,19 @@ bool ToolBox::ImplActivateItem( vcl::KeyCode aKeyCode )
+         else
+         {
+             mnDownItemId = mnCurItemId = mnHighItemId;
+-            ImplToolItem* pItem = ImplGetItem( mnHighItemId );
+-            if ( pItem->mnBits & ToolBoxItemBits::AUTOCHECK )
++            if (pToolItem && (pToolItem->mnBits & ToolBoxItemBits::AUTOCHECK))
+             {
+-                if ( pItem->mnBits & ToolBoxItemBits::RADIOCHECK )
++                if ( pToolItem->mnBits & ToolBoxItemBits::RADIOCHECK )
+                 {
+-                    if ( pItem->meState != TRISTATE_TRUE )
+-                        SetItemState( pItem->mnId, TRISTATE_TRUE );
++                    if ( pToolItem->meState != TRISTATE_TRUE )
++                        SetItemState( pToolItem->mnId, TRISTATE_TRUE );
+                 }
+                 else
+                 {
+-                    if ( pItem->meState != TRISTATE_TRUE )
+-                        pItem->meState = TRISTATE_TRUE;
++                    if ( pToolItem->meState != TRISTATE_TRUE )
++                        pToolItem->meState = TRISTATE_TRUE;
+                     else
+-                        pItem->meState = TRISTATE_FALSE;
++                        pToolItem->meState = TRISTATE_FALSE;
+                 }
+             }
+             mnMouseModifier = aKeyCode.GetModifier();
 diff --git a/vcl/source/window/toolbox2.cxx b/vcl/source/window/toolbox2.cxx
 index c3d1173..2f355cb 100644
 --- a/vcl/source/window/toolbox2.cxx
@@ -1171,7 +1215,7 @@ index 6aa19e6..904065e 100644
      g_menu_model_items_changed (G_MENU_MODEL (menu), position, 1, 1);
  }
 diff --git a/vcl/unx/gtk/gtkdata.cxx b/vcl/unx/gtk/gtkdata.cxx
-index b5c64e0..f15cce2 100644
+index 22ac431..71f9fea 100644
 --- a/vcl/unx/gtk/gtkdata.cxx
 +++ b/vcl/unx/gtk/gtkdata.cxx
 @@ -110,6 +110,7 @@ GtkSalDisplay::GtkSalDisplay( GdkDisplay* pDisplay ) :
@@ -1182,7 +1226,7 @@ index b5c64e0..f15cce2 100644
  }
  
  GtkSalDisplay::~GtkSalDisplay()
-@@ -1030,22 +1031,4 @@ void GtkSalDisplay::deregisterFrame( SalFrame* pFrame )
+@@ -1040,22 +1041,4 @@ void GtkSalDisplay::deregisterFrame( SalFrame* pFrame )
      SalGenericDisplay::deregisterFrame( pFrame );
  }
  
@@ -1266,7 +1310,7 @@ index 95fd581..076a60a 100644
  }
  #endif
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index b6295fa..d125931 100644
+index b6295fa..00dd67b 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -16,6 +16,7 @@
@@ -1500,13 +1544,11 @@ index b6295fa..d125931 100644
 +    while (pMenu->mpParentSalMenu)
 +        pMenu = pMenu->mpParentSalMenu;
 +    ImplUpdate(false, !pMenu->mbMenuBar);
- }
- 
--void GtkSalMenu::UpdateFull()
++}
++
 +#if GTK_CHECK_VERSION(3,0,0)
 +static void MenuPositionFunc(GtkMenu* menu, gint* x, gint* y, gboolean* push_in, gpointer user_data)
- {
--    ImplUpdate( TRUE );
++{
 +    Point *pPos = static_cast<Point*>(user_data);
 +    *x = pPos->X();
 +    if (gtk_widget_get_default_direction() == GTK_TEXT_DIR_RTL)
@@ -1517,12 +1559,14 @@ index b6295fa..d125931 100644
 +    }
 +    *y = pPos->Y();
 +    *push_in = false;
-+}
+ }
 +#endif
-+
+ 
+-void GtkSalMenu::UpdateFull()
 +bool GtkSalMenu::ShowNativePopupMenu(FloatingWindow* pWin, const Rectangle& rRect,
 +                                     FloatWinPopupFlags nFlags)
-+{
+ {
+-    ImplUpdate( TRUE );
 +#if GTK_CHECK_VERSION(3,0,0)
 +    guint nButton;
 +    guint32 nTime;
@@ -1970,7 +2014,7 @@ index b6295fa..d125931 100644
          g_lo_menu_set_command_to_item_in_section( pMenu, nSection, nItemPos, aCommand );
  
          gchar* aItemCommand = g_strconcat("win.", aCommand, NULL );
-@@ -628,82 +855,49 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -628,128 +855,89 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if (pTarget)
          g_variant_unref(pTarget);
@@ -2045,10 +2089,11 @@ index b6295fa..d125931 100644
 +        OString sItemId = sCommand.getToken(0, '-', nIndex);
 +
 +        GtkSalMenu* pSalSubMenu = reinterpret_cast<GtkSalMenu*>(sGtkSalMenu.toInt64());
++
++        assert(sWindow == "window" && pSalSubMenu);
++        (void)sWindow;
  
 -        return aCommand;
-+        assert(sWindow == "window" && pSalSubMenu);
-+
 +        return MenuAndId(pSalSubMenu, sItemId.toInt32());
      }
  }
@@ -2077,17 +2122,19 @@ index b6295fa..d125931 100644
 -void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
 +void GtkSalMenu::ActivateAllSubmenus(Menu* pMenuBar)
  {
-     pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
-     for ( size_t nPos = 0; nPos < maItems.size(); nPos++ )
-@@ -712,44 +906,38 @@ void GtkSalMenu::ActivateAllSubmenus(MenuBar* pMenuBar)
+-    pMenuBar->HandleMenuActivateEvent(mpVCLMenu);
+-    for ( size_t nPos = 0; nPos < maItems.size(); nPos++ )
++    for (GtkSalMenuItem* pSalItem : maItems)
+     {
+-        GtkSalMenuItem *pSalItem = maItems[ nPos ];
          if ( pSalItem->mpSubMenu != nullptr )
          {
++            pMenuBar->HandleMenuActivateEvent(pSalItem->mpSubMenu->GetMenu());
              pSalItem->mpSubMenu->ActivateAllSubmenus(pMenuBar);
--            pSalItem->mpSubMenu->Update();
+             pSalItem->mpSubMenu->Update();
++            pMenuBar->HandleMenuDeActivateEvent(pSalItem->mpSubMenu->GetMenu());
          }
      }
-+    Update();
-+    pMenuBar->HandleMenuDeActivateEvent(mpVCLMenu);
  }
  
 -void GtkSalMenu::Activate()
@@ -2146,7 +2193,7 @@ index b6295fa..d125931 100644
  
  bool GtkSalMenu::IsItemVisible( unsigned nPos )
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index e21f903..2055566 100644
+index 024735f..2d2df88 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
 @@ -481,9 +481,6 @@ GtkSalFrame::GtkSalFrame( SalFrame* pParent, SalFrameStyleFlags nStyle )
@@ -2249,7 +2296,7 @@ index e21f903..2055566 100644
  }
  
  gboolean GtkSalFrame::signalDelete( GtkWidget*, GdkEvent*, gpointer frame )
-@@ -3377,6 +3367,7 @@ void GtkSalFrame::signalDestroy( GtkWidget* pObj, gpointer frame )
+@@ -3393,6 +3383,7 @@ void GtkSalFrame::signalDestroy( GtkWidget* pObj, gpointer frame )
      {
          pThis->m_pFixedContainer = nullptr;
          pThis->m_pEventBox = nullptr;
@@ -2258,10 +2305,10 @@ index e21f903..2055566 100644
          pThis->InvalidateGraphics();
      }
 diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
-index c1117fe..fa9d009 100644
+index 14aba8a..08bfc0e 100644
 --- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
 +++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
-@@ -2311,7 +2311,6 @@ GtkSalGraphics::GtkSalGraphics( GtkSalFrame *pFrame, GtkWidget *pWindow )
+@@ -2323,7 +2323,6 @@ GtkSalGraphics::GtkSalGraphics( GtkSalFrame *pFrame, GtkWidget *pWindow )
          return;
  
      style_loaded = true;

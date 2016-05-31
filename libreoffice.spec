@@ -2234,7 +2234,7 @@ done
 * Thu May 26 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-7.beta1
 - update to 5.2.0 beta1
 
-* Mon May 16 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-6.alpha1-UNBUILT
+* Mon May 16 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-6.alpha1
 - Resolves: rhbz#1327847 remove multilib conflicts in .desktop files
 
 * Fri May 13 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-5.alpha1

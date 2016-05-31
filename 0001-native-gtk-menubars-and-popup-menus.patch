@@ -1,4 +1,4 @@
-From f83862882f592270ab3af0bc763e952fde028039 Mon Sep 17 00:00:00 2001
+From f831741cda9ae250dd3288375b1c9762c0ffc3ae Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
 Subject: [PATCH] native gtk menubars and popup menus
@@ -260,6 +260,11 @@ menu.. it crashes
 Change-Id: I6107fbd921ada71ef7d676031651deb4b1b2d2fb
 (cherry picked from commit 446d33c39fdabff117b1228e087d037b048fd1f2)
 (cherry picked from commit 80fc481496f9d15fb01cccadfdaea9edb9724251)
+
+Fix gtk2 menubar
+
+Change-Id: I0605e570022f6eb57d453a3eb8bea5f4314c8229
+(cherry picked from commit 48217c28706d22306d17ab7d73b702389d7545a4)
 ---
  framework/inc/uielement/toolbarmanager.hxx       |   2 +-
  framework/source/layoutmanager/layoutmanager.cxx |  57 +-
@@ -283,10 +288,10 @@ Change-Id: I6107fbd921ada71ef7d676031651deb4b1b2d2fb
  vcl/unx/gtk/glomenu.cxx                          |   1 +
  vcl/unx/gtk/gtkdata.cxx                          |  19 +-
  vcl/unx/gtk/gtksalframe.cxx                      |  21 +-
- vcl/unx/gtk/gtksalmenu.cxx                       | 650 +++++++++++++++--------
+ vcl/unx/gtk/gtksalmenu.cxx                       | 658 +++++++++++++++--------
  vcl/unx/gtk3/gtk3gtkframe.cxx                    |  35 +-
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        |   1 -
- 25 files changed, 668 insertions(+), 490 deletions(-)
+ 25 files changed, 676 insertions(+), 490 deletions(-)
 
 diff --git a/framework/inc/uielement/toolbarmanager.hxx b/framework/inc/uielement/toolbarmanager.hxx
 index f109f14..1efcde3 100644
@@ -1325,7 +1330,7 @@ index 95fd581..076a60a 100644
  }
  #endif
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index b6295fa..a6eb1c5 100644
+index b6295fa..d050e49 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -16,6 +16,7 @@
@@ -1336,7 +1341,7 @@ index b6295fa..a6eb1c5 100644
  #include <vcl/menu.hxx>
  #include <unx/gtk/gtkinst.hxx>
  
-@@ -24,71 +25,25 @@
+@@ -24,71 +25,29 @@
  #endif
  
  #include <sal/log.hxx>
@@ -1414,11 +1419,15 @@ index b6295fa..a6eb1c5 100644
 -    }
 -
 -    return false;
++#if GTK_CHECK_VERSION(3,0,0)
 +    return mpMenuModel && mpActionGroup;
++#else
++    return bUnityMode && mpMenuModel && mpActionGroup;
++#endif
  }
  
  /*
-@@ -112,14 +67,58 @@ void RemoveSpareItemsFromNativeMenu( GLOMenu* pMenu, GList** pOldCommandList, un
+@@ -112,14 +71,58 @@ void RemoveSpareItemsFromNativeMenu( GLOMenu* pMenu, GList** pOldCommandList, un
      }
  }
  
@@ -1479,7 +1488,7 @@ index b6295fa..a6eb1c5 100644
      {
          RemoveSpareItemsFromNativeMenu( pMenu, pOldCommandList, n, 0 );
          g_lo_menu_remove( pMenu, n );
-@@ -171,7 +170,7 @@ void RemoveUnusedCommands( GLOActionGroup* pActionGroup, GList* pOldCommandList,
+@@ -171,7 +174,7 @@ void RemoveUnusedCommands( GLOActionGroup* pActionGroup, GList* pOldCommandList,
      }
  }
  
@@ -1488,7 +1497,7 @@ index b6295fa..a6eb1c5 100644
  {
      SolarMutexGuard aGuard;
  
-@@ -179,6 +178,13 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -179,6 +182,13 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
      if( !PrepUpdate() )
          return;
  
@@ -1502,7 +1511,7 @@ index b6295fa..a6eb1c5 100644
      Menu* pVCLMenu = mpVCLMenu;
      GLOMenu* pLOMenu = G_LO_MENU( mpMenuModel );
      GLOActionGroup* pActionGroup = G_LO_ACTION_GROUP( mpActionGroup );
-@@ -238,7 +244,7 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -238,7 +248,7 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
              pOldCommandList = g_list_append( pOldCommandList, aCurrentCommand );
  
          // Get the new command for the item.
@@ -1511,7 +1520,7 @@ index b6295fa..a6eb1c5 100644
  
          // Force updating of native menu labels.
          NativeSetItemText( nSection, nItemPos, aText );
-@@ -257,7 +263,7 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -257,7 +267,7 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
  
          if ( pSubmenu && pSubmenu->GetMenu() )
          {
@@ -1520,7 +1529,7 @@ index b6295fa..a6eb1c5 100644
              pNewCommandList = g_list_append( pNewCommandList, g_strdup( aNativeCommand ) );
  
              GLOMenu* pSubMenuModel = g_lo_menu_get_submenu_from_item_in_section( pLOMenu, nSection, nItemPos );
-@@ -270,12 +276,12 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -270,12 +280,12 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
  
              g_object_unref( pSubMenuModel );
  
@@ -1535,7 +1544,7 @@ index b6295fa..a6eb1c5 100644
              }
          }
  
-@@ -285,6 +291,12 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -285,6 +295,12 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
          ++validItems;
      }
  
@@ -1548,7 +1557,7 @@ index b6295fa..a6eb1c5 100644
      // Delete extra items in last section.
      RemoveSpareItemsFromNativeMenu( pLOMenu, &pOldCommandList, nSection, validItems );
  
-@@ -297,12 +309,102 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
+@@ -297,12 +313,102 @@ void GtkSalMenu::ImplUpdate( gboolean bRecurse )
  
  void GtkSalMenu::Update()
  {
@@ -1654,7 +1663,7 @@ index b6295fa..a6eb1c5 100644
  }
  
  /*
-@@ -311,33 +413,68 @@ void GtkSalMenu::UpdateFull()
+@@ -311,33 +417,72 @@ void GtkSalMenu::UpdateFull()
  
  GtkSalMenu::GtkSalMenu( bool bMenuBar ) :
      mbMenuBar( bMenuBar ),
@@ -1728,11 +1737,15 @@ index b6295fa..a6eb1c5 100644
  bool GtkSalMenu::VisibleMenuBar()
  {
 -    return bMenuVisibility;
++#if GTK_CHECK_VERSION(3,0,0)
 +    return mbMenuBar;
++#else
++    return mbMenuBar && bUnityMode;
++#endif
  }
  
  void GtkSalMenu::InsertItem( SalMenuItem* pSalMenuItem, unsigned nPos )
-@@ -351,12 +488,15 @@ void GtkSalMenu::InsertItem( SalMenuItem* pSalMenuItem, unsigned nPos )
+@@ -351,12 +496,15 @@ void GtkSalMenu::InsertItem( SalMenuItem* pSalMenuItem, unsigned nPos )
          maItems.insert( maItems.begin() + nPos, pItem );
  
      pItem->mpParentMenu = this;
@@ -1748,23 +1761,23 @@ index b6295fa..a6eb1c5 100644
  }
  
  void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsigned )
-@@ -370,69 +510,135 @@ void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsig
+@@ -370,69 +518,135 @@ void GtkSalMenu::SetSubMenu( SalMenuItem* pSalMenuItem, SalMenu* pSubMenu, unsig
  
      pGtkSubMenu->mpParentSalMenu = this;
      pItem->mpSubMenu = pGtkSubMenu;
 +
 +    SetNeedsUpdate();
- }
- 
--static bool bInvalidMenus = false;
--static gboolean RefreshMenusUnity(gpointer)
++}
++
 +#if GTK_CHECK_VERSION(3,0,0)
 +static void CloseMenuBar(GtkWidget *, gpointer pMenu)
 +{
 +    Application::PostUserEvent(static_cast<MenuBar*>(pMenu)->GetCloseButtonClickHdl());
-+}
+ }
 +#endif
-+
+ 
+-static bool bInvalidMenus = false;
+-static gboolean RefreshMenusUnity(gpointer)
 +void GtkSalMenu::ShowCloseButton(bool bShow)
  {
 -    SolarMutexGuard g;
@@ -1921,7 +1934,7 @@ index b6295fa..a6eb1c5 100644
      GdkWindow* gdkWindow = gtk_widget_get_window( pWidget );
  
      GLOMenu* pMenuModel = G_LO_MENU( g_object_get_data( G_OBJECT( gdkWindow ), "g-lo-menubar" ) );
-@@ -454,10 +660,17 @@ void GtkSalMenu::SetFrame( const SalFrame* pFrame )
+@@ -454,10 +668,17 @@ void GtkSalMenu::SetFrame( const SalFrame* pFrame )
      }
  
      // Generate the main menu structure.
@@ -1941,7 +1954,7 @@ index b6295fa..a6eb1c5 100644
  }
  
  const GtkSalFrame* GtkSalMenu::GetFrame() const
-@@ -562,7 +775,7 @@ void GtkSalMenu::NativeSetAccelerator( unsigned nSection, unsigned nItemPos, con
+@@ -562,7 +783,7 @@ void GtkSalMenu::NativeSetAccelerator( unsigned nSection, unsigned nItemPos, con
      g_free( aCurrentAccel );
  }
  
@@ -1950,7 +1963,7 @@ index b6295fa..a6eb1c5 100644
                                         unsigned nItemPos,
                                         sal_uInt16 nId,
                                         const gchar* aCommand,
-@@ -570,35 +783,38 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -570,35 +791,38 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
                                         gboolean bChecked,
                                         gboolean bIsSubmenu )
  {
@@ -2011,7 +2024,7 @@ index b6295fa..a6eb1c5 100644
      }
  
      GLOMenu* pMenu = G_LO_MENU( mpMenuModel );
-@@ -608,6 +824,18 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -608,6 +832,18 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if ( aCurrentCommand == nullptr || g_strcmp0( aCurrentCommand, aCommand ) != 0 )
      {
@@ -2030,7 +2043,7 @@ index b6295fa..a6eb1c5 100644
          g_lo_menu_set_command_to_item_in_section( pMenu, nSection, nItemPos, aCommand );
  
          gchar* aItemCommand = g_strconcat("win.", aCommand, NULL );
-@@ -628,128 +856,102 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -628,128 +864,102 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if (pTarget)
          g_variant_unref(pTarget);
@@ -2103,10 +2116,10 @@ index b6295fa..a6eb1c5 100644
 +        OString sWindow = sCommand.getToken(0, '-', nIndex);
 +        OString sGtkSalMenu = sCommand.getToken(0, '-', nIndex);
 +        OString sItemId = sCommand.getToken(0, '-', nIndex);
-+
-+        GtkSalMenu* pSalSubMenu = reinterpret_cast<GtkSalMenu*>(sGtkSalMenu.toInt64());
  
 -        return aCommand;
++        GtkSalMenu* pSalSubMenu = reinterpret_cast<GtkSalMenu*>(sGtkSalMenu.toInt64());
++
 +        assert(sWindow == "window" && pSalSubMenu);
 +        (void)sWindow;
 +

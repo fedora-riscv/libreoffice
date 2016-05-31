@@ -237,8 +237,6 @@ Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 %if 0%{?rhel}
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
-# not upstreamed
-Patch501: 0001-fix-build-with-gcc-4.8.patch
 %endif
 
 %define instdir %{_libdir}

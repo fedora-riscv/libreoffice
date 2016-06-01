@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.3
+%define libo_version 5.1.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -249,18 +249,12 @@ Patch14: 0001-hack-out-optimization-to-build.patch
 Patch15: 0001-generate-better-unit-test-assert-message.patch
 Patch16: 0001-native-gtk-menubars-and-popup-menus.patch
 Patch17: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch18: 0001-gtk3-various-bits-means-different-things-again.patch
 Patch19: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
 Patch20: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
 Patch21: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
-Patch22: 0001-tdf-99460-sw-layout-don-t-split-table-before-fly.patch
-Patch23: 0001-Resolves-tdf-99498-don-t-overwrite-trwWidth-value-if.patch
-Patch24: 0001-rbhz-1326602-avoid-exp.-bg-bitmaps-from-deleted-slid.patch
 Patch25: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
 Patch26: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
-Patch28: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
-Patch29: 0001-gtk3-min-slider-size-too-small-since-3.20.0.patch
 Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
 Patch31: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
 Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
@@ -1622,6 +1616,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/backgroundVertexShader.glsl
 %{baseinstdir}/program/opengl/blendedTextureFragmentShader.glsl
 %{baseinstdir}/program/opengl/blendedTextureVertexShader.glsl
+%{baseinstdir}/program/opengl/combinedFragmentShader.glsl
+%{baseinstdir}/program/opengl/combinedTextureFragmentShader.glsl
+%{baseinstdir}/program/opengl/combinedTextureVertexShader.glsl
+%{baseinstdir}/program/opengl/combinedVertexShader.glsl
 %{baseinstdir}/program/opengl/commonFragmentShader.glsl
 %{baseinstdir}/program/opengl/commonVertexShader.glsl
 %{baseinstdir}/program/opengl/convolutionFragmentShader.glsl
@@ -2278,7 +2276,8 @@ done
 %endif
 
 %changelog
-* Fri Jun 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-8-UNBUILT
+* Fri Jun 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-1
+- update to 5.1.4 rc1
 - Resolves: tdf#96411 Add slide layout changing to impress menus
 - make switching to slide layout always show slide layout
 

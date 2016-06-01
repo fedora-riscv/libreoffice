@@ -1029,38 +1029,6 @@ index 3209314..24b358e 100644
      aFloatBtn->Show( bFloat );
      aHideBtn->Show( bHide );
      Resize();
-diff --git a/vcl/source/window/toolbox.cxx b/vcl/source/window/toolbox.cxx
-index 140a473..30755ac 100644
---- a/vcl/source/window/toolbox.cxx
-+++ b/vcl/source/window/toolbox.cxx
-@@ -5019,20 +5019,19 @@ bool ToolBox::ImplActivateItem( vcl::KeyCode aKeyCode )
-         else
-         {
-             mnDownItemId = mnCurItemId = mnHighItemId;
--            ImplToolItem* pItem = ImplGetItem( mnHighItemId );
--            if ( pItem->mnBits & ToolBoxItemBits::AUTOCHECK )
-+            if (pToolItem && (pToolItem->mnBits & ToolBoxItemBits::AUTOCHECK))
-             {
--                if ( pItem->mnBits & ToolBoxItemBits::RADIOCHECK )
-+                if ( pToolItem->mnBits & ToolBoxItemBits::RADIOCHECK )
-                 {
--                    if ( pItem->meState != TRISTATE_TRUE )
--                        SetItemState( pItem->mnId, TRISTATE_TRUE );
-+                    if ( pToolItem->meState != TRISTATE_TRUE )
-+                        SetItemState( pToolItem->mnId, TRISTATE_TRUE );
-                 }
-                 else
-                 {
--                    if ( pItem->meState != TRISTATE_TRUE )
--                        pItem->meState = TRISTATE_TRUE;
-+                    if ( pToolItem->meState != TRISTATE_TRUE )
-+                        pToolItem->meState = TRISTATE_TRUE;
-                     else
--                        pItem->meState = TRISTATE_FALSE;
-+                        pToolItem->meState = TRISTATE_FALSE;
-                 }
-             }
-             mnMouseModifier = aKeyCode.GetModifier();
 diff --git a/vcl/source/window/toolbox2.cxx b/vcl/source/window/toolbox2.cxx
 index c3d1173..2f355cb 100644
 --- a/vcl/source/window/toolbox2.cxx

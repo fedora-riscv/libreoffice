@@ -1,20 +1,22 @@
-From a8abbc28deebd6a9642033a47676ae9ba1900b05 Mon Sep 17 00:00:00 2001
+From 973f491109d6e1ae7a0b2bf646c72c072a3e2004 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 24 Mar 2016 14:52:35 +0100
 Subject: [PATCH] tdf#39271 allow to export only notes pages
 
+(cherry picked from commit 6392347e27ed500b30acc62e9e27618eab5a8ee0)
+
 Change-Id: Ia03062cf31b6bab8196dc317a7e8fbcfc86fadf0
 ---
- filter/source/pdf/impdialog.cxx                    | 22 +++++++++++++
+ filter/source/pdf/impdialog.cxx                    | 22 ++++++++++++++
  filter/source/pdf/impdialog.hxx                    |  4 +++
- filter/source/pdf/pdfexport.cxx                    | 18 ++++++----
+ filter/source/pdf/pdfexport.cxx                    | 22 ++++++++------
  filter/source/pdf/pdfexport.hxx                    |  1 +
- filter/uiconfig/ui/pdfgeneralpage.ui               | 38 +++++++++++++++++-----
- .../schema/org/openoffice/Office/Common.xcs        |  7 ++++
+ filter/uiconfig/ui/pdfgeneralpage.ui               | 34 ++++++++++++++++++----
+ .../schema/org/openoffice/Office/Common.xcs        |  7 +++++
  6 files changed, 75 insertions(+), 15 deletions(-)
 
 diff --git a/filter/source/pdf/impdialog.cxx b/filter/source/pdf/impdialog.cxx
-index 1fe1474..d51770c 100644
+index f1c86a8..d158b68 100644
 --- a/filter/source/pdf/impdialog.cxx
 +++ b/filter/source/pdf/impdialog.cxx
 @@ -84,6 +84,7 @@ ImpPDFTabDialog::ImpPDFTabDialog(vcl::Window* pParent, Sequence< PropertyValue >
@@ -24,8 +26,8 @@ index 1fe1474..d51770c 100644
 +    mbExportOnlyNotesPages( false ),
      mbUseTransitionEffects( false ),
      mbIsSkipEmptyPages( true ),
-     mbAddStream( false ),
-@@ -191,7 +192,10 @@ ImpPDFTabDialog::ImpPDFTabDialog(vcl::Window* pParent, Sequence< PropertyValue >
+     mbIsExportPlaceholders( false ),
+@@ -192,7 +193,10 @@ ImpPDFTabDialog::ImpPDFTabDialog(vcl::Window* pParent, Sequence< PropertyValue >
      mbUseTaggedPDF = maConfigItem.ReadBool( "UseTaggedPDF", false );
      mnPDFTypeSelection =  maConfigItem.ReadInt32( "SelectPdfVersion", 0 );
      if ( mbIsPresentation )
@@ -36,7 +38,7 @@ index 1fe1474..d51770c 100644
      mbExportNotes = maConfigItem.ReadBool( "ExportNotes", false );
      mbViewPDF = maConfigItem.ReadBool( "ViewPDFAfterExport", false );
  
-@@ -392,7 +396,10 @@ Sequence< PropertyValue > ImpPDFTabDialog::GetFilterData()
+@@ -394,7 +398,10 @@ Sequence< PropertyValue > ImpPDFTabDialog::GetFilterData()
      maConfigItem.WriteInt32("SelectPdfVersion", mnPDFTypeSelection );
  
      if ( mbIsPresentation )
@@ -47,23 +49,23 @@ index 1fe1474..d51770c 100644
      maConfigItem.WriteBool( "ExportNotes", mbExportNotes );
      maConfigItem.WriteBool( "ViewPDFAfterExport", mbViewPDF );
  
-@@ -540,6 +547,7 @@ ImpPDFTabGeneralPage::ImpPDFTabGeneralPage(vcl::Window* pParent, const SfxItemSe
+@@ -543,6 +550,7 @@ ImpPDFTabGeneralPage::ImpPDFTabGeneralPage(vcl::Window* pParent, const SfxItemSe
      get(mpCbExportHiddenSlides, "hiddenpages");
      get(mpCbExportNotes, "comments");
      get(mpCbExportNotesPages, "notes");
 +    get(mpCbExportOnlyNotesPages, "onlynotes");
      get(mpCbExportEmptyPages, "emptypages");
+     get(mpCbExportPlaceholders, "exportplaceholders" );
      get(mpCbViewPDF, "viewpdf");
- 
-@@ -577,6 +585,7 @@ void ImpPDFTabGeneralPage::dispose()
+@@ -581,6 +589,7 @@ void ImpPDFTabGeneralPage::dispose()
      mpCbExportNotes.clear();
      mpCbViewPDF.clear();
      mpCbExportNotesPages.clear();
 +    mpCbExportOnlyNotesPages.clear();
      mpCbExportEmptyPages.clear();
+     mpCbExportPlaceholders.clear();
      mpCbAddStream.clear();
-     mpCbWatermark.clear();
-@@ -658,6 +667,10 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( ImpPDFTabDialog* paParent )
+@@ -664,6 +673,10 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( ImpPDFTabDialog* paParent )
          mpRbRange->SetText(get<FixedText>("slides")->GetText());
          mpCbExportNotesPages->Show();
          mpCbExportNotesPages->Check(paParent->mbExportNotesPages);
@@ -74,7 +76,7 @@ index 1fe1474..d51770c 100644
          mpCbExportHiddenSlides->Show();
          mpCbExportHiddenSlides->Check(paParent->mbExportHiddenSlides);
      }
-@@ -665,6 +678,8 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( ImpPDFTabDialog* paParent )
+@@ -671,6 +684,8 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( ImpPDFTabDialog* paParent )
      {
          mpCbExportNotesPages->Show(false);
          mpCbExportNotesPages->Check(false);
@@ -83,7 +85,7 @@ index 1fe1474..d51770c 100644
          mpCbExportHiddenSlides->Show(false);
          mpCbExportHiddenSlides->Check(false);
      }
-@@ -690,7 +705,10 @@ void ImpPDFTabGeneralPage::GetFilterConfigItem( ImpPDFTabDialog* paParent )
+@@ -701,7 +716,10 @@ void ImpPDFTabGeneralPage::GetFilterConfigItem( ImpPDFTabDialog* paParent )
      paParent->mbExportNotes = mpCbExportNotes->IsChecked();
      paParent->mbViewPDF = mpCbViewPDF->IsChecked();
      if ( mbIsPresentation )
@@ -94,7 +96,7 @@ index 1fe1474..d51770c 100644
      paParent->mbExportBookmarks = mpCbExportBookmarks->IsChecked();
      if ( mbIsPresentation )
          paParent->mbExportHiddenSlides = mpCbExportHiddenSlides->IsChecked();
-@@ -758,6 +776,10 @@ IMPL_LINK_NOARG_TYPED(ImpPDFTabGeneralPage, ToggleExportFormFieldsHdl, CheckBox&
+@@ -770,6 +788,10 @@ IMPL_LINK_NOARG_TYPED(ImpPDFTabGeneralPage, ToggleExportFormFieldsHdl, CheckBox&
      mpFormsFrame->Enable(mpCbExportFormFields->IsChecked());
  }
  
@@ -106,36 +108,38 @@ index 1fe1474..d51770c 100644
  IMPL_LINK_NOARG_TYPED(ImpPDFTabGeneralPage, ToggleCompressionHdl, RadioButton&, void)
  {
 diff --git a/filter/source/pdf/impdialog.hxx b/filter/source/pdf/impdialog.hxx
-index f4d916e..c1e80d5 100644
+index 72938b0..db62c77 100644
 --- a/filter/source/pdf/impdialog.hxx
 +++ b/filter/source/pdf/impdialog.hxx
 @@ -104,6 +104,7 @@ protected:
      bool                    mbExportNotes;
      bool                    mbViewPDF;
      bool                    mbExportNotesPages;
-+    bool                        mbExportOnlyNotesPages;
++    bool                    mbExportOnlyNotesPages;
      bool                    mbUseTransitionEffects;
      bool                    mbIsSkipEmptyPages;
-     bool                    mbAddStream;
-@@ -218,6 +219,7 @@ class ImpPDFTabGeneralPage : public SfxTabPage
+     bool                    mbIsExportPlaceholders;
+@@ -219,6 +220,7 @@ class ImpPDFTabGeneralPage : public SfxTabPage
      VclPtr<CheckBox>     mpCbExportNotes;
      VclPtr<CheckBox>     mpCbViewPDF;
      VclPtr<CheckBox>     mpCbExportNotesPages;
-+    VclPtr<CheckBox>             mpCbExportOnlyNotesPages;
++    VclPtr<CheckBox>     mpCbExportOnlyNotesPages;
  
      VclPtr<CheckBox>     mpCbExportEmptyPages;
-     VclPtr<CheckBox>     mpCbAddStream;
-@@ -237,6 +239,8 @@ class ImpPDFTabGeneralPage : public SfxTabPage
+     VclPtr<CheckBox>     mpCbExportPlaceholders;
+@@ -239,8 +241,10 @@ class ImpPDFTabGeneralPage : public SfxTabPage
      DECL_LINK_TYPED( ToggleWatermarkHdl, CheckBox&, void );
      DECL_LINK_TYPED( ToggleAddStreamHdl, CheckBox&, void );
      DECL_LINK_TYPED( ToggleExportFormFieldsHdl, CheckBox&, void );
 +    DECL_LINK_TYPED( ToggleExportNotesPagesHdl, CheckBox&, void );
-+
      void TogglePagesHdl();
  
++
  public:
+     DECL_LINK_TYPED( ToggleExportPDFAHdl, CheckBox&, void );
+ 
 diff --git a/filter/source/pdf/pdfexport.cxx b/filter/source/pdf/pdfexport.cxx
-index 5a67041..c5f8f5a 100644
+index a55bdc9..18d8e31 100644
 --- a/filter/source/pdf/pdfexport.cxx
 +++ b/filter/source/pdf/pdfexport.cxx
 @@ -100,6 +100,7 @@ PDFExport::PDFExport( const Reference< XComponent >& rxSrcDoc,
@@ -155,7 +159,7 @@ index 5a67041..c5f8f5a 100644
                  else if ( rFilterData[ nData ].Name == "UseTransitionEffects" )
                      rFilterData[ nData ].Value >>= mbUseTransitionEffects;
                  else if ( rFilterData[ nData ].Name == "ExportFormFields" )
-@@ -840,7 +843,7 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
+@@ -844,7 +847,7 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
                      aSelection = Any();
                      aSelection <<= mxSrcDoc;
                  }
@@ -164,18 +168,22 @@ index 5a67041..c5f8f5a 100644
                  bool bReChangeToNormalView = false;
                  const OUString sShowOnlineLayout( "ShowOnlineLayout" );
                  bool bReHideWhitespace = false;
-@@ -879,8 +882,9 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
+@@ -881,10 +884,11 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
+ 
+                 if ( mbExportNotesPages && aCreator == "Impress" )
                  {
-                     uno::Reference< drawing::XShapes > xShapes;     // sj: do not allow to export notes when
-                     if ( ! ( aSelection >>= xShapes ) )             // exporting a selection -> todo: in the dialog
+-                    uno::Reference< drawing::XShapes > xShapes;     // sj: do not allow to export notes when
+-                    if ( ! ( aSelection >>= xShapes ) )             // exporting a selection -> todo: in the dialog
 -                        bSecondPassForImpressNotes = true;      // the export notes checkbox needs to be disabled
++                    uno::Reference< drawing::XShapes > xShapes;     // do not allow to export notes when exporting a selection
++                    if ( ! ( aSelection >>= xShapes ) )             // TODO: in the dialog the export notes checkbox needs to be disabled
 +                        bExportNotesPages = true;
                  }
 +                const bool bExportPages = bExportNotesPages ? !mbExportOnlyNotesPages : true;
  
                  if( aPageRange.isEmpty() )
                  {
-@@ -894,18 +898,18 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
+@@ -898,18 +902,18 @@ bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue >&
                      if ( pResMgr )
                      {
                          sal_Int32 nTotalPageCount = aRangeEnum.size();
@@ -200,11 +208,11 @@ index 5a67041..c5f8f5a 100644
                      rExportNotesValue <<= sal_True;
                      bRet = ExportSelection( *pPDFWriter, xRenderable, aSelection, aRangeEnum, aRenderOptions, nPageCount );
 diff --git a/filter/source/pdf/pdfexport.hxx b/filter/source/pdf/pdfexport.hxx
-index 75ac0aa4..8754729 100644
+index 7e8528f..f802585 100644
 --- a/filter/source/pdf/pdfexport.hxx
 +++ b/filter/source/pdf/pdfexport.hxx
-@@ -49,6 +49,7 @@ private:
-     bool                mbExportNotes;
+@@ -50,6 +50,7 @@ private:
+     bool                mbExportPlaceholders;
      bool                mbViewPDF;
      bool                mbExportNotesPages;
 +    bool                mbExportOnlyNotesPages;
@@ -212,7 +220,7 @@ index 75ac0aa4..8754729 100644
      bool                mbExportBookmarks;
      bool                mbExportHiddenSlides;
 diff --git a/filter/uiconfig/ui/pdfgeneralpage.ui b/filter/uiconfig/ui/pdfgeneralpage.ui
-index 7ba4a25..52314ac 100644
+index 8a46e0f..457ceda 100644
 --- a/filter/uiconfig/ui/pdfgeneralpage.ui
 +++ b/filter/uiconfig/ui/pdfgeneralpage.ui
 @@ -1,5 +1,5 @@
@@ -267,25 +275,7 @@ index 7ba4a25..52314ac 100644
                            </object>
                            <packing>
                              <property name="left_attach">0</property>
-@@ -604,7 +604,7 @@
-                   </object>
-                   <packing>
-                     <property name="left_attach">0</property>
--                    <property name="top_attach">9</property>
-+                    <property name="top_attach">10</property>
-                   </packing>
-                 </child>
-                 <child>
-@@ -619,7 +619,7 @@
-                   </object>
-                   <packing>
-                     <property name="left_attach">0</property>
--                    <property name="top_attach">10</property>
-+                    <property name="top_attach">11</property>
-                   </packing>
-                 </child>
-                 <child>
-@@ -634,7 +634,7 @@
+@@ -649,7 +649,7 @@
                    </object>
                    <packing>
                      <property name="left_attach">0</property>
@@ -294,8 +284,8 @@ index 7ba4a25..52314ac 100644
                    </packing>
                  </child>
                  <child>
-@@ -652,6 +652,28 @@
-                     <property name="top_attach">7</property>
+@@ -667,6 +667,28 @@
+                     <property name="top_attach">8</property>
                    </packing>
                  </child>
 +                <child>
@@ -324,10 +314,10 @@ index 7ba4a25..52314ac 100644
              </child>
            </object>
 diff --git a/officecfg/registry/schema/org/openoffice/Office/Common.xcs b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
-index 6adfa44a..9fce3d7 100644
+index 8662cfc..175d785 100644
 --- a/officecfg/registry/schema/org/openoffice/Office/Common.xcs
 +++ b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
-@@ -5135,6 +5135,13 @@
+@@ -5141,6 +5141,13 @@
              </info>
              <value>false</value>
            </prop>
@@ -342,5 +332,5 @@ index 6adfa44a..9fce3d7 100644
              <info>
                <desc>Specifies slide transitions are exported to PDF. This option
 -- 
-2.5.0
+2.7.4
 

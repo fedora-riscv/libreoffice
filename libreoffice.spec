@@ -1923,8 +1923,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
 %if 0%{?rhel}
-%{baseinstdir}/program/liborcus-0.10.so.*
-%{baseinstdir}/program/liborcus-parser-0.10.so.*
+%{baseinstdir}/program/liborcus-0.11.so.*
+%{baseinstdir}/program/liborcus-parser-0.11.so.*
 %endif
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so

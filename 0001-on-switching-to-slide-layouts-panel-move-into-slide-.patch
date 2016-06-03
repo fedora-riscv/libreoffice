@@ -1,0 +1,178 @@
+From 5df220ea6048e302dddaa6a8a3405ff461d87dc7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 3 Jun 2016 11:06:22 +0100
+Subject: [PATCH] on switching to slide layouts panel move into slide layout
+ context
+
+i.e. exit current textbox edit and shape selection
+
+Change-Id: I16a2fca158cb4caab7b6bd001742df698735dd2b
+(cherry picked from commit 05aaef55252bc9f90cbbcc1967c38ab9a5a6c798)
+
+OpenThenSwitchToDeck actually *toggles* deck visibility
+
+so rename it to that and add a OpenThenSwitchToDeck that actually
+does that, using the Toggle varient as the callback from the
+sidebar button which toggles the current deck on/off
+
+which retains the features of
+
+// tdf#67627 Clicking a second time on a Deck icon will close the Deck
+// tdf#88241 Summoning an undocked sidebar a second time should close sidebar
+
+but means that calls to OpenThenSwitchToDeck from e.g. slide layout
+don't auto close it if that deck is already open
+
+(cherry picked from commit b81daea4a78083def286fa2d5360b152b7a703fd)
+
+Change-Id: I3e3724626b93447a7ab6bc7032e9c6839dabcf55
+---
+ include/sfx2/sidebar/Sidebar.hxx              | 12 +++++++++++-
+ sd/source/ui/view/ViewShellImplementation.cxx |  2 ++
+ sfx2/source/sidebar/Sidebar.cxx               | 18 ++++++++++++++++++
+ sfx2/source/sidebar/SidebarController.cxx     | 19 ++++++++++++++++---
+ sfx2/source/sidebar/SidebarController.hxx     |  3 +++
+ sfx2/source/view/viewfrm.cxx                  |  4 ++--
+ 6 files changed, 52 insertions(+), 6 deletions(-)
+
+diff --git a/include/sfx2/sidebar/Sidebar.hxx b/include/sfx2/sidebar/Sidebar.hxx
+index aea1fcb..6b138b9 100644
+--- a/include/sfx2/sidebar/Sidebar.hxx
++++ b/include/sfx2/sidebar/Sidebar.hxx
+@@ -38,7 +38,17 @@ public:
+         this function probably returns before the requested panel is visible.
+     */
+     static void ShowPanel (
+-        const ::rtl::OUString& rsPanelId,
++        const OUString& rsPanelId,
++        const css::uno::Reference<css::frame::XFrame>& rxFrame);
++
++    /** Switch to the deck that contains the specified panel and toggle
++        the visibility of the panel (expanded and scrolled into the
++        visible area when visible)
++        Note that most of the work is done asynchronously and that
++        this function probably returns before the requested panel is visible.
++    */
++    static void TogglePanel (
++        const OUString& rsPanelId,
+         const css::uno::Reference<css::frame::XFrame>& rxFrame);
+ };
+ 
+diff --git a/sd/source/ui/view/ViewShellImplementation.cxx b/sd/source/ui/view/ViewShellImplementation.cxx
+index 44c3f26..064445c 100644
+--- a/sd/source/ui/view/ViewShellImplementation.cxx
++++ b/sd/source/ui/view/ViewShellImplementation.cxx
+@@ -120,6 +120,8 @@ void ViewShell::Implementation::ProcessModifyPageSlot (
+         if (!pArgs || pArgs->Count() == 1 || pArgs->Count() == 2 )
+         {
+             // First make sure that the sidebar is visible
++            mrViewShell.GetDrawView()->SdrEndTextEdit();
++            mrViewShell.GetDrawView()->UnmarkAll();
+             mrViewShell.GetViewFrame()->ShowChildWindow(SID_SIDEBAR);
+             sfx2::sidebar::Sidebar::ShowPanel(
+                 OUString("ImpressLayoutsPanel"),
+diff --git a/sfx2/source/sidebar/Sidebar.cxx b/sfx2/source/sidebar/Sidebar.cxx
+index a740048..6a45101 100644
+--- a/sfx2/source/sidebar/Sidebar.cxx
++++ b/sfx2/source/sidebar/Sidebar.cxx
+@@ -43,6 +43,24 @@ void Sidebar::ShowPanel (
+     }
+ }
+ 
++void Sidebar::TogglePanel (
++    const ::rtl::OUString& rsPanelId,
++    const css::uno::Reference<frame::XFrame>& rxFrame)
++{
++    SidebarController* pController = SidebarController::GetSidebarControllerForFrame(rxFrame);
++    const PanelDescriptor* pPanelDescriptor = ResourceManager::Instance().GetPanelDescriptor(rsPanelId);
++    if (pController!=NULL && pPanelDescriptor != NULL)
++    {
++        // This should be a lot more sophisticated:
++        // - Make the deck switching asynchronous
++        // - Make sure to use a context that really shows the panel
++
++        // All that is not necessary for the current use cases so lets
++        // keep it simple for the time being.
++        pController->OpenThenToggleDeck(pPanelDescriptor->msDeckId);
++    }
++}
++
+ } } // end of namespace sfx2::sidebar
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
+index ae82afc..90492dc 100644
+--- a/sfx2/source/sidebar/SidebarController.cxx
++++ b/sfx2/source/sidebar/SidebarController.cxx
+@@ -98,7 +98,7 @@ SidebarController::SidebarController (
+       mpTabBar(VclPtr<TabBar>::Create(
+               mpParentWindow,
+               rxFrame,
+-              ::boost::bind(&SidebarController::OpenThenSwitchToDeck, this, _1),
++              ::boost::bind(&SidebarController::OpenThenToggleDeck, this, _1),
+               ::boost::bind(&SidebarController::ShowPopupMenu, this, _1,_2))),
+       mxFrame(rxFrame),
+       maCurrentContext(OUString(), OUString()),
+@@ -453,8 +453,8 @@ void SidebarController::UpdateConfigurations()
+     }
+ }
+ 
+-void SidebarController::OpenThenSwitchToDeck (
+-    const ::rtl::OUString& rsDeckId)
++void SidebarController::OpenThenToggleDeck (
++    const OUString& rsDeckId)
+ {
+     SfxSplitWindow* pSplitWindow = GetSplitWindow();
+     if ( pSplitWindow && !pSplitWindow->IsFadeIn() )
+@@ -476,6 +476,19 @@ void SidebarController::OpenThenSwitchToDeck (
+     mpTabBar->HighlightDeck(rsDeckId);
+ }
+ 
++void SidebarController::OpenThenSwitchToDeck (
++    const OUString& rsDeckId)
++{
++    SfxSplitWindow* pSplitWindow = GetSplitWindow();
++    if ( pSplitWindow && !pSplitWindow->IsFadeIn() )
++        // tdf#83546 Collapsed sidebar should expand first
++        pSplitWindow->FadeIn();
++    RequestOpenDeck();
++    SwitchToDeck(rsDeckId);
++    mpTabBar->Invalidate();
++    mpTabBar->HighlightDeck(rsDeckId);
++}
++
+ void SidebarController::SwitchToDeck (
+     const ::rtl::OUString& rsDeckId)
+ {
+diff --git a/sfx2/source/sidebar/SidebarController.hxx b/sfx2/source/sidebar/SidebarController.hxx
+index 5fb8466..3c62945 100644
+--- a/sfx2/source/sidebar/SidebarController.hxx
++++ b/sfx2/source/sidebar/SidebarController.hxx
+@@ -123,6 +123,9 @@ public:
+     void OpenThenSwitchToDeck (
+         const ::rtl::OUString& rsDeckId);
+ 
++    void OpenThenToggleDeck (
++        const ::rtl::OUString& rsDeckId);
++
+     /** Show only the tab bar, not the deck.
+     */
+     void RequestCloseDeck();
+diff --git a/sfx2/source/view/viewfrm.cxx b/sfx2/source/view/viewfrm.cxx
+index fc8dbae..6a717c8 100644
+--- a/sfx2/source/view/viewfrm.cxx
++++ b/sfx2/source/view/viewfrm.cxx
+@@ -3120,8 +3120,8 @@ void SfxViewFrame::ChildWindowExecute( SfxRequest &rReq )
+         // First make sure that the sidebar is visible
+         ShowChildWindow(SID_SIDEBAR);
+ 
+-        ::sfx2::sidebar::Sidebar::ShowPanel("StyleListPanel",
+-                                            GetFrame().GetFrameInterface());
++        ::sfx2::sidebar::Sidebar::TogglePanel("StyleListPanel",
++                                              GetFrame().GetFrameInterface());
+         rReq.Done();
+         return;
+     }
+-- 
+2.7.3
+

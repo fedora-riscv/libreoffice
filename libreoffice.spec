@@ -262,6 +262,8 @@ Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 Patch28: 0001-Resolves-tdf-99730-lower-the-barrier-for-inferior-sy.patch
 Patch29: 0001-gtk3-min-slider-size-too-small-since-3.20.0.patch
 Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
+Patch31: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
+Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2276,8 +2278,9 @@ done
 %endif
 
 %changelog
-* Thu Jun 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-8-UNBUILT
+* Fri Jun 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-8-UNBUILT
 - Resolves: tdf#96411 Add slide layout changing to impress menus
+- make switching to slide layout always show slide layout
 
 * Tue May 31 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.3.2-7
 - misc gtk3 native menu fixes

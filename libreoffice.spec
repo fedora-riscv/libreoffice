@@ -2222,8 +2222,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Fri Jun 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-6-UNBUILD
+* Mon Jun 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-6
 - make slide layout always show slide layout
+- Resolves: rhbz#1342549 fix findbar crash
 
 * Mon May 23 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-5
 - Resolves: rhbz#1338546 crash after using bullet toolbar dropdown menu

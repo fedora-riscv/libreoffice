@@ -1,4 +1,4 @@
-From f831741cda9ae250dd3288375b1c9762c0ffc3ae Mon Sep 17 00:00:00 2001
+From a0f6dc004f82565101f2ae6fea2129214f9c06bf Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
 Subject: [PATCH] native gtk menubars and popup menus
@@ -265,10 +265,24 @@ Fix gtk2 menubar
 
 Change-Id: I0605e570022f6eb57d453a3eb8bea5f4314c8229
 (cherry picked from commit 48217c28706d22306d17ab7d73b702389d7545a4)
+
+gtk3: wrongly activating the parent menu and not the desired child
+
+Change-Id: I57193a424b5f19a59e98bdfe26e0cab38d4204ea
+(cherry picked from commit c450705d51a4fe67d1e9391b2f78235b79766cfe)
+(cherry picked from commit 3760679a6d0169231f04ad174eeaba6cd66d6e39)
+
+gtk3: move the updating of native menu to right after its activated
+
+try fix that view->toolbars isn't in sync
+
+Change-Id: I095be3003f076193878f2c3ce2a2be5acbe0e33f
+(cherry picked from commit 15436c009e756dd4c94046f9849ad5a186454af8)
+(cherry picked from commit 10ee6a954671407d25d35d01c62657a367278e69)
 ---
  framework/inc/uielement/toolbarmanager.hxx       |   2 +-
  framework/source/layoutmanager/layoutmanager.cxx |  57 +-
- framework/source/uielement/menubarmanager.cxx    |  11 +-
+ framework/source/uielement/menubarmanager.cxx    |   9 +-
  framework/source/uielement/toolbarmanager.cxx    |  19 +-
  include/vcl/floatwin.hxx                         |   4 +-
  include/vcl/menu.hxx                             |  18 +-
@@ -281,17 +295,16 @@ Change-Id: I0605e570022f6eb57d453a3eb8bea5f4314c8229
  vcl/source/window/floatwin.cxx                   |  54 +-
  vcl/source/window/menu.cxx                       |  85 +--
  vcl/source/window/menubarwindow.cxx              |   2 +
- vcl/source/window/toolbox.cxx                    |  15 +-
  vcl/source/window/toolbox2.cxx                   |  20 +-
  vcl/unx/gtk/a11y/atklistener.cxx                 |   1 -
  vcl/unx/gtk/gloactiongroup.cxx                   |  64 +--
  vcl/unx/gtk/glomenu.cxx                          |   1 +
  vcl/unx/gtk/gtkdata.cxx                          |  19 +-
  vcl/unx/gtk/gtksalframe.cxx                      |  21 +-
- vcl/unx/gtk/gtksalmenu.cxx                       | 658 +++++++++++++++--------
+ vcl/unx/gtk/gtksalmenu.cxx                       | 663 +++++++++++++++--------
  vcl/unx/gtk3/gtk3gtkframe.cxx                    |  35 +-
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        |   1 -
- 25 files changed, 676 insertions(+), 490 deletions(-)
+ 24 files changed, 672 insertions(+), 482 deletions(-)
 
 diff --git a/framework/inc/uielement/toolbarmanager.hxx b/framework/inc/uielement/toolbarmanager.hxx
 index f109f14..1efcde3 100644
@@ -418,7 +431,7 @@ index eb66efe..43a529a 100644
          m_xContainerTopWindow.clear();
      }
 diff --git a/framework/source/uielement/menubarmanager.cxx b/framework/source/uielement/menubarmanager.cxx
-index 1c0535f..08cd8bb 100644
+index 1c0535f..2a3ae4c 100644
 --- a/framework/source/uielement/menubarmanager.cxx
 +++ b/framework/source/uielement/menubarmanager.cxx
 @@ -386,10 +386,6 @@ throw ( RuntimeException, std::exception )
@@ -432,16 +445,7 @@ index 1c0535f..08cd8bb 100644
      {
          if ( m_bDisposed )
              return;
-@@ -488,6 +484,8 @@ throw ( RuntimeException, std::exception )
-                 pMenuItemHandler->xMenuItemDispatch.clear();
-             }
-         }
-+        if ( m_bHasMenuBar && !m_bActive )
-+            m_pVCLMenu->UpdateNativeMenu();
-     }
- }
- 
-@@ -894,9 +892,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
+@@ -894,9 +890,8 @@ IMPL_LINK_TYPED( MenuBarManager, Activate, Menu *, pMenu, bool )
                                  if ( !bPopupMenu )
                                  {
                                      xMenuItemDispatch->addStatusListener( static_cast< XStatusListener* >( this ), aTargetURL );
@@ -1298,7 +1302,7 @@ index 95fd581..076a60a 100644
  }
  #endif
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index b6295fa..d050e49 100644
+index b6295fa..7847d26 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -16,6 +16,7 @@
@@ -2011,7 +2015,7 @@ index b6295fa..d050e49 100644
          g_lo_menu_set_command_to_item_in_section( pMenu, nSection, nItemPos, aCommand );
  
          gchar* aItemCommand = g_strconcat("win.", aCommand, NULL );
-@@ -628,128 +864,102 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -628,128 +864,107 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if (pTarget)
          g_variant_unref(pTarget);
@@ -2166,9 +2170,12 @@ index b6295fa..d050e49 100644
 -        pMenuBar->HandleMenuDeActivateEvent( pSalSubMenu->mpVCLMenu );
 -    }
 +    MenuAndId aMenuAndId = decode_command(pCommand);
-+    GtkSalMenu* pSalSubMenu = aMenuAndId.first;
-+    GtkSalMenu* pTopLevel = pSalSubMenu->GetTopLevel();
-+    pTopLevel->GetMenu()->HandleMenuActivateEvent(pSalSubMenu->GetMenu());
++    GtkSalMenu* pSalMenu = aMenuAndId.first;
++    GtkSalMenu* pTopLevel = pSalMenu->GetTopLevel();
++    Menu* pVclMenu = pSalMenu->GetMenu();
++    Menu* pVclSubMenu = pVclMenu->GetPopupMenu(aMenuAndId.second);
++    pTopLevel->GetMenu()->HandleMenuActivateEvent(pVclSubMenu);
++    pVclSubMenu->UpdateNativeMenu();
  }
  
 -void GtkSalMenu::Display( bool bVisible )
@@ -2181,9 +2188,11 @@ index b6295fa..d050e49 100644
 -
 -    bool bVCLMenuVisible = !bVisible;
 +    MenuAndId aMenuAndId = decode_command(pCommand);
-+    GtkSalMenu* pSalSubMenu = aMenuAndId.first;
-+    GtkSalMenu* pTopLevel = pSalSubMenu->GetTopLevel();
-+    pTopLevel->GetMenu()->HandleMenuDeActivateEvent(pSalSubMenu->GetMenu());
++    GtkSalMenu* pSalMenu = aMenuAndId.first;
++    GtkSalMenu* pTopLevel = pSalMenu->GetTopLevel();
++    Menu* pVclMenu = pSalMenu->GetMenu();
++    Menu* pVclSubMenu = pVclMenu->GetPopupMenu(aMenuAndId.second);
++    pTopLevel->GetMenu()->HandleMenuDeActivateEvent(pVclSubMenu);
 +}
  
 -    MenuBar* pMenuBar = static_cast< MenuBar* >( mpVCLMenu );

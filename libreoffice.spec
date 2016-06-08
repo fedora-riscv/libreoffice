@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -258,6 +258,7 @@ Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
 Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
 Patch31: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
 Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
+Patch33: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2276,6 +2277,9 @@ done
 %endif
 
 %changelog
+* Wed Jun 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-2
+- Resolves: rhbz#1343766 a11y queries during dispose combobox crash
+
 * Fri Jun 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-1
 - update to 5.1.4 rc1
 - Resolves: tdf#96411 Add slide layout changing to impress menus

@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -308,6 +308,7 @@ Patch75: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
 Patch76: 0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch
 Patch77: 0001-improve-perf.-of-VCL-event-dispatch.patch
 Patch78: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
+Patch79: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2222,6 +2223,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Wed Jun 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-7
+- Resolves: rhbz#1343766 a11y queries during dispose combobox crash
+
 * Mon Jun 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-6
 - make slide layout always show slide layout
 - Resolves: rhbz#1342549 fix findbar crash

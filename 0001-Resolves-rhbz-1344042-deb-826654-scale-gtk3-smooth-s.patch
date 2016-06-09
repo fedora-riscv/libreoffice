@@ -1,0 +1,152 @@
+From f7b293d4d488a92798c86813c48869bbae54a652 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 9 Jun 2016 11:48:19 +0100
+Subject: [PATCH] Resolves: rhbz#1344042 deb#826654 scale gtk3 smooth scaling
+ events...
+
+to give traditional amounts of scroll on a single mouse wheel event
+
+ditch non smooth scroll events now seeing as apparently they are always
+available so the other types are irrelevent now
+
+if we get x and y scroll, then like macosx just dispatch x and y scroll events.
+
+Note: there seems to be a bug in the stack below us where the first scroll
+event after getting focus is one of a 0 x and y delta.  Because we now check x
+and y against 0, we don't launch a scroll event in the case of a 0x0 scroll
+which stops us occasionally appearing to go backwards on the first scroll after
+getting focus. Which is the same thing I see on e.g. gedit, the first mouse
+wheel scroll after getting focus doesn't actually do anything.
+
+(cherry picked from commit 0159ef4fbfd23ba97b20f97eb0677564bebd4ee7)
+(cherry picked from commit 23ba7c6c05d6331815a05a01d657f5e30b3bc252)
+
+Change-Id: Iec8f2e4627cd84e3896270a0847a5c4907fa083f
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  1 -
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 75 ++++++++++++++++++-------------------------
+ 2 files changed, 32 insertions(+), 44 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 1d8334c..eaa222f 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -210,7 +210,6 @@ class GtkSalFrame : public SalFrame
+ #if GTK_CHECK_VERSION(3,0,0)
+     OUString                        m_aTooltip;
+     Rectangle                       m_aHelpArea;
+-    guint32                         m_nLastScrollEventTime;
+     long                            m_nWidthRequest;
+     long                            m_nHeightRequest;
+     cairo_region_t*                 m_pRegion;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 024735f..9c4cfe8 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1074,7 +1074,6 @@ void GtkSalFrame::InitCommon()
+     m_bSpanMonitorsWhenFullscreen = false;
+     m_nState            = GDK_WINDOW_STATE_WITHDRAWN;
+     m_nVisibility       = GDK_VISIBILITY_FULLY_OBSCURED;
+-    m_nLastScrollEventTime = GDK_CURRENT_TIME;
+     m_bSendModChangeOnRelease = false;
+     m_pIMHandler        = nullptr;
+     m_hBackgroundPixmap = None;
+@@ -2559,63 +2558,53 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+ 
+ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEvent* pEvent, gpointer frame )
+ {
+-    GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+     GdkEventScroll* pSEvent = reinterpret_cast<GdkEventScroll*>(pEvent);
++    if (pSEvent->direction != GDK_SCROLL_SMOOTH)
++        return false;
+ 
+-    // gnome#726878 check for duplicate legacy scroll event
+-    if (pSEvent->direction != GDK_SCROLL_SMOOTH &&
+-        pThis->m_nLastScrollEventTime == pSEvent->time)
+-    {
+-        return true;
+-    }
++    GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+     SalWheelMouseEvent aEvent;
+ 
+     aEvent.mnTime = pSEvent->time;
+     aEvent.mnX = (sal_uLong)pSEvent->x;
++    // --- RTL --- (mirror mouse pos)
++    if (AllSettings::GetLayoutRTL())
++        aEvent.mnX = pThis->maGeometry.nWidth - 1 - aEvent.mnX;
+     aEvent.mnY = (sal_uLong)pSEvent->y;
+     aEvent.mnCode = GetMouseModCode( pSEvent->state );
+-    aEvent.mnScrollLines = 3;
+ 
+-    switch (pSEvent->direction)
++    // rhbz#1344042 "Traditionally" in gtk3 we tool a single up/down event as
++    // equating to 3 scroll lines and a delta of 120. So scale the delta here
++    // by 120 where a single mouse wheel click is an incoming delta_x of 1
++    // and divide that by 40 to get the number of scrollines
++    if (pSEvent->delta_x != 0.0)
+     {
+-        case GDK_SCROLL_SMOOTH:
+-        {
+-            //pick the bigger one I guess
+-            aEvent.mbHorz = fabs(pSEvent->delta_x) > fabs(pSEvent->delta_y);
+-            if (aEvent.mbHorz)
+-                aEvent.mnDelta = -pSEvent->delta_x * 40;
+-            else
+-                aEvent.mnDelta = -pSEvent->delta_y * 40;
++        aEvent.mnDelta = -pSEvent->delta_x * 120;
++        aEvent.mnNotchDelta = aEvent.mnDelta < 0 ? -1 : +1;
++        if (aEvent.mnDelta == 0)
++            aEvent.mnDelta = aEvent.mnNotchDelta;
++        aEvent.mbHorz = true;
++        aEvent.mnScrollLines = abs(aEvent.mnDelta) / 40;
++        if (aEvent.mnScrollLines == 0)
+             aEvent.mnScrollLines = 1;
+-            pThis->m_nLastScrollEventTime = pSEvent->time;
+-            break;
+-        }
+-        case GDK_SCROLL_UP:
+-            aEvent.mnDelta = 120;
+-            aEvent.mbHorz = false;
+-            break;
+-        case GDK_SCROLL_DOWN:
+-            aEvent.mnDelta = -120;
+-            aEvent.mbHorz = false;
+-            break;
+-        case GDK_SCROLL_LEFT:
+-            aEvent.mbHorz = true;
+-            aEvent.mnDelta = 120;
+-            break;
+-        case GDK_SCROLL_RIGHT:
+-            aEvent.mnDelta = -120;
+-            aEvent.mbHorz = true;
+-            break;
+-    };
+ 
+-    aEvent.mnNotchDelta     = aEvent.mnDelta < 0 ? -1 : 1;
++        pThis->CallCallback(SALEVENT_WHEELMOUSE, &aEvent);
++    }
+ 
+-    // --- RTL --- (mirror mouse pos)
+-    if( AllSettings::GetLayoutRTL() )
+-        aEvent.mnX = pThis->maGeometry.nWidth-1-aEvent.mnX;
++    if (pSEvent->delta_y != 0.0)
++    {
++        aEvent.mnDelta = -pSEvent->delta_y * 120;
++        aEvent.mnNotchDelta = aEvent.mnDelta < 0 ? -1 : +1;
++        if (aEvent.mnDelta == 0)
++            aEvent.mnDelta = aEvent.mnNotchDelta;
++        aEvent.mbHorz = false;
++        aEvent.mnScrollLines = abs(aEvent.mnDelta) / 40;
++        if (aEvent.mnScrollLines == 0)
++            aEvent.mnScrollLines = 1;
+ 
+-    pThis->CallCallback( SALEVENT_WHEELMOUSE, &aEvent );
++        pThis->CallCallback(SALEVENT_WHEELMOUSE, &aEvent);
++    }
+ 
+     return true;
+ }
+-- 
+2.7.3
+

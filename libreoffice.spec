@@ -259,6 +259,7 @@ Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
 Patch31: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
 Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch33: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
+Patch34: 0001-Related-tdf-99446-cairo-text-xrender-bodge.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

@@ -247,7 +247,7 @@ Patch500: 0001-disable-libe-book-support.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.10\\.so.*$
+%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.11\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif

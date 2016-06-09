@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -309,6 +309,7 @@ Patch76: 0001-tdf-86575-for-OOXML-write-plain-REF-if-deleted-parts.patch
 Patch77: 0001-improve-perf.-of-VCL-event-dispatch.patch
 Patch78: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch79: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
+Patch80: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2223,6 +2224,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Thu Jun 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-8-UNBUILT
+- Resolves: Resolves: tdf#93135 resize shape to text doesn't work
+
 * Wed Jun 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-7
 - Resolves: rhbz#1343766 a11y queries during dispose combobox crash
 

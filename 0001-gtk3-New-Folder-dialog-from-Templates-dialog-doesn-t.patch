@@ -1,4 +1,4 @@
-From 5403d9619903a7a950838a0870100774ac821ac5 Mon Sep 17 00:00:00 2001
+From a1421d594d63e4d722338179dacff4e031cebb1b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 5 May 2016 15:19:24 +0100
 Subject: [PATCH] gtk3: New Folder dialog from Templates dialog doesn't get
@@ -58,13 +58,32 @@ and still ditch that metacity hack around thing at this point too
 I truly hate this crap
 
 Change-Id: If10e758585f156b33680b8d40355302cc1ae72f3
+
+gtk3: use window groups so modal dialog are modal to their toplevel frame only
+
+so e.g. launching help from a modal dialog gives a new toplevel window
+which is not blocked by the modal dialog on the other window.
+
+likesize can go from one blocked e.g. writer window to calc and type away in
+there happily
+
+Change-Id: Id9376b393514e91dfd667dfce132f1f37367084e
+(cherry picked from commit c80d34ad551efe858c47445b13370aa8223357c7)
+
+gtk3: use gtk_window_group_get_current_grab instead of gtk_grab_get_current
+
+now that we are using window groups, otherwise the problem of tdf#99604
+comes back
+
+Change-Id: I7a940ea72bfd7fd4a7f68f1e60395d5014ce155c
+(cherry picked from commit 9b49e1817d4d045b724aed6267f8f00c6bf295cc)
 ---
- cui/source/customize/cfg.cxx      |  4 ++--
- cui/source/customize/selector.cxx | 15 +++------------
+ cui/source/customize/cfg.cxx      |  4 +--
+ cui/source/customize/selector.cxx | 15 +++--------
  cui/source/inc/selector.hxx       |  2 +-
  vcl/inc/unx/gtk/gtkframe.hxx      |  1 +
- vcl/unx/gtk3/gtk3gtkframe.cxx     | 32 ++++++++++----------------------
- 5 files changed, 17 insertions(+), 37 deletions(-)
+ vcl/unx/gtk3/gtk3gtkframe.cxx     | 57 ++++++++++++++++++++-------------------
+ 5 files changed, 37 insertions(+), 42 deletions(-)
 
 diff --git a/cui/source/customize/cfg.cxx b/cui/source/customize/cfg.cxx
 index 018cf39..72e8af5 100644
@@ -154,7 +173,7 @@ index 6a011cb..d2e9cd5 100644
      bool isFloatGrabWindow() const
      {
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 2055566..1cf7ddc 100644
+index 2d2df88..760a324 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
 @@ -103,6 +103,7 @@
@@ -165,7 +184,32 @@ index 2055566..1cf7ddc 100644
  
  #if defined ENABLE_GMENU_INTEGRATION
  static GDBusConnection* pSessionBus = nullptr;
-@@ -1435,21 +1436,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -814,8 +815,10 @@ GtkSalFrame::~GtkSalFrame()
+ 
+     InvalidateGraphics();
+ 
+-    if( m_pParent )
++    if (m_pParent)
++    {
+         m_pParent->m_aChildren.remove( this );
++    }
+ 
+     getDisplay()->deregisterFrame( this );
+ 
+@@ -1200,6 +1203,12 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+         if (!(m_pParent->m_nStyle & SalFrameStyleFlags::PLUG))
+             gtk_window_set_transient_for( GTK_WINDOW(m_pWindow), GTK_WINDOW(m_pParent->m_pWindow) );
+         m_pParent->m_aChildren.push_back( this );
++        gtk_window_group_add_window(gtk_window_get_group(GTK_WINDOW(m_pParent->m_pWindow)), GTK_WINDOW(m_pWindow));
++    }
++    else
++    {
++        gtk_window_group_add_window(gtk_window_group_new(), GTK_WINDOW(m_pWindow));
++        g_object_unref(gtk_window_get_group(GTK_WINDOW(m_pWindow)));
+     }
+ 
+     InitCommon();
+@@ -1435,21 +1444,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  SetDefaultSize();
              setMinMaxSize();
  
@@ -187,12 +231,13 @@ index 2055566..1cf7ddc 100644
              if( ! bNoActivate && (m_nStyle & SalFrameStyleFlags::TOOLWINDOW) )
                  m_bSetFocusOnMap = true;
  
-@@ -1460,6 +1446,12 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1460,6 +1454,13 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  m_nFloats++;
                  if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 1 )
                  {
++                    GtkWindowGroup *pWindowGroup = gtk_window_get_group(GTK_WINDOW(m_pWindow));
 +                    GtkWidget* pGrabWidgetBeforeShowFloat;
-+                    while ((pGrabWidgetBeforeShowFloat = gtk_grab_get_current()))
++                    while ((pGrabWidgetBeforeShowFloat = gtk_window_group_get_current_grab(pWindowGroup)))
 +                    {
 +                        m_aGrabWidgetsBeforeShowFloat.push_back(pGrabWidgetBeforeShowFloat);
 +                        gtk_grab_remove(pGrabWidgetBeforeShowFloat);
@@ -200,7 +245,7 @@ index 2055566..1cf7ddc 100644
                      grabPointer(true, true);
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(true);
-@@ -1481,6 +1473,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1481,6 +1482,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(false);
                      grabPointer(false);
@@ -210,7 +255,29 @@ index 2055566..1cf7ddc 100644
                  }
              }
              gtk_widget_hide( m_pWindow );
-@@ -2419,13 +2414,6 @@ void GtkSalFrame::SetModal(bool bModal)
+@@ -2364,11 +2368,17 @@ const SystemEnvData* GtkSalFrame::GetSystemData() const
+ 
+ void GtkSalFrame::SetParent( SalFrame* pNewParent )
+ {
+-    if( m_pParent )
+-        m_pParent->m_aChildren.remove( this );
++    if (m_pParent)
++    {
++        gtk_window_group_remove_window(gtk_window_get_group(GTK_WINDOW(m_pParent->m_pWindow)), GTK_WINDOW(m_pWindow));
++        m_pParent->m_aChildren.remove(this);
++    }
+     m_pParent = static_cast<GtkSalFrame*>(pNewParent);
+-    if( m_pParent )
+-        m_pParent->m_aChildren.push_back( this );
++    if (m_pParent)
++    {
++        m_pParent->m_aChildren.push_back(this);
++        gtk_window_group_add_window(gtk_window_get_group(GTK_WINDOW(m_pParent->m_pWindow)), GTK_WINDOW(m_pWindow));
++    }
+     if( ! isChild() )
+         gtk_window_set_transient_for( GTK_WINDOW(m_pWindow),
+                                       (m_pParent && ! m_pParent->isChild(true,false)) ? GTK_WINDOW(m_pParent->m_pWindow) : nullptr
+@@ -2419,13 +2429,6 @@ void GtkSalFrame::SetModal(bool bModal)
      if (!m_pWindow)
          return;
      gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);

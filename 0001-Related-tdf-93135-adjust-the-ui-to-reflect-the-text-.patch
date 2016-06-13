@@ -1,4 +1,4 @@
-From 2dd37eea05ddd228a41754fb4001b060ea4e578f Mon Sep 17 00:00:00 2001
+From 5bd64a424fdbdcb6244a92314f89396f0cde2e93 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 9 Jun 2016 13:03:57 +0100
 Subject: [PATCH] Related: tdf#93135 adjust the ui to reflect the text fit
@@ -74,9 +74,9 @@ Change-Id: I49241c90d919eeb5caa8775beab57746d5c6df04
  cui/source/tabpages/textattr.cxx   | 131 +++++++++--------
  cui/uiconfig/ui/textattrtabpage.ui | 286 ++++++++++++++++++++++---------------
  include/svx/svxids.hrc             |   2 +-
- sd/source/ui/dlg/prltempl.cxx      |  13 +-
+ sd/source/ui/dlg/prltempl.cxx      |  11 +-
  sd/source/ui/dlg/tabtempl.cxx      |   5 +-
- 7 files changed, 273 insertions(+), 191 deletions(-)
+ 7 files changed, 272 insertions(+), 190 deletions(-)
 
 diff --git a/cui/source/inc/textattr.hxx b/cui/source/inc/textattr.hxx
 index 881f3fd..47c0eda 100644
@@ -747,10 +747,10 @@ index 15574d6..dc0059b 100644
                    <attribute name="weight" value="bold"/>
                  </attributes>
 diff --git a/include/svx/svxids.hrc b/include/svx/svxids.hrc
-index d210579..f0bf604 100644
+index 5bca82d..fe10625 100644
 --- a/include/svx/svxids.hrc
 +++ b/include/svx/svxids.hrc
-@@ -884,7 +884,7 @@
+@@ -886,7 +886,7 @@
  #define SID_SVXSTDPARAGRAPHTABPAGE_FLAGSET              ( SID_SVX_START + 1030 )
  #define SID_SVXSTDPARAGRAPHTABPAGE_ABSLINEDIST          ( SID_SVX_START + 1031 )
  #define SID_SVXTABULATORTABPAGE_CONTROLFLAGS            ( SID_SVX_START + 1032 )
@@ -760,19 +760,17 @@ index d210579..f0bf604 100644
  #define SID_SWMODE_TYPE                                 ( SID_SVX_START + 1035 )
  #define SID_DISABLE_CTL                                 ( SID_SVX_START + 1036 )
 diff --git a/sd/source/ui/dlg/prltempl.cxx b/sd/source/ui/dlg/prltempl.cxx
-index 74c010e..3524af7 100644
+index c503c93..37ddae7 100644
 --- a/sd/source/ui/dlg/prltempl.cxx
 +++ b/sd/source/ui/dlg/prltempl.cxx
-@@ -280,10 +280,15 @@ void SdPresLayoutTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+@@ -280,9 +280,14 @@ void SdPresLayoutTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
          }
  
      else if (nId == mnEffects)
 -        {
--            aSet.Put (SfxUInt16Item(SID_DISABLE_CTL,DISABLE_CASEMAP));
 -            rPage.PageCreated(aSet);
 -        }
 +    {
-+        aSet.Put (SfxUInt16Item(SID_DISABLE_CTL,DISABLE_CASEMAP));
 +        rPage.PageCreated(aSet);
 +    }
 +    else if (nId == mnTextAtt)
@@ -784,7 +782,7 @@ index 74c010e..3524af7 100644
  
  const SfxItemSet* SdPresLayoutTemplateDlg::GetOutputItemSet() const
 diff --git a/sd/source/ui/dlg/tabtempl.cxx b/sd/source/ui/dlg/tabtempl.cxx
-index 61514ee..5e166d3 100644
+index 1189922..9a06ece 100644
 --- a/sd/source/ui/dlg/tabtempl.cxx
 +++ b/sd/source/ui/dlg/tabtempl.cxx
 @@ -24,8 +24,10 @@
@@ -799,7 +797,7 @@ index 61514ee..5e166d3 100644
  #include <svl/cjkoptions.hxx>
  
  #include <svx/dialogs.hrc>
-@@ -157,7 +159,6 @@ void SdTabTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+@@ -156,7 +158,6 @@ void SdTabTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
      }
      else if (nId == m_nTextId)
      {

@@ -1,4 +1,4 @@
-From 65f57e8c0f189c146f846251ee3b6481d9eb2c6e Mon Sep 17 00:00:00 2001
+From 3a5ce16bc2a0f766a442cebc49d4c361f95cf91b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 9 Jun 2016 09:08:08 +0100
 Subject: [PATCH] Resolves: tdf#93135 can't resize shape with "resize shape to
@@ -44,6 +44,9 @@ its not used by anything
 Change-Id: I8b8abde17c15761c621815ed2be62d6a8a5cd69a
 (cherry picked from commit d1df071c3fc452817746a8daa13000d2df667aba)
 (cherry picked from commit 65d1e5294c9f0d9300dbb92f6670cdcafa8a1ac2)
+Reviewed-on: https://gerrit.libreoffice.org/26089
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
 ---
  cui/source/tabpages/textattr.cxx | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
@@ -74,5 +77,5 @@ index 50cbcb5..a0ba1bb 100644
  
      eState = m_pTsbWordWrapText->GetState();
 -- 
-2.7.3
+2.7.4
 

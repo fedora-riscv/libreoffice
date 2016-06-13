@@ -1,0 +1,801 @@
+From 50b7a998d0229ff7f49cd6b653765410749cf747 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 9 Jun 2016 13:03:57 +0100
+Subject: [PATCH] Related: tdf#93135 adjust the ui to reflect the text fit
+ options entanglement
+
+We have two major groups of text fitting options in draw/impress
+
+ones that apply only to custom shapes
+ * Word wrap text in shape
+ * Resize shape to fit text
+
+those that apply to other elements, e.g. text boxes, legacy rectangles and lines
+ * Fit width to text
+ * Fit height to text
+ * Fit to frame
+ * Adjust to contour
+
+Of the second group, only "fit to frame" is always available. Text boxes
+have "Fit width to text" and "Fit height to text", while stuff like legacy
+rectangles and lines etc have "Adjust to contour" instead.
+
+A fun issue is that (currently anyway) the bit for "resize shape to
+fit text" in custom shapes and the bit for "fit height to text" in text boxes
+is the same bit, SDRATTR_TEXT_AUTOGROWHEIGHT.
+
+So before this change in all circumstances the same collection of checkboxes
+for all settings was visible. With context used to enable or disable which
+ones could be set according to the type of shape it was. Simultaneously there
+is logic to enable/disable checkboxes depending on if other checkboxes that
+control contradictionary options were checked/unchecked. e.g. "Fit to frame"
+disabled if "fit height to text" is enabled. So its not apparently why some
+can be enabled and some disabled by clicking about the place in the shared
+collection.
+
+In this commit we split the sizing options into their two families, one frame and
+column for each of "custom shapes" and "everything else". When adjusting
+a single selected object we use context to determine which column to show
+or hide. When editing multiple objects or the underlying graphic styles we show
+both columns. When editing a presentation style we show just the text box
+column. (The use of HasText in the original code is a concern, cause it doesn't
+make sense to me, using it like that means that in the original dialog
+format->text on an empty text box from F2 shows the contour option, but after
+entering text and then format->text it shows a set of different text box sizing
+options, so that's dropped here)
+
+Because (currently) the same SDRATTR_TEXT_AUTOGROWHEIGHT bit it used for two
+apparently different things then we visually toggle on all things that use that
+bit in multi-column mode when its togged on, i.e. on editing a style visually
+both "fit height to text" and "resize shape to fix text" are kept in sync when
+you toggle one or the other. We don't disable the "resize shape to fit text"
+checkbox (unlike the fit height to text checkbox which controls the same bit)
+if "fit to frame" and "adjust to contour" are set, and give it additional
+powers to unset those if clicked.
+
+This hopefully makes the ui describe the way things actually are.
+
+Because this SDRATTR_TEXT_AUTOGROWHEIGHT is currently sort of doing two purposes
+selecting a freshly drawn custom rectangle and using format->default formatting
+will cause it to change properties because the underlying
+SDRATTR_TEXT_AUTOGROWHEIGHT bit is cleared.
+
+The way things should probably be I guess is that there should be a
+SDRATTR_TEXT_AUTOGROWSIZE property (which used to exist but wasn't hooked up to
+anything) just for custom shapes which overrides the old family of options if
+set.
+
+(cherry picked from commit 8d51397bfd98615e74e116582a50e29846ecb76e)
+
+Change-Id: I49241c90d919eeb5caa8775beab57746d5c6df04
+---
+ cui/source/inc/textattr.hxx        |   8 +-
+ cui/source/tabpages/textanim.cxx   |  17 ++-
+ cui/source/tabpages/textattr.cxx   | 131 +++++++++--------
+ cui/uiconfig/ui/textattrtabpage.ui | 286 ++++++++++++++++++++++---------------
+ include/svx/svxids.hrc             |   2 +-
+ sd/source/ui/dlg/prltempl.cxx      |  11 +-
+ sd/source/ui/dlg/tabtempl.cxx      |   5 +-
+ 7 files changed, 271 insertions(+), 189 deletions(-)
+
+diff --git a/cui/source/inc/textattr.hxx b/cui/source/inc/textattr.hxx
+index 7d67d86..a826b2f 100644
+--- a/cui/source/inc/textattr.hxx
++++ b/cui/source/inc/textattr.hxx
+@@ -20,6 +20,7 @@
+ #define INCLUDED_CUI_SOURCE_INC_TEXTATTR_HXX
+ 
+ #include <svx/dlgctrl.hxx>
++#include <svx/svdobj.hxx>
+ 
+ #include <vcl/group.hxx>
+ 
+@@ -39,6 +40,9 @@ class SvxTextAttrPage : public SvxTabPage
+ private:
+     static const sal_uInt16 pRanges[];
+ 
++    VclPtr<VclContainer>        m_pDrawingText;
++    VclPtr<VclContainer>        m_pCustomShapeText;
++
+     VclPtr<TriStateBox>         m_pTsbAutoGrowWidth;
+     VclPtr<TriStateBox>         m_pTsbAutoGrowHeight;
+     VclPtr<TriStateBox>         m_pTsbFitToSize;
+@@ -57,7 +61,7 @@ private:
+     VclPtr<TriStateBox>         m_pTsbFullWidth;
+ 
+     const SfxItemSet&   rOutAttrs;
+-    const SdrView*      pView;
++    SdrObjKind    m_eObjKind;
+ 
+     bool                bAutoGrowSizeEnabled;
+     bool                bContourEnabled;
+@@ -89,7 +93,7 @@ public:
+     virtual void        PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
+ 
+     void         Construct();
+-    void         SetView( const SdrView* pSdrView ) { pView = pSdrView; }
++    void         SetObjKind(SdrObjKind eObjKind) { m_eObjKind = eObjKind; }
+     virtual void PageCreated(const SfxAllItemSet& aSet) override;
+ };
+ 
+diff --git a/cui/source/tabpages/textanim.cxx b/cui/source/tabpages/textanim.cxx
+index 64bf0e1..5c9ba06 100644
+--- a/cui/source/tabpages/textanim.cxx
++++ b/cui/source/tabpages/textanim.cxx
+@@ -27,6 +27,8 @@
+ #include "textattr.hxx"
+ #include <dialmgr.hxx>
+ #include "svx/dlgutil.hxx"
++#include "svx/svdmark.hxx"
++#include "svx/svdview.hxx"
+ 
+ const sal_uInt16 SvxTextAnimationPage::pRanges[] =
+ {
+@@ -63,10 +65,21 @@ SvxTextTabDialog::SvxTextTabDialog( vcl::Window* pParent,
+ void SvxTextTabDialog::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+ {
+     if (nId == m_nTextId)
++    {
++        const SdrMarkList& rMarkList = pView->GetMarkedObjectList();
++        bool bHasMarked = rMarkList.GetMarkCount() > 0;
++        SdrObjKind eKind = OBJ_NONE;
++        if (bHasMarked)
+         {
+-            static_cast<SvxTextAttrPage&>(rPage).SetView( pView );
+-            static_cast<SvxTextAttrPage&>(rPage).Construct();
++            if (rMarkList.GetMarkCount() == 1)
++            {
++                const SdrObject* pObj = rMarkList.GetMark(0)->GetMarkedSdrObj();
++                eKind = (SdrObjKind)pObj->GetObjIdentifier();
++            }
+         }
++        static_cast<SvxTextAttrPage&>(rPage).SetObjKind(eKind);
++        static_cast<SvxTextAttrPage&>(rPage).Construct();
++    }
+ }
+ 
+ 
+diff --git a/cui/source/tabpages/textattr.cxx b/cui/source/tabpages/textattr.cxx
+index a0ba1bb..23dd097 100644
+--- a/cui/source/tabpages/textattr.cxx
++++ b/cui/source/tabpages/textattr.cxx
+@@ -56,7 +56,7 @@ const sal_uInt16 SvxTextAttrPage::pRanges[] =
+ SvxTextAttrPage::SvxTextAttrPage(vcl::Window* pWindow, const SfxItemSet& rInAttrs)
+     : SvxTabPage(pWindow,"TextAttributesPage","cui/ui/textattrtabpage.ui", rInAttrs)
+     , rOutAttrs(rInAttrs)
+-    , pView(nullptr)
++    , m_eObjKind(OBJ_NONE)
+     , bAutoGrowSizeEnabled(false)
+     , bContourEnabled(false)
+     , bAutoGrowWidthEnabled(false)
+@@ -64,6 +64,8 @@ SvxTextAttrPage::SvxTextAttrPage(vcl::Window* pWindow, const SfxItemSet& rInAttr
+     , bWordWrapTextEnabled(false)
+     , bFitToSizeEnabled(false)
+ {
++    get(m_pDrawingText, "drawingtext");
++    get(m_pCustomShapeText, "customshapetext");
+     get(m_pTsbAutoGrowWidth,"TSB_AUTOGROW_WIDTH");
+     get(m_pTsbAutoGrowHeight,"TSB_AUTOGROW_HEIGHT");
+     get(m_pTsbFitToSize,"TSB_FIT_TO_SIZE");
+@@ -90,6 +92,7 @@ SvxTextAttrPage::SvxTextAttrPage(vcl::Window* pWindow, const SfxItemSet& rInAttr
+     Link<Button*,void> aLink( LINK( this, SvxTextAttrPage, ClickHdl_Impl ) );
+     m_pTsbAutoGrowWidth->SetClickHdl( aLink );
+     m_pTsbAutoGrowHeight->SetClickHdl( aLink );
++    m_pTsbAutoGrowSize->SetClickHdl( aLink );
+     m_pTsbFitToSize->SetClickHdl( aLink );
+     m_pTsbContour->SetClickHdl( aLink );
+ 
+@@ -103,6 +106,8 @@ SvxTextAttrPage::~SvxTextAttrPage()
+ 
+ void SvxTextAttrPage::dispose()
+ {
++    m_pDrawingText.clear();
++    m_pCustomShapeText.clear();
+     m_pTsbAutoGrowWidth.clear();
+     m_pTsbAutoGrowHeight.clear();
+     m_pTsbFitToSize.clear();
+@@ -181,16 +186,24 @@ void SvxTextAttrPage::Reset( const SfxItemSet* rAttrs )
+         m_pMtrFldBottom->SetText( "" );
+     m_pMtrFldBottom->SaveValue();
+ 
+-    // adjust to height
++    // adjust to height and autogrowsize
+     if ( rAttrs->GetItemState( SDRATTR_TEXT_AUTOGROWHEIGHT ) != SfxItemState::DONTCARE )
+     {
+         m_pTsbAutoGrowHeight->SetState( static_cast<const SdrOnOffItem&>( rAttrs->Get( SDRATTR_TEXT_AUTOGROWHEIGHT ) ).
+                         GetValue() ? TRISTATE_TRUE : TRISTATE_FALSE );
+         m_pTsbAutoGrowHeight->EnableTriState( false );
++
++        m_pTsbAutoGrowSize->SetState( static_cast<const SdrOnOffItem&>( rAttrs->Get( SDRATTR_TEXT_AUTOGROWHEIGHT ) ).
++                        GetValue() ? TRISTATE_TRUE : TRISTATE_FALSE );
++        m_pTsbAutoGrowSize->EnableTriState( false );
+     }
+     else
++    {
+         m_pTsbAutoGrowHeight->SetState( TRISTATE_INDET );
++        m_pTsbAutoGrowSize->SetState( TRISTATE_INDET );
++    }
+     m_pTsbAutoGrowHeight->SaveValue();
++    m_pTsbAutoGrowSize->SaveValue();
+ 
+     // adjust to width
+     if ( rAttrs->GetItemState( SDRATTR_TEXT_AUTOGROWWIDTH ) != SfxItemState::DONTCARE )
+@@ -203,17 +216,6 @@ void SvxTextAttrPage::Reset( const SfxItemSet* rAttrs )
+         m_pTsbAutoGrowWidth->SetState( TRISTATE_INDET );
+     m_pTsbAutoGrowWidth->SaveValue();
+ 
+-    // autogrowsize
+-    if ( rAttrs->GetItemState( SDRATTR_TEXT_AUTOGROWHEIGHT ) != SfxItemState::DONTCARE )
+-    {
+-        m_pTsbAutoGrowSize->SetState( static_cast<const SdrOnOffItem&>( rAttrs->Get( SDRATTR_TEXT_AUTOGROWHEIGHT ) ).
+-                        GetValue() ? TRISTATE_TRUE : TRISTATE_FALSE );
+-        m_pTsbAutoGrowSize->EnableTriState( false );
+-    }
+-    else
+-        m_pTsbAutoGrowSize->SetState( TRISTATE_INDET );
+-    m_pTsbAutoGrowSize->SaveValue();
+-
+     // wordwrap text
+     if ( rAttrs->GetItemState( SDRATTR_TEXT_WORDWRAP ) != SfxItemState::DONTCARE )
+     {
+@@ -481,52 +483,47 @@ bool SvxTextAttrPage::FillItemSet( SfxItemSet* rAttrs)
+ 
+ void SvxTextAttrPage::Construct()
+ {
+-    DBG_ASSERT( pView, "Keine gueltige View Uebergeben!" );
+-
+-    bFitToSizeEnabled = bContourEnabled = true;
+-    bWordWrapTextEnabled = bAutoGrowSizeEnabled = bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = false;
+-
+-    const SdrMarkList& rMarkList = pView->GetMarkedObjectList();
+-    if( rMarkList.GetMarkCount() == 1 )
++    switch (m_eObjKind)
+     {
+-        const SdrObject* pObj = rMarkList.GetMark( 0 )->GetMarkedSdrObj();
+-        SdrObjKind eKind = (SdrObjKind) pObj->GetObjIdentifier();
+-        if( pObj->GetObjInventor() == SdrInventor )
+-        {
+-            switch( eKind )
+-            {
+-                case OBJ_TEXT :
+-                case OBJ_TITLETEXT :
+-                case OBJ_OUTLINETEXT :
+-                case OBJ_CAPTION :
+-                {
+-                    if(pObj->HasText())
+-                    {
+-                        // contour NOT possible for pure text objects
+-                        bContourEnabled = false;
+-
+-                        // adjusting width and height is ONLY possible for pure text objects
+-                        bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = true;
+-                    }
+-                }
+-                break;
+-                case OBJ_CUSTOMSHAPE :
+-                {
+-                    bFitToSizeEnabled = bContourEnabled = false;
+-                    bAutoGrowSizeEnabled = true;
+-                    bWordWrapTextEnabled = true;
+-                }
+-                break;
+-                default: ;//prevent warning
+-            }
+-        }
++        case OBJ_NONE:
++            // indeterminate, show them all
++            bFitToSizeEnabled = bContourEnabled = bWordWrapTextEnabled =
++            bAutoGrowSizeEnabled = bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = true;
++            m_pCustomShapeText->Show();
++            m_pDrawingText->Show();
++            break;
++        case OBJ_TEXT:
++        case OBJ_TITLETEXT:
++        case OBJ_OUTLINETEXT:
++        case OBJ_CAPTION:
++            // contour NOT possible for pure text objects
++            bContourEnabled = bWordWrapTextEnabled = bAutoGrowSizeEnabled = false;
++
++            // adjusting width and height is ONLY possible for pure text objects
++            bFitToSizeEnabled = bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = true;
++            m_pCustomShapeText->Hide();
++            m_pDrawingText->Show();
++            break;
++        case OBJ_CUSTOMSHAPE:
++            bFitToSizeEnabled = bContourEnabled = bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = false;
++            bWordWrapTextEnabled = bAutoGrowSizeEnabled = true;
++            m_pDrawingText->Hide();
++            m_pCustomShapeText->Show();
++            break;
++        default:
++            bFitToSizeEnabled = bContourEnabled = true;
++            bWordWrapTextEnabled = bAutoGrowSizeEnabled = bAutoGrowWidthEnabled = bAutoGrowHeightEnabled = false;
++            m_pCustomShapeText->Hide();
++            m_pDrawingText->Show();
++            break;
+     }
+-    m_pTsbAutoGrowHeight->Enable( bAutoGrowHeightEnabled );
+-    m_pTsbAutoGrowWidth->Enable( bAutoGrowWidthEnabled );
+-    m_pTsbFitToSize->Enable( bFitToSizeEnabled );
+-    m_pTsbContour->Enable( bContourEnabled );
+-    m_pTsbAutoGrowSize->Enable( bAutoGrowSizeEnabled );
+-    m_pTsbWordWrapText->Enable( bWordWrapTextEnabled );
++
++    m_pTsbAutoGrowHeight->Show( bAutoGrowHeightEnabled );
++    m_pTsbAutoGrowWidth->Show( bAutoGrowWidthEnabled );
++    m_pTsbFitToSize->Show( bFitToSizeEnabled );
++    m_pTsbContour->Show( bContourEnabled );
++    m_pTsbAutoGrowSize->Show( bAutoGrowSizeEnabled );
++    m_pTsbWordWrapText->Show( bWordWrapTextEnabled );
+ }
+ 
+ VclPtr<SfxTabPage> SvxTextAttrPage::Create( vcl::Window* pWindow,
+@@ -639,8 +636,20 @@ IMPL_LINK_NOARG_TYPED(SvxTextAttrPage, ClickFullWidthHdl_Impl, Button*, void)
+ |*
+ \************************************************************************/
+ 
+-IMPL_LINK_NOARG_TYPED(SvxTextAttrPage, ClickHdl_Impl, Button*, void)
++IMPL_LINK_TYPED(SvxTextAttrPage, ClickHdl_Impl, Button*, pButton, void)
+ {
++    if (pButton == m_pTsbAutoGrowSize)
++    {
++        m_pTsbAutoGrowHeight->SetState(m_pTsbAutoGrowSize->GetState());
++        if (m_pTsbAutoGrowSize->GetState() == TRISTATE_TRUE)
++        {
++            m_pTsbFitToSize->SetState(TRISTATE_FALSE);
++            m_pTsbContour->SetState(TRISTATE_FALSE);
++        }
++    }
++    else if (pButton == m_pTsbAutoGrowHeight)
++        m_pTsbAutoGrowSize->SetState(m_pTsbAutoGrowHeight->GetState());
++
+     bool bAutoGrowWidth  = m_pTsbAutoGrowWidth->GetState() == TRISTATE_TRUE;
+     bool bAutoGrowHeight = m_pTsbAutoGrowHeight->GetState() == TRISTATE_TRUE;
+     bool bFitToSize      = m_pTsbFitToSize->GetState() == TRISTATE_TRUE;
+@@ -701,10 +710,10 @@ bool SvxTextAttrPage::IsTextDirectionLeftToRight() const
+ 
+ void SvxTextAttrPage::PageCreated(const SfxAllItemSet& aSet)
+ {
+-    const OfaPtrItem* pViewItem = aSet.GetItem<OfaPtrItem>(SID_SVXTEXTATTRPAGE_VIEW, false);
++    const CntUInt16Item* pObjTypeItem = aSet.GetItem<CntUInt16Item>(SID_SVXTEXTATTRPAGE_OBJKIND, false);
+ 
+-    if (pViewItem)
+-        SetView( static_cast<SdrView *>(pViewItem->GetValue()));
++    if (pObjTypeItem)
++        SetObjKind(static_cast<SdrObjKind>(pObjTypeItem->GetValue()));
+ 
+     Construct();
+ }
+diff --git a/cui/uiconfig/ui/textattrtabpage.ui b/cui/uiconfig/ui/textattrtabpage.ui
+index 15574d6..dc0059b 100644
+--- a/cui/uiconfig/ui/textattrtabpage.ui
++++ b/cui/uiconfig/ui/textattrtabpage.ui
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!-- Generated with glade 3.18.3 -->
++<!-- Generated with glade 3.20.0 -->
+ <interface>
+   <requires lib="gtk+" version="3.0"/>
+   <requires lib="LibreOffice" version="1.0"/>
+@@ -16,139 +16,189 @@
+     <property name="orientation">vertical</property>
+     <property name="spacing">12</property>
+     <child>
+-      <object class="GtkFrame" id="frame1">
++      <object class="GtkGrid">
+         <property name="visible">True</property>
+         <property name="can_focus">False</property>
+-        <property name="label_xalign">0</property>
+-        <property name="shadow_type">none</property>
++        <property name="column_homogeneous">True</property>
+         <child>
+-          <object class="GtkAlignment" id="alignment1">
++          <object class="GtkFrame" id="drawingtext">
+             <property name="visible">True</property>
+             <property name="can_focus">False</property>
+-            <property name="top_padding">6</property>
+-            <property name="left_padding">12</property>
++            <property name="label_xalign">0</property>
++            <property name="shadow_type">none</property>
+             <child>
+-              <object class="GtkGrid" id="grid1">
++              <object class="GtkAlignment" id="alignment1">
+                 <property name="visible">True</property>
+                 <property name="can_focus">False</property>
+-                <property name="row_spacing">6</property>
+-                <property name="column_spacing">12</property>
+-                <child>
+-                  <object class="GtkCheckButton" id="TSB_AUTOGROW_WIDTH">
+-                    <property name="label" translatable="yes">Fit wi_dth to text</property>
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
+-                  </object>
+-                  <packing>
+-                    <property name="left_attach">0</property>
+-                    <property name="top_attach">0</property>
+-                  </packing>
+-                </child>
+-                <child>
+-                  <object class="GtkCheckButton" id="TSB_AUTOGROW_HEIGHT">
+-                    <property name="label" translatable="yes">Fit h_eight to text</property>
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
+-                  </object>
+-                  <packing>
+-                    <property name="left_attach">0</property>
+-                    <property name="top_attach">1</property>
+-                  </packing>
+-                </child>
+-                <child>
+-                  <object class="GtkCheckButton" id="TSB_FIT_TO_SIZE">
+-                    <property name="label" translatable="yes">_Fit to frame</property>
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
+-                  </object>
+-                  <packing>
+-                    <property name="left_attach">0</property>
+-                    <property name="top_attach">2</property>
+-                  </packing>
+-                </child>
+-                <child>
+-                  <object class="GtkCheckButton" id="TSB_CONTOUR">
+-                    <property name="label" translatable="yes">_Adjust to contour</property>
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
+-                  </object>
+-                  <packing>
+-                    <property name="left_attach">0</property>
+-                    <property name="top_attach">3</property>
+-                  </packing>
+-                </child>
++                <property name="top_padding">6</property>
++                <property name="left_padding">12</property>
+                 <child>
+-                  <object class="GtkCheckButton" id="TSB_WORDWRAP_TEXT">
+-                    <property name="label" translatable="yes">_Word wrap text in shape</property>
++                  <object class="GtkGrid" id="grid1">
+                     <property name="visible">True</property>
+                     <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
++                    <property name="row_spacing">6</property>
++                    <property name="column_spacing">12</property>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_AUTOGROW_WIDTH">
++                        <property name="label" translatable="yes">Fit wi_dth to text</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">0</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_AUTOGROW_HEIGHT">
++                        <property name="label" translatable="yes">Fit h_eight to text</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">1</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_FIT_TO_SIZE">
++                        <property name="label" translatable="yes">_Fit to frame</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">2</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_CONTOUR">
++                        <property name="label" translatable="yes">_Adjust to contour</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">3</property>
++                      </packing>
++                    </child>
+                   </object>
+-                  <packing>
+-                    <property name="left_attach">1</property>
+-                    <property name="top_attach">0</property>
+-                  </packing>
+                 </child>
++              </object>
++            </child>
++            <child type="label">
++              <object class="GtkLabel" id="label1">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="label" translatable="yes">Drawing Object Text</property>
++                <property name="xalign">0</property>
++                <attributes>
++                  <attribute name="weight" value="bold"/>
++                </attributes>
++              </object>
++            </child>
++          </object>
++          <packing>
++            <property name="left_attach">0</property>
++            <property name="top_attach">0</property>
++          </packing>
++        </child>
++        <child>
++          <object class="GtkFrame" id="customshapetext">
++            <property name="visible">True</property>
++            <property name="can_focus">False</property>
++            <property name="label_xalign">0</property>
++            <property name="shadow_type">none</property>
++            <child>
++              <object class="GtkAlignment" id="alignment4">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="top_padding">6</property>
++                <property name="left_padding">12</property>
+                 <child>
+-                  <object class="GtkCheckButton" id="TSB_AUTOGROW_SIZE">
+-                    <property name="label" translatable="yes">_Resize shape to fit text</property>
++                  <object class="GtkGrid" id="grid3">
+                     <property name="visible">True</property>
+                     <property name="can_focus">False</property>
+-                    <property name="receives_default">False</property>
+-                    <property name="use_underline">True</property>
+-                    <property name="xalign">0</property>
+-                    <property name="inconsistent">True</property>
+-                    <property name="draw_indicator">True</property>
++                    <property name="row_spacing">6</property>
++                    <property name="column_spacing">12</property>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_WORDWRAP_TEXT">
++                        <property name="label" translatable="yes">_Word wrap text in shape</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">0</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <object class="GtkCheckButton" id="TSB_AUTOGROW_SIZE">
++                        <property name="label" translatable="yes">_Resize shape to fit text</property>
++                        <property name="visible">True</property>
++                        <property name="can_focus">True</property>
++                        <property name="receives_default">False</property>
++                        <property name="use_underline">True</property>
++                        <property name="xalign">0</property>
++                        <property name="inconsistent">True</property>
++                        <property name="draw_indicator">True</property>
++                      </object>
++                      <packing>
++                        <property name="left_attach">0</property>
++                        <property name="top_attach">1</property>
++                      </packing>
++                    </child>
++                    <child>
++                      <placeholder/>
++                    </child>
++                    <child>
++                      <placeholder/>
++                    </child>
+                   </object>
+-                  <packing>
+-                    <property name="left_attach">1</property>
+-                    <property name="top_attach">1</property>
+-                  </packing>
+-                </child>
+-                <child>
+-                  <placeholder/>
+-                </child>
+-                <child>
+-                  <placeholder/>
+                 </child>
+               </object>
+             </child>
++            <child type="label">
++              <object class="GtkLabel" id="label8">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="label" translatable="yes">Custom Shape Text</property>
++                <property name="xalign">0</property>
++                <attributes>
++                  <attribute name="weight" value="bold"/>
++                </attributes>
++              </object>
++            </child>
+           </object>
+-        </child>
+-        <child type="label">
+-          <object class="GtkLabel" id="label1">
+-            <property name="visible">True</property>
+-            <property name="can_focus">False</property>
+-            <property name="xalign">0</property>
+-            <property name="label" translatable="yes">Text</property>
+-            <attributes>
+-              <attribute name="weight" value="bold"/>
+-            </attributes>
+-          </object>
++          <packing>
++            <property name="left_attach">1</property>
++            <property name="top_attach">0</property>
++          </packing>
+         </child>
+       </object>
+       <packing>
+@@ -184,10 +234,10 @@
+                       <object class="GtkLabel" id="label4">
+                         <property name="visible">True</property>
+                         <property name="can_focus">False</property>
+-                        <property name="xalign">0</property>
+                         <property name="label" translatable="yes">_Left:</property>
+                         <property name="use_underline">True</property>
+                         <property name="mnemonic_widget">MTR_FLD_LEFT:0.00cm</property>
++                        <property name="xalign">0</property>
+                       </object>
+                       <packing>
+                         <property name="left_attach">0</property>
+@@ -198,10 +248,10 @@
+                       <object class="GtkLabel" id="label5">
+                         <property name="visible">True</property>
+                         <property name="can_focus">False</property>
+-                        <property name="xalign">0</property>
+                         <property name="label" translatable="yes">_Right:</property>
+                         <property name="use_underline">True</property>
+                         <property name="mnemonic_widget">MTR_FLD_RIGHT:0.00cm</property>
++                        <property name="xalign">0</property>
+                       </object>
+                       <packing>
+                         <property name="left_attach">0</property>
+@@ -212,10 +262,10 @@
+                       <object class="GtkLabel" id="label6">
+                         <property name="visible">True</property>
+                         <property name="can_focus">False</property>
+-                        <property name="xalign">0</property>
+                         <property name="label" translatable="yes">_Top:</property>
+                         <property name="use_underline">True</property>
+                         <property name="mnemonic_widget">MTR_FLD_TOP:0.00cm</property>
++                        <property name="xalign">0</property>
+                       </object>
+                       <packing>
+                         <property name="left_attach">0</property>
+@@ -226,10 +276,10 @@
+                       <object class="GtkLabel" id="label7">
+                         <property name="visible">True</property>
+                         <property name="can_focus">False</property>
+-                        <property name="xalign">0</property>
+                         <property name="label" translatable="yes">_Bottom:</property>
+                         <property name="use_underline">True</property>
+                         <property name="mnemonic_widget">MTR_FLD_BOTTOM:0.00cm</property>
++                        <property name="xalign">0</property>
+                       </object>
+                       <packing>
+                         <property name="left_attach">0</property>
+@@ -296,8 +346,8 @@
+               <object class="GtkLabel" id="label2">
+                 <property name="visible">True</property>
+                 <property name="can_focus">False</property>
+-                <property name="xalign">0</property>
+                 <property name="label" translatable="yes">Spacing to Borders</property>
++                <property name="xalign">0</property>
+                 <attributes>
+                   <attribute name="weight" value="bold"/>
+                 </attributes>
+diff --git a/include/svx/svxids.hrc b/include/svx/svxids.hrc
+index 1ec7daa..64333be 100644
+--- a/include/svx/svxids.hrc
++++ b/include/svx/svxids.hrc
+@@ -886,7 +886,7 @@
+ #define SID_SVXSTDPARAGRAPHTABPAGE_FLAGSET              ( SID_SVX_START + 1030 )
+ #define SID_SVXSTDPARAGRAPHTABPAGE_ABSLINEDIST          ( SID_SVX_START + 1031 )
+ #define SID_SVXTABULATORTABPAGE_CONTROLFLAGS            ( SID_SVX_START + 1032 )
+-#define SID_SVXTEXTATTRPAGE_VIEW                        ( SID_SVX_START + 1033 )
++#define SID_SVXTEXTATTRPAGE_OBJKIND                     ( SID_SVX_START + 1033 )
+ #define SID_FLAG_TYPE                                   ( SID_SVX_START + 1034 )
+ #define SID_SWMODE_TYPE                                 ( SID_SVX_START + 1035 )
+ #define SID_DISABLE_CTL                                 ( SID_SVX_START + 1036 )
+diff --git a/sd/source/ui/dlg/prltempl.cxx b/sd/source/ui/dlg/prltempl.cxx
+index c341a2c..5d0d6d2 100644
+--- a/sd/source/ui/dlg/prltempl.cxx
++++ b/sd/source/ui/dlg/prltempl.cxx
+@@ -280,9 +280,14 @@ void SdPresLayoutTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+         }
+ 
+     else if (nId == mnEffects)
+-        {
+-            rPage.PageCreated(aSet);
+-        }
++    {
++        rPage.PageCreated(aSet);
++    }
++    else if (nId == mnTextAtt)
++    {
++        aSet.Put(CntUInt16Item(SID_SVXTEXTATTRPAGE_OBJKIND, OBJ_TEXT));
++        rPage.PageCreated(aSet);
++    }
+ }
+ 
+ const SfxItemSet* SdPresLayoutTemplateDlg::GetOutputItemSet() const
+diff --git a/sd/source/ui/dlg/tabtempl.cxx b/sd/source/ui/dlg/tabtempl.cxx
+index 1189922..9a06ece 100644
+--- a/sd/source/ui/dlg/tabtempl.cxx
++++ b/sd/source/ui/dlg/tabtempl.cxx
+@@ -24,8 +24,10 @@
+ #include <svx/drawitem.hxx>
+ #include <svl/intitem.hxx>
+ #include <svx/ofaitem.hxx>
+-#include <svx/svxgrahicitem.hxx>
++#include <svx/svdmark.hxx>
+ #include <svx/svdmodel.hxx>
++#include <svx/svdview.hxx>
++#include <svx/svxgrahicitem.hxx>
+ #include <svl/cjkoptions.hxx>
+ 
+ #include <svx/dialogs.hrc>
+@@ -156,7 +158,6 @@ void SdTabTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+     }
+     else if (nId == m_nTextId)
+     {
+-        aSet.Put(OfaPtrItem(SID_SVXTEXTATTRPAGE_VIEW,pSdrView));
+         rPage.PageCreated(aSet);
+     }
+     else if (nId == m_nDimensionId)
+-- 
+2.7.4
+

@@ -262,6 +262,7 @@ Patch33: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 Patch34: 0001-Related-tdf-99446-cairo-text-xrender-bodge.patch
 Patch35: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
 Patch36: 0001-Resolves-rhbz-1344042-deb-826654-scale-gtk3-smooth-s.patch
+Patch37: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2280,8 +2281,9 @@ done
 %endif
 
 %changelog
-* Thu Jun 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
+* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
 - Resolves: rhbz#1344042 gtk3 mouse wheel scroll doesn't scroll enough
+- Resolves: tdf#93135 text fit options are a mess in impress/draw
 
 * Wed Jun 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-2
 - Resolves: rhbz#1343766 a11y queries during dispose combobox crash

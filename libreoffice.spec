@@ -310,6 +310,7 @@ Patch77: 0001-improve-perf.-of-VCL-event-dispatch.patch
 Patch78: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch79: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 Patch80: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
+Patch81: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2224,7 +2225,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Thu Jun 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-8-UNBUILT
+* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-8
 - Resolves: Resolves: tdf#93135 resize shape to text doesn't work
 
 * Wed Jun 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-7

@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -261,8 +261,7 @@ Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch33: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 Patch34: 0001-Related-tdf-99446-cairo-text-xrender-bodge.patch
 Patch35: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
-Patch36: 0001-Resolves-rhbz-1344042-deb-826654-scale-gtk3-smooth-s.patch
-Patch37: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
+Patch36: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2281,7 +2280,8 @@ done
 %endif
 
 %changelog
-* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
+* Thu Jun 16 2016 David Tardon <dtardon@redhat.com> - 1:5.1.4.2-1
+- update to 5.1.4 rc2
 - Resolves: rhbz#1344042 gtk3 mouse wheel scroll doesn't scroll enough
 - Resolves: tdf#93135 text fit options are a mess in impress/draw
 

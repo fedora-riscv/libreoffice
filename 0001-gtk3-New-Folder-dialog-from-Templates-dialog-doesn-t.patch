@@ -1,4 +1,4 @@
-From a1421d594d63e4d722338179dacff4e031cebb1b Mon Sep 17 00:00:00 2001
+From 7ee77f157c166c1e7ddb6c2215518119fb6175df Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 5 May 2016 15:19:24 +0100
 Subject: [PATCH] gtk3: New Folder dialog from Templates dialog doesn't get
@@ -77,13 +77,28 @@ comes back
 
 Change-Id: I7a940ea72bfd7fd4a7f68f1e60395d5014ce155c
 (cherry picked from commit 9b49e1817d4d045b724aed6267f8f00c6bf295cc)
+
+Resolves: tdf#100327 gtk3 fpicker yes/no dialog modal trouble
+
+not sure why we ever hid the file dialog when putting up the
+yes/no dialog. So lets just do the more apparently sensible thing
+on the gtk3 path and leave gtk2 alone.
+
+Probably fallout from using window groups
+
+(cherry picked from commit e50caebc02ee2045a38a39b4a4c644da0d678541)
+(cherry picked from commit 83b7c1ae8068787212f757b9c8b9c317537a2dd2)
+
+Change-Id: I4d0e8fae9568b050b674cf6ef4d8c88e65dd2ca1
 ---
- cui/source/customize/cfg.cxx      |  4 +--
- cui/source/customize/selector.cxx | 15 +++--------
- cui/source/inc/selector.hxx       |  2 +-
- vcl/inc/unx/gtk/gtkframe.hxx      |  1 +
- vcl/unx/gtk3/gtk3gtkframe.cxx     | 57 ++++++++++++++++++++-------------------
- 5 files changed, 37 insertions(+), 42 deletions(-)
+ cui/source/customize/cfg.cxx             |  4 +--
+ cui/source/customize/selector.cxx        | 15 ++-------
+ cui/source/inc/selector.hxx              |  2 +-
+ vcl/inc/unx/gtk/gtkframe.hxx             |  1 +
+ vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx |  4 +++
+ vcl/unx/gtk/fpicker/SalGtkPicker.cxx     |  2 ++
+ vcl/unx/gtk3/gtk3gtkframe.cxx            | 57 +++++++++++++++++---------------
+ 7 files changed, 43 insertions(+), 42 deletions(-)
 
 diff --git a/cui/source/customize/cfg.cxx b/cui/source/customize/cfg.cxx
 index 018cf39..72e8af5 100644
@@ -161,10 +176,10 @@ index 2f6b194..ad4bfa9 100644
      VclPtr<FixedText>                      m_pDialogDescription;
      VclPtr<SvxConfigGroupListBox>          m_pCategories;
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 6a011cb..d2e9cd5 100644
+index eaa222f..871ddd3 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -299,6 +299,7 @@ class GtkSalFrame : public SalFrame
+@@ -298,6 +298,7 @@ class GtkSalFrame : public SalFrame
      static GdkNativeWindow findTopLevelSystemWindow( GdkNativeWindow aWindow );
  
      static int m_nFloats;
@@ -172,11 +187,43 @@ index 6a011cb..d2e9cd5 100644
  
      bool isFloatGrabWindow() const
      {
+diff --git a/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx b/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
+index 9798639..b6b60f6 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
+@@ -1012,8 +1012,12 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException, std
+                             gtk_window_set_title( GTK_WINDOW( dlg ),
+                                 OUStringToOString(getResString(FILE_PICKER_TITLE_SAVE ),
+                                 RTL_TEXTENCODING_UTF8 ).getStr() );
++#if GTK_CHECK_VERSION(3,0,0)
++                            gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(m_pDialog));
++#else
+                             if (pParent)
+                                 gtk_window_set_transient_for(GTK_WINDOW(dlg), pParent);
++#endif
+                             RunDialog* pAnotherDialog = new RunDialog(dlg, xToolkit, xDesktop);
+                             uno::Reference < awt::XTopWindowListener > xAnotherLifeCycle(pAnotherDialog);
+                             btn = pAnotherDialog->run();
+diff --git a/vcl/unx/gtk/fpicker/SalGtkPicker.cxx b/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
+index 26b2740..06e9550 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
+@@ -183,8 +183,10 @@ gint RunDialog::run()
+     if (mxToolkit.is())
+         mxToolkit->removeTopWindowListener(this);
+ 
++#if !GTK_CHECK_VERSION(3,0,0)
+     if (nStatus != 1)   //PLAY
+         gtk_widget_hide( mpDialog );
++#endif
+ 
+     return nStatus;
+ }
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 2d2df88..760a324 100644
+index 6363815..1569691 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -103,6 +103,7 @@
+@@ -106,6 +106,7 @@
  using namespace com::sun::star;
  
  int GtkSalFrame::m_nFloats = 0;
@@ -184,7 +231,7 @@ index 2d2df88..760a324 100644
  
  #if defined ENABLE_GMENU_INTEGRATION
  static GDBusConnection* pSessionBus = nullptr;
-@@ -814,8 +815,10 @@ GtkSalFrame::~GtkSalFrame()
+@@ -834,8 +835,10 @@ GtkSalFrame::~GtkSalFrame()
  
      InvalidateGraphics();
  
@@ -196,7 +243,7 @@ index 2d2df88..760a324 100644
  
      getDisplay()->deregisterFrame( this );
  
-@@ -1200,6 +1203,12 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+@@ -1212,6 +1215,12 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
          if (!(m_pParent->m_nStyle & SalFrameStyleFlags::PLUG))
              gtk_window_set_transient_for( GTK_WINDOW(m_pWindow), GTK_WINDOW(m_pParent->m_pWindow) );
          m_pParent->m_aChildren.push_back( this );
@@ -209,7 +256,7 @@ index 2d2df88..760a324 100644
      }
  
      InitCommon();
-@@ -1435,21 +1444,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1447,21 +1456,6 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  SetDefaultSize();
              setMinMaxSize();
  
@@ -231,7 +278,7 @@ index 2d2df88..760a324 100644
              if( ! bNoActivate && (m_nStyle & SalFrameStyleFlags::TOOLWINDOW) )
                  m_bSetFocusOnMap = true;
  
-@@ -1460,6 +1454,13 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1472,6 +1466,13 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                  m_nFloats++;
                  if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 1 )
                  {
@@ -245,7 +292,7 @@ index 2d2df88..760a324 100644
                      grabPointer(true, true);
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(true);
-@@ -1481,6 +1482,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+@@ -1493,6 +1494,9 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
                      GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
                      pKeyboardFrame->grabKeyboard(false);
                      grabPointer(false);
@@ -255,7 +302,7 @@ index 2d2df88..760a324 100644
                  }
              }
              gtk_widget_hide( m_pWindow );
-@@ -2364,11 +2368,17 @@ const SystemEnvData* GtkSalFrame::GetSystemData() const
+@@ -2376,11 +2380,17 @@ const SystemEnvData* GtkSalFrame::GetSystemData() const
  
  void GtkSalFrame::SetParent( SalFrame* pNewParent )
  {
@@ -277,7 +324,7 @@ index 2d2df88..760a324 100644
      if( ! isChild() )
          gtk_window_set_transient_for( GTK_WINDOW(m_pWindow),
                                        (m_pParent && ! m_pParent->isChild(true,false)) ? GTK_WINDOW(m_pParent->m_pWindow) : nullptr
-@@ -2419,13 +2429,6 @@ void GtkSalFrame::SetModal(bool bModal)
+@@ -2431,13 +2441,6 @@ void GtkSalFrame::SetModal(bool bModal)
      if (!m_pWindow)
          return;
      gtk_window_set_modal(GTK_WINDOW(m_pWindow), bModal);
@@ -292,5 +339,5 @@ index 2d2df88..760a324 100644
  
  gboolean GtkSalFrame::signalTooltipQuery(GtkWidget*, gint /*x*/, gint /*y*/,
 -- 
-2.7.3
+2.7.4
 

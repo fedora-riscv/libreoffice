@@ -321,7 +321,7 @@ Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
-%if 0%{fedora}
+%if 0%{?fedora}
 Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
 %else
 # these two plugins used to be part of core--keep it that way

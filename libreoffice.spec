@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        9%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -233,8 +233,6 @@ Patch4: 0001-disable-firebird-unit-test.patch
 Patch5: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch7: 0001-rhbz-1343752-fix-view-status-in-menu.patch
-Patch8: 0002-sort-the-array.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2237,7 +2235,8 @@ done
 %endif
 
 %changelog
-* Thu Jun 16 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-9.beta2-UNBUILT
+* Wed Jun 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-1
+- update to 5.1.0 rc1
 - rhbz#1343752 wrong radiobutton and checkbutton behavior in "view" menu
 
 * Thu Jun 09 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-8.beta2

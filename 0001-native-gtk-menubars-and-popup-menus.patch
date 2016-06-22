@@ -1,4 +1,4 @@
-From b43cc882bc0e1e898a6ef737b64e90a330026418 Mon Sep 17 00:00:00 2001
+From af3a934618ced4d9576dab45113b882a658530ef Mon Sep 17 00:00:00 2001
 From: Maxim Monastirsky <momonasmon@gmail.com>
 Date: Sun, 7 Feb 2016 17:53:40 +0200
 Subject: [PATCH] native gtk menubars and popup menus
@@ -279,6 +279,21 @@ try fix that view->toolbars isn't in sync
 Change-Id: I095be3003f076193878f2c3ce2a2be5acbe0e33f
 (cherry picked from commit 15436c009e756dd4c94046f9849ad5a186454af8)
 (cherry picked from commit 10ee6a954671407d25d35d01c62657a367278e69)
+
+g_icon_serialize is only in glib >= 2.38
+
+Change-Id: I824ebd9083bd702e90f577471248be43707cc811
+(cherry picked from commit 1ad4575723a91883b8c179e247fd06d822ca7f84)
+
+G_MENU_ATTRIBUTE_ICON is only in glib >= 2.38
+
+Change-Id: I7761ac05fbc9be39a6982ba66054c75a331816be
+
+g_bytes_icon_new is only in glib >= 2.38
+
+Change-Id: I57f2d016eb6d35d2bc9be090444be1190d68d11d
+(cherry picked from commit 9ffd60792c0d445f3061d9593c233660799cd401)
+(cherry picked from commit 1458470cfc3e3f4840f0e245c2e03adeb89a008a)
 ---
  framework/inc/uielement/toolbarmanager.hxx       |   2 +-
  framework/source/layoutmanager/layoutmanager.cxx |  57 +-
@@ -299,13 +314,13 @@ Change-Id: I095be3003f076193878f2c3ce2a2be5acbe0e33f
  vcl/source/window/toolbox2.cxx                   |  20 +-
  vcl/unx/gtk/a11y/atklistener.cxx                 |   1 -
  vcl/unx/gtk/gloactiongroup.cxx                   |  64 +--
- vcl/unx/gtk/glomenu.cxx                          |  38 ++
+ vcl/unx/gtk/glomenu.cxx                          |  48 ++
  vcl/unx/gtk/gtkdata.cxx                          |  19 +-
  vcl/unx/gtk/gtksalframe.cxx                      |  21 +-
- vcl/unx/gtk/gtksalmenu.cxx                       | 695 +++++++++++++++--------
+ vcl/unx/gtk/gtksalmenu.cxx                       | 701 +++++++++++++++--------
  vcl/unx/gtk3/gtk3gtkframe.cxx                    |  35 +-
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        |   1 -
- 25 files changed, 752 insertions(+), 482 deletions(-)
+ 25 files changed, 768 insertions(+), 482 deletions(-)
 
 diff --git a/framework/inc/uielement/toolbarmanager.hxx b/framework/inc/uielement/toolbarmanager.hxx
 index f109f14..1efcde3 100644
@@ -1223,10 +1238,10 @@ index 7d846eb..1728f13 100644
          GLOAction* action = g_lo_action_new();
  
 diff --git a/vcl/unx/gtk/glomenu.cxx b/vcl/unx/gtk/glomenu.cxx
-index 6aa19e6..7fd6cc6 100644
+index 6aa19e6..da3eee4 100644
 --- a/vcl/unx/gtk/glomenu.cxx
 +++ b/vcl/unx/gtk/glomenu.cxx
-@@ -229,6 +229,23 @@ g_lo_menu_set_label (GLOMenu     *menu,
+@@ -229,6 +229,33 @@ g_lo_menu_set_label (GLOMenu     *menu,
  }
  
  void
@@ -1239,9 +1254,19 @@ index 6aa19e6..7fd6cc6 100644
 +    GVariant *value;
 +
 +    if (icon != nullptr)
++    {
++#if GLIB_CHECK_VERSION(2,38,0)
 +        value = g_icon_serialize (const_cast<GIcon*>(icon));
++#else
++        value = nullptr;
++#endif
++    }
 +    else
 +        value = nullptr;
++
++#ifndef G_MENU_ATTRIBUTE_ICON
++#    define G_MENU_ATTRIBUTE_ICON "icon"
++#endif
 +
 +    g_lo_menu_set_attribute_value (menu, position, G_MENU_ATTRIBUTE_ICON, value);
 +}
@@ -1250,7 +1275,7 @@ index 6aa19e6..7fd6cc6 100644
  g_lo_menu_set_label_to_item_in_section (GLOMenu     *menu,
                                          gint         section,
                                          gint         position,
-@@ -248,6 +265,26 @@ g_lo_menu_set_label_to_item_in_section (GLOMenu     *menu,
+@@ -248,6 +275,26 @@ g_lo_menu_set_label_to_item_in_section (GLOMenu     *menu,
      g_object_unref (model);
  }
  
@@ -1277,7 +1302,7 @@ index 6aa19e6..7fd6cc6 100644
  gchar *
  g_lo_menu_get_label_from_item_in_section (GLOMenu *menu,
                                            gint     section,
-@@ -294,6 +331,7 @@ g_lo_menu_set_action_and_target_value (GLOMenu     *menu,
+@@ -294,6 +341,7 @@ g_lo_menu_set_action_and_target_value (GLOMenu     *menu,
  
      g_lo_menu_set_attribute_value (menu, position, G_MENU_ATTRIBUTE_ACTION, action_value);
      g_lo_menu_set_attribute_value (menu, position, G_MENU_ATTRIBUTE_TARGET, target_value);
@@ -1381,7 +1406,7 @@ index 95fd581..076a60a 100644
  }
  #endif
 diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
-index b6295fa..a77b2f2 100644
+index b6295fa..2711291 100644
 --- a/vcl/unx/gtk/gtksalmenu.cxx
 +++ b/vcl/unx/gtk/gtksalmenu.cxx
 @@ -16,7 +16,9 @@
@@ -1634,11 +1659,13 @@ index b6295fa..a77b2f2 100644
 +    while (pMenu->mpParentSalMenu)
 +        pMenu = pMenu->mpParentSalMenu;
 +    ImplUpdate(false, !pMenu->mbMenuBar);
-+}
-+
+ }
+ 
+-void GtkSalMenu::UpdateFull()
 +#if GTK_CHECK_VERSION(3,0,0)
 +static void MenuPositionFunc(GtkMenu* menu, gint* x, gint* y, gboolean* push_in, gpointer user_data)
-+{
+ {
+-    ImplUpdate( TRUE );
 +    Point *pPos = static_cast<Point*>(user_data);
 +    *x = pPos->X();
 +    if (gtk_widget_get_default_direction() == GTK_TEXT_DIR_RTL)
@@ -1649,14 +1676,12 @@ index b6295fa..a77b2f2 100644
 +    }
 +    *y = pPos->Y();
 +    *push_in = false;
- }
++}
 +#endif
- 
--void GtkSalMenu::UpdateFull()
++
 +bool GtkSalMenu::ShowNativePopupMenu(FloatingWindow* pWin, const Rectangle& rRect,
 +                                     FloatWinPopupFlags nFlags)
- {
--    ImplUpdate( TRUE );
++{
 +#if GTK_CHECK_VERSION(3,0,0)
 +    guint nButton;
 +    guint32 nTime;
@@ -2020,7 +2045,7 @@ index b6295fa..a77b2f2 100644
  }
  
  const GtkSalFrame* GtkSalMenu::GetFrame() const
-@@ -540,6 +765,34 @@ void GtkSalMenu::NativeSetItemText( unsigned nSection, unsigned nItemPos, const
+@@ -540,6 +765,40 @@ void GtkSalMenu::NativeSetItemText( unsigned nSection, unsigned nItemPos, const
          g_free( aLabel );
  }
  
@@ -2035,6 +2060,7 @@ index b6295fa..a77b2f2 100644
 +
 +void GtkSalMenu::NativeSetItemIcon( unsigned nSection, unsigned nItemPos, const Image& rImage )
 +{
++#if GLIB_CHECK_VERSION(2,38,0)
 +    SolarMutexGuard aGuard;
 +
 +    SvMemoryStream* pMemStm = new SvMemoryStream;
@@ -2050,12 +2076,17 @@ index b6295fa..a77b2f2 100644
 +    g_lo_menu_set_icon_to_item_in_section( G_LO_MENU( mpMenuModel ), nSection, nItemPos, pIcon );
 +    g_object_unref(pIcon);
 +    g_bytes_unref(pBytes);
++#else
++    (void)nSection;
++    (void)nItemPos;
++    (void)rImage;
++#endif
 +}
 +
  void GtkSalMenu::NativeSetAccelerator( unsigned nSection, unsigned nItemPos, const vcl::KeyCode& rKeyCode, const OUString& rKeyName )
  {
      SolarMutexGuard aGuard;
-@@ -562,7 +815,7 @@ void GtkSalMenu::NativeSetAccelerator( unsigned nSection, unsigned nItemPos, con
+@@ -562,7 +821,7 @@ void GtkSalMenu::NativeSetAccelerator( unsigned nSection, unsigned nItemPos, con
      g_free( aCurrentAccel );
  }
  
@@ -2064,7 +2095,7 @@ index b6295fa..a77b2f2 100644
                                         unsigned nItemPos,
                                         sal_uInt16 nId,
                                         const gchar* aCommand,
-@@ -570,35 +823,38 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -570,35 +829,38 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
                                         gboolean bChecked,
                                         gboolean bIsSubmenu )
  {
@@ -2125,7 +2156,7 @@ index b6295fa..a77b2f2 100644
      }
  
      GLOMenu* pMenu = G_LO_MENU( mpMenuModel );
-@@ -608,6 +864,18 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -608,6 +870,18 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if ( aCurrentCommand == nullptr || g_strcmp0( aCurrentCommand, aCommand ) != 0 )
      {
@@ -2144,7 +2175,7 @@ index b6295fa..a77b2f2 100644
          g_lo_menu_set_command_to_item_in_section( pMenu, nSection, nItemPos, aCommand );
  
          gchar* aItemCommand = g_strconcat("win.", aCommand, NULL );
-@@ -628,128 +896,107 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
+@@ -628,128 +902,107 @@ void GtkSalMenu::NativeSetItemCommand( unsigned nSection,
  
      if (pTarget)
          g_variant_unref(pTarget);
@@ -2212,8 +2243,7 @@ index b6295fa..a77b2f2 100644
 -        else
 -            rDupsToSkip = 0;
 +        OString sCommand(action_name);
- 
--        return aCommand;
++
 +        sal_Int32 nIndex = 0;
 +        OString sWindow = sCommand.getToken(0, '-', nIndex);
 +        OString sGtkSalMenu = sCommand.getToken(0, '-', nIndex);
@@ -2223,7 +2253,8 @@ index b6295fa..a77b2f2 100644
 +
 +        assert(sWindow == "window" && pSalSubMenu);
 +        (void)sWindow;
-+
+ 
+-        return aCommand;
 +        return MenuAndId(pSalSubMenu, sItemId.toInt32());
      }
  }

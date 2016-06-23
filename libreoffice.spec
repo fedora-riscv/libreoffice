@@ -91,25 +91,13 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/3941e9cab2f4f9d8faee3e8d57ae7664-glew-1.12.0.zip
-Source102:      %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
-Source103:      %{external_url}/liborcus-0.9.2.tar.gz
-Source104:      %{external_url}/mdds_0.12.1.tar.bz2
-Source105:      %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
-Source106:      %{external_url}/libcdr-0.1.2.tar.bz2
-Source107:      %{external_url}/libwpg-0.3.1.tar.bz2
-Source108:      %{external_url}/libwpd-0.10.1.tar.bz2
-Source109:      %{external_url}/libwps-0.4.2.tar.bz2
-Source110:      %{external_url}/libvisio-0.1.5.tar.bz2
-Source111:      %{external_url}/libmspub-0.1.2.tar.bz2
-Source112:      %{external_url}/libodfgen-0.1.6.tar.bz2
-Source113:      %{external_url}/libmwaw-0.3.7.tar.bz2
-Source114:      %{external_url}/libetonyek-0.1.6.tar.bz2
-Source115:      %{external_url}/libfreehand-0.1.1.tar.bz2
-Source116:      %{external_url}/libabw-0.1.1.tar.bz2
-Source117:      %{external_url}/librevenge-0.0.4.tar.bz2
-Source118:      %{external_url}/libpagemaker-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-glew --without-system-glm --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libcdr --without-system-libwpg --without-system-libwpd --without-system-libwps --without-system-libvisio --without-system-libmspub --without-system-libodfgen --without-system-libmwaw --without-system-libetonyek --without-system-libfreehand --without-system-libabw --without-system-librevenge --without-system-libpagemaker
+Source101:      %{external_url}/liborcus-0.9.2.tar.gz
+# system mdds 0.10.3 causes a crash in sc_ucalc unit test
+Source102:      %{external_url}/mdds_0.12.1.tar.bz2
+Source103:      %{external_url}/5821b806a98e6c38370970e682ce76e8-libcmis-0.5.0.tar.gz
+Source104:      %{external_url}/libwps-0.4.2.tar.bz2
+Source105:      %{external_url}/libpagemaker-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
 %endif
 
 # build tools
@@ -142,6 +130,7 @@ BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
+BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libicu-devel
 BuildRequires: libjpeg-turbo-devel
@@ -153,6 +142,7 @@ BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
+BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(glu)
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(gstreamer-1.0)
@@ -162,11 +152,22 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
 BuildRequires: pkgconfig(lcms2)
+BuildRequires: pkgconfig(libabw-0.1)
+BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libclucene-core)
 BuildRequires: pkgconfig(libcurl)
+BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libexttextcat)
+BuildRequires: pkgconfig(libfreehand-0.1)
 BuildRequires: pkgconfig(libidn)
 BuildRequires: pkgconfig(liblangtag)
+BuildRequires: pkgconfig(libmspub-0.1)
+BuildRequires: pkgconfig(libmwaw-0.3)
+BuildRequires: pkgconfig(libodfgen-0.1)
+BuildRequires: pkgconfig(librevenge-0.0)
+BuildRequires: pkgconfig(libvisio-0.1)
+BuildRequires: pkgconfig(libwpd-0.10)
+BuildRequires: pkgconfig(libwpg-0.3)
 BuildRequires: pkgconfig(libxml-2.0)
 BuildRequires: pkgconfig(libxslt)
 BuildRequires: pkgconfig(mythes)
@@ -287,13 +288,6 @@ Patch501: 0001-fix-build-with-gcc-4.8.patch
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
 %global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.10\\.so.*$
-%global __provides_exclude %{libo_bundled_libs_filter}
-%global __requires_exclude %{libo_bundled_libs_filter}
-%endif
-
-# rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel}
-%global libo_bundled_libs_filter ^libGLEW\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -1540,13 +1534,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
-%{baseinstdir}/program/libetonyek-0.1-lo.so.*
-%{baseinstdir}/program/libGLEW.so.*
-%{baseinstdir}/program/libmwaw-0.3-lo.so.*
-%{baseinstdir}/program/libodfgen-0.1-lo.so.*
-%{baseinstdir}/program/librevenge-0.0-lo.so.*
-%{baseinstdir}/program/libwpd-0.10-lo.so.*
-%{baseinstdir}/program/libwpg-0.3-lo.so.*
 %{baseinstdir}/program/libwps-0.4-lo.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so

@@ -2237,7 +2237,8 @@ done
 %changelog
 * Wed Jun 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-1
 - update to 5.1.0 rc1
-- rhbz#1343752 wrong radiobutton and checkbutton behavior in "view" menu
+- Resolves: rhbz#1343752 wrong radiobutton and checkbutton behavior in
+  "view" menu
 - Resolves: rhbz#1349261 do not pull in all variants of english dicts
 
 * Thu Jun 09 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.0-8.beta2

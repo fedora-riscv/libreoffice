@@ -2281,7 +2281,7 @@ done
 %endif
 
 %changelog
-* Thu Jun 16 2016 David Tardon <dtardon@redhat.com> - 1:5.1.4.2-2-UNBUILT
+* Thu Jun 23 2016 David Tardon <dtardon@redhat.com> - 1:5.1.4.2-2
 - Resolves: rhbz#1343752 wrong radiobutton and checkbutton behavior in
   "view" menu
 - Resolves: rhbz#1349261 do not pull in all variants of english dicts

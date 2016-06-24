@@ -1,4 +1,4 @@
-From 91e881d3b4113c94650682b7d850b322a2866628 Mon Sep 17 00:00:00 2001
+From eb999f6174d862df2f51015b54c48393df7b1e53 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 23 Jun 2016 17:32:11 +0100
 Subject: [PATCH] Resolves: rhbz#1349501 gtk3: smooth scrolling events can be
@@ -10,25 +10,27 @@ scrolling
 (cherry picked from commit 7dfd50f947671d79b9119f10259857700d5728d8)
 
 Change-Id: I7df63f738983c90dea75b9f43a36133910446aba
+
+Resolves: rhbz#1349501 gtk3: smooth scrolling events can be disabled...
+
+better fix, if we listen to the eventbox we get either SMOOTH scrolling
+or not smooth events, not both. We get SMOOTH when supported, and not
+if not supported so no need to reintroduce the miserable hack, which
+doesn't work under wayland anyway
+
+Change-Id: I993e71d3553322425a506cd93d812efe081bf3c9
+(cherry picked from commit 053a843bccaef2d2323be3ddff6217c592a4c5db)
 ---
- vcl/inc/unx/gtk/gtkframe.hxx  |   3 +-
+ vcl/inc/unx/gtk/gtkframe.hxx  |   2 +-
  vcl/unx/gtk/gtksalframe.cxx   |   3 +-
- vcl/unx/gtk3/gtk3gtkframe.cxx | 120 +++++++++++++++++++++++++++++-------------
- 3 files changed, 85 insertions(+), 41 deletions(-)
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 112 +++++++++++++++++++++++++++---------------
+ 3 files changed, 75 insertions(+), 42 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index eaa222f..f4d2f38 100644
+index eaa222f..3b81c54 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -210,6 +210,7 @@ class GtkSalFrame : public SalFrame
- #if GTK_CHECK_VERSION(3,0,0)
-     OUString                        m_aTooltip;
-     Rectangle                       m_aHelpArea;
-+    guint32                         m_nLastScrollEventTime;
-     long                            m_nWidthRequest;
-     long                            m_nHeightRequest;
-     cairo_region_t*                 m_pRegion;
-@@ -277,7 +278,7 @@ class GtkSalFrame : public SalFrame
+@@ -277,7 +277,7 @@ class GtkSalFrame : public SalFrame
      static gboolean     signalKey( GtkWidget*, GdkEventKey*, gpointer );
      static gboolean     signalDelete( GtkWidget*, GdkEvent*, gpointer );
      static gboolean     signalWindowState( GtkWidget*, GdkEvent*, gpointer );
@@ -54,18 +56,26 @@ index 95fd581..84615c8 100644
      static sal_uLong        nLines = 0;
      if( ! nLines )
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 6363815..6b006cc 100644
+index 6363815..1c57991 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -1077,6 +1077,7 @@ void GtkSalFrame::InitCommon()
-     m_bSpanMonitorsWhenFullscreen = false;
-     m_nState            = GDK_WINDOW_STATE_WITHDRAWN;
-     m_nVisibility       = GDK_VISIBILITY_FULLY_OBSCURED;
-+    m_nLastScrollEventTime = GDK_CURRENT_TIME;
-     m_bSendModChangeOnRelease = false;
-     m_pIMHandler        = nullptr;
-     m_hBackgroundPixmap = None;
-@@ -2559,54 +2560,97 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+@@ -1039,6 +1039,7 @@ void GtkSalFrame::InitCommon()
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "drag-failed", G_CALLBACK(signalDragFailed), this ));
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "drag-data-delete", G_CALLBACK(signalDragDelete), this ));
+     m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "drag-data-get", G_CALLBACK(signalDragDataGet), this ));
++    m_aMouseSignalIds.push_back(g_signal_connect( G_OBJECT(pEventWidget), "scroll-event", G_CALLBACK(signalScroll), this ));
+ 
+     g_signal_connect( G_OBJECT(m_pFixedContainer), "draw", G_CALLBACK(signalDraw), this );
+     g_signal_connect( G_OBJECT(m_pFixedContainer), "size-allocate", G_CALLBACK(sizeAllocated), this );
+@@ -1064,7 +1065,6 @@ void GtkSalFrame::InitCommon()
+     g_signal_connect( G_OBJECT(m_pWindow), "key-release-event", G_CALLBACK(signalKey), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "delete-event", G_CALLBACK(signalDelete), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "window-state-event", G_CALLBACK(signalWindowState), this );
+-    g_signal_connect( G_OBJECT(m_pWindow), "scroll-event", G_CALLBACK(signalScroll), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "leave-notify-event", G_CALLBACK(signalCrossing), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "enter-notify-event", G_CALLBACK(signalCrossing), this );
+     g_signal_connect( G_OBJECT(m_pWindow), "visibility-notify-event", G_CALLBACK(signalVisibility), this );
+@@ -2559,54 +2559,88 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
      return true;
  }
  
@@ -78,13 +88,6 @@ index 6363815..6b006cc 100644
 -
      GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
  
-+    // gnome#726878 check for duplicate legacy scroll event
-+    if (pEvent->direction != GDK_SCROLL_SMOOTH &&
-+        pThis->m_nLastScrollEventTime == pEvent->time)
-+    {
-+        return false;
-+    }
-+
      SalWheelMouseEvent aEvent;
  
 -    aEvent.mnTime = pSEvent->time;
@@ -131,8 +134,6 @@ index 6363815..6b006cc 100644
 -
 -        pThis->CallCallback(SALEVENT_WHEELMOUSE, &aEvent);
 +        case GDK_SCROLL_SMOOTH:
-+            pThis->m_nLastScrollEventTime = pEvent->time;
-+
 +            // rhbz#1344042 "Traditionally" in gtk3 we tool a single up/down event as
 +            // equating to 3 scroll lines and a delta of 120. So scale the delta here
 +            // by 120 where a single mouse wheel click is an incoming delta_x of 1

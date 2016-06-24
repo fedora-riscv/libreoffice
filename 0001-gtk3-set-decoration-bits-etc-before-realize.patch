@@ -1,0 +1,57 @@
+From 7f928c43729995b2402a6897a86bc2acf9679db0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Mar 2016 09:38:48 +0000
+Subject: [PATCH] gtk3: set decoration bits etc before realize
+
+cause wayland is sticking a title bar into the toolbars otherwise, sigh
+
+Change-Id: Id012e9508cc0dfafbda344974a96d8a038c6c9f4
+(cherry picked from commit 68d200f490a7a21c365bf43c710c46a87f84483d)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index d923a69..a5abe4a 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1214,8 +1214,6 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+         g_object_unref(gtk_window_get_group(GTK_WINDOW(m_pWindow)));
+     }
+ 
+-    InitCommon();
+-
+     // set window type
+     bool bDecoHandling =
+         ! isChild() &&
+@@ -1245,10 +1243,13 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+         }
+         gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), eType );
+         gtk_window_set_gravity( GTK_WINDOW(m_pWindow), GDK_GRAVITY_STATIC );
++        gtk_window_set_resizable( GTK_WINDOW(m_pWindow), bool(nStyle & SalFrameStyleFlags::SIZEABLE) );
+     }
+     else if( (nStyle & SalFrameStyleFlags::FLOAT) )
+         gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), GDK_WINDOW_TYPE_HINT_POPUP_MENU );
+ 
++    InitCommon();
++
+     if( eWinType == GTK_WINDOW_TOPLEVEL )
+     {
+ #ifdef ENABLE_GMENU_INTEGRATION
+@@ -1257,13 +1258,6 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+ #endif
+ 
+     }
+-
+-    if( bDecoHandling )
+-    {
+-        gtk_window_set_resizable( GTK_WINDOW(m_pWindow), bool(nStyle & SalFrameStyleFlags::SIZEABLE) );
+-        if( ( (nStyle & (SalFrameStyleFlags::OWNERDRAWDECORATION)) ) )
+-            gtk_window_set_accept_focus(GTK_WINDOW(m_pWindow), false);
+-    }
+ }
+ 
+ GdkNativeWindow GtkSalFrame::findTopLevelSystemWindow( GdkNativeWindow aWindow )
+-- 
+2.7.4
+

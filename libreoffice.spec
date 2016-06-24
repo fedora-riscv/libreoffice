@@ -2284,7 +2284,7 @@ done
 %endif
 
 %changelog
-* Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
+* Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3
 - Resolves: rhbz#1349501 gtk3 smooth scrolling events can be user-disabled
 - Resolves: rhbz#1326304 cannot detect loss of wayland clipboard ownership
 - Resolves: rhbz#1342822 gtk3 set decoration bits before realize

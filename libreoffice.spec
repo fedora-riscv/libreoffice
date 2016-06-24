@@ -264,6 +264,7 @@ Patch35: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
 Patch36: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
 Patch37: 0001-rhbz-1343752-fix-view-status-in-menu.patch
 Patch38: 0001-Resolves-rhbz-1349501-gtk3-smooth-scrolling-events-c.patch
+Patch39: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2282,8 +2283,9 @@ done
 %endif
 
 %changelog
-* Thu Jun 23 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
+* Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3-UNBUILT
 - Resolves: rhbz#1349501 gtk3 smooth scrolling events can be user-disabled
+- Resolves: rhbz#1326304 cannot detect loss of wayland clipboard ownership
 
 * Thu Jun 23 2016 David Tardon <dtardon@redhat.com> - 1:5.1.4.2-2
 - Resolves: rhbz#1343752 wrong radiobutton and checkbutton behavior in

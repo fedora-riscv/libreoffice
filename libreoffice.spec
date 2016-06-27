@@ -311,9 +311,9 @@ Patch78: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch79: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 Patch80: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
 Patch81: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
-0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
-0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
-0003-package-fix-exception-handling-in-DeflateThread-rela.patch
+Patch82: 0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
+Patch83: 0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
+Patch84: 0003-package-fix-exception-handling-in-DeflateThread-rela.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -311,6 +311,9 @@ Patch78: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
 Patch79: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
 Patch80: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
 Patch81: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
+0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
+0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
+0003-package-fix-exception-handling-in-DeflateThread-rela.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2225,6 +2228,10 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-9-UNBUILT
+- Resolves: tdf#93553 limit parallel zip parallelism
+- Related: tdf#91807 fix parallel zip error handling
+
 * Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-8
 - Resolves: Resolves: tdf#93135 resize shape to text doesn't work
 

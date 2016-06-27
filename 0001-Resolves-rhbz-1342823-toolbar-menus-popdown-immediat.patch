@@ -1,0 +1,209 @@
+From ea34cf69c7c5d02f7751f1b20e74fcfe23755380 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 13 Jun 2016 14:44:59 +0100
+Subject: [PATCH] Resolves: rhbz#1342823 toolbar menus popdown immediately
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+(cherry picked from commit f7c888994db744396c69aa1be720c2089ada5798)
+
+Change-Id: I9cecf50fb85d84e108ccc23d22bf97d2ac510a9b
+
+Related: tdf#100337 revert x-crossplatform ToTop...
+
+which was added in...
+
+commit 82abd23f3ee1900b7579e5a0afa23581d5836f01
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Thu Nov 12 16:05:44 2015 +0000
+
+    Resolves: tdf#93317 Modified Document Dialog misses focus on Gtk3
+
+because it reportedly causes a windows-only regression
+
+and instead fix tdf#93317 by presenting windows and taking focus
+using the last received user input time to ensure that the ToTop
+on the main window doesn't take precedence over the following
+gtk_widget_show of the quit dialog
+
+(cherry picked from commit 1092cc0c75f6d2ab649dd31b1db9f0a9f0944355)
+
+Change-Id: I08d1889232af75ca214ccafe9e4e9364df74fbe2
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  4 +++-
+ vcl/source/window/dialog.cxx  |  1 -
+ vcl/unx/gtk/gtksalframe.cxx   | 14 +++++++-------
+ vcl/unx/gtk/gtksalmenu.cxx    |  2 +-
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 29 ++++++++++++++++++++++++-----
+ 5 files changed, 35 insertions(+), 15 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index b5eb02d..85ceb9a 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -277,7 +277,7 @@ class GtkSalFrame : public SalFrame
+     static gboolean     signalKey( GtkWidget*, GdkEventKey*, gpointer );
+     static gboolean     signalDelete( GtkWidget*, GdkEvent*, gpointer );
+     static gboolean     signalWindowState( GtkWidget*, GdkEvent*, gpointer );
+-    static gboolean     signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer );
++    static gboolean     signalScroll( GtkWidget*, GdkEventScroll*, gpointer );
+     static gboolean     signalCrossing( GtkWidget*, GdkEventCrossing*, gpointer );
+     static gboolean     signalVisibility( GtkWidget*, GdkEventVisibility*, gpointer );
+     static void         signalDestroy( GtkWidget*, gpointer );
+@@ -528,6 +528,8 @@ public:
+ 
+     static void                 KeyCodeToGdkKey(const vcl::KeyCode& rKeyCode,
+         guint* pGdkKeyCode, GdkModifierType *pGdkModifiers);
++
++    static guint32              GetLastInputEventTime();
+ };
+ 
+ #define OOO_TYPE_FIXED ooo_fixed_get_type()
+diff --git a/vcl/source/window/dialog.cxx b/vcl/source/window/dialog.cxx
+index 8b70c2e..f9a0997 100644
+--- a/vcl/source/window/dialog.cxx
++++ b/vcl/source/window/dialog.cxx
+@@ -866,7 +866,6 @@ bool Dialog::ImplStartExecuteModal()
+     ImplAdjustNWFSizes();
+ 
+     Show();
+-    ToTop();
+ 
+     pSVData->maAppData.mnModalMode++;
+     return true;
+diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
+index 4f9c6da..4207ae2 100644
+--- a/vcl/unx/gtk/gtksalframe.cxx
++++ b/vcl/unx/gtk/gtksalframe.cxx
+@@ -2838,7 +2838,7 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+     return true;
+ }
+ 
+-gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pSEvent, gpointer frame )
++gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer frame )
+ {
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+@@ -2851,16 +2851,16 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pSEvent, gpointe
+             nLines = SAL_WHEELMOUSE_EVENT_PAGESCROLL;
+     }
+ 
+-    bool bNeg = (pSEvent->direction == GDK_SCROLL_DOWN || pSEvent->direction == GDK_SCROLL_RIGHT );
++    bool bNeg = (pEvent->direction == GDK_SCROLL_DOWN || pEvent->direction == GDK_SCROLL_RIGHT );
+     SalWheelMouseEvent aEvent;
+-    aEvent.mnTime           = pSEvent->time;
+-    aEvent.mnX              = (sal_uLong)pSEvent->x;
+-    aEvent.mnY              = (sal_uLong)pSEvent->y;
++    aEvent.mnTime           = pEvent->time;
++    aEvent.mnX              = (sal_uLong)pEvent->x;
++    aEvent.mnY              = (sal_uLong)pEvent->y;
+     aEvent.mnDelta          = bNeg ? -120 : 120;
+     aEvent.mnNotchDelta     = bNeg ? -1 : 1;
+     aEvent.mnScrollLines    = nLines;
+-    aEvent.mnCode           = GetMouseModCode( pSEvent->state );
+-    aEvent.mbHorz           = (pSEvent->direction == GDK_SCROLL_LEFT || pSEvent->direction == GDK_SCROLL_RIGHT);
++    aEvent.mnCode           = GetMouseModCode( pEvent->state );
++    aEvent.mbHorz           = (pEvent->direction == GDK_SCROLL_LEFT || pEvent->direction == GDK_SCROLL_RIGHT);
+ 
+     // --- RTL --- (mirror mouse pos)
+     if( AllSettings::GetLayoutRTL() )
+diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
+index 2711291..a06b580 100644
+--- a/vcl/unx/gtk/gtksalmenu.cxx
++++ b/vcl/unx/gtk/gtksalmenu.cxx
+@@ -360,7 +360,7 @@ bool GtkSalMenu::ShowNativePopupMenu(FloatingWindow* pWin, const Rectangle& rRec
+     else
+     {
+         nButton = 0;
+-        nTime = gtk_get_current_event_time();
++        nTime = GtkSalFrame::GetLastInputEventTime();
+     }
+ 
+     VclPtr<vcl::Window> xParent = pWin->ImplGetWindowImpl()->mpRealParent;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index cd980ce..7694a33 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2028,6 +2028,18 @@ void GtkSalFrame::SetAlwaysOnTop( bool bOnTop )
+         gtk_window_set_keep_above( GTK_WINDOW( m_pWindow ), bOnTop );
+ }
+ 
++static guint32 nLastUserInputTime = GDK_CURRENT_TIME;
++
++guint32 GtkSalFrame::GetLastInputEventTime()
++{
++    return nLastUserInputTime;
++}
++
++static void UpdateLastInputEventTime(guint32 nUserInputTime)
++{
++    nLastUserInputTime = nUserInputTime;
++}
++
+ void GtkSalFrame::ToTop( sal_uInt16 nFlags )
+ {
+     if( m_pWindow )
+@@ -2037,12 +2049,9 @@ void GtkSalFrame::ToTop( sal_uInt16 nFlags )
+         else if( IS_WIDGET_MAPPED( m_pWindow ) )
+         {
+             if( ! (nFlags & SAL_FRAME_TOTOP_GRABFOCUS_ONLY) )
+-                gtk_window_present( GTK_WINDOW(m_pWindow) );
++                gtk_window_present_with_time(GTK_WINDOW(m_pWindow), GetLastInputEventTime());
+             else
+-            {
+-                guint32 nUserTime = GDK_CURRENT_TIME;
+-                gdk_window_focus( widget_get_window(m_pWindow), nUserTime );
+-            }
++                gdk_window_focus(widget_get_window(m_pWindow), GetLastInputEventTime());
+         }
+         else
+         {
+@@ -2460,6 +2469,8 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpA
+ 
+ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer frame )
+ {
++    UpdateLastInputEventTime(pEvent->time);
++
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+     SalMouseEvent aEvent;
+@@ -2551,6 +2562,8 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+ 
+ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer frame )
+ {
++    UpdateLastInputEventTime(pEvent->time);
++
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+     SalWheelMouseEvent aEvent;
+@@ -2680,6 +2693,8 @@ void GtkSalFrame::gestureLongPress(GtkGestureLongPress* gesture, gpointer frame)
+ 
+ gboolean GtkSalFrame::signalMotion( GtkWidget*, GdkEventMotion* pEvent, gpointer frame )
+ {
++    UpdateLastInputEventTime(pEvent->time);
++
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+     SalMouseEvent aEvent;
+@@ -2722,6 +2737,8 @@ gboolean GtkSalFrame::signalMotion( GtkWidget*, GdkEventMotion* pEvent, gpointer
+ 
+ gboolean GtkSalFrame::signalCrossing( GtkWidget*, GdkEventCrossing* pEvent, gpointer frame )
+ {
++    UpdateLastInputEventTime(pEvent->time);
++
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+     SalMouseEvent aEvent;
+     aEvent.mnTime   = pEvent->time;
+@@ -2922,6 +2939,8 @@ gboolean GtkSalFrame::signalUnmap( GtkWidget*, GdkEvent*, gpointer frame )
+ 
+ gboolean GtkSalFrame::signalKey( GtkWidget*, GdkEventKey* pEvent, gpointer frame )
+ {
++    UpdateLastInputEventTime(pEvent->time);
++
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
+     vcl::DeletionListener aDel( pThis );
+-- 
+2.7.4
+

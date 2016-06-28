@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -234,6 +234,8 @@ Patch5: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch7: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
+Patch8: 0001-rhbz-1341064-fix-OutputDevice-test-on-big-endian-sys.patch
+Patch9: 0002-update-other-places-that-read-data-from-cairo-image-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2236,6 +2238,9 @@ done
 %endif
 
 %changelog
+* Tue Jun 28 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-2
+- Resolves: rhbz#1341064 fix test on big endian systems
+
 * Wed Jun 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-1
 - update to 5.1.0 rc1
 - Resolves: rhbz#1343752 wrong radiobutton and checkbutton behavior in

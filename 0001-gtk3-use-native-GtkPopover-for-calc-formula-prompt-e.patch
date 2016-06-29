@@ -1,4 +1,4 @@
-From 421cd8a4982c9ac6be877df670634200530662b2 Mon Sep 17 00:00:00 2001
+From adc7dcad8ea2748e69dba5bf46ccc67fa7a4dcb0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 17 Feb 2016 10:47:16 +0000
 Subject: [PATCH] gtk3: use native GtkPopover for calc formula prompt, etc
@@ -332,7 +332,7 @@ index 79ee86c..8240f5f 100644
      {
          if ( rMEvt.IsLeaveWindow() )
 diff --git a/svtools/source/table/tabledatawindow.hxx b/svtools/source/table/tabledatawindow.hxx
-index 6507147ac..708d509 100644
+index 6507147..708d509 100644
 --- a/svtools/source/table/tabledatawindow.hxx
 +++ b/svtools/source/table/tabledatawindow.hxx
 @@ -38,7 +38,6 @@ namespace svt { namespace table
@@ -411,10 +411,10 @@ index c08486f..0a34503 100644
          return false;
      }
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index d5d69d1..4a75136 100644
+index 8be480f..d5aa627 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -519,6 +519,9 @@ public:
+@@ -520,6 +520,9 @@ public:
  #if GTK_CHECK_VERSION(3,0,0)
      virtual void                SetModal(bool bModal) override;
      virtual bool                ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpArea) override;
@@ -498,10 +498,10 @@ index 19570ce..e29d9ee 100644
                  vcl::Window * pWindow = pHelpWin->GetParent()->ImplGetFrameWindow();
                  Rectangle aInvRect( pHelpWin->GetWindowExtentsRelative( pWindow ) );
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 50ab3a3..e3680d9 100644
+index f5443e7..db2c25d 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -2458,6 +2458,99 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpA
+@@ -2464,6 +2464,99 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpA
      return true;
  }
  
@@ -600,7 +600,7 @@ index 50ab3a3..e3680d9 100644
 +
  gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer frame )
  {
-     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+     UpdateLastInputEventTime(pEvent->time);
 -- 
 2.7.4
 

@@ -2286,9 +2286,10 @@ done
 %endif
 
 %changelog
-* Mon Jun 27 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-4-UNBUILT
+* Wed Jun 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-4
 - Resolves: rhbz#1342823 toolbar menus popdown immediately
 - Related: tdf#91807 fix parallel zip error handling
+- Resolves: rhbz#1350478 better wayland c-n-p selection loss detection
 
 * Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3
 - Resolves: rhbz#1349501 gtk3 smooth scrolling events can be user-disabled

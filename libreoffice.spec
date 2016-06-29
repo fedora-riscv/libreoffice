@@ -314,6 +314,7 @@ Patch81: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
 Patch82: 0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
 Patch83: 0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
 Patch84: 0003-package-fix-exception-handling-in-DeflateThread-rela.patch
+Patch85: 0001-rtf-m_aStates-can-be-empty-in-the-inner-condition.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2228,7 +2229,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-9-UNBUILT
+* Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-9
+- Resolves: rhbz#1351199 CVE-2016-4324 invalid stl iterator deref
 - Resolves: tdf#93553 limit parallel zip parallelism
 - Related: tdf#91807 fix parallel zip error handling
 

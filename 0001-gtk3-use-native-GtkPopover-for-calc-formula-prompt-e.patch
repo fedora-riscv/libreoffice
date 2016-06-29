@@ -1,0 +1,606 @@
+From 421cd8a4982c9ac6be877df670634200530662b2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 17 Feb 2016 10:47:16 +0000
+Subject: [PATCH] gtk3: use native GtkPopover for calc formula prompt, etc
+
+---
+ include/vcl/help.hxx                         | 31 +++++-----
+ sc/source/ui/app/inputhdl.cxx                | 14 ++---
+ sc/source/ui/app/inputwin.cxx                |  7 ++-
+ sc/source/ui/view/tabview4.cxx               |  6 +-
+ sd/source/ui/slidesorter/view/SlsToolTip.cxx |  5 +-
+ sd/source/ui/view/viewoverlaymanager.cxx     | 10 +--
+ svtools/source/brwbox/datwin.cxx             | 12 +---
+ svtools/source/brwbox/datwin.hxx             |  2 -
+ svtools/source/table/tabledatawindow.cxx     | 16 +----
+ svtools/source/table/tabledatawindow.hxx     |  1 -
+ sw/source/uibase/docvw/edtwin.cxx            |  9 ++-
+ vcl/inc/salframe.hxx                         | 21 ++++++-
+ vcl/inc/unx/gtk/gtkframe.hxx                 |  3 +
+ vcl/source/app/help.cxx                      | 36 ++++++++---
+ vcl/unx/gtk3/gtk3gtkframe.cxx                | 93 ++++++++++++++++++++++++++++
+ 15 files changed, 189 insertions(+), 77 deletions(-)
+
+diff --git a/include/vcl/help.hxx b/include/vcl/help.hxx
+index 4d226a8..9ffd2f8 100644
+--- a/include/vcl/help.hxx
++++ b/include/vcl/help.hxx
+@@ -43,18 +43,16 @@ enum class QuickHelpFlags
+     Bottom            = 0x0020,
+     NoAutoPos         = Left | Center | Right | Top | VCenter | Bottom,
+     CtrlText          = 0x0040,
+-/// force the existent tip window to be re-positioned, even if the previous incarnation has the same text. Applies to ShowBallon and ShowQuickHelp.
+-    ForceReposition   = 0x0080,
+ /// no delay when opening the quick help. Applies to ShowBallon and ShowQuickHelp
+-    NoDelay           = 0x0100,
+-/// force balloon-style in ShowTip
+-    TipStyleBalloon   = 0x0200,
+-    NoEvadePointer    = 0x4000,
+-    BiDiRtl           = 0x8000,
++    NoDelay           = 0x0080,
++/// force balloon-style in ShowPopover
++    TipStyleBalloon   = 0x0100,
++    NoEvadePointer    = 0x0200,
++    BiDiRtl           = 0x0400,
+ };
+ namespace o3tl
+ {
+-    template<> struct typed_flags<QuickHelpFlags> : is_typed_flags<QuickHelpFlags, 0xc3ff> {};
++    template<> struct typed_flags<QuickHelpFlags> : is_typed_flags<QuickHelpFlags, 0x7ff> {};
+ }
+ 
+ #define OOO_HELP_INDEX          ".help:index"
+@@ -105,14 +103,15 @@ public:
+ 
+     static void         HideBalloonAndQuickHelp();
+ 
+-    static sal_uLong    ShowTip( vcl::Window* pParent,
+-                                 const Rectangle& rScreenRect,
+-                                 const OUString& rText, QuickHelpFlags nStyle = QuickHelpFlags::NONE );
+-    static void         UpdateTip( sal_uLong nId,
+-                                   vcl::Window* pParent,
+-                                   const Rectangle& rScreenRect,
+-                                   const OUString& rText );
+-    static void         HideTip( sal_uLong nId );
++    static sal_uLong    ShowPopover(vcl::Window* pParent,
++                                    const Rectangle& rScreenRect,
++                                    const OUString& rText,
++                                    QuickHelpFlags nStyle = QuickHelpFlags::NONE);
++    static void         UpdatePopover(sal_uLong nId,
++                                      vcl::Window* pParent,
++                                      const Rectangle& rScreenRect,
++                                      const OUString& rText);
++    static void         HidePopover(vcl::Window* pParent, sal_uLong nId);
+ };
+ 
+ #endif // INCLUDED_VCL_HELP_HXX
+diff --git a/sc/source/ui/app/inputhdl.cxx b/sc/source/ui/app/inputhdl.cxx
+index 2395cba..0a65d88 100644
+--- a/sc/source/ui/app/inputhdl.cxx
++++ b/sc/source/ui/app/inputhdl.cxx
+@@ -782,9 +782,8 @@ void ScInputHandler::HideTip()
+ {
+     if ( nTipVisible )
+     {
+-        if (pTipVisibleParent)
+-            pTipVisibleParent->RemoveEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleParentListener ) );
+-        Help::HideTip( nTipVisible );
++        pTipVisibleParent->RemoveEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleParentListener ) );
++        Help::HidePopover(pTipVisibleParent, nTipVisible );
+         nTipVisible = 0;
+         pTipVisibleParent = nullptr;
+     }
+@@ -794,9 +793,8 @@ void ScInputHandler::HideTipBelow()
+ {
+     if ( nTipVisibleSec )
+     {
+-        if (pTipVisibleSecParent)
+-            pTipVisibleSecParent->RemoveEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleSecParentListener ) );
+-        Help::HideTip( nTipVisibleSec );
++        pTipVisibleSecParent->RemoveEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleSecParentListener ) );
++        Help::HidePopover(pTipVisibleSecParent, nTipVisibleSec);
+         nTipVisibleSec = 0;
+         pTipVisibleSecParent = nullptr;
+     }
+@@ -977,7 +975,7 @@ void ScInputHandler::ShowTip( const OUString& rText )
+         Rectangle aRect( aPos, aPos );
+ 
+         QuickHelpFlags nAlign = QuickHelpFlags::Left|QuickHelpFlags::Bottom;
+-        nTipVisible = Help::ShowTip(pTipVisibleParent, aRect, rText, nAlign);
++        nTipVisible = Help::ShowPopover(pTipVisibleParent, aRect, rText, nAlign);
+         pTipVisibleParent->AddEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleParentListener ) );
+     }
+ }
+@@ -1001,7 +999,7 @@ void ScInputHandler::ShowTipBelow( const OUString& rText )
+         aPos = pTipVisibleSecParent->OutputToScreenPixel( aPos );
+         Rectangle aRect( aPos, aPos );
+         QuickHelpFlags nAlign = QuickHelpFlags::Left | QuickHelpFlags::Top | QuickHelpFlags::NoEvadePointer;
+-        nTipVisibleSec = Help::ShowTip(pTipVisibleSecParent, aRect, rText, nAlign);
++        nTipVisibleSec = Help::ShowPopover(pTipVisibleSecParent, aRect, rText, nAlign);
+         pTipVisibleSecParent->AddEventListener( LINK( this, ScInputHandler, ShowHideTipVisibleSecParentListener ) );
+     }
+ }
+diff --git a/sc/source/ui/app/inputwin.cxx b/sc/source/ui/app/inputwin.cxx
+index cd15f3d..5be068e 100644
+--- a/sc/source/ui/app/inputwin.cxx
++++ b/sc/source/ui/app/inputwin.cxx
+@@ -2220,7 +2220,10 @@ void ScPosWnd::HideTip()
+ {
+     if ( nTipVisible )
+     {
+-        Help::HideTip( nTipVisible );
++        vcl::Window* pWin = GetSubEdit();
++        if (!pWin)
++            pWin = this;
++        Help::HidePopover(pWin, nTipVisible);
+         nTipVisible = 0;
+     }
+ }
+@@ -2328,7 +2331,7 @@ void ScPosWnd::Modify()
+ 
+             OUString aText = ScGlobal::GetRscString( nStrId );
+             QuickHelpFlags nAlign = QuickHelpFlags::Left|QuickHelpFlags::Bottom;
+-            nTipVisible = Help::ShowTip(pWin, aRect, aText, nAlign);
++            nTipVisible = Help::ShowPopover(pWin, aRect, aText, nAlign);
+         }
+     }
+ }
+diff --git a/sc/source/ui/view/tabview4.cxx b/sc/source/ui/view/tabview4.cxx
+index 1067f7f..1607ab3 100644
+--- a/sc/source/ui/view/tabview4.cxx
++++ b/sc/source/ui/view/tabview4.cxx
+@@ -39,7 +39,9 @@ void ScTabView::HideTip()
+ {
+     if ( nTipVisible )
+     {
+-        Help::HideTip( nTipVisible );
++        ScSplitPos eWhich = aViewData.GetActivePart();
++        vcl::Window* pWin = pGridWin[eWhich];
++        Help::HidePopover(pWin, nTipVisible);
+         nTipVisible = 0;
+     }
+ }
+@@ -92,7 +94,7 @@ void ScTabView::ShowRefTip()
+                 //! Test, ob geaendert ??
+ 
+                 HideTip();
+-                nTipVisible = Help::ShowTip( pWin, aRect, aHelp, nFlags );
++                nTipVisible = Help::ShowPopover(pWin, aRect, aHelp, nFlags);
+                 bDone = true;
+             }
+         }
+diff --git a/sd/source/ui/slidesorter/view/SlsToolTip.cxx b/sd/source/ui/slidesorter/view/SlsToolTip.cxx
+index 0ec9298..64f7dd0 100644
+--- a/sd/source/ui/slidesorter/view/SlsToolTip.cxx
++++ b/sd/source/ui/slidesorter/view/SlsToolTip.cxx
+@@ -134,7 +134,7 @@ void ToolTip::DoShow()
+         // the preview).  Therefore we use a little trick and place the tool
+         // tip at the top of a rectangle that is placed below the preview.
+         aBox.Move(aOffset.X(), aOffset.Y() + aBox.GetHeight() + 3);
+-        mnHelpWindowHandle = Help::ShowTip(
++        mnHelpWindowHandle = Help::ShowPopover(
+             pWindow,
+             aBox,
+             msCurrentHelpText,
+@@ -146,7 +146,8 @@ bool ToolTip::Hide()
+ {
+     if (mnHelpWindowHandle>0)
+     {
+-        Help::HideTip(mnHelpWindowHandle);
++        sd::Window *pWindow (mrSlideSorter.GetContentWindow());
++        Help::HidePopover(pWindow, mnHelpWindowHandle);
+         mnHelpWindowHandle = 0;
+         return true;
+     }
+diff --git a/sd/source/ui/view/viewoverlaymanager.cxx b/sd/source/ui/view/viewoverlaymanager.cxx
+index b97a7d7..426e56a 100644
+--- a/sd/source/ui/view/viewoverlaymanager.cxx
++++ b/sd/source/ui/view/viewoverlaymanager.cxx
+@@ -146,7 +146,6 @@ private:
+ 
+     int mnHighlightId;
+     Size maImageSize;
+-    sal_uLong mnTip;
+ };
+ 
+ ImageButtonHdl::ImageButtonHdl( const SmartTagReference& xTag /*, sal_uInt16 nSID, const Image& rImage, const Image& rImageMO*/, const Point& rPnt )
+@@ -154,7 +153,6 @@ ImageButtonHdl::ImageButtonHdl( const SmartTagReference& xTag /*, sal_uInt16 nSI
+ , mxTag( dynamic_cast< ChangePlaceholderTag* >( xTag.get() ) )
+ , mnHighlightId( -1 )
+ , maImageSize( 42, 42 )
+-, mnTip( 0 )
+ {
+ }
+ 
+@@ -165,11 +163,7 @@ ImageButtonHdl::~ImageButtonHdl()
+ 
+ void ImageButtonHdl::HideTip()
+ {
+-    if( mnTip )
+-    {
+-        Help::HideTip( mnTip );
+-        mnTip = 0;
+-    }
++    Help::HideBalloonAndQuickHelp();
+ }
+ 
+ void ImageButtonHdl::onMouseEnter(const MouseEvent& rMEvt)
+@@ -201,7 +195,7 @@ void ImageButtonHdl::onMouseEnter(const MouseEvent& rMEvt)
+ 
+                 OUString aHelpText( aResId );
+                 Rectangle aScreenRect( pDev->LogicToPixel( GetPos() ), maImageSize );
+-                mnTip = Help::ShowTip( static_cast< vcl::Window* >( pHdlList->GetView()->GetFirstOutputDevice() ), aScreenRect, aHelpText ) ;
++                Help::ShowQuickHelp(static_cast< vcl::Window* >( pHdlList->GetView()->GetFirstOutputDevice() ), aScreenRect, aHelpText);
+             }
+             Touch();
+         }
+diff --git a/svtools/source/brwbox/datwin.cxx b/svtools/source/brwbox/datwin.cxx
+index aec67c3..19fe7e5 100644
+--- a/svtools/source/brwbox/datwin.cxx
++++ b/svtools/source/brwbox/datwin.cxx
+@@ -734,25 +734,17 @@ void BrowserScrollBar::Tracking( const TrackingEvent& rTEvt )
+             aTip += OUString::number(GetRangeMax());
+ 
+         Rectangle aRect(GetPointerPosPixel(), Size(GetTextWidth(aTip), GetTextHeight()));
+-        if ( _nTip )
+-            Help::UpdateTip( _nTip, this, aRect, aTip );
+-        else
+-            _nTip = Help::ShowTip( this, aRect, aTip );
++        Help::ShowQuickHelp(this, aRect, aTip);
+         _nLastPos = nPos;
+     }
+ 
+     ScrollBar::Tracking( rTEvt );
+ }
+ 
+-
+-
+ void BrowserScrollBar::EndScroll()
+ {
+-    if ( _nTip )
+-        Help::HideTip( _nTip );
+-    _nTip = 0;
++    Help::HideBalloonAndQuickHelp();
+     ScrollBar::EndScroll();
+ }
+ 
+-
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/svtools/source/brwbox/datwin.hxx b/svtools/source/brwbox/datwin.hxx
+index c3aa74b..8ff5122 100644
+--- a/svtools/source/brwbox/datwin.hxx
++++ b/svtools/source/brwbox/datwin.hxx
+@@ -184,7 +184,6 @@ protected:
+ 
+ class BrowserScrollBar: public ScrollBar
+ {
+-    sal_uLong           _nTip;
+     sal_uLong           _nLastPos;
+     VclPtr<BrowserDataWin> _pDataWin;
+ 
+@@ -192,7 +191,6 @@ public:
+                     BrowserScrollBar( vcl::Window* pParent, WinBits nStyle,
+                                       BrowserDataWin *pDataWin )
+                     :   ScrollBar( pParent, nStyle ),
+-                        _nTip( 0 ),
+                         _nLastPos( ULONG_MAX ),
+                         _pDataWin( pDataWin )
+                     {}
+diff --git a/svtools/source/table/tabledatawindow.cxx b/svtools/source/table/tabledatawindow.cxx
+index 79ee86c..8240f5f 100644
+--- a/svtools/source/table/tabledatawindow.cxx
++++ b/svtools/source/table/tabledatawindow.cxx
+@@ -33,7 +33,6 @@ namespace svt { namespace table
+     TableDataWindow::TableDataWindow( TableControl_Impl& _rTableControl )
+         :Window( &_rTableControl.getAntiImpl() )
+         ,m_rTableControl( _rTableControl )
+-        ,m_nTipWindowHandle( 0 )
+     {
+         // by default, use the background as determined by the style settings
+         const Color aWindowColor( GetSettings().GetStyleSettings().GetFieldColor() );
+@@ -123,12 +122,7 @@ namespace svt { namespace table
+                 GetOutputSizePixel()
+             );
+ 
+-            if ( m_nTipWindowHandle )
+-            {
+-                Help::UpdateTip( m_nTipWindowHandle, this, aControlScreenRect, sHelpText );
+-            }
+-            else
+-                m_nTipWindowHandle = Help::ShowTip( this, aControlScreenRect, sHelpText, nHelpStyle );
++            Help::ShowQuickHelp(this, aControlScreenRect, sHelpText, nHelpStyle);
+         }
+         else
+         {
+@@ -137,17 +131,11 @@ namespace svt { namespace table
+         }
+     }
+ 
+-
+     void TableDataWindow::impl_hideTipWindow()
+     {
+-        if ( m_nTipWindowHandle != 0 )
+-        {
+-            Help::HideTip( m_nTipWindowHandle );
+-            m_nTipWindowHandle = 0;
+-        }
++        Help::HideBalloonAndQuickHelp();
+     }
+ 
+-
+     void TableDataWindow::MouseMove( const MouseEvent& rMEvt )
+     {
+         if ( rMEvt.IsLeaveWindow() )
+diff --git a/svtools/source/table/tabledatawindow.hxx b/svtools/source/table/tabledatawindow.hxx
+index 6507147ac..708d509 100644
+--- a/svtools/source/table/tabledatawindow.hxx
++++ b/svtools/source/table/tabledatawindow.hxx
+@@ -38,7 +38,6 @@ namespace svt { namespace table
+     private:
+         TableControl_Impl&  m_rTableControl;
+         Link<LinkParamNone*,void> m_aSelectHdl;
+-        sal_uLong           m_nTipWindowHandle;
+ 
+     public:
+         explicit TableDataWindow( TableControl_Impl& _rTableControl );
+diff --git a/sw/source/uibase/docvw/edtwin.cxx b/sw/source/uibase/docvw/edtwin.cxx
+index 48ccdf2..b4e5d20 100644
+--- a/sw/source/uibase/docvw/edtwin.cxx
++++ b/sw/source/uibase/docvw/edtwin.cxx
+@@ -5950,9 +5950,9 @@ void QuickHelpData::Start( SwWrtShell& rSh, sal_uInt16 nWrdLen )
+         Point aPt( rWin.OutputToScreenPixel( rWin.LogicToPixel(
+                     rSh.GetCharRect().Pos() )));
+         aPt.Y() -= 3;
+-        nTipId = Help::ShowTip( &rWin, Rectangle( aPt, Size( 1, 1 )),
++        nTipId = Help::ShowPopover(&rWin, Rectangle( aPt, Size( 1, 1 )),
+                         m_aHelpStrings[ nCurArrPos ],
+-                        QuickHelpFlags::Left | QuickHelpFlags::Bottom );
++                        QuickHelpFlags::Left | QuickHelpFlags::Bottom);
+     }
+     else
+     {
+@@ -5985,7 +5985,10 @@ void QuickHelpData::Stop( SwWrtShell& rSh )
+     if( !m_bIsTip )
+         rSh.DeleteExtTextInput( nullptr, false );
+     else if( nTipId )
+-        Help::HideTip( nTipId );
++    {
++        vcl::Window& rWin = rSh.GetView().GetEditWin();
++        Help::HidePopover(&rWin, nTipId);
++    }
+     ClearContent();
+ }
+ 
+diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
+index c08486f..0a34503 100644
+--- a/vcl/inc/salframe.hxx
++++ b/vcl/inc/salframe.hxx
+@@ -33,6 +33,7 @@
+ #include <vcl/impdel.hxx>
+ #include <rtl/ustring.hxx>
+ #include <vcl/keycod.hxx>
++#include <vcl/help.hxx>
+ #include <vcl/window.hxx>
+ #include <vcl/vclptr.hxx>
+ #include <o3tl/typed_flags_set.hxx>
+@@ -243,7 +244,25 @@ public:
+     }
+ 
+     // return true to indicate tooltips are shown natively, false otherwise
+-    virtual bool            ShowTooltip(const OUString& /*rHelpText*/, const Rectangle& /*rHelpArea*/ )
++    virtual bool            ShowTooltip(const OUString& /*rHelpText*/, const Rectangle& /*rHelpArea*/)
++    {
++        return false;
++    }
++
++    // return !0 to indicate popovers are shown natively, 0 otherwise
++    virtual sal_uIntPtr     ShowPopover(const OUString& /*rHelpText*/, const Rectangle& /*rHelpArea*/, QuickHelpFlags /*nFlags*/)
++    {
++        return 0;
++    }
++
++    // return true to indicate popovers are shown natively, false otherwise
++    virtual bool            UpdatePopover(sal_uIntPtr /*nId*/, const OUString& /*rHelpText*/, const Rectangle& /*rHelpArea*/)
++    {
++        return false;
++    }
++
++    // return true to indicate popovers are shown natively, false otherwise
++    virtual bool            HidePopover(sal_uIntPtr /*nId*/)
+     {
+         return false;
+     }
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index d5d69d1..4a75136 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -519,6 +519,9 @@ public:
+ #if GTK_CHECK_VERSION(3,0,0)
+     virtual void                SetModal(bool bModal) override;
+     virtual bool                ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpArea) override;
++    virtual sal_uIntPtr         ShowPopover(const OUString& rHelpText, const Rectangle& rHelpArea, QuickHelpFlags nFlags) override;
++    virtual bool                UpdatePopover(sal_uIntPtr nId, const OUString& rHelpText, const Rectangle& rHelpArea) override;
++    virtual bool                HidePopover(sal_uIntPtr nId) override;
+ #endif
+ 
+     static GtkSalFrame         *getFromWindow( GtkWindow *pWindow );
+diff --git a/vcl/source/app/help.cxx b/vcl/source/app/help.cxx
+index 19570ce..e29d9ee 100644
+--- a/vcl/source/app/help.cxx
++++ b/vcl/source/app/help.cxx
+@@ -191,23 +191,37 @@ void Help::HideBalloonAndQuickHelp()
+     ImplDestroyHelpWindow( bIsVisible );
+ }
+ 
+-sal_uIntPtr Help::ShowTip( vcl::Window* pParent, const Rectangle& rScreenRect,
+-                     const OUString& rText, QuickHelpFlags nStyle )
++sal_uIntPtr Help::ShowPopover(vcl::Window* pParent, const Rectangle& rScreenRect,
++                              const OUString& rText, QuickHelpFlags nStyle)
+ {
++    sal_uIntPtr nId = pParent->ImplGetFrame()->ShowPopover(rText, rScreenRect, nStyle);
++    if (nId)
++    {
++        //popovers are handled natively, return early
++        return nId;
++    }
++
+     sal_uInt16 nHelpWinStyle = ( nStyle & QuickHelpFlags::TipStyleBalloon ) ? HELPWINSTYLE_BALLOON : HELPWINSTYLE_QUICK;
+     VclPtrInstance<HelpTextWindow> pHelpWin( pParent, rText, nHelpWinStyle, nStyle );
+ 
+-    sal_uIntPtr nId = reinterpret_cast< sal_uIntPtr >( pHelpWin.get() );
+-    UpdateTip( nId, pParent, rScreenRect, rText );
++    nId = reinterpret_cast< sal_uIntPtr >( pHelpWin.get() );
++    UpdatePopover(nId, pParent, rScreenRect, rText);
+ 
+     pHelpWin->ShowHelp( HELPDELAY_NONE );
+     return nId;
+ }
+ 
+-void Help::UpdateTip( sal_uIntPtr nId, vcl::Window* pParent, const Rectangle& rScreenRect, const OUString& rText )
++void Help::UpdatePopover(sal_uIntPtr nId, vcl::Window* pParent, const Rectangle& rScreenRect,
++                         const OUString& rText)
+ {
++    if (pParent->ImplGetFrame()->UpdatePopover(nId, rText, rScreenRect))
++    {
++        //popovers are handled natively, return early
++        return;
++    }
++
+     HelpTextWindow* pHelpWin = reinterpret_cast< HelpTextWindow* >( nId );
+-    ENSURE_OR_RETURN_VOID( pHelpWin != nullptr, "Help::UpdateTip: invalid ID!" );
++    ENSURE_OR_RETURN_VOID( pHelpWin != nullptr, "Help::UpdatePopover: invalid ID!" );
+ 
+     Size aSz = pHelpWin->CalcOutSize();
+     pHelpWin->SetOutputSizePixel( aSz );
+@@ -218,8 +232,14 @@ void Help::UpdateTip( sal_uIntPtr nId, vcl::Window* pParent, const Rectangle& rS
+     pHelpWin->Invalidate();
+ }
+ 
+-void Help::HideTip( sal_uLong nId )
++void Help::HidePopover(vcl::Window* pParent, sal_uLong nId)
+ {
++    if (pParent->ImplGetFrame()->HidePopover(nId))
++    {
++        //popovers are handled natively, return early
++        return;
++    }
++
+     VclPtr<HelpTextWindow> pHelpWin = reinterpret_cast<HelpTextWindow*>(nId);
+     vcl::Window* pFrameWindow = pHelpWin->ImplGetFrameWindow();
+     pHelpWin->Hide();
+@@ -498,7 +518,7 @@ void ImplShowHelpWindow( vcl::Window* pParent, sal_uInt16 nHelpWinStyle, QuickHe
+         else
+         {
+             bool const bTextChanged = rHelpText != pHelpWin->GetHelpText();
+-            if ( bTextChanged || ( nStyle & QuickHelpFlags::ForceReposition ) )
++            if (bTextChanged)
+             {
+                 vcl::Window * pWindow = pHelpWin->GetParent()->ImplGetFrameWindow();
+                 Rectangle aInvRect( pHelpWin->GetWindowExtentsRelative( pWindow ) );
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 50ab3a3..e3680d9 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2458,6 +2458,99 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpA
+     return true;
+ }
+ 
++#if GTK_CHECK_VERSION(3,12,0)
++namespace
++{
++    void set_pointing_to(GtkPopover *pPopOver, const Rectangle& rHelpArea)
++    {
++        GdkRectangle aRect;
++        aRect.x = rHelpArea.Left();
++        aRect.y = rHelpArea.Top();
++        aRect.width = 1;
++        aRect.height = 1;
++
++        GtkPositionType ePos = gtk_popover_get_position(pPopOver);
++        switch (ePos)
++        {
++            case GTK_POS_BOTTOM:
++            case GTK_POS_TOP:
++                aRect.width = rHelpArea.GetWidth();
++                break;
++            case GTK_POS_RIGHT:
++            case GTK_POS_LEFT:
++                aRect.height = rHelpArea.GetHeight();
++                break;
++        }
++
++        gtk_popover_set_pointing_to(pPopOver, &aRect);
++    }
++}
++#endif
++
++sal_uIntPtr GtkSalFrame::ShowPopover(const OUString& rHelpText, const Rectangle& rHelpArea, QuickHelpFlags nFlags)
++{
++#if GTK_CHECK_VERSION(3,12,0)
++    GtkWidget *pWidget = gtk_popover_new(getMouseEventWidget());
++    OString sUTF = OUStringToOString(rHelpText, RTL_TEXTENCODING_UTF8);
++    GtkWidget *pLabel =  gtk_label_new(sUTF.getStr());
++    gtk_container_add(GTK_CONTAINER(pWidget), pLabel);
++
++    if (nFlags & QuickHelpFlags::Top)
++        gtk_popover_set_position(GTK_POPOVER(pWidget), GTK_POS_BOTTOM);
++    else if (nFlags & QuickHelpFlags::Bottom)
++        gtk_popover_set_position(GTK_POPOVER(pWidget), GTK_POS_TOP);
++    else if (nFlags & QuickHelpFlags::Left)
++        gtk_popover_set_position(GTK_POPOVER(pWidget), GTK_POS_RIGHT);
++    else if (nFlags & QuickHelpFlags::Right)
++        gtk_popover_set_position(GTK_POPOVER(pWidget), GTK_POS_LEFT);
++
++    set_pointing_to(GTK_POPOVER(pWidget), rHelpArea);
++
++    gtk_popover_set_modal(GTK_POPOVER(pWidget), false);
++
++    gtk_widget_show_all(pWidget);
++
++    return reinterpret_cast<sal_uIntPtr>(pWidget);
++#else
++    (void)rHelpText;
++    (void)rHelpArea;
++    (void)nFlags;
++    return 0;
++#endif
++}
++
++bool GtkSalFrame::UpdatePopover(sal_uIntPtr nId, const OUString& rHelpText, const Rectangle& rHelpArea)
++{
++#if GTK_CHECK_VERSION(3,12,0)
++    GtkWidget *pWidget = reinterpret_cast<GtkWidget*>(nId);
++
++    set_pointing_to(GTK_POPOVER(pWidget), rHelpArea);
++
++    GtkWidget *pLabel = gtk_bin_get_child(GTK_BIN(pWidget));
++    OString sUTF = OUStringToOString(rHelpText, RTL_TEXTENCODING_UTF8);
++    gtk_label_set_text(GTK_LABEL(pLabel), sUTF.getStr());
++
++    return true;
++#else
++    (void)nId;
++    (void)rHelpText;
++    (void)rHelpArea;
++    return false
++#endif
++}
++
++bool GtkSalFrame::HidePopover(sal_uIntPtr nId)
++{
++#if GTK_CHECK_VERSION(3,12,0)
++    GtkWidget *pWidget = reinterpret_cast<GtkWidget*>(nId);
++    gtk_widget_destroy(pWidget);
++    return true;
++#else
++    (void)nId;
++    return false;
++#endif
++}
++
+ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer frame )
+ {
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+-- 
+2.7.4
+

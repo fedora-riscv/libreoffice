@@ -268,6 +268,7 @@ Patch39: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
 Patch40: 0001-gtk3-set-decoration-bits-etc-before-realize.patch
 Patch41: 0001-Resolves-rhbz-1342823-toolbar-menus-popdown-immediat.patch
 Patch42: 0001-package-fix-exception-handling-in-DeflateThread-rela.patch
+Patch43: 0001-gtk3-use-native-GtkPopover-for-calc-formula-prompt-e.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2290,6 +2291,7 @@ done
 - Resolves: rhbz#1342823 toolbar menus popdown immediately
 - Related: tdf#91807 fix parallel zip error handling
 - Resolves: rhbz#1350478 better wayland c-n-p selection loss detection
+- Resolves: rhbz#1351224 use GtkPopOvers instead of home-grown tooltips
 
 * Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3
 - Resolves: rhbz#1349501 gtk3 smooth scrolling events can be user-disabled

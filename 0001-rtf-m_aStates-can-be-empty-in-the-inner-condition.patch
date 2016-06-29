@@ -1,0 +1,37 @@
+From 4ce2689bf8616463d224ebfed1d5bc80691c6b8c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 10 May 2016 09:34:58 +0100
+Subject: [PATCH] rtf: m_aStates can be empty in the inner condition
+
+Change-Id: Id262a3019a693f236630b798579f360c9462d12e
+(cherry picked from commit 05cc87ce45fad402445c8d748817e386e56148af)
+---
+ writerfilter/source/rtftok/rtfdocumentimpl.cxx | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index 799186d..995772a 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -455,11 +455,15 @@ writerfilter::Reference<Properties>::Pointer_t RTFDocumentImpl::getProperties(RT
+ 
+         // cloneAndDeduplicate() wants to know about only a single "style", so
+         // let's merge paragraph and character style properties here.
+-        int nCharStyle = m_aStates.top().nCurrentCharacterStyleIndex;
+-        RTFReferenceTable::Entries_t::iterator itChar = m_aStyleTableEntries.find(nCharStyle);
++        RTFReferenceTable::Entries_t::iterator itChar = m_aStyleTableEntries.end();
++        if (!m_aStates.empty())
++        {
++            int nCharStyle = m_aStates.top().nCurrentCharacterStyleIndex;
++            itChar = m_aStyleTableEntries.find(nCharStyle);
++        }
++
+         RTFSprms aStyleSprms;
+         RTFSprms aStyleAttributes;
+-
+         // Ensure the paragraph style is a flat list.
+         lcl_copyFlatten(rProps, aStyleAttributes, aStyleSprms);
+ 
+-- 
+2.7.4
+

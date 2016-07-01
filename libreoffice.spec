@@ -269,6 +269,7 @@ Patch40: 0001-gtk3-set-decoration-bits-etc-before-realize.patch
 Patch41: 0001-Resolves-rhbz-1342823-toolbar-menus-popdown-immediat.patch
 Patch42: 0001-package-fix-exception-handling-in-DeflateThread-rela.patch
 Patch43: 0001-gtk3-use-native-GtkPopover-for-calc-formula-prompt-e.patch
+Patch44: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

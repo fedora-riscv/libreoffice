@@ -236,6 +236,7 @@ Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch7: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
 Patch8: 0001-rhbz-1341064-fix-OutputDevice-test-on-big-endian-sys.patch
 Patch9: 0002-update-other-places-that-read-data-from-cairo-image-.patch
+Patch10: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
 
 %if 0%{?rhel}
 # not upstreamed

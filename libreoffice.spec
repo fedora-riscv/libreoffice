@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,6 +270,7 @@ Patch41: 0001-Resolves-rhbz-1342823-toolbar-menus-popdown-immediat.patch
 Patch42: 0001-package-fix-exception-handling-in-DeflateThread-rela.patch
 Patch43: 0001-gtk3-use-native-GtkPopover-for-calc-formula-prompt-e.patch
 Patch44: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
+Patch45: 0001-Resolves-rhbz-1352835-path-options-doesn-t-promptly-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2288,6 +2289,9 @@ done
 %endif
 
 %changelog
+* Tue Jul 05 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-5-UNBUILD
+- Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker
+
 * Wed Jun 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-4
 - Resolves: rhbz#1342823 toolbar menus popdown immediately
 - Related: tdf#91807 fix parallel zip error handling

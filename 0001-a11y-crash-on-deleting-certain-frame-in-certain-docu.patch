@@ -1,0 +1,531 @@
+From 1a46e2ad9ef78099e8a048d186e2ce0f610e4742 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 30 Jun 2016 15:33:14 +0100
+Subject: [PATCH] a11y crash on deleting certain frame in certain document
+
+I've an internal RH document which crashes in a11y when a paragraph with a
+graphic and a drawing frame in it is deleted.
+
+The SdrObject is removed and deleted, but when
+SwAccessibleContext::DisposeChild is called the object does not pass IsShowing
+so its not removed from the accessibility map. Leaving an entry in the map
+pointing to a deleted SdrObject
+
+So here take the route-one approach of always removing from the map
+accessibility children which depend on a SdrObject which is getting deleted,
+whether or not it is inside the visible area at the moment.
+
+The real change here is to SwAccessibleContext::DisposeChild and to
+SwFrame::RemoveDrawObj
+
+Change-Id: I764cd54d6216d233756f52b5be66c80737b5e38d
+Reviewed-on: https://gerrit.libreoffice.org/26824
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+(cherry picked from commit 04081b6907132c867041dd492408b5349f26cd42)
+
+everything is called Dispose, hard to find anything
+
+Change-Id: I473ed39c975886a6be30860cb61f6fe59c5508a4
+(cherry picked from commit ad59dcf7dad19540403f5812677901e6fad30257)
+---
+ sw/inc/accmap.hxx                        |  9 +++++----
+ sw/source/core/access/acccell.cxx        |  4 ++--
+ sw/source/core/access/acccell.hxx        |  2 +-
+ sw/source/core/access/acccontext.cxx     | 20 +++++++++++---------
+ sw/source/core/access/acccontext.hxx     |  8 ++++----
+ sw/source/core/access/accdoc.cxx         |  4 ++--
+ sw/source/core/access/accdoc.hxx         |  2 +-
+ sw/source/core/access/accframebase.cxx   |  4 ++--
+ sw/source/core/access/accframebase.hxx   |  2 +-
+ sw/source/core/access/accmap.cxx         | 13 +++++++------
+ sw/source/core/access/accnotextframe.cxx |  4 ++--
+ sw/source/core/access/accnotextframe.hxx |  2 +-
+ sw/source/core/access/acctable.cxx       |  8 ++++----
+ sw/source/core/access/acctable.hxx       |  4 ++--
+ sw/source/core/draw/dview.cxx            |  8 ++++----
+ sw/source/core/inc/viewimp.hxx           | 10 +++++-----
+ sw/source/core/layout/fly.cxx            |  4 ++--
+ sw/source/core/view/viewimp.cxx          |  9 +++++----
+ sw/source/uibase/docvw/PostItMgr.cxx     |  2 +-
+ 19 files changed, 62 insertions(+), 57 deletions(-)
+
+diff --git a/sw/inc/accmap.hxx b/sw/inc/accmap.hxx
+index eaf01f2..a7faa82 100644
+--- a/sw/inc/accmap.hxx
++++ b/sw/inc/accmap.hxx
+@@ -184,10 +184,11 @@ public:
+     void RemoveContext( const SdrObject *pObj );
+ 
+     // Dispose frame and its children if bRecursive is set
+-    void Dispose( const SwFrame* pFrame,
+-                  const SdrObject* pObj,
+-                  vcl::Window* pWindow,
+-                  bool bRecursive = false );
++    void A11yDispose( const SwFrame* pFrame,
++                      const SdrObject* pObj,
++                      vcl::Window* pWindow,
++                      bool bRecursive = false,
++                      bool bCanSkipInvisible = true );
+ 
+     void InvalidatePosOrSize( const SwFrame* pFrame,
+                               const SdrObject* pObj,
+diff --git a/sw/source/core/access/acccell.cxx b/sw/source/core/access/acccell.cxx
+index 64315c2..a76e2fa 100644
+--- a/sw/source/core/access/acccell.cxx
++++ b/sw/source/core/access/acccell.cxx
+@@ -263,13 +263,13 @@ uno::Sequence< OUString > SAL_CALL SwAccessibleCell::getSupportedServiceNames()
+     return aRet;
+ }
+ 
+-void SwAccessibleCell::Dispose( bool bRecursive )
++void SwAccessibleCell::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     const SwFrame *pParent = GetParent( SwAccessibleChild(GetFrame()), IsInPagePreview() );
+     ::rtl::Reference< SwAccessibleContext > xAccImpl(
+             GetMap()->GetContextImpl( pParent, false ) );
+     if( xAccImpl.is() )
+-        xAccImpl->DisposeChild( SwAccessibleChild(GetFrame()), bRecursive );
++        xAccImpl->DisposeChild(SwAccessibleChild(GetFrame()), bRecursive, bCanSkipInvisible);
+     SwAccessibleContext::Dispose( bRecursive );
+ }
+ 
+diff --git a/sw/source/core/access/acccell.hxx b/sw/source/core/access/acccell.hxx
+index 6d66f33..9d53c96 100644
+--- a/sw/source/core/access/acccell.hxx
++++ b/sw/source/core/access/acccell.hxx
+@@ -83,7 +83,7 @@ public:
+         getSupportedServiceNames()
+         throw (css::uno::RuntimeException, std::exception) override;
+ 
+-    virtual void Dispose( bool bRecursive = false ) override;
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true) override;
+ 
+     virtual void InvalidatePosOrSize( const SwRect& rFrame ) override;
+ 
+diff --git a/sw/source/core/access/acccontext.cxx b/sw/source/core/access/acccontext.cxx
+index e200104..60cfe07 100644
+--- a/sw/source/core/access/acccontext.cxx
++++ b/sw/source/core/access/acccontext.cxx
+@@ -383,8 +383,9 @@ void SwAccessibleContext::InvalidateChildrenStates( const SwFrame* _pFrame,
+     }
+ }
+ 
+-void SwAccessibleContext::DisposeChildren( const SwFrame *pFrame,
+-                                           bool bRecursive )
++void SwAccessibleContext::DisposeChildren(const SwFrame *pFrame,
++                                          bool bRecursive,
++                                          bool bCanSkipInvisible)
+ {
+     const SwAccessibleChildSList aVisList( GetVisArea(), *pFrame, *(GetMap()) );
+     SwAccessibleChildSList::const_iterator aIter( aVisList.begin() );
+@@ -400,7 +401,7 @@ void SwAccessibleContext::DisposeChildren( const SwFrame *pFrame,
+             if( xAccImpl.is() )
+                 xAccImpl->Dispose( bRecursive );
+             else if( bRecursive )
+-                DisposeChildren( pLower, bRecursive );
++                DisposeChildren(pLower, bRecursive, bCanSkipInvisible);
+         }
+         else if ( rLower.GetDrawObject() )
+         {
+@@ -412,7 +413,7 @@ void SwAccessibleContext::DisposeChildren( const SwFrame *pFrame,
+         }
+         else if ( rLower.GetWindow() )
+         {
+-            DisposeChild( rLower, false );
++            DisposeChild(rLower, false, bCanSkipInvisible);
+         }
+         ++aIter;
+     }
+@@ -1022,7 +1023,7 @@ void SwAccessibleContext::ScrolledInShape( const SdrObject* ,
+     }
+ }
+ 
+-void SwAccessibleContext::Dispose( bool bRecursive )
++void SwAccessibleContext::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     SolarMutexGuard aGuard;
+ 
+@@ -1034,7 +1035,7 @@ void SwAccessibleContext::Dispose( bool bRecursive )
+ 
+     // dispose children
+     if( bRecursive )
+-        DisposeChildren( GetFrame(), bRecursive );
++        DisposeChildren(GetFrame(), bRecursive, bCanSkipInvisible);
+ 
+     // get parent
+     uno::Reference< XAccessible > xParent( GetWeakParent() );
+@@ -1073,12 +1074,13 @@ void SwAccessibleContext::Dispose( bool bRecursive )
+ }
+ 
+ void SwAccessibleContext::DisposeChild( const SwAccessibleChild& rChildFrameOrObj,
+-                                        bool bRecursive )
++                                        bool bRecursive, bool bCanSkipInvisible )
+ {
+     SolarMutexGuard aGuard;
+ 
+-    if ( IsShowing( *(GetMap()), rChildFrameOrObj ) ||
++    if ( !bCanSkipInvisible ||
+          rChildFrameOrObj.AlwaysIncludeAsChild() ||
++         IsShowing( *(GetMap()), rChildFrameOrObj ) ||
+          !SwAccessibleChild( GetFrame() ).IsVisibleChildrenOnly() )
+     {
+         // If the object could have existed before, than there is nothing to do,
+@@ -1109,7 +1111,7 @@ void SwAccessibleContext::DisposeChild( const SwAccessibleChild& rChildFrameOrOb
+         }
+     }
+     else if( bRecursive && rChildFrameOrObj.GetSwFrame() )
+-        DisposeChildren( rChildFrameOrObj.GetSwFrame(), bRecursive );
++        DisposeChildren(rChildFrameOrObj.GetSwFrame(), bRecursive, bCanSkipInvisible);
+ }
+ 
+ void SwAccessibleContext::InvalidatePosOrSize( const SwRect& )
+diff --git a/sw/source/core/access/acccontext.hxx b/sw/source/core/access/acccontext.hxx
+index e703bf4..148abc6 100644
+--- a/sw/source/core/access/acccontext.hxx
++++ b/sw/source/core/access/acccontext.hxx
+@@ -148,8 +148,8 @@ protected:
+ 
+     // Dispose children of the specified SwFrame. The SwFrame might belong to
+     // the current object or to any other child or grandchild.
+-    void DisposeChildren( const SwFrame *pFrame,
+-                          bool bRecursive );
++    void DisposeChildren(const SwFrame *pFrame,
++                         bool bRecursive, bool bCanSkipInvisible);
+ 
+     void DisposeShape( const SdrObject *pObj,
+                                 ::accessibility::AccessibleShape *pAccImpl );
+@@ -316,10 +316,10 @@ public:
+     // thread safe C++ interface
+ 
+     // The object is not visible an longer and should be destroyed
+-    virtual void Dispose( bool bRecursive = false );
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true);
+ 
+     // The child object is not visible an longer and should be destroyed
+-    virtual void DisposeChild( const sw::access::SwAccessibleChild& rFrameOrObj, bool bRecursive );
++    virtual void DisposeChild(const sw::access::SwAccessibleChild& rFrameOrObj, bool bRecursive, bool bCanSkipInvisible);
+ 
+     // The object has been moved by the layout
+     virtual void InvalidatePosOrSize( const SwRect& rFrame );
+diff --git a/sw/source/core/access/accdoc.cxx b/sw/source/core/access/accdoc.cxx
+index 2cb759a..8d8a0df 100644
+--- a/sw/source/core/access/accdoc.cxx
++++ b/sw/source/core/access/accdoc.cxx
+@@ -380,14 +380,14 @@ SwAccessibleDocument::~SwAccessibleDocument()
+         pWin->RemoveChildEventListener( LINK( this, SwAccessibleDocument, WindowChildEventListener ));
+ }
+ 
+-void SwAccessibleDocument::Dispose( bool bRecursive )
++void SwAccessibleDocument::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     OSL_ENSURE( GetFrame() && GetMap(), "already disposed" );
+ 
+     vcl::Window *pWin = GetMap() ? GetMap()->GetShell()->GetWin() : nullptr;
+     if( pWin )
+         pWin->RemoveChildEventListener( LINK( this, SwAccessibleDocument, WindowChildEventListener ));
+-    SwAccessibleContext::Dispose( bRecursive );
++    SwAccessibleContext::Dispose(bRecursive, bCanSkipInvisible);
+ }
+ 
+ IMPL_LINK_TYPED( SwAccessibleDocument, WindowChildEventListener, VclWindowEvent&, rEvent, void )
+diff --git a/sw/source/core/access/accdoc.hxx b/sw/source/core/access/accdoc.hxx
+index 5fdb656..e11f068 100644
+--- a/sw/source/core/access/accdoc.hxx
++++ b/sw/source/core/access/accdoc.hxx
+@@ -198,7 +198,7 @@ public:
+     // thread safe C++ interface
+ 
+     // The object is not visible an longer and should be destroyed
+-    virtual void Dispose( bool bRecursive = false ) override;
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true) override;
+ 
+     // XAccessibleComponent
+     sal_Int32 SAL_CALL getBackground()
+diff --git a/sw/source/core/access/accframebase.cxx b/sw/source/core/access/accframebase.cxx
+index dcd7e57..6a6ac25 100644
+--- a/sw/source/core/access/accframebase.cxx
++++ b/sw/source/core/access/accframebase.cxx
+@@ -261,14 +261,14 @@ void SwAccessibleFrameBase::Modify( const SfxPoolItem* pOld, const SfxPoolItem *
+     }
+ }
+ 
+-void SwAccessibleFrameBase::Dispose( bool bRecursive )
++void SwAccessibleFrameBase::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     SolarMutexGuard aGuard;
+ 
+     if( GetRegisteredIn() )
+         GetRegisteredInNonConst()->Remove( this );
+ 
+-    SwAccessibleContext::Dispose( bRecursive );
++    SwAccessibleContext::Dispose(bRecursive, bCanSkipInvisible);
+ }
+ 
+ //Get the selection cursor of the document.
+diff --git a/sw/source/core/access/accframebase.hxx b/sw/source/core/access/accframebase.hxx
+index 45335a4..45f2f37 100644
+--- a/sw/source/core/access/accframebase.hxx
++++ b/sw/source/core/access/accframebase.hxx
+@@ -57,7 +57,7 @@ public:
+     static sal_uInt8 GetNodeType( const SwFlyFrame *pFlyFrame );
+ 
+     // The object is not visible an longer and should be destroyed
+-    virtual void Dispose( bool bRecursive = false ) override;
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true) override;
+     virtual bool SetSelectedState( bool bSeleted ) override;
+ };
+ 
+diff --git a/sw/source/core/access/accmap.cxx b/sw/source/core/access/accmap.cxx
+index ed9ec9d..25b4327 100644
+--- a/sw/source/core/access/accmap.cxx
++++ b/sw/source/core/access/accmap.cxx
+@@ -2239,10 +2239,11 @@ void SwAccessibleMap::RemoveContext( const SdrObject *pObj )
+     }
+ }
+ 
+-void SwAccessibleMap::Dispose( const SwFrame *pFrame,
+-                               const SdrObject *pObj,
+-                               vcl::Window* pWindow,
+-                               bool bRecursive )
++void SwAccessibleMap::A11yDispose( const SwFrame *pFrame,
++                                   const SdrObject *pObj,
++                                   vcl::Window* pWindow,
++                                   bool bRecursive,
++                                   bool bCanSkipInvisible )
+ {
+     SwAccessibleChild aFrameOrObj( pFrame, pObj, pWindow );
+ 
+@@ -2353,7 +2354,7 @@ void SwAccessibleMap::Dispose( const SwFrame *pFrame,
+             // be broadcasted at the end of the action to give the table
+             // a chance to generate a single table change event.
+ 
+-            xParentAccImpl->DisposeChild( aFrameOrObj, bRecursive );
++            xParentAccImpl->DisposeChild( aFrameOrObj, bRecursive, bCanSkipInvisible );
+         }
+         else if( xShapeAccImpl.is() )
+         {
+@@ -3190,7 +3191,7 @@ bool SwAccessibleMap::ReplaceChild (
+     // Also get keep parent.
+     uno::Reference < XAccessible > xParent( pCurrentChild->getAccessibleParent() );
+     pCurrentChild = nullptr;  // will be released by dispose
+-    Dispose( nullptr, pObj, nullptr );
++    A11yDispose( nullptr, pObj, nullptr );
+ 
+     {
+         osl::MutexGuard aGuard( maMutex );
+diff --git a/sw/source/core/access/accnotextframe.cxx b/sw/source/core/access/accnotextframe.cxx
+index 9b7a1bfd..7980f27 100644
+--- a/sw/source/core/access/accnotextframe.cxx
++++ b/sw/source/core/access/accnotextframe.cxx
+@@ -164,14 +164,14 @@ void SwAccessibleNoTextFrame::Modify( const SfxPoolItem* pOld, const SfxPoolItem
+     }
+ }
+ 
+-void SwAccessibleNoTextFrame::Dispose( bool bRecursive )
++void SwAccessibleNoTextFrame::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     SolarMutexGuard aGuard;
+ 
+     if( aDepend.GetRegisteredIn() )
+         aDepend.GetRegisteredIn()->Remove( &aDepend );
+ 
+-    SwAccessibleFrameBase::Dispose( bRecursive );
++    SwAccessibleFrameBase::Dispose(bRecursive, bCanSkipInvisible);
+ }
+ 
+ // #i73249#
+diff --git a/sw/source/core/access/accnotextframe.hxx b/sw/source/core/access/accnotextframe.hxx
+index d11dd25..6be3005 100644
+--- a/sw/source/core/access/accnotextframe.hxx
++++ b/sw/source/core/access/accnotextframe.hxx
+@@ -98,7 +98,7 @@ public:
+         throw ( css::uno::RuntimeException, std::exception ) override;
+ 
+     // The object is not visible an longer and should be destroyed
+-    virtual void Dispose( bool bRecursive = false ) override;
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true) override;
+ 
+     virtual sal_Int32 SAL_CALL getCaretPosition(  ) throw (css::uno::RuntimeException, std::exception) override;
+     virtual sal_Bool SAL_CALL setCaretPosition( sal_Int32 nIndex ) throw (css::lang::IndexOutOfBoundsException, css::uno::RuntimeException, std::exception) override;
+diff --git a/sw/source/core/access/acctable.cxx b/sw/source/core/access/acctable.cxx
+index 04541c8..0327c1e 100644
+--- a/sw/source/core/access/acctable.cxx
++++ b/sw/source/core/access/acctable.cxx
+@@ -1393,18 +1393,18 @@ void SwAccessibleTable::InvalidatePosOrSize( const SwRect& rOldBox )
+     SwAccessibleContext::InvalidatePosOrSize( rOldBox );
+ }
+ 
+-void SwAccessibleTable::Dispose( bool bRecursive )
++void SwAccessibleTable::Dispose(bool bRecursive, bool bCanSkipInvisible)
+ {
+     SolarMutexGuard aGuard;
+ 
+     if( GetRegisteredIn() )
+         GetRegisteredInNonConst()->Remove( this );
+ 
+-    SwAccessibleContext::Dispose( bRecursive );
++    SwAccessibleContext::Dispose(bRecursive, bCanSkipInvisible);
+ }
+ 
+ void SwAccessibleTable::DisposeChild( const SwAccessibleChild& rChildFrameOrObj,
+-                                      bool bRecursive )
++                                      bool bRecursive, bool bCanSkipInvisible )
+ {
+     SolarMutexGuard aGuard;
+ 
+@@ -1423,7 +1423,7 @@ void SwAccessibleTable::DisposeChild( const SwAccessibleChild& rChildFrameOrObj,
+     // about its change. We then must not call the superclass
+     uno::Reference< XAccessible > xAcc( GetMap()->GetContext( pFrame, false ) );
+     if( !xAcc.is() )
+-        SwAccessibleContext::DisposeChild( rChildFrameOrObj, bRecursive );
++        SwAccessibleContext::DisposeChild( rChildFrameOrObj, bRecursive, bCanSkipInvisible );
+ }
+ 
+ void SwAccessibleTable::InvalidateChildPosOrSize( const SwAccessibleChild& rChildFrameOrObj,
+diff --git a/sw/source/core/access/acctable.hxx b/sw/source/core/access/acctable.hxx
+index 8afd565..9f3c385 100644
+--- a/sw/source/core/access/acctable.hxx
++++ b/sw/source/core/access/acctable.hxx
+@@ -224,10 +224,10 @@ public:
+     virtual void InvalidatePosOrSize( const SwRect& rOldBox ) override;
+ 
+     // The object is not visible an longer and should be destroyed
+-    virtual void Dispose( bool bRecursive = false ) override;
++    virtual void Dispose(bool bRecursive = false, bool bCanSkipInvisible = true) override;
+ 
+     virtual void DisposeChild( const sw::access::SwAccessibleChild& rFrameOrObj,
+-                               bool bRecursive ) override;
++                               bool bRecursive, bool bCanSkipInvisible ) override;
+     virtual void InvalidateChildPosOrSize( const sw::access::SwAccessibleChild& rFrameOrObj,
+                                            const SwRect& rFrame ) override;
+ 
+diff --git a/sw/source/core/draw/dview.cxx b/sw/source/core/draw/dview.cxx
+index ad6f7df..0bf2e1f 100644
+--- a/sw/source/core/draw/dview.cxx
++++ b/sw/source/core/draw/dview.cxx
+@@ -374,7 +374,7 @@ void SwDrawView::_MoveRepeatedObjs( const SwAnchoredObject& _rMovedAnchoredObj,
+                 }
+                 else
+                 {
+-                    rImp.DisposeAccessibleObj( pAnchoredObj->GetDrawObj() );
++                    rImp.DisposeAccessibleObj(pAnchoredObj->GetDrawObj(), true);
+                     rImp.AddAccessibleObj( pAnchoredObj->GetDrawObj() );
+                 }
+             }
+@@ -410,7 +410,7 @@ void SwDrawView::_MoveRepeatedObjs( const SwAnchoredObject& _rMovedAnchoredObj,
+                     }
+                     else
+                     {
+-                        rImp.DisposeAccessibleObj( pAnchoredObj->GetDrawObj() );
++                        rImp.DisposeAccessibleObj(pAnchoredObj->GetDrawObj(), true);
+                         rImp.AddAccessibleObj( pAnchoredObj->GetDrawObj() );
+                     }
+                 }
+@@ -620,7 +620,7 @@ void SwDrawView::ObjOrderChanged( SdrObject* pObj, sal_uLong nOldPos,
+                 }
+                 else
+                 {
+-                    rImp.DisposeAccessibleObj( pTmpObj );
++                    rImp.DisposeAccessibleObj(pTmpObj, true);
+                     rImp.AddAccessibleObj( pTmpObj );
+                 }
+             }
+@@ -639,7 +639,7 @@ void SwDrawView::ObjOrderChanged( SdrObject* pObj, sal_uLong nOldPos,
+     else
+     {
+         // adjustments for accessibility API
+-        rImp.DisposeAccessibleObj( pObj );
++        rImp.DisposeAccessibleObj(pObj, true);
+         rImp.AddAccessibleObj( pObj );
+     }
+ 
+diff --git a/sw/source/core/inc/viewimp.hxx b/sw/source/core/inc/viewimp.hxx
+index 3bde62f..3e6a2bb 100644
+--- a/sw/source/core/inc/viewimp.hxx
++++ b/sw/source/core/inc/viewimp.hxx
+@@ -225,10 +225,10 @@ public:
+ 
+     /// Remove a frame from the accessible view
+     void DisposeAccessible( const SwFrame *pFrame, const SdrObject *pObj,
+-                            bool bRecursive );
++                            bool bRecursive, bool bCanSkipInvisible );
+     inline void DisposeAccessibleFrame( const SwFrame *pFrame,
+                                bool bRecursive = false );
+-    inline void DisposeAccessibleObj( const SdrObject *pObj );
++    inline void DisposeAccessibleObj( const SdrObject *pObj, bool bCanSkipInvisible );
+ 
+     /// Move a frame's position in the accessible view
+     void MoveAccessible( const SwFrame *pFrame, const SdrObject *pObj,
+@@ -278,12 +278,12 @@ inline SwAccessibleMap& SwViewShellImp::GetAccessibleMap()
+ inline void SwViewShellImp::DisposeAccessibleFrame( const SwFrame *pFrame,
+                                bool bRecursive )
+ {
+-    DisposeAccessible( pFrame, nullptr, bRecursive );
++    DisposeAccessible( pFrame, nullptr, bRecursive, true );
+ }
+ 
+-inline void SwViewShellImp::DisposeAccessibleObj( const SdrObject *pObj )
++inline void SwViewShellImp::DisposeAccessibleObj( const SdrObject *pObj, bool bCanSkipInvisible )
+ {
+-    DisposeAccessible( nullptr, pObj, false );
++    DisposeAccessible( nullptr, pObj, false, bCanSkipInvisible );
+ }
+ 
+ inline void SwViewShellImp::MoveAccessibleFrame( const SwFrame *pFrame,
+diff --git a/sw/source/core/layout/fly.cxx b/sw/source/core/layout/fly.cxx
+index 5bb29a5..ba7b1cd 100644
+--- a/sw/source/core/layout/fly.cxx
++++ b/sw/source/core/layout/fly.cxx
+@@ -2162,8 +2162,8 @@ void SwFrame::RemoveDrawObj( SwAnchoredObject& _rToRemoveObj )
+     if( pSh )
+     {
+         SwRootFrame* pLayout = getRootFrame();
+-        if( pLayout && pLayout->IsAnyShellAccessible() )
+-        pSh->Imp()->DisposeAccessibleObj( _rToRemoveObj.GetDrawObj() );
++        if (pLayout && pLayout->IsAnyShellAccessible())
++            pSh->Imp()->DisposeAccessibleObj(_rToRemoveObj.GetDrawObj(), false);
+     }
+ 
+     // deregister from page frame
+diff --git a/sw/source/core/view/viewimp.cxx b/sw/source/core/view/viewimp.cxx
+index d84ffa9..06f3e6c 100644
+--- a/sw/source/core/view/viewimp.cxx
++++ b/sw/source/core/view/viewimp.cxx
+@@ -302,15 +302,16 @@ void SwViewShellImp::UpdateAccessible()
+         GetAccessibleMap().GetDocumentView();
+ }
+ 
+-void SwViewShellImp::DisposeAccessible( const SwFrame *pFrame,
+-                                   const SdrObject *pObj,
+-                                   bool bRecursive )
++void SwViewShellImp::DisposeAccessible(const SwFrame *pFrame,
++                                       const SdrObject *pObj,
++                                       bool bRecursive,
++                                       bool bCanSkipInvisible)
+ {
+     OSL_ENSURE( !pFrame || pFrame->IsAccessibleFrame(), "frame is not accessible" );
+     for(SwViewShell& rTmp : GetShell()->GetRingContainer())
+     {
+         if( rTmp.Imp()->IsAccessible() )
+-            rTmp.Imp()->GetAccessibleMap().Dispose( pFrame, pObj, nullptr, bRecursive );
++            rTmp.Imp()->GetAccessibleMap().A11yDispose( pFrame, pObj, nullptr, bRecursive, bCanSkipInvisible );
+     }
+ }
+ 
+diff --git a/sw/source/uibase/docvw/PostItMgr.cxx b/sw/source/uibase/docvw/PostItMgr.cxx
+index d985940..2457b55 100644
+--- a/sw/source/uibase/docvw/PostItMgr.cxx
++++ b/sw/source/uibase/docvw/PostItMgr.cxx
+@@ -2198,7 +2198,7 @@ void SwPostItMgr::DisconnectSidebarWinFromFrame( const SwFrame& rFrame,
+         if ( bRemoved &&
+              mpWrtShell->GetAccessibleMap() )
+         {
+-            mpWrtShell->GetAccessibleMap()->Dispose( nullptr, nullptr, &rSidebarWin );
++            mpWrtShell->GetAccessibleMap()->A11yDispose( nullptr, nullptr, &rSidebarWin );
+         }
+     }
+ }
+-- 
+2.7.4
+

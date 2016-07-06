@@ -2291,18 +2291,18 @@ done
 %endif
 
 %changelog
-* Wed Jul 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-5-UNBUILD
+* Wed Jul 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5-UNBUILD
 - Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker
 - Resolves: rhbz#1353069 don't clear XATTR_FILL properties if stylesheet is shared
 - a11y crash on deleting certain frame in certain document
 
-* Wed Jun 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-4
+* Wed Jun 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-4
 - Resolves: rhbz#1342823 toolbar menus popdown immediately
 - Related: tdf#91807 fix parallel zip error handling
 - Resolves: rhbz#1350478 better wayland c-n-p selection loss detection
 - Resolves: rhbz#1351224 use GtkPopOvers instead of home-grown tooltips
 
-* Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.1-3
+* Fri Jun 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-3
 - Resolves: rhbz#1349501 gtk3 smooth scrolling events can be user-disabled
 - Resolves: rhbz#1326304 cannot detect loss of wayland clipboard ownership
 - Resolves: rhbz#1342822 gtk3 set decoration bits before realize

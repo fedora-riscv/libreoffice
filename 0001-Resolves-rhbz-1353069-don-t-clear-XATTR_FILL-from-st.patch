@@ -1,0 +1,200 @@
+From 5de108e1ac33155293501f7931be4d3bedc8ee76 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 6 Jul 2016 10:10:27 +0100
+Subject: [PATCH] Resolves: rhbz#1353069 don't clear XATTR_FILL* from
+ stylesheet if...
+
+the master page is not the sole owner. Which happens when copying
+and pasting slides which bring along a duplicate master page to
+an already existing one, and the attempt to remove the duplicate
+strips the fill properties from the shared stylesheet in use by
+the other
+
+regression from...
+
+commit b876bbe2cacce8af379b10d82da6c7e7d229b361
+Author: David Tardon <dtardon@redhat.com>
+Date:   Tue Apr 26 09:17:11 2016 +0200
+
+    rbhz#1326602 avoid exp. bg bitmaps from deleted slides
+
+(cherry picked from commit de4908eb4d2f1f2ce38a37eea18a9efc4a0073b1)
+
+Change-Id: I91fb8f622a0e35741ecc37cef14fc93199bb730b
+---
+ include/svx/svdundo.hxx                            |  5 +--
+ reportdesign/source/core/inc/ReportUndoFactory.hxx |  2 +-
+ reportdesign/source/core/sdr/ReportUndoFactory.cxx |  4 +--
+ sc/source/core/data/drwlayer.cxx                   |  2 +-
+ sd/source/core/drawdoc3.cxx                        | 13 ++++++--
+ svx/source/svdraw/svdundo.cxx                      | 38 +++++++++++++---------
+ 6 files changed, 40 insertions(+), 24 deletions(-)
+
+diff --git a/include/svx/svdundo.hxx b/include/svx/svdundo.hxx
+index 346f6c3..b1be6dd 100644
+--- a/include/svx/svdundo.hxx
++++ b/include/svx/svdundo.hxx
+@@ -588,9 +588,10 @@ class SVX_DLLPUBLIC SdrUndoDelPage : public SdrUndoPageList
+     SdrUndoGroup*               pUndoGroup;
+     std::unique_ptr<SfxPoolItem> mpFillBitmapItem;
+     bool mbHasFillBitmap;
++    bool mbSoleOwnerOfFillBitmapProps;
+ 
+ public:
+-    SdrUndoDelPage(SdrPage& rNewPg);
++    SdrUndoDelPage(SdrPage& rNewPg, bool bSoleOwnerOfFillBitmapProps);
+     virtual ~SdrUndoDelPage();
+ 
+     virtual void Undo() override;
+@@ -763,7 +764,7 @@ public:
+     virtual SdrUndoAction* CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLayerAdmin& rNewLayerAdmin, SdrModel& rNewModel, sal_uInt16 nNeuPos1);
+ 
+     // Page
+-    virtual SdrUndoAction*  CreateUndoDeletePage(SdrPage& rPage);
++    virtual SdrUndoAction* CreateUndoDeletePage(SdrPage& rPage, bool bSoleOwnerOfFillBitmapProps = true);
+     virtual SdrUndoAction* CreateUndoNewPage(SdrPage& rPage);
+     virtual SdrUndoAction* CreateUndoCopyPage(SdrPage& rPage);
+     virtual SdrUndoAction* CreateUndoSetPageNum(SdrPage& rNewPg, sal_uInt16 nOldPageNum1, sal_uInt16 nNewPageNum1);
+diff --git a/reportdesign/source/core/inc/ReportUndoFactory.hxx b/reportdesign/source/core/inc/ReportUndoFactory.hxx
+index 88d0024..1839f1f 100644
+--- a/reportdesign/source/core/inc/ReportUndoFactory.hxx
++++ b/reportdesign/source/core/inc/ReportUndoFactory.hxx
+@@ -59,7 +59,7 @@ namespace rptui
+         virtual SdrUndoAction* CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLayerAdmin& rNewLayerAdmin, SdrModel& rNewModel, sal_uInt16 nNeuPos1) override;
+ 
+         // page
+-        virtual SdrUndoAction*  CreateUndoDeletePage(SdrPage& rPage) override;
++        virtual SdrUndoAction* CreateUndoDeletePage(SdrPage& rPage, bool bSoleOwnerOfFillBitmapProps = true) override;
+         virtual SdrUndoAction* CreateUndoNewPage(SdrPage& rPage) override;
+         virtual SdrUndoAction* CreateUndoCopyPage(SdrPage& rPage) override;
+         virtual SdrUndoAction* CreateUndoSetPageNum(SdrPage& rNewPg, sal_uInt16 nOldPageNum1, sal_uInt16 nNewPageNum1) override;
+diff --git a/reportdesign/source/core/sdr/ReportUndoFactory.cxx b/reportdesign/source/core/sdr/ReportUndoFactory.cxx
+index cbb5a8a..566400c 100644
+--- a/reportdesign/source/core/sdr/ReportUndoFactory.cxx
++++ b/reportdesign/source/core/sdr/ReportUndoFactory.cxx
+@@ -133,9 +133,9 @@ SdrUndoAction* OReportUndoFactory::CreateUndoMoveLayer(sal_uInt16 nLayerNum, Sdr
+ }
+ 
+ // page
+-SdrUndoAction*  OReportUndoFactory::CreateUndoDeletePage(SdrPage& rPage)
++SdrUndoAction*  OReportUndoFactory::CreateUndoDeletePage(SdrPage& rPage, bool bSoleOwnerOfFillBitmapProps)
+ {
+-    return m_pUndoFactory->CreateUndoDeletePage( rPage );
++    return m_pUndoFactory->CreateUndoDeletePage(rPage, bSoleOwnerOfFillBitmapProps);
+ }
+ 
+ SdrUndoAction* OReportUndoFactory::CreateUndoNewPage(SdrPage& rPage)
+diff --git a/sc/source/core/data/drwlayer.cxx b/sc/source/core/data/drwlayer.cxx
+index 2886926..2a38964 100644
+--- a/sc/source/core/data/drwlayer.cxx
++++ b/sc/source/core/data/drwlayer.cxx
+@@ -411,7 +411,7 @@ void ScDrawLayer::ScRemovePage( SCTAB nTab )
+     if (bRecording)
+     {
+         SdrPage* pPage = GetPage(static_cast<sal_uInt16>(nTab));
+-        AddCalcUndo(new SdrUndoDelPage(*pPage));        // Undo-Action becomes the page owner
++        AddCalcUndo(new SdrUndoDelPage(*pPage, true));  // Undo-Action becomes the page owner
+         RemovePage( static_cast<sal_uInt16>(nTab) );    // just deliver, not deleting
+     }
+     else
+diff --git a/sd/source/core/drawdoc3.cxx b/sd/source/core/drawdoc3.cxx
+index d993b2b..a86bdbd 100644
+--- a/sd/source/core/drawdoc3.cxx
++++ b/sd/source/core/drawdoc3.cxx
+@@ -796,8 +796,17 @@ bool SdDrawDocument::InsertBookmarkAsPage(
+                  aTest == aMPLayout &&
+                  eKind == pTest->GetPageKind() )
+             {
+-                if( bUndo )
+-                    AddUndo(GetSdrUndoFactory().CreateUndoDeletePage(*pRefPage));
++                if (bUndo)
++                {
++                    bool bSoleOwnerOfStyleSheet = true;
++                    if (pRefPage->IsMasterPage())
++                    {
++                        const SfxStyleSheet* pRefSheet = pRefPage->getSdrPageProperties().GetStyleSheet();
++                        const SfxStyleSheet* pTestSheet = pTest->getSdrPageProperties().GetStyleSheet();
++                        bSoleOwnerOfStyleSheet = pRefSheet != pTestSheet;
++                    }
++                    AddUndo(GetSdrUndoFactory().CreateUndoDeletePage(*pRefPage, bSoleOwnerOfStyleSheet));
++                }
+ 
+                 RemoveMasterPage(nPage);
+ 
+diff --git a/svx/source/svdraw/svdundo.cxx b/svx/source/svdraw/svdundo.cxx
+index f51942d..ff60a82 100644
+--- a/svx/source/svdraw/svdundo.cxx
++++ b/svx/source/svdraw/svdundo.cxx
+@@ -1459,11 +1459,11 @@ SdrUndoPageList::~SdrUndoPageList()
+ }
+ 
+ 
+-
+-SdrUndoDelPage::SdrUndoDelPage(SdrPage& rNewPg)
++SdrUndoDelPage::SdrUndoDelPage(SdrPage& rNewPg, bool bSoleOwnerOfFillBitmapProps)
+     : SdrUndoPageList(rNewPg)
+     , pUndoGroup(nullptr)
+     , mbHasFillBitmap(false)
++    , mbSoleOwnerOfFillBitmapProps(bSoleOwnerOfFillBitmapProps)
+ {
+     bItsMine = true;
+ 
+@@ -1573,12 +1573,15 @@ void SdrUndoDelPage::clearFillBitmap()
+ {
+     if (mrPage.IsMasterPage())
+     {
+-        SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
+-        assert(bool(pStyleSheet)); // who took away my stylesheet?
+-        SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
+-        rItemSet.ClearItem(XATTR_FILLBITMAP);
+-        if (mbHasFillBitmap)
+-            rItemSet.ClearItem(XATTR_FILLSTYLE);
++        if (mbSoleOwnerOfFillBitmapProps)
++        {
++            SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
++            assert(bool(pStyleSheet)); // who took away my stylesheet?
++            SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
++            rItemSet.ClearItem(XATTR_FILLBITMAP);
++            if (mbHasFillBitmap)
++                rItemSet.ClearItem(XATTR_FILLSTYLE);
++        }
+     }
+     else
+     {
+@@ -1593,12 +1596,15 @@ void SdrUndoDelPage::restoreFillBitmap()
+ {
+     if (mrPage.IsMasterPage())
+     {
+-        SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
+-        assert(bool(pStyleSheet)); // who took away my stylesheet?
+-        SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
+-        rItemSet.Put(*mpFillBitmapItem);
+-        if (mbHasFillBitmap)
+-            rItemSet.Put(XFillStyleItem(css::drawing::FillStyle_BITMAP));
++        if (mbSoleOwnerOfFillBitmapProps)
++        {
++            SfxStyleSheet* const pStyleSheet = mrPage.getSdrPageProperties().GetStyleSheet();
++            assert(bool(pStyleSheet)); // who took away my stylesheet?
++            SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
++            rItemSet.Put(*mpFillBitmapItem);
++            if (mbHasFillBitmap)
++                rItemSet.Put(XFillStyleItem(css::drawing::FillStyle_BITMAP));
++        }
+     }
+     else
+     {
+@@ -1858,9 +1864,9 @@ SdrUndoAction* SdrUndoFactory::CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLaye
+ }
+ 
+ // page
+-SdrUndoAction*  SdrUndoFactory::CreateUndoDeletePage(SdrPage& rPage)
++SdrUndoAction*  SdrUndoFactory::CreateUndoDeletePage(SdrPage& rPage, bool bSoleOwnerOfFillBitmapProps)
+ {
+-    return new SdrUndoDelPage( rPage );
++    return new SdrUndoDelPage(rPage, bSoleOwnerOfFillBitmapProps);
+ }
+ 
+ SdrUndoAction* SdrUndoFactory::CreateUndoNewPage(SdrPage& rPage)
+-- 
+2.7.4
+

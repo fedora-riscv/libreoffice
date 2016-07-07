@@ -1,0 +1,354 @@
+From ef70b6a3b0a2e1cc27c890d4c648bac4f276d6ff Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Thu, 7 Jul 2016 15:56:54 +0100
+Subject: [PATCH] Resolves: rhbz#1351224 wayland grab related crashes
+
+only one popup active at a time. Try and find the right path through the
+uncanny valley which allows popups to appear, to get all mouse input that
+happens to them, forward keyboard input to their parents, dismiss when the
+mouse is clicked outside them and not crash if another popup wants to appear
+to replace it
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |   9 ++-
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 171 +++++++++++++++++++-----------------------
+ 2 files changed, 84 insertions(+), 96 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index d5aa627..06f9162 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -268,6 +268,8 @@ class GtkSalFrame : public SalFrame
+ #endif
+ #else
+     static gboolean     signalExpose( GtkWidget*, GdkEventExpose*, gpointer );
++    void askForXEmbedFocus( sal_Int32 nTimecode );
++    void grabKeyboard(bool bGrab);
+ #endif
+     static gboolean     signalFocus( GtkWidget*, GdkEventFocus*, gpointer );
+     static gboolean     signalMap( GtkWidget*, GdkEvent*, gpointer );
+@@ -298,7 +300,6 @@ class GtkSalFrame : public SalFrame
+     static GdkNativeWindow findTopLevelSystemWindow( GdkNativeWindow aWindow );
+ 
+     static int m_nFloats;
+-    static std::vector<GtkWidget*> m_aGrabWidgetsBeforeShowFloat;
+ 
+     bool isFloatGrabWindow() const
+     {
+@@ -337,7 +338,6 @@ class GtkSalFrame : public SalFrame
+ 
+     void setMinMaxSize();
+     void createNewWindow( ::Window aParent, bool bXEmbed, SalX11Screen nXScreen );
+-    void askForXEmbedFocus( sal_Int32 nTimecode );
+ 
+     void AllocateFrame();
+     void TriggerPaintEvent();
+@@ -364,7 +364,6 @@ public:
+     // be swallowed
+     bool Dispatch( const XEvent* pEvent );
+     void grabPointer(bool bGrab, bool bOwnerEvents = false);
+-    void grabKeyboard(bool bGrab);
+ 
+     static GtkSalDisplay*  getDisplay();
+     static GdkDisplay*     getGdkDisplay();
+@@ -420,6 +419,10 @@ public:
+     void startDrag(gint nButton, gint nDragOriginX, gint nDragOriginY,
+                    GdkDragAction sourceActions, GtkTargetList* pTargetList);
+ 
++    void WithDrawn();
++
++    static void closePopup();
++
+ #endif
+     virtual ~GtkSalFrame();
+ 
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index db2c25d..41d4c2e 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -106,7 +106,6 @@
+ using namespace com::sun::star;
+ 
+ int GtkSalFrame::m_nFloats = 0;
+-std::vector<GtkWidget*> GtkSalFrame::m_aGrabWidgetsBeforeShowFloat;
+ 
+ #if defined ENABLE_GMENU_INTEGRATION
+ static GDBusConnection* pSessionBus = nullptr;
+@@ -1297,13 +1296,6 @@ void GtkSalFrame::Init( SystemParentData* pSysData )
+     //FIXME: Handling embedded windows, is going to be fun ...
+ }
+ 
+-void GtkSalFrame::askForXEmbedFocus( sal_Int32 i_nTimeCode )
+-{
+-    (void) this; // loplugin:staticmethods
+-    (void)i_nTimeCode;
+-    //FIXME: no askForXEmbedFocus for gtk3 yet
+-}
+-
+ void GtkSalFrame::SetExtendedFrameStyle( SalExtStyle nStyle )
+ {
+     if( nStyle != m_nExtStyle && ! isChild() )
+@@ -1443,30 +1435,26 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+             if( ! bNoActivate && (m_nStyle & SalFrameStyleFlags::TOOLWINDOW) )
+                 m_bSetFocusOnMap = true;
+ 
+-            gtk_widget_show( m_pWindow );
++            if (isFloatGrabWindow() && !getDisplay()->GetCaptureFrame() && m_nFloats == 0)
++            {
++                m_pParent->grabPointer(true, true);
++                gtk_grab_add(m_pParent->getMouseEventWidget());
++            }
++
++            gtk_widget_show(m_pWindow);
+ 
+             if( isFloatGrabWindow() )
+             {
+                 m_nFloats++;
+                 if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 1 )
+                 {
+-                    GtkWindowGroup *pWindowGroup = gtk_window_get_group(GTK_WINDOW(m_pWindow));
+-                    GtkWidget* pGrabWidgetBeforeShowFloat;
+-                    while ((pGrabWidgetBeforeShowFloat = gtk_window_group_get_current_grab(pWindowGroup)))
+-                    {
+-                        m_aGrabWidgetsBeforeShowFloat.push_back(pGrabWidgetBeforeShowFloat);
+-                        gtk_grab_remove(pGrabWidgetBeforeShowFloat);
+-                    }
+                     grabPointer(true, true);
+-                    GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
+-                    pKeyboardFrame->grabKeyboard(true);
++                    gtk_grab_add(getMouseEventWidget());
+                 }
+                 // #i44068# reset parent's IM context
+                 if( m_pParent )
+                     m_pParent->EndExtTextInput(EndExtTextInputFlags::NONE);
+             }
+-            if( m_bWindowIsGtkPlug )
+-                askForXEmbedFocus( 0 );
+         }
+         else
+         {
+@@ -1475,12 +1463,10 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+                 m_nFloats--;
+                 if( ! getDisplay()->GetCaptureFrame() && m_nFloats == 0)
+                 {
+-                    GtkSalFrame *pKeyboardFrame = m_pParent ? m_pParent : this;
+-                    pKeyboardFrame->grabKeyboard(false);
++                    gtk_grab_remove(getMouseEventWidget());
+                     grabPointer(false);
+-                    for (auto i = m_aGrabWidgetsBeforeShowFloat.rbegin(); i != m_aGrabWidgetsBeforeShowFloat.rend(); ++i)
+-                        gtk_grab_add(*i);
+-                    m_aGrabWidgetsBeforeShowFloat.clear();
++                    gtk_grab_remove(m_pParent->getMouseEventWidget());
++                    m_pParent->grabPointer(false);
+                 }
+             }
+             gtk_widget_hide( m_pWindow );
+@@ -2085,37 +2071,32 @@ void GtkSalFrame::grabPointer( bool bGrab, bool bOwnerEvents )
+     if (!m_pWindow)
+         return;
+ 
+-    const int nMask = (GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK);
+-
+-    GdkDeviceManager* pDeviceManager = gdk_display_get_device_manager(getGdkDisplay());
+-    GdkDevice* pPointer = gdk_device_manager_get_client_pointer(pDeviceManager);
++#if GTK_CHECK_VERSION(3, 19, 2)
++    GdkSeat* pSeat = gdk_display_get_default_seat(getGdkDisplay());
+     if (bGrab)
+-        gdk_device_grab(pPointer, widget_get_window(getMouseEventWidget()), GDK_OWNERSHIP_NONE, bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, gtk_get_current_event_time());
++    {
++        gdk_seat_grab(pSeat, widget_get_window(getMouseEventWidget()), GDK_SEAT_CAPABILITY_ALL_POINTING,
++                      bOwnerEvents, NULL, NULL, NULL, NULL);
++    }
+     else
+-        gdk_device_ungrab(pPointer, gtk_get_current_event_time());
+-}
+-
+-void GtkSalFrame::grabKeyboard( bool bGrab )
+-{
+-    static const char* pEnv = getenv("SAL_NO_MOUSEGRABS"); // let's not introduce a special var for this
+-    if (pEnv && *pEnv)
+-        return;
+-
+-    if (!m_pWindow)
+-        return;
++    {
++        gdk_seat_ungrab(pSeat);
++    }
++#else
++    const int nMask = (GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK);
+ 
+     GdkDeviceManager* pDeviceManager = gdk_display_get_device_manager(getGdkDisplay());
+     GdkDevice* pPointer = gdk_device_manager_get_client_pointer(pDeviceManager);
+-    GdkDevice* pKeyboard = gdk_device_get_associated_device(pPointer);
+     if (bGrab)
+     {
+-        gdk_device_grab(pKeyboard, widget_get_window(m_pWindow), GDK_OWNERSHIP_NONE,
+-                        true, (GdkEventMask)(GDK_KEY_PRESS | GDK_KEY_RELEASE), nullptr, gtk_get_current_event_time());
++        gdk_device_grab(pPointer, widget_get_window(getMouseEventWidget()), GDK_OWNERSHIP_NONE,
++                        bOwnerEvents, (GdkEventMask) nMask, m_pCurrentCursor, gtk_get_current_event_time());
+     }
+     else
+     {
+-        gdk_device_ungrab(pKeyboard, gtk_get_current_event_time());
++        gdk_device_ungrab(pPointer, gtk_get_current_event_time());
+     }
++#endif
+ }
+ 
+ void GtkSalFrame::CaptureMouse( bool bCapture )
+@@ -2557,6 +2538,22 @@ bool GtkSalFrame::HidePopover(sal_uIntPtr nId)
+ #endif
+ }
+ 
++void GtkSalFrame::WithDrawn()
++{
++    if (isFloatGrabWindow())
++        closePopup();
++}
++
++void GtkSalFrame::closePopup()
++{
++    if (!m_nFloats)
++        return;
++    ImplSVData* pSVData = ImplGetSVData();
++    if (!pSVData->maWinData.mpFirstFloat)
++        return;
++    pSVData->maWinData.mpFirstFloat->EndPopupMode(FloatWinPopupEndFlags::Cancel | FloatWinPopupEndFlags::CloseAll);
++}
++
+ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer frame )
+ {
+     UpdateLastInputEventTime(pEvent->time);
+@@ -2588,62 +2585,33 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+     aEvent.mnY      = (long)pEvent->y_root - pThis->maGeometry.nY;
+     aEvent.mnCode   = GetMouseModCode( pEvent->state );
+ 
+-    bool bClosePopups = false;
+-    if( pEvent->type == GDK_BUTTON_PRESS &&
+-        !(pThis->m_nStyle & SalFrameStyleFlags::OWNERDRAWDECORATION)
+-        )
+-    {
+-        if( m_nFloats > 0 )
+-        {
+-            // close popups if user clicks outside our application
+-            gint x, y;
+-            bClosePopups = (gdk_display_get_window_at_pointer( GtkSalFrame::getGdkDisplay(), &x, &y ) == nullptr);
+-        }
+-        /*  #i30306# release implicit pointer grab if no popups are open; else
+-         *  Drag cannot grab the pointer and will fail.
+-         */
+-        if( m_nFloats < 1 || bClosePopups )
+-            gdk_display_pointer_ungrab( GtkSalFrame::getGdkDisplay(), GDK_CURRENT_TIME );
+-    }
++    vcl::DeletionListener aDel( pThis );
+ 
+-    if( pThis->m_bWindowIsGtkPlug &&
+-        pEvent->type == GDK_BUTTON_PRESS &&
+-        pEvent->button == 1 )
++    if (pEvent->type == GDK_BUTTON_PRESS && pThis->isFloatGrabWindow())
+     {
+-        pThis->askForXEmbedFocus( pEvent->time );
++        bool bClosePopups = (pEvent->window != widget_get_window(pThis->getMouseEventWidget()));
++        if (bClosePopups)
++            closePopup();
+     }
+ 
+     // --- RTL --- (mirror mouse pos)
+     if( AllSettings::GetLayoutRTL() )
+         aEvent.mnX = pThis->maGeometry.nWidth-1-aEvent.mnX;
+ 
+-    vcl::DeletionListener aDel( pThis );
+-
+-    pThis->CallCallback( nEventType, &aEvent );
+-
+-    if( ! aDel.isDeleted() )
++    if (!aDel.isDeleted())
+     {
+-        if( bClosePopups )
+-        {
+-            ImplSVData* pSVData = ImplGetSVData();
+-            if ( pSVData->maWinData.mpFirstFloat )
+-            {
+-                static const char* pEnv = getenv( "SAL_FLOATWIN_NOAPPFOCUSCLOSE" );
+-                if ( !(pSVData->maWinData.mpFirstFloat->GetPopupModeFlags() & FloatWinPopupFlags::NoAppFocusClose) && !(pEnv && *pEnv) )
+-                    pSVData->maWinData.mpFirstFloat->EndPopupMode( FloatWinPopupEndFlags::Cancel | FloatWinPopupEndFlags::CloseAll );
+-            }
+-        }
++        pThis->CallCallback( nEventType, &aEvent );
++    }
+ 
+-        if( ! aDel.isDeleted() )
++    if (!aDel.isDeleted())
++    {
++        int frame_x = (int)(pEvent->x_root - pEvent->x);
++        int frame_y = (int)(pEvent->y_root - pEvent->y);
++        if( frame_x != pThis->maGeometry.nX || frame_y != pThis->maGeometry.nY )
+         {
+-            int frame_x = (int)(pEvent->x_root - pEvent->x);
+-            int frame_y = (int)(pEvent->y_root - pEvent->y);
+-            if( frame_x != pThis->maGeometry.nX || frame_y != pThis->maGeometry.nY )
+-            {
+-                pThis->maGeometry.nX = frame_x;
+-                pThis->maGeometry.nY = frame_y;
+-                pThis->CallCallback( SALEVENT_MOVE, nullptr );
+-            }
++            pThis->maGeometry.nX = frame_x;
++            pThis->maGeometry.nY = frame_y;
++            pThis->CallCallback( SALEVENT_MOVE, nullptr );
+         }
+     }
+ 
+@@ -2787,6 +2755,13 @@ gboolean GtkSalFrame::signalMotion( GtkWidget*, GdkEventMotion* pEvent, gpointer
+ 
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
++    //If a menu, e.g. font name dropdown, is open, then under wayland moving the
++    //mouse in the top left corner of the toplevel window in a
++    //0,0,float-width,float-height area generates motion events which are
++    //delivered to the dropdown
++    if (pThis->isFloatGrabWindow() && pEvent->window != widget_get_window(pThis->getMouseEventWidget()))
++        return true;
++
+     SalMouseEvent aEvent;
+     aEvent.mnTime   = pEvent->time;
+     aEvent.mnX      = (long)pEvent->x_root - pThis->maGeometry.nX;
+@@ -3027,12 +3002,15 @@ gboolean GtkSalFrame::signalUnmap( GtkWidget*, GdkEvent*, gpointer frame )
+     return false;
+ }
+ 
+-gboolean GtkSalFrame::signalKey( GtkWidget*, GdkEventKey* pEvent, gpointer frame )
++gboolean GtkSalFrame::signalKey(GtkWidget* pWidget, GdkEventKey* pEvent, gpointer frame)
+ {
+     UpdateLastInputEventTime(pEvent->time);
+ 
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
++    if (pThis->isFloatGrabWindow())
++        return signalKey(pWidget, pEvent, pThis->m_pParent);
++
+     vcl::DeletionListener aDel( pThis );
+ 
+     if( pThis->m_pIMHandler )
+@@ -3187,11 +3165,18 @@ gboolean GtkSalFrame::signalWindowState( GtkWidget*, GdkEvent* pEvent, gpointer
+         pThis->TriggerPaintEvent();
+     }
+ 
+-    if(   (pEvent->window_state.new_window_state & GDK_WINDOW_STATE_MAXIMIZED) &&
+-        ! (pThis->m_nState & GDK_WINDOW_STATE_MAXIMIZED) )
++    if ((pEvent->window_state.new_window_state & GDK_WINDOW_STATE_MAXIMIZED) &&
++        !(pThis->m_nState & GDK_WINDOW_STATE_MAXIMIZED))
+     {
+         pThis->m_aRestorePosSize = GetPosAndSize(GTK_WINDOW(pThis->m_pWindow));
+     }
++
++    if ((pEvent->window_state.new_window_state & GDK_WINDOW_STATE_WITHDRAWN) &&
++        !(pThis->m_nState & GDK_WINDOW_STATE_WITHDRAWN))
++    {
++        pThis->WithDrawn();
++    }
++
+     pThis->m_nState = pEvent->window_state.new_window_state;
+ 
+     #if OSL_DEBUG_LEVEL > 1
+-- 
+2.7.4
+

@@ -274,6 +274,7 @@ Patch45: 0001-Resolves-rhbz-1352835-path-options-doesn-t-promptly-.patch
 Patch46: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
 Patch47: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
 Patch48: 0001-g_warning-SAL_WARN.patch
+Patch49: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2292,7 +2293,7 @@ done
 %endif
 
 %changelog
-* Thu Jul 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5-UNBUILD
+* Thu Jul 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5
 - Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker
 - Resolves: rhbz#1353069 don't clear XATTR_FILL properties if stylesheet is shared
 - a11y crash on deleting certain frame in certain document

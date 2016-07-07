@@ -1,0 +1,63 @@
+From a9251e456ca8a58a51ee9c5e0784195c330042d6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 7 Jul 2016 13:54:09 +0100
+Subject: [PATCH] g_warning->SAL_WARN
+
+(cherry picked from commit 2ab9dd333406327532a106f2d20256a2d1e96bb9)
+
+Change-Id: If2a1fa3514069f5a5dc4ab9a6b853833e39bab01
+
+OSL_TRACE->SAL_INFO for the Invalidate all children output
+
+(cherry picked from commit 246eca3e5a698671e4ce7e078d994ffd317c2a68)
+
+Change-Id: Ib5db114502ebf86ab1581104b914c84eceb50829
+---
+ vcl/unx/gtk/a11y/atklistener.cxx | 15 +++++++++++++--
+ vcl/unx/gtk/a11y/atkutil.cxx     |  4 ++--
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/vcl/unx/gtk/a11y/atklistener.cxx b/vcl/unx/gtk/a11y/atklistener.cxx
+index f9c25fd..0917ab7 100644
+--- a/vcl/unx/gtk/a11y/atklistener.cxx
++++ b/vcl/unx/gtk/a11y/atklistener.cxx
+@@ -559,8 +559,19 @@ void AtkListener::notifyEvent( const accessibility::AccessibleEventObject& aEven
+             break;
+         }
+ 
+-    default:
+-            g_warning( "Unknown event notification %d", aEvent.EventId );
++        case accessibility::AccessibleEventId::PAGE_CHANGED:
++        {
++            /* // If we implemented AtkDocument then I imagine this is what this
++               // handler should look like
++               sal_Int32 nPos=0;
++               aEvent.NewValue >>= nPos;
++               g_signal_emit_by_name( G_OBJECT( atk_obj ), "page_changed", nPos );
++            */
++            break;
++        }
++
++        default:
++            SAL_WARN("vcl.gtk", "Unknown event notification: " << aEvent.EventId);
+             break;
+     }
+ }
+diff --git a/vcl/unx/gtk/a11y/atkutil.cxx b/vcl/unx/gtk/a11y/atkutil.cxx
+index 1cb92cd..864e8d6 100644
+--- a/vcl/unx/gtk/a11y/atkutil.cxx
++++ b/vcl/unx/gtk/a11y/atkutil.cxx
+@@ -214,8 +214,8 @@ void DocumentFocusListener::notifyEvent( const accessibility::AccessibleEventObj
+             break;
+ 
+             case accessibility::AccessibleEventId::INVALIDATE_ALL_CHILDREN:
+-            g_warning( "Invalidate all children called\n" );
+-            break;
++                SAL_INFO("vcl.a11y", "Invalidate all children called");
++                break;
+ 
+             default:
+                 break;
+-- 
+2.7.4
+

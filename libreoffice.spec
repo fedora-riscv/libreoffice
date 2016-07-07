@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -234,13 +234,11 @@ Patch5: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch7: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
-Patch8: 0001-rhbz-1341064-fix-OutputDevice-test-on-big-endian-sys.patch
-Patch9: 0002-update-other-places-that-read-data-from-cairo-image-.patch
-Patch10: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
-Patch11: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch12: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
-Patch13: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch14: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
+Patch8: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
+Patch9: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
+Patch10: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
+Patch11: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch12: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1214,7 +1212,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
 rm -f %{buildroot}%{baseinstdir}/program/root?.dat
 
 # I don't think we need this...
-rm -f %{buildroot}%{baseinstdir}/share/classification/example.xml
+rm -f %{buildroot}%{baseinstdir}/share/classification/example*.xml
 rmdir %{buildroot}%{baseinstdir}/share/classification
 
 #set standard permissions for rpmlint
@@ -2243,6 +2241,9 @@ done
 %endif
 
 %changelog
+* Thu Jul 07 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.2-1
+- update to 5.2.0 rc2
+
 * Tue Jun 28 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-2
 - Resolves: rhbz#1341064 fix test on big endian systems
 

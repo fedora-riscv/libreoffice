@@ -275,6 +275,7 @@ Patch46: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
 Patch47: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
 Patch48: 0001-g_warning-SAL_WARN.patch
 Patch49: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch50: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2293,11 +2294,12 @@ done
 %endif
 
 %changelog
-* Thu Jul 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5
+* Fri Jul 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5
 - Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker
 - Resolves: rhbz#1353069 don't clear XATTR_FILL properties if stylesheet is shared
 - a11y crash on deleting certain frame in certain document
 - Resolves: rhbz#1351224 solve wayland grab related crashes
+- Resolves: rhbz#1352965 gtk3 infinite clipboard recursion with clipit
 
 * Wed Jun 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-4
 - Resolves: rhbz#1342823 toolbar menus popdown immediately

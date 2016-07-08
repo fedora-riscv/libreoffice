@@ -1,4 +1,4 @@
-From 3af38da4f0cb6b6341efad280c73a7733de42bea Mon Sep 17 00:00:00 2001
+From fb71db9506d73a8a14c3fd888bdea7778def7cc0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 24 Jun 2016 15:06:36 +0100
 Subject: [PATCH] Resolves: rhbz#1326304 cannot detect loss of wayland
@@ -23,6 +23,8 @@ its "paste"->m_aSystemContents->gtk->"copy"->m_aOurContents
 
 Undoubtedly something else will break now
 
+(cherry picked from commit 88cd9dd591d7921e5bce33c170b457ae5aa871bb)
+
 Change-Id: I32f2e1a2cc3310687f61a094fdfa940fa0cfcc39
 
 Resolves: rhbz#1350478 identify that we own the selection with a unique target
@@ -45,14 +47,14 @@ didn't work.
 Change-Id: I1154899e478b6e0cc6f70aa0c90c26663299072c
 (cherry picked from commit 88f7aae022bedd61588424a11bbc033217ba4e43)
 ---
- vcl/unx/gtk3/gtk3gtkinst.cxx | 124 ++++++++++++++++++++++---------------------
- 1 file changed, 63 insertions(+), 61 deletions(-)
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 127 +++++++++++++++++++++----------------------
+ 1 file changed, 63 insertions(+), 64 deletions(-)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index ed64ded..8b01166 100644
+index 06a5427..25f4590 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
-@@ -238,47 +238,6 @@ public:
+@@ -238,50 +238,6 @@ public:
      }
  };
  
@@ -62,7 +64,10 @@ index ed64ded..8b01166 100644
 -//one here for that purpose and just give it a VclGtkClipboard* member
 -class VclGtkClipboard;
 -
--struct ClipboardOwner
+-typedef struct _ClipboardOwner ClipboardOwner;
+-typedef struct _ClipboardOwnerClass ClipboardOwnerClass;
+-
+-struct _ClipboardOwner
 -{
 -    GObject parent_instance;
 -
@@ -70,7 +75,7 @@ index ed64ded..8b01166 100644
 -    VclGtkClipboard* m_pThis;
 -};
 -
--struct ClipboardOwnerClass
+-struct _ClipboardOwnerClass
 -{
 -  GObjectClass parent_class;
 -
@@ -100,7 +105,7 @@ index ed64ded..8b01166 100644
  class VclGtkClipboard :
          public cppu::WeakComponentImplHelper<
          datatransfer::clipboard::XSystemClipboard,
-@@ -287,7 +246,6 @@ class VclGtkClipboard :
+@@ -290,7 +246,6 @@ class VclGtkClipboard :
  {
      GdkAtom                                                  m_nSelection;
      osl::Mutex                                               m_aMutex;
@@ -108,7 +113,7 @@ index ed64ded..8b01166 100644
      gulong                                                   m_nOwnerChangedSignalId;
      Reference<css::datatransfer::XTransferable>              m_aContents;
      Reference<css::datatransfer::clipboard::XClipboardOwner> m_aOwner;
-@@ -349,7 +307,7 @@ public:
+@@ -352,7 +307,7 @@ public:
  
      void ClipboardGet(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info);
      void ClipboardClear(GtkClipboard *clipboard);
@@ -117,7 +122,7 @@ index ed64ded..8b01166 100644
  };
  
  OUString VclGtkClipboard::getImplementationName() throw( RuntimeException, std::exception )
-@@ -370,13 +328,13 @@ sal_Bool VclGtkClipboard::supportsService( const OUString& ServiceName ) throw(
+@@ -373,13 +328,13 @@ sal_Bool VclGtkClipboard::supportsService( const OUString& ServiceName ) throw(
  
  Reference< css::datatransfer::XTransferable > VclGtkClipboard::getContents() throw( RuntimeException, std::exception )
  {
@@ -133,13 +138,14 @@ index ed64ded..8b01166 100644
      return m_aContents;
  }
  
-@@ -388,9 +346,55 @@ void VclGtkClipboard::ClipboardGet(GtkClipboard* /*clipboard*/, GtkSelectionData
+@@ -391,9 +346,55 @@ void VclGtkClipboard::ClipboardGet(GtkClipboard* /*clipboard*/, GtkSelectionData
      m_aConversionHelper.setSelectionData(m_aContents, selection_data, info);
  }
  
 -void VclGtkClipboard::OwnerChanged(GtkClipboard* clipboard, GdkEvent* /*event*/)
 +namespace
-+{
+ {
+-    if (G_OBJECT(m_pOwner) != gtk_clipboard_get_owner(clipboard))
 +    const OString& getPID()
 +    {
 +        static OString sPID;
@@ -157,8 +163,7 @@ index ed64ded..8b01166 100644
 +}
 +
 +void VclGtkClipboard::OwnerPossiblyChanged(GtkClipboard* clipboard, GdkEvent* /*event*/)
- {
--    if (G_OBJECT(m_pOwner) != gtk_clipboard_get_owner(clipboard))
++{
 +    if (!m_aContents.is())
 +        return;
 +
@@ -191,7 +196,7 @@ index ed64ded..8b01166 100644
      {
          //null out m_aContents to return control to the system-one which
          //will be retrieved if getContents is called again
-@@ -488,20 +492,20 @@ namespace
+@@ -491,20 +492,20 @@ namespace
                            guint info,
                            gpointer user_data_or_owner)
      {
@@ -215,7 +220,7 @@ index ed64ded..8b01166 100644
      }
  }
  
-@@ -514,8 +518,6 @@ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
+@@ -517,8 +518,6 @@ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
      GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
      m_nOwnerChangedSignalId = g_signal_connect(clipboard, "owner-change",
                                                 G_CALLBACK(handle_owner_change), this);
@@ -224,7 +229,7 @@ index ed64ded..8b01166 100644
  }
  
  void VclGtkClipboard::flushClipboard()
-@@ -534,7 +536,6 @@ VclGtkClipboard::~VclGtkClipboard()
+@@ -535,7 +534,6 @@ VclGtkClipboard::~VclGtkClipboard()
  {
      GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
      g_signal_handler_disconnect(clipboard, m_nOwnerChangedSignalId);
@@ -232,7 +237,7 @@ index ed64ded..8b01166 100644
      ClipboardClear(nullptr);
  }
  
-@@ -599,15 +600,16 @@ void VclGtkClipboard::setContents(
+@@ -600,15 +598,16 @@ void VclGtkClipboard::setContents(
          std::vector<GtkTargetEntry> aGtkTargets(m_aConversionHelper.FormatsToGtk(aFormats));
          if (!aGtkTargets.empty())
          {

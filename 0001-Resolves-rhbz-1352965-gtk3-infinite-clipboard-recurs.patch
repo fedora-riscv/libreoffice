@@ -1,4 +1,4 @@
-From 785f89233eb588447af2e5f712c2b555b4fbc344 Mon Sep 17 00:00:00 2001
+From 25477cb518a464fb052e55c2b7c250af606ba42d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 8 Jul 2016 14:50:56 +0100
 Subject: [PATCH] Resolves: rhbz#1352965 gtk3 infinite clipboard recursion with
@@ -10,10 +10,10 @@ Change-Id: Ib67afaf532b8409e05fffbf1b8312d664460567d
  1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index 25f4590..72599b2 100644
+index 8b01166..c92bf43 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
-@@ -585,6 +585,7 @@ void VclGtkClipboard::setContents(
+@@ -587,6 +587,7 @@ void VclGtkClipboard::setContents(
  {
      osl::ClearableMutexGuard aGuard( m_aMutex );
      Reference< datatransfer::clipboard::XClipboardOwner > xOldOwner( m_aOwner );
@@ -21,8 +21,8 @@ index 25f4590..72599b2 100644
      Reference< datatransfer::XTransferable > xOldContents( m_aContents );
      m_aContents = xTrans;
      m_aOwner = xClipboardOwner;
-@@ -592,6 +593,10 @@ void VclGtkClipboard::setContents(
-     std::list< Reference< datatransfer::clipboard::XClipboardListener > > xListeners( m_aListeners );
+@@ -594,6 +595,10 @@ void VclGtkClipboard::setContents(
+     std::list< Reference< datatransfer::clipboard::XClipboardListener > > aListeners( m_aListeners );
      datatransfer::clipboard::ClipboardEvent aEv;
  
 +    GtkClipboard* clipboard = gtk_clipboard_get(m_nSelection);
@@ -32,7 +32,7 @@ index 25f4590..72599b2 100644
      if (m_aContents.is())
      {
          css::uno::Sequence<css::datatransfer::DataFlavor> aFormats = xTrans->getTransferDataFlavors();
-@@ -605,15 +610,11 @@ void VclGtkClipboard::setContents(
+@@ -607,15 +612,11 @@ void VclGtkClipboard::setContents(
              aEntry.info = 0;
              aGtkTargets.push_back(aEntry);
  
@@ -48,7 +48,7 @@ index 25f4590..72599b2 100644
          m_aGtkTargets = aGtkTargets;
      }
  
-@@ -621,7 +622,7 @@ void VclGtkClipboard::setContents(
+@@ -623,7 +624,7 @@ void VclGtkClipboard::setContents(
  
      aGuard.clear();
  
@@ -56,7 +56,7 @@ index 25f4590..72599b2 100644
 +    if (bOwnerChange)
          xOldOwner->lostOwnership( this, xOldContents );
      for( std::list< Reference< datatransfer::clipboard::XClipboardListener > >::iterator it =
-          xListeners.begin(); it != xListeners.end() ; ++it )
+          aListeners.begin(); it != aListeners.end() ; ++it )
 -- 
 2.7.4
 

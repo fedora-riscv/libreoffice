@@ -239,6 +239,7 @@ Patch9: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
 Patch10: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
 Patch11: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch12: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
+Patch13: 0001-rhbz-1351292-correctly-set-edit-mode.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2243,6 +2244,7 @@ done
 %changelog
 * Thu Jul 07 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.2-1
 - update to 5.2.0 rc2
+- Resolves: rhbz#1351292 fix switching of modes in Impress
 
 * Tue Jun 28 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.1-2
 - Resolves: rhbz#1341064 fix test on big endian systems

@@ -278,6 +278,7 @@ Patch49: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch50: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch51: 0001-Resolves-rhbz-1352881-turn-off-undo-generation-durin.patch
 Patch52: 0001-rhbz-1351292-correctly-set-edit-mode.patch
+Patch53: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2296,9 +2297,10 @@ done
 %endif
 
 %changelog
-* Sat Jul 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-6-UNBUILD
+* Tue Jul 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-6
 - Resolves: rhbz#1352881 turn off undo generation during undo
 - Resolves: rhbz#1351292 fix switching of modes in Impress
+- Related: rhbz#1351369 gtk3 clipboards has to live to end once created
 
 * Fri Jul 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-5
 - Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker

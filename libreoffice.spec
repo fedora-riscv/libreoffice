@@ -1455,7 +1455,7 @@ unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
 export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
-timeout -k 2m 2h make smoketest.subsequentcheck
+timeout -k 2m 3h make smoketest.subsequentcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 

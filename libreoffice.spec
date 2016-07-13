@@ -279,6 +279,7 @@ Patch50: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch51: 0001-Resolves-rhbz-1352881-turn-off-undo-generation-durin.patch
 Patch52: 0001-rhbz-1351292-correctly-set-edit-mode.patch
 Patch53: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
+Patch54: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

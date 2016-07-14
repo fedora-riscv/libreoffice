@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.4
+%define libo_version 5.1.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -249,37 +249,27 @@ Patch14: 0001-hack-out-optimization-to-build.patch
 Patch15: 0001-generate-better-unit-test-assert-message.patch
 Patch16: 0001-native-gtk-menubars-and-popup-menus.patch
 Patch17: 0001-Resolves-rhbz-1315385-use-preferred-size-if-widget-s.patch
-Patch19: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
-Patch20: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
-Patch21: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
-Patch25: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
-Patch26: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
-Patch27: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
-Patch30: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
-Patch31: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
-Patch32: 0001-on-switching-to-slide-layouts-panel-move-into-slide-.patch
-Patch33: 0001-Resolves-rhbz-1343766-a11y-queries-during-dispose-tr.patch
-Patch34: 0001-Related-tdf-99446-cairo-text-xrender-bodge.patch
-Patch35: 0001-Resolves-tdf-93135-can-t-resize-shape-with-resize-sh.patch
-Patch36: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
-Patch37: 0001-rhbz-1343752-fix-view-status-in-menu.patch
-Patch38: 0001-Resolves-rhbz-1349501-gtk3-smooth-scrolling-events-c.patch
-Patch39: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
-Patch40: 0001-gtk3-set-decoration-bits-etc-before-realize.patch
-Patch41: 0001-Resolves-rhbz-1342823-toolbar-menus-popdown-immediat.patch
-Patch42: 0001-package-fix-exception-handling-in-DeflateThread-rela.patch
-Patch43: 0001-gtk3-use-native-GtkPopover-for-calc-formula-prompt-e.patch
-Patch44: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
-Patch45: 0001-Resolves-rhbz-1352835-path-options-doesn-t-promptly-.patch
-Patch46: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch47: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
-Patch48: 0001-g_warning-SAL_WARN.patch
-Patch49: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch50: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
-Patch51: 0001-Resolves-rhbz-1352881-turn-off-undo-generation-durin.patch
-Patch52: 0001-rhbz-1351292-correctly-set-edit-mode.patch
-Patch53: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch54: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
+Patch18: 0001-Resolves-tdf-98638-sometimes-menu-grab-doesn-t-take.patch
+Patch19: 0001-tdf-39271-allow-to-export-only-notes-pages.patch
+Patch20: 0001-Pasting-from-a-pdf-from-a-fallback-font-doesn-t-give.patch
+Patch21: 0001-gtk3-New-Folder-dialog-from-Templates-dialog-doesn-t.patch
+Patch22: 0001-only-set-cur.-page-once-when-removing-mult.-pages.patch
+Patch23: 0001-improve-perf.-of-VCL-event-dispatch-take-II.patch
+Patch24: 0001-rhbz-1327847-emit-.desktop-trans.-in-predictable-ord.patch
+Patch25: 0001-tdf-96411-Add-slide-layout-changing-to-impress-menu-.patch
+Patch26: 0001-Related-tdf-93135-adjust-the-ui-to-reflect-the-text-.patch
+Patch27: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
+Patch28: 0001-gtk3-set-decoration-bits-etc-before-realize.patch
+Patch29: 0001-Resolves-rhbz-1342823-toolbar-menus-popdown-immediat.patch
+Patch30: 0001-gtk3-use-native-GtkPopover-for-calc-formula-prompt-e.patch
+Patch31: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
+Patch32: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
+Patch33: 0001-g_warning-SAL_WARN.patch
+Patch34: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch35: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
+Patch36: 0001-Resolves-rhbz-1352881-turn-off-undo-generation-durin.patch
+Patch37: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
+Patch38: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2298,6 +2288,9 @@ done
 %endif
 
 %changelog
+* Thu Jul 14 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.1-1
+- update to 5.1.5 rc1
+
 * Tue Jul 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.4.2-6
 - Resolves: rhbz#1352881 turn off undo generation during undo
 - Resolves: rhbz#1351292 fix switching of modes in Impress

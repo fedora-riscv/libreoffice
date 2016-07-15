@@ -1620,6 +1620,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmigrationoo2lo.so
 %{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmsformslo.so
+%dir %{baseinstdir}/program/opencl
+%{baseinstdir}/program/opencl/cl-test.ods
 %dir %{baseinstdir}/program/opengl
 %{baseinstdir}/program/opengl/areaHashCRC64TFragmentShader.glsl
 %{baseinstdir}/program/opengl/areaScaleFragmentShader.glsl

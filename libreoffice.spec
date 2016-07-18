@@ -420,8 +420,6 @@ Support JavaScript scripts in LibreOffice.
 
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
-Requires: apache-commons-codec, jakarta-commons-httpclient
-Requires: apache-commons-lang, apache-commons-logging
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}

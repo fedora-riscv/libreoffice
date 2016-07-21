@@ -272,6 +272,7 @@ Patch37: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch38: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
 Patch39: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
 Patch40: 0001-fix-Link-operator.patch
+Patch41: 0001-Resolves-tdf-101054-crash-on-options-path-with-non-n.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

@@ -1,0 +1,36 @@
+From 144e73f50c49333f61c6f27b882be9dbc232ceb4 Mon Sep 17 00:00:00 2001
+From: Noel Grandin <noel@peralex.com>
+Date: Tue, 22 Dec 2015 09:05:32 +0200
+Subject: [PATCH] fix Link::operator<
+
+so that it is consistent with operator==
+
+Change-Id: Ie4c68a1f02d8c298fe99e42c5854f89db79bf3bc
+---
+ include/tools/link.hxx | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/tools/link.hxx b/include/tools/link.hxx
+index cbac102..584f963 100644
+--- a/include/tools/link.hxx
++++ b/include/tools/link.hxx
+@@ -88,8 +88,14 @@ public:
+     bool operator !() const { return !IsSet(); }
+ 
+     bool operator <(Link const & other) const {
+-        return reinterpret_cast<sal_uIntPtr>(function_)
+-            < reinterpret_cast<sal_uIntPtr>(other.function_);
++        sal_uIntPtr ptr1 = reinterpret_cast<sal_uIntPtr>(function_);
++        sal_uIntPtr ptr2 = reinterpret_cast<sal_uIntPtr>(other.function_);
++        if (ptr1 < ptr2)
++            return true;
++        else if (ptr1 > ptr2)
++            return false;
++        else
++            return instance_ < other.instance_;
+     };
+ 
+     bool operator ==(Link const & other) const
+-- 
+2.7.4
+

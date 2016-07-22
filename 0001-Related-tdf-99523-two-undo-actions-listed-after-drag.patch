@@ -1,0 +1,42 @@
+From 130f8eef234c6f44798d597814a0debc202fe8cc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 13 May 2016 16:07:55 +0100
+Subject: [PATCH] Related: tdf#99523 two undo actions listed after dragging a
+ slide
+
+to a new place. "Delete Slides" and "Drag and Drop Slides", there
+should only be the "Drag and Drop Slides" shown.
+
+There is one more EndUndo than StartUndo. The extra one is the
+last one of View::DragFinished. I surmise that this is meant
+to match the BegUndo of View::StartDrag which is not called
+in this situation.
+
+This doesn't fix tdf#99523, but its the first thing I noticed,
+so fix that first.
+
+Change-Id: I3c31a3cfe83f28892112568bacfb25294366d6cf
+---
+ sd/source/ui/view/sdview2.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sd/source/ui/view/sdview2.cxx b/sd/source/ui/view/sdview2.cxx
+index ce67bfe..e51bc60 100644
+--- a/sd/source/ui/view/sdview2.cxx
++++ b/sd/source/ui/view/sdview2.cxx
+@@ -427,7 +427,11 @@ void View::DragFinished( sal_Int8 nDropAction )
+     if( pDragTransferable )
+         pDragTransferable->SetInternalMove( false );
+ 
+-    if( bUndo )
++    //This Undo appears to matches with the STR_UNDO_DRAGDROP Undo Start of
++    //View::StartDrag But this DragFinished can be called without a matching
++    //StartDrag. So use the existence of mpDragSrcMarkList as a flag that
++    //this EndUndo has a matching BegUndo
++    if (bUndo && mpDragSrcMarkList)
+         EndUndo();
+     mnDragSrcPgNum = SDRPAGE_NOTFOUND;
+     delete mpDragSrcMarkList;
+-- 
+2.7.4
+

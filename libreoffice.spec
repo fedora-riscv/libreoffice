@@ -274,6 +274,7 @@ Patch39: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
 Patch40: 0001-fix-Link-operator.patch
 Patch41: 0001-Resolves-tdf-101054-crash-on-options-path-with-non-n.patch
 Patch42: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
+Patch43: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

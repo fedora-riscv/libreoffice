@@ -241,6 +241,7 @@ Patch11: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch12: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch13: 0001-rhbz-1351292-correctly-set-edit-mode.patch
 Patch14: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
+Patch15: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
 
 %if 0%{?rhel}
 # not upstreamed

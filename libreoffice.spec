@@ -2252,7 +2252,7 @@ done
 * Mon Jul 18 2016 Marek Kasik <mkasik@redhat.com> - 1:5.2.0.2-3
 - Rebuild for poppler-0.45.0
 
-* Thu Jul 07 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.2-2.UNBUILT
+* Thu Jul 07 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.2-2
 - remove obsolete wiki-publisher requires apache-commons-*
 
 * Thu Jul 07 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.2-1

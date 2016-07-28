@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -272,9 +272,8 @@ Patch37: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch38: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
 Patch39: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
 Patch40: 0001-fix-Link-operator.patch
-Patch41: 0001-Resolves-tdf-101054-crash-on-options-path-with-non-n.patch
-Patch42: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
-Patch43: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
+Patch41: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
+Patch42: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2293,6 +2292,9 @@ done
 %endif
 
 %changelog
+* Thu Jul 28 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-1
+- update to 5.1.5 rc2
+
 * Thu Jul 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.1-2
 - various crashes in a11y because Link::operator< is not implemented correctly
   so DYING events are not always propogated

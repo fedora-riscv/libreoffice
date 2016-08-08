@@ -1,0 +1,66 @@
+From 4b775acb8b8d891c74f47e704f5f1a9f215963ac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 4 Aug 2016 17:23:30 +0100
+Subject: [PATCH] Resolves: tdf#101213 drop use of CAIRO_OPERATOR_DIFFERENCE
+
+for tdf#99446 and rhbz#1283420 there is a hackaround which ended up in 5.1.5,
+which is not in 5.1.4, for corrupt glyphs under X. I can still reproduce the
+problem if I drop the CAIRO_OPERATOR_DIFFERENCE usage here with master and
+gtk2.
+
+This alternative hackaround to force a read of the underlying surface works
+just as well (help->license information is the reproducer) but reportedly
+solves the performance regression.
+
+(cherry picked from commit 705d7597480b2307d7e4929ce9386d80ce2a0f16)
+
+Change-Id: Ie3c5b07409537a1734226b4ce034620351297e25
+---
+ vcl/unx/generic/gdi/x11cairotextrender.cxx | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
+
+diff --git a/vcl/unx/generic/gdi/x11cairotextrender.cxx b/vcl/unx/generic/gdi/x11cairotextrender.cxx
+index cf8bc99..f25ed1f 100644
+--- a/vcl/unx/generic/gdi/x11cairotextrender.cxx
++++ b/vcl/unx/generic/gdi/x11cairotextrender.cxx
+@@ -38,10 +38,6 @@ struct _XRegion
+     BOX extents;
+ };
+ 
+-#if CAIRO_VERSION < CAIRO_VERSION_ENCODE(1, 10, 0)
+-#    define CAIRO_OPERATOR_DIFFERENCE (static_cast<cairo_operator_t>(23))
+-#endif
+-
+ X11CairoTextRender::X11CairoTextRender(X11SalGraphics& rParent)
+     : mrParent(rParent)
+ {
+@@ -56,17 +52,16 @@ cairo_t* X11CairoTextRender::getCairoContext()
+ {
+     cairo_t *cr = mrParent.getCairoContext();
+ 
+-    //rhbz#1283420 bodge to draw and undraw something which has the side effect
+-    //of making the mysterious xrender related problem go away
+-    if (cairo_version() >= CAIRO_VERSION_ENCODE(1, 10, 0))
++    //rhbz#1283420 bodge to force a read from the underlying surface which has
++    //the side effect of making the mysterious xrender related problem go away
+     {
+-        cairo_save(cr);
+-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+-        cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
+-        cairo_rectangle(cr, 0, 0, 1, 1);
+-        cairo_fill_preserve(cr);
+-        cairo_fill(cr);
+-        cairo_restore(cr);
++        cairo_surface_t *target = cairo_get_target(cr);
++        cairo_surface_t *throw_away = cairo_surface_create_similar(target, cairo_surface_get_content(target), 1, 1);
++        cairo_t *force_read_cr = cairo_create(throw_away);
++        cairo_set_source_surface(force_read_cr, target, 0, 0);
++        cairo_paint(force_read_cr);
++        cairo_destroy(force_read_cr);
++        cairo_surface_destroy(throw_away);
+     }
+ 
+     return cr;
+-- 
+2.7.4
+

@@ -1,4 +1,4 @@
-From 4b775acb8b8d891c74f47e704f5f1a9f215963ac Mon Sep 17 00:00:00 2001
+From 4cb9478a6910529233aaa3370a5b48bc2ae1f7ed Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 4 Aug 2016 17:23:30 +0100
 Subject: [PATCH] Resolves: tdf#101213 drop use of CAIRO_OPERATOR_DIFFERENCE
@@ -20,10 +20,10 @@ Change-Id: Ie3c5b07409537a1734226b4ce034620351297e25
  1 file changed, 9 insertions(+), 14 deletions(-)
 
 diff --git a/vcl/unx/generic/gdi/x11cairotextrender.cxx b/vcl/unx/generic/gdi/x11cairotextrender.cxx
-index cf8bc99..f25ed1f 100644
+index 17cb462..c2242b5 100644
 --- a/vcl/unx/generic/gdi/x11cairotextrender.cxx
 +++ b/vcl/unx/generic/gdi/x11cairotextrender.cxx
-@@ -38,10 +38,6 @@ struct _XRegion
+@@ -42,10 +42,6 @@ struct _XRegion
      BOX extents;
  };
  
@@ -34,9 +34,9 @@ index cf8bc99..f25ed1f 100644
  X11CairoTextRender::X11CairoTextRender(X11SalGraphics& rParent)
      : mrParent(rParent)
  {
-@@ -56,17 +52,16 @@ cairo_t* X11CairoTextRender::getCairoContext()
- {
-     cairo_t *cr = mrParent.getCairoContext();
+@@ -83,17 +79,16 @@ cairo_t* X11CairoTextRender::getCairoContext()
+     cairo_t *cr = cairo_create(surface);
+     cairo_surface_destroy(surface);
  
 -    //rhbz#1283420 bodge to draw and undraw something which has the side effect
 -    //of making the mysterious xrender related problem go away

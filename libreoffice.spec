@@ -275,6 +275,7 @@ Patch40: 0001-fix-Link-operator.patch
 Patch41: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
 Patch42: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
 Patch43: 0001-Resolves-tdf-101213-drop-use-of-CAIRO_OPERATOR_DIFFE.patch
+Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2293,8 +2294,9 @@ done
 %endif
 
 %changelog
-* Mon Aug 08 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-2-UNBUILT
+* Tue Aug 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-2
 - tdf#101213 text rendering performance issue
+- for crash-on-writer-exit sw restore some Dispose calls in a11y code
 
 * Thu Jul 28 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-1
 - update to 5.1.5 rc2

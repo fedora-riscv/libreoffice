@@ -1,0 +1,76 @@
+From b299aa7c64adc2de86c367888e6ccb73c4b31bc2 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 25 Feb 2016 23:24:53 +0100
+Subject: [PATCH] sw: restore some Dispose calls in a11y code
+
+These were removed by commit a5c4ddcf8ed5344d9bceeffd7431cd6895a407ca
+but the assertions inevitably triggered by their removal in the
+~SwAccessibleMap about "Frame map should be empty after disposing the
+root frame" were left intact, which (along the total lack of any stated
+reason) casts some doubt on how well thought out that change was.
+
+Basically SwAccessibleMap had the invariant that only visible frames had
+a valid SwAccessible in the mpFrameMap, and when the frames scrolled
+out of view their SwAccessible was disposed.
+
+Let's try to restore this invariant.
+
+The dispose removal has caused crashes in the past too, see
+commit 104ed86c382b73505b477bf3024982dd27823023.
+
+Change-Id: I4b3e7264ce76a8c6e551d68f6bc231982970dfdd
+---
+ sw/source/core/access/acccontext.cxx | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/core/access/acccontext.cxx b/sw/source/core/access/acccontext.cxx
+index 0e42527..86d34cd 100644
+--- a/sw/source/core/access/acccontext.cxx
++++ b/sw/source/core/access/acccontext.cxx
+@@ -240,6 +240,11 @@ void SwAccessibleContext::ChildrenScrolled( const SwFrame *pFrame,
+                                 xAccImpl->ViewForwarderChanged(
+                                     ::accessibility::IAccessibleViewForwarderListener::VISIBLE_AREA,
+                                     GetMap() );
++                                // this DisposeShape call was removed by
++                                // IAccessibility2 implementation
++                                // without giving any reason why
++                                DisposeShape( rLower.GetDrawObject(),
++                                          xAccImpl.get() );
+                             }
+                             break;
+                         // coverity[dead_error_begin] - following conditions exist to avoid compiler warning
+@@ -347,6 +352,11 @@ void SwAccessibleContext::ScrolledOut( const SwRect& rOldVisArea )
+     // It might be that the child is freshly created just to send
+     // the child event. In this case no listener will exist.
+     FireStateChangedEvent( AccessibleStateType::SHOWING, false );
++
++    // this Dispose call was removed by IAccessibility2 implementation
++    // without giving any reason why - without it we get stale
++    // entries in SwAccessibleMap::mpFrameMap.
++    Dispose(true);
+ }
+ 
+ // #i27301# - use new type definition for <_nStates>
+@@ -1140,7 +1150,18 @@ void SwAccessibleContext::InvalidatePosOrSize( const SwRect& )
+     // note: InvalidatePosOrSize must call _InvalidateContent so that
+     // SwAccessibleParagraph updates its portions, or dispose it
+     // (see accmap.cxx: INVALID_CONTENT is contained in POS_CHANGED)
+-    _InvalidateContent( true );
++    if( !bIsNewShowingState &&
++        SwAccessibleChild( GetParent() ).IsVisibleChildrenOnly() )
++    {
++        // this Dispose call was removed by IAccessibility2 implementation
++        // without giving any reason why - without it we get stale
++        // entries in SwAccessibleMap::mpFrameMap.
++        Dispose(true);
++    }
++    else
++    {
++        _InvalidateContent( true );
++    }
+ }
+ 
+ void SwAccessibleContext::InvalidateChildPosOrSize(
+-- 
+2.7.4
+

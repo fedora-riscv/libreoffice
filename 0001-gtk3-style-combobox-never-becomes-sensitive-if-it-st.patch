@@ -1,0 +1,124 @@
+From bcb0a36cab53880c2f256765c55cca4a93e2e27b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 11 Aug 2016 14:47:56 +0100
+Subject: [PATCH] gtk3: style combobox never becomes sensitive if it starts
+ insensitive
+
+Place cursor inside a protected section in writer, e.g. a table of contents.
+Save, and reload. The cursor starts inside the protected section.
+
+With the native gtk3 menubar the styles dropdown in the top left is
+grayed out. Moving the cursor outside the protected area does not
+make it active again.
+
+Under gen it works fine.
+
+*Extensive* debugging shows that there is a cache based on the numeric
+slots of commands to their dispatcher, e.g. SfxBindings::GetStateCache
+so if you SfxBindings::QueryState for a given uno command then it will
+look up what dispatcher to listen to by slot id.
+
+This StyleApply command appears in a number of places in LibreOffice,
+the toolbar as .uno:StyleApply, *but* .uno:StyleApply?A_Bunch_Of_Args
+elsewhere in the menus.
+
+In the gtk3 plugin it so happens that all the menu items are parsed
+and listeners set before the toolbar is created. While in the gen
+plugin the toolbar is created, and the menus are on-demand later.
+
+So under gen the dispatcher is created for ".uno:StyleApply" and
+other .uno:StyleApply?* go through that one. Under gtk3 the dispatcher
+is created for ".uno:StyleApply?A_Bunch_Of_Args".
+
+So, when SfxDispatchController_Impl::StateChanged is called, the
+aDispatchURL.Complete argument is ".uno:StyleApply?A_Bunch_Of_Args", but,
+because it was supplied as a cached result from the shared slot, some
+listeners have been added that want to listen to ".uno:StyleApply".
+The name doesn't match, so looking up the listeners listening to the
+command with argument finds nothing, so those listeners on the name
+without argument are not fired.
+
+Here I look up all the property names that the listeners were added to listen
+to (1 in all cases I've seen in casual testing) and if either the name with
+full args or no args matches then inform that listener that something has
+changed.
+
+Change-Id: Ib5858ccb16dce41e249ee911751053fd277551b8
+---
+ include/sfx2/unoctitm.hxx        |  2 ++
+ sfx2/source/control/unoctitm.cxx | 39 +++++++++++++++++++++++++--------------
+ 2 files changed, 27 insertions(+), 14 deletions(-)
+
+diff --git a/include/sfx2/unoctitm.hxx b/include/sfx2/unoctitm.hxx
+index 863f880..9c6de38 100644
+--- a/include/sfx2/unoctitm.hxx
++++ b/include/sfx2/unoctitm.hxx
+@@ -151,6 +151,8 @@ class SfxDispatchController_Impl : public SfxControllerItem
+                                              css::uno::Sequence< css::beans::PropertyValue >& rArgs );
+     static SfxMapUnit   GetCoreMetric( SfxItemPool& rPool, sal_uInt16 nSlot );
+ 
++    void                sendStatusChanged(const OUString& rURL, const css::frame::FeatureStateEvent& rEvent);
++
+ public:
+                         SfxDispatchController_Impl( SfxOfficeDispatch*                 pDisp,
+                                                     SfxBindings*                       pBind,
+diff --git a/sfx2/source/control/unoctitm.cxx b/sfx2/source/control/unoctitm.cxx
+index cb3050a..2f357e3 100644
+--- a/sfx2/source/control/unoctitm.cxx
++++ b/sfx2/source/control/unoctitm.cxx
+@@ -953,6 +953,25 @@ void SAL_CALL SfxDispatchController_Impl::addStatusListener(const css::uno::Refe
+     aListener->statusChanged( aEvent );
+ }
+ 
++void SfxDispatchController_Impl::sendStatusChanged(const OUString& rURL, const css::frame::FeatureStateEvent& rEvent)
++{
++    ::cppu::OInterfaceContainerHelper* pContnr = pDispatch->GetListeners().getContainer(rURL);
++    if (!pContnr)
++        return;
++    ::cppu::OInterfaceIteratorHelper aIt(*pContnr);
++    while (aIt.hasMoreElements())
++    {
++        try
++        {
++            static_cast<css::frame::XStatusListener*>(aIt.next())->statusChanged(rEvent);
++        }
++        catch (const css::uno::RuntimeException&)
++        {
++            aIt.remove();
++        }
++    }
++}
++
+ void SfxDispatchController_Impl::StateChanged( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState, SfxSlotServer* pSlotServ )
+ {
+     if ( !pDispatch )
+@@ -1031,20 +1050,12 @@ void SfxDispatchController_Impl::StateChanged( sal_uInt16 nSID, SfxItemState eSt
+                     pDispatcher->GetFrame()->GetObjectShell(), aEvent);
+         }
+ 
+-        ::cppu::OInterfaceContainerHelper* pContnr = pDispatch->GetListeners().getContainer ( aDispatchURL.Complete );
+-        if (pContnr) {
+-            ::cppu::OInterfaceIteratorHelper aIt( *pContnr );
+-            while( aIt.hasMoreElements() )
+-            {
+-                try
+-                {
+-                    static_cast< css::frame::XStatusListener *>(aIt.next())->statusChanged( aEvent );
+-                }
+-                catch (const css::uno::RuntimeException&)
+-                {
+-                    aIt.remove();
+-                }
+-            }
++        Sequence< OUString > seqNames = pDispatch->GetListeners().getContainedTypes();
++        sal_Int32 nLength = seqNames.getLength();
++        for (sal_Int32 i = 0; i < nLength; ++i)
++        {
++            if (seqNames[i] == aDispatchURL.Main || seqNames[i] == aDispatchURL.Complete)
++                sendStatusChanged(seqNames[i], aEvent);
+         }
+     }
+ }
+-- 
+2.7.4
+

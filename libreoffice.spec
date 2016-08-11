@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -276,6 +276,7 @@ Patch41: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
 Patch42: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
 Patch43: 0001-Resolves-tdf-101213-drop-use-of-CAIRO_OPERATOR_DIFFE.patch
 Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
+Patch45: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2294,6 +2295,10 @@ done
 %endif
 
 %changelog
+* Wed Aug 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-3
+- style combobox never becomes sensitive under gtk3 is if starts
+  insensitive
+
 * Tue Aug 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-2
 - tdf#101213 text rendering performance issue
 - for crash-on-writer-exit sw restore some Dispose calls in a11y code

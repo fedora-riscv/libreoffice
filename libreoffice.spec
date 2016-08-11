@@ -277,6 +277,7 @@ Patch42: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
 Patch43: 0001-Resolves-tdf-101213-drop-use-of-CAIRO_OPERATOR_DIFFE.patch
 Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
 Patch45: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
+Patch46: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2298,6 +2299,7 @@ done
 * Wed Aug 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-3
 - style combobox never becomes sensitive under gtk3 is if starts
   insensitive
+- Resolves: tdf#100250 scrollbar has no bg
 
 * Tue Aug 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-2
 - tdf#101213 text rendering performance issue

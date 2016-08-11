@@ -1,0 +1,31 @@
+From 8e91999dbf05e57338a6f6fc58f8c41e355bb573 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 11 Aug 2016 16:17:54 +0100
+Subject: [PATCH] Resolves: tdf#100250 scrollbar has no bg
+
+(cherry picked from commit 176111160ddfbe4b6b36b300062bab156d46b211)
+
+Change-Id: I48e26b775337809759f8a76be7a9c457c94cd5c9
+---
+ vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+index 14aba8a..0ecb85c 100644
+--- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+@@ -433,6 +433,11 @@ void GtkSalGraphics::PaintScrollbar(GtkStyleContext *context,
+     gtk_render_background(gtk_widget_get_style_context(gCacheWindow), cr, 0, 0,
+                           scrollbarRect.GetWidth(), scrollbarRect.GetHeight() );
+ 
++    gtk_render_background(context, cr, 0, 0,
++                          scrollbarRect.GetWidth(), scrollbarRect.GetHeight() );
++    gtk_render_frame(context, cr, 0, 0,
++                     scrollbarRect.GetWidth(), scrollbarRect.GetHeight() );
++
+     // ----------------- TROUGH
+     GtkStyleContext* pScrollbarTroughStyle = scrollbarOrientation == GTK_ORIENTATION_VERTICAL ?
+                                               mpVScrollbarTroughStyle : mpHScrollbarTroughStyle;
+-- 
+2.7.4
+

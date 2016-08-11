@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.0
+%define libo_version 5.2.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,7 +54,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.4
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -236,14 +236,10 @@ Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch7: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
 Patch8: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
 Patch9: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch10: 0001-Resolves-rhbz-1353069-don-t-clear-XATTR_FILL-from-st.patch
-Patch11: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch12: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
-Patch13: 0001-rhbz-1351292-correctly-set-edit-mode.patch
-Patch14: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch15: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
-Patch16: 0001-curl-7.50.0-has-CURL-as-typedef-struct-Curl_easy.patch
-Patch17: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
+Patch10: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch11: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
+Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
+Patch13: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2246,6 +2242,9 @@ done
 %endif
 
 %changelog
+* Thu Aug 11 2016 David Tardon <dtardon@redhat.com> - 1:5.2.1.1-1
+- update to 5.2.1 rc1
+
 * Fri Jul 29 2016 David Tardon <dtardon@redhat.com> - 1:5.2.0.4-1
 - update to 5.2.0 rc4
 

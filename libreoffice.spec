@@ -2230,8 +2230,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Jul 11 2016 David Tardon <dtardon@redhat.com> - 1:5.0.6.2-10-UNBUILT
+* Fri Aug 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-10
 - Resolves: rhbz#1351292 fix switching of modes in Impress
+- Resolves: rhbz#1303562 CAIRO_OPERATOR_DIFFERENCE is kryptonite for nvidia drivers
 
 * Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-9
 - Resolves: rhbz#1351199 CVE-2016-4324 invalid stl iterator deref

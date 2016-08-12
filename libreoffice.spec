@@ -315,7 +315,6 @@ Patch82: 0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
 Patch83: 0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
 Patch84: 0003-package-fix-exception-handling-in-DeflateThread-rela.patch
 Patch85: 0001-rtf-m_aStates-can-be-empty-in-the-inner-condition.patch
-Patch86: 0001-rhbz-1351292-correctly-set-edit-mode.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2231,7 +2230,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %changelog
 * Fri Aug 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-10
-- Resolves: rhbz#1351292 fix switching of modes in Impress
 - Resolves: rhbz#1303562 CAIRO_OPERATOR_DIFFERENCE is kryptonite for nvidia drivers
 
 * Mon Jun 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-9

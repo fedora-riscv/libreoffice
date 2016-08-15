@@ -1,0 +1,47 @@
+From 2d7b2c6357d478b83fce8f457305e7c2932c4656 Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Mon, 15 Aug 2016 15:17:11 +0100
+Subject: [PATCH] Resolves: rhbz#1364335 tooltips are truncated
+
+---
+ vcl/inc/helpwin.hxx     |  1 +
+ vcl/source/app/help.cxx | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/vcl/inc/helpwin.hxx b/vcl/inc/helpwin.hxx
+index 5889a4f..def965d 100644
+--- a/vcl/inc/helpwin.hxx
++++ b/vcl/inc/helpwin.hxx
+@@ -49,6 +49,7 @@ protected:
+     virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle&) SAL_OVERRIDE;
+     virtual void RequestHelp( const HelpEvent& rHEvt ) SAL_OVERRIDE;
+     virtual void ApplySettings(vcl::RenderContext& rRenderContext) SAL_OVERRIDE;
++    virtual void StateChanged(StateChangedType nType) SAL_OVERRIDE;
+ 
+     virtual OUString GetText() const SAL_OVERRIDE;
+     void ImplShow();
+diff --git a/vcl/source/app/help.cxx b/vcl/source/app/help.cxx
+index 7014a79..13b0c24 100644
+--- a/vcl/source/app/help.cxx
++++ b/vcl/source/app/help.cxx
+@@ -269,6 +269,17 @@ HelpTextWindow::HelpTextWindow( vcl::Window* pParent, const OUString& rText, sal
+     maHideTimer.SetTimeout( rHelpSettings.GetTipTimeout() );
+ }
+ 
++void HelpTextWindow::StateChanged(StateChangedType nType)
++{
++    FloatingWindow::StateChanged(nType);
++    if (nType == StateChangedType::InitShow)
++    {
++        ApplySettings(*this);
++        SetHelpText(maHelpText);
++        Invalidate();
++    }
++}
++
+ void HelpTextWindow::ApplySettings(vcl::RenderContext& rRenderContext)
+ {
+     const StyleSettings& rStyleSettings = rRenderContext.GetSettings().GetStyleSettings();
+-- 
+1.8.3.1
+

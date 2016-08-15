@@ -52,7 +52,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 Group:          Applications/Productivity
 URL:            http://www.libreoffice.org/
@@ -315,6 +315,7 @@ Patch82: 0001-tdf-99722-sw-silly-performance-issue-when-firing-a11.patch
 Patch83: 0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
 Patch84: 0003-package-fix-exception-handling-in-DeflateThread-rela.patch
 Patch85: 0001-rtf-m_aStates-can-be-empty-in-the-inner-condition.patch
+Patch86: 0001-Resolves-rhbz-1364335-tooltips-are-truncated.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2229,6 +2230,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
+* Mon Aug 15 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-11-UNBUILD
+- Resolves: rhbz#1364335 tooltips are truncated
+
 * Fri Aug 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-10
 - Resolves: rhbz#1303562 CAIRO_OPERATOR_DIFFERENCE is kryptonite for nvidia drivers
 

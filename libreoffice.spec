@@ -278,6 +278,7 @@ Patch43: 0001-Resolves-tdf-101213-drop-use-of-CAIRO_OPERATOR_DIFFE.patch
 Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
 Patch45: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
 Patch46: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
+Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

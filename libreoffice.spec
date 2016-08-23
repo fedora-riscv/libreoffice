@@ -240,6 +240,7 @@ Patch10: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch11: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch13: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
+Patch14: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 
 %if 0%{?rhel}
 # not upstreamed

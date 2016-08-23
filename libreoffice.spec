@@ -279,6 +279,7 @@ Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
 Patch45: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
 Patch46: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
 Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
+Patch48: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

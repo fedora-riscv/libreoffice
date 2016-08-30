@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2298,6 +2298,10 @@ done
 %endif
 
 %changelog
+* Tue Aug 30 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-4
+- Resolves: tdf#101165 crash on deselecting all filters
+- Resolves: rhbz#1364335 tooltips are truncated
+
 * Wed Aug 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-3
 - style combobox never becomes sensitive under gtk3 is if starts
   insensitive

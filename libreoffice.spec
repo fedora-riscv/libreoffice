@@ -2174,6 +2174,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_javadir}/%{name}/jurt.jar
 %{_javadir}/%{name}/ridl.jar
 %{_javadir}/%{name}/unoloader.jar
+%license instdir/LICENSE
 
 %files sdk
 %{sdkinstdir}/

@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -366,11 +366,20 @@ Support BeanShell scripts in LibreOffice.
 %package officebean
 Summary: JavaBean for LibreOffice Components
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-officebean-common = %{epoch}:%{version}-%{release}
 
 %description officebean
 Allows embedding of LibreOffice documents within the Java environment. It
 provides a Java AWT window into which the backend LibreOffice process draws
 its visual representation
+
+%package officebean-common
+Summary: Common JavaBean for LibreOffice Components
+Requires: %{name}-data = %{epoch}:%{version}-%{release}
+BuildArch: noarch
+
+%description officebean-common
+Arch-independent part of %{name}-officebean.
 
 %package rhino
 Summary: JavaScript support for LibreOffice
@@ -553,6 +562,7 @@ Summary: UNO Runtime Environment
 %if 0%{?__isa_bits} == 64
 %global mark64 ()(64bit)
 %endif
+Requires: %{name}-ure-common = %{epoch}:%{version}-%{release}
 Requires: unzip%{?_isa}, libjvm.so%{?mark64}
 Obsoletes: openoffice.org-ure < 1:3.3.1
 
@@ -563,6 +573,13 @@ either in process or over process boundaries, in the Intranet as well as in the
 Internet. UNO components may be implemented in and accessed from any
 programming language for which a UNO implementation (AKA language binding) and
 an appropriate bridge or adapter exists
+
+%package ure-common
+Summary: Common UNO Runtime Environment
+BuildArch: noarch
+
+%description ure-common
+Arch-independent part of %{name}-ure.
 
 %package sdk
 Summary: Software Development Kit for LibreOffice
@@ -1401,6 +1418,18 @@ appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-i
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
 %endif
 
+# rhbz#1247399 - move stable API jars to noarch java location
+install -m 0755 -d %{buildroot}%{_javadir}/%{name}
+for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
+    j=`basename $jar`
+    case ${j%.jar} in
+        juh|jurt|ridl|unoloader|unoil|officebean)
+            mv $jar %{buildroot}%{_javadir}/%{name}
+            ln -sr %{buildroot}%{_javadir}/%{name}/$j $jar
+            ;;
+    esac
+done
+
 %check
 unset WITH_LANG
 # work around flawed accessibility check
@@ -1896,6 +1925,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/classes/officebean.jar
 %{baseinstdir}/program/libofficebean.so
 
+%files officebean-common
+%{_javadir}/%{name}/officebean.jar
+
 %files ogltrans
 %{baseinstdir}/program/libOGLTranslo.so
 %{baseinstdir}/program/opengl/basicFragmentShader.glsl
@@ -2136,6 +2168,13 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/uno.bin
 %{baseinstdir}/program/unorc
 
+%files ure-common
+%dir %{_javadir}/%{name}
+%{_javadir}/%{name}/juh.jar
+%{_javadir}/%{name}/jurt.jar
+%{_javadir}/%{name}/ridl.jar
+%{_javadir}/%{name}/unoloader.jar
+
 %files sdk
 %{sdkinstdir}/
 %exclude %{sdkinstdir}/docs/
@@ -2182,6 +2221,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/icons/locolor/*/*/libreoffice*
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
+# TODO: rename -data to -core-common?
+%dir %{_javadir}/%{name}
+%{_javadir}/%{name}/unoil.jar
 %dir %{datadir}
 %doc instdir/CREDITS.fodt
 %doc instdir/LICENSE.html
@@ -2244,6 +2286,9 @@ done
 %endif
 
 %changelog
+* Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.2.1.2-2
+- Resolves: rhbz#1247399 install public jars according to packaging guidelines
+
 * Fri Aug 26 2016 David Tardon <dtardon@redhat.com> - 1:5.2.1.2-1
 - update to 5.2.1 rc2
 

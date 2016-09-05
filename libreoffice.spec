@@ -1398,6 +1398,8 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 #add our mime-types, e.g. for .oxt extensions
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
+
+# install LibreOfficeKit
 install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
 %if 0%{?fedora}
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
@@ -1406,6 +1408,12 @@ install -m 0644 -p gir-1.0/LOKDocView-%{girapiversion}.gir %{buildroot}%{_libdir
 mv %{buildroot}%{baseinstdir}/program/liblibreofficekitgtk.so %{buildroot}%{_libdir}
 %endif
 popd
+
+%if 0%{?fedora}
+# install LibreOfficeKit headers
+install -m 0755 -d %{buildroot}%{_includedir}/LibreOfficeKit
+install -m 0644 -p include/LibreOfficeKit/* %{buildroot}%{_includedir}/LibreOfficeKit
+%endif
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
@@ -2337,12 +2345,14 @@ done
 
 %files -n libreofficekit-devel
 %{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
+%{_includedir}/LibreOfficeKit
 
 %endif
 
 %changelog
 * Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-5
 - Resolves: rhbz#1247399 install public jars according to packaging guidelines
+- Resolves: rhbz#1363874 install LibreOfficeKit headers
 
 * Tue Aug 30 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-4
 - Resolves: tdf#101165 crash on deselecting all filters

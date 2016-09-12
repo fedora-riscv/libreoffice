@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2350,6 +2350,9 @@ done
 %endif
 
 %changelog
+* Mon Sep 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-6.UNBUILT
+- Resolves: rhbz#1375168 impress annotation menu crashes
+
 * Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-5
 - Resolves: rhbz#1247399 install public jars according to packaging guidelines
 - Resolves: rhbz#1363874 install LibreOfficeKit headers

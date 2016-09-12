@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.1
+%define libo_version 5.2.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -240,10 +240,7 @@ Patch9: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
 Patch10: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch11: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch13: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
-Patch14: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
-Patch15: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
-Patch16: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch13: 0001-add-xdg-email-as-the-default-email-route.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2299,6 +2296,9 @@ done
 %endif
 
 %changelog
+* Wed Sep 14 2016 David Tardon <dtardon@redhat.com> - 1:5.2.2.1-1
+- update to 5.2.2 rc1
+
 * Tue Sep 13 2016 Stephan Bergmann <sbergman@redhat.com> - 1:5.2.1.2-3
 - enable dconf support for Fleet Commander
 

@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -136,6 +136,7 @@ BuildRequires: pam-devel
 BuildRequires: pkgconfig(bluez)
 BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
+BuildRequires: pkgconfig(dconf)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(glew) >= 1.10.0
@@ -1078,6 +1079,7 @@ touch autogen.lastrun
  --disable-fetch-external \
  --disable-openssl \
  --disable-systray \
+ --enable-dconf \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
@@ -2297,6 +2299,9 @@ done
 %endif
 
 %changelog
+* Tue Sep 13 2016 Stephan Bergmann <sbergman@redhat.com> - 1:5.2.1.2-3
+- enable dconf support for Fleet Commander
+
 * Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.2.1.2-2
 - Resolves: rhbz#1247399 install public jars according to packaging guidelines
 - Resolves: rhbz#1363874 install LibreOfficeKit headers

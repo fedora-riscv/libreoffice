@@ -242,6 +242,7 @@ Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch13: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
 Patch14: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 Patch15: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
+Patch16: 0001-add-xdg-email-as-the-default-email-route.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -282,6 +282,7 @@ Patch46: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
 Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 Patch48: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
 Patch49: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch50: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2353,11 +2354,12 @@ done
 %endif
 
 %changelog
-* Mon Sep 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-6.UNBUILT
+* Tue Sep 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-6
 - Resolves: rhbz#1375168 impress annotation menu crashes
 - add xdg-email as the default email route cause it can attach to thunderbird
   (in theory at least)
 - enable dconf support for Fleet Commander
+- Resolves: rhbz#1375427 hide gtk3 file dialog after file is selected
 
 * Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-5
 - Resolves: rhbz#1247399 install public jars according to packaging guidelines

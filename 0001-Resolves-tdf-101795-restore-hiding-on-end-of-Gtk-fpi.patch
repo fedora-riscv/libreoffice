@@ -1,0 +1,118 @@
+From 21188796975be8187e234de446aae4371c3b360a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 2 Sep 2016 21:38:35 +0100
+Subject: [PATCH] Resolves: tdf#101795 restore hiding on end of Gtk fpicker
+ execute
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+but don't hide it at the end of every RunDialog::run so that the
+dialog still exists and is visible if the "sure you want to overwrite"
+dialog needs to be displayed
+
+and restore the cui options stuff to its original state as well,
+undoing the earlier efforts of...
+
+commit c1bd3156cf66318023f36d81ce809a38072588e4
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Thu Jul 21 21:44:06 2016 +0100
+
+    Resolves: tdf#101054 crash on options->path with non-native file picker
+
+and
+
+commit 3bbc0574d78d129359638b74612de2f93419eeb0
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Tue Jul 5 10:16:51 2016 +0100
+
+    Resolves: rhbz#1352835 path options doesn't promptly destroy folder picker
+
+Change-Id: I5d6bcee9fb0a73a95cc29e8f3f2ee2aea91a135a
+(cherry picked from commit 696e83b663d4f3e00f23947613f9f3916a4dd14d)
+Reviewed-on: https://gerrit.libreoffice.org/28642
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Maxim Monastirsky <momonasmon@gmail.com>
+---
+ cui/source/options/optpath.cxx             | 13 ++++++-------
+ vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx   |  1 +
+ vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx |  1 +
+ vcl/unx/gtk/fpicker/SalGtkPicker.cxx       |  5 -----
+ 4 files changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/cui/source/options/optpath.cxx b/cui/source/options/optpath.cxx
+index 6aa3466..b51694f 100644
+--- a/cui/source/options/optpath.cxx
++++ b/cui/source/options/optpath.cxx
+@@ -633,12 +633,11 @@ IMPL_LINK_NOARG_TYPED(SvxPathTabPage, PathHdl_Impl, Button*, void)
+             else
+             {
+                 short nRet = xFolderPicker->execute();
+-                if (nRet == ExecutableDialogResults::OK)
+-                {
+-                    OUString sFolder(xFolderPicker->getDirectory());
+-                    ChangeCurrentEntry(sFolder);
+-                }
+-                xFolderPicker.clear();
++                if (ExecutableDialogResults::OK != nRet)
++                    return;
++
++                OUString sFolder(xFolderPicker->getDirectory());
++                ChangeCurrentEntry(sFolder);
+             }
+         }
+         catch( Exception& )
+@@ -724,9 +723,9 @@ IMPL_LINK_TYPED( SvxPathTabPage, HeaderEndDrag_Impl, HeaderBar*, pBar, void )
+ 
+ IMPL_LINK_TYPED( SvxPathTabPage, DialogClosedHdl, DialogClosedEvent*, pEvt, void )
+ {
+-    assert(xFolderPicker.is() && "SvxPathTabPage::DialogClosedHdl(): no folder picker");
+     if (RET_OK == pEvt->DialogResult)
+     {
++        assert(xFolderPicker.is() && "SvxPathTabPage::DialogClosedHdl(): no folder picker");
+         OUString sURL = xFolderPicker->getDirectory();
+         ChangeCurrentEntry( sURL );
+     }
+diff --git a/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx b/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
+index 4a9453b..8b97bdd 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkFilePicker.cxx
+@@ -1050,6 +1050,7 @@ sal_Int16 SAL_CALL SalGtkFilePicker::execute() throw( uno::RuntimeException, std
+                 break;
+         }
+     }
++    gtk_widget_hide(m_pDialog);
+ 
+     if (mnHID_FolderChange)
+         g_signal_handler_disconnect(GTK_FILE_CHOOSER( m_pDialog ), mnHID_FolderChange);
+diff --git a/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx b/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
+index 88523da..1f2e46b 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkFolderPicker.cxx
+@@ -162,6 +162,7 @@ sal_Int16 SAL_CALL SalGtkFolderPicker::execute() throw( uno::RuntimeException, s
+             retVal = 0;
+             break;
+     }
++    gtk_widget_hide(m_pDialog);
+ 
+     return retVal;
+ }
+diff --git a/vcl/unx/gtk/fpicker/SalGtkPicker.cxx b/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
+index 968051d..d7f72b2 100644
+--- a/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
++++ b/vcl/unx/gtk/fpicker/SalGtkPicker.cxx
+@@ -182,11 +182,6 @@ gint RunDialog::run()
+     if (mxToolkit.is())
+         mxToolkit->removeTopWindowListener(this);
+ 
+-#if !GTK_CHECK_VERSION(3,0,0)
+-    if (nStatus != 1)   //PLAY
+-        gtk_widget_hide( mpDialog );
+-#endif
+-
+     return nStatus;
+ }
+ 
+-- 
+2.7.4
+

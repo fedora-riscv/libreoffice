@@ -140,6 +140,7 @@ BuildRequires: pam-devel
 BuildRequires: pkgconfig(bluez)
 BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
+BuildRequires: pkgconfig(dconf)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(glew) >= 1.10.0
@@ -1125,6 +1126,7 @@ touch autogen.lastrun
  --disable-fetch-external \
  --disable-openssl \
  --disable-systray \
+ --enable-dconf \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
@@ -2355,6 +2357,7 @@ done
 - Resolves: rhbz#1375168 impress annotation menu crashes
 - add xdg-email as the default email route cause it can attach to thunderbird
   (in theory at least)
+- enable dconf support for Fleet Commander
 
 * Mon Sep 05 2016 David Tardon <dtardon@redhat.com> - 1:5.1.5.2-5
 - Resolves: rhbz#1247399 install public jars according to packaging guidelines

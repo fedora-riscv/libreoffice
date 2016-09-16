@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -241,6 +241,7 @@ Patch10: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch11: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch13: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch14: 0001-Resolves-rhbz-1373933-gtk-3.21-emits-a-lot-more-styl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2296,6 +2297,9 @@ done
 %endif
 
 %changelog
+* Fri Sep 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-2
+- Resolves: rhbz#1373933 gtk 3.21 emits way too many "style-set" signals
+
 * Wed Sep 14 2016 David Tardon <dtardon@redhat.com> - 1:5.2.2.1-1
 - update to 5.2.2 rc1
 

@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -283,6 +283,7 @@ Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 Patch48: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
 Patch49: 0001-add-xdg-email-as-the-default-email-route.patch
 Patch50: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
+Patch51: 0001-consistent-ordering-of-the-file-template-list-across.patc
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2354,6 +2355,9 @@ done
 %endif
 
 %changelog
+* Fri Sep 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-7-UNBUILT
+- consistent ordering of the file template menu list across apps
+
 * Tue Sep 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-6
 - Resolves: rhbz#1375168 impress annotation menu crashes
 - add xdg-email as the default email route cause it can attach to thunderbird

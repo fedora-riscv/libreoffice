@@ -1,0 +1,52 @@
+From 5ff1a98c0092f2ada50dea738d5fbe9799517fdd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 16 Sep 2016 12:13:57 +0100
+Subject: [PATCH] consistent ordering of the file template list across apps
+
+take the order set in 5.2+ by...
+
+    tdf#61396 Possibility to edit a template not in Template Repository
+
+    Menu Sequence:
+       Open Template...
+       Save as Template...
+       ----------------------
+       Manage Templates
+
+Change-Id: Ic6b9500990632e8fcd04b7da7c13aadef5f29358
+---
+ sd/uiconfig/simpress/menubar/menubar.xml | 2 +-
+ sw/uiconfig/swriter/menubar/menubar.xml  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sd/uiconfig/simpress/menubar/menubar.xml b/sd/uiconfig/simpress/menubar/menubar.xml
+index b2ce36f..81d5e57 100644
+--- a/sd/uiconfig/simpress/menubar/menubar.xml
++++ b/sd/uiconfig/simpress/menubar/menubar.xml
+@@ -27,8 +27,8 @@
+             <menu:menuseparator/>
+             <menu:menu menu:id=".uno:TemplateMenu">
+                 <menu:menupopup>
+-                    <menu:menuitem menu:id=".uno:NewDoc"/>
+                     <menu:menuitem menu:id=".uno:SaveAsTemplate"/>
++                    <menu:menuitem menu:id=".uno:NewDoc"/>
+                 </menu:menupopup>
+             </menu:menu>
+             <menu:menuitem menu:id=".uno:AutoPilotMenu"/>
+diff --git a/sw/uiconfig/swriter/menubar/menubar.xml b/sw/uiconfig/swriter/menubar/menubar.xml
+index 07e85ae..d378380 100644
+--- a/sw/uiconfig/swriter/menubar/menubar.xml
++++ b/sw/uiconfig/swriter/menubar/menubar.xml
+@@ -28,8 +28,8 @@
+       <menu:menuitem menu:id=".uno:AutoPilotMenu"/>
+       <menu:menu menu:id=".uno:TemplateMenu">
+           <menu:menupopup>
+-              <menu:menuitem menu:id=".uno:NewDoc"/>
+               <menu:menuitem menu:id=".uno:SaveAsTemplate"/>
++              <menu:menuitem menu:id=".uno:NewDoc"/>
+           </menu:menupopup>
+       </menu:menu>
+       <menu:menuseparator/>
+-- 
+2.7.4
+

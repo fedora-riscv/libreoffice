@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -285,6 +285,7 @@ Patch49: 0001-add-xdg-email-as-the-default-email-route.patch
 Patch50: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
 Patch51: 0001-consistent-ordering-of-the-file-template-list-across.patch
 Patch52: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
+Patch53: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2356,6 +2357,9 @@ done
 %endif
 
 %changelog
+* Mon Sep 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-8
+- Resolves: tdf#102293 triple click results in visually unselected word
+
 * Mon Sep 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-7
 - consistent ordering of the file template menu list across apps
 - Related: rhbz#1353069 don't clear XATTR_FILL from inuse stylesheets

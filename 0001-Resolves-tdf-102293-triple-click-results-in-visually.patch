@@ -1,0 +1,59 @@
+From 38a61ddaf63768ebe19c92d561eac6f50d67ded7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 19 Sep 2016 21:21:58 +0100
+Subject: [PATCH] Resolves: tdf#102293 triple click results in visually
+ unselected word
+
+in previously unselected textboxes in impress
+
+started happening after...
+
+commit 16c7f8916661df24f4681ec82f6bd4d7ad85d141
+Date:   Tue Jan 12 16:36:49 2016 +0000
+
+    tdf#97075 - don't render sdr overlays before we paint
+
+in impress instead flush the overlay after activating the edit object
+if we go on to put the cursor in there. Seems to work.
+
+Change-Id: Ib746c36d1074aee09771a3dc1d69834ce80a9c08
+---
+ sd/source/ui/func/futext.cxx | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/sd/source/ui/func/futext.cxx b/sd/source/ui/func/futext.cxx
+index 72f6ae2..9b0979b 100644
+--- a/sd/source/ui/func/futext.cxx
++++ b/sd/source/ui/func/futext.cxx
+@@ -21,6 +21,8 @@
+ #include <editeng/eeitem.hxx>
+ #include <editeng/editerr.hxx>
+ #include <svx/dlgutil.hxx>
++#include <svx/sdrpagewindow.hxx>
++#include <svx/sdrpaintwindow.hxx>
+ #include <svx/svxerr.hxx>
+ #include <tools/urlobj.hxx>
+ #include <vcl/help.hxx>
+@@ -1064,6 +1066,19 @@ void FuText::SetInEditMode(const MouseEvent& rMEvt, bool bQuickDrag)
+ 
+                     if (mpView->SdrBeginTextEdit(pTextObj, pPV, mpWindow, true, pOutl) && mxTextObj->GetObjInventor() == SdrInventor)
+                     {
++                        //tdf#102293 flush overlay before going on to pass clicks down to
++                        //the outline view which will want to paint selections
++                        for (sal_uInt32 b = 0; b < pPV->PageWindowCount(); ++b)
++                        {
++                            const SdrPageWindow& rPageWindow = *pPV->GetPageWindow(b);
++                            if (!rPageWindow.GetPaintWindow().OutputToWindow())
++                                continue;
++                            rtl::Reference< sdr::overlay::OverlayManager > xManager = rPageWindow.GetOverlayManager();
++                            if (!xManager.is())
++                                continue;
++                            xManager->flush();
++                        }
++
+                         bFirstObjCreated = true;
+                         DeleteDefaultText();
+ 
+-- 
+2.7.4
+

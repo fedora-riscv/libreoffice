@@ -244,6 +244,7 @@ Patch13: 0001-add-xdg-email-as-the-default-email-route.patch
 Patch14: 0001-Resolves-rhbz-1373933-gtk-3.21-emits-a-lot-more-styl.patch
 Patch15: 0001-Related-rhbz-1373933-gtk3-emits-a-lot-of-style-updat.patch
 Patch16: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
+Patch17: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 
 %if 0%{?rhel}
 # not upstreamed

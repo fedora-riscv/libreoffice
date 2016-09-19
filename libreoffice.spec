@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,6 +243,7 @@ Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch13: 0001-add-xdg-email-as-the-default-email-route.patch
 Patch14: 0001-Resolves-rhbz-1373933-gtk-3.21-emits-a-lot-more-styl.patch
 Patch15: 0001-Related-rhbz-1373933-gtk3-emits-a-lot-of-style-updat.patch
+Patch16: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2298,6 +2299,10 @@ done
 %endif
 
 %changelog
+* Mon Sep 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-3
+- Related: rhbz#1373933 do less on style-updated
+- Related: rhbz#1353069 don't clear XATTR_FILL from in use styles
+
 * Fri Sep 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-2
 - Resolves: rhbz#1373933 gtk 3.21 emits way too many "style-set" signals
 

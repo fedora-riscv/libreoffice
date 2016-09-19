@@ -1,0 +1,63 @@
+From be1949efff0b11b5fe1fbca978ceedd8816679f9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 19 Sep 2016 12:24:02 +0100
+Subject: [PATCH] Related: rhbz#1353069 don't clear XATTR_FILL* from stylesheet
+ if...
+
+This is similar to de4908eb4d2f1f2ce38a37eea18a9efc4a0073b1 where
+
+the master page is not the sole owner. Which happens when copying
+and pasting slides which bring along a duplicate master page to
+an already existing one, and the attempt to remove the duplicate
+strips the fill properties from the shared stylesheet in use by
+the other
+
+regression from...
+
+commit b876bbe2cacce8af379b10d82da6c7e7d229b361
+Author: David Tardon <dtardon@redhat.com>
+Date:   Tue Apr 26 09:17:11 2016 +0200
+
+    rbhz#1326602 avoid exp. bg bitmaps from deleted slides
+
+Change-Id: I0a3a34ade2ad8464b1edb67a6e28dab45c761a2c
+(cherry picked from commit 914d72ee1edb351e4975a516240a38696f619217)
+---
+ sd/source/core/drawdoc3.cxx | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sd/source/core/drawdoc3.cxx b/sd/source/core/drawdoc3.cxx
+index 4a77b7c..9bef42e 100644
+--- a/sd/source/core/drawdoc3.cxx
++++ b/sd/source/core/drawdoc3.cxx
+@@ -1241,6 +1241,7 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+         {
+             // Do not delete master pages that have their precious flag set
+             bool bDeleteMaster = !pMaster->IsPrecious();
++            bool bSoleOwnerOfStyleSheet = true;
+             OUString aLayoutName = pMaster->GetLayoutName();
+ 
+             if(bOnlyDuplicatePages )
+@@ -1255,6 +1256,10 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+                     {
+                         // duplicate page found -> remove it
+                         bDeleteMaster = true;
++
++                        const SfxStyleSheet* pRefSheet = pMaster->getSdrPageProperties().GetStyleSheet();
++                        const SfxStyleSheet* pTestSheet = pMPg->getSdrPageProperties().GetStyleSheet();
++                        bSoleOwnerOfStyleSheet = pRefSheet != pTestSheet;
+                     }
+                 }
+             }
+@@ -1288,7 +1293,7 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+                     delete pNotesMaster;
+ 
+                 if( bUndo )
+-                    AddUndo(GetSdrUndoFactory().CreateUndoDeletePage(*pMaster));
++                    AddUndo(GetSdrUndoFactory().CreateUndoDeletePage(*pMaster, bSoleOwnerOfStyleSheet));
+ 
+                 RemoveMasterPage( pMaster->GetPageNum() );
+ 
+-- 
+2.7.4
+

@@ -283,7 +283,7 @@ Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
 Patch48: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
 Patch49: 0001-add-xdg-email-as-the-default-email-route.patch
 Patch50: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
-Patch51: 0001-consistent-ordering-of-the-file-template-list-across.patc
+Patch51: 0001-consistent-ordering-of-the-file-template-list-across.patch
 Patch52: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
 
 %if ! 0%{?rhel}

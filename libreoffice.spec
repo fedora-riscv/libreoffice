@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2300,6 +2300,9 @@ done
 %endif
 
 %changelog
+* Tue Sep 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-4
+- Related: rhbz#1362451 avoid recursive ownerchanged signal during ownerchange
+
 * Mon Sep 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-3
 - Related: rhbz#1373933 do less on style-updated
 - Related: rhbz#1353069 don't clear XATTR_FILL from in use styles

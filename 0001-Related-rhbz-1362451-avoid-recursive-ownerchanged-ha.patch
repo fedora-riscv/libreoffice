@@ -1,0 +1,115 @@
+From 8a382d4ad190cf07cbd6b1fd6b903975134b0cf1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 1 Sep 2016 15:50:20 +0100
+Subject: [PATCH] Related: rhbz#1362451 avoid recursive ownerchanged handling
+ during ownerchange
+
+Change-Id: Id9c12b7ce6458348890d7c7ff7fdb2cd37c4601c
+---
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 55 ++++++++++++++++++++++++++------------------
+ 1 file changed, 32 insertions(+), 23 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
+index 7c04b1d..7148882 100644
+--- a/vcl/unx/gtk3/gtk3gtkinst.cxx
++++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
+@@ -364,6 +364,29 @@ namespace
+     }
+ }
+ 
++namespace
++{
++    void ClipboardGetFunc(GtkClipboard *clipboard, GtkSelectionData *selection_data,
++                          guint info,
++                          gpointer user_data_or_owner)
++    {
++        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
++        pThis->ClipboardGet(clipboard, selection_data, info);
++    }
++
++    void ClipboardClearFunc(GtkClipboard *clipboard, gpointer user_data_or_owner)
++    {
++        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
++        pThis->ClipboardClear(clipboard);
++    }
++
++    void handle_owner_change(GtkClipboard *clipboard, GdkEvent *event, gpointer user_data)
++    {
++        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data);
++        pThis->OwnerPossiblyChanged(clipboard, event);
++    }
++}
++
+ void VclGtkClipboard::OwnerPossiblyChanged(GtkClipboard* clipboard, GdkEvent* /*event*/)
+ {
+     if (!m_aContents.is())
+@@ -376,6 +399,10 @@ void VclGtkClipboard::OwnerPossiblyChanged(GtkClipboard* clipboard, GdkEvent* /*
+     //our pid, in which case it's us.
+     bool bSelf = false;
+ 
++    //disconnect and reconnect after gtk_clipboard_wait_for_targets to
++    //avoid possible recursion
++    g_signal_handler_disconnect(clipboard, m_nOwnerChangedSignalId);
++
+     OString sTunnel = "application/x-libreoffice-internal-id-" + getPID();
+     GdkAtom *targets;
+     gint n_targets;
+@@ -394,6 +421,9 @@ void VclGtkClipboard::OwnerPossiblyChanged(GtkClipboard* clipboard, GdkEvent* /*
+         g_free(targets);
+     }
+ 
++    m_nOwnerChangedSignalId = g_signal_connect(clipboard, "owner-change",
++                                               G_CALLBACK(handle_owner_change), this);
++
+     if (!bSelf)
+     {
+         //null out m_aContents to return control to the system-one which
+@@ -486,29 +516,6 @@ void VclToGtkHelper::setSelectionData(const Reference<css::datatransfer::XTransf
+                            aData.getLength());
+ }
+ 
+-namespace
+-{
+-    void ClipboardGetFunc(GtkClipboard *clipboard, GtkSelectionData *selection_data,
+-                          guint info,
+-                          gpointer user_data_or_owner)
+-    {
+-        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
+-        pThis->ClipboardGet(clipboard, selection_data, info);
+-    }
+-
+-    void ClipboardClearFunc(GtkClipboard *clipboard, gpointer user_data_or_owner)
+-    {
+-        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
+-        pThis->ClipboardClear(clipboard);
+-    }
+-
+-    void handle_owner_change(GtkClipboard *clipboard, GdkEvent *event, gpointer user_data)
+-    {
+-        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data);
+-        pThis->OwnerPossiblyChanged(clipboard, event);
+-    }
+-}
+-
+ VclGtkClipboard::VclGtkClipboard(GdkAtom nSelection)
+     : cppu::WeakComponentImplHelper<datatransfer::clipboard::XSystemClipboard,
+                                     datatransfer::clipboard::XFlushableClipboard, XServiceInfo>
+@@ -539,6 +546,7 @@ VclGtkClipboard::~VclGtkClipboard()
+     if (!m_aGtkTargets.empty())
+     {
+         gtk_clipboard_clear(clipboard);
++        ClipboardClear(clipboard);
+     }
+     assert(m_aGtkTargets.empty());
+ }
+@@ -602,6 +610,7 @@ void VclGtkClipboard::setContents(
+     if (!m_aGtkTargets.empty())
+     {
+         gtk_clipboard_clear(clipboard);
++        ClipboardClear(clipboard);
+     }
+     assert(m_aGtkTargets.empty());
+     if (m_aContents.is())
+-- 
+2.7.4
+

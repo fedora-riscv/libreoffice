@@ -245,6 +245,7 @@ Patch14: 0001-Resolves-rhbz-1373933-gtk-3.21-emits-a-lot-more-styl.patch
 Patch15: 0001-Related-rhbz-1373933-gtk3-emits-a-lot-of-style-updat.patch
 Patch16: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
 Patch17: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
+Patch18: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2300,6 +2301,9 @@ done
 %endif
 
 %changelog
+* Wed Sep 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-5
+- Related: rhbz#1362451 apply patch
+
 * Tue Sep 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.2.1-4
 - Related: rhbz#1362451 avoid recursive ownerchanged signal during ownerchange
 

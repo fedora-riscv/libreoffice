@@ -1,4 +1,4 @@
-From 8a382d4ad190cf07cbd6b1fd6b903975134b0cf1 Mon Sep 17 00:00:00 2001
+From a0e049ba62adc036f42973807d528ce27c8647cf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 1 Sep 2016 15:50:20 +0100
 Subject: [PATCH] Related: rhbz#1362451 avoid recursive ownerchanged handling
@@ -10,7 +10,7 @@ Change-Id: Id9c12b7ce6458348890d7c7ff7fdb2cd37c4601c
  1 file changed, 32 insertions(+), 23 deletions(-)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index 7c04b1d..7148882 100644
+index 10c5c7f..7202b46 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
 @@ -364,6 +364,29 @@ namespace
@@ -74,13 +74,13 @@ index 7c04b1d..7148882 100644
 -                          guint info,
 -                          gpointer user_data_or_owner)
 -    {
--        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
+-        VclGtkClipboard* pThis = reinterpret_cast<VclGtkClipboard*>(user_data_or_owner);
 -        pThis->ClipboardGet(clipboard, selection_data, info);
 -    }
 -
 -    void ClipboardClearFunc(GtkClipboard *clipboard, gpointer user_data_or_owner)
 -    {
--        VclGtkClipboard* pThis = static_cast<VclGtkClipboard*>(user_data_or_owner);
+-        VclGtkClipboard* pThis = reinterpret_cast<VclGtkClipboard*>(user_data_or_owner);
 -        pThis->ClipboardClear(clipboard);
 -    }
 -

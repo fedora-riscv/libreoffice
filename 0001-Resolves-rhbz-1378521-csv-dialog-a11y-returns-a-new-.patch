@@ -1,0 +1,159 @@
+From 9886ac7b04b1c9ae0cd7c5f3a1c5d92222a7d67c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 26 Sep 2016 16:26:40 +0100
+Subject: [PATCH] Resolves: rhbz#1378521 csv dialog a11y returns a new
+ accessible on every query
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+the gtk a11y rather assumes that the a11y things "belong" to the matching
+widget/component and those owners will dispose them, so follow that pattern
+here and dispose the a11y objects when the parent is disposed
+
+to reproduce, enable a11y, load a csv, click once in the first column
+of the preview area and cancel the dialog and close libreoffice
+
+Reviewed-on: https://gerrit.libreoffice.org/29301
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit f626fd5f897796451685c06ce5f397a90aeaa8e6)
+
+Change-Id: Ib830da499e9f2d6fed94fb12ede7c929b607ab10
+---
+ .../ui/Accessibility/AccessibleCsvControl.cxx      | 33 +++++++++++++++++++---
+ sc/source/ui/dbgui/csvcontrol.cxx                  |  1 +
+ sc/source/ui/inc/AccessibleCsvControl.hxx          |  9 ++++++
+ 3 files changed, 39 insertions(+), 4 deletions(-)
+
+diff --git a/sc/source/ui/Accessibility/AccessibleCsvControl.cxx b/sc/source/ui/Accessibility/AccessibleCsvControl.cxx
+index bb924f2..4bc75f3 100644
+--- a/sc/source/ui/Accessibility/AccessibleCsvControl.cxx
++++ b/sc/source/ui/Accessibility/AccessibleCsvControl.cxx
+@@ -865,6 +865,15 @@ ScAccessibleCsvGrid::~ScAccessibleCsvGrid()
+     implDispose();
+ }
+ 
++void ScAccessibleCsvGrid::disposing()
++{
++    SolarMutexGuard aGuard;
++    for (XAccessibleSet::iterator aI = maAccessibleChildren.begin(); aI != maAccessibleChildren.end(); ++aI)
++        aI->second->dispose();
++    maAccessibleChildren.clear();
++    ScAccessibleCsvControl::disposing();
++}
++
+ // XAccessibleComponent -------------------------------------------------------
+ 
+ Reference< XAccessible > SAL_CALL ScAccessibleCsvGrid::getAccessibleAtPoint( const AwtPoint& rPoint )
+@@ -882,7 +891,7 @@ Reference< XAccessible > SAL_CALL ScAccessibleCsvGrid::getAccessibleAtPoint( con
+             lcl_GetApiColumn( rGrid.GetColumnFromX( rPoint.X ) ) : 0;
+         sal_Int32 nRow = (rPoint.Y >= rGrid.GetHdrHeight()) ?
+             (rGrid.GetLineFromY( rPoint.Y ) - rGrid.GetFirstVisLine() + 1) : 0;
+-        xRet = implCreateCellObj( nRow, nColumn );
++        xRet = getAccessibleCell(nRow, nColumn);
+     }
+     return xRet;
+ }
+@@ -912,13 +921,30 @@ sal_Int32 SAL_CALL ScAccessibleCsvGrid::getAccessibleChildCount() throw( Runtime
+     return implGetCellCount();
+ }
+ 
++Reference<XAccessible> ScAccessibleCsvGrid::getAccessibleCell(sal_Int32 nRow, sal_Int32 nColumn)
++{
++    sal_Int32 nIndex = implGetIndex(nRow, nColumn);
++
++    XAccessibleSet::iterator aI = maAccessibleChildren.lower_bound(nIndex);
++    if (aI != maAccessibleChildren.end() && !(maAccessibleChildren.key_comp()(nIndex, aI->first)))
++    {
++        // key already exists
++        return Reference<XAccessible>(aI->second.get());
++    }
++    // key does not exist
++    rtl::Reference<ScAccessibleCsvControl> xNew = implCreateCellObj(nRow, nColumn);
++    maAccessibleChildren.insert(aI, XAccessibleSet::value_type(nIndex, xNew));
++    return Reference<XAccessible>(xNew.get());
++}
++
+ Reference< XAccessible > SAL_CALL ScAccessibleCsvGrid::getAccessibleChild( sal_Int32 nIndex )
+         throw( IndexOutOfBoundsException, RuntimeException, std::exception )
+ {
+     SolarMutexGuard aGuard;
+     ensureAlive();
+     ensureValidIndex( nIndex );
+-    return implCreateCellObj( implGetRow( nIndex ), implGetColumn( nIndex ) );
++
++    return getAccessibleCell(implGetRow(nIndex), implGetColumn(nIndex));
+ }
+ 
+ Reference< XAccessibleRelationSet > SAL_CALL ScAccessibleCsvGrid::getAccessibleRelationSet()
+@@ -1066,7 +1092,7 @@ Reference< XAccessible > SAL_CALL ScAccessibleCsvGrid::getAccessibleCellAt( sal_
+     SolarMutexGuard aGuard;
+     ensureAlive();
+     ensureValidPosition( nRow, nColumn );
+-    return implCreateCellObj( nRow, nColumn );
++    return getAccessibleCell(nRow, nColumn);
+ }
+ 
+ Reference< XAccessible > SAL_CALL ScAccessibleCsvGrid::getAccessibleCaption()
+@@ -1235,7 +1261,6 @@ Sequence< sal_Int8 > SAL_CALL ScAccessibleCsvGrid::getImplementationId() throw(
+ void ScAccessibleCsvGrid::SendFocusEvent( bool bFocused )
+ {
+     ScAccessibleCsvControl::SendFocusEvent( bFocused );
+-
+     AccessibleEventObject aEvent;
+     aEvent.EventId = AccessibleEventId::ACTIVE_DESCENDANT_CHANGED;
+     aEvent.Source = Reference< XAccessible >( this );
+diff --git a/sc/source/ui/dbgui/csvcontrol.cxx b/sc/source/ui/dbgui/csvcontrol.cxx
+index b53b5bc..7449192 100644
+--- a/sc/source/ui/dbgui/csvcontrol.cxx
++++ b/sc/source/ui/dbgui/csvcontrol.cxx
+@@ -81,6 +81,7 @@ void ScCsvControl::dispose()
+ {
+     if( mxAccessible.is() )
+         mxAccessible->dispose();
++    mxAccessible = nullptr; // lp#1566050: prevent cyclic reference zombies
+     Control::dispose();
+ }
+ 
+diff --git a/sc/source/ui/inc/AccessibleCsvControl.hxx b/sc/source/ui/inc/AccessibleCsvControl.hxx
+index a181c24..870cb3c 100644
+--- a/sc/source/ui/inc/AccessibleCsvControl.hxx
++++ b/sc/source/ui/inc/AccessibleCsvControl.hxx
+@@ -31,6 +31,7 @@
+ #include <comphelper/uno3.hxx>
+ #include <vcl/vclptr.hxx>
+ #include "AccessibleContextBase.hxx"
++#include <map>
+ 
+ class ScCsvControl;
+ namespace utl { class AccessibleStateSetHelper; }
+@@ -304,10 +305,16 @@ class ScAccessibleCsvGrid : public ScAccessibleCsvControl, public ScAccessibleCs
+ protected:
+     typedef ::com::sun::star::uno::Reference<
+         ::com::sun::star::accessibility::XAccessibleTable > XAccessibleTableRef;
++    typedef std::map< sal_Int32, rtl::Reference<ScAccessibleCsvControl> > XAccessibleSet;
++
++private:
++    XAccessibleSet maAccessibleChildren;
+ 
+ public:
+     explicit                    ScAccessibleCsvGrid( ScCsvGrid& rGrid );
+     virtual                     ~ScAccessibleCsvGrid();
++    using ScAccessibleContextBase::disposing;
++    virtual void SAL_CALL       disposing() override;
+ 
+     // XAccessibleComponent ---------------------------------------------------
+ 
+@@ -531,6 +538,8 @@ private:
+     OUString implGetCellText( sal_Int32 nRow, sal_Int32 nColumn ) const;
+     /** Creates a new accessible object of the specified cell. Indexes must be valid. */
+     ScAccessibleCsvControl* implCreateCellObj( sal_Int32 nRow, sal_Int32 nColumn ) const;
++
++    css::uno::Reference<css::accessibility::XAccessible> getAccessibleCell(sal_Int32 nRow, sal_Int32 nColumn);
+ };
+ 
+ /** Accessible class representing a cell of the CSV grid control. */
+-- 
+2.7.4
+

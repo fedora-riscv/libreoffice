@@ -316,6 +316,7 @@ Patch83: 0002-tdf-93553-limit-parallelism-at-zip-save-time-to-usef.patch
 Patch84: 0003-package-fix-exception-handling-in-DeflateThread-rela.patch
 Patch85: 0001-rtf-m_aStates-can-be-empty-in-the-inner-condition.patch
 Patch86: 0001-Resolves-rhbz-1364335-tooltips-are-truncated.patch
+Patch87: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2230,8 +2231,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %changelog
-* Mon Aug 15 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-11-UNBUILD
+* Mon Sep 26 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-11-UNBUILT
 - Resolves: rhbz#1364335 tooltips are truncated
+- Resolves: rhbz#1378521 csv dialog a11y returns a new object each time
 
 * Fri Aug 12 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.0.6.2-10
 - Resolves: rhbz#1303562 CAIRO_OPERATOR_DIFFERENCE is kryptonite for nvidia drivers

@@ -1,0 +1,27 @@
+From 875e1bafbd985addc632ccebcf41fe7c33669674 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 27 Sep 2016 22:06:04 +0200
+Subject: [PATCH] fix build on 32-bit ARM on latest Rawhide
+
+Change-Id: If00c42235d6ec92634dc8c23fdcbb50e332ffa68
+---
+ configure.ac | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 9622255..f13cd25 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7134,7 +7134,8 @@ then
+     else
+         case "$host_cpu" in
+         arm*)
+-            my_java_arch=arm
++            AS_IF([test -e "$JAVA_HOME/jre/lib/aarch32/libjawt.so"], [my_java_arch=aarch32], [my_java_arch=arm])
++            JAVA_ARCH=$my_java_arch
+             ;;
+         i*86)
+             my_java_arch=i386
+-- 
+2.9.3
+

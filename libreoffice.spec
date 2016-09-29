@@ -247,6 +247,7 @@ Patch16: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
 Patch17: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 Patch18: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch19: 0001-fix-build-on-32-bit-ARM-on-latest-Rawhide.patch
+Patch20: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -288,6 +288,7 @@ Patch52: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
 Patch53: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 Patch54: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch55: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
+Patch56: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2359,8 +2360,9 @@ done
 %endif
 
 %changelog
-* Mon Sep 26 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-9-UNBUILD
+* Thu Sep 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-9-UNBUILD
 - Resolves: rhbz#1378521 csv dialog a11y returns a new a11y object each time
+- only date autofilter menus need the space for the tree expanders
 
 * Tue Sep 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-8
 - Resolves: tdf#102293 triple click results in visually unselected word

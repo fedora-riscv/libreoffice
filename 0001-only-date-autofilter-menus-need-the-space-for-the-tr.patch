@@ -1,0 +1,84 @@
+From be0566097f3047a3f166f5192c58b40289f683b0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 29 Sep 2016 10:09:02 +0100
+Subject: [PATCH] only date autofilter menus need the space for the tree
+ expanders
+
+so for lists that don't include dates then drop the tree view bits
+to save space to the left of the entries
+
+(cherry picked from commit 17f749afd75c407bf7adae9b8e15276de14ef5d5)
+
+Change-Id: I44f624d8a06d578674806813239a408466c87d70
+---
+ sc/source/ui/cctrl/checklistmenu.cxx | 14 ++++++++++----
+ sc/source/ui/inc/checklistmenu.hxx   |  1 +
+ sc/source/ui/view/gridwin.cxx        |  1 +
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/sc/source/ui/cctrl/checklistmenu.cxx b/sc/source/ui/cctrl/checklistmenu.cxx
+index 9d3298e..2b2c35f 100644
+--- a/sc/source/ui/cctrl/checklistmenu.cxx
++++ b/sc/source/ui/cctrl/checklistmenu.cxx
+@@ -877,7 +877,7 @@ void ScCheckListMenuWindow::CancelButton::Click()
+ ScCheckListMenuWindow::ScCheckListMenuWindow(vcl::Window* pParent, ScDocument* pDoc) :
+     ScMenuFloatingWindow(pParent, pDoc),
+     maEdSearch(VclPtr<Edit>::Create(this)),
+-    maChecks(VclPtr<ScCheckListBox>::Create(this,  WB_HASBUTTONS | WB_HASLINES | WB_HASLINESATROOT | WB_HASBUTTONSATROOT) ),
++    maChecks(VclPtr<ScCheckListBox>::Create(this, 0)),
+     maChkToggleAll(VclPtr<TriStateBox>::Create(this, 0)),
+     maBtnSelectSingle(VclPtr<ImageButton>::Create(this, 0)),
+     maBtnUnselectSingle(VclPtr<ImageButton>::Create(this, 0)),
+@@ -903,9 +903,6 @@ ScCheckListMenuWindow::ScCheckListMenuWindow(vcl::Window* pParent, ScDocument* p
+     maTabStopCtrls.push_back(maBtnUnselectSingle.get());
+     maTabStopCtrls.push_back(maBtnOk.get());
+     maTabStopCtrls.push_back(maBtnCancel.get());
+-
+-    // Enable type-ahead search in the check list box.
+-    maChecks->SetStyle(maChecks->GetStyle() | WB_QUICK_SEARCH);
+ }
+ 
+ ScCheckListMenuWindow::~ScCheckListMenuWindow()
+@@ -1726,6 +1723,15 @@ void ScCheckListBox::KeyInput( const KeyEvent& rKEvt )
+         SvTreeListBox::KeyInput( rKEvt );
+ }
+ 
++void ScCheckListMenuWindow::setHasDates(bool bHasDates)
++{
++    // WB_QUICK_SEARCH Enables type-ahead search in the check list box.
++    if (bHasDates)
++        maChecks->SetStyle(WB_QUICK_SEARCH | WB_HASBUTTONS | WB_HASLINES | WB_HASLINESATROOT | WB_HASBUTTONSATROOT);
++    else
++        maChecks->SetStyle(WB_QUICK_SEARCH | WB_HASBUTTONS);
++}
++
+ void ScCheckListMenuWindow::initMembers()
+ {
+     size_t n = maMembers.size();
+diff --git a/sc/source/ui/inc/checklistmenu.hxx b/sc/source/ui/inc/checklistmenu.hxx
+index 9f7587a..cdd428f 100644
+--- a/sc/source/ui/inc/checklistmenu.hxx
++++ b/sc/source/ui/inc/checklistmenu.hxx
+@@ -276,6 +276,7 @@ public:
+     virtual css::uno::Reference< css::accessibility::XAccessible > CreateAccessible() override;
+ 
+     void setMemberSize(size_t n);
++    void setHasDates(bool bHasDates);
+     void addDateMember(const OUString& rName, double nVal, bool bVisible);
+     void addMember(const OUString& rName, bool bVisible);
+     void initMembers();
+diff --git a/sc/source/ui/view/gridwin.cxx b/sc/source/ui/view/gridwin.cxx
+index 5c185bb..dc4c3d9 100644
+--- a/sc/source/ui/view/gridwin.cxx
++++ b/sc/source/ui/view/gridwin.cxx
+@@ -739,6 +739,7 @@ void ScGridWindow::LaunchAutoFilterMenu(SCCOL nCol, SCROW nRow)
+     std::vector<ScTypedStrData> aStrings;
+     pDoc->GetFilterEntries(nCol, nRow, nTab, true, aStrings, bHasDates);
+ 
++    mpAutoFilterPopup->setHasDates(bHasDates);
+     mpAutoFilterPopup->setMemberSize(aStrings.size());
+     std::vector<ScTypedStrData>::const_iterator it = aStrings.begin(), itEnd = aStrings.end();
+     for (; it != itEnd; ++it)
+-- 
+2.7.4
+

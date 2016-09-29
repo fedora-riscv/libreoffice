@@ -194,7 +194,11 @@ BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libgltf-0.0)
+%if 0%{?fedora} >= 26
+BuildRequires: pkgconfig(liborcus-0.12)
+%else
 BuildRequires: pkgconfig(liborcus-0.11)
+%endif
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(mdds-1.2)
@@ -248,6 +252,13 @@ Patch17: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 Patch18: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch19: 0001-fix-build-on-32-bit-ARM-on-latest-Rawhide.patch
 Patch20: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+
+%if 0%{?fedora} >= 26
+Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
+Patch401: 0001-Declare-font-border-protection-orcus-interface-metho.patch
+Patch402: 0001-Add-odf-strikeout-to-orcus-interface.patch
+Patch403: 0001-Reform-orcus-interface-to-set-border-width.patch
+%endif
 
 %if 0%{?rhel}
 # not upstreamed

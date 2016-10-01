@@ -1,4 +1,4 @@
-From 241ab576b34a1d6ac6da5616296e5343d0e51801 Mon Sep 17 00:00:00 2001
+From 3658bc21bf31f81c06060b90650ff6181578e55e Mon Sep 17 00:00:00 2001
 From: Armin Le Grand <Armin.Le.Grand@cib.de>
 Date: Thu, 21 Apr 2016 16:05:38 +0200
 Subject: [PATCH] tdf#99388 suppress close comment when PopupMenu is active
@@ -14,7 +14,6 @@ the PopupMenu is open since it uses it as parent window.
 To avoid this, a flag is added to the AnnotationWindow
 to avoid triggering the close event in that state.
 
-Change-Id: Ic27782e56d192c0963868d9ca560945f8a34394f
 Reviewed-on: https://gerrit.libreoffice.org/24280
 Tested-by: Jenkins <ci@libreoffice.org>
 Reviewed-by: Armin Le Grand <Armin.Le.Grand@cib.de>
@@ -39,14 +38,16 @@ Date:   Tue Apr 5 15:27:38 2016 +0100
 which allows keyboard focus inside floating windows to allow a11y keyboard
 navigation inside them without jumping through difficult hoops.
 
-Change-Id: I6024c048e80d09a70cb3a628378975248a55d6b6
 (cherry picked from commit 26333736f103342344b9b0fa20a3a04d426fac4f)
+
+Change-Id: Ic27782e56d192c0963868d9ca560945f8a34394f
+6024c048e80d09a70cb3a628378975248a55d6b6
 ---
  sd/source/ui/annotations/annotationmanager.cxx     | 10 ++++++++++
  sd/source/ui/annotations/annotationmanagerimpl.hxx |  5 +++++
  sd/source/ui/annotations/annotationtag.cxx         | 14 ++++++++++----
- sd/source/ui/annotations/annotationwindow.cxx      |  5 +++++
- 4 files changed, 30 insertions(+), 4 deletions(-)
+ sd/source/ui/annotations/annotationwindow.cxx      |  9 +++++++++
+ 4 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/sd/source/ui/annotations/annotationmanager.cxx b/sd/source/ui/annotations/annotationmanager.cxx
 index 2d09b7a..28e9dcf 100644
@@ -134,16 +135,27 @@ index 0c3638f..56ec7f3 100644
              }
              else if( pWindow == mpListenWindow )
 diff --git a/sd/source/ui/annotations/annotationwindow.cxx b/sd/source/ui/annotations/annotationwindow.cxx
-index dcbeb22..44639c3 100644
+index dcbeb22..76312f4 100644
 --- a/sd/source/ui/annotations/annotationwindow.cxx
 +++ b/sd/source/ui/annotations/annotationwindow.cxx
-@@ -613,6 +613,11 @@ void AnnotationWindow::SetColor()
+@@ -298,6 +298,7 @@ void AnnotationWindow::dispose()
+     mpMeta.disposeAndClear();
+     delete mpOutlinerView;
+     delete mpOutliner;
++    mpOutliner = nullptr;
+     mpVScrollbar.disposeAndClear();
+     mpTextWindow.disposeAndClear();
+     FloatingWindow::dispose();
+@@ -613,6 +614,14 @@ void AnnotationWindow::SetColor()
  
  void AnnotationWindow::Deactivate()
  {
 +    //tdf#99388 and tdf#99712, don't deactivate if we lose focus because of our
 +    //own popup
 +    if (mrManager.getPopupMenuActive())
++        return;
++
++    if (!mpOutliner) //in dispose
 +        return;
 +
      Reference< XAnnotation > xAnnotation( mxAnnotation );

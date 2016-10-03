@@ -253,6 +253,7 @@ Patch18: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch19: 0001-fix-build-on-32-bit-ARM-on-latest-Rawhide.patch
 Patch20: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch21: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch22: 0001-Resolves-tdf-101711-problems-with-attempt-to-remove-.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

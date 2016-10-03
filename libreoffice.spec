@@ -289,6 +289,7 @@ Patch53: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
 Patch54: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch55: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
 Patch56: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+Patch57: 0001-Resolves-tdf-101711-problems-with-attempt-to-remove-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2360,9 +2361,10 @@ done
 %endif
 
 %changelog
-* Thu Sep 29 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-9-UNBUILD
+* Mon Oct 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-9
 - Resolves: rhbz#1378521 csv dialog a11y returns a new a11y object each time
 - only date autofilter menus need the space for the tree expanders
+- Resolves: tdf#101711 problems with attempt to remove unused bgs
 
 * Tue Sep 20 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-8
 - Resolves: tdf#102293 triple click results in visually unselected word

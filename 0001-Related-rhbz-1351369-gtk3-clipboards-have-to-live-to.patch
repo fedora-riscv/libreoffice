@@ -1,4 +1,4 @@
-From 1c485a8b87158edc0315fd9e679b6b8394387efb Mon Sep 17 00:00:00 2001
+From 96cefd2f2c144594641f854865c3e77721424f7a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 12 Jul 2016 20:31:52 +0100
 Subject: [PATCH] Related: rhbz#1351369 gtk3 clipboards have to live to end
@@ -13,10 +13,10 @@ Change-Id: I31340254573d13dc808d1e3038e3a36ae97f6c22
  2 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkinst.hxx b/vcl/inc/unx/gtk/gtkinst.hxx
-index 099fa11..729b954 100644
+index 1e2ddba..11d9902 100644
 --- a/vcl/inc/unx/gtk/gtkinst.hxx
 +++ b/vcl/inc/unx/gtk/gtkinst.hxx
-@@ -237,6 +237,9 @@ public:
+@@ -239,6 +239,9 @@ public:
  
  private:
      std::vector<GtkSalTimer *>  m_aTimers;
@@ -25,7 +25,7 @@ index 099fa11..729b954 100644
 +#endif
      bool                        IsTimerExpired();
      bool                        bNeedsInit;
- 
+     cairo_font_options_t*       m_pLastCairoFontOptions;
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
 index 72599b2..3822ae4 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
@@ -89,5 +89,5 @@ index 72599b2..3822ae4 100644
  
  GtkDropTarget::GtkDropTarget()
 -- 
-2.7.4
+2.9.3
 

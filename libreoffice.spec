@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.1.5
+%define libo_version 5.1.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,8 +57,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,26 +270,20 @@ Patch34: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch35: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch36: 0001-Resolves-rhbz-1352881-turn-off-undo-generation-durin.patch
 Patch37: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch38: 0001-Related-rhbz-1343766-a11y-queries-during-dispose-tri.patch
-Patch39: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
-Patch40: 0001-fix-Link-operator.patch
-Patch41: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
-Patch42: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
-Patch43: 0001-Resolves-tdf-101213-drop-use-of-CAIRO_OPERATOR_DIFFE.patch
-Patch44: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
-Patch45: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
-Patch46: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
-Patch47: 0001-Resolves-tdf-91533-rhbz-1364335-Tooltips-are-truncat.patch
-Patch48: 0001-Resolves-tdf-101165-crash-on-deselecting-all-filters.patch
-Patch49: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch50: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
-Patch51: 0001-consistent-ordering-of-the-file-template-list-across.patch
-Patch52: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
-Patch53: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
-Patch54: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
-Patch55: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
-Patch56: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch57: 0001-Resolves-tdf-101711-problems-with-attempt-to-remove-.patch
+Patch38: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
+Patch39: 0001-fix-Link-operator.patch
+Patch40: 0001-Related-rhbz-1065807-recover-using-xdg-templates-and.patch
+Patch41: 0001-Related-tdf-99523-two-undo-actions-listed-after-drag.patch
+Patch42: 0001-sw-restore-some-Dispose-calls-in-a11y-code.patch
+Patch43: 0001-gtk3-style-combobox-never-becomes-sensitive-if-it-st.patch
+Patch44: 0001-Resolves-tdf-100250-scrollbar-has-no-bg.patch
+Patch45: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch46: 0001-Resolves-tdf-101795-restore-hiding-on-end-of-Gtk-fpi.patch
+Patch47: 0001-consistent-ordering-of-the-file-template-list-across.patch
+Patch48: 0001-Resolves-tdf-102293-triple-click-results-in-visually.patch
+Patch49: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
+Patch50: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
+Patch51: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -956,7 +950,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -o pt_BR -V -w pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt -o pt_PT -v pt -W
-%langpack -l ro -n Romanian -A -F -H -Y -M -O -X
+%langpack -l ro -n Romanian -A -F -H -Y -M -O -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X -O -W
 %langpack -l si -n Sinhalese -F -H -S ctl -T -O
 %langpack -l sk -n Slovak -F -H -Y -M -A -T -X -o sk_SK -V -w sk_SK
@@ -2361,6 +2355,9 @@ done
 %endif
 
 %changelog
+* Wed Oct 05 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.1-1
+- update to 5.1.6 rc1
+
 * Mon Oct 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.5.2-9
 - Resolves: rhbz#1378521 csv dialog a11y returns a new a11y object each time
 - only date autofilter menus need the space for the tree expanders

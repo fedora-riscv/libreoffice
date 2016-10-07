@@ -23,8 +23,8 @@
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
 # http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 # limit to fedora, as it breaks building of some bundled projects

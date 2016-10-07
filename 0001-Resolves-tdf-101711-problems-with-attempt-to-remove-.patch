@@ -1,4 +1,4 @@
-From ef638e3d70933685c6e3857027ab7e2bd476827c Mon Sep 17 00:00:00 2001
+From d6a33b409cfff921a8656d549f5f91b0b4f1bec3 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 30 Sep 2016 12:45:03 +0100
 Subject: [PATCH] Resolves: tdf#101711 problems with attempt to remove unused
@@ -19,10 +19,10 @@ Change-Id: I73382961973b1c53bf2ceff205615727dd378c77
  6 files changed, 18 insertions(+), 34 deletions(-)
 
 diff --git a/include/svx/svdundo.hxx b/include/svx/svdundo.hxx
-index 504dc81..4773a39 100644
+index 9d63557..9e94342 100644
 --- a/include/svx/svdundo.hxx
 +++ b/include/svx/svdundo.hxx
-@@ -590,10 +590,9 @@ class SVX_DLLPUBLIC SdrUndoDelPage : public SdrUndoPageList
+@@ -588,10 +588,9 @@ class SVX_DLLPUBLIC SdrUndoDelPage : public SdrUndoPageList
      SdrUndoGroup*               pUndoGroup;
      std::unique_ptr<SfxPoolItem> mpFillBitmapItem;
      bool mbHasFillBitmap;
@@ -31,10 +31,10 @@ index 504dc81..4773a39 100644
  public:
 -    SdrUndoDelPage(SdrPage& rNewPg, bool bSoleOwnerOfFillBitmapProps);
 +    SdrUndoDelPage(SdrPage& rNewPg);
-     virtual ~SdrUndoDelPage() override;
+     virtual ~SdrUndoDelPage();
  
      virtual void Undo() override;
-@@ -765,7 +764,7 @@ public:
+@@ -763,7 +762,7 @@ public:
      virtual SdrUndoAction* CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLayerAdmin& rNewLayerAdmin, SdrModel& rNewModel, sal_uInt16 nNeuPos1);
  
      // Page
@@ -44,7 +44,7 @@ index 504dc81..4773a39 100644
      virtual SdrUndoAction* CreateUndoCopyPage(SdrPage& rPage);
      virtual SdrUndoAction* CreateUndoSetPageNum(SdrPage& rNewPg, sal_uInt16 nOldPageNum1, sal_uInt16 nNewPageNum1);
 diff --git a/reportdesign/source/core/inc/ReportUndoFactory.hxx b/reportdesign/source/core/inc/ReportUndoFactory.hxx
-index 8619517..add7c89 100644
+index 1839f1f..03baf07 100644
 --- a/reportdesign/source/core/inc/ReportUndoFactory.hxx
 +++ b/reportdesign/source/core/inc/ReportUndoFactory.hxx
 @@ -59,7 +59,7 @@ namespace rptui
@@ -73,7 +73,7 @@ index 566400c..d1f2bb5 100644
  
  SdrUndoAction* OReportUndoFactory::CreateUndoNewPage(SdrPage& rPage)
 diff --git a/sc/source/core/data/drwlayer.cxx b/sc/source/core/data/drwlayer.cxx
-index 36f7aa7..d9ef0b5 100644
+index b2c7ab9..7ea6758 100644
 --- a/sc/source/core/data/drwlayer.cxx
 +++ b/sc/source/core/data/drwlayer.cxx
 @@ -412,7 +412,7 @@ void ScDrawLayer::ScRemovePage( SCTAB nTab )
@@ -86,10 +86,10 @@ index 36f7aa7..d9ef0b5 100644
      }
      else
 diff --git a/sd/source/core/drawdoc3.cxx b/sd/source/core/drawdoc3.cxx
-index 65905c6..4d1d1b3 100644
+index 9bef42e..111db41 100644
 --- a/sd/source/core/drawdoc3.cxx
 +++ b/sd/source/core/drawdoc3.cxx
-@@ -796,17 +796,8 @@ bool SdDrawDocument::InsertBookmarkAsPage(
+@@ -792,17 +792,8 @@ bool SdDrawDocument::InsertBookmarkAsPage(
                   aTest == aMPLayout &&
                   eKind == pTest->GetPageKind() )
              {
@@ -109,7 +109,7 @@ index 65905c6..4d1d1b3 100644
  
                  RemoveMasterPage(nPage);
  
-@@ -1243,7 +1234,6 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+@@ -1241,7 +1232,6 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
          {
              // Do not delete master pages that have their precious flag set
              bool bDeleteMaster = !pMaster->IsPrecious();
@@ -117,7 +117,7 @@ index 65905c6..4d1d1b3 100644
              OUString aLayoutName = pMaster->GetLayoutName();
  
              if(bOnlyDuplicatePages )
-@@ -1258,10 +1248,6 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+@@ -1256,10 +1246,6 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
                      {
                          // duplicate page found -> remove it
                          bDeleteMaster = true;
@@ -128,7 +128,7 @@ index 65905c6..4d1d1b3 100644
                      }
                  }
              }
-@@ -1295,7 +1281,7 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
+@@ -1293,7 +1279,7 @@ void SdDrawDocument::RemoveUnnecessaryMasterPages(SdPage* pMasterPage, bool bOnl
                      delete pNotesMaster;
  
                  if( bUndo )
@@ -138,10 +138,10 @@ index 65905c6..4d1d1b3 100644
                  RemoveMasterPage( pMaster->GetPageNum() );
  
 diff --git a/svx/source/svdraw/svdundo.cxx b/svx/source/svdraw/svdundo.cxx
-index 0f5c6ab..6619250 100644
+index ec5f2fe..18d7100 100644
 --- a/svx/source/svdraw/svdundo.cxx
 +++ b/svx/source/svdraw/svdundo.cxx
-@@ -1451,11 +1451,10 @@ SdrUndoPageList::~SdrUndoPageList()
+@@ -1444,11 +1444,10 @@ SdrUndoPageList::~SdrUndoPageList()
  }
  
  
@@ -154,7 +154,7 @@ index 0f5c6ab..6619250 100644
  {
      bItsMine = true;
  
-@@ -1565,10 +1564,10 @@ void SdrUndoDelPage::clearFillBitmap()
+@@ -1558,10 +1557,10 @@ void SdrUndoDelPage::clearFillBitmap()
  {
      if (mrPage.IsMasterPage())
      {
@@ -168,7 +168,7 @@ index 0f5c6ab..6619250 100644
              SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
              rItemSet.ClearItem(XATTR_FILLBITMAP);
              if (mbHasFillBitmap)
-@@ -1588,10 +1587,10 @@ void SdrUndoDelPage::restoreFillBitmap()
+@@ -1581,10 +1580,10 @@ void SdrUndoDelPage::restoreFillBitmap()
  {
      if (mrPage.IsMasterPage())
      {
@@ -182,7 +182,7 @@ index 0f5c6ab..6619250 100644
              SfxItemSet& rItemSet = pStyleSheet->GetItemSet();
              rItemSet.Put(*mpFillBitmapItem);
              if (mbHasFillBitmap)
-@@ -1853,9 +1852,9 @@ SdrUndoAction* SdrUndoFactory::CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLaye
+@@ -1846,9 +1845,9 @@ SdrUndoAction* SdrUndoFactory::CreateUndoMoveLayer(sal_uInt16 nLayerNum, SdrLaye
  }
  
  // page

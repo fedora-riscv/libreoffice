@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -254,6 +254,7 @@ Patch19: 0001-fix-build-on-32-bit-ARM-on-latest-Rawhide.patch
 Patch20: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch21: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch22: 0001-Resolves-tdf-101711-problems-with-attempt-to-remove-.patch
+Patch23: 0001-rhbz-1382401-Support-surrogate-pairs-in-HTMLOutFuncs.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2316,6 +2317,9 @@ done
 %endif
 
 %changelog
+* Fri Oct 07 2016 Stephan Bergmann <sbergman@redhat.com> - 1:5.2.2.2-3
+- Resolves: rhbz#1382401 broken export of emojis to HTML
+
 * Thu Sep 29 2016 David Tardon <dtardon@redhat.com> - 1:5.2.2.2-2
 - rebuild for liborcus 0.12
 

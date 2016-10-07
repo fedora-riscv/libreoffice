@@ -1,4 +1,4 @@
-From a8a0334dfc94432f22f0e1452dfaf2dabf2fe780 Mon Sep 17 00:00:00 2001
+From 463ae6186be38c6c4290b260f86b1e2044e233f0 Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Fri, 7 Oct 2016 15:02:47 +0200
 Subject: [PATCH] rhbz#1382401: Support surrogate pairs in HTMLOutFuncs
@@ -12,8 +12,8 @@ improvement of previous patch"
 Change-Id: Ib578f758e4f5f355a79a014c2ad4660924dd34a4
 ---
  include/svtools/htmlout.hxx       |  2 +-
- svtools/source/svhtml/htmlout.cxx | 40 +++++++++++++++++++++++++++------------
- 2 files changed, 29 insertions(+), 13 deletions(-)
+ svtools/source/svhtml/htmlout.cxx | 44 ++++++++++++++++++++++++++-------------
+ 2 files changed, 31 insertions(+), 15 deletions(-)
 
 diff --git a/include/svtools/htmlout.hxx b/include/svtools/htmlout.hxx
 index 715f0ba..e8a5d50 100644
@@ -29,7 +29,7 @@ index 715f0ba..e8a5d50 100644
                          OUString *pNonConvertableChars = nullptr );
      SVT_DLLPUBLIC static SvStream& Out_String( SvStream&, const OUString&,
 diff --git a/svtools/source/svhtml/htmlout.cxx b/svtools/source/svhtml/htmlout.cxx
-index 99d9e38..4305338 100644
+index 99d9e38..13ff6d8 100644
 --- a/svtools/source/svhtml/htmlout.cxx
 +++ b/svtools/source/svhtml/htmlout.cxx
 @@ -55,7 +55,7 @@ HTMLOutContext::~HTMLOutContext()
@@ -55,6 +55,15 @@ index 99d9e38..4305338 100644
      OStringBuffer aDest;
      DBG_ASSERT( RTL_TEXTENCODING_DONTKNOW != rContext.m_eDestEnc,
                      "wrong destination encoding" );
+@@ -427,7 +429,7 @@ static OString lcl_ConvertCharToHTML( sal_Unicode c,
+     if( pStr )
+     {
+         sal_Size nLen = rtl_convertUnicodeToText(
+-                            rContext.m_hConv, rContext.m_hContext, &c, 0,
++                            rContext.m_hConv, rContext.m_hContext, nullptr, 0,
+                             cBuffer, TXTCONV_BUFFER_SIZE,
+                             nFlags|RTL_UNICODETOTEXT_FLAGS_FLUSH,
+                             &nInfo, &nSrcChars );
 @@ -439,8 +441,18 @@ static OString lcl_ConvertCharToHTML( sal_Unicode c,
      }
      else
@@ -75,6 +84,15 @@ index 99d9e38..4305338 100644
                                                       cBuffer, TXTCONV_BUFFER_SIZE,
                                                    nFlags,
                                                    &nInfo, &nSrcChars );
+@@ -457,7 +469,7 @@ static OString lcl_ConvertCharToHTML( sal_Unicode c,
+             // entity.
+             // coverity[callee_ptr_arith]
+             nLen = rtl_convertUnicodeToText(
+-                                rContext.m_hConv, rContext.m_hContext, &c, 0,
++                                rContext.m_hConv, rContext.m_hContext, nullptr, 0,
+                                 cBuffer, TXTCONV_BUFFER_SIZE,
+                                 nFlags|RTL_UNICODETOTEXT_FLAGS_FLUSH,
+                                 &nInfo, &nSrcChars );
 @@ -466,11 +478,15 @@ static OString lcl_ConvertCharToHTML( sal_Unicode c,
              while( nLen-- )
                  aDest.append(*pBuffer++);

@@ -25,7 +25,7 @@ index 6212d5d..01e8ca6 100644
 +#endif
      bool                        IsTimerExpired();
      bool                        bNeedsInit;
- 
+     cairo_font_options_t*       m_pLastCairoFontOptions;
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
 index b5db25d..3cc4046 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx

@@ -185,7 +185,6 @@ BuildRequires: vigra-devel
 
 # libs / headers - conditional
 %if 0%{?fedora}
-BuildRequires: firebird-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(gobject-introspection-1.0)
@@ -233,22 +232,20 @@ Patch2:  libreoffice-installfix.patch
 # not upstreamed
 Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch4: 0001-disable-firebird-unit-test.patch
+Patch4: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch5: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch6: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch7: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
-Patch8: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
-Patch9: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch10: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch11: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
-Patch12: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch13: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch14: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
-Patch15: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
-Patch16: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch17: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch6: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
+Patch7: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
+Patch8: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
+Patch9: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch10: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
+Patch11: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
+Patch12: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch13: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
+Patch14: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
+Patch15: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+Patch16: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -1055,7 +1052,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --disable-firebird-sdbc --enable-python=system --disable-introspection --disable-gtk3
+%define distrooptions --disable-eot --disable-gltf --enable-python=system --disable-introspection --disable-gtk3
 %else # fedora
 %define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
@@ -1089,6 +1086,7 @@ touch autogen.lastrun
  %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  --disable-coinmp \
  --disable-fetch-external \
+ --disable-firebird-sdbc \
  --disable-openssl \
  --disable-systray \
  --enable-dconf \
@@ -1541,9 +1539,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
 %{baseinstdir}/program/libgielo.so
-%if 0%{?fedora}
-%{baseinstdir}/program/libfirebird_sdbclo.so
-%endif
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libindex_data.so
 %{baseinstdir}/program/libfilelo.so

@@ -859,7 +859,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -T -V -w af_ZA
+%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -V -w af_ZA
 %langpack -l ar -n Arabic -F -H -s ctl -O -W
 %langpack -l as -n Assamese -F -H -Y -o as_IN -w as_IN
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X -o bg_BG -V -w bg_BG

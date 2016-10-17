@@ -242,10 +242,9 @@ Patch9: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
 Patch10: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
 Patch11: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
 Patch12: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch13: 0001-Related-rhbz-1353069-don-t-clear-XATTR_FILL-from-sty.patch
-Patch14: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
-Patch15: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch16: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch13: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
+Patch14: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+Patch15: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

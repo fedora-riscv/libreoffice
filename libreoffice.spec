@@ -859,7 +859,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -V -w af_ZA
+%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA -T -V -w af_ZA
 %langpack -l ar -n Arabic -F -H -s ctl -O -W
 %langpack -l as -n Assamese -F -H -Y -o as_IN -w as_IN
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X -o bg_BG -V -w bg_BG
@@ -890,8 +890,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l kk -n Kazakh -F -H
 %langpack -l kn -n Kannada -F -H -Y -o kn_IN -w ka_IN
 %langpack -l ko -n Korean -F -H -A -s cjk -T -X -o ko_KR -V -w ko_KR
-%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -V -w lt_LT -X
-%langpack -l lv -n Latvian -F -H -Y -M
+%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -T -V -w lt_LT -X
+%langpack -l lv -n Latvian -F -H -Y -M -T
 %langpack -l mai -n Maithili -F -o mai_IN
 %langpack -l ml -n Malayalam -F -H -Y -o ml_IN -w ml_IN
 %langpack -l mr -n Marathi -F -H -Y -o mr_IN -w mr_IN
@@ -908,7 +908,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -o pt_BR -V -w pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt -o pt_PT -v pt -W
-%langpack -l ro -n Romanian -A -F -H -Y -M -O -X
+%langpack -l ro -n Romanian -A -F -H -Y -M -O -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X -O -W
 %langpack -l si -n Sinhalese -F -H -S ctl -T -O
 %langpack -l sk -n Slovak -F -H -Y -M -A -T -X -o sk_SK -V -w sk_SK
@@ -921,7 +921,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H -o st_ZA
 %langpack -l sv -n Swedish -F -H -Y -M -A -T -X -O -W
-%langpack -l ta -n Tamil -F -H -Y -s ctl -o ta_IN -w ta_IN
+%langpack -l ta -n Tamil -F -H -Y -s ctl -o ta_IN -T -w ta_IN
 %langpack -l te -n Telugu -F -H -Y -o te_IN -w te_IN
 %langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th -o th_TH -V -w th_TH
 %langpack -l tn -n Tswana -F -H -o tn_ZA -V -w tn_ZA

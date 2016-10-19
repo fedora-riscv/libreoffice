@@ -1,4 +1,4 @@
-From 973f491109d6e1ae7a0b2bf646c72c072a3e2004 Mon Sep 17 00:00:00 2001
+From d46e2e2fc7ace2a014a205089ff237f3467ced35 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 24 Mar 2016 14:52:35 +0100
 Subject: [PATCH] tdf#39271 allow to export only notes pages
@@ -7,13 +7,13 @@ Subject: [PATCH] tdf#39271 allow to export only notes pages
 
 Change-Id: Ia03062cf31b6bab8196dc317a7e8fbcfc86fadf0
 ---
- filter/source/pdf/impdialog.cxx                    | 22 ++++++++++++++
+ filter/source/pdf/impdialog.cxx                    | 22 ++++++++++++
  filter/source/pdf/impdialog.hxx                    |  4 +++
- filter/source/pdf/pdfexport.cxx                    | 22 ++++++++------
+ filter/source/pdf/pdfexport.cxx                    | 22 +++++++-----
  filter/source/pdf/pdfexport.hxx                    |  1 +
- filter/uiconfig/ui/pdfgeneralpage.ui               | 34 ++++++++++++++++++----
- .../schema/org/openoffice/Office/Common.xcs        |  7 +++++
- 6 files changed, 75 insertions(+), 15 deletions(-)
+ filter/uiconfig/ui/pdfgeneralpage.ui               | 40 +++++++++++++++++-----
+ .../schema/org/openoffice/Office/Common.xcs        |  7 ++++
+ 6 files changed, 78 insertions(+), 18 deletions(-)
 
 diff --git a/filter/source/pdf/impdialog.cxx b/filter/source/pdf/impdialog.cxx
 index f1c86a8..d158b68 100644
@@ -220,13 +220,13 @@ index 7e8528f..f802585 100644
      bool                mbExportBookmarks;
      bool                mbExportHiddenSlides;
 diff --git a/filter/uiconfig/ui/pdfgeneralpage.ui b/filter/uiconfig/ui/pdfgeneralpage.ui
-index 8a46e0f..457ceda 100644
+index 8a46e0f..836fd25 100644
 --- a/filter/uiconfig/ui/pdfgeneralpage.ui
 +++ b/filter/uiconfig/ui/pdfgeneralpage.ui
 @@ -1,5 +1,5 @@
  <?xml version="1.0" encoding="UTF-8"?>
 -<!-- Generated with glade 3.18.3 -->
-+<!-- Generated with glade 3.19.0 -->
++<!-- Generated with glade 3.20.0 -->
  <interface>
    <requires lib="gtk+" version="3.0"/>
    <object class="GtkAdjustment" id="adjustment1">
@@ -275,12 +275,39 @@ index 8a46e0f..457ceda 100644
                            </object>
                            <packing>
                              <property name="left_attach">0</property>
+@@ -607,7 +607,7 @@
+                     <property name="top_attach">7</property>
+                   </packing>
+                 </child>
+-                 <child>
++                <child>
+                   <object class="GtkCheckButton" id="emptypages">
+                     <property name="label" translatable="yes">Exp_ort automatically inserted blank pages</property>
+                     <property name="visible">True</property>
+@@ -619,7 +619,7 @@
+                   </object>
+                   <packing>
+                     <property name="left_attach">0</property>
+-                    <property name="top_attach">10</property>
++                    <property name="top_attach">11</property>
+                   </packing>
+                 </child>
+                 <child>
+@@ -634,7 +634,7 @@
+                   </object>
+                   <packing>
+                     <property name="left_attach">0</property>
+-                    <property name="top_attach">11</property>
++                    <property name="top_attach">12</property>
+                   </packing>
+                 </child>
+                 <child>
 @@ -649,7 +649,7 @@
                    </object>
                    <packing>
                      <property name="left_attach">0</property>
 -                    <property name="top_attach">8</property>
-+                    <property name="top_attach">9</property>
++                    <property name="top_attach">10</property>
                    </packing>
                  </child>
                  <child>
@@ -307,14 +334,14 @@ index 8a46e0f..457ceda 100644
 +                  </object>
 +                  <packing>
 +                    <property name="left_attach">0</property>
-+                    <property name="top_attach">8</property>
++                    <property name="top_attach">9</property>
 +                  </packing>
 +                </child>
                </object>
              </child>
            </object>
 diff --git a/officecfg/registry/schema/org/openoffice/Office/Common.xcs b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
-index 8662cfc..175d785 100644
+index d9e81e5..0ef4dc4 100644
 --- a/officecfg/registry/schema/org/openoffice/Office/Common.xcs
 +++ b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
 @@ -5141,6 +5141,13 @@

@@ -285,6 +285,7 @@ Patch49: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch50: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
 Patch51: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch52: 0001-rhbz-1382401-Support-surrogate-pairs-in-HTMLOutFuncs.patch
+Patch53: 0001-create-NoName-error-token-instead-of-setting-error-a.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2358,6 +2359,7 @@ done
 %changelog
 * Wed Oct 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.1-3
 - export notes pages in impress pdf export dialog is invisible
+- No ScRangeData for an already compiled token can happen in BIFF
 
 * Fri Oct 07 2016 Stephan Bergmann <sbergman@redhat.com> - 1:5.1.6.1-2
 - Resolves: rhbz#1382401 broken export of emojis to HTML

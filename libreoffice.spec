@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.3
+%define libo_version 5.3.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .alpha1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -65,7 +65,7 @@ Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerele
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
 Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source6:        %{external_url}/ce12af00283eb90d9281956524250d6e-xmlsec1-1.2.20.tar.gz
+Source6:        %{external_url}/0fb1bb06d60d7708abc4797008209bcc-xmlsec1-1.2.22.tar.gz
 Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
@@ -88,12 +88,14 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.11.2.tar.gz
+Source101:      %{external_url}/liborcus-0.12.1.tar.gz
 Source102:      %{external_url}/mdds-1.2.2.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
-Source104:      %{external_url}/libwps-0.4.3.tar.bz2
+Source104:      %{external_url}/libwps-0.4.4.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker
+Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
+Source107:      %{external_url}/libstaroffice-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice
 %endif
 
 # build tools
@@ -112,7 +114,6 @@ BuildRequires: git
 BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: make
-BuildRequires: perl(Archive::Zip)
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}
 BuildRequires: libappstream-glib
@@ -193,13 +194,11 @@ BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libgltf-0.0)
-%if 0%{?fedora} >= 26
 BuildRequires: pkgconfig(liborcus-0.12)
-%else
-BuildRequires: pkgconfig(liborcus-0.11)
-%endif
 BuildRequires: pkgconfig(libpagemaker-0.0)
+BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
+BuildRequires: pkgconfig(libzmf-0.0)
 BuildRequires: pkgconfig(mdds-1.2)
 %endif
 
@@ -235,23 +234,7 @@ Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch4: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch6: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
-Patch7: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
-Patch8: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch9: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch10: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
-Patch11: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch12: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch13: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
-Patch14: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch15: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-
-%if 0%{?fedora} >= 26
-Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
-Patch401: 0001-Declare-font-border-protection-orcus-interface-metho.patch
-Patch402: 0001-Add-odf-strikeout-to-orcus-interface.patch
-Patch403: 0001-Reform-orcus-interface-to-set-border-width.patch
-%endif
+Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -266,7 +249,7 @@ Patch500: 0001-disable-libe-book-support.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.11\\.so.*$
+%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.12\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -1103,7 +1086,6 @@ touch autogen.lastrun
  --with-system-dicts \
  --with-system-libs \
  --without-fonts \
- --without-system-npapi-headers \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  %{distrooptions} \
@@ -1755,6 +1737,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
+%{baseinstdir}/share/config/images_breeze_dark.zip
 %{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_oxygen.zip
@@ -1768,6 +1751,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/*
 %exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res/*
 %endif
+%dir %{baseinstdir}/share/emojiconfig
+%{baseinstdir}/share/emojiconfig/emoji.json
 %{baseinstdir}/share/palette
 %{baseinstdir}/share/config/webcast
 %{baseinstdir}/share/config/wizard
@@ -1792,7 +1777,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/template/en-US
 %dir %{baseinstdir}/share/template/common
 %{baseinstdir}/share/template/common/internal
-%{baseinstdir}/share/template/common/layout
 %{baseinstdir}/share/template/common/officorr
 %{baseinstdir}/share/template/common/offimisc
 %{baseinstdir}/share/template/common/personal
@@ -1985,8 +1969,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
 %if 0%{?rhel}
-%{baseinstdir}/program/liborcus-0.11.so.*
-%{baseinstdir}/program/liborcus-parser-0.11.so.*
+%{baseinstdir}/program/liborcus-0.12.so.*
+%{baseinstdir}/program/liborcus-parser-0.12.so.*
 %endif
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
@@ -2305,6 +2289,9 @@ done
 %endif
 
 %changelog
+* Sat Oct 22 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-1.alpha1
+- update to 5.3.0 alpha1
+
 * Fri Oct 21 2016 Marek Kasik <mkasik@redhat.com> - 1:5.2.3.1-2
 - Rebuild for poppler-0.48.0
 

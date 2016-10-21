@@ -1,0 +1,1475 @@
+From e0c5d650ecf94b30b66584bdd9367dcacc0a6e94 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Oct 2016 11:19:58 +0100
+Subject: [PATCH] implement CryptoAPI RC4+SHA1 encryption scheme for xls import
+
+there might be other variants out there in practice, but this
+works for default encrypted xls of excel 2013
+
+(cherry picked from commit 1473ce030314027c01c98f513407ed0897328585)
+
+contains...
+
+be more c++y
+
+(cherry picked from commit fcf7f503b64b2cf7dbef019fb43dde033e3538e8)
+
+hash len is 20 for xls cryptoapi configuration
+
+(cherry picked from commit 491884350ce74f36044b3348bd66356ad1c234af)
+
+clarify hash lengths a bit more
+
+(cherry picked from commit 8db1b13e721683d0263925c8e0300dd86a022814)
+
+hash len isn't going to change depending on who implements it
+
+(cherry picked from commit fcc846e8f29839eaace7e1d28746abea8f4b598a)
+
+move some useful header information to mscodec for reuse
+
+(cherry picked from commit fc514cbf30be1613fdf4d4b7c12cbd55ca08b9b0)
+
+rework things in light of now available documentation
+
+(cherry picked from commit 3fabbd0a22219464545f933fc28c869a6fa89546)
+
+split MSCodec_Std97 into a baseclass MSCodec97
+
+(cherry picked from commit 06916c839b16866b47235306d2db50850df0ad7c)
+
+6e06b8578959b8147043179db57e875b1d98d57d
+66cea4b9efb82d29e6c052ac11a6f2eaca823ce0
+ee585cba4acad74c11d083085153e2af96c8894f
+c7adf3ed3c8279cc93a06975d6fb337210d1af87
+f5f75e27191017a8c6a3929e2a70d21840f157c6
+a3c41a048169c78684800def94e53fc9f3201e30
+91c0e1d1d95fbd1c68966650e7ac7d23276bcbe3
+
+Change-Id: I673b00e111a734bc626ba3d3f6ecf9692f1ce7db
+---
+ filter/source/msfilter/mscodec.cxx        | 206 +++++++++++++++++++---------
+ include/filter/msfilter/mscodec.hxx       | 215 ++++++++++++++++++++++++------
+ include/oox/crypto/CryptTools.hxx         |   3 -
+ include/oox/crypto/Standard2007Engine.hxx |  76 ++---------
+ oox/source/crypto/CryptTools.cxx          |  14 +-
+ oox/source/crypto/DocumentDecryption.cxx  |  22 +--
+ oox/source/crypto/Standard2007Engine.cxx  |  67 ++++------
+ sc/source/filter/excel/xicontent.cxx      | 106 ++++++++++++---
+ sc/source/filter/excel/xistream.cxx       |  70 ++++++----
+ sc/source/filter/inc/xistream.hxx         |  67 ++++++++--
+ sc/source/filter/inc/xlcontent.hxx        |   2 -
+ 11 files changed, 553 insertions(+), 295 deletions(-)
+
+diff --git a/filter/source/msfilter/mscodec.cxx b/filter/source/msfilter/mscodec.cxx
+index 87dbf70..ade583a 100644
+--- a/filter/source/msfilter/mscodec.cxx
++++ b/filter/source/msfilter/mscodec.cxx
+@@ -247,28 +247,37 @@ void MSCodec_Xor95::Skip( sal_Size nBytes )
+     mnOffset = (mnOffset + nBytes) & 0x0F;
+ }
+ 
++MSCodec97::MSCodec97(size_t nHashLen)
++    : m_nHashLen(nHashLen)
++    , m_hCipher(rtl_cipher_create(rtl_Cipher_AlgorithmARCFOUR, rtl_Cipher_ModeStream))
++    , m_aDigestValue(nHashLen, 0)
++{
++    assert(m_hCipher != nullptr);
++    (void)memset (m_pDocId, 0, sizeof(m_pDocId));
++}
+ 
+-
+-MSCodec_Std97::MSCodec_Std97 ()
++MSCodec_Std97::MSCodec_Std97()
++    : MSCodec97(RTL_DIGEST_LENGTH_MD5)
+ {
+-    m_hCipher = rtl_cipher_create (
+-        rtl_Cipher_AlgorithmARCFOUR, rtl_Cipher_ModeStream);
+-    OSL_ASSERT(m_hCipher != nullptr);
++    m_hDigest = rtl_digest_create(rtl_Digest_AlgorithmMD5);
++    assert(m_hDigest != nullptr);
++}
+ 
+-    m_hDigest = rtl_digest_create (
+-        rtl_Digest_AlgorithmMD5);
+-    OSL_ASSERT(m_hDigest != nullptr);
++MSCodec_CryptoAPI::MSCodec_CryptoAPI()
++    : MSCodec97(RTL_DIGEST_LENGTH_SHA1)
++{
++}
+ 
+-    (void)memset (m_pDigestValue, 0, sizeof(m_pDigestValue));
+-    (void)memset (m_pDocId, 0, sizeof(m_pDocId));
++MSCodec97::~MSCodec97()
++{
++    (void)memset(m_aDigestValue.data(), 0, m_aDigestValue.size());
++    (void)memset(m_pDocId, 0, sizeof(m_pDocId));
++    rtl_cipher_destroy(m_hCipher);
+ }
+ 
+-MSCodec_Std97::~MSCodec_Std97 ()
++MSCodec_Std97::~MSCodec_Std97()
+ {
+-    (void)memset (m_pDigestValue, 0, sizeof(m_pDigestValue));
+-    (void)memset (m_pDocId, 0, sizeof(m_pDocId));
+-    rtl_digest_destroy (m_hDigest);
+-    rtl_cipher_destroy (m_hCipher);
++    rtl_digest_destroy(m_hDigest);
+ }
+ 
+ #if DEBUG_MSO_ENCRYPTION_STD97
+@@ -285,7 +294,7 @@ static inline void lcl_PrintDigest(const sal_uInt8* /*pDigest*/, const char* /*m
+ }
+ #endif
+ 
+-bool MSCodec_Std97::InitCodec( const uno::Sequence< beans::NamedValue >& aData )
++bool MSCodec97::InitCodec( const uno::Sequence< beans::NamedValue >& aData )
+ {
+ #if DEBUG_MSO_ENCRYPTION_STD97
+     fprintf(stdout, "MSCodec_Std97::InitCodec: --begin\n");fflush(stdout);
+@@ -294,16 +303,17 @@ bool MSCodec_Std97::InitCodec( const uno::Sequence< beans::NamedValue >& aData )
+ 
+     ::comphelper::SequenceAsHashMap aHashData( aData );
+     uno::Sequence< sal_Int8 > aKey = aHashData.getUnpackedValueOrDefault("STD97EncryptionKey", uno::Sequence< sal_Int8 >() );
+-
+-    if ( aKey.getLength() == RTL_DIGEST_LENGTH_MD5 )
++    const size_t nKeyLen = aKey.getLength();
++    if (nKeyLen == m_nHashLen)
+     {
+-        (void)memcpy( m_pDigestValue, aKey.getConstArray(), RTL_DIGEST_LENGTH_MD5 );
++        assert(m_aDigestValue.size() == m_nHashLen);
++        (void)memcpy(m_aDigestValue.data(), aKey.getConstArray(), m_nHashLen);
+         uno::Sequence< sal_Int8 > aUniqueID = aHashData.getUnpackedValueOrDefault("STD97UniqueID", uno::Sequence< sal_Int8 >() );
+         if ( aUniqueID.getLength() == 16 )
+         {
+             (void)memcpy( m_pDocId, aUniqueID.getConstArray(), 16 );
+             bResult = true;
+-            lcl_PrintDigest(m_pDigestValue, "digest value");
++            lcl_PrintDigest(m_aDigestValue.data(), "digest value");
+             lcl_PrintDigest(m_pDocId, "DocId value");
+         }
+         else
+@@ -315,10 +325,11 @@ bool MSCodec_Std97::InitCodec( const uno::Sequence< beans::NamedValue >& aData )
+     return bResult;
+ }
+ 
+-uno::Sequence< beans::NamedValue > MSCodec_Std97::GetEncryptionData()
++uno::Sequence< beans::NamedValue > MSCodec97::GetEncryptionData()
+ {
+     ::comphelper::SequenceAsHashMap aHashData;
+-    aHashData[ OUString( "STD97EncryptionKey" ) ] <<= uno::Sequence< sal_Int8 >( reinterpret_cast<sal_Int8*>(m_pDigestValue), RTL_DIGEST_LENGTH_MD5 );
++    assert(m_aDigestValue.size() == m_nHashLen);
++    aHashData[ OUString( "STD97EncryptionKey" ) ] <<= uno::Sequence< sal_Int8 >( reinterpret_cast<sal_Int8*>(m_aDigestValue.data()), m_nHashLen );
+     aHashData[ OUString( "STD97UniqueID" ) ] <<= uno::Sequence< sal_Int8 >( reinterpret_cast<sal_Int8*>(m_pDocId), 16 );
+ 
+     return aHashData.getAsConstNamedValueList();
+@@ -334,26 +345,51 @@ void MSCodec_Std97::InitKey (
+     uno::Sequence< sal_Int8 > aKey = ::comphelper::DocPasswordHelper::GenerateStd97Key(pPassData, pDocId);
+     // Fill raw digest of above updates into DigestValue.
+ 
+-    if ( aKey.getLength() == sizeof(m_pDigestValue) )
+-        (void)memcpy ( m_pDigestValue, aKey.getConstArray(), sizeof(m_pDigestValue) );
++    const size_t nKeyLen = aKey.getLength();
++    if (m_aDigestValue.size() == nKeyLen)
++        (void)memcpy(m_aDigestValue.data(), aKey.getConstArray(), m_aDigestValue.size());
+     else
+-        memset( m_pDigestValue, 0, sizeof(m_pDigestValue) );
++        memset(m_aDigestValue.data(), 0, m_aDigestValue.size());
++
++    lcl_PrintDigest(m_aDigestValue.data(), "digest value");
++
++    (void)memcpy (m_pDocId, pDocId, 16);
++
++    lcl_PrintDigest(m_pDocId, "DocId value");
++}
++
++void MSCodec_CryptoAPI::InitKey (
++    const sal_uInt16 pPassData[16],
++    const sal_uInt8  pDocId[16])
++{
++    sal_uInt32 saltSize = 16;
++
++    // Prepare initial data -> salt + password (in 16-bit chars)
++    std::vector<sal_uInt8> initialData(pDocId, pDocId + saltSize);
++
++    // Fill PassData into KeyData.
++    for (sal_Int32 nInd = 0; nInd < 16 && pPassData[nInd]; ++nInd)
++    {
++        initialData.push_back(sal::static_int_cast<sal_uInt8>((pPassData[nInd] >> 0) & 0xff));
++        initialData.push_back(sal::static_int_cast<sal_uInt8>((pPassData[nInd] >> 8) & 0xff));
++    }
++
++    // calculate SHA1 hash of initialData
++    rtl_digest_SHA1(initialData.data(), initialData.size(), m_aDigestValue.data(), m_aDigestValue.size());
+ 
+-    lcl_PrintDigest(m_pDigestValue, "digest value");
++    lcl_PrintDigest(m_aDigestValue.data(), "digest value");
+ 
+     (void)memcpy (m_pDocId, pDocId, 16);
+ 
+     lcl_PrintDigest(m_pDocId, "DocId value");
+ }
+ 
+-bool MSCodec_Std97::VerifyKey (
+-    const sal_uInt8 pSaltData[16],
+-    const sal_uInt8 pSaltDigest[16])
++bool MSCodec97::VerifyKey(const sal_uInt8* pSaltData, const sal_uInt8* pSaltDigest)
+ {
+     // both the salt data and salt digest (hash) come from the document being imported.
+ 
+ #if DEBUG_MSO_ENCRYPTION_STD97
+-    fprintf(stdout, "MSCodec_Std97::VerifyKey: \n");
++    fprintf(stdout, "MSCodec97::VerifyKey: \n");
+     lcl_PrintDigest(pSaltData, "salt data");
+     lcl_PrintDigest(pSaltDigest, "salt hash");
+ #endif
+@@ -361,35 +397,42 @@ bool MSCodec_Std97::VerifyKey (
+ 
+     if (InitCipher(0))
+     {
+-        sal_uInt8 pDigest[RTL_DIGEST_LENGTH_MD5];
+-        GetDigestFromSalt(pSaltData, pDigest);
++        std::vector<sal_uInt8> aDigest(m_nHashLen);
++        GetDigestFromSalt(pSaltData, aDigest.data());
+ 
+-        sal_uInt8 pBuffer[16];
++        std::vector<sal_uInt8> aBuffer(m_nHashLen);
+         // Decode original SaltDigest into Buffer.
+-        rtl_cipher_decode (
+-            m_hCipher, pSaltDigest, 16, pBuffer, sizeof(pBuffer));
++        rtl_cipher_decode(m_hCipher, pSaltDigest, m_nHashLen, aBuffer.data(), m_nHashLen);
+ 
+         // Compare Buffer with computed Digest.
+-        result = (memcmp (pBuffer, pDigest, sizeof(pDigest)) == 0);
++        result = (memcmp(aBuffer.data(), aDigest.data(), m_nHashLen) == 0);
+ 
+         // Erase Buffer and Digest arrays.
+-        rtl_secureZeroMemory (pBuffer, sizeof(pBuffer));
+-        rtl_secureZeroMemory (pDigest, sizeof(pDigest));
++        rtl_secureZeroMemory(aBuffer.data(), m_nHashLen);
++        rtl_secureZeroMemory(aDigest.data(), m_nHashLen);
+     }
+ 
+     return result;
+ }
+ 
+-bool MSCodec_Std97::InitCipher (sal_uInt32 nCounter)
++void MSCodec_CryptoAPI::GetDigestFromSalt(const sal_uInt8* pSaltData, sal_uInt8* pDigest)
++{
++    std::vector<sal_uInt8> verifier(16);
++    rtl_cipher_decode(m_hCipher,
++        pSaltData, 16, verifier.data(), verifier.size());
++
++    rtl_digest_SHA1(verifier.data(), verifier.size(), pDigest, RTL_DIGEST_LENGTH_SHA1);
++}
++
++bool MSCodec_Std97::InitCipher(sal_uInt32 nCounter)
+ {
+-    rtlCipherError result;
+     sal_uInt8      pKeyData[64]; // 512-bit message block
+ 
+     // Initialize KeyData array.
+     (void)memset (pKeyData, 0, sizeof(pKeyData));
+ 
+     // Fill 40 bit of DigestValue into [0..4].
+-    (void)memcpy (pKeyData, m_pDigestValue, 5);
++    (void)memcpy (pKeyData, m_aDigestValue.data(), 5);
+ 
+     // Fill counter into [5..8].
+     pKeyData[ 5] = sal_uInt8((nCounter >>  0) & 0xff);
+@@ -407,7 +450,7 @@ bool MSCodec_Std97::InitCipher (sal_uInt32 nCounter)
+         m_hDigest, pKeyData, RTL_DIGEST_LENGTH_MD5);
+ 
+     // Initialize Cipher with KeyData (for decoding).
+-    result = rtl_cipher_init (
++    rtlCipherError result = rtl_cipher_init (
+         m_hCipher, rtl_Cipher_DirectionBoth,
+         pKeyData, RTL_DIGEST_LENGTH_MD5, nullptr, 0);
+ 
+@@ -417,12 +460,30 @@ bool MSCodec_Std97::InitCipher (sal_uInt32 nCounter)
+     return (result == rtl_Cipher_E_None);
+ }
+ 
+-bool MSCodec_Std97::CreateSaltDigest( const sal_uInt8 nSaltData[16], sal_uInt8 nSaltDigest[16] )
++bool MSCodec_CryptoAPI::InitCipher(sal_uInt32 nCounter)
++{
++    // data = hash + iterator (4bytes)
++    std::vector<sal_uInt8> aKeyData(m_aDigestValue);
++    aKeyData.push_back(sal_uInt8((nCounter >>  0) & 0xff));
++    aKeyData.push_back(sal_uInt8((nCounter >>  8) & 0xff));
++    aKeyData.push_back(sal_uInt8((nCounter >> 16) & 0xff));
++    aKeyData.push_back(sal_uInt8((nCounter >> 24) & 0xff));
++
++    std::vector<sal_uInt8> hash(RTL_DIGEST_LENGTH_SHA1);
++    rtl_digest_SHA1(aKeyData.data(), aKeyData.size(), hash.data(), RTL_DIGEST_LENGTH_SHA1);
++
++    rtlCipherError result =
++        rtl_cipher_init(m_hCipher, rtl_Cipher_DirectionDecode,
++                        hash.data(), ENCRYPT_KEY_SIZE_AES_128/8, nullptr, 0);
++
++    return (result == rtl_Cipher_E_None);
++}
++
++void MSCodec_Std97::CreateSaltDigest( const sal_uInt8 nSaltData[16], sal_uInt8 nSaltDigest[16] )
+ {
+ #if DEBUG_MSO_ENCRYPTION_STD97
+     lcl_PrintDigest(nSaltData, "salt data");
+ #endif
+-    bool result = false;
+ 
+     if (InitCipher(0))
+     {
+@@ -434,35 +495,29 @@ bool MSCodec_Std97::CreateSaltDigest( const sal_uInt8 nSaltData[16], sal_uInt8 n
+ 
+         (void)memcpy(nSaltDigest, pDigest, 16);
+     }
+-
+-    return result;
+ }
+ 
+-bool MSCodec_Std97::Encode (
+-    const void *pData,   sal_Size nDatLen,
+-    sal_uInt8  *pBuffer, sal_Size nBufLen)
++bool MSCodec97::Encode (
++    const void *pData,   std::size_t nDatLen,
++    sal_uInt8  *pBuffer, std::size_t nBufLen)
+ {
+-    rtlCipherError result;
+-
+-    result = rtl_cipher_encode (
++    rtlCipherError result = rtl_cipher_encode(
+         m_hCipher, pData, nDatLen, pBuffer, nBufLen);
+ 
+     return (result == rtl_Cipher_E_None);
+ }
+ 
+-bool MSCodec_Std97::Decode (
+-    const void *pData,   sal_Size nDatLen,
+-    sal_uInt8  *pBuffer, sal_Size nBufLen)
++bool MSCodec97::Decode (
++    const void *pData,   std::size_t nDatLen,
++    sal_uInt8  *pBuffer, std::size_t nBufLen)
+ {
+-    rtlCipherError result;
+-
+-    result = rtl_cipher_decode (
++    rtlCipherError result = rtl_cipher_decode(
+         m_hCipher, pData, nDatLen, pBuffer, nBufLen);
+ 
+     return (result == rtl_Cipher_E_None);
+ }
+ 
+-bool MSCodec_Std97::Skip( sal_Size nDatLen )
++bool MSCodec97::Skip(std::size_t nDatLen)
+ {
+     sal_uInt8 pnDummy[ 1024 ];
+     sal_Size nDatLeft = nDatLen;
+@@ -478,7 +533,7 @@ bool MSCodec_Std97::Skip( sal_Size nDatLen )
+     return bResult;
+ }
+ 
+-void MSCodec_Std97::GetDigestFromSalt( const sal_uInt8 pSaltData[16], sal_uInt8 pDigest[16] )
++void MSCodec_Std97::GetDigestFromSalt(const sal_uInt8* pSaltData, sal_uInt8* pDigest)
+ {
+     sal_uInt8 pBuffer[64];
+     sal_uInt8 pDigestLocal[16];
+@@ -537,12 +592,41 @@ void MSCodec_Std97::GetEncryptKey (
+     }
+ }
+ 
+-void MSCodec_Std97::GetDocId( sal_uInt8 pDocId[16] )
++void MSCodec97::GetDocId( sal_uInt8 pDocId[16] )
+ {
+     if ( sizeof( m_pDocId ) == 16 )
+         (void)memcpy( pDocId, m_pDocId, 16 );
+ }
+ 
++EncryptionStandardHeader::EncryptionStandardHeader()
++{
++    flags        = 0;
++    sizeExtra    = 0;
++    algId        = 0;
++    algIdHash    = 0;
++    keyBits      = 0;
++    providedType = 0;
++    reserved1    = 0;
++    reserved2    = 0;
++}
++
++EncryptionVerifierAES::EncryptionVerifierAES()
++    : saltSize(SALT_LENGTH)
++    , encryptedVerifierHashSize(SHA1_HASH_LENGTH)
++{
++    memset(salt, 0, sizeof(salt));
++    memset(encryptedVerifier, 0, sizeof(encryptedVerifier));
++    memset(encryptedVerifierHash, 0, sizeof(encryptedVerifierHash));
++}
++
++EncryptionVerifierRC4::EncryptionVerifierRC4()
++    : saltSize(SALT_LENGTH)
++    , encryptedVerifierHashSize(SHA1_HASH_LENGTH)
++{
++    memset(salt, 0, sizeof(salt));
++    memset(encryptedVerifier, 0, sizeof(encryptedVerifier));
++    memset(encryptedVerifierHash, 0, sizeof(encryptedVerifierHash));
++}
+ 
+ 
+ }
+diff --git a/include/filter/msfilter/mscodec.hxx b/include/filter/msfilter/mscodec.hxx
+index 4f5676b..4ab6c9b 100644
+--- a/include/filter/msfilter/mscodec.hxx
++++ b/include/filter/msfilter/mscodec.hxx
+@@ -26,6 +26,12 @@
+ #include <rtl/cipher.h>
+ #include <rtl/digest.h>
+ #include <filter/msfilter/msfilterdllapi.h>
++#include <sal/types.h>
++#include <vector>
++
++namespace com { namespace sun { namespace star {
++    namespace beans { struct NamedValue; }
++} } }
+ 
+ namespace msfilter {
+ 
+@@ -172,20 +178,11 @@ public:
+     virtual void                Decode( sal_uInt8* pnData, sal_Size nBytes ) override;
+ };
+ 
+-
+-
+-
+-/** Encodes and decodes data from protected MSO 97+ documents.
+-
+-    This is a wrapper class around low level cryptographic functions from RTL.
+-    Implementation is based on the wvDecrypt package by Caolan McNamara:
+-    http://www.csn.ul.ie/~caolan/docs/wvDecrypt.html
+- */
+-class MSFILTER_DLLPUBLIC MSCodec_Std97
++class MSFILTER_DLLPUBLIC MSCodec97
+ {
+ public:
+-    explicit            MSCodec_Std97();
+-                        ~MSCodec_Std97();
++    MSCodec97(size_t nHashLen);
++    virtual ~MSCodec97();
+ 
+     /** Initializes the algorithm with the encryption data.
+ 
+@@ -193,7 +190,7 @@ public:
+             The sequence contains the necessary data to initialize
+             the codec.
+      */
+-    bool                InitCodec( const css::uno::Sequence< css::beans::NamedValue >& aData );
++    bool InitCodec(const css::uno::Sequence< css::beans::NamedValue >& aData);
+ 
+     /** Retrieves the encryption data
+ 
+@@ -203,7 +200,6 @@ public:
+      */
+     css::uno::Sequence< css::beans::NamedValue > GetEncryptionData();
+ 
+-
+     /** Initializes the algorithm with the specified password and document ID.
+ 
+         @param pPassData
+@@ -212,9 +208,9 @@ public:
+         @param pDocId
+             Unique document identifier read from or written to the file.
+      */
+-    void                InitKey(
+-                            const sal_uInt16 pPassData[ 16 ],
+-                            const sal_uInt8 pDocId[ 16 ] );
++    virtual void InitKey(const sal_uInt16 pPassData[16],
++                         const sal_uInt8 pDocId[16]) = 0;
++
+ 
+     /** Verifies the validity of the password using the passed salt data.
+ 
+@@ -230,9 +226,9 @@ public:
+         @return
+             true = Test was successful.
+      */
+-    bool                VerifyKey(
+-                            const sal_uInt8 pSaltData[ 16 ],
+-                            const sal_uInt8 pSaltDigest[ 16 ] );
++    bool VerifyKey(const sal_uInt8* pSaltData, const sal_uInt8* pSaltDigest);
++
++    virtual void GetDigestFromSalt(const sal_uInt8* pSaltData, sal_uInt8* pDigest) = 0;
+ 
+     /** Rekeys the codec using the specified counter.
+ 
+@@ -249,11 +245,7 @@ public:
+         @param nCounter
+             Block counter used to rekey the cipher.
+      */
+-    bool                InitCipher( sal_uInt32 nCounter );
+-
+-    /** Creates an MD5 digest of salt digest. */
+-    bool                CreateSaltDigest(
+-                            const sal_uInt8 nSaltData[16], sal_uInt8 nSaltDigest[16] );
++    virtual bool                InitCipher(sal_uInt32 nCounter) = 0;
+ 
+     /** Encodes a block of memory.
+ 
+@@ -277,9 +269,8 @@ public:
+         @return
+             true = Encoding was successful (no error occurred).
+     */
+-    bool                Encode(
+-                            const void* pData, sal_Size nDatLen,
+-                            sal_uInt8* pBuffer, sal_Size nBufLen );
++    bool                Encode(const void* pData, std::size_t nDatLen,
++                               sal_uInt8* pBuffer, std::size_t nBufLen);
+ 
+     /** Decodes a block of memory.
+ 
+@@ -303,9 +294,8 @@ public:
+         @return
+             true = Decoding was successful (no error occurred).
+     */
+-    bool                Decode(
+-                            const void* pData, sal_Size nDatLen,
+-                            sal_uInt8* pBuffer, sal_Size nBufLen );
++    bool                Decode(const void* pData, std::size_t nDatLen,
++                               sal_uInt8* pBuffer, std::size_t nBufLen);
+ 
+     /** Lets the cipher skip a specific amount of bytes.
+ 
+@@ -319,7 +309,66 @@ public:
+         @param nDatLen
+             Number of bytes to be skipped (cipher "seeks" forward).
+      */
+-    bool                Skip( sal_Size nDatLen );
++    bool                Skip(std::size_t nDatLen);
++
++    /* allows to get the unique document id from the codec
++     */
++    void                GetDocId( sal_uInt8 pDocId[16] );
++
++private:
++                        MSCodec97(const MSCodec97&) = delete;
++    MSCodec97&          operator=(const MSCodec97&) = delete;
++
++protected:
++    size_t              m_nHashLen;
++    rtlCipher           m_hCipher;
++    sal_uInt8           m_pDocId[16];
++    std::vector<sal_uInt8> m_aDigestValue;
++};
++
++/** Encodes and decodes data from protected MSO 97+ documents.
++
++    This is a wrapper class around low level cryptographic functions from RTL.
++    Implementation is based on the wvDecrypt package by Caolan McNamara:
++    http://www.csn.ul.ie/~caolan/docs/wvDecrypt.html
++ */
++class MSFILTER_DLLPUBLIC MSCodec_Std97 :  public MSCodec97
++{
++public:
++    MSCodec_Std97();
++    virtual ~MSCodec_Std97() override;
++
++    /** Initializes the algorithm with the specified password and document ID.
++
++        @param pPassData
++            Wide character array containing the password. Must be zero
++            terminated, which results in a maximum length of 15 characters.
++        @param pDocId
++            Unique document identifier read from or written to the file.
++     */
++    virtual void InitKey(const sal_uInt16 pPassData[16],
++                         const sal_uInt8 pDocId[16]) override;
++
++    /** Rekeys the codec using the specified counter.
++
++        After reading a specific amount of data the cipher algorithm needs to
++        be rekeyed using a counter that counts the data blocks.
++
++        The block size is for example 512 Bytes for Word files and 1024 Bytes
++        for Excel files.
++
++        @precond
++            The codec must be initialized with InitKey() before this function
++            can be used.
++
++        @param nCounter
++            Block counter used to rekey the cipher.
++     */
++    virtual bool InitCipher(sal_uInt32 nCounter) override;
++
++    /** Creates an MD5 digest of salt digest. */
++    void               CreateSaltDigest(
++                            const sal_uInt8 nSaltData[16], sal_uInt8 nSaltDigest[16] );
+ 
+     /** Gets salt data and salt digest.
+ 
+@@ -339,22 +388,108 @@ public:
+                             sal_uInt8 pSaltData[16],
+                             sal_uInt8 pSaltDigest[16]);
+ 
+-    /* allows to get the unique document id from the codec
+-     */
+-    void                GetDocId( sal_uInt8 pDocId[16] );
+-
+-    void                GetDigestFromSalt( const sal_uInt8 pSaltData[16], sal_uInt8 pDigest[16] );
++    virtual void        GetDigestFromSalt(const sal_uInt8* pSaltData, sal_uInt8* pDigest) override;
+ 
+ private:
+                         MSCodec_Std97( const MSCodec_Std97& ) = delete;
+     MSCodec_Std97&      operator=( const MSCodec_Std97& ) = delete;
+ 
+-    rtlCipher           m_hCipher;
+     rtlDigest           m_hDigest;
+-    sal_uInt8           m_pDigestValue[ RTL_DIGEST_LENGTH_MD5 ];
+-    sal_uInt8           m_pDocId[16];
+ };
+ 
++class MSFILTER_DLLPUBLIC MSCodec_CryptoAPI :  public MSCodec97
++{
++public:
++    MSCodec_CryptoAPI();
++
++    virtual void InitKey(const sal_uInt16 pPassData[16],
++                         const sal_uInt8 pDocId[16]) override;
++    virtual bool InitCipher(sal_uInt32 nCounter) override;
++    virtual void GetDigestFromSalt(const sal_uInt8* pSaltData, sal_uInt8* pDigest) override;
++};
++
++const sal_uInt32 ENCRYPTINFO_CRYPTOAPI      = 0x00000004;
++const sal_uInt32 ENCRYPTINFO_DOCPROPS       = 0x00000008;
++const sal_uInt32 ENCRYPTINFO_EXTERNAL       = 0x00000010;
++const sal_uInt32 ENCRYPTINFO_AES            = 0x00000020;
++
++const sal_uInt32 ENCRYPT_ALGO_AES128        = 0x0000660E;
++const sal_uInt32 ENCRYPT_ALGO_AES192        = 0x0000660F;
++const sal_uInt32 ENCRYPT_ALGO_AES256        = 0x00006610;
++const sal_uInt32 ENCRYPT_ALGO_RC4           = 0x00006801;
++
++const sal_uInt32 ENCRYPT_HASH_SHA1          = 0x00008004;
++
++const sal_uInt32 ENCRYPT_KEY_SIZE_AES_128   = 0x00000080;
++const sal_uInt32 ENCRYPT_KEY_SIZE_AES_192   = 0x000000C0;
++const sal_uInt32 ENCRYPT_KEY_SIZE_AES_256   = 0x00000100;
++
++const sal_uInt32 ENCRYPT_PROVIDER_TYPE_AES  = 0x00000018;
++const sal_uInt32 ENCRYPT_PROVIDER_TYPE_RC4  = 0x00000001;
++
++// version of encryption info used in MS Office 1997 (major = 1, minor = 1)
++const sal_uInt32 VERSION_INFO_1997_FORMAT       = 0x00010001;
++// version of encryption info used in MS Office 2007 (major = 3, minor = 2)
++const sal_uInt32 VERSION_INFO_2007_FORMAT       = 0x00020003;
++// version of encryption info used in MS Office 2007 SP2 and older (major = 4, minor = 2)
++const sal_uInt32 VERSION_INFO_2007_FORMAT_SP2   = 0x00020004;
++
++// version of encryption info - agile (major = 4, minor = 4)
++const sal_uInt32 VERSION_INFO_AGILE         = 0x00040004;
++
++const sal_uInt32 SALT_LENGTH                    = 16;
++const sal_uInt32 ENCRYPTED_VERIFIER_LENGTH      = 16;
++const sal_uInt32 SHA1_HASH_LENGTH = RTL_DIGEST_LENGTH_SHA1; // 20
++const sal_uInt32 SHA256_HASH_LENGTH = 32;
++const sal_uInt32 SHA512_HASH_LENGTH = 64;
++
++struct MSFILTER_DLLPUBLIC EncryptionStandardHeader
++{
++    sal_uInt32 flags;
++    sal_uInt32 sizeExtra;       // 0
++    sal_uInt32 algId;           // if flag AES && CRYPTOAPI this defaults to 128-bit AES
++    sal_uInt32 algIdHash;       // 0: determine by flags - defaults to SHA-1 if not external
++    sal_uInt32 keyBits;         // key size in bits: 0 (determine by flags), 128, 192, 256
++    sal_uInt32 providedType;    // AES or RC4
++    sal_uInt32 reserved1;       // 0
++    sal_uInt32 reserved2;       // 0
++
++    EncryptionStandardHeader();
++};
++
++struct MSFILTER_DLLPUBLIC EncryptionVerifierAES
++{
++    sal_uInt32 saltSize;                                                // must be 0x00000010
++    sal_uInt8  salt[SALT_LENGTH];                                       // random generated salt value
++    sal_uInt8  encryptedVerifier[ENCRYPTED_VERIFIER_LENGTH];            // randomly generated verifier value
++    sal_uInt32 encryptedVerifierHashSize;                               // actually written hash size - depends on algorithm
++    sal_uInt8  encryptedVerifierHash[SHA256_HASH_LENGTH];               // verifier value hash - itself also encrypted
++
++    EncryptionVerifierAES();
++};
++
++struct MSFILTER_DLLPUBLIC EncryptionVerifierRC4
++{
++    sal_uInt32 saltSize;                                                // must be 0x00000010
++    sal_uInt8  salt[SALT_LENGTH];                                       // random generated salt value
++    sal_uInt8  encryptedVerifier[ENCRYPTED_VERIFIER_LENGTH];            // randomly generated verifier value
++    sal_uInt32 encryptedVerifierHashSize;                               // actually written hash size - depends on algorithm
++    sal_uInt8  encryptedVerifierHash[SHA1_HASH_LENGTH];                 // verifier value hash - itself also encrypted
++
++    EncryptionVerifierRC4();
++};
++
++struct MSFILTER_DLLPUBLIC StandardEncryptionInfo
++{
++    EncryptionStandardHeader header;
++    EncryptionVerifierAES    verifier;
++};
++
++struct MSFILTER_DLLPUBLIC RC4EncryptionInfo
++{
++    EncryptionStandardHeader header;
++    EncryptionVerifierRC4 verifier;
++};
+ 
+ 
+ } // namespace msfilter
+diff --git a/include/oox/crypto/CryptTools.hxx b/include/oox/crypto/CryptTools.hxx
+index 898c47d..dc91ad9 100644
+--- a/include/oox/crypto/CryptTools.hxx
++++ b/include/oox/crypto/CryptTools.hxx
+@@ -126,9 +126,6 @@ public:
+         SHA512
+     };
+ 
+-    static const sal_uInt32 DIGEST_LENGTH_SHA1;
+-    static const sal_uInt32 DIGEST_LENGTH_SHA512;
+-
+ private:
+     DigestType meType;
+ 
+diff --git a/include/oox/crypto/Standard2007Engine.hxx b/include/oox/crypto/Standard2007Engine.hxx
+index 5e5a6fc..10cac82 100644
+--- a/include/oox/crypto/Standard2007Engine.hxx
++++ b/include/oox/crypto/Standard2007Engine.hxx
+@@ -13,75 +13,23 @@
+ 
+ #include <oox/crypto/CryptTools.hxx>
+ #include <oox/crypto/CryptoEngine.hxx>
++#include <filter/msfilter/mscodec.hxx>
++#include <oox/crypto/CryptoEngine.hxx>
++#include <rtl/digest.h>
++#include <rtl/ustring.hxx>
++#include <sal/types.h>
+ 
+ namespace oox {
+-namespace core {
+-
+-const sal_uInt32 ENCRYPTINFO_CRYPTOAPI      = 0x00000004;
+-const sal_uInt32 ENCRYPTINFO_DOCPROPS       = 0x00000008;
+-const sal_uInt32 ENCRYPTINFO_EXTERNAL       = 0x00000010;
+-const sal_uInt32 ENCRYPTINFO_AES            = 0x00000020;
+-
+-const sal_uInt32 ENCRYPT_ALGO_AES128        = 0x0000660E;
+-const sal_uInt32 ENCRYPT_ALGO_AES192        = 0x0000660F;
+-const sal_uInt32 ENCRYPT_ALGO_AES256        = 0x00006610;
+-const sal_uInt32 ENCRYPT_ALGO_RC4           = 0x00006801;
+-
+-const sal_uInt32 ENCRYPT_HASH_SHA1          = 0x00008004;
+-
+-const sal_uInt32 ENCRYPT_KEY_SIZE_AES_128   = 0x00000080;
+-const sal_uInt32 ENCRYPT_KEY_SIZE_AES_192   = 0x000000C0;
+-const sal_uInt32 ENCRYPT_KEY_SIZE_AES_256   = 0x00000100;
++    class BinaryXInputStream;
++    class BinaryXOutputStream;
++}
+ 
+-const sal_uInt32 ENCRYPT_PROVIDER_TYPE_AES  = 0x00000018;
+-const sal_uInt32 ENCRYPT_PROVIDER_TYPE_RC4  = 0x00000001;
+-
+-// version of encryption info used in MS Office 2007 (major = 3, minor = 2)
+-const sal_uInt32 VERSION_INFO_2007_FORMAT       = 0x00020003;
+-// version of encryption info used in MS Office 2007 SP2 and older (major = 4, minor = 2)
+-const sal_uInt32 VERSION_INFO_2007_FORMAT_SP2   = 0x00020004;
+-
+-// version of encryption info - agile (major = 4, minor = 4)
+-const sal_uInt32 VERSION_INFO_AGILE         = 0x00040004;
+-
+-const sal_uInt32 SALT_LENGTH                    = 16;
+-const sal_uInt32 ENCRYPTED_VERIFIER_LENGTH      = 16;
+-const sal_uInt32 ENCRYPTED_VERIFIER_HASH_LENGTH = 32;
+-
+-struct EncryptionStandardHeader
+-{
+-    sal_uInt32 flags;
+-    sal_uInt32 sizeExtra;       // 0
+-    sal_uInt32 algId;           // if flag AES && CRYPTOAPI this defaults to 128-bit AES
+-    sal_uInt32 algIdHash;       // 0: determine by flags - defaults to SHA-1 if not external
+-    sal_uInt32 keyBits;         // key size in bits: 0 (determine by flags), 128, 192, 256
+-    sal_uInt32 providedType;    // AES or RC4
+-    sal_uInt32 reserved1;       // 0
+-    sal_uInt32 reserved2;       // 0
+-
+-    EncryptionStandardHeader();
+-};
+-
+-struct EncryptionVerifierAES
+-{
+-    sal_uInt32 saltSize;                                                // must be 0x00000010
+-    sal_uInt8  salt[SALT_LENGTH];                                       // random generated salt value
+-    sal_uInt8  encryptedVerifier[ENCRYPTED_VERIFIER_LENGTH];            // randomly generated verifier value
+-    sal_uInt32 encryptedVerifierHashSize;                               // actually written hash size - depends on algorithm
+-    sal_uInt8  encryptedVerifierHash[ENCRYPTED_VERIFIER_HASH_LENGTH];   // verifier value hash - itself also encrypted
+-
+-    EncryptionVerifierAES();
+-};
+-
+-struct StandardEncryptionInfo
+-{
+-    EncryptionStandardHeader header;
+-    EncryptionVerifierAES    verifier;
+-};
++namespace oox {
++namespace core {
+ 
+ class Standard2007Engine : public CryptoEngine
+ {
+-    StandardEncryptionInfo mInfo;
++    msfilter::StandardEncryptionInfo mInfo;
+ 
+     bool generateVerifier();
+     bool calculateEncryptionKey(const OUString& rPassword);
+@@ -90,7 +38,7 @@ public:
+     Standard2007Engine();
+     virtual ~Standard2007Engine();
+ 
+-    StandardEncryptionInfo& getInfo() { return mInfo;}
++    msfilter::StandardEncryptionInfo& getInfo() { return mInfo;}
+ 
+     virtual bool generateEncryptionKey(const OUString& rPassword) override;
+ 
+diff --git a/oox/source/crypto/CryptTools.cxx b/oox/source/crypto/CryptTools.cxx
+index f21b0e1..9b1d50b 100644
+--- a/oox/source/crypto/CryptTools.cxx
++++ b/oox/source/crypto/CryptTools.cxx
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include "oox/crypto/CryptTools.hxx"
++#include <filter/msfilter/mscodec.hxx>
+ #include <com/sun/star/uno/RuntimeException.hpp>
+ 
+ namespace oox {
+@@ -196,15 +197,6 @@ sal_uInt32 Encrypt::update(vector<sal_uInt8>& output, vector<sal_uInt8>& input,
+ 
+ // Digest
+ 
+-#if USE_TLS_OPENSSL
+-const sal_uInt32 Digest::DIGEST_LENGTH_SHA1 = SHA_DIGEST_LENGTH;
+-const sal_uInt32 Digest::DIGEST_LENGTH_SHA512 = SHA512_DIGEST_LENGTH;
+-#endif
+-#if USE_TLS_NSS
+-const sal_uInt32 Digest::DIGEST_LENGTH_SHA1 = SHA1_LENGTH;
+-const sal_uInt32 Digest::DIGEST_LENGTH_SHA512 = SHA512_LENGTH;
+-#endif
+-
+ namespace
+ {
+ 
+@@ -275,9 +267,9 @@ sal_uInt32 Digest::getLength()
+     switch(meType)
+     {
+         case SHA1:
+-            return DIGEST_LENGTH_SHA1;
++            return msfilter::SHA1_HASH_LENGTH;
+         case SHA512:
+-            return DIGEST_LENGTH_SHA512;
++            return msfilter::SHA512_HASH_LENGTH;
+         default:
+             break;
+     }
+diff --git a/oox/source/crypto/DocumentDecryption.cxx b/oox/source/crypto/DocumentDecryption.cxx
+index 8dcf4ca..80054b3 100644
+--- a/oox/source/crypto/DocumentDecryption.cxx
++++ b/oox/source/crypto/DocumentDecryption.cxx
+@@ -235,7 +235,7 @@ bool DocumentDecryption::readAgileEncryptionInfo(Reference< XInputStream >& xInp
+         info.cipherAlgorithm == "AES" &&
+         info.cipherChaining  == "ChainingModeCBC" &&
+         info.hashAlgorithm   == "SHA1" &&
+-        info.hashSize        == 20)
++        info.hashSize        == msfilter::SHA1_HASH_LENGTH)
+     {
+         return true;
+     }
+@@ -245,7 +245,7 @@ bool DocumentDecryption::readAgileEncryptionInfo(Reference< XInputStream >& xInp
+         info.cipherAlgorithm == "AES" &&
+         info.cipherChaining  == "ChainingModeCBC" &&
+         info.hashAlgorithm   == "SHA512" &&
+-        info.hashSize        == 64 )
++        info.hashSize        == msfilter::SHA512_HASH_LENGTH)
+     {
+         return true;
+     }
+@@ -257,10 +257,10 @@ bool DocumentDecryption::readStandard2007EncryptionInfo(BinaryInputStream& rStre
+ {
+     Standard2007Engine* engine = new Standard2007Engine();
+     mEngine.reset(engine);
+-    StandardEncryptionInfo& info = engine->getInfo();
++    msfilter::StandardEncryptionInfo& info = engine->getInfo();
+ 
+     info.header.flags = rStream.readuInt32();
+-    if( getFlag( info.header.flags, ENCRYPTINFO_EXTERNAL ) )
++    if( getFlag( info.header.flags, msfilter::ENCRYPTINFO_EXTERNAL ) )
+         return false;
+ 
+     sal_uInt32 nHeaderSize = rStream.readuInt32();
+@@ -291,18 +291,18 @@ bool DocumentDecryption::readStandard2007EncryptionInfo(BinaryInputStream& rStre
+         return false;
+ 
+     // check flags and algorithm IDs, required are AES128 and SHA-1
+-    if( !getFlag( info.header.flags , ENCRYPTINFO_CRYPTOAPI ) )
++    if( !getFlag( info.header.flags, msfilter::ENCRYPTINFO_CRYPTOAPI ) )
+         return false;
+ 
+-    if( !getFlag( info.header.flags, ENCRYPTINFO_AES ) )
++    if( !getFlag( info.header.flags, msfilter::ENCRYPTINFO_AES ) )
+         return false;
+ 
+     // algorithm ID 0 defaults to AES128 too, if ENCRYPTINFO_AES flag is set
+-    if( info.header.algId != 0 && info.header.algId != ENCRYPT_ALGO_AES128 )
++    if( info.header.algId != 0 && info.header.algId != msfilter::ENCRYPT_ALGO_AES128 )
+         return false;
+ 
+     // hash algorithm ID 0 defaults to SHA-1 too
+-    if( info.header.algIdHash != 0 && info.header.algIdHash != ENCRYPT_HASH_SHA1 )
++    if( info.header.algIdHash != 0 && info.header.algIdHash != msfilter::ENCRYPT_HASH_SHA1 )
+         return false;
+ 
+     if( info.verifier.encryptedVerifierHashSize != 20 )
+@@ -326,12 +326,12 @@ bool DocumentDecryption::readEncryptionInfo()
+ 
+     switch (aVersion)
+     {
+-        case VERSION_INFO_2007_FORMAT:
+-        case VERSION_INFO_2007_FORMAT_SP2:
++        case msfilter::VERSION_INFO_2007_FORMAT:
++        case msfilter::VERSION_INFO_2007_FORMAT_SP2:
+             mCryptoType = STANDARD_2007; // Set encryption info format
+             bResult = readStandard2007EncryptionInfo( aBinaryInputStream );
+             break;
+-        case VERSION_INFO_AGILE:
++        case msfilter::VERSION_INFO_AGILE:
+             mCryptoType = AGILE; // Set encryption info format
+             aBinaryInputStream.skip(4);
+             bResult = readAgileEncryptionInfo( xEncryptionInfo );
+diff --git a/oox/source/crypto/Standard2007Engine.cxx b/oox/source/crypto/Standard2007Engine.cxx
+index 299d251..68df963 100644
+--- a/oox/source/crypto/Standard2007Engine.cxx
++++ b/oox/source/crypto/Standard2007Engine.cxx
+@@ -38,27 +38,6 @@ static const OUString lclCspName = "Microsoft Enhanced RSA and AES Cryptographic
+ 
+ } // namespace
+ 
+-EncryptionStandardHeader::EncryptionStandardHeader()
+-{
+-    flags        = 0;
+-    sizeExtra    = 0;
+-    algId        = 0;
+-    algIdHash    = 0;
+-    keyBits      = 0;
+-    providedType = 0;
+-    reserved1    = 0;
+-    reserved2    = 0;
+-}
+-
+-EncryptionVerifierAES::EncryptionVerifierAES() :
+-    saltSize(SALT_LENGTH),
+-    encryptedVerifierHashSize(Digest::DIGEST_LENGTH_SHA1)
+-{
+-    memset(salt, 0, sizeof(salt));
+-    memset(encryptedVerifier, 0, sizeof(encryptedVerifier));
+-    memset(encryptedVerifierHash, 0, sizeof(encryptedVerifierHash));
+-}
+-
+ Standard2007Engine::Standard2007Engine() :
+     CryptoEngine()
+ {}
+@@ -72,23 +51,23 @@ bool Standard2007Engine::generateVerifier()
+     if (mKey.size() != 16)
+         return false;
+ 
+-    vector<sal_uInt8> verifier(ENCRYPTED_VERIFIER_LENGTH);
+-    vector<sal_uInt8> encryptedVerifier(ENCRYPTED_VERIFIER_LENGTH);
++    vector<sal_uInt8> verifier(msfilter::ENCRYPTED_VERIFIER_LENGTH);
++    vector<sal_uInt8> encryptedVerifier(msfilter::ENCRYPTED_VERIFIER_LENGTH);
+ 
+     lclRandomGenerateValues(&verifier[0], verifier.size());
+ 
+     vector<sal_uInt8> iv;
+     Encrypt aEncryptorVerifier(mKey, iv, Crypto::AES_128_ECB);
+-    if (aEncryptorVerifier.update(encryptedVerifier, verifier) != ENCRYPTED_VERIFIER_LENGTH)
++    if (aEncryptorVerifier.update(encryptedVerifier, verifier) != msfilter::ENCRYPTED_VERIFIER_LENGTH)
+         return false;
+     std::copy(encryptedVerifier.begin(), encryptedVerifier.end(), mInfo.verifier.encryptedVerifier);
+ 
+-    vector<sal_uInt8> hash(RTL_DIGEST_LENGTH_SHA1, 0);
+-    mInfo.verifier.encryptedVerifierHashSize = RTL_DIGEST_LENGTH_SHA1;
++    vector<sal_uInt8> hash(msfilter::SHA1_HASH_LENGTH, 0);
++    mInfo.verifier.encryptedVerifierHashSize = msfilter::SHA1_HASH_LENGTH;
+     Digest::sha1(hash, verifier);
+-    hash.resize(ENCRYPTED_VERIFIER_HASH_LENGTH, 0);
++    hash.resize(msfilter::SHA256_HASH_LENGTH, 0);
+ 
+-    vector<sal_uInt8> encryptedHash(ENCRYPTED_VERIFIER_HASH_LENGTH, 0);
++    vector<sal_uInt8> encryptedHash(msfilter::SHA256_HASH_LENGTH, 0);
+ 
+     Encrypt aEncryptorHash(mKey, iv, Crypto::AES_128_ECB);
+     aEncryptorHash.update(encryptedHash, hash, hash.size());
+@@ -115,13 +94,13 @@ bool Standard2007Engine::calculateEncryptionKey(const OUString& rPassword)
+         initialData.begin() + saltSize);
+ 
+     // use "hash" vector for result of sha1 hashing
+-    vector<sal_uInt8> hash(Digest::DIGEST_LENGTH_SHA1, 0);
++    vector<sal_uInt8> hash(msfilter::SHA1_HASH_LENGTH, 0);
+ 
+     // calculate SHA1 hash of initialData
+     Digest::sha1(hash, initialData);
+ 
+     // data = iterator (4bytes) + hash
+-    vector<sal_uInt8> data(Digest::DIGEST_LENGTH_SHA1 + 4, 0);
++    vector<sal_uInt8> data(msfilter::SHA1_HASH_LENGTH + 4, 0);
+ 
+     for (sal_Int32 i = 0; i < 50000; ++i)
+     {
+@@ -130,7 +109,7 @@ bool Standard2007Engine::calculateEncryptionKey(const OUString& rPassword)
+         Digest::sha1(hash, data);
+     }
+     std::copy(hash.begin(), hash.end(), data.begin() );
+-    std::fill(data.begin() + Digest::DIGEST_LENGTH_SHA1, data.end(), 0 );
++    std::fill(data.begin() + msfilter::SHA1_HASH_LENGTH, data.end(), 0 );
+ 
+     Digest::sha1(hash, data);
+ 
+@@ -152,16 +131,16 @@ bool Standard2007Engine::generateEncryptionKey(const OUString& password)
+ 
+     calculateEncryptionKey(password);
+ 
+-    vector<sal_uInt8> encryptedVerifier(ENCRYPTED_VERIFIER_LENGTH);
++    vector<sal_uInt8> encryptedVerifier(msfilter::ENCRYPTED_VERIFIER_LENGTH);
+     std::copy(
+         mInfo.verifier.encryptedVerifier,
+-        mInfo.verifier.encryptedVerifier + ENCRYPTED_VERIFIER_LENGTH,
++        mInfo.verifier.encryptedVerifier + msfilter::ENCRYPTED_VERIFIER_LENGTH,
+         encryptedVerifier.begin());
+ 
+-    vector<sal_uInt8> encryptedHash(ENCRYPTED_VERIFIER_HASH_LENGTH);
++    vector<sal_uInt8> encryptedHash(msfilter::SHA256_HASH_LENGTH);
+     std::copy(
+         mInfo.verifier.encryptedVerifierHash,
+-        mInfo.verifier.encryptedVerifierHash + ENCRYPTED_VERIFIER_HASH_LENGTH,
++        mInfo.verifier.encryptedVerifierHash + msfilter::SHA256_HASH_LENGTH,
+         encryptedHash.begin());
+ 
+     vector<sal_uInt8> verifier(encryptedVerifier.size(), 0);
+@@ -170,7 +149,7 @@ bool Standard2007Engine::generateEncryptionKey(const OUString& password)
+     vector<sal_uInt8> verifierHash(encryptedHash.size(), 0);
+     Decrypt::aes128ecb(verifierHash, encryptedHash, mKey);
+ 
+-    vector<sal_uInt8> hash(RTL_DIGEST_LENGTH_SHA1, 0);
++    vector<sal_uInt8> hash(msfilter::SHA1_HASH_LENGTH, 0);
+     Digest::sha1(hash, verifier);
+ 
+     return std::equal( hash.begin(), hash.end(), verifierHash.begin() );
+@@ -200,11 +179,11 @@ bool Standard2007Engine::decrypt(
+ 
+ bool Standard2007Engine::writeEncryptionInfo(const OUString& password, BinaryXOutputStream& rStream)
+ {
+-    mInfo.header.flags        = ENCRYPTINFO_AES | ENCRYPTINFO_CRYPTOAPI;
+-    mInfo.header.algId        = ENCRYPT_ALGO_AES128;
+-    mInfo.header.algIdHash    = ENCRYPT_HASH_SHA1;
+-    mInfo.header.keyBits      = ENCRYPT_KEY_SIZE_AES_128;
+-    mInfo.header.providedType = ENCRYPT_PROVIDER_TYPE_AES;
++    mInfo.header.flags        = msfilter::ENCRYPTINFO_AES | msfilter::ENCRYPTINFO_CRYPTOAPI;
++    mInfo.header.algId        = msfilter::ENCRYPT_ALGO_AES128;
++    mInfo.header.algIdHash    = msfilter::ENCRYPT_HASH_SHA1;
++    mInfo.header.keyBits      = msfilter::ENCRYPT_KEY_SIZE_AES_128;
++    mInfo.header.providedType = msfilter::ENCRYPT_PROVIDER_TYPE_AES;
+ 
+     lclRandomGenerateValues(mInfo.verifier.salt, mInfo.verifier.saltSize);
+     const sal_Int32 keyLength = mInfo.header.keyBits / 8;
+@@ -218,11 +197,11 @@ bool Standard2007Engine::writeEncryptionInfo(const OUString& password, BinaryXOu
+     if (!generateVerifier())
+         return false;
+ 
+-    rStream.WriteUInt32(VERSION_INFO_2007_FORMAT);
++    rStream.WriteUInt32(msfilter::VERSION_INFO_2007_FORMAT);
+ 
+     sal_uInt32 cspNameSize = (lclCspName.getLength() * 2) + 2;
+ 
+-    sal_uInt32 encryptionHeaderSize = static_cast<sal_uInt32>(sizeof(EncryptionStandardHeader));
++    sal_uInt32 encryptionHeaderSize = static_cast<sal_uInt32>(sizeof(msfilter::EncryptionStandardHeader));
+ 
+     rStream.WriteUInt32( mInfo.header.flags );
+     sal_uInt32 headerSize = encryptionHeaderSize + cspNameSize;
+@@ -232,7 +211,7 @@ bool Standard2007Engine::writeEncryptionInfo(const OUString& password, BinaryXOu
+     rStream.writeUnicodeArray(lclCspName);
+     rStream.WriteUInt16(0);
+ 
+-    sal_uInt32 encryptionVerifierSize = static_cast<sal_uInt32>(sizeof(EncryptionVerifierAES));
++    sal_uInt32 encryptionVerifierSize = static_cast<sal_uInt32>(sizeof(msfilter::EncryptionVerifierAES));
+     rStream.writeMemory(&mInfo.verifier, encryptionVerifierSize);
+ 
+     return true;
+diff --git a/sc/source/filter/excel/xicontent.cxx b/sc/source/filter/excel/xicontent.cxx
+index 3e48f35..8c2622d 100644
+--- a/sc/source/filter/excel/xicontent.cxx
++++ b/sc/source/filter/excel/xicontent.cxx
+@@ -62,6 +62,7 @@
+ #include <memory>
+ #include <utility>
+ #include <o3tl/make_unique.hxx>
++#include <oox/helper/helper.hxx>
+ 
+ using ::com::sun::star::uno::Sequence;
+ using ::std::unique_ptr;
+@@ -1090,21 +1091,80 @@ XclImpDecrypterRef lclReadFilepass8_Standard( XclImpStream& rStrm )
+     OSL_ENSURE( rStrm.GetRecLeft() == 48, "lclReadFilepass8 - wrong record size" );
+     if( rStrm.GetRecLeft() == 48 )
+     {
+-        sal_uInt8 pnSalt[ 16 ];
+-        sal_uInt8 pnVerifier[ 16 ];
+-        sal_uInt8 pnVerifierHash[ 16 ];
+-        rStrm.Read( pnSalt, 16 );
+-        rStrm.Read( pnVerifier, 16 );
+-        rStrm.Read( pnVerifierHash, 16 );
+-        xDecr.reset( new XclImpBiff8Decrypter( pnSalt, pnVerifier, pnVerifierHash ) );
++        std::vector<sal_uInt8> aSalt(16);
++        std::vector<sal_uInt8> aVerifier(16);
++        std::vector<sal_uInt8> aVerifierHash(16);
++        rStrm.Read(aSalt.data(), 16);
++        rStrm.Read(aVerifier.data(), 16);
++        rStrm.Read(aVerifierHash.data(), 16);
++        xDecr.reset(new XclImpBiff8StdDecrypter(aSalt, aVerifier, aVerifierHash));
+     }
+     return xDecr;
+ }
+ 
+-XclImpDecrypterRef lclReadFilepass8_Strong( XclImpStream& /*rStrm*/ )
++XclImpDecrypterRef lclReadFilepass8_Strong(XclImpStream& rStream)
+ {
+-    // not supported
+-    return XclImpDecrypterRef();
++    //Its possible there are other variants in existance but these
++    //are the defaults I get with Excel 2013
++    XclImpDecrypterRef xDecr;
++
++    msfilter::RC4EncryptionInfo info;
++
++    info.header.flags = rStream.ReaduInt32();
++    if (oox::getFlag( info.header.flags, msfilter::ENCRYPTINFO_EXTERNAL))
++        return xDecr;
++
++    sal_uInt32 nHeaderSize = rStream.ReaduInt32();
++    sal_uInt32 actualHeaderSize = sizeof(info.header);
++
++    if( (nHeaderSize < actualHeaderSize) )
++        return xDecr;
++
++    info.header.flags = rStream.ReaduInt32();
++    info.header.sizeExtra = rStream.ReaduInt32();
++    info.header.algId = rStream.ReaduInt32();
++    info.header.algIdHash = rStream.ReaduInt32();
++    info.header.keyBits = rStream.ReaduInt32();
++    info.header.providedType = rStream.ReaduInt32();
++    info.header.reserved1 = rStream.ReaduInt32();
++    info.header.reserved2 = rStream.ReaduInt32();
++
++    rStream.Ignore(nHeaderSize - actualHeaderSize);
++
++    info.verifier.saltSize = rStream.ReaduInt32();
++    if (info.verifier.saltSize != 16)
++        return xDecr;
++    rStream.Read(&info.verifier.salt, sizeof(info.verifier.salt));
++    rStream.Read(&info.verifier.encryptedVerifier, sizeof(info.verifier.encryptedVerifier));
++
++    info.verifier.encryptedVerifierHashSize = rStream.ReaduInt32();
++    if (info.verifier.encryptedVerifierHashSize != RTL_DIGEST_LENGTH_SHA1)
++        return xDecr;
++    rStream.Read(&info.verifier.encryptedVerifierHash, info.verifier.encryptedVerifierHashSize);
++
++    // check flags and algorithm IDs, required are AES128 and SHA-1
++    if (!oox::getFlag(info.header.flags, msfilter::ENCRYPTINFO_CRYPTOAPI))
++        return xDecr;
++
++    if (oox::getFlag(info.header.flags, msfilter::ENCRYPTINFO_AES))
++        return xDecr;
++
++    if (info.header.algId != msfilter::ENCRYPT_ALGO_RC4)
++        return xDecr;
++
++    // hash algorithm ID 0 defaults to SHA-1 too
++    if (info.header.algIdHash != 0 && info.header.algIdHash != msfilter::ENCRYPT_HASH_SHA1)
++        return xDecr;
++
++    xDecr.reset(new XclImpBiff8CryptoAPIDecrypter(
++        std::vector<sal_uInt8>(info.verifier.salt,
++            info.verifier.salt + SAL_N_ELEMENTS(info.verifier.salt)),
++        std::vector<sal_uInt8>(info.verifier.encryptedVerifier,
++            info.verifier.encryptedVerifier + SAL_N_ELEMENTS(info.verifier.encryptedVerifier)),
++        std::vector<sal_uInt8>(info.verifier.encryptedVerifierHash,
++            info.verifier.encryptedVerifierHash + SAL_N_ELEMENTS(info.verifier.encryptedVerifierHash))));
++
++    return xDecr;
+ }
+ 
+ XclImpDecrypterRef lclReadFilepass8( XclImpStream& rStrm )
+@@ -1121,20 +1181,22 @@ XclImpDecrypterRef lclReadFilepass8( XclImpStream& rStrm )
+ 
+         case EXC_FILEPASS_BIFF8:
+         {
+-            rStrm.Ignore( 2 );
+-            sal_uInt16 nSubMode(0);
+-            nSubMode = rStrm.ReaduInt16();
+-            switch( nSubMode )
++            sal_uInt32 nVersion = rStrm.ReaduInt32();
++            if (nVersion == msfilter::VERSION_INFO_1997_FORMAT)
+             {
+-                case EXC_FILEPASS_BIFF8_STD:
+-                    xDecr = lclReadFilepass8_Standard( rStrm );
+-                break;
+-                case EXC_FILEPASS_BIFF8_STRONG:
+-                    xDecr = lclReadFilepass8_Strong( rStrm );
+-                break;
+-                default:
+-                    OSL_FAIL( "lclReadFilepass8 - unknown BIFF8 encryption sub mode" );
++                //A Version structure where Version.vMajor MUST be 0x0001,
++                //and Version.vMinor MUST be 0x0001.
++                xDecr = lclReadFilepass8_Standard(rStrm);
+             }
++            else if (nVersion == msfilter::VERSION_INFO_2007_FORMAT ||
++                     nVersion == msfilter::VERSION_INFO_2007_FORMAT_SP2)
++            {
++                //Version.vMajor MUST be 0x0002, 0x0003 or 0x0004 and
++                //Version.vMinor MUST be 0x0002.
++                xDecr = lclReadFilepass8_Strong(rStrm);
++            }
++            else
++                OSL_FAIL("lclReadFilepass8 - unknown BIFF8 encryption sub mode");
+         }
+         break;
+ 
+diff --git a/sc/source/filter/excel/xistream.cxx b/sc/source/filter/excel/xistream.cxx
+index a5eda2c..7bc231e 100644
+--- a/sc/source/filter/excel/xistream.cxx
++++ b/sc/source/filter/excel/xistream.cxx
+@@ -192,28 +192,50 @@ sal_uInt16 XclImpBiff5Decrypter::OnRead( SvStream& rStrm, sal_uInt8* pnData, sal
+     return nRet;
+ }
+ 
+-XclImpBiff8Decrypter::XclImpBiff8Decrypter( sal_uInt8 pnSalt[ 16 ],
+-        sal_uInt8 pnVerifier[ 16 ], sal_uInt8 pnVerifierHash[ 16 ] ) :
+-    maSalt( pnSalt, pnSalt + 16 ),
+-    maVerifier( pnVerifier, pnVerifier + 16 ),
+-    maVerifierHash( pnVerifierHash, pnVerifierHash + 16 )
++XclImpBiff8Decrypter::XclImpBiff8Decrypter(const std::vector<sal_uInt8>& rSalt,
++                                           const std::vector<sal_uInt8>& rVerifier,
++                                           const std::vector<sal_uInt8>& rVerifierHash)
++    : maSalt(rSalt)
++    , maVerifier(rVerifier)
++    , maVerifierHash(rVerifierHash)
++    , mpCodec(nullptr)
+ {
+ }
+ 
+-XclImpBiff8Decrypter::XclImpBiff8Decrypter( const XclImpBiff8Decrypter& rSrc ) :
+-    XclImpDecrypter( rSrc ),
+-    maEncryptionData( rSrc.maEncryptionData ),
+-    maSalt( rSrc.maSalt ),
+-    maVerifier( rSrc.maVerifier ),
+-    maVerifierHash( rSrc.maVerifierHash )
++XclImpBiff8Decrypter::XclImpBiff8Decrypter(const XclImpBiff8Decrypter& rSrc)
++    : XclImpDecrypter(rSrc)
++    , maEncryptionData(rSrc.maEncryptionData)
++    , maSalt(rSrc.maSalt)
++    , maVerifier(rSrc.maVerifier)
++    , maVerifierHash(rSrc.maVerifierHash)
++    , mpCodec(nullptr)
+ {
+-    if( IsValid() )
+-        maCodec.InitCodec( maEncryptionData );
+ }
+ 
+-XclImpBiff8Decrypter* XclImpBiff8Decrypter::OnClone() const
++XclImpBiff8StdDecrypter::XclImpBiff8StdDecrypter(const XclImpBiff8StdDecrypter& rSrc)
++    : XclImpBiff8Decrypter(rSrc)
+ {
+-    return new XclImpBiff8Decrypter( *this );
++    mpCodec = &maCodec;
++    if (IsValid())
++        maCodec.InitCodec(maEncryptionData);
++}
++
++XclImpBiff8StdDecrypter* XclImpBiff8StdDecrypter::OnClone() const
++{
++    return new XclImpBiff8StdDecrypter(*this);
++}
++
++XclImpBiff8CryptoAPIDecrypter::XclImpBiff8CryptoAPIDecrypter(const XclImpBiff8CryptoAPIDecrypter& rSrc)
++    : XclImpBiff8Decrypter(rSrc)
++{
++    mpCodec = &maCodec;
++    if (IsValid())
++        maCodec.InitCodec(maEncryptionData);
++}
++
++XclImpBiff8CryptoAPIDecrypter* XclImpBiff8CryptoAPIDecrypter::OnClone() const
++{
++    return new XclImpBiff8CryptoAPIDecrypter(*this);
+ }
+ 
+ uno::Sequence< beans::NamedValue > XclImpBiff8Decrypter::OnVerifyPassword( const OUString& rPassword )
+@@ -232,9 +254,9 @@ uno::Sequence< beans::NamedValue > XclImpBiff8Decrypter::OnVerifyPassword( const
+             *aIt = static_cast< sal_uInt16 >( *pcChar );
+ 
+         // init codec
+-        maCodec.InitKey( &aPassVect.front(), &maSalt.front() );
+-        if ( maCodec.VerifyKey( &maVerifier.front(), &maVerifierHash.front() ) )
+-            maEncryptionData = maCodec.GetEncryptionData();
++        mpCodec->InitKey( &aPassVect.front(), &maSalt.front() );
++        if ( mpCodec->VerifyKey( &maVerifier.front(), &maVerifierHash.front() ) )
++            maEncryptionData = mpCodec->GetEncryptionData();
+     }
+ 
+     return maEncryptionData;
+@@ -247,9 +269,9 @@ bool XclImpBiff8Decrypter::OnVerifyEncryptionData( const uno::Sequence< beans::N
+     if( rEncryptionData.getLength() )
+     {
+         // init codec
+-        maCodec.InitCodec( rEncryptionData );
++        mpCodec->InitCodec( rEncryptionData );
+ 
+-        if ( maCodec.VerifyKey( &maVerifier.front(), &maVerifierHash.front() ) )
++        if ( mpCodec->VerifyKey( &maVerifier.front(), &maVerifierHash.front() ) )
+             maEncryptionData = rEncryptionData;
+     }
+ 
+@@ -269,13 +291,13 @@ void XclImpBiff8Decrypter::OnUpdate( sal_Size nOldStrmPos, sal_Size nNewStrmPos,
+         /*  Rekey cipher, if block changed or if previous offset in same block. */
+         if( (nNewBlock != nOldBlock) || (nNewOffset < nOldOffset) )
+         {
+-            maCodec.InitCipher( nNewBlock );
++            mpCodec->InitCipher( nNewBlock );
+             nOldOffset = 0;     // reset nOldOffset for next if() statement
+         }
+ 
+         /*  Seek to correct offset. */
+         if( nNewOffset > nOldOffset )
+-            maCodec.Skip( nNewOffset - nOldOffset );
++            mpCodec->Skip( nNewOffset - nOldOffset );
+     }
+ }
+ 
+@@ -293,9 +315,9 @@ sal_uInt16 XclImpBiff8Decrypter::OnRead( SvStream& rStrm, sal_uInt8* pnData, sal
+         // read the block from stream
+         nRet = nRet + static_cast< sal_uInt16 >( rStrm.Read( pnCurrData, nDecBytes ) );
+         // decode the block inplace
+-        maCodec.Decode( pnCurrData, nDecBytes, pnCurrData, nDecBytes );
++        mpCodec->Decode( pnCurrData, nDecBytes, pnCurrData, nDecBytes );
+         if( GetOffset( rStrm.Tell() ) == 0 )
+-            maCodec.InitCipher( GetBlock( rStrm.Tell() ) );
++            mpCodec->InitCipher( GetBlock( rStrm.Tell() ) );
+ 
+         pnCurrData += nDecBytes;
+         nBytesLeft = nBytesLeft - nDecBytes;
+diff --git a/sc/source/filter/inc/xistream.hxx b/sc/source/filter/inc/xistream.hxx
+index d5fc51a..56d32d7 100644
+--- a/sc/source/filter/inc/xistream.hxx
++++ b/sc/source/filter/inc/xistream.hxx
+@@ -119,16 +119,7 @@ private:
+ /** Decrypts BIFF8 stream contents using the given document identifier. */
+ class XclImpBiff8Decrypter : public XclImpDecrypter
+ {
+-public:
+-    explicit            XclImpBiff8Decrypter( sal_uInt8 pnSalt[ 16 ],
+-                            sal_uInt8 pnVerifier[ 16 ], sal_uInt8 pnVerifierHash[ 16 ] );
+-
+ private:
+-    /** Private copy c'tor for OnClone(). */
+-    explicit            XclImpBiff8Decrypter( const XclImpBiff8Decrypter& rSrc );
+-
+-    /** Implementation of cloning this object. */
+-    virtual XclImpBiff8Decrypter* OnClone() const override;
+     /** Implements password verification and initialization of the decoder. */
+     virtual css::uno::Sequence< css::beans::NamedValue >
+         OnVerifyPassword( const OUString& rPassword ) override;
+@@ -143,12 +134,62 @@ private:
+     /** Returns the block offset corresponding to the passed stream position. */
+     static sal_uInt16    GetOffset( sal_Size nStrmPos );
+ 
++protected:
++    explicit  XclImpBiff8Decrypter(const std::vector<sal_uInt8>& rSalt,
++                                   const std::vector<sal_uInt8>& rVerifier,
++                                   const std::vector<sal_uInt8>& rVerifierHash);
++
++    explicit  XclImpBiff8Decrypter(const XclImpBiff8Decrypter& rSrc);
++
++    css::uno::Sequence< css::beans::NamedValue > maEncryptionData;
++    std::vector< sal_uInt8 > maSalt;
++    std::vector< sal_uInt8 > maVerifier;
++    std::vector< sal_uInt8 > maVerifierHash;
++    msfilter::MSCodec97* mpCodec;       /// Crypto algorithm implementation.
++};
++
++class XclImpBiff8StdDecrypter : public XclImpBiff8Decrypter
++{
++public:
++    explicit XclImpBiff8StdDecrypter(const std::vector<sal_uInt8>& rSalt,
++                                     const std::vector<sal_uInt8>& rVerifier,
++                                     const std::vector<sal_uInt8>& rVerifierHash)
++        : XclImpBiff8Decrypter(rSalt, rVerifier, rVerifierHash)
++    {
++        mpCodec = &maCodec;
++    }
++
++private:
++    /** Private copy c'tor for OnClone(). */
++    explicit XclImpBiff8StdDecrypter(const XclImpBiff8StdDecrypter& rSrc);
++
++    /** Implementation of cloning this object. */
++    virtual XclImpBiff8StdDecrypter* OnClone() const override;
++
+ private:
+     ::msfilter::MSCodec_Std97 maCodec;       /// Crypto algorithm implementation.
+-    css::uno::Sequence< css::beans::NamedValue > maEncryptionData;
+-    ::std::vector< sal_uInt8 > maSalt;
+-    ::std::vector< sal_uInt8 > maVerifier;
+-    ::std::vector< sal_uInt8 > maVerifierHash;
++};
++
++class XclImpBiff8CryptoAPIDecrypter : public XclImpBiff8Decrypter
++{
++public:
++    explicit XclImpBiff8CryptoAPIDecrypter(const std::vector<sal_uInt8>& rSalt,
++                                           const std::vector<sal_uInt8>& rVerifier,
++                                           const std::vector<sal_uInt8>& rVerifierHash)
++        : XclImpBiff8Decrypter(rSalt, rVerifier, rVerifierHash)
++    {
++        mpCodec = &maCodec;
++    }
++
++private:
++    /** Private copy c'tor for OnClone(). */
++    explicit XclImpBiff8CryptoAPIDecrypter(const XclImpBiff8CryptoAPIDecrypter& rSrc);
++
++    /** Implementation of cloning this object. */
++    virtual XclImpBiff8CryptoAPIDecrypter* OnClone() const override;
++
++private:
++    ::msfilter::MSCodec_CryptoAPI maCodec;       /// Crypto algorithm implementation.
+ };
+ 
+ // Stream
+diff --git a/sc/source/filter/inc/xlcontent.hxx b/sc/source/filter/inc/xlcontent.hxx
+index 6bb7b0b..ec94750 100644
+--- a/sc/source/filter/inc/xlcontent.hxx
++++ b/sc/source/filter/inc/xlcontent.hxx
+@@ -39,8 +39,6 @@ const sal_uInt16 EXC_ID_FILEPASS            = 0x002F;
+ 
+ const sal_uInt16 EXC_FILEPASS_BIFF5         = 0x0000;
+ const sal_uInt16 EXC_FILEPASS_BIFF8         = 0x0001;
+-const sal_uInt16 EXC_FILEPASS_BIFF8_STD     = 0x0001;
+-const sal_uInt16 EXC_FILEPASS_BIFF8_STRONG  = 0x0002;
+ 
+ // (0x00FC, 0x00FF) SST, EXTSST -----------------------------------------------
+ 
+-- 
+2.7.4
+

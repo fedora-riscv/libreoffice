@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -285,6 +285,7 @@ Patch49: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch50: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
 Patch51: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch52: 0001-rhbz-1382401-Support-surrogate-pairs-in-HTMLOutFuncs.patch
+Patch53: 0001-implement-CryptoAPI-RC4-SHA1-encryption-scheme-for-x.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2356,6 +2357,9 @@ done
 %endif
 
 %changelog
+* Fri Oct 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-2
+- implement CryptoAPI RC4 + SHA1 encryption scheme for xls
+
 * Wed Oct 19 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-1
 - update to 5.1.6 rc2
 

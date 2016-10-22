@@ -180,8 +180,6 @@ BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: postgresql-devel
 BuildRequires: unixODBC-devel
-BuildRequires: vigra-devel
-
 
 # libs / headers - conditional
 %if 0%{?fedora}

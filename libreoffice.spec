@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -286,6 +286,7 @@ Patch50: 0001-Resolves-rhbz-1378521-csv-dialog-a11y-returns-a-new-.patch
 Patch51: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch52: 0001-rhbz-1382401-Support-surrogate-pairs-in-HTMLOutFuncs.patch
 Patch53: 0001-implement-CryptoAPI-RC4-SHA1-encryption-scheme-for-x.patch
+Patch54: 0001-implement-CryptoAPI-RC4-SHA1-encryption-scheme-for-d.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2357,6 +2358,9 @@ done
 %endif
 
 %changelog
+* Sat Oct 22 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-3-UNBUILT
+- implement CryptoAPI RC4 + SHA1 encryption scheme for doc
+
 * Fri Oct 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-2
 - implement CryptoAPI RC4 + SHA1 encryption scheme for xls
 

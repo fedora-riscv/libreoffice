@@ -237,6 +237,9 @@ Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 %if 0%{?rhel}
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
+Patch501: 0001-fix-build-of-bundled-libzmf-with-boost-1.56.patch
+Patch502: 0001-allow-to-build-bundled-libzmf-on-aarch64.patch
+Patch503: 0001-impl.-missing-function.patch
 %endif
 
 %define instdir %{_libdir}
@@ -1525,6 +1528,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
 %if 0%{?rhel}
+%{baseinstdir}/program/libstaroffice-0.0-lo.so.*
 %{baseinstdir}/program/libwps-0.4-lo.so.*
 %endif
 %{baseinstdir}/program/libguesslanglo.so

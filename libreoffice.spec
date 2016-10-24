@@ -302,6 +302,8 @@ Patch404: 0004-define-boost_filestystem-external-for-system-boost-t.patch
 Patch500: 0001-disable-libe-book-support.patch
 # not upstreamed
 Patch501: 0001-fix-build-with-gcc-4.8.patch
+# not upstreamed (not needed for libpagemaker 0.0.3)
+Patch502: 0001-allow-to-build-bundled-libpagemaker-on-new-arches.patch
 %endif
 
 %define instdir %{_libdir}

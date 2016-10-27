@@ -1,0 +1,46 @@
+From feedd45ba2dd308af2d3a1b2f64681b9467535b6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 27 Oct 2016 14:37:03 +0100
+Subject: [PATCH] in msword the hard-break between image and caption has a
+ width
+
+while for us it doesn't, make it invisible to give it zero width
+in both implementations to head off interoperability misery
+
+Change-Id: I0944006817944b20ef35502c8588357e7ee54810
+---
+ sw/source/core/frmedt/fews.cxx | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/core/frmedt/fews.cxx b/sw/source/core/frmedt/fews.cxx
+index 9d206c1..58d0c90 100644
+--- a/sw/source/core/frmedt/fews.cxx
++++ b/sw/source/core/frmedt/fews.cxx
+@@ -19,6 +19,7 @@
+ 
+ #include <svx/svdobj.hxx>
+ #include <comphelper/lok.hxx>
++#include <editeng/charhiddenitem.hxx>
+ #include <init.hxx>
+ #include <fesh.hxx>
+ #include <pagefrm.hxx>
+@@ -502,8 +503,15 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
+                 }
+                 //put a hard-break after the graphic to keep it separated
+                 //from the caption text if the outer frame is resized
+-                SwIndex aIdx(pTextNode, bBefore ? nInsertPos : 1);
++                const sal_Int32 nIndex = bBefore ? nInsertPos : 1;
++                SwIndex aIdx(pTextNode, nIndex);
+                 pTextNode->InsertText("\n", aIdx);
++                //set the hard-break to be hidden, otherwise it has
++                //non-zero width in word and so hard-break flows on
++                //the next line, pushing the caption text out of
++                //the frame making the caption apparently disappear
++                SvxCharHiddenItem aHidden(true, RES_CHRATR_HIDDEN);
++                pTextNode->InsertItem(aHidden, nIndex, nIndex + 1);
+             }
+         }
+ 
+-- 
+2.7.4
+

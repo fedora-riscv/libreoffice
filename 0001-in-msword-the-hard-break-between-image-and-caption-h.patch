@@ -16,16 +16,14 @@ diff --git a/sw/source/core/frmedt/fews.cxx b/sw/source/core/frmedt/fews.cxx
 index 9d206c1..58d0c90 100644
 --- a/sw/source/core/frmedt/fews.cxx
 +++ b/sw/source/core/frmedt/fews.cxx
-@@ -19,6 +19,7 @@
+@@ -19,5 +19,6 @@
  
  #include <svx/svdobj.hxx>
- #include <comphelper/lok.hxx>
 +#include <editeng/charhiddenitem.hxx>
  #include <init.hxx>
  #include <fesh.hxx>
  #include <pagefrm.hxx>
-@@ -502,8 +503,15 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
-                 }
+@@ -502,7 +503,14 @@ void SwFEShell::InsertLabel( const SwLabelType eType, const OUString &rText, con
                  //put a hard-break after the graphic to keep it separated
                  //from the caption text if the outer frame is resized
 -                SwIndex aIdx(pTextNode, bBefore ? nInsertPos : 1);

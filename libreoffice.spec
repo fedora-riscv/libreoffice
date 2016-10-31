@@ -288,6 +288,7 @@ Patch52: 0001-rhbz-1382401-Support-surrogate-pairs-in-HTMLOutFuncs.patch
 Patch53: 0001-implement-CryptoAPI-RC4-SHA1-encryption-scheme-for-x.patch
 Patch54: 0001-implement-CryptoAPI-RC4-SHA1-encryption-scheme-for-d.patch
 Patch55: 0001-Resolves-tdf-103530-tdf-103531-OOXML-external-refere.patch
+Patch56: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

@@ -233,6 +233,7 @@ Patch4: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch7: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 
 %if 0%{?rhel}
 # not upstreamed

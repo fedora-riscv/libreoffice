@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,6 +243,7 @@ Patch13: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
 Patch14: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
 Patch15: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch16: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
+Patch17: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2303,6 +2304,9 @@ done
 %endif
 
 %changelog
+* Wed Nov 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-3
+- Resolves: rhbz#1390610 don't crash on moving undocked slide panel
+
 * Sun Oct 30 2016 David Tardon <dtardon@redhat.com> - 1:5.2.3.3-2
 - build again to workaround koji error
 

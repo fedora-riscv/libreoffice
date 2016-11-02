@@ -1,0 +1,29 @@
+From 488e672f34d4590c3ec29a0660d5a9bc52b2819d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 18 Oct 2016 15:37:59 +0100
+Subject: [PATCH] Resolves: tdf#98807 gtk3 isn't giving utility windows focus
+
+so just give up on that and give them a dialog hint instead
+
+Change-Id: Icca0c707dc464b0dbf362988b1dfee56866eadc0
+(cherry picked from commit c0d6fa1417141a3a7e9deb2f4d50acc28b32f1b4)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 812e4b8..109cccb 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1226,7 +1226,7 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+         }
+         else if( (nStyle & SalFrameStyleFlags::TOOLWINDOW ) )
+         {
+-            eType = GDK_WINDOW_TYPE_HINT_UTILITY;
++            eType = GDK_WINDOW_TYPE_HINT_DIALOG;
+             gtk_window_set_skip_taskbar_hint( GTK_WINDOW(m_pWindow), true );
+         }
+         else if( (nStyle & SalFrameStyleFlags::OWNERDRAWDECORATION) )
+-- 
+2.9.3
+

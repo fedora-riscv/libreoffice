@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -245,6 +245,7 @@ Patch15: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch16: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
 Patch17: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
 Patch18: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
+Patch19: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2305,6 +2306,9 @@ done
 %endif
 
 %changelog
+* Thu Nov 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-4
+- Related: rhbz#1390607 our side of per monitor fullscreen under wayland
+
 * Wed Nov 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-3
 - Resolves: rhbz#1390610 don't crash on moving undocked slide panel
 

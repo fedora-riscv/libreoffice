@@ -1,0 +1,62 @@
+From 69d79abb583fa20e7bc2d3a217f870ec750609be Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 3 Nov 2016 09:41:54 +0000
+Subject: [PATCH] Related: rhbz#1390607 our side of per-monitor fullscreen on
+ wayland
+
+keep the move window to monitor code, so under X, gnome#773857 isn't
+a problem
+
+when gnome#772525 fix is available this presumably will then work under
+wayland
+
+Change-Id: I50cfe7ede8a4f1404c26d174ef3c5bb920eb5044
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index d377f32..9c647cb 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1809,7 +1809,7 @@ void GtkSalFrame::SetScreen( unsigned int nNewScreen, SetType eType, Rectangle *
+ 
+     bool bSpanAllScreens = nNewScreen == (unsigned int)-1;
+     m_bSpanMonitorsWhenFullscreen = bSpanAllScreens && getDisplay()->getSystem()->GetDisplayScreenCount() > 1;
+-
++    gint nMonitor = -1;
+     if (m_bSpanMonitorsWhenFullscreen)   //span all screens
+     {
+         pScreen = gtk_widget_get_screen( m_pWindow );
+@@ -1820,7 +1820,6 @@ void GtkSalFrame::SetScreen( unsigned int nNewScreen, SetType eType, Rectangle *
+     }
+     else
+     {
+-        gint nMonitor;
+         bool bSameMonitor = false;
+ 
+         if (!bSpanAllScreens)
+@@ -1906,7 +1905,19 @@ void GtkSalFrame::SetScreen( unsigned int nNewScreen, SetType eType, Rectangle *
+         ? GDK_FULLSCREEN_ON_ALL_MONITORS : GDK_FULLSCREEN_ON_CURRENT_MONITOR );
+ #endif
+     if( eType == SetType::Fullscreen )
+-        gtk_window_fullscreen( GTK_WINDOW( m_pWindow ) );
++    {
++        if (m_bSpanMonitorsWhenFullscreen)
++            gtk_window_fullscreen(GTK_WINDOW(m_pWindow));
++        else
++        {
++#if GTK_CHECK_VERSION(3,18,0)
++            gtk_window_fullscreen_on_monitor(GTK_WINDOW(m_pWindow), pScreen, nMonitor);
++#else
++            gtk_window_fullscreen(GTK_WINDOW(m_pWindow));
++#endif
++        }
++
++    }
+     else if( eType == SetType::UnFullscreen )
+         gtk_window_unfullscreen( GTK_WINDOW( m_pWindow ) );
+ 
+-- 
+2.9.3
+

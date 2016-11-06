@@ -234,6 +234,7 @@ Patch4: 0001-never-run-autogen.sh.patch
 Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch7: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
+Patch8: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 
 %if 0%{?rhel}
 # not upstreamed

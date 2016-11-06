@@ -246,6 +246,7 @@ Patch16: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
 Patch17: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
 Patch18: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 Patch19: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
+Patch20: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

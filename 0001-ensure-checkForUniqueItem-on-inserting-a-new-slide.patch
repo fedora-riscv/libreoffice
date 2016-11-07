@@ -1,0 +1,40 @@
+From 8aa07967e677433e6af7d16102ffc276b9207d97 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 7 Nov 2016 13:18:03 +0000
+Subject: [PATCH] ensure checkForUniqueItem on inserting a new slide
+
+On copying slides from another presentation into one, we end up
+with two XBitmapItems with the same name and different properties.
+
+because the names are supposed to be unique, only one gets exported
+so the presentation looses graphics on export
+
+there is a bunch of places which use checkForUniqueItem to block
+this from happening, add another at the point where we insert
+the new page into the model
+
+Change-Id: If708b1997c7e83e4787d9d54f84c8b0516e6cf6b
+---
+ svx/source/svdraw/svdpage.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/svx/source/svdraw/svdpage.cxx b/svx/source/svdraw/svdpage.cxx
+index 3bb3fe9..91f9859c 100644
+--- a/svx/source/svdraw/svdpage.cxx
++++ b/svx/source/svdraw/svdpage.cxx
+@@ -1483,7 +1483,11 @@ void SdrPage::SetModel(SdrModel* pNewModel)
+ 
+         if(!IsMasterPage())
+         {
+-            pNew->PutItemSet(getSdrPageProperties().GetItemSet());
++            const SfxItemSet& rOldSet = getSdrPageProperties().GetItemSet();
++            SfxItemSet* pNewSet = rOldSet.Clone(false, &pNewModel->GetItemPool());
++            SdrModel::MigrateItemSet(&rOldSet, pNewSet, pNewModel);
++            pNew->PutItemSet(*pNewSet);
++            delete pNewSet;
+         }
+ 
+         pNew->SetStyleSheet(getSdrPageProperties().GetStyleSheet());
+-- 
+2.9.3
+

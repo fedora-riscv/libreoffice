@@ -1,0 +1,45 @@
+From e6157763e9fff300b86f3c17398216f306ba3f32 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 7 Nov 2016 17:06:54 +0000
+Subject: [PATCH] google docs can generate a pptx with an empty cmLst
+
+Change-Id: I2a3dcae5361929c6880b2da1b3107cb2c8141f32
+---
+ oox/source/ppt/presentationfragmenthandler.cxx | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/oox/source/ppt/presentationfragmenthandler.cxx b/oox/source/ppt/presentationfragmenthandler.cxx
+index 944f134..b67eb8b 100644
+--- a/oox/source/ppt/presentationfragmenthandler.cxx
++++ b/oox/source/ppt/presentationfragmenthandler.cxx
+@@ -325,15 +325,18 @@ void PresentationFragmentHandler::importSlide(sal_uInt32 nSlide, bool bFirstPage
+                 pCommentsPersistPtr->getCommentsList().cmLst.clear();
+                 importSlide( xCommentsFragmentHandler, pCommentsPersistPtr );
+ 
+-                //set comment chars for last comment on slide
+-                SlideFragmentHandler* comment_handler =
+-                    dynamic_cast<SlideFragmentHandler*>(xCommentsFragmentHandler.get());
+-                // some comments have no text -> set empty string as text to avoid
+-                // crash (back() on empty vector is undefined) and losing other
+-                // comment data that might be there (author, position, timestamp etc.)
+-                pCommentsPersistPtr->getCommentsList().cmLst.back().setText(
+-                        comment_handler->getCharVector().empty() ? "" :
+-                        comment_handler->getCharVector().back() );
++                if (!pCommentsPersistPtr->getCommentsList().cmLst.empty())
++                {
++                    //set comment chars for last comment on slide
++                    SlideFragmentHandler* comment_handler =
++                        dynamic_cast<SlideFragmentHandler*>(xCommentsFragmentHandler.get());
++                    // some comments have no text -> set empty string as text to avoid
++                    // crash (back() on empty vector is undefined) and losing other
++                    // comment data that might be there (author, position, timestamp etc.)
++                    pCommentsPersistPtr->getCommentsList().cmLst.back().setText(
++                            comment_handler->getCharVector().empty() ? "" :
++                            comment_handler->getCharVector().back() );
++                }
+                 pCommentsPersistPtr->getCommentAuthors().setValues(maAuthorList);
+ 
+                 //insert all comments from commentsList
+-- 
+2.9.3
+

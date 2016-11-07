@@ -561,9 +561,6 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
-Recommends: %{name}-ogltrans%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
 Obsoletes: openoffice.org-impress-core < 1:3.3.1

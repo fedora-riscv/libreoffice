@@ -291,7 +291,8 @@ Patch55: 0001-Resolves-tdf-103530-tdf-103531-OOXML-external-refere.patch
 Patch56: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 Patch57: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 Patch58: 0001-Resolves-tdf-103472-gtk3-dnd-must-clear-listener-aft.patch
-Patch59: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
+Patch59: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
+Patch60: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2365,10 +2366,11 @@ done
 %endif
 
 %changelog
-* Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-3-UNBUILT
+* Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-3
 - implement CryptoAPI RC4 + SHA1 encryption scheme for doc
 - Resolves: tdf#103530 tdf#103531 OOXML: external references
 - tdf#103472 gtk3 dnd must clear listener after dragDropEnd dispatch
+- improve caption export to .doc
 - ensure checkForUniqueItem on inserting a new slide
 
 * Fri Oct 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-2

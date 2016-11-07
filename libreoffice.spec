@@ -248,6 +248,7 @@ Patch18: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 Patch19: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
 Patch20: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 Patch21: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
+Patch22: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2310,6 +2311,7 @@ done
 %changelog
 * Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-5-UNBUILT
 - ensure checkForUniqueItem on inserting a new slide
+- gtk3: focus jumping around the place under wayland with popovers
 
 * Thu Nov 03 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-4
 - Related: rhbz#1390607 our side of per monitor fullscreen under wayland

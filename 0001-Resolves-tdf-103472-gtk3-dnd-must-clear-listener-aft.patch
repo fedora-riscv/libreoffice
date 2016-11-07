@@ -1,0 +1,81 @@
+From 74cb910bb43b51e454cadd79c124eb6de4b49332 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 25 Oct 2016 09:38:36 +0100
+Subject: [PATCH] Resolves: tdf#103472 gtk3 dnd must clear listener after
+ dragDropEnd dispatch
+
+like the generic dnd impl does
+
+Change-Id: Ie860c43329ee2f9332d12a53cd691ac7fcbb5eac
+(cherry picked from commit 461e9cc64b5a6e9943db397d27c6415327386494)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 234be9d..ef078a0 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -4102,10 +4102,15 @@ void GtkSalFrame::startDrag(gint nButton, gint nDragOriginX, gint nDragOriginY,
+ 
+ void GtkDragSource::dragFailed()
+ {
+-    datatransfer::dnd::DragSourceDropEvent aEv;
+-    aEv.DropAction = datatransfer::dnd::DNDConstants::ACTION_NONE;
+-    aEv.DropSuccess = false;
+-    m_xListener->dragDropEnd(aEv);
++    if (m_xListener.is())
++    {
++        datatransfer::dnd::DragSourceDropEvent aEv;
++        aEv.DropAction = datatransfer::dnd::DNDConstants::ACTION_NONE;
++        aEv.DropSuccess = false;
++        auto xListener = m_xListener;
++        m_xListener.clear();
++        xListener->dragDropEnd(aEv);
++    }
+ }
+ 
+ gboolean GtkSalFrame::signalDragFailed(GtkWidget* /*widget*/, GdkDragContext* /*context*/, GtkDragResult /*result*/, gpointer frame)
+@@ -4119,10 +4124,15 @@ gboolean GtkSalFrame::signalDragFailed(GtkWidget* /*widget*/, GdkDragContext* /*
+ 
+ void GtkDragSource::dragDelete()
+ {
+-    datatransfer::dnd::DragSourceDropEvent aEv;
+-    aEv.DropAction = datatransfer::dnd::DNDConstants::ACTION_MOVE;
+-    aEv.DropSuccess = true;
+-    m_xListener->dragDropEnd(aEv);
++    if (m_xListener.is())
++    {
++        datatransfer::dnd::DragSourceDropEvent aEv;
++        aEv.DropAction = datatransfer::dnd::DNDConstants::ACTION_MOVE;
++        aEv.DropSuccess = true;
++        auto xListener = m_xListener;
++        m_xListener.clear();
++        xListener->dragDropEnd(aEv);
++    }
+ }
+ 
+ void GtkSalFrame::signalDragDelete(GtkWidget* /*widget*/, GdkDragContext* /*context*/, gpointer frame)
+@@ -4135,10 +4145,15 @@ void GtkSalFrame::signalDragDelete(GtkWidget* /*widget*/, GdkDragContext* /*cont
+ 
+ void GtkDragSource::dragEnd(GdkDragContext* context)
+ {
+-    datatransfer::dnd::DragSourceDropEvent aEv;
+-    aEv.DropAction = GdkToVcl(gdk_drag_context_get_selected_action(context));
+-    aEv.DropSuccess = gdk_drag_drop_succeeded(context);
+-    m_xListener->dragDropEnd(aEv);
++    if (m_xListener.is())
++    {
++        datatransfer::dnd::DragSourceDropEvent aEv;
++        aEv.DropAction = GdkToVcl(gdk_drag_context_get_selected_action(context));
++        aEv.DropSuccess = gdk_drag_drop_succeeded(context);
++        auto xListener = m_xListener;
++        m_xListener.clear();
++        xListener->dragDropEnd(aEv);
++    }
+     g_ActiveDragSource = nullptr;
+ }
+ 
+-- 
+2.7.4
+

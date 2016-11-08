@@ -294,6 +294,9 @@ Patch58: 0001-Resolves-tdf-103472-gtk3-dnd-must-clear-listener-aft.patch
 Patch59: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
 Patch60: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
 Patch61: 0001-google-docs-can-generate-a-pptx-with-an-empty-cmLst.patch
+# not upstreamed: upstream wants an automatic restart after a crash; we
+# want a nice abrt report
+Patch62: 0001-don-t-suppress-crashes.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

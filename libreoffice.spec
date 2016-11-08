@@ -2309,7 +2309,7 @@ done
 %endif
 
 %changelog
-* Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-5-UNBUILT
+* Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-5
 - ensure checkForUniqueItem on inserting a new slide
 - gtk3: focus jumping around the place under wayland with popovers
 - allow abrt to work again

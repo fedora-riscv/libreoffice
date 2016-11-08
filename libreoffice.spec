@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -235,6 +235,9 @@ Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch7: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 Patch8: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
+# not upstreamed: upstream wants an automatic restart after a crash; we
+# want a nice abrt report
+Patch9: 0001-don-t-suppress-crashes.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2290,6 +2293,9 @@ done
 %endif
 
 %changelog
+* Tue Nov 08 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-2.alpha1
+- allow abrt to work again
+
 * Sat Oct 22 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-1.alpha1
 - update to 5.3.0 alpha1
 

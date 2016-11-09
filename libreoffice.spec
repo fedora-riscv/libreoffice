@@ -248,10 +248,11 @@ Patch18: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
 Patch19: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
 Patch20: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 Patch21: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
-Patch22: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
+Patch22: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch23: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch23: 0001-don-t-suppress-crashes.patch
+Patch24: 0001-don-t-suppress-crashes.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

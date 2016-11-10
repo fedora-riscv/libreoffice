@@ -1,0 +1,225 @@
+From 51157907de146066100427d6d7fbb94b1e6b798b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Nov 2016 13:20:34 +0000
+Subject: [PATCH] Resolves: rhbz#1391418 wayland toolbars can't be docked after
+ undocking
+
+see gnome#768128 for extra details
+
+under wayland, given the misery here I'm going to just disable toggling between
+docked and undocked under wayland, and throw away user config on toggling
+docked/undocked away from the defaults. You can still drag docked things around
+to new docking position, but you can't pull them out of the dock to float.
+
+non-wayland is unaffected
+
+Change-Id: Iaa859f3420e6d1b103a8b93d1ad8f82dbffe75d4
+---
+ framework/source/layoutmanager/layoutmanager.cxx |  4 ++++
+ include/vcl/settings.hxx                         |  2 ++
+ sfx2/source/dialog/dockwin.cxx                   |  4 +++-
+ vcl/inc/svdata.hxx                               |  4 ++++
+ vcl/source/app/settings.cxx                      |  7 +++++++
+ vcl/source/window/dockmgr.cxx                    |  3 +++
+ vcl/source/window/dockwin.cxx                    |  9 +++++++--
+ vcl/source/window/event.cxx                      | 10 ++++++----
+ vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        | 12 +++++++++++-
+ 9 files changed, 47 insertions(+), 8 deletions(-)
+
+diff --git a/framework/source/layoutmanager/layoutmanager.cxx b/framework/source/layoutmanager/layoutmanager.cxx
+index c43ba89..df09b67 100644
+--- a/framework/source/layoutmanager/layoutmanager.cxx
++++ b/framework/source/layoutmanager/layoutmanager.cxx
+@@ -613,6 +613,10 @@ bool LayoutManager::readWindowStateData( const OUString& aName, UIElement& rElem
+                 }
+             }
+ 
++            const bool bDockingSupportCrippled = !StyleSettings::GetDockingFloatsSupported();
++            if (bDockingSupportCrippled)
++                rElementData.m_bFloating = false;
++
+             return true;
+         }
+         catch (const NoSuchElementException&)
+diff --git a/include/vcl/settings.hxx b/include/vcl/settings.hxx
+index 579b867..74197f1 100644
+--- a/include/vcl/settings.hxx
++++ b/include/vcl/settings.hxx
+@@ -515,6 +515,8 @@ public:
+     void                            SetAutoMnemonic( bool bAutoMnemonic );
+     bool                            GetAutoMnemonic() const;
+ 
++    static bool                     GetDockingFloatsSupported();
++
+     void                            SetFontColor( const Color& rColor );
+     const Color&                    GetFontColor() const;
+ 
+diff --git a/sfx2/source/dialog/dockwin.cxx b/sfx2/source/dialog/dockwin.cxx
+index 76c41d2..b2ca180 100644
+--- a/sfx2/source/dialog/dockwin.cxx
++++ b/sfx2/source/dialog/dockwin.cxx
+@@ -908,7 +908,9 @@ void SfxDockingWindow::Initialize(SfxChildWinInfo *pInfo)
+ 
+             // check for valid alignment
+             SfxChildAlignment eLocalAlignment = (SfxChildAlignment) (sal_uInt16) aStr.toInt32();
+-            if ( pImpl->bDockingPrevented )
++            bool bIgnoreFloatConfig = (eLocalAlignment == SfxChildAlignment::NOALIGNMENT &&
++                                       !StyleSettings::GetDockingFloatsSupported());
++            if (pImpl->bDockingPrevented || bIgnoreFloatConfig)
+                 // docking prevented, ignore old configuration and take alignment from default
+                 aStr.clear();
+             else
+diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
+index b289645..d8f04e8 100644
+--- a/vcl/inc/svdata.hxx
++++ b/vcl/inc/svdata.hxx
+@@ -283,6 +283,10 @@ struct ImplSVNWFData
+     bool                    mbEnableAccel = true;           // whether or not accelerators are shown
+     bool                    mbAutoAccel = false;            // whether accelerators are only shown when Alt is held down
+     bool                    mbRolloverMenubar = false;      // theming engine supports rollover in menubar
++    // gnome#768128 I cannot see a route under wayland at present to support
++    // floating toolbars that can be redocked because there's no way to track
++    // that the toolbar is over a dockable area.
++    bool                    mbDockingFloatsSupported = true;
+ };
+ 
+ struct BlendFrameCache
+diff --git a/vcl/source/app/settings.cxx b/vcl/source/app/settings.cxx
+index 5ca3f6f..03aac21 100644
+--- a/vcl/source/app/settings.cxx
++++ b/vcl/source/app/settings.cxx
+@@ -1885,6 +1885,13 @@ StyleSettings::GetAutoMnemonic() const
+     return mxData->mbAutoMnemonic;
+ }
+ 
++bool
++StyleSettings::GetDockingFloatsSupported()
++{
++    ImplSVData* pSVData = ImplGetSVData();
++    return pSVData->maNWFData.mbDockingFloatsSupported;
++}
++
+ void
+ StyleSettings::SetFontColor( const Color& rColor )
+ {
+diff --git a/vcl/source/window/dockmgr.cxx b/vcl/source/window/dockmgr.cxx
+index cf93ac4..0674095 100644
+--- a/vcl/source/window/dockmgr.cxx
++++ b/vcl/source/window/dockmgr.cxx
+@@ -935,6 +935,9 @@ void ImplDockingWindowWrapper::EndDocking( const Rectangle& rRect, bool bFloatMo
+ {
+     Rectangle aRect( rRect );
+ 
++    if (bFloatMode && !StyleSettings::GetDockingFloatsSupported())
++        mbDockCanceled = true;
++
+     if ( !IsDockingCanceled() )
+     {
+         bool bShow = false;
+diff --git a/vcl/source/window/dockwin.cxx b/vcl/source/window/dockwin.cxx
+index c07dc21..2d5d5df 100644
+--- a/vcl/source/window/dockwin.cxx
++++ b/vcl/source/window/dockwin.cxx
+@@ -530,12 +530,14 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
+ 
+     if ( mbDockable )
+     {
++        const bool bDockingSupportCrippled = !StyleSettings::GetDockingFloatsSupported();
++
+         if ( rNEvt.GetType() == MouseNotifyEvent::MOUSEBUTTONDOWN )
+         {
+             const MouseEvent* pMEvt = rNEvt.GetMouseEvent();
+             if ( pMEvt->IsLeft() )
+             {
+-                if ( pMEvt->IsMod1() && (pMEvt->GetClicks() == 2) )
++                if (!bDockingSupportCrippled && pMEvt->IsMod1() && (pMEvt->GetClicks() == 2) )
+                 {
+                     SetFloatingMode( !IsFloatingMode() );
+                     return true;
+@@ -564,7 +566,7 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
+         {
+             const vcl::KeyCode& rKey = rNEvt.GetKeyEvent()->GetKeyCode();
+             if( rKey.GetCode() == KEY_F10 && rKey.GetModifier() &&
+-                rKey.IsShift() && rKey.IsMod1() )
++                rKey.IsShift() && rKey.IsMod1() && !bDockingSupportCrippled )
+             {
+                 SetFloatingMode( !IsFloatingMode() );
+                 return true;
+@@ -587,6 +589,9 @@ bool DockingWindow::Docking( const Point&, Rectangle& )
+ 
+ void DockingWindow::EndDocking( const Rectangle& rRect, bool bFloatMode )
+ {
++    if (bFloatMode && !StyleSettings::GetDockingFloatsSupported())
++        mbDockCanceled = true;
++
+     if ( !IsDockingCanceled() )
+     {
+         bool bShow = false;
+diff --git a/vcl/source/window/event.cxx b/vcl/source/window/event.cxx
+index ca1439f..8021c07 100644
+--- a/vcl/source/window/event.cxx
++++ b/vcl/source/window/event.cxx
+@@ -101,15 +101,17 @@ bool Window::Notify( NotifyEvent& rNEvt )
+     // check for docking window
+     // but do nothing if window is docked and locked
+     ImplDockingWindowWrapper *pWrapper = ImplGetDockingManager()->GetDockingWindowWrapper( this );
+-    if( pWrapper && !( !pWrapper->IsFloatingMode() && pWrapper->IsLocked() ) )
++    if (pWrapper && !( !pWrapper->IsFloatingMode() && pWrapper->IsLocked() ))
+     {
++        const bool bDockingSupportCrippled = !StyleSettings::GetDockingFloatsSupported();
++
+         if ( rNEvt.GetType() == MouseNotifyEvent::MOUSEBUTTONDOWN )
+         {
+             const MouseEvent* pMEvt = rNEvt.GetMouseEvent();
+             bool bHit = pWrapper->GetDragArea().IsInside( pMEvt->GetPosPixel() );
+             if ( pMEvt->IsLeft() )
+             {
+-                if ( pMEvt->IsMod1() && (pMEvt->GetClicks() == 2) )
++                if (!bDockingSupportCrippled && pMEvt->IsMod1() && (pMEvt->GetClicks() == 2))
+                 {
+                     // ctrl double click toggles floating mode
+                     pWrapper->SetFloatingMode( !pWrapper->IsFloatingMode() );
+@@ -149,8 +151,8 @@ bool Window::Notify( NotifyEvent& rNEvt )
+         else if( rNEvt.GetType() == MouseNotifyEvent::KEYINPUT )
+         {
+             const vcl::KeyCode& rKey = rNEvt.GetKeyEvent()->GetKeyCode();
+-            if( rKey.GetCode() == KEY_F10 && rKey.GetModifier() &&
+-                rKey.IsShift() && rKey.IsMod1() )
++            if (rKey.GetCode() == KEY_F10 && rKey.GetModifier() &&
++                rKey.IsShift() && rKey.IsMod1() && !bDockingSupportCrippled)
+             {
+                 pWrapper->SetFloatingMode( !pWrapper->IsFloatingMode() );
+                 /* At this point the floating toolbar frame does not have the
+diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+index fc2bb82..286e4a2 100644
+--- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+@@ -18,7 +18,9 @@
+ #include <vcl/settings.hxx>
+ #include "unx/fontmanager.hxx"
+ #include "cairo_gtk3_cairo.hxx"
+-
++#if defined(GDK_WINDOWING_WAYLAND)
++#   include <gdk/gdkwayland.h>
++#endif
+ #include <boost/optional.hpp>
+ 
+ GtkStyleContext* GtkSalGraphics::mpWindowStyle = nullptr;
+@@ -2898,6 +2900,14 @@ void GtkData::initNWF()
+     pSVData->maNWFData.mbNoFocusRectsForFlatButtons = true;
+     pSVData->maNWFData.mbAutoAccel = true;
+     pSVData->maNWFData.mbEnableAccel = true;
++
++#if defined(GDK_WINDOWING_WAYLAND)
++    //gnome#768128 for the car crash that is wayland
++    //and floating dockable toolbars
++    GdkDisplay *pDisplay = gdk_display_get_default();
++    if (GDK_IS_WAYLAND_DISPLAY(pDisplay))
++        pSVData->maNWFData.mbDockingFloatsSupported = false;
++#endif
+ }
+ 
+ void GtkData::deInitNWF()
+-- 
+2.9.3
+

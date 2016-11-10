@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -253,6 +253,7 @@ Patch23: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch24: 0001-don-t-suppress-crashes.patch
+Patch25: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2310,6 +2311,9 @@ done
 %endif
 
 %changelog
+* Thu Nov 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-6-UNBUILT
+- Resolves: rhbz#1391418 wayland toolbars can't be docked, so don't allow them to undock
+
 * Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-5
 - ensure checkForUniqueItem on inserting a new slide
 - gtk3: focus jumping around the place under wayland with popovers

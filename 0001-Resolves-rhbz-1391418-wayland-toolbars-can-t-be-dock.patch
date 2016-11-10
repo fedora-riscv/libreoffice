@@ -1,4 +1,4 @@
-From 51157907de146066100427d6d7fbb94b1e6b798b Mon Sep 17 00:00:00 2001
+From 35f5db8766713090e4971a26815bd4eb51184e2b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 10 Nov 2016 13:20:34 +0000
 Subject: [PATCH] Resolves: rhbz#1391418 wayland toolbars can't be docked after
@@ -27,10 +27,10 @@ Change-Id: Iaa859f3420e6d1b103a8b93d1ad8f82dbffe75d4
  9 files changed, 47 insertions(+), 8 deletions(-)
 
 diff --git a/framework/source/layoutmanager/layoutmanager.cxx b/framework/source/layoutmanager/layoutmanager.cxx
-index c43ba89..df09b67 100644
+index 2ade77e..46079eb 100644
 --- a/framework/source/layoutmanager/layoutmanager.cxx
 +++ b/framework/source/layoutmanager/layoutmanager.cxx
-@@ -613,6 +613,10 @@ bool LayoutManager::readWindowStateData( const OUString& aName, UIElement& rElem
+@@ -615,6 +615,10 @@ bool LayoutManager::readWindowStateData( const OUString& aName, UIElement& rElem
                  }
              }
  
@@ -42,10 +42,10 @@ index c43ba89..df09b67 100644
          }
          catch (const NoSuchElementException&)
 diff --git a/include/vcl/settings.hxx b/include/vcl/settings.hxx
-index 579b867..74197f1 100644
+index acbacf3..815e9f7 100644
 --- a/include/vcl/settings.hxx
 +++ b/include/vcl/settings.hxx
-@@ -515,6 +515,8 @@ public:
+@@ -525,6 +525,8 @@ public:
      void                            SetAutoMnemonic( bool bAutoMnemonic );
      bool                            GetAutoMnemonic() const;
  
@@ -55,10 +55,10 @@ index 579b867..74197f1 100644
      const Color&                    GetFontColor() const;
  
 diff --git a/sfx2/source/dialog/dockwin.cxx b/sfx2/source/dialog/dockwin.cxx
-index 76c41d2..b2ca180 100644
+index 25c72d8..0b45e7e 100644
 --- a/sfx2/source/dialog/dockwin.cxx
 +++ b/sfx2/source/dialog/dockwin.cxx
-@@ -908,7 +908,9 @@ void SfxDockingWindow::Initialize(SfxChildWinInfo *pInfo)
+@@ -929,7 +929,9 @@ void SfxDockingWindow::Initialize(SfxChildWinInfo *pInfo)
  
              // check for valid alignment
              SfxChildAlignment eLocalAlignment = (SfxChildAlignment) (sal_uInt16) aStr.toInt32();
@@ -70,13 +70,13 @@ index 76c41d2..b2ca180 100644
                  aStr.clear();
              else
 diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
-index b289645..d8f04e8 100644
+index 39b5610..2799fef 100644
 --- a/vcl/inc/svdata.hxx
 +++ b/vcl/inc/svdata.hxx
-@@ -283,6 +283,10 @@ struct ImplSVNWFData
-     bool                    mbEnableAccel = true;           // whether or not accelerators are shown
-     bool                    mbAutoAccel = false;            // whether accelerators are only shown when Alt is held down
-     bool                    mbRolloverMenubar = false;      // theming engine supports rollover in menubar
+@@ -280,6 +280,10 @@ struct ImplSVNWFData
+     bool                    mbDDListBoxNoTextArea:1;
+     bool                    mbEnableAccel:1;                // whether or not accelerators are shown
+     bool                    mbAutoAccel:1;                  // whether accelerators are only shown when Alt is held down
 +    // gnome#768128 I cannot see a route under wayland at present to support
 +    // floating toolbars that can be redocked because there's no way to track
 +    // that the toolbar is over a dockable area.
@@ -85,10 +85,10 @@ index b289645..d8f04e8 100644
  
  struct BlendFrameCache
 diff --git a/vcl/source/app/settings.cxx b/vcl/source/app/settings.cxx
-index 5ca3f6f..03aac21 100644
+index cb84dbe..9ef9fd2 100644
 --- a/vcl/source/app/settings.cxx
 +++ b/vcl/source/app/settings.cxx
-@@ -1885,6 +1885,13 @@ StyleSettings::GetAutoMnemonic() const
+@@ -1931,6 +1931,13 @@ StyleSettings::GetAutoMnemonic() const
      return mxData->mbAutoMnemonic;
  }
  
@@ -103,10 +103,10 @@ index 5ca3f6f..03aac21 100644
  StyleSettings::SetFontColor( const Color& rColor )
  {
 diff --git a/vcl/source/window/dockmgr.cxx b/vcl/source/window/dockmgr.cxx
-index cf93ac4..0674095 100644
+index 1b8ef13..d292553 100644
 --- a/vcl/source/window/dockmgr.cxx
 +++ b/vcl/source/window/dockmgr.cxx
-@@ -935,6 +935,9 @@ void ImplDockingWindowWrapper::EndDocking( const Rectangle& rRect, bool bFloatMo
+@@ -992,6 +992,9 @@ void ImplDockingWindowWrapper::EndDocking( const Rectangle& rRect, bool bFloatMo
  {
      Rectangle aRect( rRect );
  
@@ -117,10 +117,10 @@ index cf93ac4..0674095 100644
      {
          bool bShow = false;
 diff --git a/vcl/source/window/dockwin.cxx b/vcl/source/window/dockwin.cxx
-index c07dc21..2d5d5df 100644
+index 984d713..c3b2952 100644
 --- a/vcl/source/window/dockwin.cxx
 +++ b/vcl/source/window/dockwin.cxx
-@@ -530,12 +530,14 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
+@@ -612,12 +612,14 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
  
      if ( mbDockable )
      {
@@ -136,7 +136,7 @@ index c07dc21..2d5d5df 100644
                  {
                      SetFloatingMode( !IsFloatingMode() );
                      return true;
-@@ -564,7 +566,7 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
+@@ -646,7 +648,7 @@ bool DockingWindow::Notify( NotifyEvent& rNEvt )
          {
              const vcl::KeyCode& rKey = rNEvt.GetKeyEvent()->GetKeyCode();
              if( rKey.GetCode() == KEY_F10 && rKey.GetModifier() &&
@@ -145,7 +145,7 @@ index c07dc21..2d5d5df 100644
              {
                  SetFloatingMode( !IsFloatingMode() );
                  return true;
-@@ -587,6 +589,9 @@ bool DockingWindow::Docking( const Point&, Rectangle& )
+@@ -669,6 +671,9 @@ bool DockingWindow::Docking( const Point&, Rectangle& )
  
  void DockingWindow::EndDocking( const Rectangle& rRect, bool bFloatMode )
  {
@@ -156,7 +156,7 @@ index c07dc21..2d5d5df 100644
      {
          bool bShow = false;
 diff --git a/vcl/source/window/event.cxx b/vcl/source/window/event.cxx
-index ca1439f..8021c07 100644
+index aa09c10..74abb18 100644
 --- a/vcl/source/window/event.cxx
 +++ b/vcl/source/window/event.cxx
 @@ -101,15 +101,17 @@ bool Window::Notify( NotifyEvent& rNEvt )
@@ -191,7 +191,7 @@ index ca1439f..8021c07 100644
                  pWrapper->SetFloatingMode( !pWrapper->IsFloatingMode() );
                  /* At this point the floating toolbar frame does not have the
 diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
-index fc2bb82..286e4a2 100644
+index 0365c52..091a615 100644
 --- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
 +++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
 @@ -18,7 +18,9 @@
@@ -204,8 +204,8 @@ index fc2bb82..286e4a2 100644
 +#endif
  #include <boost/optional.hpp>
  
- GtkStyleContext* GtkSalGraphics::mpWindowStyle = nullptr;
-@@ -2898,6 +2900,14 @@ void GtkData::initNWF()
+ GtkStyleContext* GtkSalGraphics::mpButtonStyle = nullptr;
+@@ -2322,6 +2324,14 @@ void GtkData::initNWF()
      pSVData->maNWFData.mbNoFocusRectsForFlatButtons = true;
      pSVData->maNWFData.mbAutoAccel = true;
      pSVData->maNWFData.mbEnableAccel = true;

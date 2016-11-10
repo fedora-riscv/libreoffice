@@ -1,0 +1,136 @@
+From 4a809f146f071a9bfdfa85cc796f77f33f9b962c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 10 Nov 2016 10:38:29 +0000
+Subject: [PATCH] Resolves: rhbz#1342828 toolbars jumping around while moved
+ under X
+
+because the start move by wm conflicts with the manual efforts
+to position the toolbar.
+
+the move by wm was done to get wayland to move the toolbars, but
+(gnome#768128) supporting docking toolbars under wayland is futile
+as far as I can see
+
+Change-Id: I502d4617efaf1eb686469e100224e56104ad650d
+---
+ include/vcl/window.hxx        |  4 ++--
+ vcl/inc/salframe.hxx          |  4 ----
+ vcl/inc/unx/gtk/gtkframe.hxx  |  2 --
+ vcl/source/window/brdwin.cxx  |  5 +----
+ vcl/source/window/window2.cxx |  6 ------
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 20 --------------------
+ 6 files changed, 3 insertions(+), 38 deletions(-)
+
+diff --git a/include/vcl/window.hxx b/include/vcl/window.hxx
+index 0b4055b..4fdb805 100644
+--- a/include/vcl/window.hxx
++++ b/include/vcl/window.hxx
+@@ -301,11 +301,11 @@ enum class StartTrackingFlags
+     ButtonRepeat         = 0x0010,
+     MouseButtonDown      = 0x0020,
+     FocusCancel          = 0x0040,
+-    UseToolKitDrag       = 0x0080,
+ };
++
+ namespace o3tl
+ {
+-    template<> struct typed_flags<StartTrackingFlags> : is_typed_flags<StartTrackingFlags, 0x00ff> {};
++    template<> struct typed_flags<StartTrackingFlags> : is_typed_flags<StartTrackingFlags, 0x007f> {};
+ }
+ 
+ // Flags for StartAutoScroll()
+diff --git a/vcl/inc/salframe.hxx b/vcl/inc/salframe.hxx
+index fb68f3a..a0a65aa 100644
+--- a/vcl/inc/salframe.hxx
++++ b/vcl/inc/salframe.hxx
+@@ -262,10 +262,6 @@ public:
+         return false;
+     }
+ 
+-    virtual void            StartToolKitMoveBy()
+-    {
+-    }
+-
+     // Callbacks (indepent part in vcl/source/window/winproc.cxx)
+     // for default message handling return 0
+     void                    SetCallback( vcl::Window* pWindow, SALFRAMEPROC pProc );
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 0931f0a..9661ac8 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -532,8 +532,6 @@ public:
+     virtual sal_uIntPtr         ShowPopover(const OUString& rHelpText, const Rectangle& rHelpArea, QuickHelpFlags nFlags) override;
+     virtual bool                UpdatePopover(sal_uIntPtr nId, const OUString& rHelpText, const Rectangle& rHelpArea) override;
+     virtual bool                HidePopover(sal_uIntPtr nId) override;
+-
+-    virtual void                StartToolKitMoveBy() override;
+ #endif
+ 
+     static GtkSalFrame         *getFromWindow( GtkWindow *pWindow );
+diff --git a/vcl/source/window/brdwin.cxx b/vcl/source/window/brdwin.cxx
+index cb13b9f..b62eb6a 100644
+--- a/vcl/source/window/brdwin.cxx
++++ b/vcl/source/window/brdwin.cxx
+@@ -919,10 +919,7 @@ bool ImplStdBorderWindowView::MouseButtonDown( const MouseEvent& rMEvt )
+                 maFrameData.mbDragFull = false;
+                 if ( nDragFullTest != DragFullOptions::NONE )
+                     maFrameData.mbDragFull = true;   // always fulldrag for proper docking, ignore system settings
+-                StartTrackingFlags eFlags = maFrameData.mbDragFull ?
+-                    StartTrackingFlags::UseToolKitDrag :
+-                    StartTrackingFlags::NONE;
+-                pBorderWindow->StartTracking(eFlags);
++                pBorderWindow->StartTracking();
+             }
+             else if ( bHitTest )
+                 maFrameData.mnHitTest = BorderWindowHitTest::NONE;
+diff --git a/vcl/source/window/window2.cxx b/vcl/source/window/window2.cxx
+index b668704..9e42f3c 100644
+--- a/vcl/source/window/window2.cxx
++++ b/vcl/source/window/window2.cxx
+@@ -326,12 +326,6 @@ void Window::StartTracking( StartTrackingFlags nFlags )
+     pSVData->maWinData.mpTrackWin   = this;
+     pSVData->maWinData.mnTrackFlags = nFlags;
+     CaptureMouse();
+-
+-    if (nFlags & StartTrackingFlags::UseToolKitDrag)
+-    {
+-        SalFrame* pFrame = mpWindowImpl->mpFrame;
+-        pFrame->StartToolKitMoveBy();
+-    }
+ }
+ 
+ void Window::EndTracking( TrackingEventFlags nFlags )
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 02cb7d3..febf667 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2542,26 +2542,6 @@ bool GtkSalFrame::HidePopover(sal_uIntPtr nId)
+ #endif
+ }
+ 
+-void GtkSalFrame::StartToolKitMoveBy()
+-{
+-    GdkEvent *pEvent = gtk_get_current_event();
+-    if (!pEvent)
+-    {
+-        SAL_WARN("vcl.gtk", "no current event for starting window move by wm");
+-        return;
+-    }
+-    if (pEvent->type != GDK_BUTTON_PRESS)
+-    {
+-        SAL_WARN("vcl.gtk", "current event for starting window move by wm is not a button");
+-        return;
+-    }
+-    gtk_window_begin_move_drag(GTK_WINDOW(m_pWindow),
+-                               pEvent->button.button,
+-                               pEvent->button.x_root,
+-                               pEvent->button.y_root,
+-                               pEvent->button.time);
+-}
+-
+ void GtkSalFrame::addGrabLevel()
+ {
+     if (m_nGrabLevel == 0)
+-- 
+2.9.3
+

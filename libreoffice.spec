@@ -2312,7 +2312,7 @@ done
 %endif
 
 %changelog
-* Thu Nov 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-6-UNBUILT
+* Thu Nov 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-6
 - Resolves: rhbz#1342828 toolbars jumping around while moved under X
 - Resolves: rhbz#1391418 wayland toolbars can't be docked, so don't allow them to undock
 

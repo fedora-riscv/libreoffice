@@ -221,24 +221,22 @@ Requires: %{name}-base%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 
 # not upstreamed
-Patch0:  openoffice.org-2.4.0.ooo86080.unopkg.bodge.patch
+Patch0:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
-Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch1:  libreoffice-installfix.patch
 # not upstreamed
-Patch2:  libreoffice-installfix.patch
+Patch2: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 # not upstreamed
-Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch3: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch4: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch6: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-Patch7: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
-Patch8: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
+Patch4: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch5: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch6: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
+Patch7: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch9: 0001-don-t-suppress-crashes.patch
-Patch10: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch8: 0001-don-t-suppress-crashes.patch
+Patch0: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
 
 %if 0%{?rhel}
 # not upstreamed

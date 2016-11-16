@@ -256,6 +256,7 @@ Patch24: 0001-don-t-suppress-crashes.patch
 Patch25: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
 Patch26: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
 Patch27: 0001-gtk3-problems-with-gdk_drag_status-under-wayland.patch
+Patch28: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2316,6 +2317,10 @@ done
 * Wed Nov 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-7
 - under wayland the action selected by gdk_drag_status is not
   immediately available via gdk_drag_context_get_selected_action
+- under wayland with focus-follow-mouse enabled, non-native menus
+  (e.g. calc autofilter menus) drop down when mouse moves over them
+  because configure and mouse events suggest that their parent window
+  has moved.
 
 * Thu Nov 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-6
 - Resolves: rhbz#1342828 toolbars jumping around while moved under X

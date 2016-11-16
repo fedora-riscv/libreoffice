@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -255,6 +255,7 @@ Patch23: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
 Patch24: 0001-don-t-suppress-crashes.patch
 Patch25: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
 Patch26: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
+Patch27: 0001-gtk3-problems-with-gdk_drag_status-under-wayland.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2312,6 +2313,10 @@ done
 %endif
 
 %changelog
+* Wed Nov 16 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-7
+- under wayland the action selected by gdk_drag_status is not
+  immediately available via gdk_drag_context_get_selected_action
+
 * Thu Nov 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-6
 - Resolves: rhbz#1342828 toolbars jumping around while moved under X
 - Resolves: rhbz#1391418 wayland toolbars can't be docked, so don't allow them to undock

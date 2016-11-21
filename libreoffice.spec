@@ -301,6 +301,7 @@ Patch63: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.patch
 Patch64: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
 Patch65: 0001-Resolves-tdf-104096-reset-also-rRawRes-if-trailing-c.patch
 Patch66: 0001-ODF-do-not-write-an-empty-style-text-position-attrib.patch
+Patch67: 0001-Resolves-tdf-103994-AdjustReferenceOnMove-handle-ext.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2374,6 +2375,7 @@ done
 * Mon Nov 21 2016 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-5-UNBUILT
 - Resolves: tdf#104096 reset also rRawRes if trailing characters are present
 - ODF: do not write an empty style:text-position="" attribute for CharEscapement
+- Resolves: tdf#103994 AdjustReferenceOnMove: handle external references
 
 * Mon Nov 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-4
 - allow abrt to work again

@@ -1,0 +1,59 @@
+From e13677d84bef10195b9733b8ae101e31b7c92c57 Mon Sep 17 00:00:00 2001
+Message-Id: <e13677d84bef10195b9733b8ae101e31b7c92c57.1479769285.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 17 Nov 2016 22:13:19 +0100
+Subject: [PATCH] Resolves: tdf#103994 AdjustReferenceOnMove: handle external
+ references
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I8b104b0c843dd268d8760a2a73cdd3e672e6efd6
+(cherry picked from commit 4665be3af48587505bb7f49a53e8422945ec49eb)
+Reviewed-on: https://gerrit.libreoffice.org/30941
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ sc/source/core/tool/token.cxx | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-103994-AdjustReferenceOnMove-handle-ext.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-103994-AdjustReferenceOnMove-handle-ext.patch"
+
+diff --git a/sc/source/core/tool/token.cxx b/sc/source/core/tool/token.cxx
+index ffb9a29..fb53185 100644
+--- a/sc/source/core/tool/token.cxx
++++ b/sc/source/core/tool/token.cxx
+@@ -3115,6 +3115,20 @@ sc::RefUpdateResult ScTokenArray::AdjustReferenceOnMove(
+                             rRef.Ref1.SetFlag3D(true);
+                     }
+                     break;
++                case svExternalSingleRef:
++                    {
++                        ScSingleRefData& rRef = *p->GetSingleRef();
++                        ScAddress aAbs = rRef.toAbs(rOldPos);
++                        rRef.SetAddress(aAbs, rNewPos);
++                    }
++                    break;
++                case svExternalDoubleRef:
++                    {
++                        ScComplexRefData& rRef = *p->GetDoubleRef();
++                        ScRange aAbs = rRef.toAbs(rOldPos);
++                        rRef.SetRange(aAbs, rNewPos);
++                    }
++                    break;
+                 default:
+                     ;
+             }
+
+--------------erAck-patch-parts--
+
+

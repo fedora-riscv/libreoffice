@@ -299,6 +299,7 @@ Patch61: 0001-google-docs-can-generate-a-pptx-with-an-empty-cmLst.patch
 Patch62: 0001-don-t-suppress-crashes.patch
 Patch63: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.patch
 Patch64: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
+Patch65: 0001-Resolves-tdf-104096-reset-also-rRawRes-if-trailing-c.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch

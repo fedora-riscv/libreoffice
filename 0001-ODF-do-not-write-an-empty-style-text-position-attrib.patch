@@ -1,0 +1,67 @@
+From 692cf8964b7975b3f862bf8485e9d95b067b8e8a Mon Sep 17 00:00:00 2001
+Message-Id: <692cf8964b7975b3f862bf8485e9d95b067b8e8a.1479768730.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 17 Nov 2016 19:52:10 +0100
+Subject: [PATCH] ODF: do not write an empty style:text-position="" attribute
+ for CharEscapement
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... and CharEscapementHeight if the Any is void.
+This was a real error complained about in the officeotron validation
+https://bugs.documentfoundation.org/attachment.cgi?id=128411
+https://bugs.documentfoundation.org/show_bug.cgi?id=103493
+
+Also showed up as console warning
+
+	warn:legacy.osl:3269:1:xmloff/source/core/xmlerror.cxx:178: An error or a warning has occurred during XML import/export!
+	Error-Id: 0x20040003
+		Flags: 2 ERROR
+		Class: 4 API
+		Number: 3
+	Parameters:
+		0: CharEscapement
+	Exception-Message: UNKNOWN_PROPERTY
+	Position:
+		Public Identifier:
+		System Identifier: file:///.../103493-LotroPlan%203.8.ods
+		Row, Column: 2,1850164
+
+Change-Id: Ifc634cc6b3d5d6dfa43741005ef0c9a1f7ff71fe
+(cherry picked from commit 8aec9057a169acfda6f2d986af93edca54677fd2)
+Reviewed-on: https://gerrit.libreoffice.org/30939
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ xmloff/source/style/escphdl.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-ODF-do-not-write-an-empty-style-text-position-attrib.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-ODF-do-not-write-an-empty-style-text-position-attrib.patch"
+
+diff --git a/xmloff/source/style/escphdl.cxx b/xmloff/source/style/escphdl.cxx
+index 9573706..9528f3b 100644
+--- a/xmloff/source/style/escphdl.cxx
++++ b/xmloff/source/style/escphdl.cxx
+@@ -95,7 +95,7 @@ bool XMLEscapementPropHdl::exportXML( OUString& rStrExpValue, const uno::Any& rV
+     }
+ 
+     rStrExpValue = aOut.makeStringAndClear();
+-    return true;
++    return !rStrExpValue.isEmpty();
+ }
+ 
+ 
+
+--------------erAck-patch-parts--
+
+

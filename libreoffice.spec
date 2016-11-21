@@ -260,6 +260,7 @@ Patch28: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
 Patch29: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
 Patch30: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 Patch31: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.pat
+Patch32: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2317,8 +2318,10 @@ done
 %endif
 
 %changelog
-* Tue Nov 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.3.3-9-UNBUILT
+* Tue Nov 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.3.3-9
 - avoid loss of text in edited placeholder on save
+- set find toolbox so it doesn't appear to jump around in table/numbering contexts
+- drawing shapes not seeing style name change
 
 * Mon Nov 21 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-8
 - Resolves: rhbz#1396827 wayland provides exciting x_root positions on mouse click

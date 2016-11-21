@@ -1,0 +1,123 @@
+From 61a3d5c35c611af412fd9d1f94e71fa7694c3a64 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 21 Nov 2016 14:33:31 +0000
+Subject: [PATCH] set the search toolbar so it doesn't move around wrt
+ table/numbering toolbars
+
+- in Writer
+- Ctrl+F
+=> search field/toolbox appears at the bottom
+- enter some search term and click on the "Find Next" arrow
+- if the searched term appears in in a list or a table, the
+corresponding contextual toolbox appears _below_ the search toolbox,
+pushing it one row above.
+=> as user searchs repeatedly by clicking on the "Find Next" arrow, user tends
+to click on the appeared toolbox, triggering unwanted actions (like re-starting
+numbering of lists).
+
+As a user, I'd like to have:
+- the search toolbox remaining fixed on the screen and not moving around
+
+Change-Id: I809f1ff4479c31917323a39e15079205553e8b22
+---
+ .../data/org/openoffice/Office/UI/WriterGlobalWindowState.xcu       | 6 +++---
+ .../registry/data/org/openoffice/Office/UI/WriterWebWindowState.xcu | 6 +++---
+ .../registry/data/org/openoffice/Office/UI/WriterWindowState.xcu    | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/officecfg/registry/data/org/openoffice/Office/UI/WriterGlobalWindowState.xcu b/officecfg/registry/data/org/openoffice/Office/UI/WriterGlobalWindowState.xcu
+index 7d1baa4..4a22d51 100644
+--- a/officecfg/registry/data/org/openoffice/Office/UI/WriterGlobalWindowState.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/UI/WriterGlobalWindowState.xcu
+@@ -105,7 +105,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/findbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,3</value>
++          <value>0,1</value>
+         </prop>
+         <prop oor:name="Docked" oor:type="xs:boolean">
+           <value>true</value>
+@@ -159,7 +159,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/tableobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,0</value>
++          <value>0,2</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+@@ -179,7 +179,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/numobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,0</value>
++          <value>0,3</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+diff --git a/officecfg/registry/data/org/openoffice/Office/UI/WriterWebWindowState.xcu b/officecfg/registry/data/org/openoffice/Office/UI/WriterWebWindowState.xcu
+index ccbc3ca..87c4c86 100644
+--- a/officecfg/registry/data/org/openoffice/Office/UI/WriterWebWindowState.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/UI/WriterWebWindowState.xcu
+@@ -95,7 +95,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/findbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,3</value>
++          <value>0,1</value>
+         </prop>
+         <prop oor:name="Docked" oor:type="xs:boolean">
+           <value>true</value>
+@@ -172,7 +172,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/tableobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,0</value>
++          <value>0,2</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+@@ -482,7 +482,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/numobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,0</value>
++          <value>0,3</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+diff --git a/officecfg/registry/data/org/openoffice/Office/UI/WriterWindowState.xcu b/officecfg/registry/data/org/openoffice/Office/UI/WriterWindowState.xcu
+index 00fc15e..f1eb33d 100644
+--- a/officecfg/registry/data/org/openoffice/Office/UI/WriterWindowState.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/UI/WriterWindowState.xcu
+@@ -105,7 +105,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/findbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,3</value>
++          <value>0,1</value>
+         </prop>
+         <prop oor:name="Docked" oor:type="xs:boolean">
+           <value>true</value>
+@@ -221,7 +221,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/tableobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,1</value>
++          <value>0,2</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+@@ -241,7 +241,7 @@
+       </node>
+       <node oor:name="private:resource/toolbar/numobjectbar" oor:op="replace">
+         <prop oor:name="DockPos" oor:type="xs:string">
+-          <value>0,2</value>
++          <value>0,3</value>
+         </prop>
+         <prop oor:name="DockingArea" oor:type="xs:int">
+           <value>1</value>
+-- 
+2.9.3
+

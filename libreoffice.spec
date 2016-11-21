@@ -297,6 +297,7 @@ Patch61: 0001-google-docs-can-generate-a-pptx-with-an-empty-cmLst.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch62: 0001-don-t-suppress-crashes.patch
+Patch63: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2367,8 +2368,9 @@ done
 %endif
 
 %changelog
-* Tue Nov 08 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-4-UNBUILT
+* Mon Nov 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-4
 - allow abrt to work again
+- drawing shapes not seeing style name change
 
 * Mon Nov 07 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-3
 - implement CryptoAPI RC4 + SHA1 encryption scheme for doc

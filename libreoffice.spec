@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2369,6 +2369,9 @@ done
 %endif
 
 %changelog
+* Mon Nov 21 2016 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-5-UNBUILT
+- Resolves: tdf#104096 reset also rRawRes if trailing characters are present
+
 * Mon Nov 21 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-4
 - allow abrt to work again
 - drawing shapes not seeing style name change

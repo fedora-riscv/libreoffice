@@ -1,0 +1,54 @@
+From 6098c1afaa1b7700574e72efd9fe96b2bcb90968 Mon Sep 17 00:00:00 2001
+Message-Id: <6098c1afaa1b7700574e72efd9fe96b2bcb90968.1479767828.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 21 Nov 2016 22:55:11 +0100
+Subject: [PATCH] Resolves: tdf#104096 reset also rRawRes if trailing
+ characters are present
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... in lcl_ScAddress_Parse_OOo() so that ScRange::Parse() doesn't receive a
+"partially valid" result and does not attempt to follow the entire column/row
+path.
+
+(cherry picked from commit 8846cc2218091aa2af8ee3aadd81fd8a80e3b303)
+
+Backported.
+
+ Conflicts:
+	sc/source/core/tool/address.cxx
+
+Change-Id: Ie37c9d22280e30f770422fb621e3b9d972ec1546
+---
+ sc/source/core/tool/address.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-104096-reset-also-rRawRes-if-trailing-c.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-104096-reset-also-rRawRes-if-trailing-c.patch"
+
+diff --git a/sc/source/core/tool/address.cxx b/sc/source/core/tool/address.cxx
+index f3df923..d78a4f8 100644
+--- a/sc/source/core/tool/address.cxx
++++ b/sc/source/core/tool/address.cxx
+@@ -1290,7 +1290,7 @@ static sal_uInt16 lcl_ScAddress_Parse_OOo( const sal_Unicode* p, ScDocument* pDo
+             nRes |= SCA_VALID;
+     }
+     else
+-        nRes = 0;
++        nRes = rRawRes = 0;
+     return nRes;
+ }
+ 
+
+--------------erAck-patch-parts--
+
+

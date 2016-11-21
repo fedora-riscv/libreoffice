@@ -259,6 +259,7 @@ Patch27: 0001-gtk3-problems-with-gdk_drag_status-under-wayland.patch
 Patch28: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
 Patch29: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
 Patch30: 0001-avoid-loss-of-text-in-edited-placeholder.patch
+Patch31: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.pat
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

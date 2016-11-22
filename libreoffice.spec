@@ -237,6 +237,7 @@ Patch7: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 # want a nice abrt report
 Patch8: 0001-don-t-suppress-crashes.patch
 Patch9: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch10: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,0 +1,74 @@
+From 19c3559e873e79a178e9c4932363e2a2cc1b9ac0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 22 Nov 2016 13:43:32 +0000
+Subject: [PATCH] Resolves: rhbz#1397181 toolbar layout manager not respecting
+ drag cancel
+
+plus restore original mbDockCanceled state after wayland-enforced
+cancel otherwise next drag won't work
+
+Change-Id: Idefed25b925b36d0bf72b77609c4fc2eb47f71b9
+---
+ framework/source/layoutmanager/toolbarlayoutmanager.cxx | 3 +++
+ vcl/source/window/dockmgr.cxx                           | 3 +++
+ vcl/source/window/dockwin.cxx                           | 2 ++
+ 3 files changed, 8 insertions(+)
+
+diff --git a/framework/source/layoutmanager/toolbarlayoutmanager.cxx b/framework/source/layoutmanager/toolbarlayoutmanager.cxx
+index 583d622..b770fd8 100644
+--- a/framework/source/layoutmanager/toolbarlayoutmanager.cxx
++++ b/framework/source/layoutmanager/toolbarlayoutmanager.cxx
+@@ -3476,6 +3476,9 @@ throw (uno::RuntimeException, std::exception)
+ void SAL_CALL ToolbarLayoutManager::endDocking( const awt::EndDockingEvent& e )
+ throw (uno::RuntimeException, std::exception)
+ {
++    if (e.bCancelled)
++        return;
++
+     bool bDockingInProgress( false );
+     bool bStartDockFloated( false );
+     bool bFloating( false );
+diff --git a/vcl/source/window/dockmgr.cxx b/vcl/source/window/dockmgr.cxx
+index 9012a90..1467df8 100644
+--- a/vcl/source/window/dockmgr.cxx
++++ b/vcl/source/window/dockmgr.cxx
+@@ -935,6 +935,7 @@ void ImplDockingWindowWrapper::EndDocking( const Rectangle& rRect, bool bFloatMo
+ {
+     Rectangle aRect( rRect );
+ 
++    bool bOrigDockCanceled = mbDockCanceled;
+     if (bFloatMode && !StyleSettings::GetDockingFloatsSupported())
+         mbDockCanceled = true;
+ 
+@@ -971,6 +972,8 @@ void ImplDockingWindowWrapper::EndDocking( const Rectangle& rRect, bool bFloatMo
+ 
+     // must be enabled in Window::Notify to prevent permanent docking during mouse move
+     mbStartDockingEnabled = false;
++
++    mbDockCanceled = bOrigDockCanceled;
+ }
+ 
+ bool ImplDockingWindowWrapper::PrepareToggleFloatingMode()
+diff --git a/vcl/source/window/dockwin.cxx b/vcl/source/window/dockwin.cxx
+index 8f63c69..7d3ba8b 100644
+--- a/vcl/source/window/dockwin.cxx
++++ b/vcl/source/window/dockwin.cxx
+@@ -589,6 +589,7 @@ bool DockingWindow::Docking( const Point&, Rectangle& )
+ 
+ void DockingWindow::EndDocking( const Rectangle& rRect, bool bFloatMode )
+ {
++    bool bOrigDockCanceled = mbDockCanceled;
+     if (bFloatMode && !StyleSettings::GetDockingFloatsSupported())
+         mbDockCanceled = true;
+ 
+@@ -614,6 +615,7 @@ void DockingWindow::EndDocking( const Rectangle& rRect, bool bFloatMode )
+             Show();
+     }
+     mbDocking = false;
++    mbDockCanceled = bOrigDockCanceled;
+ }
+ 
+ bool DockingWindow::PrepareToggleFloatingMode()
+-- 
+2.9.3
+

@@ -236,7 +236,7 @@ Patch7: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch8: 0001-don-t-suppress-crashes.patch
-Patch0: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch9: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
 
 %if 0%{?rhel}
 # not upstreamed

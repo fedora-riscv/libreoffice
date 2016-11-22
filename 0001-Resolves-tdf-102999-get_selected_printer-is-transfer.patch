@@ -1,0 +1,45 @@
+From fe62cd4e4e7aa8bd96acf13f646a595ea8dda299 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 13 Oct 2016 14:29:15 +0100
+Subject: [PATCH] Resolves: tdf#102999 get_selected_printer is transfer none
+
+gtk_print_unix_dialog_get_settings returns a new GObject we
+have to unref, but gtk_print_unix_dialog_get_selected_printer doesn't
+add a ref so dies along with its parent dialog.
+
+Change-Id: Ie5f8ecd83f5cc2c13e4a8c3ba292ffa381f9bdf5
+(cherry picked from commit c12e14d19f86be8555f6262d138cf0776f2c9b56)
+Reviewed-on: https://gerrit.libreoffice.org/29773
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+Tested-by: Jenkins <ci@libreoffice.org>
+(cherry picked from commit bb51869d5fd339703767e1e70c832a803dd981eb)
+---
+ vcl/unx/gtk/gtkprintwrapper.cxx | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk/gtkprintwrapper.cxx b/vcl/unx/gtk/gtkprintwrapper.cxx
+index e552042..b0b6745 100644
+--- a/vcl/unx/gtk/gtkprintwrapper.cxx
++++ b/vcl/unx/gtk/gtkprintwrapper.cxx
+@@ -276,13 +276,16 @@ void GtkPrintWrapper::print_unix_dialog_add_custom_tab(GtkPrintUnixDialog* dialo
+ 
+ GtkPrinter* GtkPrintWrapper::print_unix_dialog_get_selected_printer(GtkPrintUnixDialog* dialog) const
+ {
++    GtkPrinter* pRet = nullptr;
+ #if !GTK_CHECK_VERSION(3,0,0)
+     assert(m_print_unix_dialog_get_selected_printer);
+-    return (*m_print_unix_dialog_get_selected_printer)(dialog);
++    pRet = (*m_print_unix_dialog_get_selected_printer)(dialog);
+ #else
+     (void) this; // loplugin:staticmethods
+-    return gtk_print_unix_dialog_get_selected_printer(dialog);
++    pRet = gtk_print_unix_dialog_get_selected_printer(dialog);
+ #endif
++    g_object_ref(G_OBJECT(pRet));
++    return pRet;
+ }
+ 
+ void GtkPrintWrapper::print_unix_dialog_set_manual_capabilities(GtkPrintUnixDialog* dialog, GtkPrintCapabilities capabilities) const
+-- 
+2.9.3
+

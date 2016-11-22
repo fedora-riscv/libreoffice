@@ -1,4 +1,4 @@
-From ac4f846335fb71f4a11bae6f8f1704ca915ba6af Mon Sep 17 00:00:00 2001
+From 722d918c8f185daae2f3c01cc77d1b3badec936a Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 16 Nov 2016 11:52:39 +0000
 Subject: [PATCH] gtk: under wayland tracking the window position is worthless
@@ -15,30 +15,16 @@ popups, so the menu disappears.
 
 Change-Id: I2d1aa4a51153002c925e2dde4402da2d84e52de5
 ---
- vcl/inc/svdata.hxx                        |  2 +-
  vcl/source/app/settings.cxx               |  2 +-
  vcl/unx/gtk3/gtk3gtkframe.cxx             | 10 ++++++++--
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx |  2 +-
- 4 files changed, 11 insertions(+), 5 deletions(-)
+ 3 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
-index d8f04e8..5ed1464 100644
---- a/vcl/inc/svdata.hxx
-+++ b/vcl/inc/svdata.hxx
-@@ -286,7 +286,7 @@ struct ImplSVNWFData
-     // gnome#768128 I cannot see a route under wayland at present to support
-     // floating toolbars that can be redocked because there's no way to track
-     // that the toolbar is over a dockable area.
--    bool                    mbDockingFloatsSupported = true;
-+    bool                    mbCanDetermineWindowPosition = true;
- };
- 
- struct BlendFrameCache
 diff --git a/vcl/source/app/settings.cxx b/vcl/source/app/settings.cxx
-index b8c5167..215a9e1 100644
+index 9ef9fd2..d6f6300 100644
 --- a/vcl/source/app/settings.cxx
 +++ b/vcl/source/app/settings.cxx
-@@ -1889,7 +1889,7 @@ bool
+@@ -1935,7 +1935,7 @@ bool
  StyleSettings::GetDockingFloatsSupported()
  {
      ImplSVData* pSVData = ImplGetSVData();
@@ -48,10 +34,10 @@ index b8c5167..215a9e1 100644
  
  void
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index ce9e012..196114c 100644
+index 77735391..24ffcdd 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -2773,7 +2773,9 @@ gboolean GtkSalFrame::signalMotion( GtkWidget*, GdkEventMotion* pEvent, gpointer
+@@ -2772,7 +2772,9 @@ gboolean GtkSalFrame::signalMotion( GtkWidget*, GdkEventMotion* pEvent, gpointer
      {
          pThis->maGeometry.nX = frame_x;
          pThis->maGeometry.nY = frame_y;
@@ -76,10 +62,10 @@ index ce9e012..196114c 100644
      return false;
  }
 diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
-index 9377172..c4dff0b 100644
+index 091a615..55ebc71 100644
 --- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
 +++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
-@@ -2897,7 +2897,7 @@ void GtkData::initNWF()
+@@ -2330,7 +2330,7 @@ void GtkData::initNWF()
      //and floating dockable toolbars
      GdkDisplay *pDisplay = gdk_display_get_default();
      if (GDK_IS_WAYLAND_DISPLAY(pDisplay))

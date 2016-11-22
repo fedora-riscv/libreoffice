@@ -1,4 +1,4 @@
-From 35f5db8766713090e4971a26815bd4eb51184e2b Mon Sep 17 00:00:00 2001
+From 19e1876935e6e14e73c8605a381eca6314357181 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 10 Nov 2016 13:20:34 +0000
 Subject: [PATCH] Resolves: rhbz#1391418 wayland toolbars can't be docked after
@@ -20,11 +20,12 @@ Change-Id: Iaa859f3420e6d1b103a8b93d1ad8f82dbffe75d4
  sfx2/source/dialog/dockwin.cxx                   |  4 +++-
  vcl/inc/svdata.hxx                               |  4 ++++
  vcl/source/app/settings.cxx                      |  7 +++++++
+ vcl/source/app/svdata.cxx                        |  1 +
  vcl/source/window/dockmgr.cxx                    |  3 +++
  vcl/source/window/dockwin.cxx                    |  9 +++++++--
  vcl/source/window/event.cxx                      | 10 ++++++----
  vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx        | 12 +++++++++++-
- 9 files changed, 47 insertions(+), 8 deletions(-)
+ 10 files changed, 48 insertions(+), 8 deletions(-)
 
 diff --git a/framework/source/layoutmanager/layoutmanager.cxx b/framework/source/layoutmanager/layoutmanager.cxx
 index 2ade77e..46079eb 100644
@@ -70,7 +71,7 @@ index 25c72d8..0b45e7e 100644
                  aStr.clear();
              else
 diff --git a/vcl/inc/svdata.hxx b/vcl/inc/svdata.hxx
-index 39b5610..2799fef 100644
+index 39b5610..f348f84 100644
 --- a/vcl/inc/svdata.hxx
 +++ b/vcl/inc/svdata.hxx
 @@ -280,6 +280,10 @@ struct ImplSVNWFData
@@ -80,7 +81,7 @@ index 39b5610..2799fef 100644
 +    // gnome#768128 I cannot see a route under wayland at present to support
 +    // floating toolbars that can be redocked because there's no way to track
 +    // that the toolbar is over a dockable area.
-+    bool                    mbDockingFloatsSupported = true;
++    bool                    mbCanDetermineWindowPosition:1;
  };
  
  struct BlendFrameCache
@@ -102,6 +103,18 @@ index cb84dbe..9ef9fd2 100644
  void
  StyleSettings::SetFontColor( const Color& rColor )
  {
+diff --git a/vcl/source/app/svdata.cxx b/vcl/source/app/svdata.cxx
+index ddad3e3..d050e0b 100644
+--- a/vcl/source/app/svdata.cxx
++++ b/vcl/source/app/svdata.cxx
+@@ -87,6 +87,7 @@ ImplSVData::ImplSVData()
+     maNWFData.maMenuBarHighlightTextColor = Color( COL_TRANSPARENT );
+     maNWFData.mbEnableAccel = true;
+     maNWFData.mbAutoAccel = false;
++    maNWFData.mbCanDetermineWindowPosition = true;
+ }
+ 
+ ImplSVGDIData::~ImplSVGDIData()
 diff --git a/vcl/source/window/dockmgr.cxx b/vcl/source/window/dockmgr.cxx
 index 1b8ef13..d292553 100644
 --- a/vcl/source/window/dockmgr.cxx

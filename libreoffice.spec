@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .alpha1
+%define libo_prerelease .beta1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -65,7 +65,7 @@ Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerele
 Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source4:        libreoffice-multiliblauncher.sh
 Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source6:        %{external_url}/0fb1bb06d60d7708abc4797008209bcc-xmlsec1-1.2.22.tar.gz
+Source6:        %{external_url}/86b1daaa438f5a7bea9a52d7b9799ac0-xmlsec1-1.2.23.tar.gz
 Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
@@ -231,13 +231,9 @@ Patch3: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch4: 0001-add-X-TryExec-entries-to-desktop-files.patch
 Patch5: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-Patch6: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
-Patch7: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch8: 0001-don-t-suppress-crashes.patch
-Patch9: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
-Patch10: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2293,6 +2289,9 @@ done
 %endif
 
 %changelog
+* Wed Nov 23 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-3.beta1
+- update to 5.3.0 beta1
+
 * Tue Nov 08 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-2.alpha1
 - allow abrt to work again
 

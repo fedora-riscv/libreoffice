@@ -262,6 +262,9 @@ Patch30: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 Patch31: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.patch
 Patch32: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
 Patch33: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
+Patch34: 0001-with-wayland-scaling-cairo-is-meddling-with-our-font.patch
+Patch35: 0002-Resolves-tdf-99508-ensure-sufficient-size-for-hidpi-.patch
+Patch36: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2319,6 +2322,10 @@ done
 %endif
 
 %changelog
+* Thu Nov 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-10
+- Related: rhbz#1370051 fix hidpi truncated window under wayland and
+  switch X to using the same new solution
+
 * Tue Nov 22 2016 David Tardon <dtardon@redhat.com> - 1:5.2.3.3-9
 - avoid loss of text in edited placeholder on save
 - set find toolbox so it doesn't appear to jump around in table/numbering contexts

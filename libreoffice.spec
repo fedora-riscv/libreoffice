@@ -304,6 +304,7 @@ Patch66: 0001-ODF-do-not-write-an-empty-style-text-position-attrib.patch
 Patch67: 0001-Resolves-tdf-103994-AdjustReferenceOnMove-handle-ext.patch
 Patch68: 0001-Resolves-tdf-102999-get_selected_printer-is-transfer.patch
 Patch69: 0001-avoid-loss-of-text-in-edited-placeholder.patch
+Patch70: 0001-tdf-96522-ANIMATION-Animation-Spiral-in-does-not-wor.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2374,8 +2375,9 @@ done
 %endif
 
 %changelog
-* Tue Nov 22 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-6-UNBUILT
+* Tue Nov 29 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-6
 - avoid loss of text in edited placeholder on save
+- Resolves: tdf#96522 various animations don't work
 
 * Tue Nov 22 2016 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-5
 - Resolves: tdf#104096 reset also rRawRes if trailing characters are present

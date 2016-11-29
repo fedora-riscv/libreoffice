@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -305,6 +305,7 @@ Patch67: 0001-Resolves-tdf-103994-AdjustReferenceOnMove-handle-ext.patch
 Patch68: 0001-Resolves-tdf-102999-get_selected_printer-is-transfer.patch
 Patch69: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 Patch70: 0001-tdf-96522-ANIMATION-Animation-Spiral-in-does-not-wor.patch
+Patch71: 0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2375,6 +2376,9 @@ done
 %endif
 
 %changelog
+* Tue Nov 29 2016 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-7-UNBUILT
+- Resolves: tdf#103493 copying note captions needs a completed destination sheet
+
 * Tue Nov 29 2016 David Tardon <dtardon@redhat.com> - 1:5.1.6.2-6
 - avoid loss of text in edited placeholder on save
 - Resolves: tdf#96522 various animations don't work

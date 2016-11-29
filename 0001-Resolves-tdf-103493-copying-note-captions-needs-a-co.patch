@@ -1,0 +1,134 @@
+From 2f35fa5c95a3a6ae28ef15af88eabe8ba3e586bc Mon Sep 17 00:00:00 2001
+Message-Id: <2f35fa5c95a3a6ae28ef15af88eabe8ba3e586bc.1480426428.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Sat, 26 Nov 2016 11:23:24 +0100
+Subject: [PATCH] Resolves: tdf#103493 copying note captions needs a completed
+ destination sheet
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+If a copied sheet's destination position is before its source position, the
+source's ScColumn::nTab members still pointed to the original source position
+when the captions were created, which led to the wrong drawing layer page being
+used and at the end the drawing shapes not being correctly assigned.
+
+(cherry picked from commit 0a2a7436b4041bb34b01a183b9264af8488d1af3)
+
+Backported.
+
+ Conflicts:
+	sc/inc/table.hxx
+	sc/source/core/data/documen2.cxx
+	sc/source/core/data/table2.cxx
+
+Change-Id: I9c3cc97d8b4486756023b9ab02da28079a1d0627
+---
+ sc/inc/table.hxx                 |  5 ++++-
+ sc/source/core/data/documen2.cxx | 11 +++++++++--
+ sc/source/core/data/table2.cxx   | 23 ++++++++++++++++-------
+ 3 files changed, 29 insertions(+), 10 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch"
+
+diff --git a/sc/inc/table.hxx b/sc/inc/table.hxx
+index ead8ba4..bf7c63e 100644
+--- a/sc/inc/table.hxx
++++ b/sc/inc/table.hxx
+@@ -444,7 +444,10 @@ public:
+     void CopyToTable(
+         sc::CopyToDocContext& rCxt, SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2,
+         InsertDeleteFlags nFlags, bool bMarked, ScTable* pDestTab,
+-        const ScMarkData* pMarkData = nullptr, bool bAsLink = false, bool bColRowFlags = true );
++        const ScMarkData* pMarkData = nullptr, bool bAsLink = false, bool bColRowFlags = true,
++        bool bCopyCaptions = true );
++
++    void CopyCaptionsToTable( SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2, ScTable* pDestTab, bool bCloneCaption );
+ 
+     void UndoToTable(
+         sc::CopyToDocContext& rCxt, SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2,
+diff --git a/sc/source/core/data/documen2.cxx b/sc/source/core/data/documen2.cxx
+index 57ee5f4..949cd55 100644
+--- a/sc/source/core/data/documen2.cxx
++++ b/sc/source/core/data/documen2.cxx
+@@ -874,8 +874,9 @@ bool ScDocument::CopyTab( SCTAB nOldPos, SCTAB nNewPos, const ScMarkData* pOnlyM
+     {
+         SetNoListening( true );     // noch nicht bei CopyToTable/Insert
+         sc::CopyToDocContext aCopyDocCxt(*this);
+-        maTabs[nOldPos]->CopyToTable(aCopyDocCxt, 0, 0, MAXCOL, MAXROW, InsertDeleteFlags::ALL, (pOnlyMarked != nullptr),
+-                                        maTabs[nNewPos], pOnlyMarked );
++        maTabs[nOldPos]->CopyToTable(aCopyDocCxt, 0, 0, MAXCOL, MAXROW, InsertDeleteFlags::ALL,
++                (pOnlyMarked != nullptr), maTabs[nNewPos], pOnlyMarked,
++                false /*bAsLink*/, true /*bColRowFlags*/, false /*bCopyCaptions*/ );
+         maTabs[nNewPos]->SetTabBgColor(maTabs[nOldPos]->GetTabBgColor());
+ 
+         SCTAB nDz = nNewPos - nOldPos;
+@@ -913,6 +914,12 @@ bool ScDocument::CopyTab( SCTAB nOldPos, SCTAB nNewPos, const ScMarkData* pOnlyM
+         // Copy the RTL settings
+         maTabs[nNewPos]->SetLayoutRTL(maTabs[nOldPos]->IsLayoutRTL());
+         maTabs[nNewPos]->SetLoadingRTL(maTabs[nOldPos]->IsLoadingRTL());
++
++        // Finally copy the note captions, which need
++        // 1. the updated source ScColumn::nTab members if nNewPos <= nOldPos
++        // 2. row heights and column widths of the destination
++        // 3. RTL settings of the destination
++        maTabs[nOldPos]->CopyCaptionsToTable( 0, 0, MAXCOL, MAXROW, maTabs[nNewPos], true /*bCloneCaption*/);
+     }
+ 
+     return bValid;
+diff --git a/sc/source/core/data/table2.cxx b/sc/source/core/data/table2.cxx
+index 5d43a37..629743c 100644
+--- a/sc/source/core/data/table2.cxx
++++ b/sc/source/core/data/table2.cxx
+@@ -1090,7 +1090,7 @@ void ScTable::StartListeningFormulaCells(
+ void ScTable::CopyToTable(
+     sc::CopyToDocContext& rCxt, SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2,
+     InsertDeleteFlags nFlags, bool bMarked, ScTable* pDestTab, const ScMarkData* pMarkData,
+-    bool bAsLink, bool bColRowFlags )
++    bool bAsLink, bool bColRowFlags, bool bCopyCaptions )
+ {
+     if (!ValidColRow(nCol1, nRow1) || !ValidColRow(nCol2, nRow2))
+         return;
+@@ -1210,14 +1210,23 @@ void ScTable::CopyToTable(
+     if(nFlags & InsertDeleteFlags::OUTLINE) // also only when bColRowFlags
+         pDestTab->SetOutlineTable( pOutlineTable );
+ 
+-    if (nFlags & (InsertDeleteFlags::NOTE|InsertDeleteFlags::ADDNOTES))
++    if (bCopyCaptions && (nFlags & (InsertDeleteFlags::NOTE | InsertDeleteFlags::ADDNOTES)))
+     {
+         bool bCloneCaption = (nFlags & InsertDeleteFlags::NOCAPTIONS) == InsertDeleteFlags::NONE;
+-        for (SCCOL i = nCol1; i <= nCol2; i++)
+-        {
+-            aCol[i].CopyCellNotesToDocument(nRow1, nRow2, pDestTab->aCol[i], bCloneCaption);
+-            pDestTab->aCol[i].UpdateNoteCaptions(nRow1, nRow2);
+-        }
++        CopyCaptionsToTable( nCol1, nRow1, nCol2, nRow2, pDestTab, bCloneCaption);
++    }
++}
++
++void ScTable::CopyCaptionsToTable( SCCOL nCol1, SCROW nRow1, SCCOL nCol2, SCROW nRow2, ScTable* pDestTab,
++        bool bCloneCaption )
++{
++    if (!ValidColRow(nCol1, nRow1) || !ValidColRow(nCol2, nRow2))
++        return;
++
++    for (SCCOL i = nCol1; i <= nCol2; i++)
++    {
++        aCol[i].CopyCellNotesToDocument(nRow1, nRow2, pDestTab->aCol[i], bCloneCaption);
++        pDestTab->aCol[i].UpdateNoteCaptions(nRow1, nRow2);
+     }
+ }
+ 
+
+--------------erAck-patch-parts--
+
+

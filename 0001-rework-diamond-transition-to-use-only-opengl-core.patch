@@ -1,0 +1,73 @@
+From 712af05b25bd4fd5343a5622b7a42eff177eeb83 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 1 Dec 2016 12:32:09 +0000
+Subject: [PATCH] rework diamond transition to use only opengl core
+
+cause that's all we've got in gtk3
+
+Change-Id: I6a47e344ccd39ba63e7a51ae18f89bb05bb642c4
+---
+ .../OGLTrans/generic/OGLTrans_TransitionImpl.cxx   | 28 +++++++++++++++-------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx b/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
+index 8b508c6..9eb1e51 100644
+--- a/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
++++ b/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
+@@ -317,8 +317,6 @@ OGLTransitionImpl::displayUnbufferedSlide(
+         double SlideWidthScale, double SlideHeightScale )
+ {
+     CHECK_GL_ERROR();
+-    glPushMatrix();
+-    CHECK_GL_ERROR();
+     glBindTexture(GL_TEXTURE_2D, glSlideTex);
+     CHECK_GL_ERROR();
+     glBindVertexArray(0);
+@@ -336,8 +334,6 @@ OGLTransitionImpl::displayUnbufferedSlide(
+     CHECK_GL_ERROR();
+     glBindBuffer(GL_ARRAY_BUFFER, m_nVertexBufferObject);
+     CHECK_GL_ERROR();
+-    glPopMatrix();
+-    CHECK_GL_ERROR();
+ }
+ 
+ void OGLTransitionImpl::displayScene( double nTime, double SlideWidth, double SlideHeight, double DispWidth, double DispHeight )
+@@ -360,15 +356,31 @@ void Primitive::display(GLint primitiveTransformLocation, double nTime, double W
+         CHECK_GL_ERROR();
+     }
+ 
+-    glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
++    GLuint nVertexArrayObject;
++    glGenVertexArrays(1, &nVertexArrayObject);
++    CHECK_GL_ERROR();
++    glBindVertexArray(nVertexArrayObject);
++    CHECK_GL_ERROR();
++
++    GLuint nBuffer;
++    glGenBuffers(1, &nBuffer);
+     CHECK_GL_ERROR();
+-    glEnableClientState( GL_VERTEX_ARRAY );
++    glBindBuffer(GL_ARRAY_BUFFER, nBuffer);
+     CHECK_GL_ERROR();
+-    glVertexPointer( 3, GL_FLOAT, sizeof(Vertex), &Vertices[0] );
++    glBufferData(GL_ARRAY_BUFFER, getVerticesSize(), Vertices.data(), GL_STATIC_DRAW);
++
++    glEnableVertexAttribArray(0);
++    CHECK_GL_ERROR();
++    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
++
+     CHECK_GL_ERROR();
+     glDrawArrays( GL_TRIANGLES, 0, Vertices.size() );
+     CHECK_GL_ERROR();
+-    glPopClientAttrib();
++
++    glDeleteBuffers(1, &nBuffer);
++    CHECK_GL_ERROR();
++
++    glDeleteVertexArrays(1, &nVertexArrayObject);
+ 
+     CHECK_GL_ERROR();
+ }
+-- 
+2.9.3
+

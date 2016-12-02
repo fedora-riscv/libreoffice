@@ -266,6 +266,7 @@ Patch34: 0001-with-wayland-scaling-cairo-is-meddling-with-our-font.patch
 Patch35: 0002-Resolves-tdf-99508-ensure-sufficient-size-for-hidpi-.patch
 Patch36: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
 Patch37: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
+Patch38: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2325,6 +2326,7 @@ done
 %changelog
 * Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11-UNBUILT
 - glDrawArrays takes num of indices not size of storage
+- rework diamond transition to use only opengl core
 
 * Thu Nov 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-10
 - Related: rhbz#1370051 fix hidpi truncated window under wayland and

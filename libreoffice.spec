@@ -70,7 +70,8 @@ Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%global bundling_options %{?bundling_options} --without-system-hsqldb
+Source10:       %{external_url}/libgltf-0.0.2.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-hsqldb --without-system-gltf
 
 %if 0%{?fedora}
 Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
@@ -189,7 +190,7 @@ BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
-BuildRequires: pkgconfig(libgltf-0.0)
+# BuildRequires: pkgconfig(libgltf-0.0) bump system libgltf when new epoxy one is available
 %if 0%{?fedora} >= 26
 BuildRequires: pkgconfig(liborcus-0.12)
 %else
@@ -267,6 +268,8 @@ Patch35: 0002-Resolves-tdf-99508-ensure-sufficient-size-for-hidpi-.patch
 Patch36: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
 Patch37: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
 Patch38: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
+Patch39: 0001-change-from-glew-to-epoxy.patch
+Patch40: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2324,7 +2327,7 @@ done
 %endif
 
 %changelog
-* Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11-UNBUILT
+* Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11
 - glDrawArrays takes num of indices not size of storage
 - rework diamond transition to use only opengl core
 

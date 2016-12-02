@@ -270,6 +270,7 @@ Patch37: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
 Patch38: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
 Patch39: 0001-change-from-glew-to-epoxy.patch
 Patch40: 0001-gtk3-implement-opengl-support-for-slideshow.patch
+Patch41: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2328,8 +2329,10 @@ done
 
 %changelog
 * Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11
+- Resolves: rhbz#1376332 implement opengl transition support for gtk3 + wayland
 - glDrawArrays takes num of indices not size of storage
 - rework diamond transition to use only opengl core
+- usageinfo causes one of our more frequent fedora 25 crashs
 
 * Thu Nov 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-10
 - Related: rhbz#1370051 fix hidpi truncated window under wayland and

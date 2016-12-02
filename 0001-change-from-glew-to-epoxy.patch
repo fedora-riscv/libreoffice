@@ -1,4 +1,4 @@
-From 854f5ff303bdad3f53254cea59de864a1d80f441 Mon Sep 17 00:00:00 2001
+From 6183ad6916ce411c83abd71a89b9da45e3e09498 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 25 Nov 2016 20:25:27 +0000
 Subject: [PATCH] change from glew to epoxy
@@ -81,7 +81,7 @@ Change-Id: Iefaac31e325534a81a5389f752804af917c1baef
  vcl/source/opengl/OpenGLHelper.cxx                 |   8 +-
  vcl/unx/generic/app/saldisp.cxx                    |   1 -
  vcl/workben/icontest.cxx                           |   2 -
- 74 files changed, 474 insertions(+), 367 deletions(-)
+ 74 files changed, 475 insertions(+), 366 deletions(-)
  delete mode 100644 config_host/config_opengl.h.in
  create mode 100644 external/epoxy/Library_epoxy.mk
  rename external/{glew => epoxy}/Makefile (100%)
@@ -114,10 +114,10 @@ index 3884f7f..c0c61033 100644
  		$(call fetch_Optional,GLYPHY,GLYPHY_TARBALL) \
  		$(call fetch_Optional_pack,GOOGLE_DOCS_EXTENSION_PACK) \
 diff --git a/RepositoryExternal.mk b/RepositoryExternal.mk
-index 24bbab7..4232978 100644
+index 24bbab7..bd2fce4 100644
 --- a/RepositoryExternal.mk
 +++ b/RepositoryExternal.mk
-@@ -184,51 +184,41 @@ endef
+@@ -184,51 +184,43 @@ endef
  endif # SYSTEM_CPPUNIT
  
  ifneq ($(ENABLE_OPENGL)$(ENABLE_OPENGL_CANVAS)$(if $(filter ANDROID,$(OS)),TRUE),)
@@ -137,10 +137,11 @@ index 24bbab7..4232978 100644
  endef
  
 -gb_ExternalProject__use_glew :=
-+else # !SYSTEM_EPOXY
++gb_ExternalProject__use_epoxy :=
  
 -else # !SYSTEM_GLEW
--
++else # !SYSTEM_EPOXY
+ 
 -$(eval $(call gb_Helper_register_packages_for_install,ooo,\
 -	glew \
 -))

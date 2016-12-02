@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        11%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -265,6 +265,7 @@ Patch33: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
 Patch34: 0001-with-wayland-scaling-cairo-is-meddling-with-our-font.patch
 Patch35: 0002-Resolves-tdf-99508-ensure-sufficient-size-for-hidpi-.patch
 Patch36: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
+Patch37: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2322,6 +2323,9 @@ done
 %endif
 
 %changelog
+* Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11-UNBUILT
+- glDrawArrays takes num of indices not size of storage
+
 * Thu Nov 24 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-10
 - Related: rhbz#1370051 fix hidpi truncated window under wayland and
   switch X to using the same new solution

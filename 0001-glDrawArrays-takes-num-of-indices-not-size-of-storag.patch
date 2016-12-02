@@ -1,0 +1,35 @@
+From b79a9371e10374876609ed7ff8bf59f1ed320860 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 30 Nov 2016 14:22:53 +0000
+Subject: [PATCH] glDrawArrays takes num of indices, not size of storage
+
+this stops the strange missing corner seen during the diamond
+transition
+
+(cherry picked from commit 579feb4d841ea80de699f4124378d0701034833e)
+Reviewed-on: https://gerrit.libreoffice.org/31426
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: David Tardon <dtardon@redhat.com>
+(cherry picked from commit 75627b4dc1a821142419ed50d247c2d0e621c78b)
+
+Change-Id: If806a0a3303eb38644bb6d3a479cadbd5fe9ca25
+---
+ slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx b/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
+index 669f68a..8b508c6 100644
+--- a/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
++++ b/slideshow/source/engine/OGLTrans/generic/OGLTrans_TransitionImpl.cxx
+@@ -366,7 +366,7 @@ void Primitive::display(GLint primitiveTransformLocation, double nTime, double W
+     CHECK_GL_ERROR();
+     glVertexPointer( 3, GL_FLOAT, sizeof(Vertex), &Vertices[0] );
+     CHECK_GL_ERROR();
+-    glDrawArrays( GL_TRIANGLES, 0, getVerticesSize() );
++    glDrawArrays( GL_TRIANGLES, 0, Vertices.size() );
+     CHECK_GL_ERROR();
+     glPopClientAttrib();
+ 
+-- 
+2.9.3
+

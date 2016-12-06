@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.3
+%define libo_version 5.2.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -53,8 +53,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        12%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -233,46 +233,36 @@ Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
 Patch4: 0001-never-run-autogen.sh.patch
 # not upstreamed
 Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch6: 0001-Resolves-rhbz-1326304-cannot-detect-loss-of-wayland-.patch
+# not upstreamed: upstream wants an automatic restart after a crash; we
+# want a nice abrt report
+Patch6: 0001-don-t-suppress-crashes.patch
 Patch7: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
 Patch8: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
 Patch9: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch10: 0001-Resolves-rhbz-1352965-gtk3-infinite-clipboard-recurs.patch
-Patch11: 0001-Related-rhbz-1351369-gtk3-clipboards-have-to-live-to.patch
-Patch12: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch13: 0001-Related-rhbz-1362451-avoid-recursive-ownerchanged-ha.patch
-Patch14: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch15: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-Patch16: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
-Patch17: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
-Patch18: 0001-convert-angle-from-degrees-to-radians-for-glm.patch
-Patch19: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
-Patch20: 0001-remove-OpenGL-transitions-config.-file-from-scheme.patch
-Patch21: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
-Patch22: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
-Patch23: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
-# not upstreamed: upstream wants an automatic restart after a crash; we
-# want a nice abrt report
-Patch24: 0001-don-t-suppress-crashes.patch
-Patch25: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
-Patch26: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
-Patch27: 0001-gtk3-problems-with-gdk_drag_status-under-wayland.patch
-Patch28: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
-Patch29: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
-Patch30: 0001-avoid-loss-of-text-in-edited-placeholder.patch
-Patch31: 0001-drawing-shapes-aren-t-tracking-style-name-changes-co.patch
-Patch32: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
-Patch33: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
-Patch34: 0001-with-wayland-scaling-cairo-is-meddling-with-our-font.patch
-Patch35: 0002-Resolves-tdf-99508-ensure-sufficient-size-for-hidpi-.patch
-Patch36: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
-Patch37: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
-Patch38: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
-Patch39: 0001-change-from-glew-to-epoxy.patch
-Patch40: 0001-gtk3-implement-opengl-support-for-slideshow.patch
-Patch41: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
-Patch42: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
-Patch43: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
+Patch10: 0001-add-xdg-email-as-the-default-email-route.patch
+Patch11: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+Patch12: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch13: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
+Patch14: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
+Patch15: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
+Patch16: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
+Patch17: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch18: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
+Patch19: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
+Patch20: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
+Patch21: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
+Patch22: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
+Patch23: 0001-avoid-loss-of-text-in-edited-placeholder.patch
+Patch24: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
+Patch25: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
+Patch26: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
+Patch27: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
+Patch28: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
+Patch29: 0001-change-from-glew-to-epoxy.patch
+Patch30: 0001-gtk3-implement-opengl-support-for-slideshow.patch
+Patch31: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
+Patch32: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
+Patch33: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2330,7 +2320,8 @@ done
 %endif
 
 %changelog
-* Tue Dec 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-12-UNBUILT
+* Tue Dec 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.1-1
+- update to 5.2.4 rc1
 - Resolves: rhbz#1400683 ctrl+alt+c doesn't insert comment
 - Resolves: rhbz#1401778 switching document from window menu doesn't work under wayland
 

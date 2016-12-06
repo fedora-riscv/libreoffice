@@ -1,0 +1,41 @@
+From dec2ad89bf3a3613fb477843554ced640c248db4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 29 Jul 2016 12:44:19 +0100
+Subject: [PATCH] Resolves: rhbz#1400683 ctrl+alt+c doesn't insert comment
+
+only map GDK_SUPER_MASK to KEY_MOD3 and not GDK_META_MASK
+
+on wayland I'm getting a GDK_MOD1_MASK and a GDK_META_MASK
+on pressing the left alt. The check for KEY_MOD2 in
+Window::KeyInput trips up with the extra KEY_MOD3 bit set
+so the auto mnemonic underlines don't appear on pressing
+left alt under wayland
+
+Lets map only GDK_SUPER_MASK to KEY_MOD3
+
+(cherry picked from commit a840b2526b8b8e44991bef2eb7b6ba44a1a90d3a)
+
+Change-Id: I1e9cc9fc095f5edfa7ad7c71440232c6de1ecf04
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index cf3c426..17b9e27 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -122,10 +122,7 @@ static sal_uInt16 GetKeyModCode( guint state )
+         nCode |= KEY_MOD1;
+     if( (state & GDK_MOD1_MASK) )
+         nCode |= KEY_MOD2;
+-
+-    // Map Meta/Super keys to MOD3 modifier on all Unix systems
+-    // except Mac OS X
+-    if ( (state & GDK_META_MASK ) || ( state & GDK_SUPER_MASK ) )
++    if( (state & GDK_SUPER_MASK) )
+         nCode |= KEY_MOD3;
+     return nCode;
+ }
+-- 
+2.9.3
+

@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -271,6 +271,7 @@ Patch38: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
 Patch39: 0001-change-from-glew-to-epoxy.patch
 Patch40: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 Patch41: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
+Patch42: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2328,6 +2329,9 @@ done
 %endif
 
 %changelog
+* Tue Dec 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-12-UNBUILT
+- Resolves: rhbz#1400683 ctrl+alt+c doesn't insert comment
+
 * Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11
 - Resolves: rhbz#1376332 implement opengl transition support for gtk3 + wayland
 - glDrawArrays takes num of indices not size of storage

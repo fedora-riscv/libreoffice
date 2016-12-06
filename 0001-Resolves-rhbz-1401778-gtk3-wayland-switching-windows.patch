@@ -1,0 +1,66 @@
+From d53907598e2ce79acd3add991a603f161f4f47f9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 6 Dec 2016 21:03:07 +0000
+Subject: [PATCH] Resolves: rhbz#1401778 gtk3+wayland switching windows from
+ the menu woes
+
+ignore 0 timestamps cause they're useless and get the current event time
+stamp during MenuBarReturnFocus to determine the timestamp of the menu
+command dispatch
+
+(cherry picked from commit adfcd16220444ef3ea318515c5a331210250e45f)
+
+Change-Id: Ia4b00aafc9ef47b41dcca2c160e943200db5c524
+(cherry picked from commit 1b2bb1c952a3e8dc5c625c7a9f0042f06ba1c9a0)
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  | 1 +
+ vcl/unx/gtk/gtksalmenu.cxx    | 1 +
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 7 ++++++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 1b48aa3..b402bb2 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -544,6 +544,7 @@ public:
+         guint* pGdkKeyCode, GdkModifierType *pGdkModifiers);
+ 
+     static guint32              GetLastInputEventTime();
++    static void                 UpdateLastInputEventTime(guint32 nUserInputTime);
+ };
+ 
+ #define OOO_TYPE_FIXED ooo_fixed_get_type()
+diff --git a/vcl/unx/gtk/gtksalmenu.cxx b/vcl/unx/gtk/gtksalmenu.cxx
+index c891cf3..75cab1c 100644
+--- a/vcl/unx/gtk/gtksalmenu.cxx
++++ b/vcl/unx/gtk/gtksalmenu.cxx
+@@ -679,6 +679,7 @@ bool GtkSalMenu::TakeFocus()
+ 
+ static void MenuBarReturnFocus(GtkMenuShell*, gpointer menu)
+ {
++    GtkSalFrame::UpdateLastInputEventTime(gtk_get_current_event_time());
+     GtkSalMenu* pMenu = static_cast<GtkSalMenu*>(menu);
+     pMenu->ReturnFocus();
+ }
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 17b9e27..77dc6c1 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2028,8 +2028,13 @@ guint32 GtkSalFrame::GetLastInputEventTime()
+     return nLastUserInputTime;
+ }
+ 
+-static void UpdateLastInputEventTime(guint32 nUserInputTime)
++void GtkSalFrame::UpdateLastInputEventTime(guint32 nUserInputTime)
+ {
++    //gtk3 can generate a synthetic crossing event with a useless 0
++    //(GDK_CURRENT_TIME) timestamp on showing a menu from the main
++    //menubar, which is unhelpful, so ignore the 0 timestamps
++    if (nUserInputTime == GDK_CURRENT_TIME)
++        return;
+     nLastUserInputTime = nUserInputTime;
+ }
+ 
+-- 
+2.9.3
+

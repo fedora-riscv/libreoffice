@@ -272,6 +272,7 @@ Patch39: 0001-change-from-glew-to-epoxy.patch
 Patch40: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 Patch41: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
 Patch42: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
+Patch43: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2331,6 +2332,7 @@ done
 %changelog
 * Tue Dec 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-12-UNBUILT
 - Resolves: rhbz#1400683 ctrl+alt+c doesn't insert comment
+- Resolves: rhbz#1401778 switching document from window menu doesn't work under wayland
 
 * Fri Dec 02 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.3.3-11
 - Resolves: rhbz#1376332 implement opengl transition support for gtk3 + wayland

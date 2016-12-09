@@ -1,0 +1,36 @@
+From ceec2456d59ca4c4ef440b5691e76c4af9cf8c0c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 9 Dec 2016 11:09:21 +0000
+Subject: [PATCH] Related: rhbz#1397939 crash with null pSidebarController
+
+Change-Id: I7627ff30564b2de61669c71dafd15e7b1778b5c6
+(cherry picked from commit f5edbb4158e86bfea7267115395b64e60fd61dc7)
+(cherry picked from commit 5768416761756a386cba54314f783cb9c0d0d093)
+---
+ sfx2/source/sidebar/Panel.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sfx2/source/sidebar/Panel.cxx b/sfx2/source/sidebar/Panel.cxx
+index 9c05dde..d5c6b78 100644
+--- a/sfx2/source/sidebar/Panel.cxx
++++ b/sfx2/source/sidebar/Panel.cxx
+@@ -115,14 +115,14 @@ void Panel::SetUIElement (const Reference<ui::XUIElement>& rxElement)
+ 
+ void Panel::SetExpanded (const bool bIsExpanded)
+ {
+-    SidebarController* pSidebarController= SidebarController::GetSidebarControllerForFrame(mxFrame);
++    SidebarController* pSidebarController = SidebarController::GetSidebarControllerForFrame(mxFrame);
+ 
+     if (mbIsExpanded != bIsExpanded)
+     {
+         mbIsExpanded = bIsExpanded;
+         maDeckLayoutTrigger();
+ 
+-        if (maContextAccess)
++        if (maContextAccess && pSidebarController)
+         {
+             pSidebarController->GetResourceManager()->StorePanelExpansionState(
+                 msPanelId,
+-- 
+2.9.3
+

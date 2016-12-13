@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%define libo_prerelease .beta2
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -225,15 +225,13 @@ Patch0:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch1:  libreoffice-installfix.patch
 # not upstreamed
-Patch2: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch2: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch3: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch4: 0001-add-X-TryExec-entries-to-desktop-files.patch
-Patch5: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch3: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch8: 0001-don-t-suppress-crashes.patch
+Patch4: 0001-don-t-suppress-crashes.patch
+Patch5: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2289,6 +2287,9 @@ done
 %endif
 
 %changelog
+* Thu Dec 15 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-5.beta2
+- update to 5.3.0 beta2
+
 * Tue Dec 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.3.0.0-4.beta1
 - rebuild for hunspell-1.5.4
 

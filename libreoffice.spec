@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2289,6 +2289,9 @@ done
 %endif
 
 %changelog
+* Tue Dec 13 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.3.0.0-4.beta1
+- rebuild for hunspell-1.5.4
+
 * Wed Nov 23 2016 David Tardon <dtardon@redhat.com> - 1:5.3.0.0-3.beta1
 - update to 5.3.0 beta1
 

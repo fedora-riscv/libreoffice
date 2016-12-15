@@ -53,8 +53,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2321,7 +2321,8 @@ done
 %endif
 
 %changelog
-* Fri Dec 09 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.1-2-UNBUILT
+* Thu Dec 15 2016 David Tardon <dtardon@redhat.com> - 1:5.2.4.2-1
+- update to 5.2.4
 - Resolves: rhbz#1397939 crash with null pSidebarController
 
 * Tue Dec 06 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.1-1

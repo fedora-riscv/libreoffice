@@ -5,7 +5,7 @@
 # so we need a way to define it easily at one place.
 %define libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
-%define libo_buildfix %{nil}
+%define libo_buildfix -buildfix1
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -1005,7 +1005,7 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
+%setup -q -n %{name}-%{version}%{?libo_prerelease}%{?libo_buildfix} -b 1 -b 2
 rm -rf git-hooks */git-hooks
 
 # set up git repo

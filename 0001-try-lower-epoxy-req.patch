@@ -1,0 +1,26 @@
+From 7d408567c5a3fe37ce4f72a1dc1a31e69af9b45c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 20 Dec 2016 11:11:32 +0000
+Subject: [PATCH] try lower epoxy req
+
+Change-Id: I2fff46985502dafa3b860aaebe862853ebaccabb
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 48cee0c..b18fec7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -11790,7 +11790,7 @@ AC_SUBST(CAIRO_LIBS)
+ dnl ===================================================================
+ dnl Check for system epoxy
+ dnl ===================================================================
+-libo_CHECK_SYSTEM_MODULE([epoxy], [EPOXY], [epoxy >= 1.3.1], ["-I${WORKDIR}/UnpackedTarball/epoxy/include"])
++libo_CHECK_SYSTEM_MODULE([epoxy], [EPOXY], [epoxy >= 1.2], ["-I${WORKDIR}/UnpackedTarball/epoxy/include"])
+ 
+ dnl ===================================================================
+ dnl Test whether to use avahi
+-- 
+2.9.3
+

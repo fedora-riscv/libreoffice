@@ -266,6 +266,7 @@ Patch32: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
 Patch33: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
 Patch34: 0001-Related-rhbz-1397939-crash-with-null-pSidebarControl.patch
 Patch35: 0001-Related-rhbz-1405521-abrt-reported-crash-in-dnd.patch
+Patch36: 0001-try-lower-epoxy-req.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

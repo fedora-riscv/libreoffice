@@ -192,7 +192,7 @@ BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
-BuildRequires: pkgconfig(libgltf-0.0)
+BuildRequires: pkgconfig(libgltf-0.1)
 BuildRequires: pkgconfig(liborcus-0.12)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
@@ -222,17 +222,18 @@ Requires: %{name}-base%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 
 # not upstreamed
-Patch0:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
+Patch0: 0001-installation-fix.patch
 # not upstreamed
-Patch1:  libreoffice-installfix.patch
+Patch1: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch2: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch3: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch2: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch4: 0001-don-t-suppress-crashes.patch
-Patch5: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch3: 0001-don-t-suppress-crashes.patch
+Patch4: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch5: 0001-change-from-glew-to-epoxy.patch
+Patch6: 0001-gtk3-implement-opengl-support-for-slideshow.patch
+Patch7: 0001-lower-the-system-epoxy-requirement.patch
 
 %if 0%{?rhel}
 # not upstreamed

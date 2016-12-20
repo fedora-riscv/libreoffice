@@ -1,17 +1,18 @@
-From eab93c587dd524241f63e885b0e4ac8700da5d16 Mon Sep 17 00:00:00 2001
+From 3d36f9efa2e2f7a39a926e2d1acea2255b990b03 Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
-Date: Mon, 3 Feb 2014 20:31:04 +0100
-Subject: [PATCH] solenv: allow missing files
+Date: Mon, 3 Feb 2014 21:41:00 +0100
+Subject: [PATCH] installation fix
 
 ---
  solenv/bin/modules/installer/scriptitems.pm | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ solenv/bin/modules/installer/worker.pm      |  1 -
+ 2 files changed, 6 insertions(+), 10 deletions(-)
 
 diff --git a/solenv/bin/modules/installer/scriptitems.pm b/solenv/bin/modules/installer/scriptitems.pm
-index 4c384ce..963ca84 100644
+index 5f8dfd6..dff0f13 100644
 --- a/solenv/bin/modules/installer/scriptitems.pm
 +++ b/solenv/bin/modules/installer/scriptitems.pm
-@@ -1133,11 +1133,10 @@ sub remove_Files_Without_Sourcedirectory
+@@ -1131,11 +1131,10 @@ sub remove_Files_Without_Sourcedirectory
  
              if ( ! $installer::globals::languagepack && !$installer::globals::helppack)
              {
@@ -25,7 +26,7 @@ index 4c384ce..963ca84 100644
  
                  next;   # removing this file from list, if sourcepath is empty
              }
-@@ -1145,11 +1144,10 @@ sub remove_Files_Without_Sourcedirectory
+@@ -1143,11 +1142,10 @@ sub remove_Files_Without_Sourcedirectory
              {
                  if (( $onefile->{'ismultilingual'} ) || ( $styles =~ /\bFORCELANGUAGEPACK\b/ ))
                  {
@@ -39,7 +40,7 @@ index 4c384ce..963ca84 100644
  
                      next;   # removing this file from list, if sourcepath is empty
                  }
-@@ -1167,11 +1165,10 @@ sub remove_Files_Without_Sourcedirectory
+@@ -1165,11 +1163,10 @@ sub remove_Files_Without_Sourcedirectory
              {
                  if (( $onefile->{'ismultilingual'} ) || ( $styles =~ /\bFORCEHELPPACK\b/ ))
                  {
@@ -53,6 +54,18 @@ index 4c384ce..963ca84 100644
  
                      next;   # removing this file from list, if sourcepath is empty
                  }
+diff --git a/solenv/bin/modules/installer/worker.pm b/solenv/bin/modules/installer/worker.pm
+index aab676f..0e6f67d 100644
+--- a/solenv/bin/modules/installer/worker.pm
++++ b/solenv/bin/modules/installer/worker.pm
+@@ -96,7 +96,6 @@ sub create_installation_directory
+ 
+     $installdir = installer::systemactions::create_directories("install", $languageref);
+     installer::logger::print_message( "... creating installation set in $installdir ...\n" );
+-    remove_old_installation_sets($installdir);
+     my $inprogressinstalldir = $installdir . "_inprogress";
+     installer::systemactions::rename_directory($installdir, $inprogressinstalldir);
+     $installdir = $inprogressinstalldir;
 -- 
-1.8.4.2
+2.9.3
 

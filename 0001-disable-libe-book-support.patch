@@ -1,4 +1,4 @@
-From af3156dd92c03e0005d55e88e6e45bca93a117ee Mon Sep 17 00:00:00 2001
+From d5a09cb1c8f61e2cfc60d8a1dfe57c1ed0a45cdc Mon Sep 17 00:00:00 2001
 From: David Tardon <dtardon@redhat.com>
 Date: Thu, 21 Aug 2014 16:10:51 +0200
 Subject: [PATCH] disable libe-book support
@@ -15,10 +15,10 @@ Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
  7 files changed, 30 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 62f753b..647ca87 100644
+index 5ec9ae6..7aed2ed 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7757,12 +7757,6 @@ AS_IF([test "$COM" = "MSC"],
+@@ -7796,12 +7796,6 @@ AS_IF([test "$COM" = "MSC"],
  libo_CHECK_SYSTEM_MODULE([librevenge],[REVENGE],[librevenge-0.0 >= 0.0.1],["-I${WORKDIR}/UnpackedTarball/librevenge/inc"],["-L${librevenge_libdir} -lrevenge-0.0"])
  
  dnl ===================================================================
@@ -32,7 +32,7 @@ index 62f753b..647ca87 100644
  dnl ===================================================================
  libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1])
 diff --git a/external/Module_external.mk b/external/Module_external.mk
-index 44280e3..b496331 100644
+index 55fce1f..2f53503 100644
 --- a/external/Module_external.mk
 +++ b/external/Module_external.mk
 @@ -37,7 +37,6 @@ $(eval $(call gb_Module_add_moduledirs,external,\
@@ -41,8 +41,8 @@ index 44280e3..b496331 100644
  	$(call gb_Helper_optional,CURL,curl) \
 -	$(call gb_Helper_optional,EBOOK,libebook) \
  	$(call gb_Helper_optional,EPM,epm) \
+ 	$(call gb_Helper_optional,EPOXY,epoxy) \
  	$(call gb_Helper_optional,ETONYEK,libetonyek) \
- 	$(call gb_Helper_optional,EXPAT,expat) \
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
 index 5dd20f7..d3dc749 100644
 --- a/filter/Configuration_filter.mk
@@ -143,5 +143,5 @@ index 4c5f37f..d815802 100644
        constructor="org_libreoffice_comp_Writer_PagesImportFilter_get_implementation">
      <service name="com.sun.star.document.ExtendedTypeDetection"/>
 -- 
-2.5.0
+2.9.3
 

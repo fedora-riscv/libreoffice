@@ -1152,7 +1152,7 @@ touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
- %{?_smp_mflags:--with-parallelism=2} \
+ %{?_smp_mflags:--with-parallelism=%{_smp_mflags}} \
  --disable-coinmp \
  --disable-fetch-external \
  --disable-openssl \

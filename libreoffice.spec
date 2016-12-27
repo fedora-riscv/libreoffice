@@ -55,11 +55,9 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
-
-ExcludeArch:    armv7hl
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -2290,6 +2288,9 @@ done
 %endif
 
 %changelog
+* Tue Dec 27 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.3.0.0-8.beta1
+- try arm build
+
 * Thu Dec 22 2016 Miro Hrončok <mhroncok@redhat.com> - 1:5.3.0.0-7.beta2
 - Rebuild for Python 3.6
 

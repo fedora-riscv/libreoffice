@@ -1064,6 +1064,7 @@ touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
+ --with-parallelism=1 \
  --disable-coinmp \
  --disable-fetch-external \
  --disable-firebird-sdbc \
@@ -1091,7 +1092,7 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-make verbose=true %{?_smp_mflags} build-nocheck
+make verbose=true -j1 build-nocheck
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

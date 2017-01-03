@@ -1058,13 +1058,17 @@ export MDDS_LIBS=' '
 aclocal -I m4
 autoconf
 
+SMP_MFLAGS=%{?_smp_mflags}
+SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
+SMP_MFLAGS=$((SMP_MFLAGS*2))
+
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
 touch autogen.lastrun
 %configure \
  %vendoroption \
  %{?with_lang} \
- --with-parallelism=1 \
+ --with-parallelism=$SMP_MFLAGS \
  --disable-coinmp \
  --disable-fetch-external \
  --disable-firebird-sdbc \
@@ -1092,7 +1096,7 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-make verbose=true -j1 build-nocheck
+make verbose=true build-nocheck
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

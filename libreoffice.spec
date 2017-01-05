@@ -267,6 +267,7 @@ Patch33: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
 Patch34: 0001-Related-rhbz-1397939-crash-with-null-pSidebarControl.patch
 Patch35: 0001-Related-rhbz-1405521-abrt-reported-crash-in-dnd.patch
 Patch36: 0001-try-lower-epoxy-req.patch
+Patch37: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2326,6 +2327,7 @@ done
 %changelog
 * Mon Dec 19 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-2-UNBUILT
 - Related: rhbz#1405521 abrt reported crash in dnd
+- Resolves: rhbz#1400328 fix import of SVG images
 
 * Thu Dec 15 2016 David Tardon <dtardon@redhat.com> - 1:5.2.4.2-1
 - update to 5.2.4

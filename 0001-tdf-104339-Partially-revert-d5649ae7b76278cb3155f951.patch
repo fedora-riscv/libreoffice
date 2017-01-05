@@ -1,0 +1,50 @@
+From 5903235d57acb13d9d5286d23b443a01aeab9a3c Mon Sep 17 00:00:00 2001
+From: Xisco Fauli <anistenis@gmail.com>
+Date: Fri, 16 Dec 2016 14:52:18 +0100
+Subject: [PATCH] tdf#104339 Partially revert
+ d5649ae7b76278cb3155f951d6327157c7c92b65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I5160c6efe7cf58351955d9d1d3066e3b33bdfe20
+Reviewed-on: https://gerrit.libreoffice.org/32082
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Xisco Faulí <xiscofauli@libreoffice.org>
+---
+ svgio/source/svgreader/svgstyleattributes.cxx | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/svgio/source/svgreader/svgstyleattributes.cxx b/svgio/source/svgreader/svgstyleattributes.cxx
+index 948f361..8cb6bb5 100644
+--- a/svgio/source/svgreader/svgstyleattributes.cxx
++++ b/svgio/source/svgreader/svgstyleattributes.cxx
+@@ -2677,24 +2677,7 @@ namespace svgio
+ 
+         OUString SvgStyleAttributes::getClipPathXLink() const
+         {
+-            if(mbIsClipPathContent)
+-            {
+-                return maClipPathXLink;
+-            }
+-
+-            if(!maClipPathXLink.isEmpty())
+-            {
+-                return maClipPathXLink;
+-            }
+-
+-            const SvgStyleAttributes* pSvgStyleAttributes = getParentStyle();
+-
+-            if(pSvgStyleAttributes && !pSvgStyleAttributes->maClipPathXLink.isEmpty())
+-            {
+-                return pSvgStyleAttributes->getClipPathXLink();
+-            }
+-
+-            return OUString();
++            return maClipPathXLink;
+         }
+ 
+         const SvgClipPathNode* SvgStyleAttributes::accessClipPathXLink() const
+-- 
+2.9.3
+

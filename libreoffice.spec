@@ -1062,6 +1062,7 @@ autoconf
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 SMP_MFLAGS=$((SMP_MFLAGS*2))
+SMP_MFLAGS=1
 
 # TODO: enable coinmp?
 # avoid running autogen.sh on make

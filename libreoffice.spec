@@ -1097,6 +1097,7 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
+make verbose=true helpcontent2.all
 make verbose=true build-nocheck
 
 #generate the icons and mime type stuff

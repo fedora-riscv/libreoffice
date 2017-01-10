@@ -1062,7 +1062,6 @@ autoconf
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 SMP_MFLAGS=$((SMP_MFLAGS*2))
-SMP_MFLAGS=1
 
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
@@ -1098,8 +1097,13 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-make verbose=true helpcontent2.all
-make verbose=true build-nocheck
+
+if ! make verbose=true build-nocheck; then
+    echo "build attempt 1 failed"
+    df -h
+    export TMPDIR=/var/tmp
+    make verbose=true GMAKE_OPTIONS=-rj1 build-nocheck
+fi
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

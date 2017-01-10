@@ -2326,7 +2326,7 @@ done
 %endif
 
 %changelog
-* Tue Jan 10 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-3
+* Tue Jan 10 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-3
 - Related: rhbz#1405521 abrt reported crash in dnd
 - Resolves: rhbz#1400328 fix import of SVG images
 - Resolves: rhbz#1409634 crash on close storing clipboard selection of database table

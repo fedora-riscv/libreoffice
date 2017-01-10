@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta2
+%define libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -234,7 +234,6 @@ Patch4: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
 Patch5: 0001-change-from-glew-to-epoxy.patch
 Patch6: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 Patch7: 0001-lower-the-system-epoxy-requirement.patch
-Patch8: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1998,6 +1997,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/resource/scen-US.res
 %{baseinstdir}/program/resource/solveren-US.res
 %{baseinstdir}/program/libvbaobjlo.so
+%{baseinstdir}/share/calc/styles.xml
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc
@@ -2300,6 +2300,9 @@ done
 %endif
 
 %changelog
+* Tue Jan 10 2017 David Tardon <dtardon@redhat.com> - 1:5.3.0.1-1
+- update to 5.3.0 rc1
+
 * Tue Dec 27 2016 Caolán McNamara <caolanm@redhat.com> - 1:5.3.0.0-8.beta1
 - try arm build
 

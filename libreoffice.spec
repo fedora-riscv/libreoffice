@@ -269,6 +269,7 @@ Patch35: 0001-Related-rhbz-1405521-abrt-reported-crash-in-dnd.patch
 Patch36: 0001-try-lower-epoxy-req.patch
 Patch37: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 Patch38: 0001-Resolves-rhbz-1409634-crash-on-close-storing-clipboa.patch
+Patch39: 0001-Resolves-rhbz-1408500-gtk3-toolbar-borders-too-disti.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2327,10 +2328,11 @@ done
 %endif
 
 %changelog
-* Tue Jan 10 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-2
+* Wed Jan 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-2
 - Related: rhbz#1405521 abrt reported crash in dnd
 - Resolves: rhbz#1400328 fix import of SVG images
 - Resolves: rhbz#1409634 crash on close storing clipboard selection of database table
+- Resolves: rhbz#1408500 gtk3 toolbar borders too distinct
 
 * Thu Dec 15 2016 David Tardon <dtardon@redhat.com> - 1:5.2.4.2-1
 - update to 5.2.4

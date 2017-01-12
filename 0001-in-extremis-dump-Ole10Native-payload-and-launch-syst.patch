@@ -117,7 +117,7 @@ index 815d0f2..3826646 100644
                  catch ( embed::UnreachableStateException& )
                  {
 -                    if ( nVerb == 0 || nVerb == embed::EmbedVerbs::MS_OLEVERB_OPEN )
-+                    if (nVerb == embed::EmbedVerbs::MS_OLEVERB_PRIMARY || nVerb == embed::EmbedVerbs::MS_OLEVERB_OPEN || embed::EmbedVerbs::MS_OLEVERB_SHOW)
++                    if (nVerb == embed::EmbedVerbs::MS_OLEVERB_PRIMARY || nVerb == embed::EmbedVerbs::MS_OLEVERB_OPEN || nVert == embed::EmbedVerbs::MS_OLEVERB_SHOW)
                      {
                          // a workaround for the default verb, usually makes sense for alien objects
                          try

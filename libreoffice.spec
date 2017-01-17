@@ -1,11 +1,11 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.4
+%define libo_version 5.2.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
 %define libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
-%define libo_buildfix -buildfix1
+%define libo_buildfix %{nil}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %define vendoroption --with-vendor="Red Hat, Inc."
@@ -22,8 +22,8 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-# %%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+#%%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 %if 0%{?fedora}
@@ -53,8 +53,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -231,49 +231,37 @@ Patch1:  openoffice.org-3.1.0.oooXXXXX.solenv.allowmissing.patch
 # not upstreamed
 Patch2:  libreoffice-installfix.patch
 # not upstreamed
-Patch3: 0001-Resolves-rhbz-1035092-no-shortcut-key-for-Italian-To.patch
+Patch3: 0001-never-run-autogen.sh.patch
 # not upstreamed
-Patch4: 0001-never-run-autogen.sh.patch
-# not upstreamed
-Patch5: 0001-add-X-TryExec-entries-to-desktop-files.patch
+Patch4: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch6: 0001-don-t-suppress-crashes.patch
-Patch7: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
-Patch8: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
-Patch9: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
-Patch10: 0001-add-xdg-email-as-the-default-email-route.patch
-Patch11: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
-Patch12: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-Patch13: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
-Patch14: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
-Patch15: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
-Patch16: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
-Patch17: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
-Patch18: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
-Patch19: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
-Patch20: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
-Patch21: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
-Patch22: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
-Patch23: 0001-avoid-loss-of-text-in-edited-placeholder.patch
-Patch24: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
-Patch25: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
-Patch26: 0001-Resolves-rhbz-1362453-use-the-cairo-scaling-approach.patch
-Patch27: 0001-glDrawArrays-takes-num-of-indices-not-size-of-storag.patch
-Patch28: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
-Patch29: 0001-change-from-glew-to-epoxy.patch
-Patch30: 0001-gtk3-implement-opengl-support-for-slideshow.patch
-Patch31: 0001-usageinfo-causes-one-of-our-more-frequent-fedora-25-.patch
-Patch32: 0001-Resolves-rhbz-1400683-ctrl-alt-c-doesn-t-insert-comm.patch
-Patch33: 0001-Resolves-rhbz-1401778-gtk3-wayland-switching-windows.patch
-Patch34: 0001-Related-rhbz-1397939-crash-with-null-pSidebarControl.patch
-Patch35: 0001-Related-rhbz-1405521-abrt-reported-crash-in-dnd.patch
-Patch36: 0001-try-lower-epoxy-req.patch
-Patch37: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
-Patch38: 0001-Resolves-rhbz-1409634-crash-on-close-storing-clipboa.patch
-Patch39: 0001-Resolves-rhbz-1408500-gtk3-toolbar-borders-too-disti.patch
-Patch40: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
-Patch41: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
+Patch5: 0001-don-t-suppress-crashes.patch
+Patch6: 0001-don-t-autocapitalize-words-that-follow-a-field-mark.patch
+Patch7: 0001-a11y-crash-on-deleting-certain-frame-in-certain-docu.patch
+Patch8: 0001-Resolves-rhbz-1351224-wayland-grab-related-crashes.patch
+Patch9: 0001-only-date-autofilter-menus-need-the-space-for-the-tr.patch
+Patch10: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
+Patch11: 0001-in-msword-the-hard-break-between-image-and-caption-h.patch
+Patch12: 0001-Resolves-tdf-98807-gtk3-isn-t-giving-utility-windows.patch
+Patch13: 0001-Related-rhbz-1390607-our-side-of-per-monitor-fullscr.patch
+Patch14: 0001-ensure-checkForUniqueItem-on-inserting-a-new-slide.patch
+Patch15: 0001-catch-and-rethrow-later-uno-exceptions-within-glib-s.patch
+Patch16: 0001-gtk3-focus-jumping-around-the-place-under-wayland-po.patch
+Patch17: 0001-Resolves-rhbz-1342828-toolbars-jumping-around-while-.patch
+Patch18: 0001-Resolves-rhbz-1391418-wayland-toolbars-can-t-be-dock.patch
+Patch19: 0001-gtk-under-wayland-tracking-the-window-position-is-wo.patch
+Patch20: 0001-Resolves-rhbz-1396827-update-geom-on-mouse-click-as-.patch
+Patch21: 0001-avoid-loss-of-text-in-edited-placeholder.patch
+Patch22: 0001-set-the-search-toolbar-so-it-doesn-t-move-around-wrt.patch
+Patch23: 0001-Resolves-rhbz-1397181-toolbar-layout-manager-not-res.patch
+Patch24: 0001-rework-diamond-transition-to-use-only-opengl-core.patch
+Patch25: 0001-change-from-glew-to-epoxy.patch
+Patch26: 0001-gtk3-implement-opengl-support-for-slideshow.patch
+Patch27: 0001-try-lower-epoxy-req.patch
+Patch28: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
+Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
+Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2332,7 +2320,7 @@ done
 %endif
 
 %changelog
-* Wed Jan 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.4.2-3
+* Wed Jan 18 2017 David Tardon <dtardon@redhat.com> - 1:5.2.5.1-1
 - Related: rhbz#1405521 abrt reported crash in dnd
 - Resolves: rhbz#1400328 fix import of SVG images
 - Resolves: rhbz#1409634 crash on close storing clipboard selection of database table

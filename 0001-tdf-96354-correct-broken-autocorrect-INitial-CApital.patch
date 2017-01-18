@@ -1,0 +1,46 @@
+From 76ab23e1f3adf5206212e30a28a699cb64868fb0 Mon Sep 17 00:00:00 2001
+From: Yossi Zahn <yossizahn@gmail.com>
+Date: Mon, 28 Nov 2016 13:01:40 +0000
+Subject: [PATCH] tdf#96354 correct broken autocorrect INitial CApitals
+
+Change-Id: If65ec7814c3aed5e4c17294ae57c34550373469d
+Reviewed-on: https://gerrit.libreoffice.org/31317
+Reviewed-by: jan iversen <jani@documentfoundation.org>
+Tested-by: jan iversen <jani@documentfoundation.org>
+(cherry picked from commit c6db0e064959ec154db9471a8e1f1e2716bb3523)
+---
+ editeng/source/misc/svxacorr.cxx | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/editeng/source/misc/svxacorr.cxx b/editeng/source/misc/svxacorr.cxx
+index b363614..f8f180e 100644
+--- a/editeng/source/misc/svxacorr.cxx
++++ b/editeng/source/misc/svxacorr.cxx
+@@ -104,13 +104,13 @@ static inline bool IsWordDelim( const sal_Unicode c )
+ static inline bool IsLowerLetter( sal_Int32 nCharType )
+ {
+     return CharClass::isLetterType( nCharType ) &&
+-            0 == ( css::i18n::KCharacterType::UPPER & nCharType);
++           ( css::i18n::KCharacterType::LOWER & nCharType);
+ }
+ 
+ static inline bool IsUpperLetter( sal_Int32 nCharType )
+ {
+     return CharClass::isLetterType( nCharType ) &&
+-            0 == ( css::i18n::KCharacterType::LOWER & nCharType);
++            ( css::i18n::KCharacterType::UPPER & nCharType);
+ }
+ 
+ bool lcl_IsUnsupportedUnicodeChar( CharClass& rCC, const OUString& rTxt,
+@@ -415,7 +415,7 @@ bool SvxAutoCorrect::FnCapitalStartWord( SvxAutoCorrDoc& rDoc, const OUString& r
+                 if( xSpeller->hasLanguage(eLang) )
+                 {
+                     Sequence< css::beans::PropertyValue > aEmptySeq;
+-                    if (!xSpeller->spell(sWord, eLang, aEmptySeq).is())
++                    if (xSpeller->isValid(sWord, eLang, aEmptySeq))
+                     {
+                         return false;
+                     }
+-- 
+2.9.3
+

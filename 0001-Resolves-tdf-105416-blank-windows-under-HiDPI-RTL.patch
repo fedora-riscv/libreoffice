@@ -1,0 +1,27 @@
+From ddc719f17427070be46492ea6b5cca587f867e10 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 19 Jan 2017 10:01:25 +0000
+Subject: [PATCH] Resolves: tdf#105416 blank windows under HiDPI RTL
+
+Change-Id: I819f06babd448c37ce2d58297562b640aba1c8c6
+(cherry picked from commit 4e9cfc178c47893229f8030bfe73e2b7c5de92c3)
+---
+ vcl/headless/svpgdi.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index 3f4a042..c832893 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -409,7 +409,7 @@ sal_uInt16 SvpSalGraphics::GetBitCount() const
+ 
+ long SvpSalGraphics::GetGraphicsWidth() const
+ {
+-    return m_pSurface ? cairo_image_surface_get_width(m_pSurface) : 0;
++    return m_pSurface ? cairo_image_surface_get_width(m_pSurface) / m_fScale : 0;
+ }
+ 
+ void SvpSalGraphics::ResetClipRegion()
+-- 
+2.9.3
+

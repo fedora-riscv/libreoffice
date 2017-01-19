@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -262,6 +262,7 @@ Patch27: 0001-try-lower-epoxy-req.patch
 Patch28: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
 Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
+Patch31: 0001-Resolves-tdf-105416-blank-windows-under-HiDPI-RTL.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2320,6 +2321,9 @@ done
 %endif
 
 %changelog
+* Thu Jan 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-2-UNBUILT
+- Resolves: tdf#105416 fix blank windows under hidpi + rtl
+
 * Wed Jan 18 2017 David Tardon <dtardon@redhat.com> - 1:5.2.5.1-1
 - Related: rhbz#1405521 abrt reported crash in dnd
 - Resolves: rhbz#1400328 fix import of SVG images

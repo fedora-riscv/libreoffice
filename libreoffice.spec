@@ -2321,8 +2321,9 @@ done
 %endif
 
 %changelog
-* Thu Jan 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-2-UNBUILT
+* Mon Jan 23 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-2
 - Resolves: tdf#105416 fix blank windows under hidpi + rtl
+- improve Ole10Native dumping
 
 * Wed Jan 18 2017 David Tardon <dtardon@redhat.com> - 1:5.2.5.1-1
 - Related: rhbz#1405521 abrt reported crash in dnd

@@ -31,12 +31,19 @@
 %global file_triggers 1
 %endif
 %global girapiversion 0.1
+%ifarch %{arm}
+%global armhack 1
+%endif
 
 # get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
+%if 0%{?armhack}
+%bcond_with langpacks
+%else
 %bcond_without langpacks
+%endif
 
 # remove workdir at the end of %%build, to allow build on space-constrained machines
 %ifarch s390 s390x
@@ -54,11 +61,9 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
-
-ExcludeArch:    armv7hl
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -835,7 +840,9 @@ Provides additional %{langname} translations and resources for LibreOffice. \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
 %{-T: \
 %docdir %{baseinstdir}/help/%{_langpack_lang} \
+%if !0%{?armhack}
 %{baseinstdir}/help/%{_langpack_lang} \
+%endif
 } \
 %{-i:%{expand:%%_langpack_common %{-i*}}} \
 } \
@@ -1114,7 +1121,9 @@ touch autogen.lastrun
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \
+%if !0%{?armhack}
  --with-help \
+%endif
  --with-system-dicts \
  --with-system-libs \
  --without-fonts \
@@ -1482,6 +1491,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files core
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
+%if !0%{?armhack}
 %docdir %{baseinstdir}/help/en-US
 %dir %{baseinstdir}/help/en-US
 %{baseinstdir}/help/en-US/default.css
@@ -1493,6 +1503,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/help/en-US/sbasic.*
 %{baseinstdir}/help/en-US/schart.*
 %{baseinstdir}/help/en-US/shared.*
+%endif
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
 %{baseinstdir}/help/main_transform.xsl
@@ -1901,7 +1912,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files base
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/sdatabase.*
+%endif
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
@@ -1994,7 +2007,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc instdir/LICENSE
 
 %files calc
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/scalc.*
+%endif
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -2036,7 +2051,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files draw
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/sdraw.*
+%endif
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
@@ -2058,7 +2075,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/msgbox.py*
 
 %files writer
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/swriter.*
+%endif
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -2085,7 +2104,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/simpress.*
+%endif
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
@@ -2113,7 +2134,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files math
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/smath.*
+%endif
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/program/resource/smen-US.res
@@ -2321,6 +2344,9 @@ done
 %endif
 
 %changelog
+* Tue Jan 24 2017 David Tardon <dtardon@redhat.com> - 1:5.2.5.1-3
+- temp. disable building of help on ARM to fix build
+
 * Mon Jan 23 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-2
 - Resolves: tdf#105416 fix blank windows under hidpi + rtl
 - improve Ole10Native dumping

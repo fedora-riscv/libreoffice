@@ -61,7 +61,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -268,6 +268,7 @@ Patch28: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
 Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
 Patch31: 0001-Resolves-tdf-105416-blank-windows-under-HiDPI-RTL.patch
+Patch32: 0001-sw-revert-ToX-hyperlinks-to-LO-4.3-behaviour.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2344,6 +2345,9 @@ done
 %endif
 
 %changelog
+* Wed Jan 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-4
+- fix overlapping hyperlinks in writer toc confusion
+
 * Tue Jan 24 2017 David Tardon <dtardon@redhat.com> - 1:5.2.5.1-3
 - temp. disable building of help on ARM to fix build
 

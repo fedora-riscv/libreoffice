@@ -61,7 +61,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -269,6 +269,7 @@ Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
 Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
 Patch31: 0001-Resolves-tdf-105416-blank-windows-under-HiDPI-RTL.patch
 Patch32: 0001-sw-revert-ToX-hyperlinks-to-LO-4.3-behaviour.patch
+Patch33: 0001-Resolves-tdf-104153-lookup-what-listbox-an-entry-is-.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2345,6 +2346,9 @@ done
 %endif
 
 %changelog
+* Fri Jan 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-5-UNBUILT
+- make pivot table dialog not crash
+
 * Wed Jan 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-4
 - fix overlapping hyperlinks in writer toc confusion
 

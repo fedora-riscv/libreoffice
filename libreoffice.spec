@@ -270,6 +270,7 @@ Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
 Patch31: 0001-Resolves-tdf-105416-blank-windows-under-HiDPI-RTL.patch
 Patch32: 0001-sw-revert-ToX-hyperlinks-to-LO-4.3-behaviour.patch
 Patch33: 0001-Resolves-tdf-104153-lookup-what-listbox-an-entry-is-.patch
+Patch34: 0001-Resolves-rhbz-1417480-stray-bare-XWarpPointer-call-i.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2346,7 +2347,8 @@ done
 %endif
 
 %changelog
-* Fri Jan 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-5-UNBUILT
+* Mon Jan 30 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-5-UNBUILT
+- Resolves:rhbz#1417480 stray bare XWarpPointer call crash under wayland
 - make pivot table dialog not crash
 
 * Wed Jan 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-4

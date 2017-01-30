@@ -1,0 +1,37 @@
+From c97c60da0e25e85c00aa620559f685a1370ba2c4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 30 Jan 2017 09:13:21 +0000
+Subject: [PATCH] Resolves: rhbz#1417480 stray bare XWarpPointer call in gtk3
+ code
+
+which blows up under wayland naturally
+
+can get here from tools->options->mouse positioning->"dialog center"
+table->insert table
+
+Change-Id: Id81b06a63cc3a2a1073d236e2f36dc65e533e598
+(cherry picked from commit b4b989b59cc5841fdf4635b19b975cae3a88430f)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 00438ea..1c2486e 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2140,9 +2140,9 @@ void GtkSalFrame::SetPointerPos( long nX, long nY )
+     unsigned int nWindowLeft = maGeometry.nX + nX;
+     unsigned int nWindowTop  = maGeometry.nY + nY;
+ 
+-    XWarpPointer( GDK_DISPLAY_XDISPLAY (pDisplay), None,
+-                  GDK_WINDOW_XID (gdk_screen_get_root_window( pScreen ) ),
+-                  0, 0, 0, 0, nWindowLeft, nWindowTop);
++    GdkDeviceManager* pManager = gdk_display_get_device_manager(pDisplay);
++    gdk_device_warp(gdk_device_manager_get_client_pointer(pManager), pScreen, nWindowLeft, nWindowTop);
++
+     // #i38648# ask for the next motion hint
+     gint x, y;
+     GdkModifierType mask;
+-- 
+2.9.3
+

@@ -1131,7 +1131,6 @@ touch autogen.lastrun
  %{?archoptions}
 
 ulimit -c unlimited
-export TMPDIR=/var/tmp
 %if 0%{?armhack}
 ( make verbose=true helpcontent2.all \
 || make verbose=true PARALLELISM=1 helpcontent2.all ) && \

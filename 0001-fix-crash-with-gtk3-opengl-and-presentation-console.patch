@@ -1,4 +1,4 @@
-From 56f634c8bf3c77ef53f0ab475680a0c3b5dcd1c5 Mon Sep 17 00:00:00 2001
+From fd59e15b6889ddc77bb1be09a2a97f54fe3b3a19 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 1 Feb 2017 17:24:26 +0000
 Subject: [PATCH] fix crash with gtk3, opengl and presentation console
@@ -21,27 +21,27 @@ Change-Id: If1b23600ef07241e52d92bd5eb38b9e90d9ed192
  4 files changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 74649cb..3deb4c4 100644
+index c0f2350..874566d 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
-@@ -348,6 +348,7 @@ public:
+@@ -354,6 +354,7 @@ public:
+ #if GTK_CHECK_VERSION(3,0,0)
      cairo_surface_t*                m_pSurface;
      DamageHandler                   m_aDamageHandler;
-     int                             m_nGrabLevel;
 +    bool                            m_bSalObjectSetPosSize;
  #endif
      GtkSalFrame( SalFrame* pParent, SalFrameStyleFlags nStyle );
      GtkSalFrame( SystemParentData* pSysData );
-@@ -425,6 +426,7 @@ public:
-     void addGrabLevel();
-     void removeGrabLevel();
+@@ -431,6 +432,7 @@ public:
+ 
+     static void closePopup();
  
 +    void nopaint_container_resize_children(GtkContainer*);
  #endif
-     virtual ~GtkSalFrame() override;
+     virtual ~GtkSalFrame();
  
 diff --git a/vcl/inc/unx/gtk/gtkobject.hxx b/vcl/inc/unx/gtk/gtkobject.hxx
-index 12a9ff3..1f30095 100644
+index 55896a2..1b048eb 100644
 --- a/vcl/inc/unx/gtk/gtkobject.hxx
 +++ b/vcl/inc/unx/gtk/gtkobject.hxx
 @@ -30,6 +30,7 @@ class GtkSalObject : public SalObject
@@ -53,18 +53,18 @@ index 12a9ff3..1f30095 100644
  #else
      GdkRegion*          m_pRegion;
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 6b0af8f..1a74fb5 100644
+index b5f77c3..7f711ae 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -982,6 +982,7 @@ void GtkSalFrame::InitCommon()
+@@ -961,6 +961,7 @@ static void damaged(void *handle,
+ void GtkSalFrame::InitCommon()
  {
      m_pSurface = nullptr;
-     m_nGrabLevel = 0;
 +    m_bSalObjectSetPosSize = false;
  
      m_aDamageHandler.handle = this;
      m_aDamageHandler.damaged = ::damaged;
-@@ -2892,6 +2893,8 @@ void GtkSalFrame::sizeAllocated(GtkWidget*, GdkRectangle *pAllocation, gpointer
+@@ -2888,6 +2889,8 @@ void GtkSalFrame::sizeAllocated(GtkWidget*, GdkRectangle *pAllocation, gpointer
      pThis->maGeometry.nHeight = pAllocation->height;
      pThis->AllocateFrame();
      pThis->CallCallbackExc( SalEvent::Resize, nullptr );
@@ -73,7 +73,7 @@ index 6b0af8f..1a74fb5 100644
      pThis->TriggerPaintEvent();
  }
  
-@@ -4283,4 +4286,11 @@ long GtkSalFrame::CallCallbackExc(SalEvent nEvent, const void* pEvent) const
+@@ -4299,4 +4302,11 @@ long GtkSalFrame::CallCallbackExc(SalEvent nEvent, const void* pEvent) const
      return nRet;
  }
  
@@ -86,7 +86,7 @@ index 6b0af8f..1a74fb5 100644
 +
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/vcl/unx/gtk3/gtk3gtkobject.cxx b/vcl/unx/gtk3/gtk3gtkobject.cxx
-index 039a4ba..4a8d0fd 100644
+index b57c4dc..d86163a 100644
 --- a/vcl/unx/gtk3/gtk3gtkobject.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkobject.cxx
 @@ -30,8 +30,9 @@

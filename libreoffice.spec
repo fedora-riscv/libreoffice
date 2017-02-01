@@ -268,6 +268,7 @@ Patch32: 0001-sw-revert-ToX-hyperlinks-to-LO-4.3-behaviour.patch
 Patch33: 0001-Resolves-tdf-104153-lookup-what-listbox-an-entry-is-.patch
 Patch34: 0001-Resolves-rhbz-1417480-stray-bare-XWarpPointer-call-i.patch
 Patch35: 0001-Resolves-tdf-101664-dropcaps-not-set-in-styles-on-lo.patch
+Patch36: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2329,10 +2330,11 @@ done
 %endif
 
 %changelog
-* Mon Jan 30 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-5-UNBUILT
+* Wed Feb 01 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-5
 - Resolves:rhbz#1417480 stray bare XWarpPointer call crash under wayland
 - make pivot table dialog not crash
 - Resolves: tdf#101664 dropcaps not set in styles on load
+- make opengl work inside presenter console under gtk3
 
 * Wed Jan 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-4
 - fix overlapping hyperlinks in writer toc confusion

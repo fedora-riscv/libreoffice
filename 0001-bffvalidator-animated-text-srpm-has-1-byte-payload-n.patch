@@ -1,0 +1,38 @@
+From dcc5c8e93c67d59820c92ec5d6fa7d78671993b3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 2 Feb 2017 16:02:42 +0000
+Subject: [PATCH] bffvalidator: animated text srpm has 1 byte payload, not 2
+
+which is why my sample document creates a .doc which triggers
+word's safe mode
+
+this has been wrong since initial impl in
+
+commit 4d5c193b2fd38c6cab049fcb97189462fff0fddb
+...
+    2003/07/17 14:13:17 mmaher 1.64.6.6: #110851# Added support for animated text effects
+
+a mere 13+ years ago
+
+Change-Id: I8c4d95dac8e03f6523a2a036f0100f425f787a13
+(cherry picked from commit 6263d03d538f014af2e17a4ecf3d218387ba5219)
+---
+ sw/source/filter/ww8/ww8atr.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sw/source/filter/ww8/ww8atr.cxx b/sw/source/filter/ww8/ww8atr.cxx
+index ebd51df..fb6b552 100644
+--- a/sw/source/filter/ww8/ww8atr.cxx
++++ b/sw/source/filter/ww8/ww8atr.cxx
+@@ -1125,7 +1125,7 @@ void WW8AttributeOutput::CharAnimatedText( const SvxBlinkItem& rBlink )
+ {
+     m_rWW8Export.InsUInt16( NS_sprm::LN_CSfxText );
+     // At the moment the only animated text effect we support is blinking
+-    m_rWW8Export.InsUInt16( rBlink.GetValue() ? 2 : 0 );
++    m_rWW8Export.pO->push_back( rBlink.GetValue() ? 2 : 0 );
+ }
+ 
+ void WW8AttributeOutput::CharCrossedOut( const SvxCrossedOutItem& rCrossed )
+-- 
+2.9.3
+

@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -257,6 +257,10 @@ Patch503: 0001-impl.-missing-function.patch
 %global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.12\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
+%endif
+
+%if 0%{?__isa_bits} == 64
+%global mark64 ()(64bit)
 %endif
 
 %description
@@ -554,9 +558,6 @@ creation and management of PostgreSQL databases through a GUI.
 %package ure
 Summary: UNO Runtime Environment
 #rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
-%if 0%{?__isa_bits} == 64
-%global mark64 ()(64bit)
-%endif
 Requires: %{name}-ure-common = %{epoch}:%{version}-%{release}
 Requires: unzip%{?_isa}, libjvm.so%{?mark64}
 Obsoletes: openoffice.org-ure < 1:3.3.1
@@ -664,6 +665,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: gstreamer1(element-gtksink)%{?mark64}
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
@@ -2301,6 +2303,9 @@ done
 %endif
 
 %changelog
+* Thu Feb 02 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.0.3-2
+- Resolves: rhbz#1409401 add depend on gtksink gstreamer1 element
+
 * Fri Jan 27 2017 David Tardon <dtardon@redhat.com> - 1:5.3.0.3-1
 - update to 5.3.0 rc3
 

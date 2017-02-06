@@ -40,7 +40,11 @@
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
+%if 0%{?armhack}
+%bcond_with langpacks
+%else
 %bcond_without langpacks
+%endif
 
 # remove workdir at the end of %%build, to allow build on space-constrained machines
 %ifarch s390 s390x
@@ -807,7 +811,9 @@ Provides additional %{langname} translations and resources for LibreOffice. \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
 %{-T: \
 %docdir %{baseinstdir}/help/%{_langpack_lang} \
+%if !0%{?armhack}
 %{baseinstdir}/help/%{_langpack_lang} \
+%endif
 } \
 %{-i:%{expand:%%_langpack_common %{-i*}}} \
 } \
@@ -1089,7 +1095,9 @@ touch autogen.lastrun
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \
+%if !0%{?armhack}
  --with-help \
+%endif
  --with-system-dicts \
  --with-system-libs \
  --without-fonts \
@@ -1101,10 +1109,6 @@ touch autogen.lastrun
 
 ulimit -c unlimited
 
-%if 0%{?armhack}
-( make verbose=true helpcontent2.all \
-|| make verbose=true PARALLELISM=1 helpcontent2.all ) && \
-%endif
 make verbose=true build-nocheck
 
 #generate the icons and mime type stuff
@@ -1460,6 +1464,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files core
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
+%if !0%{?armhack}
 %docdir %{baseinstdir}/help/en-US
 %dir %{baseinstdir}/help/en-US
 %{baseinstdir}/help/en-US/default.css
@@ -1471,6 +1476,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/help/en-US/sbasic.*
 %{baseinstdir}/help/en-US/schart.*
 %{baseinstdir}/help/en-US/shared.*
+%endif
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
 %{baseinstdir}/help/main_transform.xsl
@@ -1882,7 +1888,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files base
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/sdatabase.*
+%endif
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
@@ -1975,7 +1983,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc instdir/LICENSE
 
 %files calc
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/scalc.*
+%endif
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -2018,7 +2028,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files draw
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/sdraw.*
+%endif
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
@@ -2040,7 +2052,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/msgbox.py*
 
 %files writer
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/swriter.*
+%endif
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -2067,7 +2081,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/simpress.*
+%endif
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
@@ -2095,7 +2111,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files math
+%if !0%{?armhack}
 %{baseinstdir}/help/en-US/smath.*
+%endif
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/program/resource/smen-US.res

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,6 +270,7 @@ Patch34: 0001-Resolves-rhbz-1417480-stray-bare-XWarpPointer-call-i.patch
 Patch35: 0001-Resolves-tdf-101664-dropcaps-not-set-in-styles-on-lo.patch
 Patch36: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 Patch37: 0001-bffvalidator-animated-text-srpm-has-1-byte-payload-n.patch
+Patch38: 0001-animation-duration-scale-etc-don-t-fill-horizontal-s.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2333,6 +2334,9 @@ done
 %endif
 
 %changelog
+* Tue Feb 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8-UNBUILT
+- animation duration/scale widget don't fill horizontal space
+
 * Thu Feb 02 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-7
 - fix broken .doc blink property export that triggers word's safe mode
 

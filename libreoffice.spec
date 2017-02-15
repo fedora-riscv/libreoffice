@@ -2335,7 +2335,7 @@ done
 %endif
 
 %changelog
-* Wed Feb 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8-UNBUILT
+* Wed Feb 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8
 - animation duration/scale widget don't fill horizontal space
 - Resolves: tdf#105998 distort hairline borders to fall inside canvas
 

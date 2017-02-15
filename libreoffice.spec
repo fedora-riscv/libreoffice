@@ -271,6 +271,7 @@ Patch35: 0001-Resolves-tdf-101664-dropcaps-not-set-in-styles-on-lo.patch
 Patch36: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 Patch37: 0001-bffvalidator-animated-text-srpm-has-1-byte-payload-n.patch
 Patch38: 0001-animation-duration-scale-etc-don-t-fill-horizontal-s.patch
+Patch39: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2334,8 +2335,9 @@ done
 %endif
 
 %changelog
-* Tue Feb 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8-UNBUILT
+* Wed Feb 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8-UNBUILT
 - animation duration/scale widget don't fill horizontal space
+- Resolves: tdf#105998 distort hairline borders to fall inside canvas
 
 * Thu Feb 02 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-7
 - fix broken .doc blink property export that triggers word's safe mode

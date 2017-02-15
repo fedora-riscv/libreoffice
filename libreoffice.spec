@@ -237,11 +237,10 @@ Patch2: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch3: 0001-don-t-suppress-crashes.patch
-Patch4: 0001-rhbz-1353069-don-t-record-undo-information-in-the-cl.patch
-Patch5: 0001-change-from-glew-to-epoxy.patch
-Patch6: 0001-gtk3-implement-opengl-support-for-slideshow.patch
-Patch7: 0001-lower-the-system-epoxy-requirement.patch
-Patch8: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
+Patch4: 0001-change-from-glew-to-epoxy.patch
+Patch5: 0001-gtk3-implement-opengl-support-for-slideshow.patch
+Patch6: 0001-lower-the-system-epoxy-requirement.patch
+Patch7: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 
 %if 0%{?rhel}
 # not upstreamed

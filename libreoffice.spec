@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.5
+%define libo_version 5.2.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -22,8 +22,8 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
-#%%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+#%%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src/
 %if 0%{?fedora}
@@ -61,7 +61,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -266,17 +266,9 @@ Patch26: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 Patch27: 0001-try-lower-epoxy-req.patch
 Patch28: 0001-tdf-104339-Partially-revert-d5649ae7b76278cb3155f951.patch
 Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
-Patch30: 0001-tdf-96354-correct-broken-autocorrect-INitial-CApital.patch
-Patch31: 0001-Resolves-tdf-105416-blank-windows-under-HiDPI-RTL.patch
-Patch32: 0001-sw-revert-ToX-hyperlinks-to-LO-4.3-behaviour.patch
-Patch33: 0001-Resolves-tdf-104153-lookup-what-listbox-an-entry-is-.patch
-Patch34: 0001-Resolves-rhbz-1417480-stray-bare-XWarpPointer-call-i.patch
-Patch35: 0001-Resolves-tdf-101664-dropcaps-not-set-in-styles-on-lo.patch
-Patch36: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
-Patch37: 0001-bffvalidator-animated-text-srpm-has-1-byte-payload-n.patch
-Patch38: 0001-animation-duration-scale-etc-don-t-fill-horizontal-s.patch
-Patch39: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
-Patch40: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
+Patch30: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
+Patch31: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
+Patch32: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2354,7 +2346,8 @@ done
 %endif
 
 %changelog
-* Fri Feb 17 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-9-UNBUILT
+* Fri Feb 17 2017 David Tardon <dtardon@redhat.com> - 1:5.2.6.1-1
+- update to 5.2.6 rc1
 - Related: rhbz#1422353 make writer behave like calc and impress wrt maximized first start
 
 * Wed Feb 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8

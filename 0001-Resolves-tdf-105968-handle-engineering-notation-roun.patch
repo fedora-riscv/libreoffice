@@ -1,0 +1,58 @@
+From 9c4ac0960602e6bf417d520478f666a13886cec3 Mon Sep 17 00:00:00 2001
+Message-Id: <9c4ac0960602e6bf417d520478f666a13886cec3.1487193222.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Wed, 15 Feb 2017 22:01:51 +0100
+Subject: [PATCH] Resolves: tdf#105968 handle engineering notation rounded into
+ next magnitude
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: Ie31ab88543994f0e8aeef8152c230c05e071ef8e
+(cherry picked from commit 63bc2b13cb344cce99348496838d7d2c2f690211)
+---
+ svl/source/numbers/zformat.cxx | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-105968-handle-engineering-notation-roun.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-105968-handle-engineering-notation-roun.patch"
+
+diff --git a/svl/source/numbers/zformat.cxx b/svl/source/numbers/zformat.cxx
+index 24ca0f9..6e740b3 100644
+--- a/svl/source/numbers/zformat.cxx
++++ b/svl/source/numbers/zformat.cxx
+@@ -2347,11 +2347,22 @@ bool SvNumberformat::ImpGetScientificOutput(double fNumber,
+                 nExpSign = 1;
+             }
+             ExpStr = OUString::number( nExp );
++            const sal_Unicode cFirstDigit = sStr[0];
+             // rescale mantissa
+             sStr = ::rtl::math::doubleToUString( fNumber,
+                                          rtl_math_StringFormat_E,
+                                          nRescale + rInfo.nCntPost, '.' );
++
++            // sStr now may contain a rounded-up value shifted into the next
++            // magnitude, for example 1.000E+02 (4 digits) for fNumber 99.995
++            // (9.9995E+02 rounded to 3 decimals) but we want the final result
++            // to be 100.00E+00 (5 digits), so for the following fill routines
++            // below to work correctly append a zero decimal.
++            /* TODO: this is awkward, could an engineering notation mode be
++             * introduced to rtl_math_doubleToUString()? */
+             sStr.truncate( sStr.indexOf('E') );
++            if (sStr[0] == '1' && cFirstDigit != '1')
++                sStr.append('0');
+         }
+ 
+         // cut any decimal delimiter
+
+--------------erAck-patch-parts--
+
+

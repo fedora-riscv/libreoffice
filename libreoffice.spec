@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -272,6 +272,7 @@ Patch36: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 Patch37: 0001-bffvalidator-animated-text-srpm-has-1-byte-payload-n.patch
 Patch38: 0001-animation-duration-scale-etc-don-t-fill-horizontal-s.patch
 Patch39: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
+Patch40: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2335,6 +2336,9 @@ done
 %endif
 
 %changelog
+* Fri Feb 17 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-9-UNBUILT
+- Related: rhbz#1422353 make writer behave like calc and impress wrt maximized first start
+
 * Wed Feb 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.5.1-8
 - animation duration/scale widget don't fill horizontal space
 - Resolves: tdf#105998 distort hairline borders to fall inside canvas

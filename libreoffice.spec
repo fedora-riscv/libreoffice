@@ -39,11 +39,7 @@
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
 # so it is necessary to change this to bcond_with to achieve the same
 # effect
-%if 0%{?armhack}
-%bcond_with langpacks
-%else
 %bcond_without langpacks
-%endif
 
 # remove workdir at the end of %%build, to allow build on space-constrained machines
 %ifarch s390 s390x

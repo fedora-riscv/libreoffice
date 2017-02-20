@@ -266,6 +266,7 @@ Patch30: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 Patch31: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 Patch32: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 Patch33: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
+Patch34: 0001-right-click-to-insert-image.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2345,6 +2346,7 @@ done
 %changelog
 * Mon Feb 20 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.1-2-UNBUILT
 - Related: rhbz#1424754 a11y warnings under gtk3
+- right click to insert image got removed
 
 * Fri Feb 17 2017 David Tardon <dtardon@redhat.com> - 1:5.2.6.1-1
 - update to 5.2.6 rc1

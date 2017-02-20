@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -265,6 +265,7 @@ Patch29: 0001-in-extremis-dump-Ole10Native-payload-and-launch-syst.patch
 Patch30: 0001-fix-crash-with-gtk3-opengl-and-presentation-console.patch
 Patch31: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 Patch32: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
+Patch33: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2342,6 +2343,9 @@ done
 %endif
 
 %changelog
+* Mon Feb 20 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.1-2-UNBUILT
+- Related: rhbz#1424754 a11y warnings under gtk3
+
 * Fri Feb 17 2017 David Tardon <dtardon@redhat.com> - 1:5.2.6.1-1
 - update to 5.2.6 rc1
 - Related: rhbz#1422353 make writer behave like calc and impress wrt maximized first start

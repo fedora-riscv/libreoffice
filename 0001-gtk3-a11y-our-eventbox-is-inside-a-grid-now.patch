@@ -1,0 +1,31 @@
+From 8041c9d613b66ec9aa0de30101d545ff7b89b92f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 21 Jul 2016 11:55:13 +0100
+Subject: [PATCH] gtk3-a11y: our eventbox is inside a grid now
+
+Change-Id: Icb49d6274b09fb426ab6c0f9f67b7c71c4ef9a31
+(cherry picked from commit 27328034f5e2644b4a0287532e762e87ea36c4a0)
+---
+ vcl/unx/gtk/a11y/atkfactory.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk/a11y/atkfactory.cxx b/vcl/unx/gtk/a11y/atkfactory.cxx
+index bca68a6..2f51f14 100644
+--- a/vcl/unx/gtk/a11y/atkfactory.cxx
++++ b/vcl/unx/gtk/a11y/atkfactory.cxx
+@@ -109,7 +109,11 @@ wrapper_factory_create_accessible( GObject *obj )
+     if (!pEventBox)
+         return atk_noop_object_wrapper_new();
+ 
+-    GtkWidget* pTopLevel = gtk_widget_get_parent(pEventBox);
++    GtkWidget* pTopLevelGrid = gtk_widget_get_parent(pEventBox);
++    if (!pTopLevelGrid)
++        return atk_noop_object_wrapper_new();
++
++    GtkWidget* pTopLevel = gtk_widget_get_parent(pTopLevelGrid);
+     if (!pTopLevel)
+         return atk_noop_object_wrapper_new();
+ #else
+-- 
+2.9.3
+

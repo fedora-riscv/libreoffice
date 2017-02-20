@@ -267,6 +267,7 @@ Patch31: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 Patch32: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 Patch33: 0001-gtk3-a11y-our-eventbox-is-inside-a-grid-now.patch
 Patch34: 0001-right-click-to-insert-image.patch
+Patch35: 0001-Resolves-tdf-106105-duplicate-marks-not-merged-when-.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2347,6 +2348,7 @@ done
 * Mon Feb 20 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.1-2-UNBUILT
 - Related: rhbz#1424754 a11y warnings under gtk3
 - right click to insert image got removed
+- Resolves: tdf#106105 duplicate marks not merged when at start of vector
 
 * Fri Feb 17 2017 David Tardon <dtardon@redhat.com> - 1:5.2.6.1-1
 - update to 5.2.6 rc1

@@ -1,0 +1,39 @@
+From fc391766c29745209b65f067db2a88bb8a0323c9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 20 Feb 2017 14:52:52 +0000
+Subject: [PATCH] Resolves: tdf#106105 duplicate marks not merged when they are
+ at the start
+
+i.e. initial mark isn't compared which goes on to crash under some circumstances
+
+regression from...
+
+commit aa11e7bae89fe691f914abb27d1c4a03d27a7ee5
+Date:   Tue Aug 14 16:31:53 2012 +0200
+
+    Convert maList in SdrMarkList from Container to std::vector
+
+Change-Id: Ib3e9b02aad91c14971656af171d48154507da127
+(cherry picked from commit 35bb22c1a834b306c910cb065bc006818c9fa9b3)
+---
+ svx/source/svdraw/svdmark.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/svx/source/svdraw/svdmark.cxx b/svx/source/svdraw/svdmark.cxx
+index bb164d7..4cbd4b5 100644
+--- a/svx/source/svdraw/svdmark.cxx
++++ b/svx/source/svdraw/svdmark.cxx
+@@ -258,8 +258,9 @@ void SdrMarkList::ImpForceSort()
+             if(maList.size() > 1)
+             {
+                 SdrMark* pAkt = maList.back();
+-                for (size_t i = maList.size() - 2; i; --i)
++                for (size_t count = maList.size() - 1; count; --count)
+                 {
++                    size_t i = count - 1;
+                     SdrMark* pCmp = maList[i];
+                     if(pAkt->GetMarkedSdrObj() == pCmp->GetMarkedSdrObj() && pAkt->GetMarkedSdrObj())
+                     {
+-- 
+2.9.3
+

@@ -238,6 +238,7 @@ Patch5: 0001-gtk3-implement-opengl-support-for-slideshow.patch
 Patch6: 0001-lower-the-system-epoxy-requirement.patch
 Patch7: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 Patch8: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
+Patch9: 0001-right-click-to-insert-image.patch
 
 %if 0%{?rhel}
 # not upstreamed

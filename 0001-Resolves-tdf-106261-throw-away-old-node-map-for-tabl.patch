@@ -1,0 +1,46 @@
+From 62f5fbd95c70c57356bcb3d616c06c0bb3ba6edc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 1 Mar 2017 17:24:21 +0000
+Subject: [PATCH] Resolves: tdf#106261 throw away old node map for table
+
+when generating a new one, otherwise on exporting the same table
+twice to two consecutive .doc footnotes will think the second
+export of the table is a level lower because it will find it
+in the map and
+
+WW8TableNodeInfo::Pointer_t WW8TableInfo::insertTableNodeInfo
+
+does pNodeInfo->setDepth(nDepth + pNodeInfo->getDepth());
+using the cached pNodeInfo depth and not a new fresh pNodeInfo of
+depth 0
+
+Change-Id: I7aa7ac6a19814910c1d19d78f04cfd9886c444c5
+(cherry picked from commit 6f3e24ad64dd40b3ef8def7d879ba395a16874a1)
+---
+ sw/source/filter/ww8/wrtww8.cxx | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/sw/source/filter/ww8/wrtww8.cxx b/sw/source/filter/ww8/wrtww8.cxx
+index 262ee5c..85bf4ea 100644
+--- a/sw/source/filter/ww8/wrtww8.cxx
++++ b/sw/source/filter/ww8/wrtww8.cxx
+@@ -1832,8 +1832,16 @@ void MSWordExportBase::WriteSpecialText( sal_uLong nStart, sal_uLong nEnd, sal_u
+     // clear linked textboxes since old ones can't be linked to frames in this section
+     m_aLinkedTextboxesHelper.clear();
+ 
++    // tdf#106261 Reset table infos, otherwise the depth of the cells will be
++    // incorrect, in case the header/footer had table(s) and we try to export
++    // the same table second time.
++    ww8::WW8TableInfo::Pointer_t pOldTableInfo = m_pTableInfo;
++    m_pTableInfo = std::make_shared<ww8::WW8TableInfo>();
++
+     WriteText();
+ 
++    m_pTableInfo = pOldTableInfo;
++
+     m_bOutPageDescs = bOldPageDescs;
+     delete m_pCurPam;                    // delete Pam
+     m_pCurPam = pOldPam;
+-- 
+2.9.3
+

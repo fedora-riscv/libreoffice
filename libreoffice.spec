@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,6 +270,7 @@ Patch34: 0001-right-click-to-insert-image.patch
 Patch35: 0001-Resolves-tdf-106105-duplicate-marks-not-merged-when-.patch
 Patch36: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch37: 0001-don-t-lock-sidebar-size-due-to-long-master-slide-nam.patch
+Patch38: 0001-Resolves-tdf-106261-throw-away-old-node-map-for-tabl.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2347,6 +2348,9 @@ done
 %endif
 
 %changelog
+* Fri Mar 03 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-2
+- Resolves: tdf#106261 fix export of certain table in footers combinations
+
 * Wed Mar 01 2017 David Tardon <dtardon@redhat.com> - 1:5.2.6.2-1
 - update to 5.2.6 rc2
 

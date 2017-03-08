@@ -1,0 +1,44 @@
+From 7573cf62537d8d6e3f359545ca454d30052f4873 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 8 Mar 2017 10:04:17 +0000
+Subject: [PATCH] show the last gif frame when the animation ends
+
+Change-Id: I240d0a46cff905edababbd13fe7e58c9e4d0f0db
+---
+ slideshow/source/engine/shapes/intrinsicanimationactivity.cxx | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/slideshow/source/engine/shapes/intrinsicanimationactivity.cxx b/slideshow/source/engine/shapes/intrinsicanimationactivity.cxx
+index e44f832..15aca74 100644
+--- a/slideshow/source/engine/shapes/intrinsicanimationactivity.cxx
++++ b/slideshow/source/engine/shapes/intrinsicanimationactivity.cxx
+@@ -173,12 +173,16 @@ namespace slideshow
+                 return false;
+             }
+ 
++            const ::std::size_t nNumFrames(maTimeouts.size());
++
+             // mnNumLoops == 0 means infinite looping
+             if( mnNumLoops != 0 &&
+                 mnLoopCount >= mnNumLoops )
+             {
+-                // #i55294# After finishing the loops, display the first frame
+-                pDrawShape->setIntrinsicAnimationFrame( 0 );
++                // #i55294# After finishing the loops, display the last frame
++                // powerpoint 2013 and firefox etc show the last frame when
++                // the animation ends
++                pDrawShape->setIntrinsicAnimationFrame(nNumFrames - 1);
+                 maContext.mpSubsettableShapeManager->notifyShapeUpdate( pDrawShape );
+ 
+                 end();
+@@ -187,7 +191,6 @@ namespace slideshow
+             }
+ 
+             ::std::size_t       nNewIndex = 0;
+-            const ::std::size_t nNumFrames(maTimeouts.size());
+ 
+             pDrawShape->setIntrinsicAnimationFrame( mnCurrIndex );
+ 
+-- 
+2.9.3
+

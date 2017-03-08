@@ -272,6 +272,7 @@ Patch36: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch37: 0001-don-t-lock-sidebar-size-due-to-long-master-slide-nam.patch
 Patch38: 0001-Resolves-tdf-106261-throw-away-old-node-map-for-tabl.patch
 Patch39: 0001-show-the-last-gif-frame-when-the-animation-ends.patch
+Patch40: 0001-tdf-106218-sw-compare-document-tweak-special-handlin.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2351,6 +2352,7 @@ done
 %changelog
 * Wed Mar 08 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-3-UNBUILT
 - show the last gif frame when the animation ends
+- Resolves: tdf#106218 compare document tweak special handling of EndOfContent
 
 * Fri Mar 03 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-2
 - Resolves: tdf#106261 fix export of certain table in footers combinations

@@ -1,0 +1,64 @@
+From e5945332990c09b21bf6127ffb411e18c66d6bc1 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Tue, 7 Mar 2017 23:12:44 +0100
+Subject: [PATCH] tdf#106218 sw: compare document: tweak special handling of
+ EndOfContent
+
+In case the last paragraph in the document is inserted or deleted, the
+redline must not be positioned on the EndOfContent node (i#101009).
+
+But then rejecting the redline will have an additional paragraph as
+compared to the original document.  Try to avoid that by tweaking the
+start position of the redline to the end of the previous paragraph.
+
+(regression from f4609c4c294a62023b6cd6baeb6a73d44992dec3)
+
+Change-Id: Iae75042a3124d0f3bca955fb856c94a6f478b986
+(cherry picked from commit 9b3fa51e7ba4e2bfe9806295c3cbc8db347480d8)
+---
+ sw/source/core/doc/doccomp.cxx | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/sw/source/core/doc/doccomp.cxx b/sw/source/core/doc/doccomp.cxx
+index fa2ca52..f2de17d 100644
+--- a/sw/source/core/doc/doccomp.cxx
++++ b/sw/source/core/doc/doccomp.cxx
+@@ -1682,6 +1682,17 @@ void CompareData::SetRedlinesToDoc( bool bUseDocInfo )
+                 SwContentNode *const pContentNode( pTmp->GetContentNode() );
+                 pTmp->GetPoint()->nContent.Assign( pContentNode,
+                         (pContentNode) ? pContentNode->Len() : 0 );
++                // tdf#106218 try to avoid losing a paragraph break here:
++                if (pTmp->GetMark()->nContent == 0)
++                {
++                    SwNodeIndex const prev(pTmp->GetMark()->nNode, -1);
++                    if (prev.GetNode().IsTextNode())
++                    {
++                        *pTmp->GetMark() = SwPosition(
++                            *prev.GetNode().GetTextNode(),
++                            prev.GetNode().GetTextNode()->Len());
++                    }
++                }
+             }
+ 
+             rDoc.getIDocumentRedlineAccess().DeleteRedline( *pTmp, false, USHRT_MAX );
+@@ -1714,6 +1725,17 @@ void CompareData::SetRedlinesToDoc( bool bUseDocInfo )
+                 SwContentNode *const pContentNode( pTmp->GetContentNode() );
+                 pTmp->GetPoint()->nContent.Assign( pContentNode,
+                         (pContentNode) ? pContentNode->Len() : 0 );
++                // tdf#106218 try to avoid losing a paragraph break here:
++                if (pTmp->GetMark()->nContent == 0)
++                {
++                    SwNodeIndex const prev(pTmp->GetMark()->nNode, -1);
++                    if (prev.GetNode().IsTextNode())
++                    {
++                        *pTmp->GetMark() = SwPosition(
++                            *prev.GetNode().GetTextNode(),
++                            prev.GetNode().GetTextNode()->Len());
++                    }
++                }
+             }
+         } while( pInsRing != ( pTmp = pTmp->GetNext()) );
+         SwRedlineData aRedlnData( nsRedlineType_t::REDLINE_INSERT, nAuthor, aTimeStamp,
+-- 
+2.9.3
+

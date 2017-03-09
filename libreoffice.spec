@@ -2350,7 +2350,7 @@ done
 %endif
 
 %changelog
-* Wed Mar 08 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-3-UNBUILT
+* Thu Mar 09 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-3
 - show the last gif frame when the animation ends
 - Resolves: tdf#106218 compare document tweak special handling of EndOfContent
 

@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -877,6 +877,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN -v hi-IN -w hi_IN -X
 %langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -V -w hr_HR -T -X
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU -V -w hu_HU
+%langpack -l id -n Indonesian -F -H -Y -T
 %langpack -l it -n Italian -F -H -Y -M -A -T -X -O -W
 %langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP -V -w ja_JP
 %langpack -l kk -n Kazakh -F -H
@@ -2320,6 +2321,9 @@ done
 %endif
 
 %changelog
+* Mon Mar 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.1.2-2
+- Resolves: rhbz#1431189 add Indonesian langpack
+
 * Thu Mar 09 2017 David Tardon <dtardon@redhat.com> - 1:5.3.1.2-1
 - update to 5.3.1 rc2
 

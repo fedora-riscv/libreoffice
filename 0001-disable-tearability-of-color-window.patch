@@ -1,0 +1,40 @@
+From ac6f8a49b6dc0b8c8edbba111e9913c87f65e19b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 13 Mar 2017 14:04:30 +0000
+Subject: [PATCH] disable tearability of color window
+
+Change-Id: I5e01bf274f1a621f8d78e26ba8202451800c8ad4
+---
+ svx/source/tbxctrls/tbcontrl.cxx | 3 +--
+ svx/uiconfig/ui/colorwindow.ui   | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/svx/source/tbxctrls/tbcontrl.cxx b/svx/source/tbxctrls/tbcontrl.cxx
+index 28684f4..c85b3e6 100644
+--- a/svx/source/tbxctrls/tbcontrl.cxx
++++ b/svx/source/tbxctrls/tbcontrl.cxx
+@@ -2759,8 +2759,7 @@ VclPtr<SfxPopupWindow> SvxColorToolBoxControl::CreatePopupWindow()
+             break;
+     }
+ 
+-    pColorWin->StartPopupMode( &GetToolBox(),
+-        FloatWinPopupFlags::AllowTearOff|FloatWinPopupFlags::NoAppFocusClose );
++    pColorWin->StartPopupMode( &GetToolBox(), FloatWinPopupFlags::NoAppFocusClose );
+     pColorWin->StartSelection();
+     SetPopupWindow( pColorWin );
+     if ( !bSidebarType )
+diff --git a/svx/uiconfig/ui/colorwindow.ui b/svx/uiconfig/ui/colorwindow.ui
+index 9482562..702bee3 100644
+--- a/svx/uiconfig/ui/colorwindow.ui
++++ b/svx/uiconfig/ui/colorwindow.ui
+@@ -25,7 +25,6 @@
+     <property name="destroy_with_parent">True</property>
+     <property name="type_hint">popup-menu</property>
+     <property name="skip_pager_hint">True</property>
+-    <property name="decorated">False</property>
+     <property name="deletable">False</property>
+     <child>
+       <object class="GtkBox" id="box1">
+-- 
+2.9.3
+

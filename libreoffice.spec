@@ -275,6 +275,7 @@ Patch39: 0001-show-the-last-gif-frame-when-the-animation-ends.patch
 Patch40: 0001-tdf-106218-sw-compare-document-tweak-special-handlin.patch
 Patch41: 0001-rhbz-1431476-dnd-has-started-copying-instead-of-movi.patch
 Patch42: 0001-Resolves-rhbz-1431540-crash-in-SwDBManager-releaseRe.patch
+Patch43: 0001-disable-tearability-of-color-window.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2355,6 +2356,7 @@ done
 * Mon Mar 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-4
 - Resolves: rhbz#1431476 dnd has started copying instead of moving slides
 - Resolves: rhbz#1431540 crash in SwDBManager releaseRef
+- Resolves: rhbz#1431478 color popups in wrong place under wayland
 
 * Thu Mar 09 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-3
 - show the last gif frame when the animation ends

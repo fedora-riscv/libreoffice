@@ -1,0 +1,46 @@
+From 6903066822900a700ccf67ae70fa171c94644a9a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 23 Mar 2017 14:13:27 +0000
+Subject: [PATCH] Related: rhbz#1334915 tdf#100158 hack using startcenter icon
+ under wayland
+
+cause I can get no traction with gnome#779143 to allow changing wayland
+app_ids for windows, so might as well bodge something to make us look
+less pathetic than the broken app icon
+
+Change-Id: I9810ba4908dd06a2fdbb2e58e7ad6ff4978ddd43
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index a06294b..a1dae15 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -1447,7 +1447,23 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
+                 m_pParent->addGrabLevel();
+             }
+ 
++#if defined(GDK_WINDOWING_WAYLAND)
++            //rhbz#1334915, gnome#779143, tdf#100158
++            //gtk under wayland lacks a way to change the app_id
++            //of a window, so brute force everything as a
++            //startcenter when initially shown to at least get
++            //the default LibreOffice icon and not the broken
++            //app icon
++            if (GDK_IS_WAYLAND_DISPLAY(getGdkDisplay()))
++            {
++                OString sOrigName(g_get_prgname());
++                g_set_prgname("libreoffice-startcenter");
++                gtk_widget_show(m_pWindow);
++                g_set_prgname(sOrigName.getStr());
++            }
++#else
+             gtk_widget_show(m_pWindow);
++#endif
+ 
+             if( isFloatGrabWindow() )
+             {
+-- 
+2.9.3
+

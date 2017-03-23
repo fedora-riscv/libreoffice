@@ -241,6 +241,7 @@ Patch8: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 Patch9: 0001-right-click-to-insert-image.patch
 Patch10: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch11: 0001-Resolves-tdf-106645-gtk3-scrollbar-is-too-wide.patch
+Patch12: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 
 %if 0%{?rhel}
 # not upstreamed

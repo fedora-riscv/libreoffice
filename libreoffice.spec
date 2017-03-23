@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -276,6 +276,7 @@ Patch40: 0001-tdf-106218-sw-compare-document-tweak-special-handlin.patch
 Patch41: 0001-rhbz-1431476-dnd-has-started-copying-instead-of-movi.patch
 Patch42: 0001-Resolves-rhbz-1431540-crash-in-SwDBManager-releaseRe.patch
 Patch43: 0001-disable-tearability-of-color-window.patch
+Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2353,6 +2354,11 @@ done
 %endif
 
 %changelog
+* Thu Mar 23 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-5-UNBUILT
+- Related: rhbz#1334915 if gtk won't let me change the wayland window app_id
+  then at least force an initial one which matches the startcenter to get a 
+  less pathetic icon
+
 * Mon Mar 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-4
 - Resolves: rhbz#1431476 dnd has started copying instead of moving slides
 - Resolves: rhbz#1431540 crash in SwDBManager releaseRef

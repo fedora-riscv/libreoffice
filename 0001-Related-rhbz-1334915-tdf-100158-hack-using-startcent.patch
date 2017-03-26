@@ -1,4 +1,4 @@
-From 6903066822900a700ccf67ae70fa171c94644a9a Mon Sep 17 00:00:00 2001
+From e60e1d83dca62060585cf4054cda9e897176590c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 23 Mar 2017 14:13:27 +0000
 Subject: [PATCH] Related: rhbz#1334915 tdf#100158 hack using startcenter icon
@@ -10,14 +10,14 @@ less pathetic than the broken app icon
 
 Change-Id: I9810ba4908dd06a2fdbb2e58e7ad6ff4978ddd43
 ---
- vcl/unx/gtk3/gtk3gtkframe.cxx | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index a06294b..a1dae15 100644
+index 1a4823e..745d297 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -1447,7 +1447,23 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
+@@ -1446,7 +1446,27 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
                  m_pParent->addGrabLevel();
              }
  
@@ -34,6 +34,10 @@ index a06294b..a1dae15 100644
 +                g_set_prgname("libreoffice-startcenter");
 +                gtk_widget_show(m_pWindow);
 +                g_set_prgname(sOrigName.getStr());
++            }
++            else
++            {
++                gtk_widget_show(m_pWindow);
 +            }
 +#else
              gtk_widget_show(m_pWindow);

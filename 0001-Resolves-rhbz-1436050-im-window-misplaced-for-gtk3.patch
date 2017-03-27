@@ -1,0 +1,31 @@
+From fe8ed6a55852bd3f7fce908c1a09d60b42af77cf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 27 Mar 2017 14:33:40 +0100
+Subject: [PATCH] Resolves: rhbz#1436050 im window misplaced for gtk3
+
+events are relative to event window not the toplevel
+window which includes a menubar widget (and maybe
+the decoration topbar as well)
+
+Change-Id: I5101bd4a35d6e3aee03191594e5f6edb7ca34c69
+(cherry picked from commit 32351d1bd34a0a0d3bb8fa41667a770c125de460)
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 1a4823e..550e76e 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -3566,7 +3566,7 @@ void GtkSalFrame::IMHandler::createIMContext()
+                           G_CALLBACK (signalIMPreeditEnd), this );
+ 
+         GetGenericData()->ErrorTrapPush();
+-        gtk_im_context_set_client_window( m_pIMContext, widget_get_window(GTK_WIDGET(m_pFrame->m_pWindow)) );
++        gtk_im_context_set_client_window(m_pIMContext, widget_get_window(m_pFrame->getMouseEventWidget()));
+         gtk_im_context_focus_in( m_pIMContext );
+         GetGenericData()->ErrorTrapPop();
+         m_bFocused = true;
+-- 
+2.9.3
+

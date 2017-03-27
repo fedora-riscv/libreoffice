@@ -277,6 +277,7 @@ Patch41: 0001-rhbz-1431476-dnd-has-started-copying-instead-of-movi.patch
 Patch42: 0001-Resolves-rhbz-1431540-crash-in-SwDBManager-releaseRe.patch
 Patch43: 0001-disable-tearability-of-color-window.patch
 Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
+Patch45: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2354,7 +2355,8 @@ done
 %endif
 
 %changelog
-* Thu Mar 23 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-5-UNBUILT
+* Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-5
+- Resolves: rhbz#1436050 im-window misplaced for gtk3
 - Related: rhbz#1334915 if gtk won't let me change the wayland window app_id
   then at least force an initial one which matches the startcenter to get a 
   less pathetic icon

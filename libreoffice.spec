@@ -242,6 +242,7 @@ Patch9: 0001-right-click-to-insert-image.patch
 Patch10: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch11: 0001-Resolves-tdf-106645-gtk3-scrollbar-is-too-wide.patch
 Patch12: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
+Patch13: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 
 %if 0%{?rhel}
 # not upstreamed

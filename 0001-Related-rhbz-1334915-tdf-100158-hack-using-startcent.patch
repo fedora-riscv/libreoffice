@@ -1,4 +1,4 @@
-From e60e1d83dca62060585cf4054cda9e897176590c Mon Sep 17 00:00:00 2001
+From aab38aaead7e18044f992cdbf1b1af8db5cd3cab Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 23 Mar 2017 14:13:27 +0000
 Subject: [PATCH] Related: rhbz#1334915 tdf#100158 hack using startcenter icon
@@ -14,11 +14,11 @@ Change-Id: I9810ba4908dd06a2fdbb2e58e7ad6ff4978ddd43
  1 file changed, 20 insertions(+)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 1a4823e..745d297 100644
+index 3e1496a..980f932 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -1446,7 +1446,27 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
-                 m_pParent->addGrabLevel();
+@@ -1431,7 +1431,27 @@ void GtkSalFrame::Show( bool bVisible, bool bNoActivate )
+                 gtk_grab_add(m_pParent->getMouseEventWidget());
              }
  
 +#if defined(GDK_WINDOWING_WAYLAND)

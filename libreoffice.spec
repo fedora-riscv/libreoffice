@@ -61,7 +61,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -310,6 +310,7 @@ Patch69: 0001-avoid-loss-of-text-in-edited-placeholder.patch
 Patch70: 0001-tdf-96522-ANIMATION-Animation-Spiral-in-does-not-wor.patch
 Patch71: 0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch
 Patch72: 0001-Resolves-tdf-105968-handle-engineering-notation-roun.patch
+Patch73: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2398,6 +2399,9 @@ done
 %endif
 
 %changelog
+* Thu Feb 16 2017 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-8.UNBUILT
+- Resolves: DOCX import w:hideMark vs. w:vMerge table layout
+
 * Thu Feb 16 2017 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-7
 - Resolves: tdf#103493 copying note captions needs a completed destination sheet
 - Resolves: tdf#105968 handle engineering notation rounded into next magnitude

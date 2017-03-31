@@ -1,0 +1,47 @@
+From baec88396e0f1910ac3d4d1a1f87b45a90ba0342 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Thu, 30 Mar 2017 23:11:41 +0200
+Subject: [PATCH] writerfilter: DOCX import: fix handling of w:hideMark vs.
+ w:vMerge
+
+The problem is that Writer's layout can't handle the case where cells
+are vertically merged and the last row has a fixed height; the vertically
+merged cell will grow up to the height of the other cells in the non-
+fixed rows plus the fixed row height, but no larger.
+
+So for now, avoid setting fixed row heights in this case.
+
+(regression from d1278ef4849661b9ae0eb7aaf4d74fbf91ccaf11)
+
+(cherry picked from commit c382c998ffdaf80c10a3f078fb4f0a37224d1158)
+Reviewed-on: https://gerrit.libreoffice.org/35960
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+(cherry picked from commit 7d7d21cfa53c8e80fd4dd0938579d8377da5a840)
+
+Change-Id: Iac3689e0bb0d5b8a62115ca0fb1f2c553a6e6bbc
+---
+ writerfilter/source/dmapper/DomainMapperTableHandler.cxx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/writerfilter/source/dmapper/DomainMapperTableHandler.cxx b/writerfilter/source/dmapper/DomainMapperTableHandler.cxx
+index d21f5f7..dbe7cc5 100644
+--- a/writerfilter/source/dmapper/DomainMapperTableHandler.cxx
++++ b/writerfilter/source/dmapper/DomainMapperTableHandler.cxx
+@@ -870,8 +870,12 @@ CellPropertyValuesSeq_t DomainMapperTableHandler::endTableGetCellProperties(Tabl
+ bool lcl_hideMarks(PropertyMapVector1& rCellProperties)
+ {
+     for (size_t nCell = 0; nCell < rCellProperties.size(); ++nCell)
+-        if (!rCellProperties[nCell]->isSet(PROP_CELL_HIDE_MARK))
++    {
++        // if anything is vertically merged, the row must not be set to fixed
++        // as Writer's layout doesn't handle that well
++        if (!rCellProperties[nCell]->isSet(PROP_CELL_HIDE_MARK) || rCellProperties[nCell]->isSet(PROP_VERTICAL_MERGE))
+             return false;
++    }
+     return true;
+ }
+ 
+-- 
+2.9.3
+

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -278,6 +278,7 @@ Patch42: 0001-Resolves-rhbz-1431540-crash-in-SwDBManager-releaseRe.patch
 Patch43: 0001-disable-tearability-of-color-window.patch
 Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 Patch45: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
+Patch46: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2355,6 +2356,9 @@ done
 %endif
 
 %changelog
+* Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-6.UNBUILT
+- Resolves: DOCX import w:hideMark vs. w:vMerge table layout
+
 * Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-5
 - Resolves: rhbz#1436050 im-window misplaced for gtk3
 - Related: rhbz#1334915 if gtk won't let me change the wayland window app_id

@@ -1,0 +1,34 @@
+From a0b2c38d4f811a3fc576d710d1a13bd0cdeb8bd5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 12 Apr 2017 10:45:35 +0100
+Subject: [PATCH] infinite SetDefaultSize->SetPosSize->SetDefaultSize
+
+https://retrace.fedoraproject.org/faf/reports/1278627/
+
+presumably the 'optimal' starting size hits the invalid size path
+causing another attempt usin the optimal size, so force a valid
+initial fallback size
+
+Change-Id: I6c38ee5e1b90ce41a4550c8a8370e791f5c351b0
+(cherry picked from commit 4930acb18bbd145fd995084cd95e3e9d631424ed)
+---
+ vcl/source/window/dialog.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/source/window/dialog.cxx b/vcl/source/window/dialog.cxx
+index eef4c5a..bff1f27 100644
+--- a/vcl/source/window/dialog.cxx
++++ b/vcl/source/window/dialog.cxx
+@@ -662,7 +662,8 @@ Size bestmaxFrameSizeForScreenSize(const Size &rScreenSize)
+     else
+         h -= 100;
+ 
+-    return Size(w, h);
++    return Size(std::max<long>(w, 640 - 15),
++                std::max<long>(h, 480 - 50));
+ }
+ 
+ void Dialog::StateChanged( StateChangedType nType )
+-- 
+2.9.3
+

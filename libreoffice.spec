@@ -279,6 +279,7 @@ Patch43: 0001-disable-tearability-of-color-window.patch
 Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 Patch45: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
 Patch46: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
+Patch47: 0001-infinite-SetDefaultSize-SetPosSize-SetDefaultSize.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch

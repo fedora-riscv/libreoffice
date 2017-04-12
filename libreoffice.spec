@@ -280,6 +280,7 @@ Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 Patch45: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
 Patch46: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
 Patch47: 0001-infinite-SetDefaultSize-SetPosSize-SetDefaultSize.patch
+Patch48: 0001-rhbz-1438179-sw-fix-toolbar-Next-Track-Change-Previo.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2359,6 +2360,7 @@ done
 %changelog
 * Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-6.UNBUILT
 - Resolves: DOCX import w:hideMark vs. w:vMerge table layout
+- Resolves: rhbz#1438179 Writer change tracking toolbar navigation
 
 * Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-5
 - Resolves: rhbz#1436050 im-window misplaced for gtk3

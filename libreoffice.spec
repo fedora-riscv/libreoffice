@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.2.6
+%define libo_version 5.2.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,17 +270,13 @@ Patch34: 0001-right-click-to-insert-image.patch
 Patch35: 0001-Resolves-tdf-106105-duplicate-marks-not-merged-when-.patch
 Patch36: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch37: 0001-don-t-lock-sidebar-size-due-to-long-master-slide-nam.patch
-Patch38: 0001-Resolves-tdf-106261-throw-away-old-node-map-for-tabl.patch
-Patch39: 0001-show-the-last-gif-frame-when-the-animation-ends.patch
-Patch40: 0001-tdf-106218-sw-compare-document-tweak-special-handlin.patch
-Patch41: 0001-rhbz-1431476-dnd-has-started-copying-instead-of-movi.patch
-Patch42: 0001-Resolves-rhbz-1431540-crash-in-SwDBManager-releaseRe.patch
-Patch43: 0001-disable-tearability-of-color-window.patch
-Patch44: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
-Patch45: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
-Patch46: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
-Patch47: 0001-infinite-SetDefaultSize-SetPosSize-SetDefaultSize.patch
-Patch48: 0001-rhbz-1438179-sw-fix-toolbar-Next-Track-Change-Previo.patch
+Patch38: 0001-show-the-last-gif-frame-when-the-animation-ends.patch
+Patch39: 0001-tdf-106218-sw-compare-document-tweak-special-handlin.patch
+Patch40: 0001-rhbz-1431476-dnd-has-started-copying-instead-of-movi.patch
+Patch41: 0001-disable-tearability-of-color-window.patch
+Patch42: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
+Patch43: 0001-Resolves-rhbz-1436050-im-window-misplaced-for-gtk3.patch
+Patch44: 0001-infinite-SetDefaultSize-SetPosSize-SetDefaultSize.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2358,6 +2354,9 @@ done
 %endif
 
 %changelog
+* Mon Apr 17 2017 David Tardon <dtardon@redhat.com> - 1:5.2.7.1-1
+- update to 5.2.7 rc1
+
 * Thu Apr 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-6
 - Resolves: DOCX import w:hideMark vs. w:vMerge table layout
 - Resolves: rhbz#1438179 Writer change tracking toolbar navigation

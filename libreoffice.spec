@@ -311,6 +311,7 @@ Patch70: 0001-tdf-96522-ANIMATION-Animation-Spiral-in-does-not-wor.patch
 Patch71: 0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch
 Patch72: 0001-Resolves-tdf-105968-handle-engineering-notation-roun.patch
 Patch73: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
+Patch74: 0001-rhbz-1438179-sw-fix-toolbar-Next-Track-Change-Previo.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2401,6 +2402,7 @@ done
 %changelog
 * Thu Feb 16 2017 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-8.UNBUILT
 - Resolves: DOCX import w:hideMark vs. w:vMerge table layout
+- Resolves: rhbz#1438179 Writer change tracking toolbar navigation
 
 * Thu Feb 16 2017 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-7
 - Resolves: tdf#103493 copying note captions needs a completed destination sheet

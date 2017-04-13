@@ -2358,7 +2358,7 @@ done
 %endif
 
 %changelog
-* Mon Mar 27 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-6.UNBUILT
+* Thu Apr 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.6.2-6
 - Resolves: DOCX import w:hideMark vs. w:vMerge table layout
 - Resolves: rhbz#1438179 Writer change tracking toolbar navigation
 

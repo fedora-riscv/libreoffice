@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.3.2
+%define libo_version 5.3.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,7 +57,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -240,9 +240,8 @@ Patch7: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
 Patch8: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
 Patch9: 0001-right-click-to-insert-image.patch
 Patch10: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
-Patch11: 0001-Resolves-tdf-106645-gtk3-scrollbar-is-too-wide.patch
-Patch12: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
-Patch13: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+Patch11: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
+Patch12: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2324,6 +2323,9 @@ done
 %endif
 
 %changelog
+* Wed Apr 19 2017 David Tardon <dtardon@redhat.com> - 1:5.3.3.1-1
+- update to 5.3.3 rc1
+
 * Wed Mar 29 2017 David Tardon <dtardon@redhat.com> - 1:5.3.2.2-1
 - update to 5.3.2 rc2
 

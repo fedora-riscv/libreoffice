@@ -1,0 +1,73 @@
+From 9f1f5126381069e198fbfa3e71beedfbf6b6d300 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 2 Jan 2017 11:53:31 +0000
+Subject: [PATCH] ofz#372 check if ImplSplit succeeded
+
+(cherry picked from commit 62a97e6a561ce65e88d4c537a1b82c336f012722)
+(cherry picked from commit 6431e2bff67e81b4aff4e3b52e67903e1cd566f3)
+
+Change-Id: I1e34295fe3ee5f77e787f583616d52fa92a0eca4
+Reviewed-on: https://gerrit.libreoffice.org/32640
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ tools/inc/poly.h              |  2 +-
+ tools/source/generic/poly.cxx | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/tools/inc/poly.h b/tools/inc/poly.h
+index f15f01f..3269efe 100644
+--- a/tools/inc/poly.h
++++ b/tools/inc/poly.h
+@@ -42,7 +42,7 @@ public:
+ 
+     void            ImplSetSize( sal_uInt16 nSize, bool bResize = true );
+     void            ImplCreateFlagArray();
+-    void            ImplSplit( sal_uInt16 nPos, sal_uInt16 nSpace, ImplPolygon* pInitPoly = NULL );
++    bool            ImplSplit( sal_uInt16 nPos, sal_uInt16 nSpace, ImplPolygon* pInitPoly = NULL );
+ };
+ 
+ #define MAX_POLYGONS        ((sal_uInt16)0x3FF0)
+diff --git a/tools/source/generic/poly.cxx b/tools/source/generic/poly.cxx
+index ada7051..9919573 100644
+--- a/tools/source/generic/poly.cxx
++++ b/tools/source/generic/poly.cxx
+@@ -213,11 +213,14 @@ void ImplPolygon::ImplSetSize( sal_uInt16 nNewSize, bool bResize )
+     mnPoints   = nNewSize;
+ }
+ 
+-void ImplPolygon::ImplSplit( sal_uInt16 nPos, sal_uInt16 nSpace, ImplPolygon* pInitPoly )
++bool ImplPolygon::ImplSplit( sal_uInt16 nPos, sal_uInt16 nSpace, ImplPolygon* pInitPoly )
+ {
+     //Can't fit this in :-(, throw ?
+     if (mnPoints + nSpace > USHRT_MAX)
+-        return;
++    {
++        SAL_WARN("tools", "Polygon needs " << mnPoints + nSpace << " points, but only " << USHRT_MAX << " possible");
++        return false;
++    }
+ 
+     const sal_uInt16    nNewSize = mnPoints + nSpace;
+     const std::size_t   nSpaceSize = static_cast<std::size_t>(nSpace) * sizeof(Point);
+@@ -273,6 +276,8 @@ void ImplPolygon::ImplSplit( sal_uInt16 nPos, sal_uInt16 nSpace, ImplPolygon* pI
+         mpPointAry = pNewAry;
+         mnPoints   = nNewSize;
+     }
++
++    return true;
+ }
+ 
+ void ImplPolygon::ImplCreateFlagArray()
+@@ -1445,7 +1450,8 @@ void Polygon::Insert( sal_uInt16 nPos, const Point& rPt, PolyFlags eFlags )
+     if( nPos >= mpImplPolygon->mnPoints )
+         nPos = mpImplPolygon->mnPoints;
+ 
+-    mpImplPolygon->ImplSplit( nPos, 1 );
++    if (!mpImplPolygon->ImplSplit(nPos, 1))
++        return;
+     mpImplPolygon->mpPointAry[ nPos ] = rPt;
+ 
+     if( POLY_NORMAL != eFlags )
+-- 
+2.9.3
+

@@ -312,6 +312,8 @@ Patch71: 0001-Resolves-tdf-103493-copying-note-captions-needs-a-co.patch
 Patch72: 0001-Resolves-tdf-105968-handle-engineering-notation-roun.patch
 Patch73: 0001-writerfilter-DOCX-import-fix-handling-of-w-hideMark-.patch
 Patch74: 0001-rhbz-1438179-sw-fix-toolbar-Next-Track-Change-Previo.patch
+Patch75: 0001-ofz-372-check-if-ImplSplit-succeeded.patch
+Patch76: 0001-Resolves-ofz-313-cbBmiSrc-getDIBV5HeaderSize.patch
 
 %if ! 0%{?rhel}
 Patch400: 0001-Update-liborcus-to-0.11.0.patch
@@ -2400,7 +2402,9 @@ done
 %endif
 
 %changelog
-* Thu Feb 16 2017 Eike Rathke <erack@redhat.com> - 1:5.1.6.2-8.UNBUILT
+* Fri Apr 21 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.1.6.2-8
+- CVE-2017-7870 Heap-buffer-overflow in WMF filter
+- CVE-2016-10327 Heap-buffer-overflow in EMF filter
 - Resolves: DOCX import w:hideMark vs. w:vMerge table layout
 - Resolves: rhbz#1438179 Writer change tracking toolbar navigation
 

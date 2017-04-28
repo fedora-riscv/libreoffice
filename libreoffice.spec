@@ -152,6 +152,7 @@ BuildRequires: pkgconfig(glu)
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires: pkgconfig(gtk+-2.0)
+BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
 BuildRequires: pkgconfig(lcms2)
@@ -193,7 +194,6 @@ BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(gobject-introspection-1.0)
 BuildRequires: pkgconfig(graphite2)
-BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
@@ -653,6 +653,17 @@ Supplements: (%{name}-core%{?_isa} and gtk2%{?_isa})
 %description gtk2
 A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
 
+%package gtk3
+Summary: LibreOffice GTK+ 3 integration plug-in
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: gstreamer1(element-gtksink)%{?mark64}
+%if 0%{?weak_deps}
+Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
+%endif
+
+%description gtk3
+A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
+
 %if 0%{?fedora}
 
 %package kde4
@@ -666,15 +677,6 @@ Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description kde4
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
-
-%package gtk3
-Summary: LibreOffice GTK+ 3 integration plug-in
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: gstreamer1(element-gtksink)%{?mark64}
-Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
-
-%description gtk3
-A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
@@ -1046,9 +1048,9 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --enable-python=system --disable-introspection --disable-gtk3
+%define distrooptions --disable-eot --disable-gltf --enable-python=system --disable-introspection
 %else # fedora
-%define distrooptions --enable-eot --enable-gtk3 --enable-kde4 --with-system-opencollada --with-system-ucpp
+%define distrooptions --enable-eot --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
 export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
 %endif
@@ -1090,6 +1092,7 @@ touch autogen.lastrun
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
+ --enable-gtk3 \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
@@ -2302,14 +2305,14 @@ done
 %files gtk2
 %{baseinstdir}/program/libvclplug_gtklo.so
 
+%files gtk3
+%{baseinstdir}/program/libvclplug_gtk3lo.so
+
 %if 0%{?fedora}
 
 %files kde4
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
-
-%files gtk3
-%{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %files -n libreofficekit
 %{baseinstdir}/share/libreofficekit

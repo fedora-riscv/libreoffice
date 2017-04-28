@@ -98,7 +98,10 @@ Source104:      %{external_url}/libwps-0.4.4.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
 Source107:      %{external_url}/libstaroffice-0.0.2.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice
+# TODO: maybe it's still possible to build with harfbuzz 0.9.36 with some amount of patching?
+Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
+Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite
 %endif
 
 # build tools
@@ -146,11 +149,9 @@ BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(glu)
-BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires: pkgconfig(gtk+-2.0)
-BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
 BuildRequires: pkgconfig(lcms2)
@@ -191,7 +192,9 @@ BuildRequires: unixODBC-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(gobject-introspection-1.0)
+BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(gtk+-3.0)
+BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)

@@ -246,9 +246,6 @@ Patch12: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 %if 0%{?rhel}
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
-Patch501: 0001-fix-build-of-bundled-libzmf-with-boost-1.56.patch
-Patch502: 0001-allow-to-build-bundled-libzmf-on-aarch64.patch
-Patch503: 0001-impl.-missing-function.patch
 %endif
 
 %define instdir %{_libdir}

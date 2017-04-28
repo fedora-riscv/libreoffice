@@ -18,19 +18,16 @@ diff --git a/configure.ac b/configure.ac
 index 5ec9ae6..7aed2ed 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7796,12 +7796,6 @@ AS_IF([test "$COM" = "MSC"],
- libo_CHECK_SYSTEM_MODULE([librevenge],[REVENGE],[librevenge-0.0 >= 0.0.1],["-I${WORKDIR}/UnpackedTarball/librevenge/inc"],["-L${librevenge_libdir} -lrevenge-0.0"])
+@@ -7796,9 +7796,6 @@ AS_IF([test "$COM" = "MSC"],
  
- dnl ===================================================================
--dnl Check for system libe-book
--dnl ===================================================================
+ libo_CHECK_SYSTEM_MODULE([libfreehand],[FREEHAND],[libfreehand-0.1])
+ 
 -libo_CHECK_SYSTEM_MODULE([libebook],[EBOOK],[libe-book-0.1])
 -libo_PKG_VERSION([EBOOK], [libe-book-0.1], [0.1.2])
 -
--dnl ===================================================================
- dnl Check for system libetonyek
- dnl ===================================================================
- libo_CHECK_SYSTEM_MODULE([libetonyek],[ETONYEK],[libetonyek-0.1])
+ libo_CHECK_SYSTEM_MODULE([libabw],[ABW],[libabw-0.1])
+ 
+ libo_CHECK_SYSTEM_MODULE([libpagemaker],[PAGEMAKER],[libpagemaker-0.0])
 diff --git a/external/Module_external.mk b/external/Module_external.mk
 index 55fce1f..2f53503 100644
 --- a/external/Module_external.mk
@@ -79,8 +76,8 @@ index 9ec43c4..48cbd52 100644
  	boost_headers \
 -	ebook \
  	etonyek \
+ 	icu_headers \
  	icui18n \
- 	icuuc \
 @@ -65,7 +64,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
  
  $(eval $(call gb_Library_add_exception_objects,wpftwriter,\

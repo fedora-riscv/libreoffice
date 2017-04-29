@@ -149,6 +149,7 @@ BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(glu)
+BuildRequires: pkgconfig(gobject-introspection-1.0)
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires: pkgconfig(gtk+-2.0)
@@ -192,7 +193,6 @@ BuildRequires: unixODBC-devel
 %if 0%{?fedora}
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
-BuildRequires: pkgconfig(gobject-introspection-1.0)
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
@@ -678,6 +678,8 @@ Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 %description kde4
 A plug-in for LibreOffice that enables integration into the KDE desktop environment.
 
+%endif
+
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
@@ -698,8 +700,6 @@ License: MPLv2.0
 %description -n libreofficekit-devel
 The libreofficekit-devel package contains libraries and header files for
 developing applications that use libreofficekit.
-
-%endif
 
 %if 0%{?_enable_debug_packages}
 
@@ -1048,7 +1048,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --enable-python=system --disable-introspection
+%define distrooptions --disable-eot --disable-gltf --enable-python=system
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --with-system-opencollada --with-system-ucpp
 export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
@@ -1093,6 +1093,7 @@ touch autogen.lastrun
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
  --enable-gtk3 \
+ --enable-introspection \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
@@ -1130,9 +1131,7 @@ pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
-%if 0%{?fedora}
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
-%endif
 
 %if %{with smallbuild}
 # remove the biggest offenders
@@ -1368,19 +1367,15 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 # install LibreOfficeKit
 install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
-%if 0%{?fedora}
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
 install -m 0755 -d %{buildroot}%{_libdir}/gir-1.0
 install -m 0644 -p gir-1.0/LOKDocView-%{girapiversion}.gir %{buildroot}%{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 mv %{buildroot}%{baseinstdir}/program/liblibreofficekitgtk.so %{buildroot}%{_libdir}
-%endif
 popd
 
-%if 0%{?fedora}
 # install LibreOfficeKit headers
 install -m 0755 -d %{buildroot}%{_includedir}/LibreOfficeKit
 install -m 0644 -p include/LibreOfficeKit/* %{buildroot}%{_includedir}/LibreOfficeKit
-%endif
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
@@ -2314,6 +2309,8 @@ done
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
+%endif
+
 %files -n libreofficekit
 %{baseinstdir}/share/libreofficekit
 %{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
@@ -2322,8 +2319,6 @@ done
 %files -n libreofficekit-devel
 %{_libdir}/gir-1.0/LOKDocView-%{girapiversion}.gir
 %{_includedir}/LibreOfficeKit
-
-%endif
 
 %changelog
 * Wed Apr 19 2017 David Tardon <dtardon@redhat.com> - 1:5.3.3.1-1

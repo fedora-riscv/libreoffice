@@ -801,10 +801,26 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %if 0%{?weak_deps} \
 %{-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{lang})} \
+%{-T:Recommends: %{name}-help-%{lang}} \
 %endif \
 \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for LibreOffice. \
+\
+%{-T: \
+%package help-%{lang} \
+Summary: %{langname} help for LibreOffice \
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
+\
+%description help-%{lang} \
+Provides %{langname} help for LibreOffice. \
+\
+%files help-%{lang} \
+%docdir %{baseinstdir}/help/%{_langpack_lang} \
+%if !0%{?armhack}
+%{baseinstdir}/help/%{_langpack_lang} \
+%endif
+} \
 \
 %files %{pkgname} \
 %{!-E: \
@@ -812,12 +828,6 @@ Provides additional %{langname} translations and resources for LibreOffice. \
 %{-x:%{baseinstdir}/share/autotext/%{-x*}}%{!-x:%{-X:%{baseinstdir}/share/autotext/%{_langpack_lang}}} \
 %{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
-%{-T: \
-%docdir %{baseinstdir}/help/%{_langpack_lang} \
-%if !0%{?armhack}
-%{baseinstdir}/help/%{_langpack_lang} \
-%endif
-} \
 %{-i:%{expand:%%_langpack_common %{-i*}}} \
 } \
 %{nil}

@@ -1,0 +1,32 @@
+From 6f53cf281eb3c13fc516ff79decb70b2a87a96d0 Mon Sep 17 00:00:00 2001
+From: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Date: Sat, 29 Apr 2017 05:11:40 +0200
+Subject: [PATCH] apparently the executable does not need pdfium directly
+ anymore
+
+Change-Id: If7ec9a18603005791ff948c7ecfddc5010ac88fe
+Reviewed-on: https://gerrit.libreoffice.org/37091
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+---
+ xmlsecurity/Executable_pdfverify.mk | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/xmlsecurity/Executable_pdfverify.mk b/xmlsecurity/Executable_pdfverify.mk
+index 9a67a785983a..11c22d1d7ea6 100644
+--- a/xmlsecurity/Executable_pdfverify.mk
++++ b/xmlsecurity/Executable_pdfverify.mk
+@@ -11,10 +11,6 @@ $(eval $(call gb_Executable_Executable,pdfverify))
+ 
+ $(eval $(call gb_Executable_use_sdk_api,pdfverify))
+ 
+-$(eval $(call gb_Executable_use_externals,pdfverify,\
+-	pdfium \
+-))
+-
+ $(eval $(call gb_Executable_set_include,pdfverify,\
+     $$(INCLUDE) \
+     -I$(SRCDIR)/xmlsecurity/inc \
+-- 
+2.12.2
+

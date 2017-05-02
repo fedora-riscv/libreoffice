@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.3.3
+%define libo_version 5.4.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease %{nil}
+%define libo_prerelease .alpha1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %define libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -57,7 +57,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.0
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -94,14 +94,18 @@ Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.
 Source101:      %{external_url}/liborcus-0.12.1.tar.gz
 Source102:      %{external_url}/mdds-1.2.2.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
-Source104:      %{external_url}/libwps-0.4.4.tar.bz2
+Source104:      %{external_url}/libwps-0.4.6.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
-Source107:      %{external_url}/libstaroffice-0.0.2.tar.bz2
+Source107:      %{external_url}/libstaroffice-0.0.3.tar.bz2
 # TODO: maybe it's still possible to build with harfbuzz 0.9.36 with some amount of patching?
 Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
 Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite
+Source110:      %{external_url}/gpgme-1.8.2.tar.bz2
+Source111:      %{external_url}/libgpg-error-1.26.tar.bz2
+Source112:      %{external_url}/libassuan-1.4.3.tar.bz2
+Source113:      %{external_url}/cppunit-1.14.0.tar.gz
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
 %endif
 
 # build tools
@@ -141,7 +145,6 @@ BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
 BuildRequires: pkgconfig(bluez)
-BuildRequires: pkgconfig(cppunit)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(dconf)
 BuildRequires: pkgconfig(epoxy)
@@ -191,8 +194,10 @@ BuildRequires: unixODBC-devel
 
 # libs / headers - conditional
 %if 0%{?fedora}
+BuildRequires: gpgmepp-devel
 BuildRequires: kdelibs4-devel
 BuildRequires: openCOLLADA-devel
+BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
@@ -236,15 +241,11 @@ Patch2: 0001-add-X-TryExec-entries-to-desktop-files.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch3: 0001-don-t-suppress-crashes.patch
-Patch4: 0001-change-from-glew-to-epoxy.patch
-Patch5: 0001-gtk3-implement-opengl-support-for-slideshow.patch
-Patch6: 0001-lower-the-system-epoxy-requirement.patch
-Patch7: 0001-Resolves-tdf-105998-distort-hairline-borders-to-fall.patch
-Patch8: 0001-Related-rhbz-1422353-make-writer-behave-like-calc-an.patch
-Patch9: 0001-right-click-to-insert-image.patch
-Patch10: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
-Patch11: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
-Patch12: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+# not upstreamed
+Patch4: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
+# not upstreamed
+Patch5: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+Patch6: 0001-apparently-the-executable-does-not-need-pdfium-direc.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1097,6 +1098,7 @@ touch autogen.lastrun
  --disable-fetch-external \
  --disable-firebird-sdbc \
  --disable-openssl \
+ --disable-pdfium \
  --disable-systray \
  --enable-dconf \
  --enable-evolution2 \
@@ -1621,6 +1623,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
 %{baseinstdir}/program/libxsec_fw.so
+%{baseinstdir}/program/libxsec_gpg.so
 %{baseinstdir}/program/libxsec_xmlsec.so
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
@@ -1733,7 +1736,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/resource/upden-US.res
 %{baseinstdir}/program/resource/vclen-US.res
 %{baseinstdir}/program/resource/writerperfecten-US.res
-%{baseinstdir}/program/resource/wzien-US.res
 %{baseinstdir}/program/resource/xmlsecen-US.res
 %{baseinstdir}/program/resource/xsltdlgen-US.res
 %{baseinstdir}/program/senddoc
@@ -1916,7 +1918,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/resource/dbpen-US.res
 %{baseinstdir}/program/resource/rpten-US.res
 %{baseinstdir}/program/resource/rptuien-US.res
-%{baseinstdir}/program/resource/sdbclen-US.res
 %{baseinstdir}/program/resource/sdberren-US.res
 %{baseinstdir}/share/registry/base.xcd
 %{baseinstdir}/share/registry/reportbuilder.xcd
@@ -2095,7 +2096,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/help/en-US/simpress.*
 %endif
 %{baseinstdir}/program/libanimcorelo.so
-%{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
 %{baseinstdir}/program/libwpftimpresslo.so
@@ -2331,6 +2331,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue May 02 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.0-1.alpha1
+- update to 5.4.0 alpha1
+
 * Wed Apr 19 2017 David Tardon <dtardon@redhat.com> - 1:5.3.3.1-1
 - update to 5.3.3 rc1
 

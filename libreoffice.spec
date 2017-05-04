@@ -135,7 +135,6 @@ BuildRequires: zip
 BuildRequires: %{libo_python}-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
-BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
@@ -149,6 +148,7 @@ BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(dconf)
 BuildRequires: pkgconfig(epoxy)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
+BuildRequires: pkgconfig(expat)
 BuildRequires: pkgconfig(freetype2)
 BuildRequires: pkgconfig(glew) >= 1.10.0
 BuildRequires: pkgconfig(glu)

@@ -316,13 +316,6 @@ Obsoletes: libreoffice-appdata < 1:4.3.3.0
 Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-javafilter < 1:4.1.0.0
-Obsoletes: openoffice.org-core < 1:3.3.1
-Obsoletes: openoffice.org-brand < 1:3.3.1, broffice.org-brand < 1:3.3.1
-Obsoletes: openoffice.org-headless < 1:3.3.1
-Obsoletes: openoffice.org-javafilter < 1:3.3.1
-Obsoletes: openoffice.org-langpack-ms < 1:3.3.1, libreoffice-langpack-ms < 1:3.3.99.1
-Obsoletes: openoffice.org-langpack-ur < 1:3.3.1, libreoffice-langpack-ur < 1:3.3.99.1
-Obsoletes: openoffice.org-testtools < 1:3.3.1
 Obsoletes: libreoffice-testtools < 1:3.4.99.1
 Obsoletes: autocorr-eu < 1:4.0.1.2
 Provides: libreoffice-appdata = %{epoch}:%{version}-%{release}
@@ -338,7 +331,6 @@ Summary: Python support for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{libo_python}%{?_isa}
-Obsoletes: openoffice.org-pyuno < 1:3.3.1
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -355,9 +347,6 @@ Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-report-builder < 1:4.1.0.0
-Obsoletes: openoffice.org-base-core < 1:3.3.1
-Obsoletes: openoffice.org-base < 1:3.3.1, broffice.org-base < 1:3.3.1
-Obsoletes: openoffice.org-report-builder < 1:3.3.1
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
@@ -367,7 +356,6 @@ databases through a GUI.
 Summary: BeanShell support for LibreOffice
 Requires: bsh
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-bsh < 1:3.3.1
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
@@ -393,7 +381,6 @@ Arch-independent part of %{name}-officebean.
 %package rhino
 Summary: JavaScript support for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-rhino < 1:3.3.1
 
 %description rhino
 Support JavaScript scripts in LibreOffice.
@@ -403,7 +390,6 @@ Summary: Create Wiki articles on MediaWiki servers with LibreOffice
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-wiki-publisher < 1:3.3.1
 
 %description wiki-publisher
 The Wiki Publisher enables you to create Wiki articles on MediaWiki servers
@@ -425,7 +411,6 @@ Summary: 3D OpenGL slide transitions for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-ogltrans < 1:3.3.1
 
 %description ogltrans
 OpenGL Transitions enable 3D slide transitions to be used in LibreOffice.
@@ -436,7 +421,6 @@ Summary: PDF Importer for LibreOffice Draw
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-pdfimport < 1:3.3.1
 
 %description pdfimport
 The PDF Importer imports PDF into drawing documents to preserve layout
@@ -445,8 +429,6 @@ and enable basic editing of PDF documents.
 %package %{fontname}-fonts
 Summary: LibreOffice dingbats font
 Requires: fontpackages-filesystem
-Obsoletes: openoffice.org-fonts < 1:3.3.1
-Obsoletes: openoffice.org-opensymbol-fonts < 1:3.3.1
 BuildArch: noarch
 
 %description %{fontname}-fonts
@@ -459,8 +441,6 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-writer-core < 1:3.3.1
-Obsoletes: openoffice.org-writer < 1:3.3.1, broffice.org-writer < 1:3.3.1
 
 %description writer
 The LibreOffice Word Processor application.
@@ -469,7 +449,6 @@ The LibreOffice Word Processor application.
 Summary: Email mail-merge component for LibreOffice 
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-emailmerge < 1:3.3.1
 
 %description emailmerge
 Enables the LibreOffice writer module to mail-merge to email.
@@ -480,8 +459,6 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-calc-core < 1:3.3.1
-Obsoletes: openoffice.org-calc < 1:3.3.1, broffice.org-calc < 1:3.3.1
 
 %description calc
 The LibreOffice Spreadsheet application.
@@ -494,8 +471,6 @@ Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-draw-core < 1:3.3.1
-Obsoletes: openoffice.org-draw < 1:3.3.1, broffice.org-draw < 1:3.3.1
 
 %description draw
 The LibreOffice Drawing Application.
@@ -508,10 +483,6 @@ Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
 Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
-Obsoletes: openoffice.org-impress-core < 1:3.3.1
-Obsoletes: openoffice.org-impress < 1:3.3.1, broffice.org-impress < 1:3.3.1
-Obsoletes: openoffice.org-presentation-minimizer < 1:3.3.1
-Obsoletes: openoffice.org-presenter-screen < 1:3.3.1
 Provides: %{name}-presentation-minimizer = %{epoch}:%{version}-%{release}
 Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
@@ -525,8 +496,6 @@ Summary: LibreOffice Equation Editor Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-math-core < 1:3.3.1
-Obsoletes: openoffice.org-math < 1:3.3.1, broffice.org-math < 1:3.3.1
 
 %description math 
 The LibreOffice Equation Editor Application.
@@ -536,7 +505,6 @@ Summary: LibreOffice Extra Graphic filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-graphicfilter < 1:3.3.1
 
 %description graphicfilter
 The graphicfilter module for LibreOffice provides graphic filters, e.g. svg and
@@ -545,7 +513,6 @@ flash filters.
 %package xsltfilter
 Summary: Optional xsltfilter module for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: openoffice.org-xsltfilter < 1:3.3.1
 
 %description xsltfilter
 The xsltfilter module for LibreOffice, provides additional docbook and
@@ -567,7 +534,6 @@ Summary: UNO Runtime Environment
 #rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
 Requires: %{name}-ure-common = %{epoch}:%{version}-%{release}
 Requires: unzip%{?_isa}, libjvm.so%{?mark64}
-Obsoletes: openoffice.org-ure < 1:3.3.1
 
 %description ure
 UNO is the component model of LibreOffice. UNO offers interoperability between
@@ -589,7 +555,6 @@ Summary: Software Development Kit for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: unzip%{?_isa}, java-devel
-Obsoletes: openoffice.org-sdk < 1:3.3.1, openoffice.org-devel < 1:3.3.1
 
 %description sdk
 The LibreOffice SDK is an add-on for the LibreOffice office suite. It provides
@@ -599,7 +564,6 @@ building against the sdk use %{sdkinstdir}/setsdkenv_unix.sh.
 
 %package sdk-doc
 Summary: Software Development Kit documentation for LibreOffice
-Obsoletes: openoffice.org-sdk-doc < 1:3.3.1
 
 %description sdk-doc
 This provides documentation for programming using the LibreOffice APIs
@@ -739,7 +703,6 @@ This package provides gdb pretty printers for package %{name}.
 # Additionally, it's possible
 # * to require autocorr, hunspell, hyphen or mythes package or font for
 #   given language,
-# * to obsolete openoffice.org-langpack package,
 # * to provide libreoffice-langpack-loc package, where loc is glibc
 #   locale--this is necessary for yum to pick it automatically,
 # * to require other, unrelated, packages,
@@ -760,7 +723,6 @@ This package provides gdb pretty printers for package %{name}.
 # l:   language code, e.g., cs
 # Mm:  mythes dependency
 # n:   language name, e.g., Czech
-# Oo:  Obsoletes: of openoffice.org-langpack
 # p:   Provides: of libreoffice-langpack
 # r:   comma-separated list of additional requires
 # S:s: script classification (cjk, ctl). -S is only a marker, as it does
@@ -772,11 +734,10 @@ This package provides gdb pretty printers for package %{name}.
 #
 # Example:
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
-# autocorr-cs, mythes-cs-CZ and suitable font, obsoleting
-# openoffice.org-langpack-cs_CZ:
+# autocorr-cs, mythes-cs-CZ and suitable font:
 # %%langpack -l cs -n Czech -H -A -m cs-CZ
 #  b de g  jk     q  tu    z BCD  G IJK  N PQR  U    Z0123456789
-%define langpack(Aa:c:EFf:Hh:i:L:l:Mm:n:p:Oo:r:S:s:TXx:Yy:) \
+%define langpack(Aa:c:EFf:Hh:i:L:l:Mm:n:p:r:S:s:TXx:Yy:) \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define _langpack_lang %{-L:%{-L*}}%{!-L:%{lang}} \
 %define pkgname langpack-%{lang} \
@@ -793,7 +754,6 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
 %{-r:Requires: %{-r*}} \
-%{-o:Obsoletes: openoffice.org-langpack-%{-o*} < 1:3.3.1}%{!-o:%{-O:Obsoletes: openoffice.org-langpack-%{lang} < 1:3.3.1}} \
 %{-p:Provides: %{name}-langpack-%{-p*} = %{epoch}:%{version}-%{release}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
 %if 0%{?weak_deps} \
@@ -859,87 +819,87 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
 %{nil}
 
-%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US -O
+%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A -o af_ZA
-%langpack -l ar -n Arabic -F -H -s ctl -O -T
-%langpack -l as -n Assamese -F -H -Y -o as_IN
-%langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X -o bg_BG
-%langpack -l bn -n Bengali -F -H -Y -T -O
+%langpack -l af -n Afrikaans -F -H -Y -A
+%langpack -l ar -n Arabic -F -H -s ctl -T
+%langpack -l as -n Assamese -F -H -Y
+%langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X
+%langpack -l bn -n Bengali -F -H -Y -T
 %langpack -l br -n Breton -F -H
-%langpack -l ca -n Catalan -F -H -Y -M -A -T -o ca_ES -X
-%langpack -l cs -n Czech -F -H -Y -M -A -T -X -o cs_CZ
-%langpack -l cy -n Welsh -F -H -Y -o cy_GB
-%langpack -l da -n Danish -F -H -Y -M -A -T -X -o da_DK
-%langpack -l de -n German -F -H -Y -M -A -T -X -O
-%langpack -l dz -n Dzongkha -F -s ctl -T -O
-%langpack -l el -n Greek -F -H -Y -M -T -o el_GR
-%langpack -l es -n Spanish -F -H -Y -M -A -T -X -O
-%langpack -l et -n Estonian -F -H -Y -T -o et_EE
-%langpack -l eu -n Basque -F -H -Y -T -o eu_ES
+%langpack -l ca -n Catalan -F -H -Y -M -A -T -X
+%langpack -l cs -n Czech -F -H -Y -M -A -T -X
+%langpack -l cy -n Welsh -F -H -Y
+%langpack -l da -n Danish -F -H -Y -M -A -T -X
+%langpack -l de -n German -F -H -Y -M -A -T -X
+%langpack -l dz -n Dzongkha -F -s ctl -T
+%langpack -l el -n Greek -F -H -Y -M -T
+%langpack -l es -n Spanish -F -H -Y -M -A -T -X
+%langpack -l et -n Estonian -F -H -Y -T
+%langpack -l eu -n Basque -F -H -Y -T
 %langpack -l fa -n Farsi -A -H -Y -s ctl -X
-%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -o fi_FI -X
-%langpack -l fr -n French -F -H -Y -M -A -T -X -O
-%langpack -l ga -n Irish -F -H -Y -M -A -o ga_IE
-%langpack -l gl -n Galician -F -H -Y -T -o gl_ES
-%langpack -l gu -n Gujarati -F -H -Y -s ctl -o gu_IN -T
-%langpack -l he -n Hebrew -F -H -s ctl -o he_IL -T
-%langpack -l hi -n Hindi -F -H -Y -s ctl -T -o hi_IN-IN -X
-%langpack -l hr -n Croatian -F -H -Y -A -o hr_HR -T -X
-%langpack -l hu -n Hungarian -F -H -Y -M -A -T -X -o hu_HU
+%langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -X
+%langpack -l fr -n French -F -H -Y -M -A -T -X
+%langpack -l ga -n Irish -F -H -Y -M -A
+%langpack -l gl -n Galician -F -H -Y -T
+%langpack -l gu -n Gujarati -F -H -Y -s ctl -T
+%langpack -l he -n Hebrew -F -H -s ctl -T
+%langpack -l hi -n Hindi -F -H -Y -s ctl -T-IN -X
+%langpack -l hr -n Croatian -F -H -Y -A -T -X
+%langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
 %langpack -l id -n Indonesian -F -H -Y -T
-%langpack -l it -n Italian -F -H -Y -M -A -T -X -O
-%langpack -l ja -n Japanese -F -A -s cjk -T -X -o ja_JP
+%langpack -l it -n Italian -F -H -Y -M -A -T -X
+%langpack -l ja -n Japanese -F -A -s cjk -T -X
 %langpack -l kk -n Kazakh -F -H
-%langpack -l kn -n Kannada -F -H -Y -o kn_IN
-%langpack -l ko -n Korean -F -H -A -s cjk -T -X -o ko_KR
-%langpack -l lt -n Lithuanian -F -H -Y -A -o lt_LT -T -X
+%langpack -l kn -n Kannada -F -H -Y
+%langpack -l ko -n Korean -F -H -A -s cjk -T -X
+%langpack -l lt -n Lithuanian -F -H -Y -A -T -X
 %langpack -l lv -n Latvian -F -H -Y -M -T
-%langpack -l mai -n Maithili -F -o mai_IN
-%langpack -l ml -n Malayalam -F -H -Y -o ml_IN
-%langpack -l mr -n Marathi -F -H -Y -o mr_IN
-%langpack -l nb -n Bokmal -F -H -Y -M -T -o nb_NO
-%langpack -l nl -n Dutch -F -H -Y -M -A -T -X -O
-%langpack -l nn -n Nynorsk -F -H -Y -M -T -o nn_NO
+%langpack -l mai -n Maithili -F
+%langpack -l ml -n Malayalam -F -H -Y
+%langpack -l mr -n Marathi -F -H -Y
+%langpack -l nb -n Bokmal -F -H -Y -M -T
+%langpack -l nl -n Dutch -F -H -Y -M -A -T -X
+%langpack -l nn -n Nynorsk -F -H -Y -M -T
 %define langpack_lang Southern Ndebele
-%langpack -l nr -n %{langpack_lang} -F -H -o nr_ZA
+%langpack -l nr -n %{langpack_lang} -F -H
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H -o nso_ZA
-%langpack -l or -n Odia -F -H -Y -s ctl -o or_IN
-%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -O
-%langpack -l pl -n Polish -F -H -Y -M -A -T -X -o pl_PL
+%langpack -l nso -n %{langpack_lang} -F -H
+%langpack -l or -n Odia -F -H -Y -s ctl
+%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN
+%langpack -l pl -n Polish -F -H -Y -M -A -T -X
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -o pt_BR
-%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt -o pt_PT
-%langpack -l ro -n Romanian -A -F -H -Y -M -O -T -X
-%langpack -l ru -n Russian -F -H -Y -M -A -T -X -O
-%langpack -l si -n Sinhalese -F -H -S ctl -T -O
-%langpack -l sk -n Slovak -F -H -Y -M -A -T -X -o sk_SK
-%langpack -l sl -n Slovenian -F -H -Y -M -A -T -X -o sl_SI
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X
+%langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
+%langpack -l ro -n Romanian -A -F -H -Y -M -T -X
+%langpack -l ru -n Russian -F -H -Y -M -A -T -X
+%langpack -l si -n Sinhalese -F -H -S ctl -T
+%langpack -l sk -n Slovak -F -H -Y -M -A -T -X
+%langpack -l sl -n Slovenian -F -H -Y -M -A -T -X
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -O
-%langpack -l ss -n Swati -F -H -o ss_ZA
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn
+%langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
-%langpack -l st -n %{langpack_lang} -F -H -o st_ZA
-%langpack -l sv -n Swedish -F -H -Y -M -A -T -X -O
-%langpack -l ta -n Tamil -F -H -Y -s ctl -o ta_IN -T
-%langpack -l te -n Telugu -F -H -Y -o te_IN
-%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th -o th_TH
-%langpack -l tn -n Tswana -F -H -o tn_ZA
-%langpack -l tr -n Turkish -F -A -T -X -o tr_TR
-%langpack -l ts -n Tsonga -F -H -o ts_ZA
-%langpack -l uk -n Ukrainian -F -H -Y -M -T -O
-%langpack -l ve -n Venda -F -H -o ve_ZA
-%langpack -l xh -n Xhosa -F -H -o xh_ZA
+%langpack -l st -n %{langpack_lang} -F -H
+%langpack -l sv -n Swedish -F -H -Y -M -A -T -X
+%langpack -l ta -n Tamil -F -H -Y -s ctl -T
+%langpack -l te -n Telugu -F -H -Y
+%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
+%langpack -l tn -n Tswana -F -H
+%langpack -l tr -n Turkish -F -A -T -X
+%langpack -l ts -n Tsonga -F -H
+%langpack -l uk -n Ukrainian -F -H -Y -M -T
+%langpack -l ve -n Venda -F -H
+%langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -o zh_CN-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN-CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -o zh_TW-TW
-%langpack -l zu -n Zulu -F -H -Y -o zu_ZA
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW-TW
+%langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
 %endif

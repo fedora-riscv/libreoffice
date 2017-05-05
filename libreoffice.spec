@@ -670,13 +670,15 @@ This package provides gdb pretty printers for package %{name}.
 
 %endif
 
-%define _langpack_common() \
+%define _langpack_common(E) \
 %{baseinstdir}/program/resource/*%{1}.res  \
+%{!-E: \
 %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1}.zip \
 %{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1}.zip \
+%{baseinstdir}/share/registry/res/registry_%{1}.xcd \
+} \
 %{baseinstdir}/share/template/%{1} \
 %{baseinstdir}/share/registry/Langpack-%{1}.xcd \
-%{baseinstdir}/share/registry/res/registry_%{1}.xcd \
 %{baseinstdir}/share/registry/res/fcfg_langpack_%{1}.xcd \
 %{nil}
 
@@ -698,7 +700,7 @@ This package provides gdb pretty printers for package %{name}.
 #
 # Aa:  autocorr dependency
 # c:   additional config file (just the name stem)
-# E    the package does not contain any files (i.e., has empty filelist)
+# E:   base (US English) langpack
 # Ff:  font language dependency
 # Hh:  hunspell dependency
 # i:   additional language added to this package
@@ -764,13 +766,11 @@ Provides %{langname} help for LibreOffice. \
 } \
 \
 %files %{pkgname} \
-%{!-E: \
-%{expand:%%_langpack_common %{_langpack_lang}} \
+%{expand:%%_langpack_common %{-E} %{_langpack_lang}} \
 %{-x:%{baseinstdir}/share/autotext/%{-x*}}%{!-x:%{-X:%{baseinstdir}/share/autotext/%{_langpack_lang}}} \
 %{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
-%{-i:%{expand:%%_langpack_common %{-i*}}} \
-} \
+%{-i:%{expand:%%_langpack_common %{-E} %{-i*}}} \
 %{nil}
 
 # Defines an auto-correction subpackage.
@@ -802,7 +802,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
 %{nil}
 
-%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US
+%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US -T -X
 
 %if %{with langpacks}
 
@@ -1416,19 +1416,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files core
 %dir %{baseinstdir}
 %dir %{baseinstdir}/help
-%if !0%{?armhack}
-%docdir %{baseinstdir}/help/en-US
-%dir %{baseinstdir}/help/en-US
-%{baseinstdir}/help/en-US/default.css
-%{baseinstdir}/help/en-US/err.html
-%{baseinstdir}/help/en-US/highcontrast1.css
-%{baseinstdir}/help/en-US/highcontrast2.css
-%{baseinstdir}/help/en-US/highcontrastblack.css
-%{baseinstdir}/help/en-US/highcontrastwhite.css
-%{baseinstdir}/help/en-US/sbasic.*
-%{baseinstdir}/help/en-US/schart.*
-%{baseinstdir}/help/en-US/shared.*
-%endif
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
 %{baseinstdir}/help/main_transform.xsl
@@ -1638,46 +1625,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
 %dir %{baseinstdir}/program/resource
-%{baseinstdir}/program/resource/avmediaen-US.res
-%{baseinstdir}/program/resource/accen-US.res
-%{baseinstdir}/program/resource/basctlen-US.res
-%{baseinstdir}/program/resource/biben-US.res
-%{baseinstdir}/program/resource/chartcontrolleren-US.res
-%{baseinstdir}/program/resource/cuien-US.res
-%{baseinstdir}/program/resource/dbaen-US.res
-%{baseinstdir}/program/resource/dbmmen-US.res
-%{baseinstdir}/program/resource/dbuen-US.res
-%{baseinstdir}/program/resource/dbwen-US.res
-%{baseinstdir}/program/resource/deploymenten-US.res
-%{baseinstdir}/program/resource/deploymentguien-US.res
-%{baseinstdir}/program/resource/dkten-US.res
-%{baseinstdir}/program/resource/editengen-US.res
-%{baseinstdir}/program/resource/epsen-US.res
-%{baseinstdir}/program/resource/euren-US.res
-%{baseinstdir}/program/resource/fps_officeen-US.res
-%{baseinstdir}/program/resource/frmen-US.res
-%{baseinstdir}/program/resource/fween-US.res
-%{baseinstdir}/program/resource/galen-US.res
-%{baseinstdir}/program/resource/impen-US.res
-%{baseinstdir}/program/resource/ofaen-US.res
-%{baseinstdir}/program/resource/pcren-US.res
-%{baseinstdir}/program/resource/pdffilteren-US.res
-%{baseinstdir}/program/resource/sben-US.res
-%{baseinstdir}/program/resource/scnen-US.res
-%{baseinstdir}/program/resource/sden-US.res
-%{baseinstdir}/program/resource/sfxen-US.res
-%{baseinstdir}/program/resource/sdbten-US.res
-%{baseinstdir}/program/resource/svlen-US.res
-%{baseinstdir}/program/resource/svten-US.res
-%{baseinstdir}/program/resource/svxen-US.res
-%{baseinstdir}/program/resource/swen-US.res
-%{baseinstdir}/program/resource/tplen-US.res
-%{baseinstdir}/program/resource/uuien-US.res
-%{baseinstdir}/program/resource/upden-US.res
-%{baseinstdir}/program/resource/vclen-US.res
-%{baseinstdir}/program/resource/writerperfecten-US.res
-%{baseinstdir}/program/resource/xmlsecen-US.res
-%{baseinstdir}/program/resource/xsltdlgen-US.res
 %{baseinstdir}/program/senddoc
 %dir %{baseinstdir}/program/services
 %{baseinstdir}/program/services/services.rdb
@@ -1704,7 +1651,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/autotext
 %dir %{_datadir}/autocorr
 %{baseinstdir}/share/autocorr
-%{baseinstdir}/share/autotext/en-US
 %{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
@@ -1741,11 +1687,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/main.xcd
 %{baseinstdir}/share/registry/oo-ad-ldap.xcd.sample
 %{baseinstdir}/share/registry/oo-ldap.xcd.sample
-%{baseinstdir}/share/registry/Langpack-en-US.xcd
 %dir %{baseinstdir}/share/registry/res
-%{baseinstdir}/share/registry/res/fcfg_langpack_en-US.xcd
 %dir %{baseinstdir}/share/template
-%{baseinstdir}/share/template/en-US
 %dir %{baseinstdir}/share/template/common
 %{baseinstdir}/share/template/common/internal
 %{baseinstdir}/share/template/common/officorr
@@ -1840,9 +1783,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files base
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/sdatabase.*
-%endif
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
@@ -1853,12 +1793,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so
 %{baseinstdir}/program/librptxmllo.so
-%{baseinstdir}/program/resource/abpen-US.res
-%{baseinstdir}/program/resource/cnren-US.res
-%{baseinstdir}/program/resource/dbpen-US.res
-%{baseinstdir}/program/resource/rpten-US.res
-%{baseinstdir}/program/resource/rptuien-US.res
-%{baseinstdir}/program/resource/sdberren-US.res
 %{baseinstdir}/share/registry/base.xcd
 %{baseinstdir}/share/registry/reportbuilder.xcd
 %{baseinstdir}/program/sbase
@@ -1934,9 +1868,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc instdir/LICENSE
 
 %files calc
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/scalc.*
-%endif
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -1953,13 +1884,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libscuilo.so
 %{baseinstdir}/program/libsolverlo.so
 %{baseinstdir}/program/libwpftcalclo.so
-%{baseinstdir}/program/resource/analysisen-US.res
-%{baseinstdir}/program/resource/dateen-US.res
-%{baseinstdir}/program/resource/foren-US.res
-%{baseinstdir}/program/resource/foruien-US.res
-%{baseinstdir}/program/resource/pricingen-US.res
-%{baseinstdir}/program/resource/scen-US.res
-%{baseinstdir}/program/resource/solveren-US.res
 %{baseinstdir}/program/libvbaobjlo.so
 %{baseinstdir}/share/calc/styles.xml
 %{baseinstdir}/share/registry/calc.xcd
@@ -1979,9 +1903,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files draw
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/sdraw.*
-%endif
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
@@ -2003,9 +1924,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/msgbox.py*
 
 %files writer
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/swriter.*
-%endif
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -2014,7 +1932,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libwpftwriterlo.so
 %{baseinstdir}/program/libwriterfilterlo.so
 %{baseinstdir}/program/libvbaswobjlo.so
-%{baseinstdir}/program/resource/t602filteren-US.res
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
 %{baseinstdir}/program/swriter
@@ -2032,9 +1949,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/simpress.*
-%endif
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
@@ -2061,12 +1975,8 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files math
-%if !0%{?armhack}
-%{baseinstdir}/help/en-US/smath.*
-%endif
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
-%{baseinstdir}/program/resource/smen-US.res
 %{baseinstdir}/share/registry/math.xcd
 %{baseinstdir}/program/smath
 %{_datadir}/applications/libreoffice-math.desktop

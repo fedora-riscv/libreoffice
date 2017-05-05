@@ -2237,6 +2237,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files sdk-doc
 %docdir %{sdkinstdir}/docs
+%license instdir/LICENSE
 %{sdkinstdir}/docs/
 %{sdkinstdir}/examples/
 

@@ -829,7 +829,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l gl -n Galician -F -H -Y -T
 %langpack -l gu -n Gujarati -F -H -Y -s ctl -T
 %langpack -l he -n Hebrew -F -H -s ctl -T
-%langpack -l hi -n Hindi -F -H -Y -s ctl -T-IN -X
+%langpack -l hi -n Hindi -F -H -Y -s ctl -T -X
 %langpack -l hr -n Croatian -F -H -Y -A -T -X
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
 %langpack -l id -n Indonesian -F -H -Y -T

@@ -312,14 +312,7 @@ Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
-Obsoletes: libreoffice-appdata < 1:4.3.3.0
-Obsoletes: libreoffice-binfilter < 1:4.0.0.0
 Obsoletes: libreoffice-headless < 1:4.4.0.0
-Obsoletes: libreoffice-javafilter < 1:4.1.0.0
-Obsoletes: libreoffice-testtools < 1:3.4.99.1
-Obsoletes: autocorr-eu < 1:4.0.1.2
-Provides: libreoffice-appdata = %{epoch}:%{version}-%{release}
-Provides: libreoffice-appdata%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -346,7 +339,6 @@ Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: %{name}-report-builder < 1:4.1.0.0
 
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
@@ -481,12 +473,6 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: %{name}-presentation-minimizer < 2:4.2.0.0-1.alpha1
-Obsoletes: %{name}-presenter-screen < 2:4.0.0.0-1.beta1
-Provides: %{name}-presentation-minimizer = %{epoch}:%{version}-%{release}
-Provides: %{name}-presentation-minimizer%{?_isa} = %{epoch}:%{version}-%{release}
-Provides: %{name}-presenter-screen = %{epoch}:%{version}-%{release}
-Provides: %{name}-presenter-screen%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description impress
 The LibreOffice Presentation Application.
@@ -635,9 +621,6 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 %package kde4
 Summary: LibreOffice KDE integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: %{name}-kde < 1:5.1.1.3-2
-Provides: %{name}-kde = %{epoch}:%{version}-%{release}
-Provides: %{name}-kde%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 

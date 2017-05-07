@@ -86,10 +86,10 @@ index 9ec43c4..48cbd52 100644
  	writerperfect/source/writer/MSWorksImportFilter \
  	writerperfect/source/writer/MWAWImportFilter \
  	writerperfect/source/writer/PagesImportFilter \
-diff --git a/writerperfect/qa/unit/WpftImportTestBase.hxx b/writerperfect/qa/unit/WpftImportTestBase.hxx
+diff --git a/writerperfect/qa/unit/WpftFilterFixture.hxx b/writerperfect/qa/unit/WpftFilterFixture.hxx
 index ce70172..d73d435 100644
---- a/writerperfect/qa/unit/WpftImportTestBase.hxx
-+++ b/writerperfect/qa/unit/WpftImportTestBase.hxx
+--- a/writerperfect/qa/unit/WpftFilterFixture.hxx
++++ b/writerperfect/qa/unit/WpftFilterFixture.hxx
 @@ -29,9 +29,6 @@
          ((minor) > (req_minor) \
           || ((minor) == (req_minor) && ((micro) >= (req_micro)))))

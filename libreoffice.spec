@@ -26,7 +26,7 @@
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
 # %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 # URL for external projects' tarballs
-%define external_url http://dev-www.libreoffice.org/src/
+%define external_url http://dev-www.libreoffice.org/src
 %if 0%{?fedora}
 %global weak_deps 1
 %global file_triggers 1

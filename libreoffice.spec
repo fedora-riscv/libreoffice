@@ -103,7 +103,7 @@ Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minim
 Source110:      %{external_url}/gpgme-1.8.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.26.tar.bz2
 Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
-Source113:      %{external_url}/cppunit-1.14.0.tar.gz
+Source113:      %{external_url}/3d569869d27b48860210c758c4f313082103a5e58219a7669b52bfd29d674780-cppunit-1.14.0.tar.gz
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
 %endif
 

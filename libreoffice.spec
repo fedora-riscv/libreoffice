@@ -1551,6 +1551,12 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxoflo.so
 %{baseinstdir}/program/libxsec_fw.so
 %{baseinstdir}/program/libxsec_gpg.so
+%if 0%{?rhel}
+%{baseinstdir}/program/libassuan.so.0
+%{baseinstdir}/program/libgpg-error.so.0
+%{baseinstdir}/program/libgpgme.so.11
+%{baseinstdir}/program/libgpgmepp.so.6
+%endif
 %{baseinstdir}/program/libxsec_xmlsec.so
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so

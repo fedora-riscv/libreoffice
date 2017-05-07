@@ -98,7 +98,6 @@ Source104:      %{external_url}/libwps-0.4.6.tar.bz2
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
 Source107:      %{external_url}/libstaroffice-0.0.3.tar.bz2
-# TODO: maybe it's still possible to build with harfbuzz 0.9.36 with some amount of patching?
 Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
 Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
 Source110:      %{external_url}/gpgme-1.8.2.tar.bz2

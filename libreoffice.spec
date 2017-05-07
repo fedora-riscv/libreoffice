@@ -246,6 +246,7 @@ Patch4: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch5: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch6: 0001-apparently-the-executable-does-not-need-pdfium-direc.patch
 Patch7: 0001-add-missing-dep-on-dir.patch
+Patch8: 0001-Use-gcd-from-boost-math-gcd.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,22 +1,23 @@
-From 2ca03b2e1658da06ce12b310a4423b36cbeaa5cc Mon Sep 17 00:00:00 2001
+From c9c8dee4fe2bf232317a1d3f387bd4ec98ada894 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 9 May 2017 09:24:11 +0100
-Subject: [PATCH 1/2] Related: tdf#62702 handle EmbeddedOdf like CONTENTS on
- ole activate attempt
+Subject: [PATCH] Related: tdf#62702 handle EmbeddedOdf like CONTENTS on ole
+ activate attempt
 
-Change-Id: I11f1d6ad049cada1cadfe97a440b7ae562ba4ced
 (cherry picked from commit 8db9cfd2973b3e6f0c682fe8961540d528e6d493)
 
 Related: tdf#62702 also try various other known streams for object content
 
-Change-Id: I5b5fa61e9930ba0eaa5ac86e4231050c9ebebf8a
 (cherry picked from commit 013e34d875aeb75d9660af7c18967c2d468cbd74)
+
+Change-Id: I11f1d6ad049cada1cadfe97a440b7ae562ba4ced
+5b5fa61e9930ba0eaa5ac86e4231050c9ebebf8a
 ---
  embeddedobj/source/msole/oleembed.cxx | 31 +++++++++++++++++++++++--------
  1 file changed, 23 insertions(+), 8 deletions(-)
 
 diff --git a/embeddedobj/source/msole/oleembed.cxx b/embeddedobj/source/msole/oleembed.cxx
-index 2faed0b..bf5dea0 100644
+index 2faed0b..e268757 100644
 --- a/embeddedobj/source/msole/oleembed.cxx
 +++ b/embeddedobj/source/msole/oleembed.cxx
 @@ -711,18 +711,33 @@ namespace
@@ -27,17 +28,17 @@ index 2faed0b..bf5dea0 100644
 -        try
 +        //various stream names that can contain the real document contents for
 +        //this object in a straightforward direct way
-+        const OUStringLiteral aStreamNames[] =
++        static const OUStringLiteral aStreamNames[] =
          {
 -            xNameContainer->getByName("CONTENTS") >>= xCONTENTS;
 -        }
 -        catch (container::NoSuchElementException const&)
-+            "CONTENTS",
-+            "Package",
-+            "EmbeddedOdf",
-+            "WordDocument",
-+            "Workbook",
-+            "PowerPoint Document"
++            OUStringLiteral("CONTENTS"),
++            OUStringLiteral("Package"),
++            OUStringLiteral("EmbeddedOdf"),
++            OUStringLiteral("WordDocument"),
++            OUStringLiteral("Workbook"),
++            OUStringLiteral("PowerPoint Document")
 +        };
 +
 +        bool bCopied = false;

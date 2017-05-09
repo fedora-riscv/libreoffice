@@ -1,0 +1,217 @@
+From 4796ce2b93089c363639c64a8fde734df2c594a1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 8 May 2017 15:26:22 +0100
+Subject: [PATCH 5/5] Resolves: rhbz#144437 make gnome-documents not crash the
+ whole time
+
+accept that once initted that LibreOffice cannot be deinitted and reinited
+(without lots of work), but allow the main loop to quit and restart so LOKs
+thread can run and exit successfully, new LOK connections will restart the main
+loop.
+
+The buckets of global state continues to be valid the whole time this way
+
+Change-Id: Ide54c0df2ce4065f7c192ae8c2cedfaaa2b58d72
+---
+ desktop/source/app/app.cxx               |  2 +-
+ desktop/source/app/officeipcthread.cxx   |  9 +++++++--
+ desktop/source/app/officeipcthread.hxx   |  2 +-
+ desktop/source/lib/init.cxx              |  5 ++++-
+ framework/source/services/desktop.cxx    |  8 +++++---
+ libreofficekit/source/gtk/lokdocview.cxx | 34 +++++++++++++++++++++-----------
+ vcl/source/app/svmain.cxx                |  8 ++++++++
+ 7 files changed, 49 insertions(+), 19 deletions(-)
+
+diff --git a/desktop/source/app/app.cxx b/desktop/source/app/app.cxx
+index 8793697..9786afe 100644
+--- a/desktop/source/app/app.cxx
++++ b/desktop/source/app/app.cxx
+@@ -1994,7 +1994,7 @@ IMPL_LINK_NOARG(Desktop, OpenClients_Impl, void*, void)
+         // When this server closes down it attempts to recreate the pipe (in RequestHandler::Disable()).
+         // It's possible that the client has a pending connection request.
+         // When the IPC thread is not running, this connection locks (because maPipe.accept()) is never called
+-        RequestHandler::SetReady();
++        RequestHandler::SetReady(true);
+         OpenClients();
+ 
+         CloseSplashScreen();
+diff --git a/desktop/source/app/officeipcthread.cxx b/desktop/source/app/officeipcthread.cxx
+index 7a2fd46..5ea5f41 100644
+--- a/desktop/source/app/officeipcthread.cxx
++++ b/desktop/source/app/officeipcthread.cxx
+@@ -939,6 +939,8 @@ void RequestHandler::Disable()
+             handler->mIpcThread->join();
+             handler->mIpcThread.clear();
+         }
++
++        handler->cReady.reset();
+     }
+ }
+ 
+@@ -953,12 +955,15 @@ RequestHandler::~RequestHandler()
+     assert(!mIpcThread.is());
+ }
+ 
+-void RequestHandler::SetReady()
++void RequestHandler::SetReady(bool bIsReady)
+ {
+     osl::MutexGuard g(GetMutex());
+     if (pGlobal.is())
+     {
+-        pGlobal->cReady.set();
++        if (bIsReady)
++            pGlobal->cReady.set();
++        else
++            pGlobal->cReady.reset();
+     }
+ }
+ 
+diff --git a/desktop/source/app/officeipcthread.hxx b/desktop/source/app/officeipcthread.hxx
+index 2826aba..2b58ce4 100644
+--- a/desktop/source/app/officeipcthread.hxx
++++ b/desktop/source/app/officeipcthread.hxx
+@@ -122,7 +122,7 @@ class RequestHandler: public salhelper::SimpleReferenceObject
+     static Status               Enable(bool ipc);
+     static void                 Disable();
+     // start dispatching events...
+-    static void                 SetReady();
++    static void                 SetReady(bool bIsReady);
+     static void                 WaitForReady();
+ 
+     bool                        AreRequestsEnabled() const { return mState == State::RequestsEnabled; }
+diff --git a/desktop/source/lib/init.cxx b/desktop/source/lib/init.cxx
+index 9df6471..14c7bfd 100644
+--- a/desktop/source/lib/init.cxx
++++ b/desktop/source/lib/init.cxx
+@@ -2742,10 +2742,12 @@ static void lo_startmain(void*)
+ {
+     osl_setThreadName("lo_startmain");
+ 
+-    if (GetpApp())
++    if (comphelper::SolarMutex::get())
+         Application::GetSolarMutex().tryToAcquire();
+ 
+     soffice_main();
++
++    Application::ReleaseSolarMutex();
+ }
+ 
+ static bool bInitialized = false;
+@@ -2912,6 +2914,7 @@ static int lo_initialize(LibreOfficeKit* pThis, const char* pAppPath, const char
+             SAL_INFO("lok", "Enabling RequestHandler");
+             RequestHandler::Enable(false);
+             SAL_INFO("lok", "Starting soffice_main");
++            RequestHandler::SetReady(false);
+             pLib->maThread = osl_createThread(lo_startmain, nullptr);
+             SAL_INFO("lok", "Waiting for RequestHandler");
+             RequestHandler::WaitForReady();
+diff --git a/framework/source/services/desktop.cxx b/framework/source/services/desktop.cxx
+index 20afab1..6f6412a 100644
+--- a/framework/source/services/desktop.cxx
++++ b/framework/source/services/desktop.cxx
+@@ -59,6 +59,7 @@
+ #include <com/sun/star/frame/XTerminateListener2.hpp>
+ 
+ #include <comphelper/sequence.hxx>
++#include <comphelper/lok.hxx>
+ #include <cppuhelper/supportsservice.hxx>
+ #include <rtl/instance.hxx>
+ #include <vcl/svapp.hxx>
+@@ -228,8 +229,9 @@ sal_Bool SAL_CALL Desktop::terminate()
+ 
+     // try to close all open frames.
+     // Allow using of any UI ... because Desktop.terminate() was designed as UI functionality in the past.
+-    bool bIsEventTestingMode = Application::IsEventTestingModeEnabled();
+-    bool bFramesClosed = impl_closeFrames(!bIsEventTestingMode);
++    bool bRestartableMainLoop = Application::IsEventTestingModeEnabled() ||
++                                comphelper::LibreOfficeKit::isActive();
++    bool bFramesClosed = impl_closeFrames(!bRestartableMainLoop);
+ 
+     // Ask normal terminate listener. They could stop terminating the process.
+     Desktop::TTerminateListenerList lCalledTerminationListener;
+@@ -241,7 +243,7 @@ sal_Bool SAL_CALL Desktop::terminate()
+         return false;
+     }
+ 
+-    if (bIsEventTestingMode)
++    if (bRestartableMainLoop)
+     {
+         Application::Quit();
+         return true;
+diff --git a/libreofficekit/source/gtk/lokdocview.cxx b/libreofficekit/source/gtk/lokdocview.cxx
+index 18985d5..04bd143 100644
+--- a/libreofficekit/source/gtk/lokdocview.cxx
++++ b/libreofficekit/source/gtk/lokdocview.cxx
+@@ -2587,20 +2587,32 @@ static void lok_doc_view_destroy (GtkWidget* widget)
+     std::stringstream ss;
+     ss << "lok::Document::setView(" << priv->m_nViewId << ")";
+     g_info("%s", ss.str().c_str());
+-    priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
+-    priv->m_pDocument->pClass->registerCallback(priv->m_pDocument, nullptr, nullptr);
+-    aGuard.unlock();
+-
+-    if (priv->m_pDocument && priv->m_pDocument->pClass->getViewsCount(priv->m_pDocument) > 1)
++    if (priv->m_pDocument)
+     {
+-        priv->m_pDocument->pClass->destroyView(priv->m_pDocument, priv->m_nViewId);
++        priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
++        priv->m_pDocument->pClass->registerCallback(priv->m_pDocument, nullptr, nullptr);
+     }
+-    else
++    aGuard.unlock();
++
++    if (priv->m_pDocument)
+     {
+-        if (priv->m_pDocument)
+-            priv->m_pDocument->pClass->destroy (priv->m_pDocument);
+-        if (priv->m_pOffice)
+-            priv->m_pOffice->pClass->destroy (priv->m_pOffice);
++        if (priv->m_pDocument->pClass->getViewsCount(priv->m_pDocument) > 1)
++        {
++            priv->m_pDocument->pClass->destroyView(priv->m_pDocument, priv->m_nViewId);
++        }
++        else
++        {
++            if (priv->m_pDocument)
++            {
++                priv->m_pDocument->pClass->destroy (priv->m_pDocument);
++                priv->m_pDocument = nullptr;
++            }
++            if (priv->m_pOffice)
++            {
++                priv->m_pOffice->pClass->destroy (priv->m_pOffice);
++                priv->m_pOffice = nullptr;
++            }
++        }
+     }
+ 
+     GTK_WIDGET_CLASS (lok_doc_view_parent_class)->destroy (widget);
+diff --git a/vcl/source/app/svmain.cxx b/vcl/source/app/svmain.cxx
+index 2cd6137..a5f7807 100644
+--- a/vcl/source/app/svmain.cxx
++++ b/vcl/source/app/svmain.cxx
+@@ -84,6 +84,7 @@
+ #include <com/sun/star/lang/XComponent.hpp>
+ #include <com/sun/star/frame/Desktop.hpp>
+ 
++#include <comphelper/lok.hxx>
+ #include <cppuhelper/implbase.hxx>
+ #include <uno/current_context.hxx>
+ 
+@@ -361,6 +362,13 @@ VCLUnoWrapperDeleter::disposing(lang::EventObject const& /* rSource */)
+ 
+ void DeInitVCL()
+ {
++    //rhbz#1444437, when using LibreOffice like a library you can't realistically
++    //tear everything down and recreate them on the next call, there's too many
++    //(c++) singletons that point to stuff that gets deleted during shutdown
++    //which won't be recreated on restart.
++    if (comphelper::LibreOfficeKit::isActive())
++        return;
++
+     {
+         SolarMutexReleaser r; // unblock threads blocked on that so we can join
+         ::comphelper::JoinAsyncEventNotifiers();
+-- 
+2.9.3
+

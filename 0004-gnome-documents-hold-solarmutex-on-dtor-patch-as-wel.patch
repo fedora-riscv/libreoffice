@@ -1,0 +1,38 @@
+From 710bbe401ada2cbcb18f5923635809566e748351 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 8 May 2017 15:51:46 +0100
+Subject: [PATCH 4/5] gnome-documents: hold solarmutex on dtor patch as well
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I75fe71612116d435606c37185bf55b450425fc25
+Reviewed-on: https://gerrit.libreoffice.org/37396
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 899ffa4c4c66702e2a65f4065cbb7970d0e9c0e2)
+---
+ include/comphelper/unique_disposing_ptr.hxx | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/comphelper/unique_disposing_ptr.hxx b/include/comphelper/unique_disposing_ptr.hxx
+index c986b12..324b7ae 100644
+--- a/include/comphelper/unique_disposing_ptr.hxx
++++ b/include/comphelper/unique_disposing_ptr.hxx
+@@ -177,6 +177,12 @@ public:
+         SolarMutexGuard aGuard;
+         unique_disposing_ptr<T>::reset(p);
+     }
++
++    virtual ~unique_disposing_solar_mutex_reset_ptr() override
++    {
++        if (unique_disposing_ptr<T>::get() && comphelper::SolarMutex::get())
++            reset();
++    }
+ };
+ 
+ }
+-- 
+2.9.3
+

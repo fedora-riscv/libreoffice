@@ -1,0 +1,68 @@
+From 19d92c9c354465b40403f6cccd48ce62ea8e7b04 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 5 May 2017 14:34:51 +0100
+Subject: [PATCH 3/5] rhbz#1444437 gnome-documents finalize may not occur
+ immediately
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+when LOK Widget is destroyed, it may instead happen during GC of javascript,
+like in the in gnome-documents case, but "destroy" will be called promptly. So
+close documents and office in destroy, not finalize
+
+Change-Id: I1dd7b828839894cb2d87f5c087194fe458ca22f0
+Reviewed-on: https://gerrit.libreoffice.org/37398
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit c45660df336a640f0f9d4290b881548d25c9db9d)
+---
+ libreofficekit/source/gtk/lokdocview.cxx | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/libreofficekit/source/gtk/lokdocview.cxx b/libreofficekit/source/gtk/lokdocview.cxx
+index a08d93e..18985d5 100644
+--- a/libreofficekit/source/gtk/lokdocview.cxx
++++ b/libreofficekit/source/gtk/lokdocview.cxx
+@@ -2574,9 +2574,12 @@ static gboolean lok_doc_view_draw (GtkWidget* pWidget, cairo_t* pCairo)
+     return FALSE;
+ }
+ 
+-static void lok_doc_view_finalize (GObject* object)
++//rhbz#1444437 finalize may not occur immediately when this widget is destroyed
++//it may happen during GC of javascript, e.g. in gnome-documents but "destroy"
++//will be called promptly, so close documents in destroy, not finalize
++static void lok_doc_view_destroy (GtkWidget* widget)
+ {
+-    LOKDocView* pDocView = LOK_DOC_VIEW (object);
++    LOKDocView* pDocView = LOK_DOC_VIEW (widget);
+     LOKDocViewPrivate& priv = getPrivate(pDocView);
+ 
+     // Ignore notifications sent to this view on shutdown.
+@@ -2599,6 +2602,15 @@ static void lok_doc_view_finalize (GObject* object)
+         if (priv->m_pOffice)
+             priv->m_pOffice->pClass->destroy (priv->m_pOffice);
+     }
++
++    GTK_WIDGET_CLASS (lok_doc_view_parent_class)->destroy (widget);
++}
++
++static void lok_doc_view_finalize (GObject* object)
++{
++    LOKDocView* pDocView = LOK_DOC_VIEW (object);
++    LOKDocViewPrivate& priv = getPrivate(pDocView);
++
+     delete priv.m_pImpl;
+     priv.m_pImpl = nullptr;
+ 
+@@ -2649,6 +2661,7 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
+     pWidgetClass->key_press_event = signalKey;
+     pWidgetClass->key_release_event = signalKey;
+     pWidgetClass->motion_notify_event = lok_doc_view_signal_motion;
++    pWidgetClass->destroy = lok_doc_view_destroy;
+ 
+     /**
+      * LOKDocView:lopath:
+-- 
+2.9.3
+

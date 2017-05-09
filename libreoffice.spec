@@ -247,6 +247,11 @@ Patch11: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 Patch12: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch13: 0001-Related-tdf-62702-handle-EmbeddedOdf-like-CONTENTS-o.patch
 Patch14: 0002-Resolves-tdf-62702-allow-ole-objects-to-be-inserted-.patch
+Patch15: 0001-fold-SfxPickList-Get-and-ensure-together.patch
+Patch16: 0002-gnome-documents-rework-SfxPickList-as-pimpl.patch
+Patch17: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
+Patch18: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
+Patch19: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
 
 %if 0%{?rhel}
 # not upstreamed

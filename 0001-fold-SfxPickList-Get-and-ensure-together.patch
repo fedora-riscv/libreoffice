@@ -1,0 +1,45 @@
+From e4d3b23009a323efc8b31431107cc2d2a529b118 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 8 May 2017 15:27:49 +0100
+Subject: [PATCH 1/5] fold SfxPickList::Get and ::ensure together
+
+Change-Id: Iab68095a9733393b656623ddd6bb8705f7cfda82
+(cherry picked from commit f17d55e5495859b2a78ed625fc2573391e26cdf1)
+---
+ sfx2/source/appl/sfxpicklist.cxx | 3 +--
+ sfx2/source/inc/sfxpicklist.hxx  | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/sfx2/source/appl/sfxpicklist.cxx b/sfx2/source/appl/sfxpicklist.cxx
+index be48209..cc3a5cf 100644
+--- a/sfx2/source/appl/sfxpicklist.cxx
++++ b/sfx2/source/appl/sfxpicklist.cxx
+@@ -167,10 +167,9 @@ void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
+                                                                  (pFilter) ? pFilter->GetServiceName() : OUString() );
+ }
+ 
+-SfxPickList& SfxPickList::Get()
++void SfxPickList::ensure()
+ {
+     static SfxPickList aUniqueInstance(SvtHistoryOptions().GetSize(ePICKLIST));
+-    return aUniqueInstance;
+ }
+ 
+ SfxPickList::SfxPickList( sal_uInt32 nAllowedMenuSize ) :
+diff --git a/sfx2/source/inc/sfxpicklist.hxx b/sfx2/source/inc/sfxpicklist.hxx
+index e77d6ed..b1e86b0 100644
+--- a/sfx2/source/inc/sfxpicklist.hxx
++++ b/sfx2/source/inc/sfxpicklist.hxx
+@@ -45,8 +45,7 @@ class SfxPickList : public SfxListener
+     static void             AddDocumentToPickList( SfxObjectShell* pDocShell );
+ 
+     public:
+-        static SfxPickList& Get();
+-        static void ensure() { Get(); }
++        static void ensure();
+ 
+         virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
+ };
+-- 
+2.9.3
+

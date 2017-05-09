@@ -1,0 +1,132 @@
+From 24785875d0bbeae58fe362b088238115c961e2c1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 8 May 2017 15:35:29 +0100
+Subject: [PATCH 2/5] gnome-documents: rework SfxPickList as pimpl
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+and call impl dtor with SolarMutex held
+
+Change-Id: I06931ca9ab4384a5e3c255847cf3533ed03b77dc
+Reviewed-on: https://gerrit.libreoffice.org/37395
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 53082fcd1b1cccf7ef0c3cb1bef8e747c4e88a61)
+---
+ sfx2/source/appl/sfxpicklist.cxx | 40 ++++++++++++++++++++++++++++++++--------
+ sfx2/source/inc/sfxpicklist.hxx  | 27 +++++++++------------------
+ 2 files changed, 41 insertions(+), 26 deletions(-)
+
+diff --git a/sfx2/source/appl/sfxpicklist.cxx b/sfx2/source/appl/sfxpicklist.cxx
+index cc3a5cf..7781e9d 100644
+--- a/sfx2/source/appl/sfxpicklist.cxx
++++ b/sfx2/source/appl/sfxpicklist.cxx
+@@ -83,7 +83,25 @@ namespace
+         : public rtl::Static<osl::Mutex, thePickListMutex> {};
+ }
+ 
+-void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
++class SfxPickListImpl : public SfxListener
++{
++private:
++    sal_uInt32 m_nAllowedMenuSize;
++    css::uno::Reference< css::util::XStringWidth > m_xStringLength;
++
++    /**
++     * Adds the given document to the pick list (recent documents) if it satisfies
++       certain requirements, e.g. being writable. Check implementation for requirement
++       details.
++     */
++    static void         AddDocumentToPickList( SfxObjectShell* pDocShell );
++
++public:
++    SfxPickListImpl(sal_uInt32 nMenuSize);
++    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
++};
++
++void SfxPickListImpl::AddDocumentToPickList( SfxObjectShell* pDocSh )
+ {
+     if (pDocSh->IsAvoidRecentDocs() || comphelper::LibreOfficeKit::isActive())
+         return;
+@@ -167,12 +185,23 @@ void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
+                                                                  (pFilter) ? pFilter->GetServiceName() : OUString() );
+ }
+ 
++SfxPickList::SfxPickList(sal_uInt32 nAllowedMenuSize)
++    : mxImpl(new SfxPickListImpl(nAllowedMenuSize))
++{
++}
++
++SfxPickList::~SfxPickList()
++{
++    std::unique_ptr<SolarMutexGuard> xGuard(comphelper::SolarMutex::get() ? new SolarMutexGuard : nullptr);
++    mxImpl.reset();
++}
++
+ void SfxPickList::ensure()
+ {
+     static SfxPickList aUniqueInstance(SvtHistoryOptions().GetSize(ePICKLIST));
+ }
+ 
+-SfxPickList::SfxPickList( sal_uInt32 nAllowedMenuSize ) :
++SfxPickListImpl::SfxPickListImpl( sal_uInt32 nAllowedMenuSize ) :
+     m_nAllowedMenuSize( nAllowedMenuSize )
+ {
+     m_xStringLength = new StringLength;
+@@ -180,12 +209,7 @@ SfxPickList::SfxPickList( sal_uInt32 nAllowedMenuSize ) :
+     StartListening( *SfxGetpApp() );
+ }
+ 
+-SfxPickList::~SfxPickList()
+-{
+-}
+-
+-
+-void SfxPickList::Notify( SfxBroadcaster&, const SfxHint& rHint )
++void SfxPickListImpl::Notify( SfxBroadcaster&, const SfxHint& rHint )
+ {
+     const SfxOpenUrlHint* pOpenUrlHint = dynamic_cast<const SfxOpenUrlHint*>(&rHint);
+     if ( pOpenUrlHint )
+diff --git a/sfx2/source/inc/sfxpicklist.hxx b/sfx2/source/inc/sfxpicklist.hxx
+index b1e86b0..cf257d9 100644
+--- a/sfx2/source/inc/sfxpicklist.hxx
++++ b/sfx2/source/inc/sfxpicklist.hxx
+@@ -29,25 +29,16 @@
+ 
+ #define PICKLIST_MAXSIZE  100
+ 
+-class SfxPickList : public SfxListener
+-{
+-    sal_uInt32                      m_nAllowedMenuSize;
+-    css::uno::Reference< css::util::XStringWidth > m_xStringLength;
+-
+-                            SfxPickList( sal_uInt32 nMenuSize );
+-                            virtual ~SfxPickList() override;
+-
+-    /**
+-     * Adds the given document to the pick list (recent documents) if it satisfies
+-       certain requirements, e.g. being writable. Check implementation for requirement
+-       details.
+-     */
+-    static void             AddDocumentToPickList( SfxObjectShell* pDocShell );
++class SfxPickListImpl;
+ 
+-    public:
+-        static void ensure();
+-
+-        virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
++class SfxPickList
++{
++private:
++    std::unique_ptr<SfxPickListImpl> mxImpl;
++public:
++    SfxPickList(sal_uInt32 nAllowedMenuSize);
++    static void ensure();
++    ~SfxPickList();
+ };
+ 
+ #endif // INCLUDED_SFX2_SOURCE_INC_SFXPICKLIST_HXX
+-- 
+2.9.3
+

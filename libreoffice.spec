@@ -232,19 +232,17 @@ Requires: %{name}-base%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 
 # not upstreamed
-Patch0: 0001-installation-fix.patch
-# not upstreamed
-Patch1: 0001-never-run-autogen.sh.patch
+Patch0: 0001-never-run-autogen.sh.patch
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
-Patch2: 0001-don-t-suppress-crashes.patch
+Patch1: 0001-don-t-suppress-crashes.patch
 # not upstreamed
-Patch3: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
+Patch2: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 # not upstreamed
-Patch4: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
-Patch5: 0001-apparently-the-executable-does-not-need-pdfium-direc.patch
-Patch6: 0001-add-missing-dep-on-dir.patch
-Patch7: 0001-Use-gcd-from-boost-math-gcd.patch
+Patch3: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+Patch4: 0001-apparently-the-executable-does-not-need-pdfium-direc.patch
+Patch5: 0001-add-missing-dep-on-dir.patch
+Patch6: 0001-Use-gcd-from-boost-math-gcd.patch
 
 %if 0%{?rhel}
 # not upstreamed

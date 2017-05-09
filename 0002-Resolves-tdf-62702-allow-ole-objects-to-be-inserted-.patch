@@ -1,0 +1,246 @@
+From 8daa13abb5ebec4d0b867f1d56ebc8516ae3bb71 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 9 May 2017 13:27:06 +0100
+Subject: [PATCH 2/2] Resolves: tdf#62702 allow ole objects to be inserted as
+ icons
+
+under windows on "create new", "further objects" you get the
+native windows insert object dialog which has the "Display As Icon"
+option, but on Linux etc (or using our own dialog) there isn't that
+option
+
+so add a "Display as icon" checkbox in our own dialog and generate
+an icon through SvFileInformationManager::GetImage
+
+Change-Id: I0a400189031900bd1e387465ec4ba57847cb5394
+(cherry picked from commit f505f95d466d4d3348f41dfd93e5c243d15c6c71)
+---
+ cui/source/dialogs/insdlg.cxx      |  16 +++++
+ cui/source/inc/insdlg.hxx          |   1 +
+ cui/uiconfig/ui/insertoleobject.ui | 131 +++++++++++++++++++++----------------
+ 3 files changed, 90 insertions(+), 58 deletions(-)
+
+diff --git a/cui/source/dialogs/insdlg.cxx b/cui/source/dialogs/insdlg.cxx
+index 47af495..ac404bb 100644
+--- a/cui/source/dialogs/insdlg.cxx
++++ b/cui/source/dialogs/insdlg.cxx
+@@ -34,6 +34,7 @@
+ 
+ #include "insdlg.hxx"
+ #include <dialmgr.hxx>
++#include <svtools/imagemgr.hxx>
+ #include <svtools/sores.hxx>
+ 
+ #include <tools/urlobj.hxx>
+@@ -164,6 +165,7 @@ SvInsertOleDlg::SvInsertOleDlg
+     get(m_pEdFilepath, "urled");
+     get(m_pBtnFilepath, "urlbtn");
+     get(m_pCbFilelink, "linktofile");
++    get(m_pCbAsIcon, "asicon");
+     m_pLbObjecttype->SetDoubleClickHdl( LINK( this, SvInsertOleDlg, DoubleClickHdl ) );
+     m_pBtnFilepath->SetClickHdl( LINK( this, SvInsertOleDlg, BrowseHdl ) );
+     Link<Button*,void> aLink( LINK( this, SvInsertOleDlg, RadioHdl ) );
+@@ -188,6 +190,7 @@ void SvInsertOleDlg::dispose()
+     m_pEdFilepath.clear();
+     m_pBtnFilepath.clear();
+     m_pCbFilelink.clear();
++    m_pCbAsIcon.clear();
+     InsertObjectDialog_Impl::dispose();
+ }
+ 
+@@ -328,6 +331,19 @@ short SvInsertOleDlg::Execute()
+                 aErr = aErr.replaceFirst( "%", aFileName );
+                 ScopedVclPtrInstance<MessageDialog>(this, aErr)->Execute();
+             }
++            else
++            {
++                if (m_pCbAsIcon->IsChecked())
++                {
++                    //something nice here I guess would be to write the filename into
++                    //the image with this icon above it
++                    Image aImage = SvFileInformationManager::GetImage(aURL, true);
++                    SvMemoryStream aTemp;
++                    WriteDIBBitmapEx(aImage.GetBitmapEx(), aTemp);
++                    m_aIconMetaFile = Sequence<sal_Int8>(static_cast<const sal_Int8*>(aTemp.GetData()), aTemp.Seek(STREAM_SEEK_TO_END));
++                    m_aIconMediaType = "application/x-openoffice-bitmap;windows_formatname=\"Bitmap\"";
++                }
++            }
+         }
+     }
+ 
+diff --git a/cui/source/inc/insdlg.hxx b/cui/source/inc/insdlg.hxx
+index cd6a45a..4b42774 100644
+--- a/cui/source/inc/insdlg.hxx
++++ b/cui/source/inc/insdlg.hxx
+@@ -64,6 +64,7 @@ class SvInsertOleDlg : public InsertObjectDialog_Impl
+     VclPtr<Edit> m_pEdFilepath;
+     VclPtr<PushButton> m_pBtnFilepath;
+     VclPtr<CheckBox> m_pCbFilelink;
++    VclPtr<CheckBox> m_pCbAsIcon;
+     const SvObjectServerList* m_pServers;
+ 
+     css::uno::Sequence< sal_Int8 > m_aIconMetaFile;
+diff --git a/cui/uiconfig/ui/insertoleobject.ui b/cui/uiconfig/ui/insertoleobject.ui
+index 5ddf229..1aaeecb 100644
+--- a/cui/uiconfig/ui/insertoleobject.ui
++++ b/cui/uiconfig/ui/insertoleobject.ui
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!-- Generated with glade 3.18.3 -->
++<!-- Generated with glade 3.20.0 -->
+ <interface>
+   <requires lib="gtk+" version="3.0"/>
+   <object class="GtkDialog" id="InsertOLEObjectDialog">
+@@ -12,6 +12,63 @@
+         <property name="can_focus">False</property>
+         <property name="orientation">vertical</property>
+         <property name="spacing">12</property>
++        <child internal-child="action_area">
++          <object class="GtkButtonBox" id="dialog-action_area1">
++            <property name="can_focus">False</property>
++            <property name="layout_style">end</property>
++            <child>
++              <object class="GtkButton" id="ok">
++                <property name="label">gtk-ok</property>
++                <property name="visible">True</property>
++                <property name="can_focus">True</property>
++                <property name="can_default">True</property>
++                <property name="has_default">True</property>
++                <property name="receives_default">True</property>
++                <property name="use_stock">True</property>
++              </object>
++              <packing>
++                <property name="expand">False</property>
++                <property name="fill">True</property>
++                <property name="position">0</property>
++              </packing>
++            </child>
++            <child>
++              <object class="GtkButton" id="cancel">
++                <property name="label">gtk-cancel</property>
++                <property name="visible">True</property>
++                <property name="can_focus">True</property>
++                <property name="receives_default">True</property>
++                <property name="use_stock">True</property>
++              </object>
++              <packing>
++                <property name="expand">False</property>
++                <property name="fill">True</property>
++                <property name="position">1</property>
++              </packing>
++            </child>
++            <child>
++              <object class="GtkButton" id="help">
++                <property name="label">gtk-help</property>
++                <property name="visible">True</property>
++                <property name="can_focus">True</property>
++                <property name="receives_default">True</property>
++                <property name="use_stock">True</property>
++              </object>
++              <packing>
++                <property name="expand">False</property>
++                <property name="fill">True</property>
++                <property name="position">2</property>
++                <property name="secondary">True</property>
++              </packing>
++            </child>
++          </object>
++          <packing>
++            <property name="expand">False</property>
++            <property name="fill">True</property>
++            <property name="pack_type">end</property>
++            <property name="position">1</property>
++          </packing>
++        </child>
+         <child>
+           <object class="GtkBox" id="box1">
+             <property name="width_request">400</property>
+@@ -162,6 +219,21 @@
+                             <property name="top_attach">1</property>
+                           </packing>
+                         </child>
++                        <child>
++                          <object class="GtkCheckButton" id="asicon">
++                            <property name="label" translatable="yes">Display as icon</property>
++                            <property name="visible">True</property>
++                            <property name="can_focus">True</property>
++                            <property name="receives_default">False</property>
++                            <property name="xalign">0</property>
++                            <property name="draw_indicator">True</property>
++                          </object>
++                          <packing>
++                            <property name="left_attach">0</property>
++                            <property name="top_attach">2</property>
++                            <property name="width">2</property>
++                          </packing>
++                        </child>
+                       </object>
+                     </child>
+                   </object>
+@@ -191,63 +263,6 @@
+             <property name="position">0</property>
+           </packing>
+         </child>
+-        <child internal-child="action_area">
+-          <object class="GtkButtonBox" id="dialog-action_area1">
+-            <property name="can_focus">False</property>
+-            <property name="layout_style">end</property>
+-            <child>
+-              <object class="GtkButton" id="ok">
+-                <property name="label">gtk-ok</property>
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="can_default">True</property>
+-                <property name="has_default">True</property>
+-                <property name="receives_default">True</property>
+-                <property name="use_stock">True</property>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="position">0</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkButton" id="cancel">
+-                <property name="label">gtk-cancel</property>
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="receives_default">True</property>
+-                <property name="use_stock">True</property>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="position">1</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkButton" id="help">
+-                <property name="label">gtk-help</property>
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="receives_default">True</property>
+-                <property name="use_stock">True</property>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="position">2</property>
+-                <property name="secondary">True</property>
+-              </packing>
+-            </child>
+-          </object>
+-          <packing>
+-            <property name="expand">False</property>
+-            <property name="fill">True</property>
+-            <property name="pack_type">end</property>
+-            <property name="position">1</property>
+-          </packing>
+-        </child>
+       </object>
+     </child>
+     <action-widgets>
+-- 
+2.9.3
+

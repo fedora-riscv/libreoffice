@@ -960,7 +960,6 @@ git commit -q -a -m 'temporarily disable failing tests'
 mv .git .git-rpm
 
 %build
-echo building localizations: %{langpack_langs}
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 

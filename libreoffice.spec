@@ -960,7 +960,6 @@ git commit -q -a -m 'temporarily disable failing tests'
 mv .git .git-rpm
 
 %build
-echo build start time is `date`, diskspace: `df -h . | tail -n 1`
 echo building localizations: %{langpack_langs}
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
@@ -1077,8 +1076,6 @@ cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{gi
 # NOTE: not removing complete LinkTarget, as some libs are needed for smoketest
 rm -rf $WORKDIR/CxxObject $WORKDIR/GenCxxObject $WORKDIR/HelpTarget $WORKDIR/LinkTarget/CppunitTest
 %endif
-
-echo build end time is `date`, diskspace: `df -h . | tail -n 1`
 
 
 %install

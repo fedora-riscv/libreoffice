@@ -32,9 +32,6 @@
 %global file_triggers 1
 %endif
 %global girapiversion 0.1
-%ifarch %{arm}
-%global armhack 1
-%endif
 
 # get english only and no-langpacks for a faster smoketest build
 # fedpkg compile/install/local/mockbuild does not handle --without ATM,
@@ -754,9 +751,7 @@ Provides %{langname} help for LibreOffice. \
 \
 %files help-%{lang} \
 %docdir %{baseinstdir}/help/%{_langpack_lang} \
-%if !0%{?armhack}
 %{baseinstdir}/help/%{_langpack_lang} \
-%endif
 } \
 \
 %files %{pkgname} \
@@ -1047,9 +1042,7 @@ touch autogen.lastrun
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
  --with-external-tar="$EXTSRCDIR" \
-%if !0%{?armhack}
  --with-help \
-%endif
  --with-system-dicts \
  --with-system-libs \
  --without-fonts \

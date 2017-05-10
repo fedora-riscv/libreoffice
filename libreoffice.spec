@@ -1043,6 +1043,7 @@ touch autogen.lastrun
  --with-help \
  --with-system-dicts \
  --with-system-libs \
+ --without-export-validation \
  --without-fonts \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
@@ -1384,6 +1385,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
+make
 unset WITH_LANG
 # work around flawed accessibility check
 export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"

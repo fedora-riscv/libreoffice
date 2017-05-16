@@ -1,4 +1,4 @@
-From 0b99a389fdd8bcc1f0642ad4c3723da599ed4fc2 Mon Sep 17 00:00:00 2001
+From cdfbf7cb85f2c403da625b4154a5364fa4743919 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 16 May 2017 10:12:09 +0100
 Subject: [PATCH] Resolves: rhbz#1367846 improve gtk3 trackpad scrolling
@@ -46,7 +46,7 @@ index bd5f40a..425cf44 100644
      bool            IsDeltaPixel() const { return mbDeltaIsPixel; }
  
 diff --git a/include/vcl/window.hxx b/include/vcl/window.hxx
-index 577416d..692fbc0 100644
+index feab50f..d519e8b 100644
 --- a/include/vcl/window.hxx
 +++ b/include/vcl/window.hxx
 @@ -742,7 +742,7 @@ private:
@@ -94,10 +94,10 @@ index e7f7dcd..8ef928f 100644
                                      bool bHorz, bool bDeltaIsPixel )
  {
 diff --git a/vcl/source/window/window2.cxx b/vcl/source/window/window2.cxx
-index 5d427cc..985a250 100644
+index df72144..a6ceaa0 100644
 --- a/vcl/source/window/window2.cxx
 +++ b/vcl/source/window/window2.cxx
-@@ -670,7 +670,7 @@ long Window::GetDrawPixel( OutputDevice* pDev, long nPixels ) const
+@@ -664,7 +664,7 @@ long Window::GetDrawPixel( OutputDevice* pDev, long nPixels ) const
      return nP;
  }
  
@@ -106,7 +106,7 @@ index 5d427cc..985a250 100644
  {
      if ( pScrl && nN && pScrl->IsEnabled() && pScrl->IsInputEnabled() && ! pScrl->IsInModalMode() )
      {
-@@ -687,7 +687,7 @@ static void lcl_HandleScrollHelper( ScrollBar* pScrl, long nN, bool isMultiplyBy
+@@ -681,7 +681,7 @@ static void lcl_HandleScrollHelper( ScrollBar* pScrl, long nN, bool isMultiplyBy
                  nN*=pScrl->GetLineSize();
              }
  
@@ -115,7 +115,7 @@ index 5d427cc..985a250 100644
  
              if ( fVal < LONG_MIN )
                  nNewPos = LONG_MIN;
-@@ -743,8 +743,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+@@ -737,8 +737,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
                  {
                      if (!pData->IsDeltaPixel())
                      {
@@ -126,7 +126,7 @@ index 5d427cc..985a250 100644
                          if ( nScrollLines == COMMAND_WHEEL_PAGESCROLL )
                          {
                              if ( pData->GetDelta() < 0 )
-@@ -753,7 +753,7 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+@@ -747,7 +747,7 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
                                  nLines = LONG_MAX;
                          }
                          else
@@ -135,7 +135,7 @@ index 5d427cc..985a250 100644
                          if ( nLines )
                          {
                              ImplHandleScroll( nullptr,
-@@ -866,8 +866,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+@@ -860,8 +860,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
  // horizontal or vertical scroll bar. nY is correspondingly either
  // the horizontal or vertical scroll amount.
  
@@ -147,10 +147,10 @@ index 5d427cc..985a250 100644
      lcl_HandleScrollHelper( pHScrl, nX, true );
      lcl_HandleScrollHelper( pVScrl, nY, true );
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 7c8c127..82accd1 100644
+index 6d07163..5bed078 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -2699,10 +2699,7 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer
+@@ -2695,10 +2695,7 @@ gboolean GtkSalFrame::signalScroll(GtkWidget*, GdkEventScroll* pEvent, gpointer
                  if (aEvent.mnDelta == 0)
                      aEvent.mnDelta = aEvent.mnNotchDelta;
                  aEvent.mbHorz = true;
@@ -159,10 +159,10 @@ index 7c8c127..82accd1 100644
 -                    aEvent.mnScrollLines = 1;
 -
 +                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40.0;
-                 pThis->CallCallback(SalEvent::WheelMouse, &aEvent);
+                 pThis->CallCallbackExc(SalEvent::WheelMouse, &aEvent);
              }
  
-@@ -2713,10 +2710,7 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer
+@@ -2709,10 +2706,7 @@ gboolean GtkSalFrame::signalScroll(GtkWidget*, GdkEventScroll* pEvent, gpointer
                  if (aEvent.mnDelta == 0)
                      aEvent.mnDelta = aEvent.mnNotchDelta;
                  aEvent.mbHorz = false;
@@ -171,7 +171,7 @@ index 7c8c127..82accd1 100644
 -                    aEvent.mnScrollLines = 1;
 -
 +                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40.0;
-                 pThis->CallCallback(SalEvent::WheelMouse, &aEvent);
+                 pThis->CallCallbackExc(SalEvent::WheelMouse, &aEvent);
              }
  
 -- 

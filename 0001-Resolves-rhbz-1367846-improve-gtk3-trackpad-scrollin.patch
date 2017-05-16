@@ -1,0 +1,179 @@
+From 0b99a389fdd8bcc1f0642ad4c3723da599ed4fc2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 16 May 2017 10:12:09 +0100
+Subject: [PATCH] Resolves: rhbz#1367846 improve gtk3 trackpad scrolling
+
+convert number of "lines" scrolled to double and allow
+fractional parts of lines/columns
+
+Change-Id: Ib99c815cfc8823e22fc1d76e201903c34ed0f61b
+---
+ include/vcl/commandevent.hxx       |  6 +++---
+ include/vcl/window.hxx             |  2 +-
+ vcl/inc/salwtype.hxx               |  2 +-
+ vcl/source/window/commandevent.cxx |  4 ++--
+ vcl/source/window/window2.cxx      | 14 +++++++-------
+ vcl/unx/gtk3/gtk3gtkframe.cxx      | 10 ++--------
+ 6 files changed, 16 insertions(+), 22 deletions(-)
+
+diff --git a/include/vcl/commandevent.hxx b/include/vcl/commandevent.hxx
+index bd5f40a..425cf44 100644
+--- a/include/vcl/commandevent.hxx
++++ b/include/vcl/commandevent.hxx
+@@ -140,7 +140,7 @@ class VCL_DLLPUBLIC CommandWheelData
+ private:
+     long              mnDelta;
+     long              mnNotchDelta;
+-    sal_uLong         mnLines;
++    double            mnLines;
+     CommandWheelMode  mnWheelMode;
+     sal_uInt16        mnCode;
+     bool              mbHorz;
+@@ -149,13 +149,13 @@ private:
+ public:
+                     CommandWheelData();
+                     CommandWheelData( long nWheelDelta, long nWheelNotchDelta,
+-                                      sal_uLong nScrollLines,
++                                      double nScrollLines,
+                                       CommandWheelMode nWheelMode, sal_uInt16 nKeyModifier,
+                                       bool bHorz = false, bool bDeltaIsPixel = false );
+ 
+     long            GetDelta() const { return mnDelta; }
+     long            GetNotchDelta() const { return mnNotchDelta; }
+-    sal_uLong       GetScrollLines() const { return mnLines; }
++    double          GetScrollLines() const { return mnLines; }
+     bool            IsHorz() const { return mbHorz; }
+     bool            IsDeltaPixel() const { return mbDeltaIsPixel; }
+ 
+diff --git a/include/vcl/window.hxx b/include/vcl/window.hxx
+index 577416d..692fbc0 100644
+--- a/include/vcl/window.hxx
++++ b/include/vcl/window.hxx
+@@ -742,7 +742,7 @@ private:
+     SAL_DLLPRIVATE void                 ImplCallActivateListeners(vcl::Window*);
+     SAL_DLLPRIVATE void                 ImplCallDeactivateListeners(vcl::Window*);
+ 
+-    SAL_DLLPRIVATE void                 ImplHandleScroll( ScrollBar* pHScrl, long nX, ScrollBar* pVScrl, long nY );
++    SAL_DLLPRIVATE void                 ImplHandleScroll( ScrollBar* pHScrl, double nX, ScrollBar* pVScrl, double nY );
+ 
+     SAL_DLLPRIVATE Rectangle            ImplOutputToUnmirroredAbsoluteScreenPixel( const Rectangle& rRect ) const;
+     SAL_DLLPRIVATE long                 ImplGetUnmirroredOutOffX();
+diff --git a/vcl/inc/salwtype.hxx b/vcl/inc/salwtype.hxx
+index 2a45616..d01da2b 100644
+--- a/vcl/inc/salwtype.hxx
++++ b/vcl/inc/salwtype.hxx
+@@ -149,7 +149,7 @@ struct SalWheelMouseEvent
+     long            mnY;            // Y-Position (Pixel, TopLeft-Output)
+     long            mnDelta;        // Number of rotations
+     long            mnNotchDelta;   // Number of fixed rotations
+-    sal_uLong       mnScrollLines;  // Actual number of lines to scroll
++    double          mnScrollLines;  // Actual number of lines to scroll
+     sal_uInt16      mnCode;         // SV-Modifiercode (KEY_SHIFT|KEY_MOD1|KEY_MOD2|MOUSE_LEFT|MOUSE_MIDDLE|MOUSE_RIGHT)
+     bool        mbHorz;         // Horizontal
+     bool        mbDeltaIsPixel; // delta value is a pixel value (on touch devices)
+diff --git a/vcl/source/window/commandevent.cxx b/vcl/source/window/commandevent.cxx
+index e7f7dcd..8ef928f 100644
+--- a/vcl/source/window/commandevent.cxx
++++ b/vcl/source/window/commandevent.cxx
+@@ -73,7 +73,7 @@ CommandWheelData::CommandWheelData()
+ {
+     mnDelta         = 0;
+     mnNotchDelta    = 0;
+-    mnLines         = 0;
++    mnLines         = 0.0;
+     mnWheelMode     = CommandWheelMode::NONE;
+     mnCode          = 0;
+     mbHorz          = false;
+@@ -81,7 +81,7 @@ CommandWheelData::CommandWheelData()
+ }
+ 
+ CommandWheelData::CommandWheelData( long nWheelDelta, long nWheelNotchDelta,
+-                                    sal_uLong nScrollLines,
++                                    double nScrollLines,
+                                     CommandWheelMode nWheelMode, sal_uInt16 nKeyModifier,
+                                     bool bHorz, bool bDeltaIsPixel )
+ {
+diff --git a/vcl/source/window/window2.cxx b/vcl/source/window/window2.cxx
+index 5d427cc..985a250 100644
+--- a/vcl/source/window/window2.cxx
++++ b/vcl/source/window/window2.cxx
+@@ -670,7 +670,7 @@ long Window::GetDrawPixel( OutputDevice* pDev, long nPixels ) const
+     return nP;
+ }
+ 
+-static void lcl_HandleScrollHelper( ScrollBar* pScrl, long nN, bool isMultiplyByLineSize )
++static void lcl_HandleScrollHelper( ScrollBar* pScrl, double nN, bool isMultiplyByLineSize )
+ {
+     if ( pScrl && nN && pScrl->IsEnabled() && pScrl->IsInputEnabled() && ! pScrl->IsInModalMode() )
+     {
+@@ -687,7 +687,7 @@ static void lcl_HandleScrollHelper( ScrollBar* pScrl, long nN, bool isMultiplyBy
+                 nN*=pScrl->GetLineSize();
+             }
+ 
+-            const double fVal = (double)(nNewPos - nN);
++            const double fVal = nNewPos - nN;
+ 
+             if ( fVal < LONG_MIN )
+                 nNewPos = LONG_MIN;
+@@ -743,8 +743,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+                 {
+                     if (!pData->IsDeltaPixel())
+                     {
+-                        sal_uLong nScrollLines = pData->GetScrollLines();
+-                        long nLines;
++                        double nScrollLines = pData->GetScrollLines();
++                        double nLines;
+                         if ( nScrollLines == COMMAND_WHEEL_PAGESCROLL )
+                         {
+                             if ( pData->GetDelta() < 0 )
+@@ -753,7 +753,7 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+                                 nLines = LONG_MAX;
+                         }
+                         else
+-                            nLines = pData->GetNotchDelta() * (long)nScrollLines;
++                            nLines = pData->GetNotchDelta() * nScrollLines;
+                         if ( nLines )
+                         {
+                             ImplHandleScroll( nullptr,
+@@ -866,8 +866,8 @@ bool Window::HandleScrollCommand( const CommandEvent& rCmd,
+ // horizontal or vertical scroll bar. nY is correspondingly either
+ // the horizontal or vertical scroll amount.
+ 
+-void Window::ImplHandleScroll( ScrollBar* pHScrl, long nX,
+-                               ScrollBar* pVScrl, long nY )
++void Window::ImplHandleScroll( ScrollBar* pHScrl, double nX,
++                               ScrollBar* pVScrl, double nY )
+ {
+     lcl_HandleScrollHelper( pHScrl, nX, true );
+     lcl_HandleScrollHelper( pVScrl, nY, true );
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 7c8c127..82accd1 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2699,10 +2699,7 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer
+                 if (aEvent.mnDelta == 0)
+                     aEvent.mnDelta = aEvent.mnNotchDelta;
+                 aEvent.mbHorz = true;
+-                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40;
+-                if (aEvent.mnScrollLines == 0)
+-                    aEvent.mnScrollLines = 1;
+-
++                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40.0;
+                 pThis->CallCallback(SalEvent::WheelMouse, &aEvent);
+             }
+ 
+@@ -2713,10 +2710,7 @@ gboolean GtkSalFrame::signalScroll( GtkWidget*, GdkEventScroll* pEvent, gpointer
+                 if (aEvent.mnDelta == 0)
+                     aEvent.mnDelta = aEvent.mnNotchDelta;
+                 aEvent.mbHorz = false;
+-                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40;
+-                if (aEvent.mnScrollLines == 0)
+-                    aEvent.mnScrollLines = 1;
+-
++                aEvent.mnScrollLines = std::abs(aEvent.mnDelta) / 40.0;
+                 pThis->CallCallback(SalEvent::WheelMouse, &aEvent);
+             }
+ 
+-- 
+2.9.3
+

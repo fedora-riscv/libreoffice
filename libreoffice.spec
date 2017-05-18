@@ -253,6 +253,7 @@ Patch17: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
 Patch18: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
 Patch19: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
 Patch20: 0001-Resolves-rhbz-1367846-improve-gtk3-trackpad-scrollin.patch
+Patch21: 0001-Related-rhbz-1367846-queue-and-merge-scroll-events.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.3.3
+%define libo_version 5.3.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,7 +57,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -245,15 +245,12 @@ Patch9: 0001-right-click-to-insert-image.patch
 Patch10: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch11: 0001-Related-rhbz-1334915-tdf-100158-hack-using-startcent.patch
 Patch12: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
-Patch13: 0001-Related-tdf-62702-handle-EmbeddedOdf-like-CONTENTS-o.patch
-Patch14: 0002-Resolves-tdf-62702-allow-ole-objects-to-be-inserted-.patch
-Patch15: 0001-fold-SfxPickList-Get-and-ensure-together.patch
-Patch16: 0002-gnome-documents-rework-SfxPickList-as-pimpl.patch
-Patch17: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
-Patch18: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
-Patch19: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
-Patch20: 0001-Resolves-rhbz-1367846-improve-gtk3-trackpad-scrollin.patch
-Patch21: 0001-Related-rhbz-1367846-queue-and-merge-scroll-events.patch
+Patch13: 0002-Resolves-tdf-62702-allow-ole-objects-to-be-inserted-.patch
+Patch14: 0001-fold-SfxPickList-Get-and-ensure-together.patch
+Patch15: 0002-gnome-documents-rework-SfxPickList-as-pimpl.patch
+Patch16: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
+Patch17: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
+Patch18: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2340,6 +2337,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Jun 03 2017 David Tardon <dtardon@redhat.com> - 1:5.3.4.1-1
+- update to 5.3.4 rc1
+
 * Mon May 08 2017 David Tardon <dtardon@redhat.com> - 1:5.3.3.2-1
 - update to 5.3.3 rc2
 

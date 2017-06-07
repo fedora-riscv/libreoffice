@@ -22,9 +22,11 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %define __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-# http://dev-builds.libreoffice.org/pre-releases/src
+%if 0%{?rebase}
 %define source_url http://dev-builds.libreoffice.org/pre-releases/src
-# %%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%else
+%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%endif
 # URL for external projects' tarballs
 %define external_url http://dev-www.libreoffice.org/src
 %if 0%{?fedora}
@@ -62,15 +64,20 @@ URL:            http://www.libreoffice.org/
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
-Source3:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source4:        libreoffice-multiliblauncher.sh
-Source5:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source6:        %{external_url}/xmlsec1-1.2.24.tar.gz
-Source7:        %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source8:        %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+%if 0%{?rebase}
+Source3:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+Source4:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+Source5:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+%endif
+Source6:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source7:        libreoffice-multiliblauncher.sh
+Source8:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source9:        %{external_url}/xmlsec1-1.2.24.tar.gz
+Source10:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source11:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source9:        %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 %if 0%{?fedora}
@@ -1258,10 +1265,10 @@ for app in base calc draw impress math writer; do
     chmod a+x oo$app
 done
 
-sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE4} > unopkg
+sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE7} > unopkg
 chmod a+x unopkg
 
-sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE4} > libreoffice
+sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE7} > libreoffice
 chmod a+x libreoffice
 
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel

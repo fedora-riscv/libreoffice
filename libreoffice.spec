@@ -1,34 +1,34 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.4.0
+%global libo_version 5.4.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%define libo_prerelease .beta1
+%global libo_prerelease .beta1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
-%define libo_buildfix %{nil}
+%global libo_buildfix %{nil}
 # rhbz#715152 state vendor
 %if 0%{?rhel}
-%define vendoroption --with-vendor="Red Hat, Inc."
-%define libo_use_python3 %{nil}
-%define libo_python python
-%define libo_python_sitearch %{python_sitearch}
+%global vendoroption --with-vendor="Red Hat, Inc."
+%global libo_use_python3 %{nil}
+%global libo_python python
+%global libo_python_sitearch %{python_sitearch}
 %endif
 %if 0%{?fedora}
-%define libo_use_python3 1
-%define libo_python python3
-%define libo_python_sitearch %{python3_sitearch}
-%define vendoroption --with-vendor="The Fedora Project"
+%global libo_use_python3 1
+%global libo_python python3
+%global libo_python_sitearch %{python3_sitearch}
+%global vendoroption --with-vendor="The Fedora Project"
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
-%define __jar_repack %{nil}
+%global __jar_repack %{nil}
 # make it easier to download sources from pre-release site
 %if 0%{?rebase}
-%define source_url http://dev-builds.libreoffice.org/pre-releases/src
+%global source_url http://dev-builds.libreoffice.org/pre-releases/src
 %else
-%define source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
+%global source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
 %endif
 # URL for external projects' tarballs
-%define external_url http://dev-www.libreoffice.org/src
+%global external_url http://dev-www.libreoffice.org/src
 %if 0%{?fedora}
 %global weak_deps 1
 %global file_triggers 1
@@ -250,11 +250,11 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch500: 0001-disable-libe-book-support.patch
 %endif
 
-%define instdir %{_libdir}
-%define baseinstdir %{instdir}/libreoffice
-%define sdkinstdir %{baseinstdir}/sdk
-%define datadir %{_datadir}/%{name}
-%define fontname opensymbol
+%global instdir %{_libdir}
+%global baseinstdir %{instdir}/libreoffice
+%global sdkinstdir %{baseinstdir}/sdk
+%global datadir %{_datadir}/%{name}
+%global fontname opensymbol
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}

@@ -1,0 +1,402 @@
+From c0eb8faf3fcbf868bc1b01488b627851a8f77776 Mon Sep 17 00:00:00 2001
+From: Troy Rollo <libreoffice@troy.rollo.name>
+Date: Tue, 6 Jun 2017 17:41:33 +1000
+Subject: [PATCH 2/2] tdf#103091 conditional style conditions not saved
+
+Reviewed-on: https://gerrit.libreoffice.org/38451
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+(cherry picked from commit a5b4cb3f836c991d0647f55e1ef4920ce6115eac)
+Reviewed-on: https://gerrit.libreoffice.org/38747
+(cherry picked from commit e9869b9b38d4e4e7f893aecb26f73d985f17e350)
+
+Change-Id: Iccf3eb531ee3382d27105e5ccce6013707a646b6
+---
+ sw/source/core/unocore/unostyle.cxx |   3 +-
+ sw/source/filter/xml/xmlfmt.cxx     |  53 ++++++++++++++-
+ xmloff/Library_xo.mk                |   1 +
+ xmloff/inc/prstylecond.hxx          |  23 +++++++
+ xmloff/source/style/prstylecond.cxx | 125 ++++++++++++++++++++++++++++++++++++
+ xmloff/source/style/styleexp.cxx    |  50 ++++++++++++++-
+ 6 files changed, 251 insertions(+), 4 deletions(-)
+ create mode 100644 xmloff/inc/prstylecond.hxx
+ create mode 100644 xmloff/source/style/prstylecond.cxx
+
+diff --git a/sw/source/core/unocore/unostyle.cxx b/sw/source/core/unocore/unostyle.cxx
+index 894f3393..14634dd 100644
+--- a/sw/source/core/unocore/unostyle.cxx
++++ b/sw/source/core/unocore/unostyle.cxx
+@@ -1892,7 +1892,8 @@ void SwXStyle::SetPropertyValues_Impl(const uno::Sequence<OUString>& rPropertyNa
+ {
+     if(!m_pDoc)
+         throw uno::RuntimeException();
+-    const SfxItemPropertySet* pPropSet = aSwMapProvider.GetPropertySet(m_rEntry.m_nPropMapType);
++    sal_Int8 nPropSetId = m_bIsConditional ? PROPERTY_MAP_CONDITIONAL_PARA_STYLE : m_rEntry.m_nPropMapType;
++    const SfxItemPropertySet* pPropSet = aSwMapProvider.GetPropertySet(nPropSetId);
+     const SfxItemPropertyMap &rMap = pPropSet->getPropertyMap();
+     if(rPropertyNames.getLength() != rValues.getLength())
+         throw lang::IllegalArgumentException();
+diff --git a/sw/source/filter/xml/xmlfmt.cxx b/sw/source/filter/xml/xmlfmt.cxx
+index e0cdd96..be50e3e 100644
+--- a/sw/source/filter/xml/xmlfmt.cxx
++++ b/sw/source/filter/xml/xmlfmt.cxx
+@@ -30,6 +30,7 @@
+ #include "docary.hxx"
+ #include <IDocumentStylePoolAccess.hxx>
+ #include "unostyle.hxx"
++#include "unoprnms.hxx"
+ #include "fmtpdsc.hxx"
+ #include "pagedesc.hxx"
+ #include <xmloff/xmlnmspe.hxx>
+@@ -43,6 +44,7 @@
+ #include <xmloff/XMLTextMasterStylesContext.hxx>
+ #include <xmloff/XMLTextShapeStyleContext.hxx>
+ #include <xmloff/XMLGraphicsDefaultStyle.hxx>
++#include <com/sun/star/beans/XPropertySet.hpp>
+ #include "xmlimp.hxx"
+ #include "xmltbli.hxx"
+ #include "cellatr.hxx"
+@@ -50,8 +52,11 @@
+ #include <xmloff/attrlist.hxx>
+ #include <unotxdoc.hxx>
+ #include <docsh.hxx>
++#include <ccoll.hxx>
+ 
+ using namespace ::com::sun::star;
++using namespace ::com::sun::star::beans;
++using namespace ::com::sun::star::uno;
+ using namespace ::xmloff::token;
+ 
+ class SwXMLConditionParser_Impl
+@@ -202,8 +207,11 @@ public:
+             const uno::Reference< xml::sax::XAttributeList > & xAttrList );
+     virtual ~SwXMLConditionContext_Impl();
+ 
+-
+     bool IsValid() const { return 0 != nCondition; }
++
++    sal_uInt32 getCondition() const { return nCondition; }
++    sal_uInt32 getSubCondition() const { return nSubCondition; }
++    OUString const &getApplyStyle() const { return sApplyStyle; }
+ };
+ 
+ SwXMLConditionContext_Impl::SwXMLConditionContext_Impl(
+@@ -254,10 +262,12 @@ typedef std::vector<SwXMLConditionContext_Impl*> SwXMLConditions_Impl;
+ class SwXMLTextStyleContext_Impl : public XMLTextStyleContext
+ {
+     SwXMLConditions_Impl    *pConditions;
++    uno::Reference < style::XStyle > xNewStyle;
+ 
+ protected:
+ 
+     virtual uno::Reference < style::XStyle > Create() override;
++    virtual void Finish( bool bOverwrite ) override;
+ 
+ public:
+ 
+@@ -278,7 +288,6 @@ public:
+ 
+ uno::Reference < style::XStyle > SwXMLTextStyleContext_Impl::Create()
+ {
+-    uno::Reference < style::XStyle > xNewStyle;
+ 
+     if( pConditions && XML_STYLE_FAMILY_TEXT_PARAGRAPH == GetFamily() )
+     {
+@@ -300,6 +309,46 @@ uno::Reference < style::XStyle > SwXMLTextStyleContext_Impl::Create()
+     return xNewStyle;
+ }
+ 
++void
++SwXMLTextStyleContext_Impl::Finish( bool bOverwrite )
++{
++
++    if( pConditions && XML_STYLE_FAMILY_TEXT_PARAGRAPH == GetFamily() && xNewStyle.is() )
++    {
++        CommandStruct const *aCommands = SwCondCollItem::GetCmds();
++
++        Reference< XPropertySet > xPropSet( xNewStyle, UNO_QUERY );
++
++        uno::Sequence< beans::NamedValue > aSeq( pConditions->size() );
++
++        std::vector<rtl::Reference<SwXMLConditionContext_Impl>>::size_type i;
++        unsigned j;
++
++        for( i = 0; i < pConditions->size(); ++i )
++        {
++            if( (*pConditions)[i]->IsValid() )
++            {
++                sal_uInt32 nCond = (*pConditions)[i]->getCondition();
++                sal_uInt32 nSubCond = (*pConditions)[i]->getSubCondition();
++
++                for( j = 0; j < COND_COMMAND_COUNT; ++j )
++                {
++                    if( aCommands[j].nCnd == nCond &&
++                        aCommands[j].nSubCond == nSubCond )
++                    {
++                            aSeq[i].Name = GetCommandContextByIndex( j );
++                            aSeq[i].Value <<= GetImport().GetStyleDisplayName( GetFamily(), (*pConditions)[i]->getApplyStyle() );
++                            break;
++                    }
++                }
++            }
++        }
++
++        xPropSet->setPropertyValue( UNO_NAME_PARA_STYLE_CONDITIONS, uno::makeAny( aSeq )  );
++    }
++    XMLTextStyleContext::Finish( bOverwrite );
++}
++
+ SwXMLTextStyleContext_Impl::SwXMLTextStyleContext_Impl( SwXMLImport& rImport,
+         sal_uInt16 nPrfx, const OUString& rLName,
+         const uno::Reference< xml::sax::XAttributeList > & xAttrList,
+diff --git a/xmloff/Library_xo.mk b/xmloff/Library_xo.mk
+index 9575643..1abb50d 100644
+--- a/xmloff/Library_xo.mk
++++ b/xmloff/Library_xo.mk
+@@ -251,6 +251,7 @@ $(eval $(call gb_Library_add_exception_objects,xo,\
+     xmloff/source/style/postuhdl \
+     xmloff/source/style/prhdlfac \
+     xmloff/source/style/prstylei \
++	xmloff/source/style/prstylecond \
+     xmloff/source/style/shadwhdl \
+     xmloff/source/style/shdwdhdl \
+     xmloff/source/style/styleexp \
+diff --git a/xmloff/inc/prstylecond.hxx b/xmloff/inc/prstylecond.hxx
+new file mode 100644
+index 0000000..85c9aae
+--- /dev/null
++++ b/xmloff/inc/prstylecond.hxx
+@@ -0,0 +1,23 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++ */
++
++OUString GetParaStyleCondExternal( OUString const &);
++OUString GetParaStyleCondInternal( OUString const &);
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/xmloff/source/style/prstylecond.cxx b/xmloff/source/style/prstylecond.cxx
+new file mode 100644
+index 0000000..28312fb
+--- /dev/null
++++ b/xmloff/source/style/prstylecond.cxx
+@@ -0,0 +1,125 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++ */
++
++#include <rtl/ustring.hxx>
++#include "prstylecond.hxx"
++#include <xmloff/xmltoken.hxx>
++
++using namespace ::xmloff::token;
++
++static struct ConditionMap
++{
++        char const* aInternal;
++        XMLTokenEnum nExternal;
++        int         aValue;
++} aConditionMap[] =
++{
++    { "TableHeader",            XML_TABLE_HEADER,   -1 },
++    { "Table",                  XML_TABLE,          -1 },
++    { "Frame",                  XML_TEXT_BOX,       -1 }, // FIXME - Not in ODF spec
++    { "Section",                XML_SECTION,        -1 },
++    { "Footnote",               XML_FOOTNOTE,       -1 },
++    { "Endnote",                XML_ENDNOTE,        -1 },
++    { "Header",                 XML_HEADER,         -1 },
++    { "Footer",                 XML_FOOTER,         -1 },
++    { "OutlineLevel1",          XML_OUTLINE_LEVEL,   1 },
++    { "OutlineLevel2",          XML_OUTLINE_LEVEL,   2 },
++    { "OutlineLevel3",          XML_OUTLINE_LEVEL,   3 },
++    { "OutlineLevel4",          XML_OUTLINE_LEVEL,   4 },
++    { "OutlineLevel5",          XML_OUTLINE_LEVEL,   5 },
++    { "OutlineLevel6",          XML_OUTLINE_LEVEL,   6 },
++    { "OutlineLevel7",          XML_OUTLINE_LEVEL,   7 },
++    { "OutlineLevel8",          XML_OUTLINE_LEVEL,   8 },
++    { "OutlineLevel9",          XML_OUTLINE_LEVEL,   9 },
++    { "OutlineLevel10",         XML_OUTLINE_LEVEL,  10 },
++    { "NumberingLevel1",        XML_LIST_LEVEL,      1 },
++    { "NumberingLevel2",        XML_LIST_LEVEL,      2 },
++    { "NumberingLevel3",        XML_LIST_LEVEL,      3 },
++    { "NumberingLevel4",        XML_LIST_LEVEL,      4 },
++    { "NumberingLevel5",        XML_LIST_LEVEL,      5 },
++    { "NumberingLevel6",        XML_LIST_LEVEL,      6 },
++    { "NumberingLevel7",        XML_LIST_LEVEL,      7 },
++    { "NumberingLevel8",        XML_LIST_LEVEL,      8 },
++    { "NumberingLevel9",        XML_LIST_LEVEL,      9 },
++    { "NumberingLevel10",       XML_LIST_LEVEL,     10 }
++};
++
++#define CONDITION_COUNT (sizeof(aConditionMap) / sizeof(aConditionMap[0]))
++
++OUString GetParaStyleCondExternal( OUString const &internal)
++{
++    unsigned i;
++
++    for(i = 0; i < CONDITION_COUNT; ++i)
++    {
++        if(internal.compareToAscii( aConditionMap[i].aInternal ) == 0)
++        {
++            OUString aResult( GetXMLToken( aConditionMap[i].nExternal ) );
++
++            aResult += "()";
++            if( aConditionMap[i].aValue != -1 )
++            {
++                aResult += "=";
++                aResult += OUString::number( aConditionMap[i].aValue );
++            }
++            return aResult;
++        }
++    }
++    return OUString();
++}
++
++OUString GetParaStyleCondInternal( OUString const &external)
++{
++        sal_Int32 paren = external.indexOf('(');
++
++        if( paren > 0 && external[paren + 1] == ')' )
++        {
++            OUString stub( external.getStr(), paren );
++            int numval = -1;
++            unsigned i;
++
++            if(external.getLength() > paren + 2)
++            {
++                if(external[paren + 2] == '=')
++                {
++                    OUString num( external.getStr() + 3 );
++
++                    numval = num.toInt32();
++                }
++                else
++                {
++                    return OUString();
++                }
++            }
++
++            for(i = 0; i < CONDITION_COUNT; ++i)
++            {
++                if( aConditionMap[i].aValue == numval &&
++                    stub == GetXMLToken( aConditionMap[i].nExternal ) )
++                {
++                    return OUString( aConditionMap[i].aInternal,
++                                     strlen( aConditionMap[i].aInternal ),
++                                     RTL_TEXTENCODING_ASCII_US );
++                }
++            }
++        }
++        return OUString();
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/xmloff/source/style/styleexp.cxx b/xmloff/source/style/styleexp.cxx
+index f96e1c7..b41e836 100644
+--- a/xmloff/source/style/styleexp.cxx
++++ b/xmloff/source/style/styleexp.cxx
+@@ -30,6 +30,7 @@
+ #include <com/sun/star/style/XStyleFamiliesSupplier.hpp>
+ #include <com/sun/star/style/XStyle.hpp>
+ #include <com/sun/star/container/XNameContainer.hpp>
++#include <com/sun/star/beans/NamedValue.hpp>
+ #include <com/sun/star/beans/XPropertySet.hpp>
+ #include <com/sun/star/beans/XPropertyState.hpp>
+ #include <com/sun/star/document/XEventsSupplier.hpp>
+@@ -41,6 +42,7 @@
+ #include <xmloff/maptype.hxx>
+ #include <memory>
+ #include <set>
++#include "prstylecond.hxx"
+ 
+ using namespace ::com::sun::star;
+ using namespace ::com::sun::star::uno;
+@@ -75,8 +77,54 @@ void XMLStyleExport::exportStyleAttributes( const Reference< XStyle >& )
+ {
+ }
+ 
+-void XMLStyleExport::exportStyleContent( const Reference< XStyle >& )
++void XMLStyleExport::exportStyleContent( const Reference< XStyle >& rStyle )
+ {
++    Reference< XPropertySet > xPropSet( rStyle, UNO_QUERY );
++
++    try
++    {
++        uno::Any aProperty = xPropSet->getPropertyValue( "ParaStyleConditions" );
++        uno::Sequence< beans::NamedValue > aSeq;
++        int i;
++
++        aProperty >>= aSeq;
++
++        for(i = 0; i < aSeq.getLength(); ++i)
++        {
++            beans::NamedValue const& aNamedCond = aSeq[i];
++            OUString aStyleName;
++
++            if ( aNamedCond.Value >>= aStyleName )
++            {
++                if ( aStyleName.getLength() > 0 )
++                {
++                    OUString aExternal = GetParaStyleCondExternal( aNamedCond.Name );
++
++                    if (aExternal.getLength() > 0)
++                    {
++                        bool    bEncoded;
++
++
++                        GetExport().AddAttribute( XML_NAMESPACE_STYLE,
++                                            XML_CONDITION,
++                                            aExternal);
++                        GetExport().AddAttribute( XML_NAMESPACE_STYLE,
++                                            XML_APPLY_STYLE_NAME,
++                                            GetExport().EncodeStyleName( aStyleName,
++                                                                       &bEncoded ) );
++                        SvXMLElementExport aElem( GetExport(),
++                                                  XML_NAMESPACE_STYLE,
++                                                  XML_MAP,
++                                                  true,
++                                                  true );
++                    }
++                }
++            }
++        }
++    }
++    catch( const beans::UnknownPropertyException& )
++    {
++    }
+ }
+ 
+ bool XMLStyleExport::exportStyle(
+-- 
+2.9.4
+

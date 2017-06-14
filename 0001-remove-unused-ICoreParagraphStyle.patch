@@ -1,0 +1,276 @@
+From 7c7e538cce25c74b2697db34738d37d363ab385f Mon Sep 17 00:00:00 2001
+From: Noel Grandin <noel@peralex.com>
+Date: Mon, 26 Sep 2016 13:01:42 +0200
+Subject: [PATCH 1/2] remove unused ICoreParagraphStyle
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+which was introduced in
+    commit aef1e2dde5e53ba8416a393bbe155ef0c18511a7
+    Author: Bjoern Michaelsen <bjoern.michaelsen@canonical.com>
+    Date:   Mon Dec 21 03:55:14 2015 +0100
+    move SwXStyle entirely into compilation unit
+
+but Bjoern can't remember why he introduced it:
+"Likely best to rip it out now and implement it properly when there is
+a good testcase for this XML filter scenario ..."
+
+Reviewed-on: https://gerrit.libreoffice.org/29297
+Reviewed-by: Björn Michaelsen <bjoern.michaelsen@canonical.com>
+Tested-by: Jenkins <ci@libreoffice.org>
+(cherry picked from commit da870b35dd0cf8b7a987530e896b3e044f444908)
+
+Change-Id: Iaef19131d804369436097ab445d6c192587f9d9f
+Note: this commit is bogus but required for the next one
+---
+ sw/inc/unostyle.hxx                 |  7 ---
+ sw/source/core/unocore/unostyle.cxx | 10 -----
+ sw/source/filter/xml/xmlfmt.cxx     | 50 ---------------------
+ sw/source/filter/xml/xmltexte.cxx   | 87 -------------------------------------
+ sw/source/filter/xml/xmltexte.hxx   |  3 --
+ 5 files changed, 157 deletions(-)
+
+diff --git a/sw/inc/unostyle.hxx b/sw/inc/unostyle.hxx
+index 72b6b04..82c72bb 100644
+--- a/sw/inc/unostyle.hxx
++++ b/sw/inc/unostyle.hxx
+@@ -113,13 +113,6 @@ namespace sw
+             virtual css::document::XEventsSupplier& GetEventsSupplier() =0;
+             virtual ~ICoreFrameStyle() {};
+     };
+-    class ICoreParagraphStyle
+-    {
+-        public:
+-            static const css::uno::Sequence<sal_Int8>& getUnoTunnelId();
+-            virtual const SwTextFormatColl* GetFormatColl() =0;
+-            virtual ~ICoreParagraphStyle() {};
+-    };
+ }
+ 
+ // access to all automatic style families
+diff --git a/sw/source/core/unocore/unostyle.cxx b/sw/source/core/unocore/unostyle.cxx
+index 7ec6ecb..894f3393 100644
+--- a/sw/source/core/unocore/unostyle.cxx
++++ b/sw/source/core/unocore/unostyle.cxx
+@@ -1059,7 +1059,6 @@ static SwGetPoolIdFromName lcl_GetSwEnumFromSfxEnum(SfxStyleFamily eFamily)
+ namespace
+ {
+     class theSwXStyleUnoTunnelId : public rtl::Static<UnoTunnelIdInit, theSwXStyleUnoTunnelId> {};
+-    class theCoreParagraphUnoTunnelId : public rtl::Static<UnoTunnelIdInit, theCoreParagraphUnoTunnelId> {};
+ }
+ 
+ const uno::Sequence<sal_Int8>& SwXStyle::getUnoTunnelId()
+@@ -1067,11 +1066,6 @@ const uno::Sequence<sal_Int8>& SwXStyle::getUnoTunnelId()
+     return theSwXStyleUnoTunnelId::get().getSeq();
+ }
+ 
+-const uno::Sequence<sal_Int8>& sw::ICoreParagraphStyle::getUnoTunnelId()
+-{
+-    return theCoreParagraphUnoTunnelId::get().getSeq();
+-}
+-
+ sal_Int64 SAL_CALL SwXStyle::getSomething(const uno::Sequence<sal_Int8>& rId)
+     throw(uno::RuntimeException, std::exception)
+ {
+@@ -1081,10 +1075,6 @@ sal_Int64 SAL_CALL SwXStyle::getSomething(const uno::Sequence<sal_Int8>& rId)
+     {
+         return sal::static_int_cast<sal_Int64>(reinterpret_cast<sal_IntPtr>(this));
+     }
+-    else if(0 == memcmp(sw::ICoreParagraphStyle::getUnoTunnelId().getConstArray(), rId.getConstArray(), 16))
+-    {
+-        return sal::static_int_cast<sal_Int64>(reinterpret_cast<sal_IntPtr>(dynamic_cast<sw::ICoreParagraphStyle*>(this)));
+-    }
+     return 0;
+ }
+ 
+diff --git a/sw/source/filter/xml/xmlfmt.cxx b/sw/source/filter/xml/xmlfmt.cxx
+index dcf39d8..e0cdd96 100644
+--- a/sw/source/filter/xml/xmlfmt.cxx
++++ b/sw/source/filter/xml/xmlfmt.cxx
+@@ -204,10 +204,6 @@ public:
+ 
+ 
+     bool IsValid() const { return 0 != nCondition; }
+-
+-    sal_uInt32 GetCondition() const { return nCondition; }
+-    sal_uInt32 GetSubCondition() const { return nSubCondition; }
+-    const OUString& GetApplyStyle() const { return sApplyStyle; }
+ };
+ 
+ SwXMLConditionContext_Impl::SwXMLConditionContext_Impl(
+@@ -277,8 +273,6 @@ public:
+             sal_uInt16 nPrefix,
+             const OUString& rLocalName,
+             const uno::Reference< xml::sax::XAttributeList > & xAttrList ) override;
+-
+-    virtual void Finish( bool bOverwrite ) override;
+ };
+ 
+ 
+@@ -359,50 +353,6 @@ SvXMLImportContext *SwXMLTextStyleContext_Impl::CreateChildContext(
+     return pContext;
+ }
+ 
+-void SwXMLTextStyleContext_Impl::Finish( bool bOverwrite )
+-{
+-    XMLTextStyleContext::Finish( bOverwrite );
+-    if(!pConditions || XML_STYLE_FAMILY_TEXT_PARAGRAPH != GetFamily())
+-        return;
+-    uno::Reference<style::XStyle> xStyle = GetStyle();
+-    if(!xStyle.is())
+-        return;
+-    uno::Reference<lang::XUnoTunnel> xStyleTunnel(xStyle, uno::UNO_QUERY);
+-    if(!xStyleTunnel.is())
+-        return;
+-    sw::ICoreParagraphStyle* pCoreParagraphStyle(reinterpret_cast<sw::ICoreParagraphStyle*>(
+-            xStyleTunnel->getSomething(sw::ICoreParagraphStyle::getUnoTunnelId())));
+-    if(!pCoreParagraphStyle)
+-        return;
+-    SwTextFormatColl* pColl = const_cast<SwTextFormatColl*>(pCoreParagraphStyle->GetFormatColl());
+-    OSL_ENSURE( pColl, "Text collection not found" );
+-    if( !pColl || RES_CONDTXTFMTCOLL != pColl->Which() )
+-        return;
+-    SwDoc *pDoc = SwImport::GetDocFromXMLImport(GetImport());
+-    const size_t nCount = pConditions->size();
+-    OUString sName;
+-    for( size_t i = 0; i < nCount; i++ )
+-    {
+-        const SwXMLConditionContext_Impl *pCond = (*pConditions)[i];
+-        const OUString aDisplayName(
+-            GetImport().GetStyleDisplayName( XML_STYLE_FAMILY_TEXT_PARAGRAPH,
+-                pCond->GetApplyStyle() ) );
+-        SwStyleNameMapper::FillUIName(aDisplayName,
+-                                      sName,
+-                                      nsSwGetPoolIdFromName::GET_POOLID_TXTCOLL,
+-                                      true);
+-        SwTextFormatColl* pCondColl = pDoc->FindTextFormatCollByName( sName );
+-        OSL_ENSURE( pCondColl,
+-            "SwXMLItemSetStyleContext_Impl::ConnectConditions: cond coll missing" );
+-        if( pCondColl )
+-        {
+-            SwCollCondition aCond( pCondColl, pCond->GetCondition(),
+-                                              pCond->GetSubCondition() );
+-            static_cast<SwConditionTextFormatColl*>(pColl)->InsertCondition( aCond );
+-        }
+-    }
+-}
+-
+ class SwXMLItemSetStyleContext_Impl : public SvXMLStyleContext
+ {
+     OUString                sMasterPageName;
+diff --git a/sw/source/filter/xml/xmltexte.cxx b/sw/source/filter/xml/xmltexte.cxx
+index 823397e..f652a32 100644
+--- a/sw/source/filter/xml/xmltexte.cxx
++++ b/sw/source/filter/xml/xmltexte.cxx
+@@ -79,93 +79,6 @@ SwNoTextNode *SwXMLTextParagraphExport::GetNoTextNode(
+     return  pNdIdx->GetNodes()[pNdIdx->GetIndex() + 1]->GetNoTextNode();
+ }
+ 
+-void SwXMLTextParagraphExport::exportStyleContent(
+-        const Reference< XStyle > & rStyle )
+-{
+-
+-    Reference<XUnoTunnel> xStyleTunnel(rStyle, UNO_QUERY);
+-    Reference<lang::XServiceInfo> xServiceInfo(rStyle, UNO_QUERY);
+-    if(!xStyleTunnel.is() || !xServiceInfo.is() || !xServiceInfo->supportsService("com.sun.star.style.ParagraphStyle"))
+-        return;
+-    sw::ICoreParagraphStyle* pCoreParagraphStyle(reinterpret_cast<sw::ICoreParagraphStyle*>(
+-            xStyleTunnel->getSomething(sw::ICoreParagraphStyle::getUnoTunnelId())));
+-    if(!pCoreParagraphStyle)
+-        return;
+-    const SwTextFormatColl* pColl(pCoreParagraphStyle->GetFormatColl());
+-    OSL_ENSURE( pColl, "There is the text collection?" );
+-    if( pColl && RES_CONDTXTFMTCOLL == pColl->Which() )
+-    {
+-        const SwFormatCollConditions& rConditions =
+-            static_cast<const SwConditionTextFormatColl *>(pColl)->GetCondColls();
+-        for( size_t i=0; i < rConditions.size(); ++i )
+-        {
+-            const SwCollCondition& rCond = *rConditions[i];
+-
+-            enum XMLTokenEnum eFunc = XML_TOKEN_INVALID;
+-            OUString sVal;
+-            switch( rCond.GetCondition() )
+-            {
+-            case PARA_IN_LIST:
+-                eFunc = XML_LIST_LEVEL;
+-                sVal = OUString::number(rCond.GetSubCondition()+1);
+-                break;
+-            case PARA_IN_OUTLINE:
+-                eFunc = XML_OUTLINE_LEVEL;
+-                sVal = OUString::number(rCond.GetSubCondition()+1);
+-                break;
+-            case PARA_IN_FRAME:
+-                eFunc = XML_TEXT_BOX;
+-                break;
+-            case PARA_IN_TABLEHEAD:
+-                eFunc = XML_TABLE_HEADER;
+-                break;
+-            case PARA_IN_TABLEBODY:
+-                eFunc = XML_TABLE;
+-                break;
+-            case PARA_IN_SECTION:
+-                eFunc = XML_SECTION;
+-                break;
+-            case PARA_IN_FOOTENOTE:
+-                eFunc = XML_FOOTNOTE;
+-                break;
+-            case PARA_IN_FOOTER:
+-                eFunc = XML_FOOTER;
+-                break;
+-            case PARA_IN_HEADER:
+-                eFunc = XML_HEADER;
+-                break;
+-            case PARA_IN_ENDNOTE:
+-                eFunc = XML_ENDNOTE;
+-                break;
+-            }
+-            OSL_ENSURE( eFunc != XML_TOKEN_INVALID,
+-                        "SwXMLExport::ExportFormat: unknown condition" );
+-            if( eFunc != XML_TOKEN_INVALID )
+-            {
+-                OUString sCond = GetXMLToken(eFunc) + "()";
+-                if( !sVal.isEmpty() )
+-                {
+-                    sCond += "=" + sVal;
+-                }
+-
+-                GetExport().AddAttribute( XML_NAMESPACE_STYLE,
+-                            XML_CONDITION, sCond );
+-                OUString aString;
+-                SwStyleNameMapper::FillProgName(
+-                                rCond.GetTextFormatColl()->GetName(),
+-                                aString,
+-                                nsSwGetPoolIdFromName::GET_POOLID_TXTCOLL,
+-                                true);
+-                aString = GetExport().EncodeStyleName( aString );
+-                GetExport().AddAttribute( XML_NAMESPACE_STYLE,
+-                            XML_APPLY_STYLE_NAME, aString );
+-                SvXMLElementExport aElem( GetExport(), XML_NAMESPACE_STYLE,
+-                                          XML_MAP, true, true );
+-            }
+-        }
+-    }
+-}
+-
+ SwXMLTextParagraphExport::SwXMLTextParagraphExport(
+         SwXMLExport& rExp,
+          SvXMLAutoStylePoolP& _rAutoStylePool ) :
+diff --git a/sw/source/filter/xml/xmltexte.hxx b/sw/source/filter/xml/xmltexte.hxx
+index e714994..3ec9a6c 100644
+--- a/sw/source/filter/xml/xmltexte.hxx
++++ b/sw/source/filter/xml/xmltexte.hxx
+@@ -43,9 +43,6 @@ class SwXMLTextParagraphExport : public XMLTextParagraphExport
+         const css::uno::Reference < css::beans::XPropertySet >& rPropSet );
+ 
+ protected:
+-    virtual void exportStyleContent(
+-            const css::uno::Reference< css::style::XStyle > & rStyle ) override;
+-
+     virtual void _collectTextEmbeddedAutoStyles(
+         const css::uno::Reference< css::beans::XPropertySet > & rPropSet ) override;
+     virtual void _exportTextEmbedded(
+-- 
+2.9.4
+

@@ -1,0 +1,62 @@
+From a730b43f32390b1408078d7d176f9630c4fd23b6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 19 Jun 2017 15:02:17 +0100
+Subject: [PATCH 2/2] consider field marks as text for auto quotes
+
+Change-Id: I511a13f7785a0de6efaa8439d3f0bff20a1644ed
+---
+ editeng/qa/unit/core-test.cxx    | 17 +++++++++++++++++
+ editeng/source/misc/svxacorr.cxx |  2 +-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/editeng/qa/unit/core-test.cxx b/editeng/qa/unit/core-test.cxx
+index 8048fea..552d713 100644
+--- a/editeng/qa/unit/core-test.cxx
++++ b/editeng/qa/unit/core-test.cxx
+@@ -351,6 +351,7 @@ void Test::testAutocorrect()
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("autocorrect", sExpected, aFoo.getResult());
+     }
+ 
++    // don't autocapitalize after a field mark
+     {
+         OUString sInput("Test. \x01 test");
+         sal_Unicode cNextChar(' ');
+@@ -361,6 +362,22 @@ void Test::testAutocorrect()
+ 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("autocorrect", sExpected, aFoo.getResult());
+     }
++
++    // consider field contents as text for auto quotes
++    {
++        OUString sInput("T\x01");
++        sal_Unicode cNextChar('"');
++        const sal_Unicode EXPECTED[] = { 'T', 0x01, 0x0201d };
++        OUString sExpected(EXPECTED, SAL_N_ELEMENTS(EXPECTED));
++
++        TestAutoCorrDoc aFoo(sInput, LANGUAGE_ENGLISH_US);
++        aAutoCorrect.SetAutoCorrFlag(ChgQuotes, true);
++        aAutoCorrect.DoAutoCorrect(aFoo, sInput, sInput.getLength(), cNextChar, true);
++        fprintf(stderr, "text is %x\n", aFoo.getResult()[aFoo.getResult().getLength() - 1]);
++
++        CPPUNIT_ASSERT_EQUAL_MESSAGE("autocorrect", sExpected, aFoo.getResult());
++    }
++
+ }
+ 
+ namespace {
+diff --git a/editeng/source/misc/svxacorr.cxx b/editeng/source/misc/svxacorr.cxx
+index 6a815bc..99075e8 100644
+--- a/editeng/source/misc/svxacorr.cxx
++++ b/editeng/source/misc/svxacorr.cxx
+@@ -1247,7 +1247,7 @@ void SvxAutoCorrect::DoAutoCorrect( SvxAutoCorrDoc& rDoc, const OUString& rTxt,
+             {
+                 sal_Unicode cPrev;
+                 bool bSttQuote = !nInsPos ||
+-                        IsWordDelim( ( cPrev = rTxt[ nInsPos-1 ])) ||
++                        NonFieldWordDelim( ( cPrev = rTxt[ nInsPos-1 ])) ||
+                         lcl_IsInAsciiArr( "([{", cPrev ) ||
+                         ( cEmDash && cEmDash == cPrev ) ||
+                         ( cEnDash && cEnDash == cPrev );
+-- 
+2.9.3
+

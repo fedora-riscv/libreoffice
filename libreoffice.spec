@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -252,6 +252,8 @@ Patch16: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
 Patch17: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
 Patch18: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
 Patch19: 0001-make-opengl-transitions-under-X-flicker-free-on-ente.patch
+Patch20: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
+Patch21: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2338,7 +2340,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Jun 13 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.1-2
+* Mon Jun 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.1-3
+- consider field marks as text for auto quotes
+
+* Mon Jun 12 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.1-2
 - make opengl transitions flicker free under X
 
 * Sat Jun 03 2017 David Tardon <dtardon@redhat.com> - 1:5.3.4.1-1

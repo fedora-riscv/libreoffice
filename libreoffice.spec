@@ -244,6 +244,8 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 # not upstreamed
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+Patch3: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
+Patch4: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 
 %if 0%{?rhel}
 # not upstreamed

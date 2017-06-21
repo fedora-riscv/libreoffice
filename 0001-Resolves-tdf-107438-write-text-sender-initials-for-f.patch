@@ -1,0 +1,74 @@
+From 0fb375bd77846318e4a31a76d606726389c77994 Mon Sep 17 00:00:00 2001
+Message-Id: <0fb375bd77846318e4a31a76d606726389c77994.1498070696.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 20 Jun 2017 12:59:23 +0200
+Subject: [PATCH] Resolves: tdf#107438 write <text:sender-initials> for fields
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Only in <office:annotation> context write <loext:sender-initials>
+
+Broken since
+
+    commit 5f8476c00f482ab5c8707de2ebdcd41faa4057fc
+    Date:   Fri Dec 13 23:21:46 2013 +0100
+
+and
+
+    commit 49f9694e34d07468cff4a7e4de332f11be3e0dd8
+    Date:   Fri Dec 13 23:30:34 2013 +0100
+
+Change-Id: I48b146b779878bf0faa5830a721559d8e864dd33
+(cherry picked from commit 29f250c428953750ce89dec7ee961723478609c1)
+---
+ xmloff/source/text/txtflde.cxx | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch"
+
+diff --git a/xmloff/source/text/txtflde.cxx b/xmloff/source/text/txtflde.cxx
+index c198d27..2bf2589 100644
+--- a/xmloff/source/text/txtflde.cxx
++++ b/xmloff/source/text/txtflde.cxx
+@@ -2229,23 +2229,10 @@ void XMLTextFieldExport::ExportElement(enum XMLTokenEnum eElementName,
+     if (eElementName != XML_TOKEN_INVALID)
+     {
+         // Element
+-        if (eElementName == XML_SENDER_INITIALS)
+-        {
+-            if (SvtSaveOptions().GetODFDefaultVersion() > SvtSaveOptions::ODFVER_012)
+-            {
+-                SvXMLElementExport aElem( GetExport(), XML_NAMESPACE_LO_EXT,
+-                        eElementName, false, false );
+-                // export content
+-                GetExport().Characters(sContent);
+-            }
+-        }
+-        else
+-        {
+-            SvXMLElementExport aElem( GetExport(), XML_NAMESPACE_TEXT,
+-                                      eElementName, false, false );
+-            // export content
+-            GetExport().Characters(sContent);
+-        }
++        SvXMLElementExport aElem( GetExport(), XML_NAMESPACE_TEXT,
++                eElementName, false, false );
++        // export content
++        GetExport().Characters(sContent);
+     } else {
+         // always export content
+         GetExport().Characters(sContent);
+
+--------------erAck-patch-parts--
+
+

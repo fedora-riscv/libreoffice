@@ -1,0 +1,102 @@
+From 8ae78a68c839a46016bc07f13755448889280e59 Mon Sep 17 00:00:00 2001
+Message-Id: <8ae78a68c839a46016bc07f13755448889280e59.1498082855.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Wed, 21 Jun 2017 23:42:25 +0200
+Subject: [PATCH] Resolves: tdf#108292 WalkAndMatchElements: really limit the
+ match
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... to the columns queried, not just when entering an mdds node. Otherwise it
+would return an unexpected index, plus bailing out early spares unnecessary
+comparisons for the rest of a node block.
+
+Regression of
+
+    commit 3fed166279377f7ad702b8911899243b8adff3bf
+    Date:   Fri Aug 16 16:29:38 2013 +0200
+
+that started to use
+
+    commit 7334f8db6f6004d48e2dbf014f27878a7ae21eb1
+    Date:   Fri Aug 16 16:29:27 2013 +0200
+
+with its bad implementation.
+
+Just that VLOOKUP on a matrix with a larger block of same typed data as the
+query *and* a match in an excess column seems to be rare..
+
+Change-Id: Ia4ef3fd56490de82910d5aa13a84be2de851f9b0
+(cherry picked from commit d3b77628efc72d857c63c8fb91d7ed2b499ac860)
+---
+ sc/source/core/tool/scmatrix.cxx | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch"
+
+diff --git a/sc/source/core/tool/scmatrix.cxx b/sc/source/core/tool/scmatrix.cxx
+index 0974143..1f42bb4 100644
+--- a/sc/source/core/tool/scmatrix.cxx
++++ b/sc/source/core/tool/scmatrix.cxx
+@@ -1281,6 +1281,8 @@ public:
+ 
+     size_t getMatching() const { return mnResult; }
+ 
++    size_t getRemainingCount() const { return ((mnCol2 + 1) * maSize.row) - mnIndex; }
++
+     size_t compare(const MatrixImplType::element_block_node_type& node) const;
+ 
+     void operator() (const MatrixImplType::element_block_node_type& node)
+@@ -1290,7 +1292,7 @@ public:
+             return;
+ 
+         // limit lookup to the requested columns
+-        if ((mnCol1 * maSize.row) <= mnIndex && mnIndex < ((mnCol2 + 1) * maSize.row))
++        if ((mnCol1 * maSize.row) <= mnIndex && getRemainingCount() > 0)
+         {
+             mnResult = compare(node);
+         }
+@@ -1311,7 +1313,8 @@ size_t WalkAndMatchElements<double>::compare(const MatrixImplType::element_block
+ 
+             block_type::const_iterator it = block_type::begin(*node.data);
+             block_type::const_iterator itEnd = block_type::end(*node.data);
+-            for (; it != itEnd; ++it, nCount++)
++            const size_t nRemaining = getRemainingCount();
++            for (; it != itEnd && nCount < nRemaining; ++it, ++nCount)
+             {
+                 if (*it == maMatchValue)
+                 {
+@@ -1326,7 +1329,8 @@ size_t WalkAndMatchElements<double>::compare(const MatrixImplType::element_block
+ 
+             block_type::const_iterator it = block_type::begin(*node.data);
+             block_type::const_iterator itEnd = block_type::end(*node.data);
+-            for (; it != itEnd; ++it, ++nCount)
++            const size_t nRemaining = getRemainingCount();
++            for (; it != itEnd && nCount < nRemaining; ++it, ++nCount)
+             {
+                 if (int(*it) == maMatchValue)
+                 {
+@@ -1356,7 +1360,8 @@ size_t WalkAndMatchElements<svl::SharedString>::compare(const MatrixImplType::el
+ 
+             block_type::const_iterator it = block_type::begin(*node.data);
+             block_type::const_iterator itEnd = block_type::end(*node.data);
+-            for (; it != itEnd; ++it, ++nCount)
++            const size_t nRemaining = getRemainingCount();
++            for (; it != itEnd && nCount < nRemaining; ++it, ++nCount)
+             {
+                 if (it->getDataIgnoreCase() == maMatchValue.getDataIgnoreCase())
+                 {
+
+--------------erAck-patch-parts--
+
+

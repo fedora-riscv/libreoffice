@@ -284,6 +284,7 @@ Patch48: 0001-remove-unused-ICoreParagraphStyle.patch
 Patch49: 0002-tdf-103091-conditional-style-conditions-not-saved.patch
 Patch50: 0001-Resolves-tdf-108671-mark-named-expression-single-ref.patch
 Patch51: 0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch
+Patch52: 0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2365,6 +2366,7 @@ done
 - Resolves: tdf#103091 ODF conditional style conditions import/export
 - Resolves: tdf#108671 mark named expression single reference #REF! if deleted
 - Resolves: tdf#107438 write <text:sender-initials> for fields
+- Resolves: tdf#108292 WalkAndMatchElements: really limit the match
 
 * Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-3
 - Related: rhbz#1367846 queue and merge scrolling events

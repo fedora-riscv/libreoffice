@@ -282,6 +282,7 @@ Patch46: 0001-Resolves-rhbz-1367846-improve-gtk3-trackpad-scrollin.patch
 Patch47: 0001-Related-rhbz-1367846-queue-and-merge-scroll-events.patch
 Patch48: 0001-remove-unused-ICoreParagraphStyle.patch
 Patch49: 0002-tdf-103091-conditional-style-conditions-not-saved.patch
+Patch50: 0001-Resolves-tdf-108671-mark-named-expression-single-ref.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2361,6 +2362,7 @@ done
 %changelog
 * Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-4.UNBUILT
 - Resolves: tdf#103091 ODF conditional style conditions import/export
+- Resolves: tdf#108671 mark named expression single reference #REF! if deleted
 
 * Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-3
 - Related: rhbz#1367846 queue and merge scrolling events

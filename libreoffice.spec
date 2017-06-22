@@ -2362,7 +2362,7 @@ done
 %endif
 
 %changelog
-* Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-4.UNBUILT
+* Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-4
 - Resolves: tdf#103091 ODF conditional style conditions import/export
 - Resolves: tdf#108671 mark named expression single reference #REF! if deleted
 - Resolves: tdf#107438 write <text:sender-initials> for fields

@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%global libo_prerelease .beta2
+%global libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1555,7 +1555,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
 %{baseinstdir}/program/libxsec_fw.so
-%{baseinstdir}/program/libxsec_gpg.so
 %if 0%{?rhel}
 %{baseinstdir}/program/libassuan.so.0
 %{baseinstdir}/program/libgpg-error.so.0
@@ -2194,6 +2193,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jun 23 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.1-1
+- update to 5.4.0 rc1
+
 * Wed Jun 07 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.0-3.beta2
 - update to 5.4.0 beta2
 

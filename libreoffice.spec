@@ -726,6 +726,7 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-filters%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit

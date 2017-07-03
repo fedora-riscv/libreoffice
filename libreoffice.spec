@@ -692,6 +692,7 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-filters%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit

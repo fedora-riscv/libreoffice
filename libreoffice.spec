@@ -56,7 +56,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
+Version:        %{libo_version}.2
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -103,7 +103,7 @@ Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
 Source107:      %{external_url}/libstaroffice-0.0.3.tar.xz
 Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
-Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
+Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
 Source110:      %{external_url}/gpgme-1.8.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.26.tar.bz2
 Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
@@ -1064,6 +1064,7 @@ touch autogen.lastrun
  --with-system-libs \
  --without-export-validation \
  --without-fonts \
+ --without-system-xmlsec \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  %{distrooptions} \
@@ -2194,6 +2195,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jul 07 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.2-1
+- update to 5.4.0 rc2
+
 * Fri Jun 23 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.1-1
 - update to 5.4.0 rc1
 

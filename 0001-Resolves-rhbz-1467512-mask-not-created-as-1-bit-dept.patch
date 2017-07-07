@@ -1,0 +1,26 @@
+From 577899517576f6d79311093d4e49d9b775ddcf0c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 7 Jul 2017 13:59:27 +0100
+Subject: [PATCH] Resolves: rhbz#1467512 mask not created as 1 bit depth
+
+Change-Id: Ib5bdd594efd41eb881dfc4e2454b72e4739ffd56
+---
+ vcl/headless/svpgdi.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index 033389e..c694fc0 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -1110,7 +1110,7 @@ void SvpSalGraphics::drawMask( const SalTwoRect& rTR,
+ SalBitmap* SvpSalGraphics::getBitmap( long nX, long nY, long nWidth, long nHeight )
+ {
+     SvpSalBitmap* pBitmap = new SvpSalBitmap();
+-    pBitmap->Create(Size(nWidth, nHeight), 32, BitmapPalette());
++    pBitmap->Create(Size(nWidth, nHeight), GetBitCount(), BitmapPalette());
+ 
+     cairo_surface_t* target = SvpSalGraphics::createCairoSurface(pBitmap->GetBuffer());
+     cairo_t* cr = cairo_create(target);
+-- 
+2.9.3
+

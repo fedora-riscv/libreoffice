@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1537,6 +1537,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
+%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbiblo.so
@@ -2112,7 +2113,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %if !0%{?armhack}
 %{baseinstdir}/help/en-US/simpress.*
 %endif
-%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
@@ -2350,6 +2350,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jul 11 2017 David Tardon <dtardon@redhat.com> - 1:5.3.4.2-3
+- Resolves: rhbz#1463839 libanimcore is needed by Draw too
+
 * Fri Jul 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.2-2
 - Resolves: rhbz#1467512 mask not created as 1 bit depth
 

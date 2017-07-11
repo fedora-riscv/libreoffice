@@ -1455,6 +1455,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
+%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbiblo.so
@@ -1962,7 +1963,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
-%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
 %{baseinstdir}/program/libwpftimpresslo.so

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1555,6 +1555,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libi18nsearchlo.so
 %{baseinstdir}/program/libldapbe2lo.so
 %{baseinstdir}/program/libacclo.so
+%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbiblo.so
@@ -2126,7 +2127,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %if !0%{?armhack}
 %{baseinstdir}/help/en-US/simpress.*
 %endif
-%{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libplacewarelo.so
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
@@ -2363,6 +2363,9 @@ done
 %endif
 
 %changelog
+* Tue Jul 11 2017 David Tardon <dtardon@redhat.com> - 1:5.2.7.2-5
+- Resolves: rhbz#1463839 libanimcore is needed by Draw too
+
 * Thu May 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-4
 - Resolves: tdf#103091 ODF conditional style conditions import/export
 - Resolves: tdf#108671 mark named expression single reference #REF! if deleted

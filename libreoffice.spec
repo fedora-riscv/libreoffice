@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -262,6 +262,7 @@ Patch19: 0001-make-opengl-transitions-under-X-flicker-free-on-ente.patch
 Patch20: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
 Patch21: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 Patch22: 0001-Resolves-rhbz-1467512-mask-not-created-as-1-bit-dept.patch
+Patch23: 0001-gtk3-make-video-playback-fill-playback-window.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2350,6 +2351,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jul 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.2-4
+- fix video playback size under gtk3
+
 * Tue Jul 11 2017 David Tardon <dtardon@redhat.com> - 1:5.3.4.2-3
 - Resolves: rhbz#1463839 libanimcore is needed by Draw too
 

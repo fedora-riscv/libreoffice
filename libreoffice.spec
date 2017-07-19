@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -285,6 +285,7 @@ Patch49: 0002-tdf-103091-conditional-style-conditions-not-saved.patch
 Patch50: 0001-Resolves-tdf-108671-mark-named-expression-single-ref.patch
 Patch51: 0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch
 Patch52: 0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch
+Patch53: 0001-gtk3-make-video-playback-fill-playback-window.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2363,6 +2364,9 @@ done
 %endif
 
 %changelog
+* Wed Jul 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-6
+- fix video playback size under gtk3
+
 * Tue Jul 11 2017 David Tardon <dtardon@redhat.com> - 1:5.2.7.2-5
 - Resolves: rhbz#1463839 libanimcore is needed by Draw too
 

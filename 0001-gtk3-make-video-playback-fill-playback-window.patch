@@ -1,0 +1,26 @@
+From 0022abf2cb75d8966e3d5e14dc351db13a19bca0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 19 Jul 2017 09:54:20 +0100
+Subject: [PATCH] gtk3: make video playback fill playback window
+
+Change-Id: I43f2f77889856dc6a3b0c3a3775826dbb000be7a
+---
+ avmedia/source/gstreamer/gstplayer.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/avmedia/source/gstreamer/gstplayer.cxx b/avmedia/source/gstreamer/gstplayer.cxx
+index bc2d749..64c55db 100644
+--- a/avmedia/source/gstreamer/gstplayer.cxx
++++ b/avmedia/source/gstreamer/gstplayer.cxx
+@@ -920,6 +920,8 @@ uno::Reference< ::media::XPlayerWindow > SAL_CALL Player::createPlayerWindow( co
+                 {
+                     mbUseGtkSink = true;
+                     g_object_get(pVideosink, "widget", &mpGtkWidget, nullptr);
++                    gtk_widget_set_vexpand(mpGtkWidget, true);
++                    gtk_widget_set_hexpand(mpGtkWidget, true);
+                     GtkWidget *pParent = static_cast<GtkWidget*>(pEnvData->pWidget);
+                     gtk_container_add (GTK_CONTAINER(pParent), mpGtkWidget);
+ 
+-- 
+2.9.3
+

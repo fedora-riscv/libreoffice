@@ -1,0 +1,77 @@
+From 84992f33219a75c898980a2737c0f286958aa05a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 24 Jul 2017 21:32:30 +0100
+Subject: [PATCH] don't jump back to selected slide on right click context menu
+
+i.e. two many slides to fit in slide sorter panel, so scroll bar,
+select slide one, scroll to the end and right click between slides
+(or anywhere that isn't a slide) and without this fix the sorter
+jumps back to make the selected slide 1 visible. The right click
+menu will offer "new slide", choosing that will insert a slide
+at the point that was originally clicked, not at the point it
+was scrolled back to
+
+losing focus trigger a (dubious looking) callback to jump to the
+selected slide, so disable it while context menu is up
+
+Change-Id: Ie42bf158258cc38c9b7cfda7672f24d2ac8bfa11
+---
+ .../ui/slidesorter/controller/SlideSorterController.cxx    | 14 +++++++++++---
+ .../slidesorter/inc/controller/SlideSorterController.hxx   |  1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/sd/source/ui/slidesorter/controller/SlideSorterController.cxx b/sd/source/ui/slidesorter/controller/SlideSorterController.cxx
+index dfbf169..dfd07f3 100644
+--- a/sd/source/ui/slidesorter/controller/SlideSorterController.cxx
++++ b/sd/source/ui/slidesorter/controller/SlideSorterController.cxx
+@@ -111,6 +111,7 @@ SlideSorterController::SlideSorterController (SlideSorter& rSlideSorter)
+       mpListener(),
+       mnModelChangeLockCount(0),
+       mbIsForcedRearrangePending(false),
++      mbContextMenuOpen(false),
+       mbPreModelChangeDone(false),
+       mbPostModelChangePending(false),
+       maSelectionBeforeSwitch(),
+@@ -386,7 +387,9 @@ bool SlideSorterController::Command (
+                 SfxDispatcher* pDispatcher = pViewShell->GetDispatcher();
+                 if (pDispatcher != nullptr)
+                 {
++                    mbContextMenuOpen = true;
+                     pDispatcher->ExecutePopup( aPopupId, pWindow, &aMenuLocation );
++                    mbContextMenuOpen = false;
+                     mrSlideSorter.GetView().UpdatePageUnderMouse();
+                     ::rtl::Reference<SelectionFunction> pFunction(GetCurrentSelectionFunction());
+                     if (pFunction.is())
+@@ -553,9 +556,14 @@ IMPL_LINK(SlideSorterController, WindowEventHandler, VclWindowEvent&, rEvent, vo
+                     GetFocusManager().HideFocus();
+                     mrView.GetToolTip().Hide();
+ 
+-                    // Select the current slide so that it is properly
+-                    // visualized when the focus is moved to the edit view.
+-                    GetPageSelector().SelectPage(GetCurrentSlideManager()->GetCurrentSlide());
++                    //don't scroll back to the selected slide when we lose
++                    //focus due to a temporary active context menu
++                    if (!mbContextMenuOpen)
++                    {
++                        // Select the current slide so that it is properly
++                        // visualized when the focus is moved to the edit view.
++                        GetPageSelector().SelectPage(GetCurrentSlideManager()->GetCurrentSlide());
++                    }
+                 }
+                 break;
+ 
+diff --git a/sd/source/ui/slidesorter/inc/controller/SlideSorterController.hxx b/sd/source/ui/slidesorter/inc/controller/SlideSorterController.hxx
+index cee9f96..33130e5 100644
+--- a/sd/source/ui/slidesorter/inc/controller/SlideSorterController.hxx
++++ b/sd/source/ui/slidesorter/inc/controller/SlideSorterController.hxx
+@@ -240,6 +240,7 @@ private:
+ 
+     int mnModelChangeLockCount;
+     bool mbIsForcedRearrangePending;
++    bool mbContextMenuOpen;
+ 
+     bool mbPreModelChangeDone;
+     bool mbPostModelChangePending;
+-- 
+2.9.4
+

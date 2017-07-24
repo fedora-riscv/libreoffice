@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -264,6 +264,7 @@ Patch21: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 Patch22: 0001-Resolves-rhbz-1467512-mask-not-created-as-1-bit-dept.patch
 Patch23: 0001-gtk3-make-video-playback-fill-playback-window.patch
 Patch24: 0001-cairo_canvas-shape-clipping-box-doesn-t-match-where-.patch
+Patch25: 0001-don-t-jump-back-to-selected-slide-on-right-click-con.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2352,6 +2353,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jul 24 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.2-6
+- fix slide sorter panel jumping to old position on right click context menu
+
 * Mon Jul 24 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.2-5
 - fix clipping box for animated text effects in slideshows
 

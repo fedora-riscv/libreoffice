@@ -1308,6 +1308,9 @@ rm -rf %{buildroot}%{baseinstdir}/share/fonts
 # move platform-independent data into shared dir
 install -m 0755 -d %{buildroot}%{datadir}
 rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE* %{buildroot}%{baseinstdir}/NOTICE
+# rhbz#1473749 ensure display of files in license/about dialogs works
+ln -sr %{buildroot}%{datadir}/LICENSE.fodt %{buildroot}%{baseinstdir}/LICENSE.fodt
+ln -sr %{buildroot}%{datadir}/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through
@@ -1497,6 +1500,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files core
 %dir %{baseinstdir}
+%{baseinstdir}/CREDITS.fodt
+%{baseinstdir}/LICENSE.fodt
 %dir %{baseinstdir}/help
 %if !0%{?armhack}
 %docdir %{baseinstdir}/help/en-US

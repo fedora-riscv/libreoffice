@@ -57,11 +57,9 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
-
-ExcludeArch:    s390x
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -2197,6 +2195,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jul 31 2017 Kalev Lember <klember@redhat.com> - 1:5.4.0.3-3
+- Enable the s390x build again
+
 * Mon Jul 31 2017 Kalev Lember <klember@redhat.com> - 1:5.4.0.3-2
 - Temporarily disable the build on s390x
 

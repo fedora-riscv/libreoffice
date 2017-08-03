@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2200,6 +2200,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Aug 03 2017 David Tardon <dtardon@redhat.com> - 1:5.4.0.3-4
+- rebuild for poppler 0.57.0
+
 * Mon Jul 31 2017 Kalev Lember <klember@redhat.com> - 1:5.4.0.3-3
 - Enable the s390x build again
 

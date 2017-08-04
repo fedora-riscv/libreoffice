@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.3.4
+%define libo_version 5.3.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -258,7 +258,6 @@ Patch15: 0002-gnome-documents-rework-SfxPickList-as-pimpl.patch
 Patch16: 0003-rhbz-1444437-gnome-documents-finalize-may-not-occur-.patch
 Patch17: 0004-gnome-documents-hold-solarmutex-on-dtor-patch-as-wel.patch
 Patch18: 0005-Resolves-rhbz-144437-make-gnome-documents-not-crash-.patch
-Patch19: 0001-make-opengl-transitions-under-X-flicker-free-on-ente.patch
 Patch20: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
 Patch21: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 Patch22: 0001-Resolves-rhbz-1467512-mask-not-created-as-1-bit-dept.patch
@@ -2353,6 +2352,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Aug 04 2017 David Tardon <dtardon@redhat.com> - 1:5.3.5.2-1
+- update to 5.3.5
+
 * Mon Jul 24 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.4.2-6
 - fix slide sorter panel jumping to old position on right click context menu
 

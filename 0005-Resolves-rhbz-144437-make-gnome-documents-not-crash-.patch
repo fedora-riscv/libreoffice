@@ -1,7 +1,7 @@
-From 4796ce2b93089c363639c64a8fde734df2c594a1 Mon Sep 17 00:00:00 2001
+From 226b7436988f7a0e4c7d06353c630f10047ac7f6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Mon, 8 May 2017 15:26:22 +0100
-Subject: [PATCH 5/5] Resolves: rhbz#144437 make gnome-documents not crash the
+Subject: [PATCH] Resolves: rhbz#144437 make gnome-documents not crash the
  whole time
 
 accept that once initted that LibreOffice cannot be deinitted and reinited
@@ -18,15 +18,15 @@ Change-Id: Ide54c0df2ce4065f7c192ae8c2cedfaaa2b58d72
  desktop/source/app/officeipcthread.hxx   |  2 +-
  desktop/source/lib/init.cxx              |  5 ++++-
  framework/source/services/desktop.cxx    |  8 +++++---
- libreofficekit/source/gtk/lokdocview.cxx | 34 +++++++++++++++++++++-----------
+ libreofficekit/source/gtk/lokdocview.cxx | 27 ++++++++++++++++++---------
  vcl/source/app/svmain.cxx                |  8 ++++++++
- 7 files changed, 49 insertions(+), 19 deletions(-)
+ 7 files changed, 44 insertions(+), 17 deletions(-)
 
 diff --git a/desktop/source/app/app.cxx b/desktop/source/app/app.cxx
-index 8793697..9786afe 100644
+index df79f41..dc7ff1e 100644
 --- a/desktop/source/app/app.cxx
 +++ b/desktop/source/app/app.cxx
-@@ -1994,7 +1994,7 @@ IMPL_LINK_NOARG(Desktop, OpenClients_Impl, void*, void)
+@@ -1998,7 +1998,7 @@ IMPL_LINK_NOARG(Desktop, OpenClients_Impl, void*, void)
          // When this server closes down it attempts to recreate the pipe (in RequestHandler::Disable()).
          // It's possible that the client has a pending connection request.
          // When the IPC thread is not running, this connection locks (because maPipe.accept()) is never called
@@ -139,27 +139,18 @@ index 20afab1..6f6412a 100644
          Application::Quit();
          return true;
 diff --git a/libreofficekit/source/gtk/lokdocview.cxx b/libreofficekit/source/gtk/lokdocview.cxx
-index 18985d5..04bd143 100644
+index 6d05b7a..5d64d7b 100644
 --- a/libreofficekit/source/gtk/lokdocview.cxx
 +++ b/libreofficekit/source/gtk/lokdocview.cxx
-@@ -2587,20 +2587,32 @@ static void lok_doc_view_destroy (GtkWidget* widget)
-     std::stringstream ss;
-     ss << "lok::Document::setView(" << priv->m_nViewId << ")";
-     g_info("%s", ss.str().c_str());
--    priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
--    priv->m_pDocument->pClass->registerCallback(priv->m_pDocument, nullptr, nullptr);
--    aGuard.unlock();
--
+@@ -2610,16 +2610,25 @@ static void lok_doc_view_destroy (GtkWidget* widget)
+ 
+     aGuard.unlock();
+ 
 -    if (priv->m_pDocument && priv->m_pDocument->pClass->getViewsCount(priv->m_pDocument) > 1)
-+    if (priv->m_pDocument)
-     {
+-    {
 -        priv->m_pDocument->pClass->destroyView(priv->m_pDocument, priv->m_nViewId);
-+        priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
-+        priv->m_pDocument->pClass->registerCallback(priv->m_pDocument, nullptr, nullptr);
-     }
+-    }
 -    else
-+    aGuard.unlock();
-+
 +    if (priv->m_pDocument)
      {
 -        if (priv->m_pDocument)
@@ -213,5 +204,5 @@ index 2cd6137..a5f7807 100644
          SolarMutexReleaser r; // unblock threads blocked on that so we can join
          ::comphelper::JoinAsyncEventNotifiers();
 -- 
-2.9.3
+2.13.0
 

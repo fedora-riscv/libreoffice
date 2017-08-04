@@ -1,4 +1,4 @@
-From e2f5d3d365ced3da2005792c69d7e1cdbe5ece50 Mon Sep 17 00:00:00 2001
+From 6562e12885fa2abf1a1bf0d606b08e00c4547934 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 25 Nov 2016 20:25:27 +0000
 Subject: [PATCH] change from glew to epoxy
@@ -8,52 +8,48 @@ cause that works under wayland out of the box and gtk3 uses it already
 Change-Id: Iefaac31e325534a81a5389f752804af917c1baef
 ---
  Makefile.fetch                                     |  2 +-
- RepositoryExternal.mk                              | 46 +++++------
+ RepositoryExternal.mk                              | 46 +++++++++------------
  avmedia/Library_avmedia.mk                         |  2 +-
- avmedia/Library_avmediaogl.mk                      |  6 +-
+ avmedia/Library_avmediaogl.mk                      |  6 +--
  bin/check-elf-dynamic-objects                      |  2 +-
  bin/lo-all-static-libs                             |  2 +-
- canvas/Library_oglcanvas.mk                        |  7 +-
+ canvas/Library_oglcanvas.mk                        |  7 +---
  canvas/source/opengl/ogl_buffercontext.hxx         |  2 +-
  canvas/source/opengl/ogl_canvascustomsprite.cxx    |  2 +-
  canvas/source/opengl/ogl_canvashelper.cxx          |  2 +-
  canvas/source/opengl/ogl_canvastools.cxx           |  2 +-
  canvas/source/opengl/ogl_texturecache.cxx          |  2 +-
  canvas/source/opengl/ogl_tools.hxx                 |  3 +-
- chart2/Library_chartcore.mk                        |  9 +--
+ chart2/Library_chartcore.mk                        |  9 +---
  chart2/Library_chartopengl.mk                      |  4 +-
  chart2/inc/pch/precompiled_chartcore.hxx           |  2 +-
  chart2/source/view/charttypes/GL3DBarChart.cxx     |  2 +-
- chart2/source/view/main/GL3DRenderer.cxx           |  8 +-
+ chart2/source/view/main/GL3DRenderer.cxx           |  8 ++--
  chart2/source/view/main/OpenGLRender.cxx           |  2 +-
- config_host.mk.in                                  |  6 +-
- config_host/config_opengl.h.in                     | 10 ---
- configure.ac                                       | 21 ++---
+ config_host.mk.in                                  |  6 +--
+ config_host/config_opengl.h.in                     | 10 -----
+ configure.ac                                       | 21 +++++-----
  cui/Library_cui.mk                                 |  2 +-
  distro-configs/LibreOfficeFlatpak.conf             |  1 -
- download.lst                                       |  7 +-
+ download.lst                                       |  7 ++--
  external/Module_external.mk                        |  2 +-
- external/epoxy/Library_epoxy.mk                    | 63 +++++++++++++++
- external/{glew => epoxy}/Makefile                  |  0
- .../{glew/Module_glew.mk => epoxy/Module_epoxy.mk} |  9 +--
- external/epoxy/README                              |  5 ++
- external/epoxy/UnpackedTarball_epoxy.mk            | 20 +++++
- external/epoxy/epoxy.windows.api.patch             | 90 ++++++++++++++++++++++
- external/glew/ExternalPackage_glew.mk              | 33 --------
- external/glew/ExternalProject_glew.mk              | 36 ---------
- external/glew/README                               |  6 --
- external/glew/UnpackedTarball_glew.mk              | 48 ------------
- external/glew/glew-macosx-install-name.patch.1     | 13 ----
- external/glew/glew-msvc-disable-sse2.patch.1       | 10 ---
- external/glew/glew-static-only.patch.1             | 12 ---
- external/glew/glew-tmpdir.patch.1                  | 13 ----
- external/glew/glew_use_CC_variable.patch.1         | 24 ------
- external/libgltf/ExternalProject_libgltf.mk        | 10 +--
- external/libgltf/libgltf-msvc-x64.patch.1          | 31 ++++----
- include/vcl/opengl/OpenGLContext.hxx               |  6 +-
+ external/glew/ExternalPackage_glew.mk              | 33 ---------------
+ external/glew/ExternalProject_glew.mk              | 36 ----------------
+ external/glew/Makefile                             |  7 ----
+ external/glew/Module_glew.mk                       | 18 --------
+ external/glew/README                               |  6 ---
+ external/glew/UnpackedTarball_glew.mk              | 48 ----------------------
+ external/glew/glew-macosx-install-name.patch.1     | 13 ------
+ external/glew/glew-msvc-disable-sse2.patch.1       | 10 -----
+ external/glew/glew-static-only.patch.1             | 12 ------
+ external/glew/glew-tmpdir.patch.1                  | 13 ------
+ external/glew/glew_use_CC_variable.patch.1         | 24 -----------
+ external/libgltf/ExternalProject_libgltf.mk        | 10 ++---
+ external/libgltf/libgltf-msvc-x64.patch.1          | 31 +++++++-------
+ include/vcl/opengl/OpenGLContext.hxx               |  6 +--
  include/vcl/opengl/OpenGLHelper.hxx                |  2 +-
  include/vcl/opengl/OpenGLWrapper.hxx               |  2 +-
- slideshow/Library_OGLTrans.mk                      |  9 +--
+ slideshow/Library_OGLTrans.mk                      |  9 +---
  slideshow/Library_slideshow.mk                     |  2 +-
  slideshow/source/engine/opengl/TransitionImpl.cxx  |  1 -
  slideshow/source/engine/opengl/TransitionImpl.hxx  |  3 +-
@@ -77,22 +73,18 @@ Change-Id: Iefaac31e325534a81a5389f752804af917c1baef
  vcl/inc/opengl/texture.hxx                         |  2 +-
  vcl/inc/pch/precompiled_vcl.hxx                    |  2 +-
  vcl/inc/unx/saldisp.hxx                            |  2 +-
- vcl/opengl/x11/gdiimpl.cxx                         | 31 ++++----
+ vcl/opengl/x11/gdiimpl.cxx                         | 31 ++++++--------
  vcl/osx/salobj.cxx                                 |  4 +-
- vcl/source/opengl/OpenGLContext.cxx                | 34 ++------
- vcl/source/opengl/OpenGLHelper.cxx                 |  8 +-
+ vcl/source/opengl/OpenGLContext.cxx                | 34 +++------------
+ vcl/source/opengl/OpenGLHelper.cxx                 |  8 ++--
  vcl/unx/generic/app/saldisp.cxx                    |  1 -
  vcl/workben/icontest.cxx                           |  2 -
- 77 files changed, 340 insertions(+), 418 deletions(-)
+ 72 files changed, 128 insertions(+), 434 deletions(-)
  delete mode 100644 config_host/config_opengl.h.in
- create mode 100644 external/epoxy/Library_epoxy.mk
- rename external/{glew => epoxy}/Makefile (100%)
- rename external/{glew/Module_glew.mk => epoxy/Module_epoxy.mk} (69%)
- create mode 100644 external/epoxy/README
- create mode 100644 external/epoxy/UnpackedTarball_epoxy.mk
- create mode 100644 external/epoxy/epoxy.windows.api.patch
  delete mode 100644 external/glew/ExternalPackage_glew.mk
  delete mode 100644 external/glew/ExternalProject_glew.mk
+ delete mode 100644 external/glew/Makefile
+ delete mode 100644 external/glew/Module_glew.mk
  delete mode 100644 external/glew/README
  delete mode 100644 external/glew/UnpackedTarball_glew.mk
  delete mode 100644 external/glew/glew-macosx-install-name.patch.1
@@ -533,10 +525,10 @@ index 67b9e47..0000000
 -
 -#endif
 diff --git a/configure.ac b/configure.ac
-index 079e856..0f8e58d 100644
+index 7fdcc65..f8b5df8 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1634,6 +1634,11 @@ AC_ARG_WITH(system-cairo,
+@@ -1645,6 +1645,11 @@ AC_ARG_WITH(system-cairo,
          [Use cairo libraries already on system.  Happens automatically for
           (implicit) --enable-gtk and for --enable-gtk3.]))
  
@@ -548,7 +540,7 @@ index 079e856..0f8e58d 100644
  AC_ARG_WITH(myspell-dicts,
      AS_HELP_STRING([--with-myspell-dicts],
          [Adds myspell dictionaries to the LibreOffice installation set]),
-@@ -8941,14 +8946,6 @@ AC_SUBST([GLM_CFLAGS])
+@@ -8952,14 +8957,6 @@ AC_SUBST([GLM_CFLAGS])
  AC_SUBST([SYSTEM_GLM])
  
  dnl ===================================================================
@@ -563,7 +555,7 @@ index 079e856..0f8e58d 100644
  dnl Check for system odbc
  dnl ===================================================================
  AC_MSG_CHECKING([which odbc headers to use])
-@@ -10497,7 +10494,7 @@ if test "x$enable_gltf" != "xno" -a $_os != iOS -a $_os != Android -a "$ENABLE_H
+@@ -10508,7 +10505,7 @@ if test "x$enable_gltf" != "xno" -a $_os != iOS -a $_os != Android -a "$ENABLE_H
      AC_DEFINE(HAVE_FEATURE_GLTF,1)
      if test "$with_system_libgltf" = "yes"; then
          SYSTEM_LIBGLTF=TRUE
@@ -572,7 +564,7 @@ index 079e856..0f8e58d 100644
          FilterLibs "${LIBGLTF_LIBS}"
          LIBGLTF_LIBS="${filteredlibs}"
      else
-@@ -11728,6 +11725,11 @@ AC_SUBST(CAIRO_CFLAGS)
+@@ -11739,6 +11736,11 @@ AC_SUBST(CAIRO_CFLAGS)
  AC_SUBST(CAIRO_LIBS)
  
  dnl ===================================================================
@@ -584,7 +576,7 @@ index 079e856..0f8e58d 100644
  dnl Test whether to use avahi
  dnl ===================================================================
  if test "$_os" = "WINNT"; then
-@@ -12886,7 +12888,6 @@ AC_CONFIG_HEADERS([config_host/config_mpl.h])
+@@ -12897,7 +12899,6 @@ AC_CONFIG_HEADERS([config_host/config_mpl.h])
  AC_CONFIG_HEADERS([config_host/config_orcus.h])
  AC_CONFIG_HEADERS([config_host/config_kde4.h])
  AC_CONFIG_HEADERS([config_host/config_oox.h])
@@ -606,7 +598,7 @@ index 6a63a1d..64f7844 100644
  endif
  
 diff --git a/distro-configs/LibreOfficeFlatpak.conf b/distro-configs/LibreOfficeFlatpak.conf
-index d5d6686..121d198 100644
+index a7a0c73..d85e8ea 100644
 --- a/distro-configs/LibreOfficeFlatpak.conf
 +++ b/distro-configs/LibreOfficeFlatpak.conf
 @@ -11,7 +11,6 @@
@@ -618,10 +610,10 @@ index d5d6686..121d198 100644
  --without-system-libabw
  --without-system-libcdr
 diff --git a/download.lst b/download.lst
-index 3e3313b..9d7af4f 100644
+index 4c67612..49d659a 100644
 --- a/download.lst
 +++ b/download.lst
-@@ -29,6 +29,8 @@ export CURL_TARBALL := curl-7.51.0.tar.gz
+@@ -29,6 +29,8 @@ export CURL_TARBALL := curl-7.52.1.tar.gz
  export DBGHELP_DLL := 13fbc2e8b37ddf28181dd6d8081c2b8e-dbghelp.dll
  export EBOOK_MD5SUM := 6b48eda57914e6343efebc9381027b78
  export EBOOK_TARBALL := libe-book-0.1.2.tar.bz2
@@ -636,9 +628,9 @@ index 3e3313b..9d7af4f 100644
  export FREETYPE_TARBALL := dbf2caca1d3afd410a29217a9809d397-freetype-2.4.8.tar.bz2
 -export GLEW_TARBALL := 3941e9cab2f4f9d8faee3e8d57ae7664-glew-1.12.0.zip
  export GLM_TARBALL := bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
- export GRAPHITE_TARBALL := 3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
- export HARFBUZZ_MD5SUM := 5986e1bfcd983d1f6caa53ef64c4abc5
-@@ -88,8 +89,8 @@ export LIBATOMIC_OPS_TARBALL := libatomic_ops-7_2d.zip
+ export GRAPHITE_MD5SUM := 9c499b8ec9f1b81fd0bb6a3b986f4b0f
+ export GRAPHITE_TARBALL := graphite2-minimal-1.3.10.tgz
+@@ -89,8 +90,8 @@ export LIBATOMIC_OPS_TARBALL := libatomic_ops-7_2d.zip
  export LIBEOT_MD5SUM := aa24f5dd2a2992f4a116aa72af817548
  export LIBEOT_TARBALL := libeot-0.01.tar.bz2
  export LIBEXTTEXTCAT_TARBALL := 10d61fbaa6a06348823651b1bd7940fe-libexttextcat-3.4.4.tar.bz2
@@ -668,236 +660,6 @@ index 1dbf97b..c14e668 100644
  	$(call gb_Helper_optional,GLM,glm) \
  	$(call gb_Helper_optional,GRAPHITE,graphite) \
  	$(call gb_Helper_optional,HARFBUZZ,harfbuzz) \
-diff --git a/external/epoxy/Library_epoxy.mk b/external/epoxy/Library_epoxy.mk
-new file mode 100644
-index 0000000..28f9dab
---- /dev/null
-+++ b/external/epoxy/Library_epoxy.mk
-@@ -0,0 +1,63 @@
-+# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
-+#
-+# This file is part of the LibreOffice project.
-+#
-+# This Source Code Form is subject to the terms of the Mozilla Public
-+# License, v. 2.0. If a copy of the MPL was not distributed with this
-+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+#
-+
-+$(eval $(call gb_Library_Library,epoxy))
-+
-+$(eval $(call gb_Library_use_unpacked,epoxy,epoxy))
-+
-+$(eval $(call gb_Library_set_warnings_not_errors,epoxy))
-+
-+$(eval $(call gb_Library_set_include,epoxy,\
-+	-I$(WORKDIR)/UnpackedTarball/epoxy/include \
-+	-I$(WORKDIR)/UnpackedTarball/epoxy/src \
-+	$$(INCLUDE) \
-+))
-+
-+# epoxy is riddled with warnings... let's spare use
-+# the pointless spamming
-+$(eval $(call gb_Library_add_cxxflags,epoxy,\
-+	-w \
-+))
-+$(eval $(call gb_Library_add_cflags,epoxy,\
-+	-w \
-+))
-+
-+ifeq ($(OS),LINUX)
-+$(eval $(call gb_Library_add_libs,epoxy,\
-+	-ldl \
-+))
-+endif
-+
-+$(eval $(call gb_Library_add_generated_cobjects,epoxy,\
-+	UnpackedTarball/epoxy/src/dispatch_common \
-+	UnpackedTarball/epoxy/src/gl_generated_dispatch \
-+))
-+
-+ifeq ($(OS),WNT)
-+$(eval $(call gb_Library_add_generated_cobjects,epoxy,\
-+	UnpackedTarball/epoxy/src/dispatch_wgl \
-+	UnpackedTarball/epoxy/src/wgl_generated_dispatch \
-+))
-+else ifeq ($(OS),MACOSX)
-+# nothing
-+else ifeq ($(OS),ANDROID)
-+$(eval $(call gb_Library_add_generated_cobjects,epoxy,\
-+	UnpackedTarball/epoxy/src/dispatch_egl \
-+	UnpackedTarball/epoxy/src/egl_generated_dispatch \
-+))
-+else
-+$(eval $(call gb_Library_add_generated_cobjects,epoxy,\
-+	UnpackedTarball/epoxy/src/dispatch_glx \
-+	UnpackedTarball/epoxy/src/glx_generated_dispatch \
-+	UnpackedTarball/epoxy/src/dispatch_egl \
-+	UnpackedTarball/epoxy/src/egl_generated_dispatch \
-+))
-+endif
-+
-+# vim: set noet sw=4 ts=4:
-diff --git a/external/glew/Makefile b/external/epoxy/Makefile
-similarity index 100%
-rename from external/glew/Makefile
-rename to external/epoxy/Makefile
-diff --git a/external/glew/Module_glew.mk b/external/epoxy/Module_epoxy.mk
-similarity index 69%
-rename from external/glew/Module_glew.mk
-rename to external/epoxy/Module_epoxy.mk
-index 1d1b9a7..ea65176 100644
---- a/external/glew/Module_glew.mk
-+++ b/external/epoxy/Module_epoxy.mk
-@@ -7,12 +7,11 @@
- # file, You can obtain one at http://mozilla.org/MPL/2.0/.
- #
- 
--$(eval $(call gb_Module_Module,glew))
-+$(eval $(call gb_Module_Module,epoxy))
- 
--$(eval $(call gb_Module_add_targets,glew,\
--	ExternalProject_glew \
--	UnpackedTarball_glew \
--	ExternalPackage_glew \
-+$(eval $(call gb_Module_add_targets,epoxy,\
-+	Library_epoxy \
-+	UnpackedTarball_epoxy \
- ))
- 
- # vim: set noet sw=4 ts=4:
-diff --git a/external/epoxy/README b/external/epoxy/README
-new file mode 100644
-index 0000000..8bd467a
---- /dev/null
-+++ b/external/epoxy/README
-@@ -0,0 +1,5 @@
-+Epoxy is an OpenGL Extension Wrangler
-+
-+Epoxy is a library for handling OpenGL function pointer management for you
-+
-+https://github.com/anholt/libepoxy
-diff --git a/external/epoxy/UnpackedTarball_epoxy.mk b/external/epoxy/UnpackedTarball_epoxy.mk
-new file mode 100644
-index 0000000..76c0fdf
---- /dev/null
-+++ b/external/epoxy/UnpackedTarball_epoxy.mk
-@@ -0,0 +1,20 @@
-+# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
-+#
-+# This file is part of the LibreOffice project.
-+#
-+# This Source Code Form is subject to the terms of the Mozilla Public
-+# License, v. 2.0. If a copy of the MPL was not distributed with this
-+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+#
-+
-+$(eval $(call gb_UnpackedTarball_UnpackedTarball,epoxy))
-+
-+$(eval $(call gb_UnpackedTarball_set_tarball,epoxy,$(EPOXY_TARBALL)))
-+
-+$(eval $(call gb_UnpackedTarball_set_patchlevel,epoxy,0))
-+
-+$(eval $(call gb_UnpackedTarball_add_patches,epoxy, \
-+    external/epoxy/epoxy.windows.api.patch \
-+))
-+
-+# vim: set noet sw=4 ts=4:
-diff --git a/external/epoxy/epoxy.windows.api.patch b/external/epoxy/epoxy.windows.api.patch
-new file mode 100644
-index 0000000..12d2afb
---- /dev/null
-+++ b/external/epoxy/epoxy.windows.api.patch
-@@ -0,0 +1,90 @@
-+--- include/epoxy/gl.h
-++++ include/epoxy/gl.h
-+@@ -59,7 +59,8 @@
-+ 
-+ #else
-+ #ifndef APIENTRY
-+-#define APIENTRY __stdcall
-++#define WINAPI __stdcall
-++#define APIENTRY WINAPI
-+ #endif
-+ 
-+ #ifndef GLAPIENTRY
-+--- src/egl_generated_dispatch.c
-++++ src/egl_generated_dispatch.c
-+@@ -128,7 +128,11 @@
-+ };
-+ 
-+ #if USING_DISPATCH_TABLE
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void);
-+ 
-+ #endif
-+@@ -1642,7 +1646,11 @@
-+ uint32_t egl_tls_index;
-+ uint32_t egl_tls_size = sizeof(struct dispatch_table);
-+ 
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void)
-+ {
-+ 	return TlsGetValue(egl_tls_index);
-+--- src/gl_generated_dispatch.c
-++++ src/gl_generated_dispatch.c
-+@@ -3122,7 +3122,11 @@
-+ };
-+ 
-+ #if USING_DISPATCH_TABLE
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void);
-+ 
-+ #endif
-+@@ -51507,7 +51511,11 @@
-+ uint32_t gl_tls_index;
-+ uint32_t gl_tls_size = sizeof(struct dispatch_table);
-+ 
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void)
-+ {
-+ 	return TlsGetValue(gl_tls_index);
-+--- src/wgl_generated_dispatch.c
-++++ src/wgl_generated_dispatch.c
-+@@ -157,7 +157,11 @@
-+ };
-+ 
-+ #if USING_DISPATCH_TABLE
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void);
-+ 
-+ #endif
-+@@ -1701,7 +1705,11 @@
-+ uint32_t wgl_tls_index;
-+ uint32_t wgl_tls_size = sizeof(struct dispatch_table);
-+ 
-++#if defined (_MSC_VER)
-++static __inline struct dispatch_table *
-++#else
-+ static inline struct dispatch_table *
-++#endif
-+ get_dispatch_table(void)
-+ {
-+ 	return TlsGetValue(wgl_tls_index);
 diff --git a/external/glew/ExternalPackage_glew.mk b/external/glew/ExternalPackage_glew.mk
 deleted file mode 100644
 index e6adc8b..0000000
@@ -977,6 +739,43 @@ index 0d80cd0..0000000
 -	)
 -
 -endif
+-
+-# vim: set noet sw=4 ts=4:
+diff --git a/external/glew/Makefile b/external/glew/Makefile
+deleted file mode 100644
+index e4968cf..0000000
+--- a/external/glew/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
+-
+-module_directory:=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+-
+-include $(module_directory)/../../solenv/gbuild/partial_build.mk
+-
+-# vim: set noet sw=4 ts=4:
+diff --git a/external/glew/Module_glew.mk b/external/glew/Module_glew.mk
+deleted file mode 100644
+index 1d1b9a7..0000000
+--- a/external/glew/Module_glew.mk
++++ /dev/null
+@@ -1,18 +0,0 @@
+-# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
+-#
+-# This file is part of the LibreOffice project.
+-#
+-# This Source Code Form is subject to the terms of the Mozilla Public
+-# License, v. 2.0. If a copy of the MPL was not distributed with this
+-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-#
+-
+-$(eval $(call gb_Module_Module,glew))
+-
+-$(eval $(call gb_Module_add_targets,glew,\
+-	ExternalProject_glew \
+-	UnpackedTarball_glew \
+-	ExternalPackage_glew \
+-))
 -
 -# vim: set noet sw=4 ts=4:
 diff --git a/external/glew/README b/external/glew/README
@@ -1381,10 +1180,10 @@ index 66ecb6b..b739c0c 100644
  #include <vector>
  
 diff --git a/slideshow/source/engine/opengl/TransitionerImpl.cxx b/slideshow/source/engine/opengl/TransitionerImpl.cxx
-index ef1d385..01cd3e5 100644
+index 61a28e9..1434b03 100644
 --- a/slideshow/source/engine/opengl/TransitionerImpl.cxx
 +++ b/slideshow/source/engine/opengl/TransitionerImpl.cxx
-@@ -810,7 +810,7 @@ void buildMipmaps(
+@@ -830,7 +830,7 @@ void buildMipmaps(
      GLint internalFormat, GLsizei width, GLsizei height, GLenum format,
      GLenum type, const void * data)
  {
@@ -1433,7 +1232,7 @@ index 879c7ac..70ce156 100644
  endif
  
 diff --git a/vcl/CppunitTest_vcl_wmf_test.mk b/vcl/CppunitTest_vcl_wmf_test.mk
-index 369c792..7cae363 100644
+index 44d6851..3b78147 100644
 --- a/vcl/CppunitTest_vcl_wmf_test.mk
 +++ b/vcl/CppunitTest_vcl_wmf_test.mk
 @@ -87,7 +87,7 @@ $(eval $(call gb_CppunitTest_use_externals,vcl_wmf_test,\
@@ -1453,7 +1252,7 @@ index 369c792..7cae363 100644
      -lX11 \
  ))
  endif
-@@ -190,7 +189,6 @@ ifeq ($(OS), $(filter LINUX %BSD SOLARIS, $(OS)))
+@@ -189,7 +188,6 @@ ifeq ($(OS), $(filter LINUX %BSD SOLARIS, $(OS)))
  $(eval $(call gb_CppunitTest_add_libs,vcl_wmf_test,\
      -lm $(DLOPEN_LIBS) \
      -lpthread \
@@ -1500,7 +1299,7 @@ index abf8cbe..8704453 100644
  ))
  
 diff --git a/vcl/Library_vcl.mk b/vcl/Library_vcl.mk
-index f552b55..3bfff8c 100644
+index a52938b..a911329 100644
 --- a/vcl/Library_vcl.mk
 +++ b/vcl/Library_vcl.mk
 @@ -124,7 +124,7 @@ $(eval $(call gb_Library_use_externals,vcl,\
@@ -1802,7 +1601,7 @@ index c75f2a7..9e6e746 100644
  }
  
 diff --git a/vcl/source/opengl/OpenGLContext.cxx b/vcl/source/opengl/OpenGLContext.cxx
-index 33d8009..1b2893b 100644
+index fc12d88..11a0052 100644
 --- a/vcl/source/opengl/OpenGLContext.cxx
 +++ b/vcl/source/opengl/OpenGLContext.cxx
 @@ -7,7 +7,6 @@
@@ -1829,7 +1628,7 @@ index 33d8009..1b2893b 100644
  {
      // ignore Nvidia's 131218: "Program/shader state performance warning: Fragment Shader is going to be recompiled because the shader key based on GL state mismatches."
      // the GLSL compiler is a bit too aggressive in optimizing the state based on the current OpenGL state
-@@ -280,30 +274,14 @@ OUString getGLString(GLenum eGlEnum)
+@@ -281,30 +275,14 @@ OUString getGLString(GLenum eGlEnum)
      return sString;
  }
  
@@ -1862,7 +1661,7 @@ index 33d8009..1b2893b 100644
      {
          SAL_WARN("vcl.opengl", "We don't have at least OpenGL 3.0");
          return false;
-@@ -319,11 +297,11 @@ bool OpenGLContext::InitGLEW()
+@@ -320,11 +298,11 @@ bool OpenGLContext::InitGLEW()
      return true;
  }
  
@@ -1877,7 +1676,7 @@ index 33d8009..1b2893b 100644
          OpenGLZone aZone;
  
 diff --git a/vcl/source/opengl/OpenGLHelper.cxx b/vcl/source/opengl/OpenGLHelper.cxx
-index f07e7dc..9b91415 100644
+index e00a93a..6f4a880 100644
 --- a/vcl/source/opengl/OpenGLHelper.cxx
 +++ b/vcl/source/opengl/OpenGLHelper.cxx
 @@ -401,7 +401,7 @@ GLint OpenGLHelper::LoadShaders(const OUString& rVertexShaderName,
@@ -1898,7 +1697,7 @@ index f07e7dc..9b91415 100644
      {
          glProgramParameteri(ProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
          glLinkProgram(ProgramID);
-@@ -1085,14 +1085,14 @@ void OpenGLHelper::debugMsgPrint(const int nType, const char *pFormat, ...)
+@@ -1106,14 +1106,14 @@ void OpenGLHelper::debugMsgPrint(const int nType, const char *pFormat, ...)
      {
          OpenGLZone aZone;
  
@@ -1941,5 +1740,5 @@ index ae2973b..32d6ae8 100644
  
  #include <com/sun/star/lang/XComponent.hpp>
 -- 
-2.9.3
+2.13.0
 

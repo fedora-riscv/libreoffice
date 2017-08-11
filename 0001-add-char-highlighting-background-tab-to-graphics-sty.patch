@@ -1,0 +1,99 @@
+From c4bc798c3b2043b0e92573c87c4fb3e17043ee59 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 11 Aug 2017 12:31:13 +0100
+Subject: [PATCH] add char highlighting (background) tab to graphics styles
+ dialog
+
+Change-Id: I2cf3872116ae59051847d73612a2f4f8385d34d8
+---
+ sd/source/ui/dlg/tabtempl.cxx             |  7 +++++++
+ sd/source/ui/func/fuchar.cxx              |  2 +-
+ sd/source/ui/inc/tabtempl.hxx             |  1 +
+ sd/uiconfig/simpress/ui/templatedialog.ui | 14 ++++++++++++++
+ 4 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/sd/source/ui/dlg/tabtempl.cxx b/sd/source/ui/dlg/tabtempl.cxx
+index 17e962b..9042bf5 100644
+--- a/sd/source/ui/dlg/tabtempl.cxx
++++ b/sd/source/ui/dlg/tabtempl.cxx
+@@ -71,6 +71,7 @@ SdTabTemplateDlg::SdTabTemplateDlg( vcl::Window* pParent,
+     , m_nFontId(0)
+     , m_nFontEffectId(0)
+     , m_nIndentsId(0)
++    , m_nBackgroundId(0)
+     , m_nTextId(0)
+     , m_nAnimationId(0)
+     , m_nDimensionId(0)
+@@ -88,6 +89,7 @@ SdTabTemplateDlg::SdTabTemplateDlg( vcl::Window* pParent,
+     m_nFontId = AddTabPage("font", RID_SVXPAGE_CHAR_NAME);
+     m_nFontEffectId = AddTabPage("fonteffect", RID_SVXPAGE_CHAR_EFFECTS);
+     m_nIndentsId = AddTabPage("indents", RID_SVXPAGE_STD_PARAGRAPH);
++    m_nBackgroundId = AddTabPage("background", RID_SVXPAGE_BACKGROUND);
+     m_nTextId = AddTabPage("text", RID_SVXPAGE_TEXTATTR);
+     m_nAnimationId = AddTabPage("animation", RID_SVXPAGE_TEXTANIMATION);
+     m_nDimensionId = AddTabPage("dimensioning", RID_SVXPAGE_MEASURE);
+@@ -149,6 +151,11 @@ void SdTabTemplateDlg::PageCreated( sal_uInt16 nId, SfxTabPage &rPage )
+     {
+         rPage.PageCreated(aSet);
+     }
++    else if (nId == m_nBackgroundId)
++    {
++        aSet.Put(SfxUInt32Item(SID_FLAG_TYPE,static_cast<sal_uInt32>(SvxBackgroundTabFlags::SHOW_CHAR_BKGCOLOR)));
++        rPage.PageCreated(aSet);
++    }
+     else if (nId == m_nTextId)
+     {
+         rPage.PageCreated(aSet);
+diff --git a/sd/source/ui/func/fuchar.cxx b/sd/source/ui/func/fuchar.cxx
+index b5c5a18..1ffa757 100644
+--- a/sd/source/ui/func/fuchar.cxx
++++ b/sd/source/ui/func/fuchar.cxx
+@@ -68,7 +68,7 @@ void FuChar::DoExecute( SfxRequest& rReq )
+         SfxItemSet aEditAttr( mpDoc->GetPool() );
+         mpView->GetAttributes( aEditAttr );
+ 
+-        SfxItemSet aNewAttr(mpViewShell->GetPool(), svl::Items<EE_ITEMS_START, EE_ITEMS_END>{});
++        SfxItemSet aNewAttr(mpViewShell->GetPool(), EE_ITEMS_START, EE_ITEMS_END);
+         aNewAttr.Put( aEditAttr, false );
+ 
+         SdAbstractDialogFactory* pFact = SdAbstractDialogFactory::Create();
+diff --git a/sd/source/ui/inc/tabtempl.hxx b/sd/source/ui/inc/tabtempl.hxx
+index d5c2f5e..bc00417 100644
+--- a/sd/source/ui/inc/tabtempl.hxx
++++ b/sd/source/ui/inc/tabtempl.hxx
+@@ -50,6 +50,7 @@ private:
+     sal_uInt16 m_nFontId;
+     sal_uInt16 m_nFontEffectId;
+     sal_uInt16 m_nIndentsId;
++    sal_uInt16 m_nBackgroundId;
+     sal_uInt16 m_nTextId;
+     sal_uInt16 m_nAnimationId;
+     sal_uInt16 m_nDimensionId;
+diff --git a/sd/uiconfig/simpress/ui/templatedialog.ui b/sd/uiconfig/simpress/ui/templatedialog.ui
+index 961a0bb..380f9f0 100644
+--- a/sd/uiconfig/simpress/ui/templatedialog.ui
++++ b/sd/uiconfig/simpress/ui/templatedialog.ui
+@@ -204,6 +204,20 @@
+               <placeholder/>
+             </child>
+             <child type="tab">
++              <object class="GtkLabel" id="background">
++                <property name="visible">True</property>
++                <property name="can_focus">False</property>
++                <property name="label" translatable="yes" context="templatedialog|background">Highlighting</property>
++              </object>
++              <packing>
++                <property name="position">6</property>
++                <property name="tab_fill">False</property>
++              </packing>
++            </child>
++            <child>
++              <placeholder/>
++            </child>
++            <child type="tab">
+               <object class="GtkLabel" id="indents">
+                 <property name="visible">True</property>
+                 <property name="can_focus">False</property>
+-- 
+2.9.4
+

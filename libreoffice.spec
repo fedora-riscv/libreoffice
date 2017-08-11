@@ -107,7 +107,7 @@ Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
 Source107:      %{external_url}/libstaroffice-0.0.2.tar.bz2
 # TODO: maybe it's still possible to build with harfbuzz 0.9.36 with some amount of patching?
 Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
-Source109:      %{external_url}/3069842a88b8f40c6b83ad2850cda293-graphite2-minimal-1.3.9.tgz
+Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite
 %endif
 

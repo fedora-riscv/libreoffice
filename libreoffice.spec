@@ -992,7 +992,7 @@ export PATH=$QT4DIR/bin:$PATH
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
         case "$i" in
-                -pipe|-Wall|-Werror*|-g|-fexceptions) continue;;
+                -pipe|-Wall|-Werror*|-fexceptions) continue;;
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done

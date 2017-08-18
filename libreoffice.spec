@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -265,6 +265,7 @@ Patch23: 0001-gtk3-make-video-playback-fill-playback-window.patch
 Patch24: 0001-cairo_canvas-shape-clipping-box-doesn-t-match-where-.patch
 Patch25: 0001-don-t-jump-back-to-selected-slide-on-right-click-con.patch
 Patch26: 0001-add-char-highlighting-background-tab-to-graphics-sty.patch
+Patch27: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2353,6 +2354,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Aug 18 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.5.2-3
+- fix presenting with hidpi internal console and non-hidpi external
+
 * Fri Aug 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.5.2-2
 - enable highlight color to be edited for graphics styles
 

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -286,6 +286,7 @@ Patch50: 0001-Resolves-tdf-108671-mark-named-expression-single-ref.patch
 Patch51: 0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch
 Patch52: 0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch
 Patch53: 0001-gtk3-make-video-playback-fill-playback-window.patch
+Patch54: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2364,6 +2365,9 @@ done
 %endif
 
 %changelog
+* Tue Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-7-UNBUILT
+- Resolves:rhbz#1400287 resizing properties dialog hides widgets
+
 * Wed Jul 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-6
 - fix video playback size under gtk3
 

@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -263,6 +263,7 @@ Patch20: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 Patch21: 0001-Resolves-rhbz-1467512-mask-not-created-as-1-bit-dept.patch
 Patch22: 0001-add-char-highlighting-background-tab-to-graphics-sty.patch
 Patch23: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
+Patch24: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2351,6 +2352,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2.UNBUILT
+- Resolves: rhbz#1400287 resizing properties dialog hides widgets
+
 * Sat Aug 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.6.1-1
 - update to 5.3.6 rc1
 

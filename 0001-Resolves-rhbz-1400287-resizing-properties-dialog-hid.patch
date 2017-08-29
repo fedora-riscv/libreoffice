@@ -1,0 +1,52 @@
+From 98d7e0917f0e434e1e291e1d741715cd90161dc5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 29 Aug 2017 14:01:09 +0100
+Subject: [PATCH] Resolves: rhbz#1400287 resizing properties dialog hides
+ widgets
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I5d066f53c5bdfb4dd50d60c5cb4b66e425c0293c
+Reviewed-on: https://gerrit.libreoffice.org/41696
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 57d3e8b35d18c6fb329badbab8a8c28020253a40)
+---
+ sfx2/source/dialog/dinfdlg.cxx | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/sfx2/source/dialog/dinfdlg.cxx b/sfx2/source/dialog/dinfdlg.cxx
+index b2bcbf2..f8dc73d 100644
+--- a/sfx2/source/dialog/dinfdlg.cxx
++++ b/sfx2/source/dialog/dinfdlg.cxx
+@@ -1505,6 +1505,7 @@ CustomPropertiesWindow::CustomPropertiesWindow(vcl::Window* pParent,
+     m_aDurationField->SetPosSizePixel(aPos, aSize);
+     m_aDateField->SetPosSizePixel(aPos, aSize);
+     m_aTimeField->SetPosSizePixel(aPos, aSize);
++    m_aYesNoButton->SetPosSizePixel(aPos, aSize);
+ 
+     m_aEditLoseFocusIdle.SetPriority( SchedulerPriority::LOWEST );
+     m_aEditLoseFocusIdle.SetIdleHdl( LINK( this, CustomPropertiesWindow, EditTimeoutHdl ) );
+@@ -1795,12 +1796,13 @@ void CustomPropertiesWindow::updateLineWidth()
+ 
+         vcl::Window** pCurrent = pWindows;
+         vcl::Window** pNewCurrent = pNewWindows;
+-        while ( *pCurrent )
++        while (*pCurrent)
+         {
+-            Size aSize = (*pCurrent)->GetSizePixel();
+-            Point aPos = (*pCurrent)->GetPosPixel();
+-            aPos.Y() = (*pNewCurrent)->GetPosPixel().Y();
+-            (*pNewCurrent)->SetPosSizePixel( aPos, aSize );
++            Size aSize = (*pNewCurrent)->GetSizePixel();
++            aSize.Width() = (*pCurrent)->GetSizePixel().Width();
++            Point aPos = (*pNewCurrent)->GetPosPixel();
++            aPos.X() = (*pCurrent)->GetPosPixel().X();
++            (*pNewCurrent)->SetPosSizePixel(aPos, aSize);
+             pCurrent++;
+             pNewCurrent++;
+         }
+-- 
+2.9.4
+

@@ -2353,7 +2353,7 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2
+* Thu Aug 31 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2
 - Resolves: rhbz#1400287 resizing properties dialog hides widgets
 - Resolves: tdf#95960 improve custom properties page
 - Resolves: tdf#112145 broken pdf export of editengine highlight color

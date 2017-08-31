@@ -287,8 +287,7 @@ Patch51: 0001-Resolves-tdf-107438-write-text-sender-initials-for-f.patch
 Patch52: 0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch
 Patch53: 0001-gtk3-make-video-playback-fill-playback-window.patch
 Patch54: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
-Patch55: 0001-Resolves-tdf-95960-improve-custom-properties-page.patch
-Patch56: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
+Patch55: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2369,7 +2368,6 @@ done
 %changelog
 * Thu Aug 31 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-7
 - Resolves: rhbz#1400287 resizing properties dialog hides widgets
-- Resolves: tdf#95960 improve custom properties page
 - Resolves: tdf#112145 broken pdf export of editengine highlight color
 
 * Wed Jul 19 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-6

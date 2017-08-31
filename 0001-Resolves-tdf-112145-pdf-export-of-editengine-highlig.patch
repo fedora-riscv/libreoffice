@@ -1,0 +1,72 @@
+From 29286e3290807bf7640e4712c8ed2aa75c8ff18d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 31 Aug 2017 16:22:58 +0100
+Subject: [PATCH] Resolves: tdf#112145 pdf export of editengine highlight color
+ fails sometimes
+
+When setting a fill or line color on the outputdevice, put it back to its previous
+setting when finished with the record, PRIMITIVE2D_ID_POLYPOLYGONCOLORPRIMITIVE2D
+was the one in this case but protect the other similar ones here too
+
+Change-Id: Ifb9b182d72bb6c48a9d9480270fde4384be6291e
+---
+ drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx b/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
+index 885367d..34501fc 100644
+--- a/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
++++ b/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
+@@ -1219,6 +1219,8 @@ namespace drawinglayer
+                     }
+                     else
+                     {
++                        mpOutputDevice->Push(PushFlags::LINECOLOR | PushFlags::FILLCOLOR);
++
+                         // support SvtGraphicStroke MetaCommentAction
+                         SvtGraphicStroke* pSvtGraphicStroke = impTryToCreateSvtGraphicStroke(
+                             rBasePolygon, nullptr,
+@@ -1274,6 +1276,8 @@ namespace drawinglayer
+                         }
+ 
+                         impEndSvtGraphicStroke(pSvtGraphicStroke);
++
++                        mpOutputDevice->Pop();
+                     }
+ 
+                     break;
+@@ -1666,6 +1670,7 @@ namespace drawinglayer
+                 }
+                 case PRIMITIVE2D_ID_POLYPOLYGONCOLORPRIMITIVE2D :
+                 {
++                    mpOutputDevice->Push(PushFlags::LINECOLOR | PushFlags::FILLCOLOR);
+                     const primitive2d::PolyPolygonColorPrimitive2D& rPolygonCandidate(static_cast< const primitive2d::PolyPolygonColorPrimitive2D& >(rCandidate));
+                     basegfx::B2DPolyPolygon aLocalPolyPolygon(rPolygonCandidate.getB2DPolyPolygon());
+ 
+@@ -1722,6 +1727,7 @@ namespace drawinglayer
+                         impEndSvtGraphicFill(pSvtGraphicFill);
+                     }
+ 
++                    mpOutputDevice->Pop();
+                     break;
+                 }
+                 case PRIMITIVE2D_ID_METAFILEPRIMITIVE2D :
+@@ -1811,6 +1817,7 @@ namespace drawinglayer
+                 }
+                 case PRIMITIVE2D_ID_UNIFIEDTRANSPARENCEPRIMITIVE2D :
+                 {
++
+                     // for metafile: Need to examine what the pure vcl version is doing here actually
+                     // - uses DrawTransparent with metafile for content and a gradient
+                     // - uses DrawTransparent for single PolyPoylgons directly. Can be detected by
+@@ -1945,6 +1952,7 @@ namespace drawinglayer
+                         }
+                     }
+ 
++                    mpOutputDevice->Pop();
+                     break;
+                 }
+                 case PRIMITIVE2D_ID_TRANSPARENCEPRIMITIVE2D :
+-- 
+2.9.4
+

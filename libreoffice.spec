@@ -2352,8 +2352,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2.UNBUILT
+* Thu Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2
 - Resolves: rhbz#1400287 resizing properties dialog hides widgets
+- Resolves: tdf#95960 improve custom properties page
 
 * Sat Aug 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.6.1-1
 - update to 5.3.6 rc1

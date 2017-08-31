@@ -264,6 +264,7 @@ Patch21: 0001-Resolves-rhbz-1467512-mask-not-created-as-1-bit-dept.patch
 Patch22: 0001-add-char-highlighting-background-tab-to-graphics-sty.patch
 Patch23: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
 Patch24: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
+Patch25: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2355,6 +2356,7 @@ done
 * Thu Aug 29 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2
 - Resolves: rhbz#1400287 resizing properties dialog hides widgets
 - Resolves: tdf#95960 improve custom properties page
+- Resolves: tdf#112145 broken pdf export of editengine highlight color
 
 * Sat Aug 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.6.1-1
 - update to 5.3.6 rc1

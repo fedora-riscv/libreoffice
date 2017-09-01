@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2353,10 +2353,12 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 01 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-3
+- Resolves: tdf#112145 broken pdf export of editengine highlight color
+
 * Thu Aug 31 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-2
 - Resolves: rhbz#1400287 resizing properties dialog hides widgets
 - Resolves: tdf#95960 improve custom properties page
-- Resolves: tdf#112145 broken pdf export of editengine highlight color
 
 * Sat Aug 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.6.1-1
 - update to 5.3.6 rc1

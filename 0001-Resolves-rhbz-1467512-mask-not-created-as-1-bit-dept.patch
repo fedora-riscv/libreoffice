@@ -1,26 +1,206 @@
-From 577899517576f6d79311093d4e49d9b775ddcf0c Mon Sep 17 00:00:00 2001
+From 97406f8816b0c10d73f6070e07c8181242dc1596 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 7 Jul 2017 13:59:27 +0100
 Subject: [PATCH] Resolves: rhbz#1467512 mask not created as 1 bit depth
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Change-Id: Ib5bdd594efd41eb881dfc4e2454b72e4739ffd56
----
- vcl/headless/svpgdi.cxx | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
+Resolves: tdf#104141 CAIRO_FORMAT_A1 vs N1BitLsbPal
+
+where vcl transparency is the opposite of cairo's so we've been switching the
+source color to the opposite for drawing on CAIRO_FORMAT_A1 and then sucking
+out the bits "as-is" to give the right results.
+
+Now instead use the right source color and toggle CAIRO_FORMAT_A1 bitmaps to
+N1BitLsbPal in getBitmap.
+
+Then additionally toggle all N1BitLsbPal bitmaps input to drawBitmap to
+CAIRO_FORMAT_A1 when making a cairo surface from them.
+
+Change-Id: I45c6d4f3894c6a22a07a3bd65950cd8070e8eaff
+Reviewed-on: https://gerrit.libreoffice.org/40453
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+
+Resolves: tdf#111483 1 bit bitmaps with non-standard black/white indexes
+
+can be left "untoggled" when converted to cairo A1
+
+Change-Id: I18f3e2109cd4b57bce584545090e26c931de1200
+Reviewed-on: https://gerrit.libreoffice.org/41895
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+
+Resolves: tdf#111073 incorrect gif background color
+
+a) set correct palette entries for the 1bit bitmap returned
+b) only use a BITMASK for the mask (like its AnimatedGraphicPrimitive2D
+brother in drawinglayer does)
+
+Change-Id: I704997de554dc4d0e523458d45ab329815b5046a
+---
+ slideshow/source/engine/shapes/gdimtftools.cxx |  2 +-
+ vcl/headless/svpgdi.cxx                        | 76 +++++++++++++++++++-------
+ 2 files changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/slideshow/source/engine/shapes/gdimtftools.cxx b/slideshow/source/engine/shapes/gdimtftools.cxx
+index 6cd569e..efa4303 100644
+--- a/slideshow/source/engine/shapes/gdimtftools.cxx
++++ b/slideshow/source/engine/shapes/gdimtftools.cxx
+@@ -287,7 +287,7 @@ bool getAnimationFromGraphic( VectorOfMtfAnimationFrames&   o_rFrames,
+     pVDev->EnableMapMode( false );
+ 
+     // setup mask VDev (alpha VDev is currently rather slow)
+-    ScopedVclPtrInstance< VirtualDevice > pVDevMask;
++    ScopedVclPtrInstance<VirtualDevice> pVDevMask(DeviceFormat::BITMASK);
+     pVDevMask->SetOutputSizePixel( aAnimSize );
+     pVDevMask->EnableMapMode( false );
+ 
 diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
-index 033389e..c694fc0 100644
+index 1b49133..c40aad1 100644
 --- a/vcl/headless/svpgdi.cxx
 +++ b/vcl/headless/svpgdi.cxx
-@@ -1110,7 +1110,7 @@ void SvpSalGraphics::drawMask( const SalTwoRect& rTR,
+@@ -99,6 +99,30 @@ bool SvpSalGraphics::blendAlphaBitmap( const SalTwoRect&, const SalBitmap&, cons
+ 
+ namespace
+ {
++    cairo_format_t getCairoFormat(const BitmapBuffer& rBuffer)
++    {
++        cairo_format_t nFormat;
++        assert(rBuffer.mnBitCount == 32 || rBuffer.mnBitCount == 1);
++        if (rBuffer.mnBitCount == 32)
++            nFormat = CAIRO_FORMAT_ARGB32;
++        else
++            nFormat = CAIRO_FORMAT_A1;
++        return nFormat;
++    }
++
++    void Toggle1BitTransparency(const BitmapBuffer& rBuf)
++    {
++        assert(rBuf.maPalette.GetBestIndex(BitmapColor(Color(COL_BLACK))) == 0);
++        // TODO: make upper layers use standard alpha
++        if (getCairoFormat(rBuf) == CAIRO_FORMAT_A1)
++        {
++            const int nImageSize = rBuf.mnHeight * rBuf.mnScanlineSize;
++            unsigned char* pDst = rBuf.mpBits;
++            for (int i = nImageSize; --i >= 0; ++pDst)
++                *pDst = ~*pDst;
++        }
++    }
++
+     class SourceHelper
+     {
+     public:
+@@ -176,10 +200,14 @@ namespace
+                 pAlphaBits = new unsigned char[nImageSize];
+                 memcpy(pAlphaBits, pMaskBuf->mpBits, nImageSize);
+ 
+-                // TODO: make upper layers use standard alpha
+-                unsigned char* pDst = pAlphaBits;
+-                for (int i = nImageSize; --i >= 0; ++pDst)
+-                    *pDst = ~*pDst;
++                const sal_Int32 nBlackIndex = pMaskBuf->maPalette.GetBestIndex(BitmapColor(Color(COL_BLACK)));
++                if (nBlackIndex == 0)
++                {
++                    // TODO: make upper layers use standard alpha
++                    unsigned char* pDst = pAlphaBits;
++                    for (int i = nImageSize; --i >= 0; ++pDst)
++                        *pDst = ~*pDst;
++                }
+ 
+                 mask = cairo_image_surface_create_for_data(pAlphaBits,
+                                                 CAIRO_FORMAT_A1,
+@@ -894,7 +922,7 @@ void SvpSalGraphics::applyColor(cairo_t *cr, SalColor aColor)
+     }
+     else
+     {
+-        double fSet = aColor == COL_BLACK ? 0.0 : 1.0;
++        double fSet = aColor == COL_BLACK ? 1.0 : 0.0;
+         cairo_set_source_rgba(cr, 1, 1, 1, fSet);
+         cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+     }
+@@ -951,8 +979,12 @@ static basegfx::B2DRange renderSource(cairo_t* cr, const SalTwoRect& rTR,
+     if (rTR.mnSrcWidth != 0 && rTR.mnSrcHeight != 0) {
+         cairo_scale(cr, (double)(rTR.mnDestWidth)/rTR.mnSrcWidth, ((double)rTR.mnDestHeight)/rTR.mnSrcHeight);
+     }
++
++    cairo_save(cr);
+     cairo_set_source_surface(cr, source, -rTR.mnSrcX, -rTR.mnSrcY);
++    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+     cairo_paint(cr);
++    cairo_restore(cr);
+ 
+     return extents;
+ }
+@@ -1016,12 +1048,16 @@ void SvpSalGraphics::copyBits( const SalTwoRect& rTR,
+ 
+ void SvpSalGraphics::drawBitmap(const SalTwoRect& rTR, const SalBitmap& rSourceBitmap)
+ {
+-    SourceHelper aSurface(rSourceBitmap);
+-    cairo_surface_t* source = aSurface.getSurface();
+-    if (!source)
++    if (rSourceBitmap.GetBitCount() == 1)
+     {
+-        SAL_WARN("vcl.gdi", "unsupported SvpSalGraphics::drawBitmap case");
++        MaskHelper aMask(rSourceBitmap);
++        cairo_surface_t* source = aMask.getMask();
++        copySource(rTR, source);
++        return;
+     }
++
++    SourceHelper aSurface(rSourceBitmap);
++    cairo_surface_t* source = aSurface.getSurface();
+     copySource(rTR, source);
+ }
+ 
+@@ -1107,7 +1143,14 @@ void SvpSalGraphics::drawMask( const SalTwoRect& rTR,
  SalBitmap* SvpSalGraphics::getBitmap( long nX, long nY, long nWidth, long nHeight )
  {
      SvpSalBitmap* pBitmap = new SvpSalBitmap();
 -    pBitmap->Create(Size(nWidth, nHeight), 32, BitmapPalette());
-+    pBitmap->Create(Size(nWidth, nHeight), GetBitCount(), BitmapPalette());
++    BitmapPalette aPal;
++    if (GetBitCount() == 1)
++    {
++        aPal.SetEntryCount(2);
++        aPal[0] = Color(COL_BLACK);
++        aPal[1] = Color(COL_WHITE);
++    }
++    pBitmap->Create(Size(nWidth, nHeight), GetBitCount(), aPal);
  
      cairo_surface_t* target = SvpSalGraphics::createCairoSurface(pBitmap->GetBuffer());
      cairo_t* cr = cairo_create(target);
+@@ -1118,6 +1161,8 @@ SalBitmap* SvpSalGraphics::getBitmap( long nX, long nY, long nWidth, long nHeigh
+     cairo_destroy(cr);
+     cairo_surface_destroy(target);
+ 
++    Toggle1BitTransparency(*pBitmap->GetBuffer());
++
+     return pBitmap;
+ }
+ 
+@@ -1230,17 +1275,6 @@ bool SvpSalGraphics::drawEPS( long, long, long, long, void*, sal_uLong )
+ 
+ namespace
+ {
+-    cairo_format_t getCairoFormat(const BitmapBuffer& rBuffer)
+-    {
+-        cairo_format_t nFormat;
+-        assert(rBuffer.mnBitCount == 32 || rBuffer.mnBitCount == 1);
+-        if (rBuffer.mnBitCount == 32)
+-            nFormat = CAIRO_FORMAT_ARGB32;
+-        else
+-            nFormat = CAIRO_FORMAT_A1;
+-        return nFormat;
+-    }
+-
+     bool isCairoCompatible(const BitmapBuffer* pBuffer)
+     {
+         if (!pBuffer)
 -- 
-2.9.3
+2.9.4
 

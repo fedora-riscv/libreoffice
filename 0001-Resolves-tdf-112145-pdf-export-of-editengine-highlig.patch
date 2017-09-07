@@ -1,4 +1,4 @@
-From 627c4d41d5bc1506f4e71414527560c750a10168 Mon Sep 17 00:00:00 2001
+From f41ae9bc40fae21ac66d859057488801c1d47ccd Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 31 Aug 2017 16:22:58 +0100
 Subject: [PATCH] Resolves: tdf#112145 pdf export of editengine highlight color
@@ -14,7 +14,7 @@ Change-Id: Ifb9b182d72bb6c48a9d9480270fde4384be6291e
  1 file changed, 8 insertions(+)
 
 diff --git a/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx b/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
-index 885367d..e81126d 100644
+index 885367d..0274b7c 100644
 --- a/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
 +++ b/drawinglayer/source/processor2d/vclmetafileprocessor2d.cxx
 @@ -1219,6 +1219,8 @@ namespace drawinglayer
@@ -43,14 +43,14 @@ index 885367d..e81126d 100644
                      const primitive2d::PolyPolygonColorPrimitive2D& rPolygonCandidate(static_cast< const primitive2d::PolyPolygonColorPrimitive2D& >(rCandidate));
                      basegfx::B2DPolyPolygon aLocalPolyPolygon(rPolygonCandidate.getB2DPolyPolygon());
  
-@@ -1741,6 +1746,7 @@ namespace drawinglayer
-                         RenderMetafilePrimitive2D(aMetafile);
+@@ -1722,6 +1727,7 @@ namespace drawinglayer
+                         impEndSvtGraphicFill(pSvtGraphicFill);
                      }
  
 +                    mpOutputDevice->Pop();
                      break;
                  }
-                 case PRIMITIVE2D_ID_MASKPRIMITIVE2D :
+                 case PRIMITIVE2D_ID_METAFILEPRIMITIVE2D :
 @@ -1811,6 +1817,7 @@ namespace drawinglayer
                  }
                  case PRIMITIVE2D_ID_UNIFIEDTRANSPARENCEPRIMITIVE2D :
@@ -68,5 +68,5 @@ index 885367d..e81126d 100644
                  }
                  case PRIMITIVE2D_ID_TRANSPARENCEPRIMITIVE2D :
 -- 
-2.9.4
+2.13.5
 

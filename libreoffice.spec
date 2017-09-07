@@ -2355,8 +2355,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Sep 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-4-UNBUILT
+* Thu Sep 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-4
 - Resolves: tdf#110737 animations starved of redraw events
+- fix mismerge of pdf export of highlight color fix
 
 * Fri Sep 01 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-3
 - Resolves: tdf#112145 broken pdf export of editengine highlight color

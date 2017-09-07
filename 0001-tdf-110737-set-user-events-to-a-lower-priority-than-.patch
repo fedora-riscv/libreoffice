@@ -1,0 +1,30 @@
+From 00e609146a029c2cb010f7a617c77cddcdbf1513 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 7 Sep 2017 16:47:04 +0100
+Subject: [PATCH] tdf#110737 set user-events to a lower priority than system
+ redraw
+
+Change-Id: Ic6672fcce4cb5516d388fee22120383ccc70a4a5
+---
+ vcl/unx/gtk3/gtk3gtkdata.cxx | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkdata.cxx b/vcl/unx/gtk3/gtk3gtkdata.cxx
+index b2c298b..5b043e8 100644
+--- a/vcl/unx/gtk3/gtk3gtkdata.cxx
++++ b/vcl/unx/gtk3/gtk3gtkdata.cxx
+@@ -839,7 +839,10 @@ void GtkData::PostUserEvent()
+     else // nothing pending anyway
+     {
+         m_pUserEvent = g_idle_source_new();
+-        g_source_set_priority (m_pUserEvent, G_PRIORITY_HIGH);
++        // tdf#110737 set user-events to a lower priority than system redraw
++        // events, which is G_PRIORITY_HIGH_IDLE + 20, so presentations
++        // queue-redraw has a chance to be fulfilled
++        g_source_set_priority (m_pUserEvent,  G_PRIORITY_HIGH_IDLE + 30);
+         g_source_set_can_recurse (m_pUserEvent, TRUE);
+         g_source_set_callback (m_pUserEvent, call_userEventFn,
+                                static_cast<gpointer>(this), nullptr);
+-- 
+2.9.4
+

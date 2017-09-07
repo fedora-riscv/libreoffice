@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -265,6 +265,8 @@ Patch22: 0001-add-char-highlighting-background-tab-to-graphics-sty.patch
 Patch23: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
 Patch24: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
 Patch25: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
+Patch26: 0001-its-really-the-contents-we-want-to-redraw.patch
+Patch27: 0001-tdf-110737-set-user-events-to-a-lower-priority-than-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2353,6 +2355,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Sep 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-4-UNBUILT
+- Resolves: tdf#110737 animations starved of redraw events
+
 * Fri Sep 01 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-3
 - Resolves: tdf#112145 broken pdf export of editengine highlight color
 

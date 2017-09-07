@@ -1,0 +1,29 @@
+From 7739839d43dd2437d13968465cfe4762bc3f2e35 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 7 Sep 2017 16:39:12 +0100
+Subject: [PATCH] its really the contents we want to redraw
+
+doesn't matter in practice though, but change it anyway
+
+Change-Id: I9df8304f01c80a899bdd7219fc4ce459bda7de08
+---
+ vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+index 04b682c..ed23a8e 100644
+--- a/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
++++ b/vcl/unx/gtk3/gtk3salnativewidgets-gtk.cxx
+@@ -3311,7 +3311,8 @@ cairo::SurfaceSharedPtr GtkSalGraphics::CreateSurface(const OutputDevice& /*rRef
+ void GtkSalGraphics::WidgetQueueDraw() const
+ {
+     //request gtk to sync the entire contents
+-    gtk_widget_queue_draw(mpWindow);
++    GtkWidget *pWidget = GTK_WIDGET(mpFrame->getFixedContainer());
++    gtk_widget_queue_draw(pWidget);
+ }
+ 
+ namespace {
+-- 
+2.9.4
+

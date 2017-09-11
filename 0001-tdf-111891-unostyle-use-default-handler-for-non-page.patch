@@ -1,0 +1,219 @@
+From 3d7159d665718d6bb40d21f723c5102a45865a4f Mon Sep 17 00:00:00 2001
+From: Justin Luth <justin_luth@sil.org>
+Date: Thu, 24 Aug 2017 15:48:29 -0400
+Subject: [PATCH 1/2] tdf#111891 unostyle: use default handler for non-page
+ style
+
+LO 5.1 commit 664197d95becd516c3dac25a50439078ba61e051
+introduced a handler for RES_TEXT_VERT_ADJUST to handle
+page styles, but that meant that the default handler
+was no longer called for frames (the only other item
+currently using RES_TEXT_VERT_ADJUST).
+
+Change-Id: I33827160fe64dc4cc2107afc26f7ac2e698007e1
+Reviewed-on: https://gerrit.libreoffice.org/41538
+Tested-by: Justin Luth <justin_luth@sil.org>
+Reviewed-by: Justin Luth <justin_luth@sil.org>
+(cherry picked from commit 10dc371d31f003ac3ed9b89ca1db95d36603603f)
+Reviewed-on: https://gerrit.libreoffice.org/41910
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Miklos Vajna <vmiklos@collabora.co.uk>
+(cherry picked from commit 461aa995d75f031209711feda9d785d915c42dd2)
+Reviewed-on: https://gerrit.libreoffice.org/42082
+(cherry picked from commit db7a015c86248bd2a3d090240f9360f84b3bec8c)
+---
+ sw/qa/extras/odfexport/data/tdf111891_frameVertStyle.odt | Bin 0 -> 8814 bytes
+ sw/qa/extras/odfexport/odfexport.cxx                     |   6 ++++++
+ sw/source/core/unocore/unostyle.cxx                      |   7 ++++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+ create mode 100644 sw/qa/extras/odfexport/data/tdf111891_frameVertStyle.odt
+
+diff --git a/sw/qa/extras/odfexport/data/tdf111891_frameVertStyle.odt b/sw/qa/extras/odfexport/data/tdf111891_frameVertStyle.odt
+new file mode 100644
+index 0000000000000000000000000000000000000000..8fcf98a6272bb749d26c88030b35f8c147a02308
+GIT binary patch
+literal 8814
+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
+LZ9yGT-;Mqsc2j`C
+
+literal 0
+HcmV?d00001
+
+diff --git a/sw/qa/extras/odfexport/odfexport.cxx b/sw/qa/extras/odfexport/odfexport.cxx
+index 8c827404769f..9f0a3b6907d3 100644
+--- a/sw/qa/extras/odfexport/odfexport.cxx
++++ b/sw/qa/extras/odfexport/odfexport.cxx
+@@ -756,6 +756,12 @@ DECLARE_ODFEXPORT_TEST(testTextFrameVertAdjust, "textframe-vertadjust.odt")
+     CPPUNIT_ASSERT_EQUAL(drawing::TextVerticalAdjust_BOTTOM, getProperty<drawing::TextVerticalAdjust>(xFrame, "TextVerticalAdjust"));
+ }
+ 
++DECLARE_ODFEXPORT_TEST(testTdf111891_frameVertStyle, "tdf111891_frameVertStyle.odt")
++{
++    uno::Reference<beans::XPropertySet> xFrame(getShape(1), uno::UNO_QUERY);
++    CPPUNIT_ASSERT_EQUAL(drawing::TextVerticalAdjust_BOTTOM, getProperty<drawing::TextVerticalAdjust>(xFrame, "TextVerticalAdjust"));
++}
++
+ DECLARE_ODFEXPORT_TEST(testShapeRelsize, "shape-relsize.odt")
+ {
+     uno::Reference<drawing::XShape> xShape = getShape(1);
+diff --git a/sw/source/core/unocore/unostyle.cxx b/sw/source/core/unocore/unostyle.cxx
+index 14634dd9b3e2..e8cc3863c548 100644
+--- a/sw/source/core/unocore/unostyle.cxx
++++ b/sw/source/core/unocore/unostyle.cxx
+@@ -1685,8 +1685,13 @@ void SwXStyle::SetPropertyValue<RES_PAGEDESC>(const SfxItemPropertySimpleEntry&
+     }
+ }
+ template<>
+-void SwXStyle::SetPropertyValue<RES_TEXT_VERT_ADJUST>(const SfxItemPropertySimpleEntry&, const SfxItemPropertySet&, const uno::Any& rValue, SwStyleBase_Impl& o_rStyleBase)
++void SwXStyle::SetPropertyValue<RES_TEXT_VERT_ADJUST>(const SfxItemPropertySimpleEntry& rEntry, const SfxItemPropertySet& rPropSet, const uno::Any& rValue, SwStyleBase_Impl& o_rStyleBase)
+ {
++    if(m_rEntry.m_eFamily != SfxStyleFamily::Page)
++    {
++        SetPropertyValue<HINT_BEGIN>(rEntry, rPropSet, rValue, o_rStyleBase);
++        return;
++    }
+     if(!m_pDoc || !rValue.has<drawing::TextVerticalAdjust>() || !o_rStyleBase.GetOldPageDesc())
+         return;
+     SwPageDesc* pPageDesc = m_pDoc->FindPageDesc(o_rStyleBase.GetOldPageDesc()->GetName());
+-- 
+2.13.5
+

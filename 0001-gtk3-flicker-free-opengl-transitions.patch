@@ -1,0 +1,313 @@
+From 3d4e0b01a0fb31a63ea86248a546c40952b212f4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 10 Sep 2017 16:07:49 +0100
+Subject: [PATCH] gtk3: flicker-free opengl transitions
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+leave the GtkGLArea opengl context alone except for the final render into it,
+create a new context for the slide transitions to play with
+
+set up a pair of framebuffers, a scratch one to let the transitions render
+into, the other to take a snapshot when the transition is finished with it and
+then tell GtkGLArea we're ready to render it and when the callback comes around
+copy the snapshot into it.
+
+Change-Id: I3515614baf7eea0ff53c46edbaf9cf66f926eef2
+
+hidpi+gtk3: move setting the opengl slide viewport
+
+to when the window size is set, and adjust to gtk3 hidpi
+scaling factor
+
+Change-Id: Id9bd0defd0b6ae640ac57f88133d954202d4bcc3
+Reviewed-on: https://gerrit.libreoffice.org/42143
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 1a547a566eba5943f9e4d9987baf4aee80846dd1)
+---
+ include/vcl/opengl/OpenGLContext.hxx               |   1 +
+ .../source/engine/opengl/TransitionerImpl.cxx      |   1 -
+ vcl/source/opengl/OpenGLContext.cxx                |  11 +-
+ vcl/unx/gtk3/gtk3gtkinst.cxx                       | 145 ++++++++++++++++++++-
+ 4 files changed, 149 insertions(+), 9 deletions(-)
+
+diff --git a/include/vcl/opengl/OpenGLContext.hxx b/include/vcl/opengl/OpenGLContext.hxx
+index 5796f7e..c9b1c81 100644
+--- a/include/vcl/opengl/OpenGLContext.hxx
++++ b/include/vcl/opengl/OpenGLContext.hxx
+@@ -158,6 +158,7 @@ public:
+ private:
+     virtual bool initWindow();
+     virtual void destroyCurrentContext();
++    virtual void adjustToNewSize();
+ 
+ protected:
+     bool InitGL();
+diff --git a/slideshow/source/engine/opengl/TransitionerImpl.cxx b/slideshow/source/engine/opengl/TransitionerImpl.cxx
+index c958389..06e1123 100644
+--- a/slideshow/source/engine/opengl/TransitionerImpl.cxx
++++ b/slideshow/source/engine/opengl/TransitionerImpl.cxx
+@@ -346,7 +346,6 @@ bool OGLTransitionerImpl::initWindowFromSlideShowView( const Reference< presenta
+ 
+     mpContext->swapBuffers();
+ 
+-    glViewport(0, 0, aCanvasArea.Width, aCanvasArea.Height);
+     CHECK_GL_ERROR();
+ 
+     return true;
+diff --git a/vcl/source/opengl/OpenGLContext.cxx b/vcl/source/opengl/OpenGLContext.cxx
+index 42fba6d..51517ca 100644
+--- a/vcl/source/opengl/OpenGLContext.cxx
++++ b/vcl/source/opengl/OpenGLContext.cxx
+@@ -338,14 +338,21 @@ void OpenGLContext::restoreDefaultFramebuffer()
+ 
+ void OpenGLContext::setWinPosAndSize(const Point &rPos, const Size& rSize)
+ {
+-    if(m_xWindow)
++    if (m_xWindow)
+         m_xWindow->SetPosSizePixel(rPos, rSize);
+-    if( m_pChildWindow )
++    if (m_pChildWindow)
+         m_pChildWindow->SetPosSizePixel(rPos, rSize);
+ 
+     GLWindow& rGLWin = getModifiableOpenGLWindow();
+     rGLWin.Width = rSize.Width();
+     rGLWin.Height = rSize.Height();
++    adjustToNewSize();
++}
++
++void OpenGLContext::adjustToNewSize()
++{
++    const GLWindow& rGLWin = getOpenGLWindow();
++    glViewport(0, 0, rGLWin.Width, rGLWin.Height);
+ }
+ 
+ void OpenGLContext::setWinSize(const Size& rSize)
+diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
+index 3d20cca..1ad0619 100644
+--- a/vcl/unx/gtk3/gtk3gtkinst.cxx
++++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
+@@ -924,11 +924,27 @@ class GtkOpenGLContext : public OpenGLContext
+ {
+     GLWindow m_aGLWin;
+     GtkWidget *m_pGLArea;
++    GdkGLContext *m_pContext;
++    guint m_nAreaFrameBuffer;
++    guint m_nFrameBuffer;
++    guint m_nRenderBuffer;
++    guint m_nDepthBuffer;
++    guint m_nFrameScratchBuffer;
++    guint m_nRenderScratchBuffer;
++    guint m_nDepthScratchBuffer;
+ 
+ public:
+     GtkOpenGLContext()
+         : OpenGLContext()
+         , m_pGLArea(nullptr)
++        , m_pContext(nullptr)
++        , m_nAreaFrameBuffer(0)
++        , m_nFrameBuffer(0)
++        , m_nRenderBuffer(0)
++        , m_nDepthBuffer(0)
++        , m_nFrameScratchBuffer(0)
++        , m_nRenderScratchBuffer(0)
++        , m_nDepthScratchBuffer(0)
+     {
+     }
+ 
+@@ -958,6 +974,70 @@ private:
+         pThis->m_pGLArea = nullptr;
+     }
+ 
++    static gboolean signalRender(GtkGLArea*, GdkGLContext*, gpointer window)
++    {
++        GtkOpenGLContext* pThis = static_cast<GtkOpenGLContext*>(window);
++
++        int scale = gtk_widget_get_scale_factor(pThis->m_pGLArea);
++        int width = pThis->m_aGLWin.Width * scale;
++        int height = pThis->m_aGLWin.Height * scale;
++
++        glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
++
++        glBindFramebuffer(GL_READ_FRAMEBUFFER, pThis->m_nAreaFrameBuffer);
++        glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
++
++        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height,
++                          GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
++
++        gdk_gl_context_make_current(pThis->m_pContext);
++        return true;
++    }
++
++    virtual void adjustToNewSize() override
++    {
++#if GTK_CHECK_VERSION(3,16,0)
++        if (m_pGLArea)
++        {
++            int scale = gtk_widget_get_scale_factor(m_pGLArea);
++            int width = m_aGLWin.Width * scale;
++            int height = m_aGLWin.Height * scale;
++
++            gtk_gl_area_make_current(GTK_GL_AREA(m_pGLArea));
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nRenderBuffer);
++            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB8, width, height);
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nDepthBuffer);
++            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
++            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_nAreaFrameBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nRenderBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nDepthBuffer);
++
++            gdk_gl_context_make_current(m_pContext);
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nRenderBuffer);
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nDepthBuffer);
++            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_nFrameBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nRenderBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nDepthBuffer);
++            glViewport(0, 0, width, height);
++
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nRenderScratchBuffer);
++            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB8, width, height);
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nDepthScratchBuffer);
++            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
++            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_nFrameScratchBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nRenderScratchBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nDepthScratchBuffer);
++            glViewport(0, 0, width, height);
++        }
++#endif
++    }
++
+     virtual bool ImplInit() override
+     {
+ #if GTK_CHECK_VERSION(3,16,0)
+@@ -965,14 +1045,28 @@ private:
+         GtkWidget *pParent = static_cast<GtkWidget*>(pEnvData->pWidget);
+         m_pGLArea = gtk_gl_area_new();
+         g_signal_connect(G_OBJECT(m_pGLArea), "destroy", G_CALLBACK(signalDestroy), this);
++        g_signal_connect(G_OBJECT(m_pGLArea), "render", G_CALLBACK(signalRender), this);
+         gtk_gl_area_set_has_depth_buffer(GTK_GL_AREA(m_pGLArea), true);
+         gtk_gl_area_set_auto_render(GTK_GL_AREA(m_pGLArea), false);
+         gtk_widget_set_hexpand(m_pGLArea, true);
+         gtk_widget_set_vexpand(m_pGLArea, true);
+         gtk_container_add(GTK_CONTAINER(pParent), m_pGLArea);
+         gtk_widget_show_all(pParent);
++
+         gtk_gl_area_make_current(GTK_GL_AREA(m_pGLArea));
+         gtk_gl_area_attach_buffers(GTK_GL_AREA(m_pGLArea));
++        glGenFramebuffersEXT(1, &m_nAreaFrameBuffer);
++
++        GdkWindow *pWindow = gtk_widget_get_window(pParent);
++        m_pContext = gdk_window_create_gl_context(pWindow, nullptr);
++        gdk_gl_context_realize(m_pContext, nullptr);
++        gdk_gl_context_make_current(m_pContext);
++        glGenFramebuffersEXT(1, &m_nFrameBuffer);
++        glGenRenderbuffersEXT(1, &m_nRenderBuffer);
++        glGenRenderbuffersEXT(1, &m_nDepthBuffer);
++        glGenFramebuffersEXT(1, &m_nFrameScratchBuffer);
++        glGenRenderbuffersEXT(1, &m_nRenderScratchBuffer);
++        glGenRenderbuffersEXT(1, &m_nDepthScratchBuffer);
+ #endif
+         bool bRet = InitGL();
+         InitGLDebugging();
+@@ -983,7 +1077,9 @@ private:
+     {
+         OpenGLContext::restoreDefaultFramebuffer();
+ #if GTK_CHECK_VERSION(3,16,0)
+-        gtk_gl_area_attach_buffers(GTK_GL_AREA(m_pGLArea));
++        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_nFrameScratchBuffer);
++        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
++                                     GL_RENDERBUFFER_EXT, m_nRenderScratchBuffer);
+ #endif
+     }
+ 
+@@ -996,7 +1092,22 @@ private:
+ 
+ #if GTK_CHECK_VERSION(3,16,0)
+         if (m_pGLArea)
+-            gtk_gl_area_make_current(GTK_GL_AREA(m_pGLArea));
++        {
++            int scale = gtk_widget_get_scale_factor(m_pGLArea);
++            int width = m_aGLWin.Width * scale;
++            int height = m_aGLWin.Height * scale;
++
++            gdk_gl_context_make_current(m_pContext);
++
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nRenderScratchBuffer);
++            glBindRenderbuffer(GL_RENDERBUFFER, m_nDepthScratchBuffer);
++            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_nFrameScratchBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nRenderScratchBuffer);
++            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
++                                         GL_RENDERBUFFER_EXT, m_nDepthScratchBuffer);
++            glViewport(0, 0, width, height);
++        }
+ #endif
+ 
+         registerAsCurrent();
+@@ -1012,7 +1123,7 @@ private:
+     virtual bool isCurrent() override
+     {
+ #if GTK_CHECK_VERSION(3,16,0)
+-        return m_pGLArea && gdk_gl_context_get_current() == gtk_gl_area_get_context(GTK_GL_AREA(m_pGLArea));
++        return m_pGLArea && gdk_gl_context_get_current() == m_pContext;
+ #else
+         return false;
+ #endif
+@@ -1020,9 +1131,6 @@ private:
+ 
+     virtual void sync() override
+     {
+-#if GTK_CHECK_VERSION(3,16,0)
+-        gtk_gl_area_queue_render(GTK_GL_AREA(m_pGLArea));
+-#endif
+     }
+ 
+     virtual void resetCurrent() override
+@@ -1036,10 +1144,35 @@ private:
+     virtual void swapBuffers() override
+     {
+ #if GTK_CHECK_VERSION(3,16,0)
++        int scale = gtk_widget_get_scale_factor(m_pGLArea);
++        int width = m_aGLWin.Width * scale;
++        int height = m_aGLWin.Height * scale;
++
++        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_nFrameBuffer);
++        glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
++
++        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_nFrameScratchBuffer);
++        glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
++
++        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height,
++                          GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
++
++        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_nFrameScratchBuffer);
++        glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
++
+         gtk_gl_area_queue_render(GTK_GL_AREA(m_pGLArea));
+ #endif
+         BuffersSwapped();
+     }
++#if GTK_CHECK_VERSION(3,16,0)
++    virtual ~GtkOpenGLContext() override
++    {
++        if (m_pContext)
++        {
++            g_clear_object(&m_pContext);
++        }
++    }
++#endif
+ };
+ 
+ OpenGLContext* GtkInstance::CreateOpenGLContext()
+-- 
+2.9.5
+

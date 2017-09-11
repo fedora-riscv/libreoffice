@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -288,6 +288,7 @@ Patch52: 0001-Resolves-tdf-108292-WalkAndMatchElements-really-limi.patch
 Patch53: 0001-gtk3-make-video-playback-fill-playback-window.patch
 Patch54: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
 Patch55: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
+Patch56: 0001-gtk3-flicker-free-opengl-transitions.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2366,6 +2367,9 @@ done
 %endif
 
 %changelog
+* Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-10
+- gtk3 flicker-free opengl transitions
+
 * Fri Sep 08 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-9
 - Related: tdf#112145 fix redraw of embedded calc in writer
 

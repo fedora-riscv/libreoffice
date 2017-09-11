@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        11%{?libo_prerelease}%{?dist}
+Release:        12%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -289,8 +289,9 @@ Patch53: 0001-gtk3-make-video-playback-fill-playback-window.patch
 Patch54: 0001-Resolves-rhbz-1400287-resizing-properties-dialog-hid.patch
 Patch55: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
 Patch56: 0001-gtk3-flicker-free-opengl-transitions.patch
-Patch57: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
-Patch58: 0002-tdf-109080-First-page-header-footer-ODF-1-2.patch
+Patch57: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
+Patch58: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
+Patch59: 0002-tdf-109080-First-page-header-footer-ODF-1-2.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2369,6 +2370,9 @@ done
 %endif
 
 %changelog
+* Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-12
+- backport using similar surfaces to help gtk3 flicker-free opengl transitions
+
 * Mon Sep 11 2017 Michael Stahl <mstahl@redhat.com> - 1:5.2.7.2-11
 - Resolves: tdf#111891 ODF import: vertical adjustment on frame style lost
 - Related: tdf#109080 first page header/footer ODF import

@@ -268,6 +268,7 @@ Patch25: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
 Patch26: 0001-its-really-the-contents-we-want-to-redraw.patch
 Patch27: 0001-tdf-110737-set-user-events-to-a-lower-priority-than-.patch
 Patch28: 0001-gtk3-flicker-free-opengl-transitions.patch
+Patch29: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2356,8 +2357,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-5-UNBUILT
+* Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-5
 - gtk3 flicker-free opengl transitions
+- Resolves: tdf#111891 vertical alignment lost in frame style
 
 * Thu Sep 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-4
 - Resolves: tdf#110737 animations starved of redraw events

@@ -1,4 +1,4 @@
-From 3d4e0b01a0fb31a63ea86248a546c40952b212f4 Mon Sep 17 00:00:00 2001
+From 6969cdac8e04e65f00f4fec9f681ebbf243f0945 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Sun, 10 Sep 2017 16:07:49 +0100
 Subject: [PATCH] gtk3: flicker-free opengl transitions
@@ -31,8 +31,8 @@ Tested-by: Caolán McNamara <caolanm@redhat.com>
  include/vcl/opengl/OpenGLContext.hxx               |   1 +
  .../source/engine/opengl/TransitionerImpl.cxx      |   1 -
  vcl/source/opengl/OpenGLContext.cxx                |  11 +-
- vcl/unx/gtk3/gtk3gtkinst.cxx                       | 145 ++++++++++++++++++++-
- 4 files changed, 149 insertions(+), 9 deletions(-)
+ vcl/unx/gtk3/gtk3gtkinst.cxx                       | 151 ++++++++++++++++++++-
+ 5 files changed, 166 insertions(+), 23 deletions(-)
 
 diff --git a/include/vcl/opengl/OpenGLContext.hxx b/include/vcl/opengl/OpenGLContext.hxx
 index 5796f7e..c9b1c81 100644
@@ -87,12 +87,14 @@ index 42fba6d..51517ca 100644
  
  void OpenGLContext::setWinSize(const Size& rSize)
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index 3d20cca..1ad0619 100644
+index 3d20cca..a37deb0 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
-@@ -924,11 +924,27 @@ class GtkOpenGLContext : public OpenGLContext
+@@ -923,12 +923,32 @@ Reference< XInterface > GtkInstance::CreateDragSource()
+ class GtkOpenGLContext : public OpenGLContext
  {
      GLWindow m_aGLWin;
++#if GTK_CHECK_VERSION(3,16,0)
      GtkWidget *m_pGLArea;
 +    GdkGLContext *m_pContext;
 +    guint m_nAreaFrameBuffer;
@@ -102,10 +104,12 @@ index 3d20cca..1ad0619 100644
 +    guint m_nFrameScratchBuffer;
 +    guint m_nRenderScratchBuffer;
 +    guint m_nDepthScratchBuffer;
++#endif
  
  public:
      GtkOpenGLContext()
          : OpenGLContext()
++#if GTK_CHECK_VERSION(3,16,0)
          , m_pGLArea(nullptr)
 +        , m_pContext(nullptr)
 +        , m_nAreaFrameBuffer(0)
@@ -115,10 +119,18 @@ index 3d20cca..1ad0619 100644
 +        , m_nFrameScratchBuffer(0)
 +        , m_nRenderScratchBuffer(0)
 +        , m_nDepthScratchBuffer(0)
++#endif
      {
      }
  
-@@ -958,6 +974,70 @@ private:
+@@ -952,12 +972,78 @@ private:
+     virtual const GLWindow& getOpenGLWindow() const override { return m_aGLWin; }
+     virtual GLWindow& getModifiableOpenGLWindow() override { return m_aGLWin; }
+ 
++#if GTK_CHECK_VERSION(3,16,0)
+     static void signalDestroy(GtkWidget*, gpointer context)
+     {
+         GtkOpenGLContext* pThis = static_cast<GtkOpenGLContext*>(context);
          pThis->m_pGLArea = nullptr;
      }
  
@@ -141,6 +153,7 @@ index 3d20cca..1ad0619 100644
 +        gdk_gl_context_make_current(pThis->m_pContext);
 +        return true;
 +    }
++#endif
 +
 +    virtual void adjustToNewSize() override
 +    {
@@ -189,7 +202,7 @@ index 3d20cca..1ad0619 100644
      virtual bool ImplInit() override
      {
  #if GTK_CHECK_VERSION(3,16,0)
-@@ -965,14 +1045,28 @@ private:
+@@ -965,14 +1051,28 @@ private:
          GtkWidget *pParent = static_cast<GtkWidget*>(pEnvData->pWidget);
          m_pGLArea = gtk_gl_area_new();
          g_signal_connect(G_OBJECT(m_pGLArea), "destroy", G_CALLBACK(signalDestroy), this);
@@ -218,7 +231,7 @@ index 3d20cca..1ad0619 100644
  #endif
          bool bRet = InitGL();
          InitGLDebugging();
-@@ -983,7 +1077,9 @@ private:
+@@ -983,7 +1083,9 @@ private:
      {
          OpenGLContext::restoreDefaultFramebuffer();
  #if GTK_CHECK_VERSION(3,16,0)
@@ -229,7 +242,7 @@ index 3d20cca..1ad0619 100644
  #endif
      }
  
-@@ -996,7 +1092,22 @@ private:
+@@ -996,7 +1098,22 @@ private:
  
  #if GTK_CHECK_VERSION(3,16,0)
          if (m_pGLArea)
@@ -253,7 +266,7 @@ index 3d20cca..1ad0619 100644
  #endif
  
          registerAsCurrent();
-@@ -1012,7 +1123,7 @@ private:
+@@ -1012,7 +1129,7 @@ private:
      virtual bool isCurrent() override
      {
  #if GTK_CHECK_VERSION(3,16,0)
@@ -262,7 +275,7 @@ index 3d20cca..1ad0619 100644
  #else
          return false;
  #endif
-@@ -1020,9 +1131,6 @@ private:
+@@ -1020,9 +1137,6 @@ private:
  
      virtual void sync() override
      {
@@ -272,7 +285,7 @@ index 3d20cca..1ad0619 100644
      }
  
      virtual void resetCurrent() override
-@@ -1036,10 +1144,35 @@ private:
+@@ -1036,10 +1150,35 @@ private:
      virtual void swapBuffers() override
      {
  #if GTK_CHECK_VERSION(3,16,0)

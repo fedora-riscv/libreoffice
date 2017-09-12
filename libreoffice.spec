@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        12%{?libo_prerelease}%{?dist}
+Release:        13%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -762,7 +762,7 @@ Requires: gdb%{?_isa}
 Requires: %{libo_python}-six
 Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
-Supplements: libreoffice-debuginfo%{?_isa} = %{epoch}:%{version}-%{release}
+Supplements: libreoffice-debuginfo%{?_isa}
 %endif
 
 %description gdb-debug-support
@@ -852,8 +852,8 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-p:Provides: %{name}-langpack-%{-p*} = %{epoch}:%{version}-%{release}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
 %if 0%{?weak_deps} \
-%{-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{-p*})} \
-%{!-p:Supplements: (%{name}-core%{?_isa} = %{epoch}:%{version}-%{release} and langpacks-%{lang})} \
+%{-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{-p*})} \
+%{!-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{lang})} \
 %endif \
 \
 %description %{pkgname} \
@@ -2370,6 +2370,9 @@ done
 %endif
 
 %changelog
+* Tue Sep 12 2017 David Tardon <dtardon@redhat.com> - 1:5.2.7.2-13-UNBUILT
+- Resolves: rhbz#1490318 do not use versioned Supplements
+
 * Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-12
 - backport using similar surfaces to help gtk3 flicker-free opengl transitions
 

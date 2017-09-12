@@ -269,6 +269,7 @@ Patch26: 0001-its-really-the-contents-we-want-to-redraw.patch
 Patch27: 0001-tdf-110737-set-user-events-to-a-lower-priority-than-.patch
 Patch28: 0001-gtk3-flicker-free-opengl-transitions.patch
 Patch29: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
+Patch30: 0001-Resolves-tdf-106163-safe-fix-for-wrong-final-row-col.patch
 
 %if 0%{?rhel}
 # not upstreamed

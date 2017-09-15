@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,6 +270,7 @@ Patch27: 0001-tdf-110737-set-user-events-to-a-lower-priority-than-.patch
 Patch28: 0001-gtk3-flicker-free-opengl-transitions.patch
 Patch29: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
 Patch30: 0001-Resolves-tdf-106163-safe-fix-for-wrong-final-row-col.patch
+Patch31: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2358,6 +2359,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6-UNBUILT
+- Resolves: tdf#112408 crash with nan from bad ascent in presented console help
+
 * Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-5
 - gtk3 flicker-free opengl transitions
 - Resolves: tdf#111891 vertical alignment lost in frame style

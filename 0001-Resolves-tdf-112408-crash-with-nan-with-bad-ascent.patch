@@ -1,0 +1,32 @@
+From cc369b3447da7f354901a79007b5db6f98379189 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 15 Sep 2017 16:17:21 +0100
+Subject: [PATCH] Resolves: tdf#112408 crash with nan with bad ascent
+
+bad ascent in the common case is probably fixed with tdf#107249
+
+Change-Id: I0a06de06cb07277c50dcffd1b6a1121398e84e42
+Reviewed-on: https://gerrit.libreoffice.org/42329
+Reviewed-by: Michael Stahl <mstahl@redhat.com>
+Tested-by: Jenkins <ci@libreoffice.org>
+---
+ sdext/source/presenter/PresenterTheme.cxx | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sdext/source/presenter/PresenterTheme.cxx b/sdext/source/presenter/PresenterTheme.cxx
+index 10c7cf0..5e60dde 100644
+--- a/sdext/source/presenter/PresenterTheme.cxx
++++ b/sdext/source/presenter/PresenterTheme.cxx
+@@ -570,6 +570,9 @@ double PresenterTheme::FontDescriptor::GetCellSizeForDesignSize (
+     geometry::RealRectangle2D aBox (PresenterCanvasHelper::GetTextBoundingBox (xFont, "X"));
+ 
+     const double nAscent (-aBox.Y1);
++    //tdf#112408
++    if (nAscent == 0)
++        return nDesignSize;
+     const double nDescent (aBox.Y2);
+     const double nScale = (nAscent+nDescent) / nAscent;
+     return nDesignSize * nScale;
+-- 
+2.9.5
+

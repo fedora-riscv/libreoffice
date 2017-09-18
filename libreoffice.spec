@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 5.4.1
+%global libo_version 5.4.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -246,7 +246,6 @@ Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
 Patch4: 0002-consider-field-marks-as-text-for-auto-quotes.patch
-Patch5: 0001-add-char-highlighting-background-tab-to-graphics-sty.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2201,6 +2200,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Sep 18 2017 David Tardon <dtardon@redhat.com> - 1:5.4.2.1-1
+- update to 5.4.2 rc1
+
 * Tue Sep 12 2017 David Tardon <dtardon@redhat.com> - 1:5.4.1.2-3
 - Resolves: rhbz#1490318 do not use versioned Supplements
 

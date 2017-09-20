@@ -972,7 +972,7 @@ sed -i -e /CppunitTest_sd_tiledrendering/d sd/Module_sd.mk # ppc64/s390x
 sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk # ppc64
 sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
 sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # i686
-sed -i -e /CppunitTest_dbaccess_RowSetClones/d dbaccess/Module_dbaccess.mk # i686
+sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i686
 git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.

@@ -22,7 +22,7 @@
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %global __jar_repack %{nil}
 # make it easier to download sources from pre-release site
-%if 0%{?rebase}
+%if 0%{?prerelease}
 %global source_url http://dev-builds.libreoffice.org/pre-releases/src
 %else
 %global source_url http://download.documentfoundation.org/libreoffice/src/%{libo_version}
@@ -62,22 +62,21 @@ License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1
 URL:            http://www.libreoffice.org/
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
-Source1:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
-Source2:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
-%if 0%{?rebase}
-Source3:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
-Source4:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+Source1:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
+Source3:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
+Source4:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source5:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
-%endif
-Source6:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
-Source7:        libreoffice-multiliblauncher.sh
-Source8:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source9:        %{external_url}/xmlsec1-1.2.24.tar.gz
-Source10:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source11:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source6:        gpgkey-C2839ECAD9408FBE9531C3E9F434A1EFAFEEAEA3.gpg.asc
+Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
+Source8:        libreoffice-multiliblauncher.sh
+Source9:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source10:        %{external_url}/xmlsec1-1.2.24.tar.gz
+Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 %if 0%{?fedora}
@@ -124,6 +123,7 @@ BuildRequires: flex
 BuildRequires: gcc-c++
 BuildRequires: gdb
 BuildRequires: git
+BuildRequires: gnupg2
 BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: make
@@ -934,7 +934,13 @@ done \
 %{!?-l:%{error:-l must be present}}
 
 %prep
-%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 1 -b 2
+# verify tarballs
+gpg2 --dearmor < %{SOURCE6} > keyring.gpg
+gpgv2 --keyring ./keyring.gpg %{SOURCE1} %{SOURCE0}
+gpgv2 --keyring ./keyring.gpg %{SOURCE3} %{SOURCE2}
+gpgv2 --keyring ./keyring.gpg %{SOURCE5} %{SOURCE4}
+
+%setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 4
 rm -rf git-hooks */git-hooks
 
 # set up git repo

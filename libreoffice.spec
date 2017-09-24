@@ -101,7 +101,7 @@ Source104:      %{external_url}/libwps-0.4.6.tar.xz
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
 Source107:      %{external_url}/libstaroffice-0.0.3.tar.xz
-Source108:      %{external_url}/harfbuzz-1.3.2.tar.bz2
+Source108:      %{external_url}/harfbuzz-1.4.8.tar.bz2
 Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
 Source110:      %{external_url}/gpgme-1.8.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.26.tar.bz2

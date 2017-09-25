@@ -2355,8 +2355,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Sep 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6-UNBUILT
+* Mon Sep 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6
 - Resolves: tdf#112408 crash with nan from bad ascent in presenter console help
+- Improve resizing chevrons
 
 * Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-5
 - gtk3 flicker-free opengl transitions

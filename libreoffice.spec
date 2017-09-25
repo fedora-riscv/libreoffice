@@ -324,13 +324,7 @@ Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
-%if 0%{?fedora}
 Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
-%else
-# these two plugins used to be part of core--keep it that way
-Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -2361,7 +2355,7 @@ done
 
 %changelog
 * Fri Sep 15 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6-UNBUILT
-- Resolves: tdf#112408 crash with nan from bad ascent in presented console help
+- Resolves: tdf#112408 crash with nan from bad ascent in presenter console help
 
 * Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-5
 - gtk3 flicker-free opengl transitions

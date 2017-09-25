@@ -271,6 +271,7 @@ Patch28: 0001-gtk3-flicker-free-opengl-transitions.patch
 Patch29: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
 Patch30: 0001-Resolves-tdf-106163-safe-fix-for-wrong-final-row-col.patch
 Patch31: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
+Patch32: 0001-gtk3-only-for-3.20.patch
 
 %if 0%{?rhel}
 # not upstreamed

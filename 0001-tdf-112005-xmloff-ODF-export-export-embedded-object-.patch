@@ -1,0 +1,131 @@
+From 16e9c725cf878d82ff7b61884b62ad2e7a014fdf Mon Sep 17 00:00:00 2001
+From: Michael Stahl <mstahl@redhat.com>
+Date: Wed, 20 Sep 2017 17:45:14 +0200
+Subject: [PATCH] tdf#112005 xmloff: ODF export: export embedded object text
+ *first*
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+... before adding any attributes, so that the attributes don't
+erroneously get added to the paragraph element.
+
+Also fix the problem that if you set "ODF format version" to 1.1 or 1.2,
+export asserts in SvXMLNamespaceMap::GetQNameByKey() because the "loext"
+namespace isn't registered, and creates an invalid <p> element.
+
+Change-Id: I637f9d3ff746d877ced480e35ef53f4545a06a4b
+(cherry picked from commit 86f256596c8566e80993e1cf6035bc3534b6f816)
+Reviewed-on: https://gerrit.libreoffice.org/42569
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sc/qa/unit/subsequent_export-test.cxx | 22 ++++++++++++++++++++++
+ xmloff/source/draw/shapeexport.cxx    | 22 +++++++++++++++-------
+ 2 files changed, 37 insertions(+), 7 deletions(-)
+
+diff --git a/sc/qa/unit/subsequent_export-test.cxx b/sc/qa/unit/subsequent_export-test.cxx
+index 0941a0b0adb0..5793c09575e0 100644
+--- a/sc/qa/unit/subsequent_export-test.cxx
++++ b/sc/qa/unit/subsequent_export-test.cxx
+@@ -118,6 +118,7 @@ public:
+     void testLandscapeOrientationXLSX();
+ 
+     void testInlineArrayXLS();
++    void testEmbeddedChartODS();
+     void testEmbeddedChartXLS();
+     void testCellAnchoredGroupXLS();
+ 
+@@ -206,6 +207,7 @@ public:
+     CPPUNIT_TEST(testOutlineExportXLSX);
+     CPPUNIT_TEST(testLandscapeOrientationXLSX);
+     CPPUNIT_TEST(testInlineArrayXLS);
++    CPPUNIT_TEST(testEmbeddedChartODS);
+     CPPUNIT_TEST(testEmbeddedChartXLS);
+     CPPUNIT_TEST(testCellAnchoredGroupXLS);
+ 
+@@ -284,6 +286,8 @@ void ScExportTest::registerNamespaces(xmlXPathContextPtr& pXmlXPathCtx)
+         { BAD_CAST("office"), BAD_CAST("urn:oasis:names:tc:opendocument:xmlns:office:1.0") },
+         { BAD_CAST("table"), BAD_CAST("urn:oasis:names:tc:opendocument:xmlns:table:1.0") },
+         { BAD_CAST("text"), BAD_CAST("urn:oasis:names:tc:opendocument:xmlns:text:1.0") },
++        { BAD_CAST("style"), BAD_CAST("urn:oasis:names:tc:opendocument:xmlns:style:1.0") },
++        { BAD_CAST("draw"), BAD_CAST("urn:oasis:names:tc:opendocument:xmlns:drawing:1.0") },
+         { BAD_CAST("xlink"), BAD_CAST("http://www.w3c.org/1999/xlink") },
+         { BAD_CAST("xdr"), BAD_CAST("http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing") },
+         { BAD_CAST("x"), BAD_CAST("http://schemas.openxmlformats.org/spreadsheetml/2006/main") },
+@@ -1765,6 +1769,24 @@ void ScExportTest::testInlineArrayXLS()
+     xDocSh->DoClose();
+ }
+ 
++void ScExportTest::testEmbeddedChartODS()
++{
++    ScDocShellRef xShell = loadDoc("embedded-chart.", FORMAT_XLS);
++    CPPUNIT_ASSERT(xShell.Is());
++
++    std::shared_ptr<utl::TempFile> pTempFile(
++            ScBootstrapFixture::exportTo(xShell.get(), FORMAT_ODS));
++
++    xmlDocPtr pDoc = XPathHelper::parseExport(pTempFile, m_xSFactory, "content.xml");
++    CPPUNIT_ASSERT(pDoc);
++    assertXPath(pDoc,
++        "/office:document-content/office:body/office:spreadsheet/table:table[2]/table:table-row[7]/table:table-cell[2]/draw:frame/draw:object",
++        "notify-on-update-of-ranges",
++        "Chart1.B3:Chart1.B5 Chart1.C2:Chart1.C2 Chart1.C3:Chart1.C5");
++
++    xShell->DoClose();
++}
++
+ void ScExportTest::testEmbeddedChartXLS()
+ {
+     ScDocShellRef xShell = loadDoc("embedded-chart.", FORMAT_XLS);
+diff --git a/xmloff/source/draw/shapeexport.cxx b/xmloff/source/draw/shapeexport.cxx
+index 04fb1772064f..fd70e2a083b9 100644
+--- a/xmloff/source/draw/shapeexport.cxx
++++ b/xmloff/source/draw/shapeexport.cxx
+@@ -1508,6 +1508,13 @@ bool XMLShapeExport::ImpExportPresentationAttributes( const uno::Reference< bean
+ 
+ void XMLShapeExport::ImpExportText( const uno::Reference< drawing::XShape >& xShape, TextPNS eExtensionNS )
+ {
++    if (eExtensionNS == TextPNS::EXTENSION)
++    {
++        if (mrExport.getDefaultVersion() <= SvtSaveOptions::ODFVER_012)
++        {
++            return; // do not export to ODF 1.1/1.2
++        }
++    }
+     uno::Reference< text::XText > xText( xShape, uno::UNO_QUERY );
+     if( xText.is() )
+     {
+@@ -2775,6 +2782,14 @@ void XMLShapeExport::ImpExportOLE2Shape(
+ 
+         if( !bIsEmptyPresObj || bSaveBackwardsCompatible )
+         {
++            // tdf#112005 export text *before* adding any attributes
++            if (!bIsEmptyPresObj && supportsText(eShapeType))
++            {
++                // #i118485# Add text export, the draw OLE shape allows text now
++                // fdo#58571 chart objects don't allow text:p
++                ImpExportText( xShape, TextPNS::EXTENSION );
++            }
++
+             if (pAttrList)
+             {
+                 mrExport.AddAttributeList(pAttrList);
+@@ -2810,13 +2825,6 @@ void XMLShapeExport::ImpExportOLE2Shape(
+                 if( !sClassId.isEmpty() )
+                     mrExport.AddAttribute(XML_NAMESPACE_DRAW, XML_CLASS_ID, sClassId );
+ 
+-                if(supportsText(eShapeType))
+-                {
+-                    // #i118485# Add text export, the draw OLE shape allows text now
+-                    // fdo#58571 chart objects don't allow text:p
+-                    ImpExportText( xShape, TextPNS::EXTENSION );
+-                }
+-
+                 if(!bExportEmbedded)
+                 {
+                     // xlink:href
+-- 
+2.13.5
+

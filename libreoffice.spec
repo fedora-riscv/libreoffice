@@ -248,6 +248,7 @@ Patch3: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
 Patch4: 0002-consider-field-marks-as-text-for-auto-quotes.patch
 Patch5: 0001-gtk3-only-for-3.20.patch
 Patch6: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
+Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 
 %if 0%{?rhel}
 # not upstreamed

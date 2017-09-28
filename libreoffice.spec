@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -273,6 +273,7 @@ Patch30: 0001-Resolves-tdf-106163-safe-fix-for-wrong-final-row-col.patch
 Patch31: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
 Patch32: 0001-gtk3-only-for-3.20.patch
 Patch33: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
+Patch34: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2355,6 +2356,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Sep 28 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-7-UNBUILT
+- Resolves: tdf#42873 videos in presenter console misplaced
+
 * Mon Sep 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6
 - Resolves: tdf#112408 crash with nan from bad ascent in presenter console help
 - Improve resizing chevrons

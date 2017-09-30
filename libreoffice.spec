@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1285,10 +1285,10 @@ for app in base calc draw impress math writer; do
     chmod a+x oo$app
 done
 
-sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE7} > unopkg
+sed -e s/LAUNCHER/unopkg/g -e s/BRAND/libreoffice/g %{SOURCE8} > unopkg
 chmod a+x unopkg
 
-sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE7} > libreoffice
+sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE8} > libreoffice
 chmod a+x libreoffice
 
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
@@ -2212,6 +2212,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Oct 01 2017 Thierry Vignaud <tvignaud@redhat.com> - 1:5.4.2.2-2
+- fix libreoffice wrapper
+
 * Wed Sep 27 2017 David Tardon <dtardon@redhat.com> - 1:5.4.2.2-1
 - update to 5.4.2 rc2
 

@@ -586,6 +586,7 @@ BuildArch: noarch
 %package x11
 Summary: LibreOffice generic X11 support plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
@@ -598,6 +599,8 @@ A plug-in for LibreOffice that enables generic X11 support.
 %package gtk2
 Summary: LibreOffice GTK+ 2 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
@@ -623,6 +626,7 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 %package kde4
 Summary: LibreOffice KDE integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 

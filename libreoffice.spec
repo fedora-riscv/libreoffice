@@ -1753,7 +1753,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfwklo.so
 %{baseinstdir}/program/libfwllo.so
 %{baseinstdir}/program/libfwmlo.so
-%{baseinstdir}/program/libi18nlangtag.so
 # TODO: shouldn't it have lo suffix?
 %{baseinstdir}/program/libi18nutil.so
 %{baseinstdir}/program/libpackage2.so
@@ -2058,6 +2057,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libbinaryurplo.so
 %{baseinstdir}/program/libbootstraplo.so
 %{baseinstdir}/program/libgcc3_uno.so
+%{baseinstdir}/program/libi18nlangtag.so
 %{baseinstdir}/program/libintrospectionlo.so
 %{baseinstdir}/program/libinvocadaptlo.so
 %{baseinstdir}/program/libinvocationlo.so

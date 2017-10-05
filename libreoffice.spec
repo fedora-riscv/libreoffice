@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%define libo_version 5.3.6
+%define libo_version 5.3.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -268,12 +268,10 @@ Patch25: 0001-Resolves-tdf-112145-pdf-export-of-editengine-highlig.patch
 Patch26: 0001-its-really-the-contents-we-want-to-redraw.patch
 Patch27: 0001-tdf-110737-set-user-events-to-a-lower-priority-than-.patch
 Patch28: 0001-gtk3-flicker-free-opengl-transitions.patch
-Patch29: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
-Patch30: 0001-Resolves-tdf-106163-safe-fix-for-wrong-final-row-col.patch
-Patch31: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
-Patch32: 0001-gtk3-only-for-3.20.patch
-Patch33: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
-Patch34: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
+Patch29: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
+Patch30: 0001-gtk3-only-for-3.20.patch
+Patch31: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
+Patch32: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2365,6 +2363,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Oct 05 2017 David Tardon <dtardon@redhat.com> - 1:5.3.7.1-1
+- update to 5.3.7 rc1
+
 * Thu Sep 28 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-7-UNBUILT
 - Resolves: tdf#42873 videos in presenter console misplaced
 

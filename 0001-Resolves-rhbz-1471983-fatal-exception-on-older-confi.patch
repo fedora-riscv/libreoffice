@@ -1,0 +1,37 @@
+From f1ccc7aaf11dfcff554306e27350459951d746e0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 9 Oct 2017 14:28:24 +0100
+Subject: [PATCH] Resolves: rhbz#1471983 fatal exception on older config
+ without slide bg panel
+
+Change-Id: Id437bdd8feac06da42c180ff4f7759ec282fa8d4
+---
+ sd/source/ui/sidebar/SlideBackground.cxx | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/sd/source/ui/sidebar/SlideBackground.cxx b/sd/source/ui/sidebar/SlideBackground.cxx
+index f98e5be..3e3df8b 100644
+--- a/sd/source/ui/sidebar/SlideBackground.cxx
++++ b/sd/source/ui/sidebar/SlideBackground.cxx
+@@ -422,11 +422,14 @@ void SlideBackground::SetPanelTitle( const OUString& rTitle )
+     if ( !xPanels.is() )
+         return;
+ 
+-    Reference<ui::XPanel> xPanel ( xPanels->getByName("SlideBackgroundPanel"), uno::UNO_QUERY);
+-    if ( !xPanel.is() )
+-        return;
++    if (xPanels->hasByName("SlideBackgroundPanel"))
++    {
++        Reference<ui::XPanel> xPanel ( xPanels->getByName("SlideBackgroundPanel"), uno::UNO_QUERY);
++        if ( !xPanel.is() )
++            return;
+ 
+-    xPanel->setTitle( rTitle );
++        xPanel->setTitle( rTitle );
++    }
+ }
+ 
+ void SlideBackground::addListener()
+-- 
+2.9.5
+

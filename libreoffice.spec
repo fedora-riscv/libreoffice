@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -272,6 +272,7 @@ Patch29: 0001-Resolves-tdf-112408-crash-with-nan-with-bad-ascent.patch
 Patch30: 0001-gtk3-only-for-3.20.patch
 Patch31: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch32: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
+Patch33: 0001-Resolves-rhbz-1471983-fatal-exception-on-older-confi.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2363,10 +2364,14 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Oct 09 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.1-2
+- Resolves: rhbz#1471983 fatal exception on older config without
+  slide background panel
+
 * Thu Oct 05 2017 David Tardon <dtardon@redhat.com> - 1:5.3.7.1-1
 - update to 5.3.7 rc1
 
-* Thu Sep 28 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-7-UNBUILT
+* Thu Sep 28 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-7
 - Resolves: tdf#42873 videos in presenter console misplaced
 
 * Mon Sep 25 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.6.1-6

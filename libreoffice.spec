@@ -274,6 +274,7 @@ Patch31: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch32: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch33: 0001-Resolves-rhbz-1471983-fatal-exception-on-older-confi.patch
 Patch34: 0001-Resolves-tdf-112933-correct-number-of-one-decimal-in.patch
+Patch35: 0001-a11y-crash-in-use-after-dispose.patch
 
 %if 0%{?rhel}
 # not upstreamed

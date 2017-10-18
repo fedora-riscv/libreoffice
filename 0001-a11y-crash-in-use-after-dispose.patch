@@ -1,0 +1,45 @@
+From b6b0f7b99b68c66ea2b5e8e507c52801796b4d97 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 18 Oct 2017 11:05:20 +0100
+Subject: [PATCH] a11y: crash in use after dispose
+
+calc, chart in tab 3 with a11y enabled, select chart
+switch to tab 1, crash cause mpParent has been deleted, IsDisposed
+is correctly set, but shape accesses parent anyway
+
+Change-Id: I6f57a798bfcc82eebb883291cec54e157ff5187b
+
+potential deref of empty xStateSet
+
+Change-Id: I83d876b0d966b18cdf85249b7e856e4e4f4dec27
+---
+ svx/source/accessibility/AccessibleShape.cxx | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/svx/source/accessibility/AccessibleShape.cxx b/svx/source/accessibility/AccessibleShape.cxx
+index 043ba8e..47c0aca 100644
+--- a/svx/source/accessibility/AccessibleShape.cxx
++++ b/svx/source/accessibility/AccessibleShape.cxx
+@@ -410,7 +410,9 @@ uno::Reference<XAccessibleStateSet> SAL_CALL
+     ::osl::MutexGuard aGuard (maMutex);
+     Reference<XAccessibleStateSet> xStateSet;
+ 
+-    if (IsDisposed())
++    bool bDisposed = IsDisposed();
++
++    if (bDisposed)
+     {
+         // Return a minimal state set that only contains the DEFUNC state.
+         xStateSet = AccessibleContextBase::getAccessibleStateSet ();
+@@ -461,7 +463,7 @@ uno::Reference<XAccessibleStateSet> SAL_CALL
+             xStateSet.set( new ::utl::AccessibleStateSetHelper (*pStateSet));
+         }
+     }
+-    if (mpParent && mpParent->IsDocumentSelAll())
++    if (!bDisposed && xStateSet.is() && mpParent && mpParent->IsDocumentSelAll())
+     {
+         ::utl::AccessibleStateSetHelper* pStateSet =
+             static_cast< ::utl::AccessibleStateSetHelper*>(xStateSet.get());
+-- 
+2.9.5
+

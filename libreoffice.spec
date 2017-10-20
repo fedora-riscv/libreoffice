@@ -293,6 +293,7 @@ Patch57: 0001-bubble-the-original-gtk-surface-type-through-renderi.patch
 Patch58: 0001-tdf-111891-unostyle-use-default-handler-for-non-page.patch
 Patch59: 0002-tdf-109080-First-page-header-footer-ODF-1-2.patch
 Patch60: 0001-tdf-112005-xmloff-ODF-export-export-embedded-object-.patch
+Patch61: 0001-tdf-97630-xmloff-ODF-extended-draw-fit-to-size-mess.patch
 
 %if 0%{?fedora} >= 26
 Patch400: 0001-Switch-from-orcus-0.11-to-orcus-0.12.patch
@@ -2379,6 +2380,7 @@ done
 * Tue Sep 12 2017 David Tardon <dtardon@redhat.com> - 1:5.2.7.2-13-UNBUILT
 - Resolves: rhbz#1490318 do not use versioned Supplements
 - Resolves: tdf#112005 invalid ODF export of embedded object text
+- Resolves: tdf#97630 ODF import/export draw:fit-to-size/style:shrink-to-fit
 
 * Mon Sep 11 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.2.7.2-12
 - backport using similar surfaces to help gtk3 flicker-free opengl transitions

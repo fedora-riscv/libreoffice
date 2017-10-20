@@ -613,6 +613,7 @@ A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
 %if 0%{?weak_deps}
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})

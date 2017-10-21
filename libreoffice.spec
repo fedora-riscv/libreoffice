@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 5.4.3
+%global libo_version 6.0.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%global libo_prerelease %{nil}
+%global libo_prerelease .alpha1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.0
+Release:        0%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -71,7 +71,7 @@ Source6:        gpgkey-C2839ECAD9408FBE9531C3E9F434A1EFAFEEAEA3.gpg.asc
 Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source8:        libreoffice-multiliblauncher.sh
 Source9:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source10:        %{external_url}/xmlsec1-1.2.24.tar.gz
+Source10:       %{external_url}/xmlsec1-1.2.25.tar.gz
 Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
@@ -99,7 +99,7 @@ Source102:      %{external_url}/mdds-1.2.2.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.6.tar.xz
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
-Source106:      %{external_url}/libzmf-0.0.1.tar.bz2
+Source106:      %{external_url}/libzmf-0.0.2.tar.xz
 Source107:      %{external_url}/libstaroffice-0.0.3.tar.xz
 Source108:      %{external_url}/harfbuzz-1.4.8.tar.bz2
 Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
@@ -107,7 +107,9 @@ Source110:      %{external_url}/gpgme-1.8.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.26.tar.bz2
 Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source113:      %{external_url}/cppunit-1.14.0.tar.gz
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
+Source114:      %{external_url}/libqxp-0.0.0.tar.xz
+Source115:      %{external_url}/libepubgen-0.0.1.tar.xz
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
 %endif
 
 # build tools
@@ -122,6 +124,7 @@ BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
 BuildRequires: gdb
+BuildRequires: gettext
 BuildRequires: git
 BuildRequires: gnupg2
 BuildRequires: gperf
@@ -141,7 +144,6 @@ BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
-BuildRequires: libicu-devel
 BuildRequires: libjpeg-turbo-devel
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
@@ -162,6 +164,7 @@ BuildRequires: pkgconfig(gtk+-2.0)
 BuildRequires: pkgconfig(gtk+-3.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
+BuildRequires: pkgconfig(icu-i18n)
 BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
@@ -206,9 +209,11 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
+BuildRequires: pkgconfig(libepubgen-0.0)
 BuildRequires: pkgconfig(libgltf-0.1)
 BuildRequires: pkgconfig(liborcus-0.12)
 BuildRequires: pkgconfig(libpagemaker-0.0)
+BuildRequires: pkgconfig(libqxp-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(libzmf-0.0)
@@ -244,11 +249,13 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 # not upstreamed
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
-Patch3: 0001-rename-IsAutoCapitalizeWordDelim-to-NonFieldWordDeli.patch
-Patch4: 0002-consider-field-marks-as-text-for-auto-quotes.patch
-Patch5: 0001-gtk3-only-for-3.20.patch
-Patch6: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
-Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
+# not upstreamed
+Patch3: 0001-gtk3-only-for-3.20.patch
+Patch4: 0001-allow-to-override-ENABLE_STRIP-in-the-installer.patch
+Patch5: 0001-fix-build-error.patch
+Patch6: 0001-blind-attempt-to-fix-build-on-big-endian.patch
+Patch7: 0001-remove-GetSwapFloat-nonsense-from-all-3-EMF-readers.patch
+Patch8: 0001-Make-testUtf8StringLiterals-work-when-char-is-unsign.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -678,16 +685,15 @@ This package provides gdb pretty printers for package %{name}.
 
 %endif
 
-%define _langpack_common(E) \
-%{baseinstdir}/program/resource/*%{1}.res  \
+%define _langpack_common(Eg:j:l:) \
 %{!-E: \
-%{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/%{1}.zip \
-%{baseinstdir}/share/config/soffice.cfg/*/ui/res/%{1}.zip \
-%{baseinstdir}/share/registry/res/registry_%{1}.xcd \
+%{baseinstdir}/program/resource/%{-g:%{-g*}}%{!-g:%{-l*}}/LC_MESSAGES/*.mo  \
+%{baseinstdir}/share/registry/res/registry_%{-l*}.xcd \
 } \
-%{baseinstdir}/share/template/%{1} \
-%{baseinstdir}/share/registry/Langpack-%{1}.xcd \
-%{baseinstdir}/share/registry/res/fcfg_langpack_%{1}.xcd \
+%{baseinstdir}/share/template/%{-l*} \
+%{baseinstdir}/share/registry/Langpack-%{-l*}.xcd \
+%{baseinstdir}/share/registry/res/fcfg_langpack_%{-l*}.xcd \
+%{baseinstdir}/share/wizards/resources_%{-j:%{-j*}}%{!-j:%{-l*}}.properties \
 %{nil}
 
 # Defines a language pack subpackage.
@@ -710,8 +716,11 @@ This package provides gdb pretty printers for package %{name}.
 # c:   additional config file (just the name stem)
 # E:   base (US English) langpack
 # Ff:  font language dependency
+# g:   glibc/java locale
 # Hh:  hunspell dependency
 # i:   additional language added to this package
+# j:   java locale for the additional language
+# k:   glibc locale for the additional language
 # L:   internal (LibreOffice) language code, used in file names
 # l:   language code, e.g., cs
 # Mm:  mythes dependency
@@ -729,8 +738,8 @@ This package provides gdb pretty printers for package %{name}.
 # libreoffice-langpack-cs: langpack for Czech lang. requiring hyphen-cs,
 # autocorr-cs, mythes-cs-CZ and suitable font:
 # %%langpack -l cs -n Czech -H -A -m cs-CZ
-#  b de g  jk     q  tu    z BCD  G IJK  N PQR  U    Z0123456789
-%define langpack(Aa:c:EFf:Hh:i:L:l:Mm:n:p:r:S:s:TXx:Yy:) \
+#  b de           q  tu    z BCD  G IJK  N PQR  U    Z0123456789
+%define langpack(Aa:c:EFf:g:Hh:i:j:k:L:l:Mm:n:p:r:S:s:TXx:Yy:) \
 %define lang %{-l:%{-l*}}%{!-l:%{error:Language code not defined}} \
 %define _langpack_lang %{-L:%{-L*}}%{!-L:%{lang}} \
 %define pkgname langpack-%{lang} \
@@ -772,11 +781,11 @@ Provides %{langname} help for LibreOffice. \
 } \
 \
 %files %{pkgname} \
-%{expand:%%_langpack_common %{-E} %{_langpack_lang}} \
+%{expand:%%_langpack_common %{-E} -l %{_langpack_lang} %{-g:-g %{-g*} -j %{-g*}}} \
 %{-x:%{baseinstdir}/share/autotext/%{-x*}}%{!-x:%{-X:%{baseinstdir}/share/autotext/%{_langpack_lang}}} \
 %{-c:%{baseinstdir}/share/registry/%{-c*}.xcd} \
 %{-s:%{baseinstdir}/share/registry/%{-s*}_%{_langpack_lang}.xcd} \
-%{-i:%{expand:%%_langpack_common %{-E} %{-i*}}} \
+%{-i:%{expand:%%_langpack_common %{-E} -l %{-i*} %{-k:-g %{-k*}} %{-j:-j %{-j*}}}} \
 %{nil}
 
 # Defines an auto-correction subpackage.
@@ -808,7 +817,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
 %{nil}
 
-%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US -T -X
+%langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US -T -X -g en_US
 
 %if %{with langpacks}
 
@@ -857,10 +866,10 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Northern Sotho
 %langpack -l nso -n %{langpack_lang} -F -H
 %langpack -l or -n Odia -F -H -Y -s ctl
-%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN
+%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
@@ -870,7 +879,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn
 %langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
 %langpack -l st -n %{langpack_lang} -F -H
@@ -885,9 +894,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H
 %langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
 %langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
@@ -988,6 +997,7 @@ sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
 sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # i686
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i686
 sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686
+sed -i -e /CppunitTest_sd_export_ooxml2/d sd/Module_sd.mk # i686
 git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.
@@ -1124,7 +1134,7 @@ export PRODUCTVERSIONSHORT PRODUCTVERSION
 # installation
 
 install -m 0755 -d %{buildroot}%{instdir}
-if ! make instsetoo_native PKGFORMAT=installed EPM=not-used-but-must-be-set; then
+if ! make instsetoo_native PKGFORMAT=installed DISABLE_STRIP=1 EPM=not-used-but-must-be-set; then
     echo - ---dump log start---
     cat $WORKDIR/installation/LibreOffice/installed/logging/en-US/log_*_en-US.log
     echo - ---dump log end---
@@ -1504,6 +1514,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libeditenglo.so
 %{baseinstdir}/program/libembobj.so
 %{baseinstdir}/program/libemboleobj.so
+%{baseinstdir}/program/libemfiolo.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
 %{baseinstdir}/program/libgielo.so
@@ -1542,7 +1553,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/librecentfile.so
-%{baseinstdir}/program/libreslo.so
 %{baseinstdir}/program/libsaxlo.so
 %{baseinstdir}/program/libscnlo.so
 %{baseinstdir}/program/libscriptframe.so
@@ -1659,7 +1669,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
+%if %{with langpacks}
 %dir %{baseinstdir}/program/resource
+%endif
 %{baseinstdir}/program/senddoc
 %dir %{baseinstdir}/program/services
 %{baseinstdir}/program/services/services.rdb
@@ -1699,11 +1711,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/*/ui
-# UI translations go into langpacks
-%if %{with langpacks}
-%exclude %{baseinstdir}/share/config/soffice.cfg/modules/*/ui/res/*
-%exclude %{baseinstdir}/share/config/soffice.cfg/*/ui/res/*
-%endif
 %dir %{baseinstdir}/share/emojiconfig
 %{baseinstdir}/share/emojiconfig/emoji.json
 %{baseinstdir}/share/palette
@@ -1966,6 +1973,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libt602filterlo.so
 %{baseinstdir}/program/libwpftwriterlo.so
 %{baseinstdir}/program/libwriterfilterlo.so
+%{baseinstdir}/program/libwriterlo.so
 %{baseinstdir}/program/libvbaswobjlo.so
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer

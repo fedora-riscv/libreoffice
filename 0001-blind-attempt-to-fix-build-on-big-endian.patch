@@ -1,0 +1,39 @@
+From cb0eb72ec40210ea7bade415ab3e78824e705c29 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Thu, 26 Oct 2017 22:24:55 +0200
+Subject: [PATCH] blind attempt to fix build on big endian
+
+Change-Id: I4dc2d5a5fbbded5f4c7a1417c150fe6b1a73a69d
+---
+ drawinglayer/source/tools/emfphelperdata.cxx | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drawinglayer/source/tools/emfphelperdata.cxx b/drawinglayer/source/tools/emfphelperdata.cxx
+index be8f17acc02f..75f1c3c8f3f3 100644
+--- a/drawinglayer/source/tools/emfphelperdata.cxx
++++ b/drawinglayer/source/tools/emfphelperdata.cxx
+@@ -42,6 +42,21 @@
+ 
+ namespace emfplushelper
+ {
++
++#ifdef OSL_BIGENDIAN
++    // little endian <-> big endian switch
++    static float GetSwapFloat(SvStream& rStream)
++    {
++        float fTmp;
++        sal_Int8* pPtr = (sal_Int8*)&fTmp;
++        rStream.ReadSChar(pPtr[3]);
++        rStream.ReadSChar(pPtr[2]);
++        rStream.ReadSChar(pPtr[1]);
++        rStream.ReadSChar(pPtr[0]);
++        return fTmp;
++    }
++#endif
++
+     const char* emfTypeToName(sal_uInt16 type)
+     {
+         switch (type)
+-- 
+2.14.1
+

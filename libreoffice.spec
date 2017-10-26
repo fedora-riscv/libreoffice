@@ -59,8 +59,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -273,8 +273,7 @@ Patch30: 0001-gtk3-only-for-3.20.patch
 Patch31: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch32: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch33: 0001-Resolves-rhbz-1471983-fatal-exception-on-older-confi.patch
-Patch34: 0001-Resolves-tdf-112933-correct-number-of-one-decimal-in.patch
-Patch35: 0001-a11y-crash-in-use-after-dispose.patch
+Patch34: 0001-a11y-crash-in-use-after-dispose.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2366,6 +2365,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Oct 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.7.2-1
+- update to 5.3.7 rc2
+
 * Mon Oct 09 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.1-2
 - Resolves: rhbz#1471983 fatal exception on older config without
   slide background panel

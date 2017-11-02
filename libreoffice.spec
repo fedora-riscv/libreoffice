@@ -70,6 +70,7 @@ Source5:        %{source_url}/libreoffice-translations-%{version}%{?libo_prerele
 Source6:        gpgkey-C2839ECAD9408FBE9531C3E9F434A1EFAFEEAEA3.gpg.asc
 Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c3162b3bc-unowinreg.dll
 Source8:        libreoffice-multiliblauncher.sh
+
 Source9:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 Source10:       %{external_url}/xmlsec1-1.2.25.tar.gz
 Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
@@ -78,6 +79,11 @@ Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #backwards compatability.
 Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
+
+Provides: bundled(hsqldb) = 1.8.0
+Provides: bundled(rhino) = 1.5
+Provides: bundled(xmlsec1) = 1.2.25
+Provides: bundled(xsltml) = 2.1.2
 
 %if 0%{?fedora}
 Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
@@ -110,6 +116,22 @@ Source113:      %{external_url}/cppunit-1.14.0.tar.gz
 Source114:      %{external_url}/libqxp-0.0.0.tar.xz
 Source115:      %{external_url}/libepubgen-0.0.1.tar.xz
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
+
+Provides: bundled(gpgme) = 1.8.0
+Provides: bundled(graphite2) = 1.3.10
+Provides: bundled(harfbuzz) = 1.4.8
+Provides: bundled(libassuan) = 2.4.3
+Provides: bundled(libcmis) = 0.5.1
+Provides: bundled(libepubgen) = 0.0.1
+Provides: bundled(libgpg-error) = 1.26
+Provides: bundled(liborcus) = 0.12.1
+Provides: bundled(libpagemaker) = 0.0.3
+Provides: bundled(libqxp) = 0.0.0
+Provides: bundled(libstaroffice) = 0.0.3
+Provides: bundled(libwps) = 0.4.6
+Provides: bundled(libzmf) = 0.0.2
+Provides: bundled(mdds) = 1.2.2
+Provides: bundled(ucpp) = 1.3.2
 %endif
 
 # build tools
@@ -2244,6 +2266,7 @@ done
 - update to 6.0.0 alpha1
 - update location of appdata files
 - use weak dependencies
+- mark bundled packages
 
 * Tue Oct 17 2017 David Tardon <dtardon@redhat.com> - 1:5.4.3.1-1
 - update to 5.4.3 rc1

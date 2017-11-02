@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        0%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2225,6 +2225,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 02 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-1.alpha1
+- update to 6.0.0 alpha1
+
 * Tue Oct 17 2017 David Tardon <dtardon@redhat.com> - 1:5.4.3.1-1
 - update to 5.4.3 rc1
 

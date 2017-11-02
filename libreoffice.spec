@@ -1380,8 +1380,8 @@ install -m 0755 -d %{buildroot}%{_datadir}/glade3/catalogs
 ln -sr %{buildroot}%{_datadir}/glade/catalogs/libreoffice-catalog.xml %{buildroot}%{_datadir}/glade3/catalogs
 
 # rhbz#1049543 install appdata
-install -m 0755 -d %{buildroot}%{_datadir}/appdata
-install -m 0644 -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/appdata
+install -m 0755 -d %{buildroot}%{_datadir}/metainfo
+install -m 0644 -p sysui/desktop/appstream-appdata/*.appdata.xml %{buildroot}%{_datadir}/metainfo
 
 # rhbz#1215800 install symbolic icons
 install -m 0755 -d %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
@@ -1411,14 +1411,14 @@ export DESTDIR=%{buildroot}
 #
 # See http://people.freedesktop.org/~hughsient/appdata/#screenshots for more details.
 #
-appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-writer.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-writer.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-calc.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-calc.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-draw.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-draw.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/appdata/libreoffice-impress.appdata.xml \
+appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-impress.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
 %endif
 
@@ -1838,7 +1838,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/base.xcd
 %{baseinstdir}/share/registry/reportbuilder.xcd
 %{baseinstdir}/program/sbase
-%{_datadir}/appdata/libreoffice-base.appdata.xml
+%{_datadir}/metainfo/libreoffice-base.appdata.xml
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
@@ -1931,7 +1931,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc
-%{_datadir}/appdata/libreoffice-calc.appdata.xml
+%{_datadir}/metainfo/libreoffice-calc.appdata.xml
 %{_datadir}/applications/libreoffice-calc.desktop
 %{_bindir}/oocalc
 %{_mandir}/man1/oocalc.1*
@@ -1948,7 +1948,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
-%{_datadir}/appdata/libreoffice-draw.appdata.xml
+%{_datadir}/metainfo/libreoffice-draw.appdata.xml
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
 %{_mandir}/man1/oodraw.1*
@@ -1978,7 +1978,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
 %{baseinstdir}/program/swriter
-%{_datadir}/appdata/libreoffice-writer.appdata.xml
+%{_datadir}/metainfo/libreoffice-writer.appdata.xml
 %{_datadir}/applications/libreoffice-writer.desktop
 %{_bindir}/oowriter
 %{_mandir}/man1/oowriter.1*
@@ -2003,7 +2003,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/impress.xcd
 %{baseinstdir}/program/pagein-impress
 %{baseinstdir}/program/simpress
-%{_datadir}/appdata/libreoffice-impress.appdata.xml
+%{_datadir}/metainfo/libreoffice-impress.appdata.xml
 %{_datadir}/applications/libreoffice-impress.desktop
 %{_bindir}/ooimpress
 %{_mandir}/man1/ooimpress.1*
@@ -2227,6 +2227,7 @@ done
 %changelog
 * Thu Nov 02 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-1.alpha1
 - update to 6.0.0 alpha1
+- update location of appdata files
 
 * Tue Oct 17 2017 David Tardon <dtardon@redhat.com> - 1:5.4.3.1-1
 - update to 5.4.3 rc1

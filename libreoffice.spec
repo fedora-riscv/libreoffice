@@ -291,6 +291,15 @@ formats, including Microsoft Office File Formats.
 Summary: All import / export filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?weak_deps}
+Recommends: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
+%else
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
@@ -298,6 +307,7 @@ Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 
 %description filters
 Metapackage to pull in all subpackages that contain import or export
@@ -308,17 +318,22 @@ Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
-%if 0%{?fedora}
-Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?weak_deps}
+Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
+Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
+Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
+Recommends: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %else
 # these two plugins used to be part of core--keep it that way
 Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
+Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
+%endif
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
@@ -2228,6 +2243,7 @@ done
 * Thu Nov 02 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-1.alpha1
 - update to 6.0.0 alpha1
 - update location of appdata files
+- use weak dependencies
 
 * Tue Oct 17 2017 David Tardon <dtardon@redhat.com> - 1:5.4.3.1-1
 - update to 5.4.3 rc1

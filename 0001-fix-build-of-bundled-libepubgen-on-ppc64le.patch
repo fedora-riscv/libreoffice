@@ -1,0 +1,26 @@
+From d6765e376706680156e71e985eeeb58bf469f849 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Sun, 5 Nov 2017 15:05:43 +0100
+Subject: [PATCH] fix build of bundled libepubgen on ppc64le
+
+Change-Id: I559058ffe2192764a27d278eea0e4d4676bbd64d
+---
+ external/libepubgen/UnpackedTarball_libepubgen.mk | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/external/libepubgen/UnpackedTarball_libepubgen.mk b/external/libepubgen/UnpackedTarball_libepubgen.mk
+index 28582a5cf0f3..312facb2bb11 100644
+--- a/external/libepubgen/UnpackedTarball_libepubgen.mk
++++ b/external/libepubgen/UnpackedTarball_libepubgen.mk
+@@ -32,6 +32,8 @@ $(eval $(call gb_UnpackedTarball_UnpackedTarball,libepubgen))
+ 
+ $(eval $(call gb_UnpackedTarball_set_tarball,libepubgen,$(EPUBGEN_TARBALL)))
+ 
++$(eval $(call gb_UnpackedTarball_update_autoconf_configs,libepubgen))
++
+ $(eval $(call gb_UnpackedTarball_set_patchlevel,libepubgen,0))
+ 
+ $(eval $(call gb_UnpackedTarball_add_patches,libepubgen,\
+-- 
+2.14.1
+

@@ -1,4 +1,4 @@
-From 0d28cfc3461c8e4cbd3c0642dd75f6a95d123a17 Mon Sep 17 00:00:00 2001
+From 47f913ccf293665bd8c7737917c8284f16f95166 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 3 Nov 2017 15:53:22 +0000
 Subject: [PATCH] gtk3: fix popover placement in RTL
@@ -9,19 +9,19 @@ Change-Id: I8c20b277ce943f915941b2af9353f98c66f9065c
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 5c34d4f..9ac5197 100644
+index cdbd1b3..61446c7 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -2482,7 +2482,7 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const tools::Rectangle&
+@@ -2480,7 +2480,7 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const Rectangle& rHelpA
  #if GTK_CHECK_VERSION(3,12,0)
  namespace
  {
--    void set_pointing_to(GtkPopover *pPopOver, const tools::Rectangle& rHelpArea)
-+    void set_pointing_to(GtkPopover *pPopOver, const tools::Rectangle& rHelpArea, const SalFrameGeometry& rGeometry)
+-    void set_pointing_to(GtkPopover *pPopOver, const Rectangle& rHelpArea)
++    void set_pointing_to(GtkPopover *pPopOver, const Rectangle& rHelpArea, const SalFrameGeometry& rGeometry)
      {
          GdkRectangle aRect;
          aRect.x = rHelpArea.Left();
-@@ -2503,6 +2503,9 @@ namespace
+@@ -2501,6 +2501,9 @@ namespace
                  break;
          }
  
@@ -31,7 +31,7 @@ index 5c34d4f..9ac5197 100644
          gtk_popover_set_pointing_to(pPopOver, &aRect);
      }
  }
-@@ -2525,7 +2528,7 @@ sal_uIntPtr GtkSalFrame::ShowPopover(const OUString& rHelpText, const tools::Rec
+@@ -2523,7 +2526,7 @@ sal_uIntPtr GtkSalFrame::ShowPopover(const OUString& rHelpText, const Rectangle&
      else if (nFlags & QuickHelpFlags::Right)
          gtk_popover_set_position(GTK_POPOVER(pWidget), GTK_POS_LEFT);
  
@@ -40,7 +40,7 @@ index 5c34d4f..9ac5197 100644
  
      gtk_popover_set_modal(GTK_POPOVER(pWidget), false);
  
-@@ -2545,7 +2548,7 @@ bool GtkSalFrame::UpdatePopover(sal_uIntPtr nId, const OUString& rHelpText, cons
+@@ -2543,7 +2546,7 @@ bool GtkSalFrame::UpdatePopover(sal_uIntPtr nId, const OUString& rHelpText, cons
  #if GTK_CHECK_VERSION(3,12,0)
      GtkWidget *pWidget = reinterpret_cast<GtkWidget*>(nId);
  

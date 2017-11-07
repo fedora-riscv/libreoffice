@@ -275,6 +275,7 @@ Patch32: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch33: 0001-Resolves-rhbz-1471983-fatal-exception-on-older-confi.patch
 Patch34: 0001-a11y-crash-in-use-after-dispose.patch
 Patch35: 0001-gtk3-fix-popover-placement-in-RTL.patch
+Patch36: 0001-Resolves-rhbz-1505379-gtk3-X-open-comboboxes-block-s.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2366,8 +2367,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Nov 06 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-2.UNBUILT
+* Tue Nov 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-2
 - fix RTL popover placement under gtk3
+- Resolves: rhbz#1505379 gtk3 + X open comboboxes block session
 
 * Thu Oct 26 2017 David Tardon <dtardon@redhat.com> - 1:5.3.7.2-1
 - update to 5.3.7 rc2

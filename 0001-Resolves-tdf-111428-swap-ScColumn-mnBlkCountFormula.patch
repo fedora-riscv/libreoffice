@@ -1,0 +1,61 @@
+From 7f1297d9b4f449eb9ada8008fb21b7046d1a8f19 Mon Sep 17 00:00:00 2001
+Message-Id: <7f1297d9b4f449eb9ada8008fb21b7046d1a8f19.1510255021.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 2 Nov 2017 12:53:14 +0100
+Subject: [PATCH] Resolves: tdf#111428 swap ScColumn::mnBlkCountFormula
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+ This is a combination of 2 commits.
+
+(cherry picked from commit 423df1fa929784c14e3a133c06468589fe9269cd)
+(cherry picked from commit 911e2aff3cc37cb7410292728ffea05fffbfb0b3)
+
+CellStoreEvent remembered the original ScColumn::mnBlkCountFormula,
+hence after inserting a column to the left the quick check of
+ScColumn::HasFormulaCell() whether there are any formula cells worked on
+the swapped in count (originally the one to the right) that happens to
+be empty in the scenario. Things worked correctly by accident if the
+next column to the right already contained a formula cell.
+
+c44fed96c49bea7365bf1200e06788860966795c
+
+Change-Id: If993856ceee657736f516a81c293506041a6b7eb
+Reviewed-on: https://gerrit.libreoffice.org/44210
+Reviewed-by: Markus Mohrhard <markus.mohrhard@googlemail.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+Reviewed-on: https://gerrit.libreoffice.org/44493
+---
+ sc/source/core/data/column.cxx | 3 +++
+ 1 file changed, 3 insertions(+)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-111428-swap-ScColumn-mnBlkCountFormula.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-111428-swap-ScColumn-mnBlkCountFormula.patch"
+
+diff --git a/sc/source/core/data/column.cxx b/sc/source/core/data/column.cxx
+index ac65f8a1b7ca..d868333c8b7a 100644
+--- a/sc/source/core/data/column.cxx
++++ b/sc/source/core/data/column.cxx
+@@ -1891,6 +1891,9 @@ void ScColumn::SwapCol(ScColumn& rCol)
+     maCellTextAttrs.swap(rCol.maCellTextAttrs);
+     maCellNotes.swap(rCol.maCellNotes);
+ 
++    // Swap all CellStoreEvent mdds event_func related.
++    std::swap( mnBlkCountFormula, rCol.mnBlkCountFormula);
++
+     // notes update caption
+     UpdateNoteCaptions(0, MAXROW);
+     rCol.UpdateNoteCaptions(0, MAXROW);
+
+--------------erAck-patch-parts--
+
+

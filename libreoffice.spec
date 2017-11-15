@@ -277,6 +277,7 @@ Patch34: 0001-a11y-crash-in-use-after-dispose.patch
 Patch35: 0001-gtk3-fix-popover-placement-in-RTL.patch
 Patch36: 0001-Resolves-rhbz-1505379-gtk3-X-open-comboboxes-block-s.patch
 Patch37: 0001-Resolves-tdf-111428-swap-ScColumn-mnBlkCountFormula.patch
+Patch38: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2368,8 +2369,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Nov 09 2017 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-3-UNBUILT
+* Wed Nov 15 2017 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-3
 - Resolves: tdf#111428 swap ScColumn::mnBlkCountFormula
+- impress constantly trying to create an internal Sidebar
 
 * Tue Nov 07 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-2
 - fix RTL popover placement under gtk3

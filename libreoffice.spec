@@ -1022,18 +1022,12 @@ git commit -q -a -m 'add Red Hat colors to palette'
 # apply patches
 git am %{patches}
 
-sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk
-sed -i -e /CppunitTest_sd_import_tests/d sd/Module_sd.mk
-sed -i -e /CppunitTest_chart2_dump/d chart2/Module_chart2.mk
-sed -i -e /CppunitTest_sw_ooxmlexport9/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk # i686
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sw_ww8export/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
 sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk # ppc64*
 sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk # aarch64/ppc64*
-sed -i -e /CppunitTest_sd_tiledrendering/d sd/Module_sd.mk # ppc64/s390x
-sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk # ppc64
-sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
 sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # i686
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i686
 sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686

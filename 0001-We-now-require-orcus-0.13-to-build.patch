@@ -1,0 +1,29 @@
+From 5c5fd9b86c8177403ab73c77fbb047a9ccad19f1 Mon Sep 17 00:00:00 2001
+From: Kohei Yoshida <kohei.yoshida@gmail.com>
+Date: Sat, 18 Nov 2017 07:46:02 -0500
+Subject: [PATCH] We now require orcus-0.13 to build.
+
+Change-Id: Ieea3eda0c3f073caf5a957e55567c84bd7261ed2
+Reviewed-on: https://gerrit.libreoffice.org/44908
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Kohei Yoshida <libreoffice@kohei.us>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 7c594aa88719..1dabb24a252c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8970,7 +8970,7 @@ AC_SUBST(ENABLE_FUZZERS)
+ dnl ===================================================================
+ dnl Orcus
+ dnl ===================================================================
+-libo_CHECK_SYSTEM_MODULE([orcus],[ORCUS],[liborcus-0.12 >= 0.12.0])
++libo_CHECK_SYSTEM_MODULE([orcus],[ORCUS],[liborcus-0.13 >= 0.13.0])
+ if test "$with_system_orcus" != "yes"; then
+     if test "$SYSTEM_BOOST" = "TRUE"; then
+         # ===========================================================
+-- 
+2.14.3
+

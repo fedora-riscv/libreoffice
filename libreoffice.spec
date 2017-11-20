@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -100,7 +100,7 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.12.1.tar.gz
+Source101:      %{external_url}/liborcus-0.13.1.tar.xz
 Source102:      %{external_url}/mdds-1.2.3.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.7.tar.xz
@@ -124,7 +124,7 @@ Provides: bundled(libassuan) = 2.4.3
 Provides: bundled(libcmis) = 0.5.1
 Provides: bundled(libepubgen) = 0.0.1
 Provides: bundled(libgpg-error) = 1.27
-Provides: bundled(liborcus) = 0.12.1
+Provides: bundled(liborcus) = 0.13.1
 Provides: bundled(libpagemaker) = 0.0.3
 Provides: bundled(libqxp) = 0.0.0
 Provides: bundled(libstaroffice) = 0.0.4
@@ -233,7 +233,7 @@ BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.0)
 BuildRequires: pkgconfig(libgltf-0.1)
-BuildRequires: pkgconfig(liborcus-0.12)
+BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libqxp-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
@@ -278,6 +278,8 @@ Patch5: 0001-fix-build-error.patch
 Patch6: 0001-blind-attempt-to-fix-build-on-big-endian.patch
 Patch7: 0001-remove-GetSwapFloat-nonsense-from-all-3-EMF-readers.patch
 Patch8: 0001-Make-testUtf8StringLiterals-work-when-char-is-unsign.patch
+Patch9: 0001-Updated-liborcus-to-0.13.1.patch
+Patch10: 0001-We-now-require-orcus-0.13-to-build.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -295,7 +297,7 @@ Patch503: 0001-one-slash-is-enough.patch
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
-%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.12\\.so.*$
+%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.13\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
 %endif
@@ -2263,6 +2265,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Nov 20 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-3.alpha1
+- rebuild for liborcus 0.13.1
+
 * Wed Nov 08 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-2.alpha1
 - rebuild for poppler 0.61.0
 

@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -278,6 +278,7 @@ Patch35: 0001-gtk3-fix-popover-placement-in-RTL.patch
 Patch36: 0001-Resolves-rhbz-1505379-gtk3-X-open-comboboxes-block-s.patch
 Patch37: 0001-Resolves-tdf-111428-swap-ScColumn-mnBlkCountFormula.patch
 Patch38: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
+Patch39: 0001-Compensate-for-loss-of-Type-1-Standard-Symbols-L-sub.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2369,6 +2370,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 21 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-4
+- Compensate for loss of Type1 Standard Symbols L
+
 * Wed Nov 15 2017 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-3
 - Resolves: tdf#111428 swap ScColumn::mnBlkCountFormula
 - impress constantly trying to create an internal Sidebar

@@ -1,0 +1,234 @@
+From 0a0927b78d42569a11e2e3520cd8469f9202b5ed Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Fri, 22 Sep 2017 17:14:56 +0200
+Subject: [PATCH] Compensate for loss of Type 1 "Standard Symbols L" substitute
+ for "Symbol"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+At least for me on Linux since LO 5.3, 'soffice
+sw/qa/extras/rtfexport/data/fdo72031.rtf' shows "Å" (rendered in "DejaVu Sans")
+instead of "⊕" (rendered in "Standard Symbols L").  That's presumably because
+47ea13ef8dc8ab9aeded6121845e3ebd1d28b292 "Kill the old Unix layout engines"
+removed support for Type 1 fonts (see "Ignore Type 1 fonts" in
+FontCfgWrapper::addFontSet, vcl/unx/generic/fontmanager/fontconfig.cxx), and my
+(Fedora 25) /usr/share/fonts/default/Type1/s050000l.pfb "Standard Symbols L" is
+a Type 1 font.  So we fell back to fontconfig's generic (weak) suggestion of
+"DejaVu Sans" as a substitute for "Symbol".
+
+So extend our fc_local.conf to suggest our "OpenSymbol" as a substitute for
+"Symbol".
+
+As that fc_local.conf was originally brought along by --with-fonts, which is
+enabled by default but can be disabled, compilation of fc_local.conf from the
+various snippets is moved to postprocess.
+
+macOS and Windows were never affected, as they both come with a "Symbol" font
+installed in the system.  (And we don't install fc_local.conf on Windows at
+all.)
+
+Reviewed-on: https://gerrit.libreoffice.org/42670
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+Tested-by: Stephan Bergmann <sbergman@redhat.com>
+(cherry picked from commit e79f1261549d9c497a38ea1af8843a86883b02cd)
+
+Change-Id: I8d6d87f24974577fd66f5f3989f606237ebb3d75
+---
+ Repository.mk                                      |  2 +-
+ external/more_fonts/Module_more_fonts.mk           |  1 -
+ external/more_fonts/Package_conf.mk                | 14 ----------
+ .../{fonts/fc_local.conf => fc_local.snippet}      |  6 -----
+ extras/source/truetype/symbol/fc_local.snippet     |  6 +++++
+ postprocess/CustomTarget_fontconfig.mk             | 30 ++++++++++++++++++++++
+ postprocess/Module_postprocess.mk                  | 13 ++++++++++
+ postprocess/Package_fontconfig.mk                  | 18 +++++++++++++
+ vcl/unx/generic/fontmanager/fontconfig.cxx         |  2 ++
+ 9 files changed, 70 insertions(+), 22 deletions(-)
+ delete mode 100644 external/more_fonts/Package_conf.mk
+ rename external/more_fonts/{fonts/fc_local.conf => fc_local.snippet} (84%)
+ create mode 100644 extras/source/truetype/symbol/fc_local.snippet
+ create mode 100644 postprocess/CustomTarget_fontconfig.mk
+ create mode 100644 postprocess/Package_fontconfig.mk
+
+diff --git a/Repository.mk b/Repository.mk
+index a1e9cb7..963d586 100644
+--- a/Repository.mk
++++ b/Repository.mk
+@@ -797,10 +797,10 @@ $(eval $(call gb_Helper_register_packages, \
+ 	cli_basetypes_copy \
+ 	desktop_install \
+ 	$(if $(filter DESKTOP,$(BUILD_TYPE)),desktop_scripts_install) \
++	$(if $(filter-out WNT,$(OS)),postprocess_fontconfig) \
+ 	extras_fonts \
+ 	extras_wordbook \
+ 	$(if $(filter MSC,$(COM)),msvc_dlls) \
+-	more_fonts_conf \
+ 	instsetoo_native_setup \
+ 	$(if $(ENABLE_OOENV),instsetoo_native_ooenv) \
+ 	odk_headers_generated \
+diff --git a/external/more_fonts/Module_more_fonts.mk b/external/more_fonts/Module_more_fonts.mk
+index f584a8f..6e52247 100644
+--- a/external/more_fonts/Module_more_fonts.mk
++++ b/external/more_fonts/Module_more_fonts.mk
+@@ -10,7 +10,6 @@
+ $(eval $(call gb_Module_Module,more_fonts))
+ 
+ $(eval $(call gb_Module_add_targets,more_fonts,\
+-	Package_conf \
+ 	ExternalPackage_caladea \
+ 	ExternalPackage_carlito \
+ 	ExternalPackage_dejavu \
+diff --git a/external/more_fonts/Package_conf.mk b/external/more_fonts/Package_conf.mk
+deleted file mode 100644
+index 2d259c2..0000000
+--- a/external/more_fonts/Package_conf.mk
++++ /dev/null
+@@ -1,14 +0,0 @@
+-# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t -*-
+-#
+-# This file is part of the LibreOffice project.
+-#
+-# This Source Code Form is subject to the terms of the Mozilla Public
+-# License, v. 2.0. If a copy of the MPL was not distributed with this
+-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-#
+-
+-$(eval $(call gb_Package_Package,more_fonts_conf,$(SRCDIR)/external/more_fonts/fonts))
+-
+-$(eval $(call gb_Package_add_file,more_fonts_conf,$(LIBO_SHARE_FOLDER)/fonts/truetype/fc_local.conf,fc_local.conf))
+-
+-# vim: set noet sw=4 ts=4:
+diff --git a/external/more_fonts/fonts/fc_local.conf b/external/more_fonts/fc_local.snippet
+similarity index 84%
+rename from external/more_fonts/fonts/fc_local.conf
+rename to external/more_fonts/fc_local.snippet
+index 6af763c..cb49929 100644
+--- a/external/more_fonts/fonts/fc_local.conf
++++ b/external/more_fonts/fc_local.snippet
+@@ -1,7 +1,3 @@
+-<?xml version="1.0"?>
+-<!DOCTYPE fontconfig SYSTEM "/etc/fonts/conf.d/fonts.dtd">
+-<fontconfig>
+-
+ 	<!-- Alias similar/metric-compatible families from various sources: -->
+ 
+ 	<alias binding="same">
+@@ -31,5 +27,3 @@
+ 	  <family>Caladea</family>
+ 	  </accept>
+ 	</alias>
+-
+-</fontconfig>
+diff --git a/extras/source/truetype/symbol/fc_local.snippet b/extras/source/truetype/symbol/fc_local.snippet
+new file mode 100644
+index 0000000..5b29e1d
+--- /dev/null
++++ b/extras/source/truetype/symbol/fc_local.snippet
+@@ -0,0 +1,6 @@
++<match target="pattern">
++  <test name="family"><string>Symbol</string></test>
++  <edit name="family" mode="append" binding="same">
++    <string>OpenSymbol</string>
++  </edit>
++</match>
+diff --git a/postprocess/CustomTarget_fontconfig.mk b/postprocess/CustomTarget_fontconfig.mk
+new file mode 100644
+index 0000000..72ff3f3
+--- /dev/null
++++ b/postprocess/CustomTarget_fontconfig.mk
+@@ -0,0 +1,30 @@
++# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t; fill-column: 100 -*-
++#
++# This file is part of the LibreOffice project.
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++
++$(eval $(call gb_CustomTarget_CustomTarget,postprocess/fontconfig))
++
++$(call gb_CustomTarget_get_workdir,postprocess/fontconfig)/fc_local.conf: \
++    $(SRCDIR)/extras/source/truetype/symbol/fc_local.snippet \
++    $(SRCDIR)/postprocess/CustomTarget_fontconfig.mk \
++    | $(call gb_CustomTarget_get_workdir,postprocess/fontconfig)/.dir
++
++ifneq ($(filter MORE_FONTS,$(BUILD_TYPE)),)
++$(call gb_CustomTarget_get_workdir,postprocess/fontconfig)/fc_local.conf: \
++    $(SRCDIR)/external/more_fonts/fc_local.snippet
++endif
++
++$(call gb_CustomTarget_get_workdir,postprocess/fontconfig)/fc_local.conf:
++	printf '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "/etc/fonts/conf.d/fonts.dtd">\n<fontconfig>\n' >$@
++	cat $(SRCDIR)/extras/source/truetype/symbol/fc_local.snippet >>$@
++ifneq ($(filter MORE_FONTS,$(BUILD_TYPE)),)
++	cat $(SRCDIR)/external/more_fonts/fc_local.snippet >>$@
++endif
++	printf '</fontconfig>\n' >>$@
++
++# vim: set noet sw=4 ts=4:
+diff --git a/postprocess/Module_postprocess.mk b/postprocess/Module_postprocess.mk
+index 5775cfa..6ab59fc 100644
+--- a/postprocess/Module_postprocess.mk
++++ b/postprocess/Module_postprocess.mk
+@@ -28,6 +28,19 @@ $(eval $(call gb_Module_add_targets,postprocess,\
+ ))
+ endif
+ 
++# For configurations that use fontconfig (cf. inclusion of
++# vcl/unx/generic/fontmanager/fontconfig.cxx in Library_vcl), add
++# instdir/share/fonts/truetype/fc_local.conf when it shall
++# contain content from at least one of external/more_fonts/fc_local.snippet
++# (conditional on MORE_FONTS in BUILD_TYPE) and
++# extras/source/truetype/symbol/fc_local.snippet (unconditional):
++ifneq ($(USING_X11)$(ENABLE_HEADLESS)$(filter ANDROID,$(OS)),)
++$(eval $(call gb_Module_add_targets,postprocess, \
++    CustomTarget_fontconfig \
++    Package_fontconfig \
++))
++endif
++
+ $(eval $(call gb_Module_add_check_targets,postprocess,\
+ 	CppunitTest_services \
+ ))
+diff --git a/postprocess/Package_fontconfig.mk b/postprocess/Package_fontconfig.mk
+new file mode 100644
+index 0000000..37f096e
+--- /dev/null
++++ b/postprocess/Package_fontconfig.mk
+@@ -0,0 +1,18 @@
++# -*- Mode: makefile-gmake; tab-width: 4; indent-tabs-mode: t; fill-column: 100 -*-
++#
++# This file is part of the LibreOffice project.
++#
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++#
++
++$(eval $(call gb_Package_Package,postprocess_fontconfig,$(call gb_CustomTarget_get_workdir,postprocess/fontconfig)))
++
++$(eval $(call gb_Package_add_files,postprocess_fontconfig,$(LIBO_SHARE_FOLDER)/fonts/truetype, \
++    fc_local.conf \
++))
++
++$(eval $(call gb_Package_use_custom_target,postprocess_fontconfig,postprocess/fontconfig))
++
++# vim: set noet sw=4 ts=4:
+diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+index d451f48..810a0e3 100644
+--- a/vcl/unx/generic/fontmanager/fontconfig.cxx
++++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
+@@ -680,6 +680,8 @@ void PrintFontManager::addFontconfigDir( const OString& rDirName )
+                         reinterpret_cast<FcChar8 const *>(aConfFileName.getStr()), FcTrue);
+         if( !bCfgOk )
+             fprintf( stderr, "FcConfigParseAndLoad( \"%s\") => %d\n", aConfFileName.getStr(), bCfgOk );
++    } else {
++        SAL_INFO("vcl", "cannot open " << aConfFileName);
+     }
+ 
+     return;
+-- 
+2.9.5
+

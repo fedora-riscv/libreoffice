@@ -1,0 +1,162 @@
+From 9206a08ada00e8762c4a634f242bd566028964bb Mon Sep 17 00:00:00 2001
+Message-Id: <9206a08ada00e8762c4a634f242bd566028964bb.1511376335.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Fri, 17 Nov 2017 11:03:45 +0100
+Subject: [PATCH] Upgrade to ICU 60.1
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Partially extracted and adjusted from
+
+Change-Id: I6d90f51ee88c4e1005edbaa93d23cfb94cb2acfb
+Reviewed-on: https://gerrit.libreoffice.org/44871
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+---
+ external/firebird/ExternalProject_firebird.mk      |   6 +
+ .../source/breakiterator/breakiterator_unicode.cxx |  21 +++
+ i18nutil/source/utility/unicode.cxx                |  11 ++
+ include/svx/strings.hrc                            |   7 +
+ svx/source/dialog/charmap.cxx                      |  23 +++
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Upgrade-to-ICU-60.1.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Upgrade-to-ICU-60.1.patch"
+
+diff -ru orig.libreoffice-6.0.0.0.alpha1/external/firebird/ExternalProject_firebird.mk libreoffice-6.0.0.0.alpha1/external/firebird/ExternalProject_firebird.mk
+--- a/external/firebird/ExternalProject_firebird.mk	2017-10-19 23:52:58.000000000 +0200
++++ b/external/firebird/ExternalProject_firebird.mk	2017-11-22 20:28:58.340429178 +0100
+@@ -26,6 +26,10 @@
+ INVOKE_FPA:="CPU=\$$(EMPTY) $${FB_CPU_ARG}"
+ endif
+ 
++ifeq ($(COM_IS_CLANG),TRUE)
++firebird_NO_CXX11_NARROWING := -Wno-c++11-narrowing
++endif
++
+ MAKE_PRE=$(call gb_Helper_extend_ld_path,$(call gb_UnpackedTarball_get_dir,icu)/source/lib) LC_ALL=C
+ 
+ MAKE_POST=$(if $(filter MACOSX,$(OS)),&& $(PERL) \
+@@ -70,6 +74,8 @@
+ 			$(if $(SYSTEM_LIBTOMMATH),$(LIBTOMMATH_CFLAGS), \
+ 				-L$(call gb_UnpackedTarball_get_dir,libtommath) \
+ 			) \
++			$(CXXFLAGS_CXX11) \
++			$(firebird_NO_CXX11_NARROWING) \
+ 		" \
+ 		&& export LDFLAGS=" \
+ 			$(if $(SYSTEM_ICU),$(ICU_LIBS), \
+diff -ru orig.libreoffice-6.0.0.0.alpha1/i18npool/source/breakiterator/breakiterator_unicode.cxx libreoffice-6.0.0.0.alpha1/i18npool/source/breakiterator/breakiterator_unicode.cxx
+--- a/i18npool/source/breakiterator/breakiterator_unicode.cxx	2017-10-19 23:52:58.000000000 +0200
++++ b/i18npool/source/breakiterator/breakiterator_unicode.cxx	2017-11-22 20:28:58.341429176 +0100
+@@ -544,6 +544,27 @@
+         } else { //word boundary break
+             lbr.breakIndex = pLineBI->preceding(nStartPos);
+             lbr.breakType = BreakType::WORDBOUNDARY;
++
++            // Special case for Slash U+002F SOLIDUS in URI and path names.
++            // TR14 defines that as SY: Symbols Allowing Break After (A).
++            // This is unwanted in paths, see also i#17155
++            if (lbr.breakIndex > 0 && Text[lbr.breakIndex-1] == '/')
++            {
++                // Look backward and take any whitespace before as a break
++                // opportunity. This also glues something like "w/o".
++                // Avoid an overly long path and break it as was indicated.
++                // Overly long here is arbitrarily defined.
++                const sal_Int32 nOverlyLong = 66;
++                sal_Int32 nPos = lbr.breakIndex - 1;
++                while (nPos > 0 && lbr.breakIndex - nPos < nOverlyLong)
++                {
++                    if (u_isWhitespace(Text.iterateCodePoints( &nPos, -1)))
++                    {
++                        lbr.breakIndex = nPos + 1;
++                        break;
++                    }
++                }
++            }
+         }
+ 
+ #define WJ 0x2060   // Word Joiner
+diff -ru orig.libreoffice-6.0.0.0.alpha1/i18nutil/source/utility/unicode.cxx libreoffice-6.0.0.0.alpha1/i18nutil/source/utility/unicode.cxx
+--- a/i18nutil/source/utility/unicode.cxx	2017-10-19 23:52:58.000000000 +0200
++++ b/i18nutil/source/utility/unicode.cxx	2017-11-22 20:28:58.342429173 +0100
+@@ -716,6 +716,17 @@
+             sRet = "mis";   // Zsye - Emoji variant
+             break;
+ #endif
++#if (U_ICU_VERSION_MAJOR_NUM >= 60)
++        case USCRIPT_MASARAM_GONDI:
++            sRet = "gon-Gonm";  // macro language code, could be wsg,esg,gno
++            break;
++        case USCRIPT_SOYOMBO:
++            sRet = "mn-Soyo";   // abugida to write Mongolian, also Tibetan and Sanskrit
++            break;
++        case USCRIPT_ZANABAZAR_SQUARE:
++            sRet = "mn-Zanb";   // abugida to write Mongolian
++            break;
++#endif
+     }
+     return sRet;
+ }
+diff -ru orig.libreoffice-6.0.0.0.alpha1/include/svx/strings.hrc libreoffice-6.0.0.0.alpha1/include/svx/strings.hrc
+--- a/include/svx/strings.hrc	2017-10-19 23:52:58.000000000 +0200
++++ b/include/svx/strings.hrc	2017-11-22 20:28:58.343429171 +0100
+@@ -1588,6 +1588,13 @@
+ #define RID_SUBSETSTR_OSAGE                                 NC_("RID_SUBSETMAP", "Osage")
+ #define RID_SUBSETSTR_TANGUT                                NC_("RID_SUBSETMAP", "Tangut")
+ #define RID_SUBSETSTR_TANGUT_COMPONENTS                     NC_("RID_SUBSETMAP", "Tangut Components")
++#define RID_SUBSETSTR_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_F    NC_("RID_SUBSETMAP", "CJK Unified Ideographs Extension F")
++#define RID_SUBSETSTR_KANA_EXTENDED_A                       NC_("RID_SUBSETMAP", "Kana Extended-A")
++#define RID_SUBSETSTR_MASARAM_GONDI                         NC_("RID_SUBSETMAP", "Masaram Gondi")
++#define RID_SUBSETSTR_NUSHU                                 NC_("RID_SUBSETMAP", "Nushu")
++#define RID_SUBSETSTR_SOYOMBO                               NC_("RID_SUBSETMAP", "Soyombo")
++#define RID_SUBSETSTR_SYRIAC_SUPPLEMENT                     NC_("RID_SUBSETMAP", "Syriac Supplement")
++#define RID_SUBSETSTR_ZANABAZAR_SQUARE                      NC_("RID_SUBSETMAP", "Zanabazar Square")
+ 
+ #endif
+ 
+diff -ru orig.libreoffice-6.0.0.0.alpha1/svx/source/dialog/charmap.cxx libreoffice-6.0.0.0.alpha1/svx/source/dialog/charmap.cxx
+--- a/svx/source/dialog/charmap.cxx	2017-10-19 23:52:58.000000000 +0200
++++ b/svx/source/dialog/charmap.cxx	2017-11-22 20:28:58.343429171 +0100
+@@ -1832,6 +1832,29 @@
+                     aAllSubsets.emplace_back( 0x18800, 0x18AFF, SvxResId(RID_SUBSETSTR_TANGUT_COMPONENTS) );
+                     break;
+ #endif
++#if (U_ICU_VERSION_MAJOR_NUM >= 60)
++                case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_F:
++                    aAllSubsets.emplace_back( 0x2CEB0, 0x2EBE0, SvxResId(RID_SUBSETSTR_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_F) );
++                    break;
++                case UBLOCK_KANA_EXTENDED_A:
++                    aAllSubsets.emplace_back( 0x1B100, 0x1B12F, SvxResId(RID_SUBSETSTR_KANA_EXTENDED_A) );
++                    break;
++                case UBLOCK_MASARAM_GONDI:
++                    aAllSubsets.emplace_back( 0x11D00, 0x11D5F, SvxResId(RID_SUBSETSTR_MASARAM_GONDI) );
++                    break;
++                case UBLOCK_NUSHU:
++                    aAllSubsets.emplace_back( 0x1B170, 0x1B2FF, SvxResId(RID_SUBSETSTR_NUSHU) );
++                    break;
++                case UBLOCK_SOYOMBO:
++                    aAllSubsets.emplace_back( 0x11A50, 0x11AAF, SvxResId(RID_SUBSETSTR_SOYOMBO) );
++                    break;
++                case UBLOCK_SYRIAC_SUPPLEMENT:
++                    aAllSubsets.emplace_back( 0x0860, 0x086f, SvxResId(RID_SUBSETSTR_SYRIAC_SUPPLEMENT) );
++                    break;
++                case UBLOCK_ZANABAZAR_SQUARE:
++                    aAllSubsets.emplace_back( 0x11A00, 0x11A4F, SvxResId(RID_SUBSETSTR_ZANABAZAR_SQUARE) );
++                    break;
++#endif
+ 
+             }
+ 
+
+--------------erAck-patch-parts--
+
+

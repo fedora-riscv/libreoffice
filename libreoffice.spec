@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -280,6 +280,7 @@ Patch7: 0001-remove-GetSwapFloat-nonsense-from-all-3-EMF-readers.patch
 Patch8: 0001-Make-testUtf8StringLiterals-work-when-char-is-unsign.patch
 Patch9: 0001-Updated-liborcus-to-0.13.1.patch
 Patch10: 0001-We-now-require-orcus-0.13-to-build.patch
+Patch11: 0001-prepare-for-build-with-ICU-60.1.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2265,6 +2266,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Nov 22 2017 Eike Rathke <erack@redhat.com> - 1:6.0.0.0-4.alpha1
+- prepare for build with ICU 60.1
+
 * Mon Nov 20 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-3.alpha1
 - rebuild for liborcus 0.13.1
 

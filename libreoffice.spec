@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%global libo_prerelease .alpha1
+%global libo_prerelease .beta1
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -85,10 +85,6 @@ Provides: bundled(rhino) = 1.5
 Provides: bundled(xmlsec1) = 1.2.25
 Provides: bundled(xsltml) = 2.1.2
 
-%if 0%{?fedora}
-Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
-%endif
-
 # symbolic icons
 Source42:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-base-symbolic.svg
 Source43:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-calc-symbolic.svg
@@ -101,13 +97,13 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source101:      %{external_url}/liborcus-0.13.1.tar.xz
-Source102:      %{external_url}/mdds-1.2.3.tar.bz2
+Source102:      %{external_url}/mdds-1.3.1.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.7.tar.xz
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.2.tar.xz
-Source107:      %{external_url}/libstaroffice-0.0.4.tar.xz
-Source108:      %{external_url}/harfbuzz-1.4.8.tar.bz2
+Source107:      %{external_url}/libstaroffice-0.0.5.tar.xz
+Source108:      %{external_url}/harfbuzz-1.7.0.tar.bz2
 Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
 Source110:      %{external_url}/gpgme-1.9.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.27.tar.bz2
@@ -119,7 +115,7 @@ Source115:      %{external_url}/libepubgen-0.0.1.tar.bz2
 
 Provides: bundled(gpgme) = 1.9.0
 Provides: bundled(graphite2) = 1.3.10
-Provides: bundled(harfbuzz) = 1.4.8
+Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
 Provides: bundled(libcmis) = 0.5.1
 Provides: bundled(libepubgen) = 0.0.1
@@ -127,10 +123,10 @@ Provides: bundled(libgpg-error) = 1.27
 Provides: bundled(liborcus) = 0.13.1
 Provides: bundled(libpagemaker) = 0.0.3
 Provides: bundled(libqxp) = 0.0.0
-Provides: bundled(libstaroffice) = 0.0.4
+Provides: bundled(libstaroffice) = 0.0.5
 Provides: bundled(libwps) = 0.4.7
 Provides: bundled(libzmf) = 0.0.2
-Provides: bundled(mdds) = 1.2.3
+Provides: bundled(mdds) = 1.3.1
 Provides: bundled(ucpp) = 1.3.2
 %endif
 
@@ -232,7 +228,6 @@ BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.0)
-BuildRequires: pkgconfig(libgltf-0.1)
 BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libqxp-0.0)
@@ -273,21 +268,11 @@ Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch3: 0001-gtk3-only-for-3.20.patch
-Patch4: 0001-allow-to-override-ENABLE_STRIP-in-the-installer.patch
-Patch5: 0001-fix-build-error.patch
-Patch6: 0001-blind-attempt-to-fix-build-on-big-endian.patch
-Patch7: 0001-remove-GetSwapFloat-nonsense-from-all-3-EMF-readers.patch
-Patch8: 0001-Make-testUtf8StringLiterals-work-when-char-is-unsign.patch
-Patch9: 0001-Updated-liborcus-to-0.13.1.patch
-Patch10: 0001-We-now-require-orcus-0.13-to-build.patch
-Patch11: 0001-prepare-for-build-with-ICU-60.1.patch
+Patch4: 0001-fix-includes-in-aarch64-bridge.patch
 
 %if 0%{?rhel}
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
-Patch501: 0001-fix-build-with-older-boost.patch
-Patch502: 0001-fix-build-of-bundled-libepubgen-on-ppc64le.patch
-Patch503: 0001-one-slash-is-enough.patch
 %endif
 
 %global instdir %{_libdir}
@@ -1035,6 +1020,7 @@ sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # i686
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i686
 sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686
 sed -i -e /CppunitTest_sd_export_ooxml2/d sd/Module_sd.mk # i686
+sed -i -e /CppunitTest_sw_ooxmlexport4/d sw/Module_sw.mk
 %if 0%{?rhel}
 sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
 sed -i -e /CppunitTest_writerperfect_draw/d writerperfect/Module_writerperfect.mk
@@ -1073,11 +1059,9 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-gltf --enable-python=system
+%define distrooptions --disable-eot --enable-python=system
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4 --with-system-opencollada --with-system-ucpp
-export OPENCOLLADA_CFLAGS='-I/usr/include/COLLADABaseUtils -I/usr/include/COLLADAFramework -I/usr/include/COLLADASaxFrameworkLoader -I/usr/include/GeneratedSaxParser'
-export OPENCOLLADA_LIBS='-lOpenCOLLADABaseUtils -lOpenCOLLADAFramework -lOpenCOLLADASaxFrameworkLoader -lGeneratedSaxParser'
+%define distrooptions --enable-eot --enable-kde4 --with-system-ucpp
 %endif
 
 %if %{with langpacks}
@@ -1743,6 +1727,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_breeze_dark.zip
+%{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_helpimg.zip
 %{baseinstdir}/share/config/images_hicontrast.zip
@@ -1831,7 +1816,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/bootstraprc
 %{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/setuprc
-%{baseinstdir}/program/intro.*
+%{baseinstdir}/program/intro.png
+%{baseinstdir}/program/intro-highres.png
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
 %{baseinstdir}/program/sofficerc
@@ -2266,6 +2252,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Nov 25 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-5.beta1
+- update to 6.0.0 beta1
+
 * Wed Nov 22 2017 Eike Rathke <erack@redhat.com> - 1:6.0.0.0-4.alpha1
 - prepare for build with ICU 60.1
 

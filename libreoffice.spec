@@ -280,6 +280,12 @@ Patch500: 0001-disable-libe-book-support.patch
 %global sdkinstdir %{baseinstdir}/sdk
 %global datadir %{_datadir}/%{name}
 %global fontname opensymbol
+# HACK: Get the data dir for -data subpackage. I haven't found any better
+# way to do this...
+%global oldname %{name}
+%global name %{name}-data
+%global lodatadocdir %{_pkgdocdir}
+%global name %{oldname}
 
 # rhbz#1085420 make sure we do not provide bundled libraries
 %if 0%{?rhel}
@@ -1283,8 +1289,8 @@ rm -rf %{buildroot}%{baseinstdir}/share/fonts
 install -m 0755 -d %{buildroot}%{datadir}
 rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE* %{buildroot}%{baseinstdir}/NOTICE
 # rhbz#1473749 ensure display of files in license/about dialogs works
-ln -sr %{buildroot}%{_docdir}/libreoffice-data/LICENSE.fodt %{buildroot}%{baseinstdir}/LICENSE.fodt
-ln -sr %{buildroot}%{_docdir}/libreoffice-data/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
+ln -sr %{buildroot}%{lodatadocdir}/LICENSE.fodt %{buildroot}%{baseinstdir}/LICENSE.fodt
+ln -sr %{buildroot}%{lodatadocdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through

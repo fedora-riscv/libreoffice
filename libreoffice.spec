@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 5.4.3
+%global libo_version 5.4.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -56,7 +56,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -250,7 +250,6 @@ Patch5: 0001-gtk3-only-for-3.20.patch
 Patch6: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
-Patch9: 0001-Compensate-for-loss-of-Type-1-Standard-Symbols-L-sub.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2218,6 +2217,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Dec 01 2017 David Tardon <dtardon@redhat.com> - 1:5.4.4.1-1
+- update to 5.4.4 rc1
+
 * Sat Nov 11 2017 David Tardon <dtardon@redhat.com> - 1:5.4.3.2-1
 - update to 5.4.3 rc2
 

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -250,6 +250,7 @@ Patch5: 0001-gtk3-only-for-3.20.patch
 Patch6: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
+Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2217,6 +2218,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Dec 06 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.4.4.1-2-UNBUILT
+- Related: tdf#105998 except cut and paste case
+
 * Fri Dec 01 2017 David Tardon <dtardon@redhat.com> - 1:5.4.4.1-1
 - update to 5.4.4 rc1
 

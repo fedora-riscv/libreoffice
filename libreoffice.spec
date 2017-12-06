@@ -1313,6 +1313,7 @@ pushd %{buildroot}%{baseinstdir}/share/fonts/truetype
 install -d -m 0755 %{buildroot}%{_fontdir}
 install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
+rm -rf %{buildroot}%{baseinstdir}/share/fonts/truetype/*.ttf
 
 # move platform-independent data into shared dir
 install -m 0755 -d %{buildroot}%{datadir}

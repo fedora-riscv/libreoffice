@@ -1312,7 +1312,6 @@ pushd %{buildroot}%{baseinstdir}/share/fonts/truetype
 install -d -m 0755 %{buildroot}%{_fontdir}
 install -p -m 0644 *.ttf %{buildroot}%{_fontdir}
 popd
-rm -rf %{buildroot}%{baseinstdir}/share/fonts
 
 # move platform-independent data into shared dir
 install -m 0755 -d %{buildroot}%{datadir}
@@ -1796,6 +1795,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/versionrc
 %{baseinstdir}/program/xid-fullscreen-on-all-monitors
 %dir %{baseinstdir}/share
+%dir %{baseinstdir}/share/fonts
+%dir %{baseinstdir}/share/fonts/truetype
+%{baseinstdir}/share/fonts/truetype/fc_local.conf
 %dir %{baseinstdir}/share/Scripts
 %{baseinstdir}/share/Scripts/java
 %dir %{baseinstdir}/share/autotext

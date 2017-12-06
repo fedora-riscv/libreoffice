@@ -269,6 +269,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-fix-includes-in-aarch64-bridge.patch
+Patch5: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 
 %if 0%{?rhel}
 # not upstreamed

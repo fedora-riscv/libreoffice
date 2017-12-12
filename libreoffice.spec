@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -280,6 +280,7 @@ Patch37: 0001-Resolves-tdf-111428-swap-ScColumn-mnBlkCountFormula.patch
 Patch38: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch39: 0001-Compensate-for-loss-of-Type-1-Standard-Symbols-L-sub.patch
 Patch40: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
+Patch41: 0001-Resolves-tdf-114406-treat-as-the-operator-that-it-is.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2374,6 +2375,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Dec 12 2017 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-6
+- Resolves: tdf#114406 treat % as the operator that it is
+
 * Wed Dec 06 2017 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-5
 - tdf#105998 missing hairlines in cut and paste of shapes from draw
   to writer as bitmaps

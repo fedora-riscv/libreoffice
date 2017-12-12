@@ -1,4 +1,4 @@
-From 15cdcd0346b7aa98d4697edec8aeea9c810efa62 Mon Sep 17 00:00:00 2001
+From 6e5d7b41eaee08cd4ff169f2268e4ca9c00326d2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 5 Dec 2017 17:13:28 +0000
 Subject: [PATCH] Related: tdf#105998 except cut and paste as bitmap instead of
@@ -18,22 +18,22 @@ Tested-by: Jenkins <ci@libreoffice.org>
 Reviewed-by: Caolán McNamara <caolanm@redhat.com>
 Tested-by: Caolán McNamara <caolanm@redhat.com>
 ---
- .../source/processor2d/vclpixelprocessor2d.cxx     | 25 +++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ .../source/processor2d/vclpixelprocessor2d.cxx     | 23 ++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
 diff --git a/drawinglayer/source/processor2d/vclpixelprocessor2d.cxx b/drawinglayer/source/processor2d/vclpixelprocessor2d.cxx
-index 9c21c83ee..5c5c0bb 100644
+index 4b5e45c..adde2ab 100644
 --- a/drawinglayer/source/processor2d/vclpixelprocessor2d.cxx
 +++ b/drawinglayer/source/processor2d/vclpixelprocessor2d.cxx
 @@ -41,6 +41,7 @@
- #include "helperwrongspellrenderer.hxx"
+ #include <helperwrongspellrenderer.hxx>
  #include <drawinglayer/primitive2d/fillhatchprimitive2d.hxx>
  #include <basegfx/polygon/b2dpolygontools.hxx>
 +#include <basegfx/polygon/b2dpolypolygontools.hxx>
  #include <vcl/hatch.hxx>
  #include <tools/diagnose_ex.h>
  #include <com/sun/star/awt/PosSize.hpp>
-@@ -210,10 +211,6 @@ namespace drawinglayer
+@@ -248,10 +249,6 @@ namespace drawinglayer
                  maBColorModifierStack.getModifiedColor(
                      rSource.getLineAttribute().getColor()));
  
@@ -44,7 +44,7 @@ index 9c21c83ee..5c5c0bb 100644
              double fLineWidth(rSource.getLineAttribute().getWidth());
  
              if(basegfx::fTools::more(fLineWidth, 0.0))
-@@ -234,6 +231,24 @@ namespace drawinglayer
+@@ -272,6 +269,24 @@ namespace drawinglayer
                  fLineWidth = 0.0;
              }
  
@@ -70,5 +70,5 @@ index 9c21c83ee..5c5c0bb 100644
              bool bTryWorked(false);
  
 -- 
-2.9.5
+2.14.3
 

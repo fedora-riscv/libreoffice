@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%global libo_prerelease .beta1
+%global libo_prerelease .beta2
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.0
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -99,7 +99,7 @@ Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.
 Source101:      %{external_url}/liborcus-0.13.1.tar.xz
 Source102:      %{external_url}/mdds-1.3.1.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
-Source104:      %{external_url}/libwps-0.4.7.tar.xz
+Source104:      %{external_url}/libwps-0.4.8.tar.xz
 Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
 Source106:      %{external_url}/libzmf-0.0.2.tar.xz
 Source107:      %{external_url}/libstaroffice-0.0.5.tar.xz
@@ -110,7 +110,7 @@ Source111:      %{external_url}/libgpg-error-1.27.tar.bz2
 Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source113:      %{external_url}/cppunit-1.14.0.tar.gz
 Source114:      %{external_url}/libqxp-0.0.0.tar.xz
-Source115:      %{external_url}/libepubgen-0.0.1.tar.bz2
+Source115:      %{external_url}/libepubgen-0.1.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
 
 Provides: bundled(gpgme) = 1.9.0
@@ -118,7 +118,7 @@ Provides: bundled(graphite2) = 1.3.10
 Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
 Provides: bundled(libcmis) = 0.5.1
-Provides: bundled(libepubgen) = 0.0.1
+Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(libgpg-error) = 1.27
 Provides: bundled(liborcus) = 0.13.1
 Provides: bundled(libpagemaker) = 0.0.3
@@ -227,7 +227,7 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
-BuildRequires: pkgconfig(libepubgen-0.0)
+BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(libqxp-0.0)
@@ -268,8 +268,8 @@ Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch3: 0001-gtk3-only-for-3.20.patch
-Patch4: 0001-fix-includes-in-aarch64-bridge.patch
-Patch5: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
+Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
+Patch5: 0001-external-upload-libepubgen-0.1.0.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2262,6 +2262,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Dec 14 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-8.beta2
+- update to 6.0.0 beta2
+
 * Mon Dec 04 2017 Caolán McNamara <caolanm@redhat.com> - 1:6.0.0.0-7.beta1
 - Rebuild for hunspell 1.6.2
 

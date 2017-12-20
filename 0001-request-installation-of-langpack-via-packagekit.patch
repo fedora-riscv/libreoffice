@@ -1,0 +1,551 @@
+From 29b1b27def32445a468b9f16d704777bba292025 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 20 Dec 2017 15:29:39 +0000
+Subject: [PATCH] request installation of langpack via packagekit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+if ui is set to track the locale automatically and the current locale
+has no match in installed resources but has a match in the list of
+languages that libreoffice was compiled to contain
+
+so e.g. de_AT locale shouldn't trigger the installation of anything if
+langpack-de is already installed and yue_HK shouldn't trigger install
+of anything cause that not supported (at time of writing) for libreoffice
+
+put Fedora/RHEL/Ubuntu naming schemes in here.
+
+I moved the lang code from svl to svtools so I could use the restart dialog
+to prompt to restart after the langpack is installed, but packagekit's blocking
+mode seems to be no longer blocking and control returns immediately which is a
+change since the last time I played with this stuff, so drop the restart thing
+for now. The lack of a blocking modal also makes the "run this on idle when there's
+a toplevel window up and running" a bit futile, but lets keep that for now anyway.
+
+also...
+
+set dbus id for existing DbusSessionHelper users
+
+Change-Id: I64329e21ae79b6607856de9781bee0274b9cb136
+Reviewed-on: https://gerrit.libreoffice.org/46854
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 7cf4eeed81fd333c87dedffa792f5d547b7981f0)
+
+Change-Id: Ice731be539850338ccdd8af87839e0b4d83f01e7
+---
+ config_host/config_langs.h.in                      |  10 ++
+ config_host/config_vendor.h.in                     |  10 ++
+ configure.ac                                       |   4 +
+ cui/source/options/optgdlg.cxx                     |   3 +-
+ desktop/source/app/langselect.cxx                  |   3 +-
+ include/svl/languageoptions.hxx                    |   3 -
+ include/svtools/langhelp.hxx                       |   3 +
+ include/vcl/sysdata.hxx                            |  13 ++
+ .../registry/data/org/openoffice/Office/Common.xcu |   3 +
+ .../schema/org/openoffice/Office/Common.xcs        |   6 +
+ sfx2/source/appl/appserv.cxx                       |  11 +-
+ svl/source/config/languageoptions.cxx              |  33 ------
+ svtools/source/misc/langhelp.cxx                   | 132 ++++++++++++++++++++-
+ sw/source/uibase/app/apphdl.cxx                    |  10 +-
+ vcl/unx/generic/fontmanager/fontconfig.cxx         |  10 +-
+ 15 files changed, 205 insertions(+), 49 deletions(-)
+ create mode 100644 config_host/config_langs.h.in
+ create mode 100644 config_host/config_vendor.h.in
+
+diff --git a/config_host/config_langs.h.in b/config_host/config_langs.h.in
+new file mode 100644
+index 0000000..d60a5c1
+--- /dev/null
++++ b/config_host/config_langs.h.in
+@@ -0,0 +1,10 @@
++/* Configuration of restriction on supported ui languages, by the
++ * --with-lang option.
++ */
++
++#ifndef CONFIG_LANGS_H
++#define CONFIG_LANGS_H
++
++#define WITH_LANG ""
++
++#endif
+diff --git a/config_host/config_vendor.h.in b/config_host/config_vendor.h.in
+new file mode 100644
+index 0000000..3260221
+--- /dev/null
++++ b/config_host/config_vendor.h.in
+@@ -0,0 +1,10 @@
++/* Configuration of restriction on supported ui languages, by the
++ * --with-lang option.
++ */
++
++#ifndef CONFIG_VENDOR_H
++#define CONFIG_VENDOR_H
++
++#define OOO_VENDOR ""
++
++#endif
+diff --git a/configure.ac b/configure.ac
+index 9b3ccf6..0a89bf3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -11784,6 +11784,7 @@ if test "$enable_release_build" = "" -o "$enable_release_build" = "no"; then
+     ALL_LANGS=`echo $ALL_LANGS qtz`
+ fi
+ AC_SUBST(ALL_LANGS)
++AC_DEFINE_UNQUOTED(WITH_LANG,"$WITH_LANG")
+ AC_SUBST(WITH_LANG)
+ AC_SUBST(WITH_LANG_LIST)
+ AC_SUBST(GIT_NEEDED_SUBMODULES)
+@@ -11932,6 +11933,7 @@ else
+     OOO_VENDOR="$with_vendor"
+     AC_MSG_RESULT([$OOO_VENDOR])
+ fi
++AC_DEFINE_UNQUOTED(OOO_VENDOR,"$OOO_VENDOR")
+ AC_SUBST(OOO_VENDOR)
+ 
+ if test "$_os" = "Android" ; then
+@@ -12545,6 +12547,7 @@ AC_CONFIG_HEADERS([config_host/config_gio.h])
+ AC_CONFIG_HEADERS([config_host/config_global.h])
+ AC_CONFIG_HEADERS([config_host/config_gpgme.h])
+ AC_CONFIG_HEADERS([config_host/config_java.h])
++AC_CONFIG_HEADERS([config_host/config_langs.h])
+ AC_CONFIG_HEADERS([config_host/config_lgpl.h])
+ AC_CONFIG_HEADERS([config_host/config_liblangtag.h])
+ AC_CONFIG_HEADERS([config_host/config_locales.h])
+@@ -12556,6 +12559,7 @@ AC_CONFIG_HEADERS([config_host/config_options.h])
+ AC_CONFIG_HEADERS([config_host/config_options_calc.h])
+ AC_CONFIG_HEADERS([config_host/config_test.h])
+ AC_CONFIG_HEADERS([config_host/config_typesizes.h])
++AC_CONFIG_HEADERS([config_host/config_vendor.h])
+ AC_CONFIG_HEADERS([config_host/config_vcl.h])
+ AC_CONFIG_HEADERS([config_host/config_vclplug.h])
+ AC_CONFIG_HEADERS([config_host/config_version.h])
+diff --git a/cui/source/options/optgdlg.cxx b/cui/source/options/optgdlg.cxx
+index 1c90931..7965179 100644
+--- a/cui/source/options/optgdlg.cxx
++++ b/cui/source/options/optgdlg.cxx
+@@ -21,6 +21,7 @@
+ #include <svl/zforlist.hxx>
+ #include <svl/currencytable.hxx>
+ #include <svtools/grfmgr.hxx>
++#include <svtools/langhelp.hxx>
+ #include <svl/flagitem.hxx>
+ #include <sfx2/dispatch.hxx>
+ #include <unotools/lingucfg.hxx>
+@@ -1122,7 +1123,7 @@ namespace
+     LanguageTag GetInstalledLocaleForSystemUILanguage()
+     {
+         css::uno::Sequence<OUString> inst(officecfg::Setup::Office::InstalledLocales::get()->getElementNames());
+-        return LanguageTag(getInstalledLocaleForSystemUILanguage(inst)).makeFallback();
++        return LanguageTag(getInstalledLocaleForSystemUILanguage(inst, false)).makeFallback();
+     }
+ }
+ 
+diff --git a/desktop/source/app/langselect.cxx b/desktop/source/app/langselect.cxx
+index 4ce877a..86ce743 100644
+--- a/desktop/source/app/langselect.cxx
++++ b/desktop/source/app/langselect.cxx
+@@ -37,6 +37,7 @@
+ #include <sal/log.hxx>
+ #include <sal/types.h>
+ #include <svl/languageoptions.hxx>
++#include <svtools/langhelp.hxx>
+ 
+ #include <app.hxx>
+ 
+@@ -103,7 +104,7 @@ bool prepareLocale() {
+         }
+     }
+     if (locale.isEmpty()) {
+-        locale = getInstalledLocaleForSystemUILanguage(inst);
++        locale = getInstalledLocaleForSystemUILanguage(inst, true);
+     }
+     if (locale.isEmpty()) {
+         return false;
+diff --git a/include/svl/languageoptions.hxx b/include/svl/languageoptions.hxx
+index f386cb6..6de8eb5 100644
+--- a/include/svl/languageoptions.hxx
++++ b/include/svl/languageoptions.hxx
+@@ -131,9 +131,6 @@ public:
+     bool            isCJKKeyboardLayoutInstalled() const;
+ };
+ 
+-OUString SVL_DLLPUBLIC getInstalledLocaleForLanguage(css::uno::Sequence<OUString> const & installed, OUString const & locale);
+-OUString SVL_DLLPUBLIC getInstalledLocaleForSystemUILanguage(css::uno::Sequence<OUString> const & installed);
+-
+ #endif // INCLUDED_SVL_LANGUAGEOPTIONS_HXX
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/include/svtools/langhelp.hxx b/include/svtools/langhelp.hxx
+index a3a84df..db22bb3 100644
+--- a/include/svtools/langhelp.hxx
++++ b/include/svtools/langhelp.hxx
+@@ -22,6 +22,9 @@
+  */
+ SVT_DLLPUBLIC void localizeWebserviceURI( OUString& io_rURI );
+ 
++OUString SVT_DLLPUBLIC getInstalledLocaleForLanguage(css::uno::Sequence<OUString> const & installed, OUString const & locale);
++OUString SVT_DLLPUBLIC getInstalledLocaleForSystemUILanguage(css::uno::Sequence<OUString> const & installed, bool bRequestInstallIfMissing);
++
+ #endif
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/include/vcl/sysdata.hxx b/include/vcl/sysdata.hxx
+index e427e3a..fd7ec93 100644
+--- a/include/vcl/sysdata.hxx
++++ b/include/vcl/sysdata.hxx
+@@ -98,6 +98,19 @@ struct SystemEnvData
+     }
+ };
+ 
++inline sal_uInt32 GetDbusId(const SystemEnvData& rData)
++{
++#if defined(_WIN32) || defined( MACOSX ) || defined( ANDROID ) || defined( IOS )
++    (void)rData;
++    return 0;
++#elif defined( UNX )
++    return rData.aWindow;
++#else
++    (void)rData;
++    return 0;
++#endif
++}
++
+ struct SystemParentData
+ {
+     sal_uInt32      nSize;            // size in bytes of this structure
+diff --git a/officecfg/registry/data/org/openoffice/Office/Common.xcu b/officecfg/registry/data/org/openoffice/Office/Common.xcu
+index 6b94ff9..26d1ba0 100644
+--- a/officecfg/registry/data/org/openoffice/Office/Common.xcu
++++ b/officecfg/registry/data/org/openoffice/Office/Common.xcu
+@@ -535,6 +535,9 @@
+       <prop oor:name="EnableFontInstallation" oor:type="xs:boolean">
+         <value install:module="unx">true</value>
+       </prop>
++      <prop oor:name="EnableLangpackInstallation" oor:type="xs:boolean">
++        <value install:module="unx">true</value>
++      </prop>
+   </node>
+   <node oor:name="Classification">
+       <prop oor:name="Policy" oor:type="xs:short">
+diff --git a/officecfg/registry/schema/org/openoffice/Office/Common.xcs b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
+index f9816fc..2884179 100644
+--- a/officecfg/registry/schema/org/openoffice/Office/Common.xcs
++++ b/officecfg/registry/schema/org/openoffice/Office/Common.xcs
+@@ -6382,6 +6382,12 @@
+         </info>
+         <value>true</value>
+       </prop>
++      <prop oor:name="EnableLangpackInstallation" oor:type="xs:boolean" oor:nillable="false">
++        <info>
++           <desc>Specifies if missing langpack installation should be triggered.</desc>
++        </info>
++        <value>true</value>
++      </prop>
+     </group>
+     <group oor:name="Classification">
+       <info>
+diff --git a/sfx2/source/appl/appserv.cxx b/sfx2/source/appl/appserv.cxx
+index 1e2a2ec..a22d09a 100644
+--- a/sfx2/source/appl/appserv.cxx
++++ b/sfx2/source/appl/appserv.cxx
+@@ -59,6 +59,7 @@
+ #include <unotools/configmgr.hxx>
+ #include <tools/diagnose_ex.h>
+ #include <vcl/layout.hxx>
++#include <vcl/sysdata.hxx>
+ #include <svl/intitem.hxx>
+ #include <svl/eitem.hxx>
+ #include <svl/stritem.hxx>
+@@ -184,7 +185,7 @@ namespace
+             return false;
+         }
+     }
+-    void lcl_tryLoadBibliography()
++    void lcl_tryLoadBibliography(const vcl::Window* pTopWindow)
+     {
+         // lp#527938, debian#602953, fdo#33266, i#105408
+         // make sure we actually can instantiate services from base first
+@@ -196,7 +197,11 @@ namespace
+                 using namespace svtools;
+                 Reference< XSyncDbusSessionHelper > xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
+                 Sequence< OUString > vPackages { "libreoffice-base" };
+-                xSyncDbusSessionHelper->InstallPackageNames(0, vPackages, OUString());
++
++                const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
++                sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
++
++                xSyncDbusSessionHelper->InstallPackageNames(nDbusId, vPackages, OUString());
+                 // Ill be back (hopefully)!
+                 SolarMutexGuard aGuard;
+                 executeRestartDialog(comphelper::getProcessComponentContext(), nullptr, RESTART_REASON_BIBLIOGRAPHY_INSTALL);
+@@ -1661,7 +1666,7 @@ void SfxApplication::OfaExec_Impl( SfxRequest& rReq )
+         break;
+ 
+         case SID_COMP_BIBLIOGRAPHY:
+-            lcl_tryLoadBibliography();
++            lcl_tryLoadBibliography(GetTopWindow());
+         break;
+     }
+ }
+diff --git a/svl/source/config/languageoptions.cxx b/svl/source/config/languageoptions.cxx
+index 9f9fe45..74af031 100644
+--- a/svl/source/config/languageoptions.cxx
++++ b/svl/source/config/languageoptions.cxx
+@@ -27,7 +27,6 @@
+ #include <rtl/instance.hxx>
+ #include <com/sun/star/i18n/ScriptType.hpp>
+ #include <unotools/syslocale.hxx>
+-#include <officecfg/System.hxx>
+ 
+ #ifdef _WIN32
+ #if !defined WIN32_LEAN_AND_MEAN
+@@ -256,41 +255,9 @@ bool SvtSystemLanguageOptions::isKeyboardLayoutTypeInstalled(sal_Int16 scriptTyp
+     return isInstalled;
+ }
+ 
+-
+ bool SvtSystemLanguageOptions::isCJKKeyboardLayoutInstalled() const
+ {
+     return isKeyboardLayoutTypeInstalled(css::i18n::ScriptType::ASIAN);
+ }
+ 
+-OUString getInstalledLocaleForLanguage(css::uno::Sequence<OUString> const & installed, OUString const & locale)
+-{
+-    if (locale.isEmpty())
+-        return OUString();  // do not attempt to resolve anything
+-
+-    for (sal_Int32 i = 0; i != installed.getLength(); ++i) {
+-        if (installed[i] == locale) {
+-            return installed[i];
+-        }
+-    }
+-    std::vector<OUString> fallbacks(LanguageTag(locale).getFallbackStrings(false));
+-    for (OUString & rf : fallbacks) {
+-        for (sal_Int32 i = 0; i != installed.getLength(); ++i) {
+-            if (installed[i] == rf) {
+-                return installed[i];
+-            }
+-        }
+-    }
+-    return OUString();
+-}
+-
+-OUString getInstalledLocaleForSystemUILanguage(const css::uno::Sequence<OUString>& rLocaleElementNames)
+-{
+-    OUString locale = getInstalledLocaleForLanguage(rLocaleElementNames, officecfg::System::L10N::UILocale::get());
+-    if (locale.isEmpty())
+-        locale = getInstalledLocaleForLanguage(rLocaleElementNames, "en-US");
+-    if (locale.isEmpty() && rLocaleElementNames.hasElements())
+-        locale = rLocaleElementNames[0];
+-    return locale;
+-}
+-
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/svtools/source/misc/langhelp.cxx b/svtools/source/misc/langhelp.cxx
+index 16a3a1d..49627e8 100644
+--- a/svtools/source/misc/langhelp.cxx
++++ b/svtools/source/misc/langhelp.cxx
+@@ -7,12 +7,20 @@
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  */
+ 
+-
++#include <comphelper/sequence.hxx>
++#include <i18nlangtag/mslangid.hxx>
++#include <officecfg/Office/Common.hxx>
++#include <officecfg/System.hxx>
++#include <org/freedesktop/PackageKit/SyncDbusSessionHelper.hpp>
++#include <rtl/ustring.hxx>
+ #include <svtools/langhelp.hxx>
+-
++#include <vcl/idle.hxx>
+ #include <vcl/svapp.hxx>
++#include <vcl/sysdata.hxx>
+ #include <vcl/settings.hxx>
+-#include <rtl/ustring.hxx>
++#include <vcl/window.hxx>
++#include <config_langs.h>
++#include <config_vendor.h>
+ 
+ void localizeWebserviceURI( OUString& rURI )
+ {
+@@ -33,4 +41,122 @@ void localizeWebserviceURI( OUString& rURI )
+     rURI += aLang;
+ }
+ 
++OUString getInstalledLocaleForLanguage(css::uno::Sequence<OUString> const & installed, OUString const & locale)
++{
++    if (locale.isEmpty())
++        return OUString();  // do not attempt to resolve anything
++
++    for (sal_Int32 i = 0; i != installed.getLength(); ++i) {
++        if (installed[i] == locale) {
++            return installed[i];
++        }
++    }
++    std::vector<OUString> fallbacks(LanguageTag(locale).getFallbackStrings(false));
++    for (OUString & rf : fallbacks) {
++        for (sal_Int32 i = 0; i != installed.getLength(); ++i) {
++            if (installed[i] == rf) {
++                return installed[i];
++            }
++        }
++    }
++    return OUString();
++}
++
++static std::unique_ptr<Idle> xLangpackInstaller;
++
++class InstallLangpack : public Idle
++{
++    std::vector<OUString> m_aPackages;
++public:
++    explicit InstallLangpack(const std::vector<OUString>& rPackages)
++        : Idle("install langpack")
++        , m_aPackages(rPackages)
++    {
++        SetPriority(TaskPriority::LOWEST);
++    }
++
++    virtual void Invoke() override
++    {
++        vcl::Window* pTopWindow = Application::GetActiveTopWindow();
++        if (!pTopWindow)
++            pTopWindow = Application::GetFirstTopLevelWindow();
++        if (!pTopWindow)
++        {
++            Start();
++            return;
++        }
++        try
++        {
++            using namespace org::freedesktop::PackageKit;
++            css::uno::Reference<XSyncDbusSessionHelper> xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
++            const SystemEnvData* pEnvData = pTopWindow->GetSystemData();
++            sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
++            xSyncDbusSessionHelper->InstallPackageNames(nDbusId, comphelper::containerToSequence(m_aPackages), OUString());
++        }
++        catch (const css::uno::Exception& e)
++        {
++            SAL_INFO("svl", "trying to install a LibreOffice langpack, caught " << e);
++        }
++        xLangpackInstaller.reset();
++    }
++};
++
++OUString getInstalledLocaleForSystemUILanguage(const css::uno::Sequence<OUString>& rLocaleElementNames, bool bRequestInstallIfMissing)
++{
++    OUString wantedLocale = officecfg::System::L10N::UILocale::get();
++    OUString locale = getInstalledLocaleForLanguage(rLocaleElementNames, wantedLocale);
++    if (bRequestInstallIfMissing && locale.isEmpty() && !wantedLocale.isEmpty() && !Application::IsHeadlessModeEnabled() &&
++        officecfg::Office::Common::PackageKit::EnableLangpackInstallation::get())
++    {
++        LanguageTag aWantedTag(wantedLocale);
++        if (aWantedTag.getLanguage() != "en")
++        {
++            // We try these bases + the exact locale + fallback locale.
++            //
++            // The theory is that we can request a bunch of packages
++            // and it's a success if one of them is available
++            std::vector<OUString> aPackages;
++            OUString sAvailableLocales(WITH_LANG);
++            std::vector<OUString> aAvailable;
++            sal_Int32 nIndex = 0;
++            do
++            {
++                aAvailable.emplace_back(sAvailableLocales.getToken(0, ' ', nIndex));
++            }
++            while (nIndex >= 0);
++            OUString install = getInstalledLocaleForLanguage(comphelper::containerToSequence(aAvailable), wantedLocale);
++            if (!install.isEmpty() && install != "en-US")
++            {
++                if (strcmp(OOO_VENDOR, "Red Hat, Inc.") == 0 || strcmp(OOO_VENDOR, "The Fedora Project") == 0)
++                {
++                    // langpack is the typical Fedora/RHEL naming convention
++                    LanguageType eType = aWantedTag.getLanguageType();
++                    if (MsLangId::isSimplifiedChinese(eType))
++                        aPackages.emplace_back("libreoffice-langpack-zh-Hans");
++                    else if (MsLangId::isTraditionalChinese(eType))
++                        aPackages.emplace_back("libreoffice-langpack-zh-Hant");
++                    else
++                        aPackages.emplace_back("libreoffice-langpack-" + install);
++                }
++                //Debian would be: "The Document Foundation/Debian"
++                else if (strcmp(OOO_VENDOR, "The Document Foundation, Debian and Ubuntu") == 0)
++                {
++                    // l10n is the typical Debian/Ubuntu naming convention
++                    aPackages.emplace_back("libreoffice-l10n-" + install);
++                }
++            }
++            if (!aPackages.empty())
++            {
++                xLangpackInstaller.reset(new InstallLangpack(aPackages));
++                xLangpackInstaller->Start();
++            }
++        }
++    }
++    if (locale.isEmpty())
++        locale = getInstalledLocaleForLanguage(rLocaleElementNames, "en-US");
++    if (locale.isEmpty() && rLocaleElementNames.hasElements())
++        locale = rLocaleElementNames[0];
++    return locale;
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sw/source/uibase/app/apphdl.cxx b/sw/source/uibase/app/apphdl.cxx
+index 467112e..d30e9b4 100644
+--- a/sw/source/uibase/app/apphdl.cxx
++++ b/sw/source/uibase/app/apphdl.cxx
+@@ -44,6 +44,7 @@
+ #include <svl/ctloptions.hxx>
+ #include <unotools/useroptions.hxx>
+ #include <vcl/msgbox.hxx>
++#include <vcl/sysdata.hxx>
+ #include <vcl/wrkwin.hxx>
+ #include <svx/insctrl.hxx>
+ #include <svx/selctrl.hxx>
+@@ -420,7 +421,14 @@ void SwMailMergeWizardExecutor::ExecuteMailMergeWizard( const SfxItemSet * pArgs
+             using namespace svtools;
+             css::uno::Reference< XSyncDbusSessionHelper > xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
+             const css::uno::Sequence< OUString > vPackages{ "libreoffice-base" };
+-            xSyncDbusSessionHelper->InstallPackageNames(0, vPackages, OUString());
++
++            vcl::Window* pTopWindow = Application::GetActiveTopWindow();
++            if (!pTopWindow)
++                pTopWindow = Application::GetFirstTopLevelWindow();
++            const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
++            sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
++
++            xSyncDbusSessionHelper->InstallPackageNames(nDbusId, vPackages, OUString());
+             SolarMutexGuard aGuard;
+             executeRestartDialog(comphelper::getProcessComponentContext(), nullptr, RESTART_REASON_MAILMERGE_INSTALL);
+         }
+diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+index 2c16e04..1cff42c 100644
+--- a/vcl/unx/generic/fontmanager/fontconfig.cxx
++++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
+@@ -866,11 +866,13 @@ namespace
+ #if ENABLE_GIO
+     guint get_xid_for_dbus()
+     {
+-        // FIXME: Application::GetActiveTopWindow only returns something sensible if LO currently has the focus
+-        // (which is not the case when you are trying to debug this...). It should instead return the last active window.
+-        const vcl::Window *pTopWindow = Application::IsHeadlessModeEnabled() ? nullptr : Application::GetActiveTopWindow();
++        if (Application::IsHeadlessModeEnabled())
++            return 0;
++        const vcl::Window *pTopWindow = Application::GetActiveTopWindow();
++        if (!pTopWindow)
++            pTopWindow = Application::GetFirstTopLevelWindow();
+         const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
+-        return pEnvData ? pEnvData->aWindow : 0;
++        return pEnvData ? GetDbusId(*pEnvData) : 0;
+     }
+ #endif
+ }
+-- 
+2.9.5
+

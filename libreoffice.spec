@@ -3,7 +3,7 @@
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
-%global libo_prerelease .beta2
+%global libo_prerelease %{nil}
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.0
-Release:        8%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -269,7 +269,6 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
-Patch5: 0001-external-upload-libepubgen-0.1.0.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2262,6 +2261,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Dec 20 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.1-1
+- update to 6.0.0 rc1
+
 * Thu Dec 14 2017 David Tardon <dtardon@redhat.com> - 1:6.0.0.0-8.beta2
 - update to 6.0.0 beta2
 

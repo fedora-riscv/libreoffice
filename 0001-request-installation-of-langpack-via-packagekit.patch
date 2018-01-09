@@ -1,4 +1,4 @@
-From 29b1b27def32445a468b9f16d704777bba292025 Mon Sep 17 00:00:00 2001
+From 44686bc81055c7bee7f41f9e219c35115ce8119f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 20 Dec 2017 15:29:39 +0000
 Subject: [PATCH] request installation of langpack via packagekit
@@ -43,15 +43,19 @@ Change-Id: Ice731be539850338ccdd8af87839e0b4d83f01e7
  desktop/source/app/langselect.cxx                  |   3 +-
  include/svl/languageoptions.hxx                    |   3 -
  include/svtools/langhelp.hxx                       |   3 +
- include/vcl/sysdata.hxx                            |  13 ++
+ offapi/org/freedesktop/PackageKit/XModify.idl      |  22 ++--
  .../registry/data/org/openoffice/Office/Common.xcu |   3 +
  .../schema/org/openoffice/Office/Common.xcs        |   6 +
- sfx2/source/appl/appserv.cxx                       |  11 +-
+ sfx2/source/appl/appserv.cxx                       |   3 +-
+ .../sessioninstall/SyncDbusSessionHelper.cxx       |  57 +++++----
+ .../sessioninstall/SyncDbusSessionHelper.hxx       |  20 ++--
  svl/source/config/languageoptions.cxx              |  33 ------
- svtools/source/misc/langhelp.cxx                   | 132 ++++++++++++++++++++-
- sw/source/uibase/app/apphdl.cxx                    |  10 +-
- vcl/unx/generic/fontmanager/fontconfig.cxx         |  10 +-
- 15 files changed, 205 insertions(+), 49 deletions(-)
+ svtools/source/misc/langhelp.cxx                   | 130 ++++++++++++++++++++-
+ sw/source/uibase/app/apphdl.cxx                    |   3 +-
+ vcl/inc/unx/fontmanager.hxx                        |   6 +-
+ vcl/unx/generic/fontmanager/fontconfig.cxx         |  93 ++-------------
+ vcl/unx/generic/fontmanager/fontmanager.cxx        |   2 -
+ 19 files changed, 235 insertions(+), 179 deletions(-)
  create mode 100644 config_host/config_langs.h.in
  create mode 100644 config_host/config_vendor.h.in
 
@@ -88,10 +92,10 @@ index 0000000..3260221
 +
 +#endif
 diff --git a/configure.ac b/configure.ac
-index 9b3ccf6..0a89bf3 100644
+index bbb47e6..55e2aa0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -11784,6 +11784,7 @@ if test "$enable_release_build" = "" -o "$enable_release_build" = "no"; then
+@@ -11777,6 +11777,7 @@ if test "$enable_release_build" = "" -o "$enable_release_build" = "no"; then
      ALL_LANGS=`echo $ALL_LANGS qtz`
  fi
  AC_SUBST(ALL_LANGS)
@@ -99,7 +103,7 @@ index 9b3ccf6..0a89bf3 100644
  AC_SUBST(WITH_LANG)
  AC_SUBST(WITH_LANG_LIST)
  AC_SUBST(GIT_NEEDED_SUBMODULES)
-@@ -11932,6 +11933,7 @@ else
+@@ -11925,6 +11926,7 @@ else
      OOO_VENDOR="$with_vendor"
      AC_MSG_RESULT([$OOO_VENDOR])
  fi
@@ -107,7 +111,7 @@ index 9b3ccf6..0a89bf3 100644
  AC_SUBST(OOO_VENDOR)
  
  if test "$_os" = "Android" ; then
-@@ -12545,6 +12547,7 @@ AC_CONFIG_HEADERS([config_host/config_gio.h])
+@@ -12538,6 +12540,7 @@ AC_CONFIG_HEADERS([config_host/config_gio.h])
  AC_CONFIG_HEADERS([config_host/config_global.h])
  AC_CONFIG_HEADERS([config_host/config_gpgme.h])
  AC_CONFIG_HEADERS([config_host/config_java.h])
@@ -115,7 +119,7 @@ index 9b3ccf6..0a89bf3 100644
  AC_CONFIG_HEADERS([config_host/config_lgpl.h])
  AC_CONFIG_HEADERS([config_host/config_liblangtag.h])
  AC_CONFIG_HEADERS([config_host/config_locales.h])
-@@ -12556,6 +12559,7 @@ AC_CONFIG_HEADERS([config_host/config_options.h])
+@@ -12549,6 +12552,7 @@ AC_CONFIG_HEADERS([config_host/config_options.h])
  AC_CONFIG_HEADERS([config_host/config_options_calc.h])
  AC_CONFIG_HEADERS([config_host/config_test.h])
  AC_CONFIG_HEADERS([config_host/config_typesizes.h])
@@ -193,30 +197,100 @@ index a3a84df..db22bb3 100644
  #endif
  
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
-diff --git a/include/vcl/sysdata.hxx b/include/vcl/sysdata.hxx
-index e427e3a..fd7ec93 100644
---- a/include/vcl/sysdata.hxx
-+++ b/include/vcl/sysdata.hxx
-@@ -98,6 +98,19 @@ struct SystemEnvData
-     }
+diff --git a/offapi/org/freedesktop/PackageKit/XModify.idl b/offapi/org/freedesktop/PackageKit/XModify.idl
+index a712bb5..69544e9 100644
+--- a/offapi/org/freedesktop/PackageKit/XModify.idl
++++ b/offapi/org/freedesktop/PackageKit/XModify.idl
+@@ -22,7 +22,7 @@ module PackageKit
+  *  The interface used for modifying the package database.
+  *
+  * @sa
+- * https://git.gnome.org/browse/gnome-software/tree/src/org.freedesktop.PackageKit.xml
++ * https://git.gnome.org/browse/gnome-software/tree/src/org.freedesktop.PackageKit.Modify2.xml
+  * for documentation of the corresponding D-Bus interface
+  */
+ interface XModify : com::sun::star::uno::XInterface
+@@ -32,70 +32,70 @@ interface XModify : com::sun::star::uno::XInterface
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallPackageFiles( [in] unsigned long xid, [in] sequence< string > files, [in] string interaction);
++    void InstallPackageFiles([in] sequence< string > files, [in] string interaction);
+ 
+     /**
+      * Installs sequence< string > packages to provide sequence< string > files.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallProvideFiles( [in] unsigned long xid, [in] sequence< string > files, [in] string interaction);
++    void InstallProvideFiles([in] sequence< string > files, [in] string interaction);
+ 
+     /**
+      * Installs sequence< string > packages to provide sequence< string > files.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallCatalogs( [in] unsigned long xid, [in] sequence< string > files, [in] string interaction);
++    void InstallCatalogs([in] sequence< string > files, [in] string interaction);
+ 
+     /**
+      * Installs sequence< string > packages from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallPackageNames( [in] unsigned long xid, [in] sequence< string > packages, [in] string interaction);
++    void InstallPackageNames([in] sequence< string > packages, [in] string interaction);
+ 
+     /**
+      * Installs mimetype handlers from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallMimeTypes( [in] unsigned long xid, [in] sequence< string > mimeTypes, [in] string interaction);
++    void InstallMimeTypes([in] sequence< string > mimeTypes, [in] string interaction);
+ 
+     /**
+      * Installs fontconfig resources ( [in] usually fonts) from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallFontconfigResources( [in] unsigned long xid, [in] sequence< string > resources, [in] string interaction);
++    void InstallFontconfigResources([in] sequence< string > resources, [in] string interaction);
+ 
+     /**
+      * Installs GStreamer resources ( [in] usually codecs) from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallGStreamerResources( [in] unsigned long xid, [in] sequence< string > resources, [in] string interaction);
++    void InstallGStreamerResources([in] sequence< string > resources, [in] string interaction);
+ 
+     /**
+      * Installs resources of a given type from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallResources( [in] unsigned long xid, [in] sequence< string > types, [in] sequence< string > resources, [in] string interaction);
++    void InstallResources([in] sequence< string > types, [in] sequence< string > resources, [in] string interaction);
+ 
+     /**
+      * Removes sequence< string > packages that provide the given local sequence< string > files.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void RemovePackageByFiles( [in] unsigned long xid, [in] sequence< string > files, [in] string interaction);
++    void RemovePackageByFiles([in] sequence< string > files, [in] string interaction);
+ 
+     /**
+      * Installs printer drivers from a configured software source.
+      * @since LibreOffice 4.0
+      */
+ 
+-    void InstallPrinterDrivers( [in] unsigned long xid, [in] sequence< string > files, [in] string interaction);
++    void InstallPrinterDrivers([in] sequence< string > files, [in] string interaction);
  };
  
-+inline sal_uInt32 GetDbusId(const SystemEnvData& rData)
-+{
-+#if defined(_WIN32) || defined( MACOSX ) || defined( ANDROID ) || defined( IOS )
-+    (void)rData;
-+    return 0;
-+#elif defined( UNX )
-+    return rData.aWindow;
-+#else
-+    (void)rData;
-+    return 0;
-+#endif
-+}
-+
- struct SystemParentData
- {
-     sal_uInt32      nSize;            // size in bytes of this structure
+ } ; // PackageKit
 diff --git a/officecfg/registry/data/org/openoffice/Office/Common.xcu b/officecfg/registry/data/org/openoffice/Office/Common.xcu
 index 6b94ff9..26d1ba0 100644
 --- a/officecfg/registry/data/org/openoffice/Office/Common.xcu
@@ -249,7 +323,7 @@ index f9816fc..2884179 100644
      <group oor:name="Classification">
        <info>
 diff --git a/sfx2/source/appl/appserv.cxx b/sfx2/source/appl/appserv.cxx
-index 1e2a2ec..a22d09a 100644
+index 1e2a2ec..e48e5aa 100644
 --- a/sfx2/source/appl/appserv.cxx
 +++ b/sfx2/source/appl/appserv.cxx
 @@ -59,6 +59,7 @@
@@ -260,37 +334,191 @@ index 1e2a2ec..a22d09a 100644
  #include <svl/intitem.hxx>
  #include <svl/eitem.hxx>
  #include <svl/stritem.hxx>
-@@ -184,7 +185,7 @@ namespace
-             return false;
-         }
-     }
--    void lcl_tryLoadBibliography()
-+    void lcl_tryLoadBibliography(const vcl::Window* pTopWindow)
-     {
-         // lp#527938, debian#602953, fdo#33266, i#105408
-         // make sure we actually can instantiate services from base first
-@@ -196,7 +197,11 @@ namespace
+@@ -196,7 +197,7 @@ namespace
                  using namespace svtools;
                  Reference< XSyncDbusSessionHelper > xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
                  Sequence< OUString > vPackages { "libreoffice-base" };
 -                xSyncDbusSessionHelper->InstallPackageNames(0, vPackages, OUString());
-+
-+                const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
-+                sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
-+
-+                xSyncDbusSessionHelper->InstallPackageNames(nDbusId, vPackages, OUString());
++                xSyncDbusSessionHelper->InstallPackageNames(vPackages, OUString());
                  // Ill be back (hopefully)!
                  SolarMutexGuard aGuard;
                  executeRestartDialog(comphelper::getProcessComponentContext(), nullptr, RESTART_REASON_BIBLIOGRAPHY_INSTALL);
-@@ -1661,7 +1666,7 @@ void SfxApplication::OfaExec_Impl( SfxRequest& rReq )
-         break;
+diff --git a/shell/source/sessioninstall/SyncDbusSessionHelper.cxx b/shell/source/sessioninstall/SyncDbusSessionHelper.cxx
+index a1211f7..1938077 100644
+--- a/shell/source/sessioninstall/SyncDbusSessionHelper.cxx
++++ b/shell/source/sessioninstall/SyncDbusSessionHelper.cxx
+@@ -18,7 +18,7 @@ using namespace ::com::sun::star::uno;
  
-         case SID_COMP_BIBLIOGRAPHY:
--            lcl_tryLoadBibliography();
-+            lcl_tryLoadBibliography(GetTopWindow());
-         break;
+ namespace
+ {
+-    struct GVariantDeleter { void operator()(GVariant* pV) { g_variant_unref(pV); } };
++    struct GVariantDeleter { void operator()(GVariant* pV) { if (pV) g_variant_unref(pV); } };
+     struct GVariantBuilderDeleter { void operator()(GVariantBuilder* pVB) { g_variant_builder_unref(pVB); } };
+     template <typename T> struct GObjectDeleter { void operator()(T* pO) { g_object_unref(pO); } };
+     class GErrorWrapper
+@@ -55,8 +55,15 @@ namespace
+         return proxy;
      }
+ 
++    static GVariant* pk_make_platform_data()
++    {
++        GVariantBuilder builder;
++        g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
++        return g_variant_builder_end(&builder);
++    }
++
+ void request(
+-    char const * method, sal_uInt32 xid,
++    char const * method,
+     css::uno::Sequence<OUString> const & resources,
+     OUString const & interaction)
+ {
+@@ -70,14 +77,14 @@ void request(
+     }
+     auto iactUtf8(OUStringToOString(interaction, RTL_TEXTENCODING_UTF8));
+     std::shared_ptr<GDBusProxy> proxy(
+-        lcl_GetPackageKitProxy("Modify"), GObjectDeleter<GDBusProxy>());
++        lcl_GetPackageKitProxy("Modify2"), GObjectDeleter<GDBusProxy>());
+     GErrorWrapper error;
+-    g_dbus_proxy_call_sync(
++    std::shared_ptr<GVariant> result(g_dbus_proxy_call_sync(
+         proxy.get(), method,
+         g_variant_new(
+-            "(uass)", static_cast<guint32>(xid), builder.get(),
+-            iactUtf8.getStr()),
+-        G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.getRef());
++            "(asss@a{sv})", builder.get(), iactUtf8.getStr(),
++            "libreoffice-startcenter.desktop", pk_make_platform_data()),
++        G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.getRef()), GVariantDeleter());
  }
+ 
+ }
+@@ -92,66 +99,66 @@ namespace shell { namespace sessioninstall
+     }
+ 
+ void SyncDbusSessionHelper::InstallPackageFiles(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & files,
++    css::uno::Sequence<OUString> const & files,
+     OUString const & interaction)
+ {
+-    request("InstallPackageFiles", xid, files, interaction);
++    request("InstallPackageFiles", files, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallProvideFiles(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & files,
++    css::uno::Sequence<OUString> const & files,
+     OUString const & interaction)
+ {
+-    request("InstallProvideFiles", xid, files, interaction);
++    request("InstallProvideFiles", files, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallCatalogs(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & files,
++    css::uno::Sequence<OUString> const & files,
+     OUString const & interaction)
+ {
+-    request("InstallCatalogs", xid, files, interaction);
++    request("InstallCatalogs", files, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallPackageNames(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & packages,
++    css::uno::Sequence<OUString> const & packages,
+     OUString const & interaction)
+ {
+-    request("InstallPackageNames", xid, packages, interaction);
++    request("InstallPackageNames", packages, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallMimeTypes(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & mimeTypes,
++    css::uno::Sequence<OUString> const & mimeTypes,
+     OUString const & interaction)
+ {
+-    request("InstallMimeTypes", xid, mimeTypes, interaction);
++    request("InstallMimeTypes", mimeTypes, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallFontconfigResources(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & resources,
++    css::uno::Sequence<OUString> const & resources,
+     OUString const & interaction)
+ {
+-    request("InstallFontconfigResources", xid, resources, interaction);
++    request("InstallFontconfigResources", resources, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallGStreamerResources(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & resources,
++    css::uno::Sequence<OUString> const & resources,
+     OUString const & interaction)
+ {
+-    request("InstallGStreamerResources", xid, resources, interaction);
++    request("InstallGStreamerResources", resources, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::RemovePackageByFiles(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & files,
++    css::uno::Sequence<OUString> const & files,
+     OUString const & interaction)
+ {
+-    request("RemovePackageByFiles", xid, files, interaction);
++    request("RemovePackageByFiles", files, interaction);
+ }
+ 
+ void SyncDbusSessionHelper::InstallPrinterDrivers(
+-    sal_uInt32 xid, css::uno::Sequence<OUString> const & files,
++    css::uno::Sequence<OUString> const & files,
+     OUString const & interaction)
+ {
+-    request("InstallPrinteDrivers", xid, files, interaction);
++    request("InstallPrinteDrivers", files, interaction);
+ }
+ 
+     void SAL_CALL SyncDbusSessionHelper::IsInstalled( const OUString& sPackagename, const OUString& sInteraction, sal_Bool& o_isInstalled )
+diff --git a/shell/source/sessioninstall/SyncDbusSessionHelper.hxx b/shell/source/sessioninstall/SyncDbusSessionHelper.hxx
+index 731b649..72b17ba 100644
+--- a/shell/source/sessioninstall/SyncDbusSessionHelper.hxx
++++ b/shell/source/sessioninstall/SyncDbusSessionHelper.hxx
+@@ -23,26 +23,26 @@ namespace shell { namespace sessioninstall
+             SyncDbusSessionHelper(css::uno::Reference< css::uno::XComponentContext> const&);
+ 
+             // XModify Methods
+-            virtual void SAL_CALL InstallPackageFiles( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallPackageFiles( const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallProvideFiles( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallProvideFiles( const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallCatalogs( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallCatalogs( const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallPackageNames( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& packages, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallPackageNames( const css::uno::Sequence< OUString >& packages, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallMimeTypes( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& mimeTypes, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallMimeTypes( const css::uno::Sequence< OUString >& mimeTypes, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallFontconfigResources( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& resources, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallFontconfigResources( const css::uno::Sequence< OUString >& resources, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallGStreamerResources( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& resources, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallGStreamerResources( const css::uno::Sequence< OUString >& resources, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallResources( ::sal_uInt32 /* xid */, const css::uno::Sequence< OUString >& /* types */, const css::uno::Sequence< OUString >& /* resources */, const OUString& /* interaction */ ) override
++            virtual void SAL_CALL InstallResources( const css::uno::Sequence< OUString >& /* types */, const css::uno::Sequence< OUString >& /* resources */, const OUString& /* interaction */ ) override
+                 { throw css::uno::RuntimeException(); } // not implemented
+ 
+-            virtual void SAL_CALL RemovePackageByFiles( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
++            virtual void SAL_CALL RemovePackageByFiles( const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
+ 
+-            virtual void SAL_CALL InstallPrinterDrivers( ::sal_uInt32 xid, const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
++            virtual void SAL_CALL InstallPrinterDrivers( const css::uno::Sequence< OUString >& files, const OUString& interaction ) override;
+ 
+             // XQuery Methods
+             virtual void SAL_CALL IsInstalled( const OUString& /* package_name */, const OUString& /* interaction */, sal_Bool& /* installed */ ) override;
 diff --git a/svl/source/config/languageoptions.cxx b/svl/source/config/languageoptions.cxx
 index 9f9fe45..74af031 100644
 --- a/svl/source/config/languageoptions.cxx
@@ -346,7 +574,7 @@ index 9f9fe45..74af031 100644
 -
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/svtools/source/misc/langhelp.cxx b/svtools/source/misc/langhelp.cxx
-index 16a3a1d..49627e8 100644
+index 16a3a1d..1e4c5c5 100644
 --- a/svtools/source/misc/langhelp.cxx
 +++ b/svtools/source/misc/langhelp.cxx
 @@ -7,12 +7,20 @@
@@ -373,7 +601,7 @@ index 16a3a1d..49627e8 100644
  
  void localizeWebserviceURI( OUString& rURI )
  {
-@@ -33,4 +41,122 @@ void localizeWebserviceURI( OUString& rURI )
+@@ -33,4 +41,120 @@ void localizeWebserviceURI( OUString& rURI )
      rURI += aLang;
  }
  
@@ -425,9 +653,7 @@ index 16a3a1d..49627e8 100644
 +        {
 +            using namespace org::freedesktop::PackageKit;
 +            css::uno::Reference<XSyncDbusSessionHelper> xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
-+            const SystemEnvData* pEnvData = pTopWindow->GetSystemData();
-+            sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
-+            xSyncDbusSessionHelper->InstallPackageNames(nDbusId, comphelper::containerToSequence(m_aPackages), OUString());
++            xSyncDbusSessionHelper->InstallPackageNames(comphelper::containerToSequence(m_aPackages), OUString());
 +        }
 +        catch (const css::uno::Exception& e)
 +        {
@@ -497,7 +723,7 @@ index 16a3a1d..49627e8 100644
 +
  /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/sw/source/uibase/app/apphdl.cxx b/sw/source/uibase/app/apphdl.cxx
-index 467112e..d30e9b4 100644
+index 467112e..6986807 100644
 --- a/sw/source/uibase/app/apphdl.cxx
 +++ b/sw/source/uibase/app/apphdl.cxx
 @@ -44,6 +44,7 @@
@@ -508,44 +734,213 @@ index 467112e..d30e9b4 100644
  #include <vcl/wrkwin.hxx>
  #include <svx/insctrl.hxx>
  #include <svx/selctrl.hxx>
-@@ -420,7 +421,14 @@ void SwMailMergeWizardExecutor::ExecuteMailMergeWizard( const SfxItemSet * pArgs
+@@ -420,7 +421,7 @@ void SwMailMergeWizardExecutor::ExecuteMailMergeWizard( const SfxItemSet * pArgs
              using namespace svtools;
              css::uno::Reference< XSyncDbusSessionHelper > xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
              const css::uno::Sequence< OUString > vPackages{ "libreoffice-base" };
 -            xSyncDbusSessionHelper->InstallPackageNames(0, vPackages, OUString());
-+
-+            vcl::Window* pTopWindow = Application::GetActiveTopWindow();
-+            if (!pTopWindow)
-+                pTopWindow = Application::GetFirstTopLevelWindow();
-+            const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
-+            sal_uInt32 nDbusId = pEnvData ? GetDbusId(*pEnvData) : 0;
-+
-+            xSyncDbusSessionHelper->InstallPackageNames(nDbusId, vPackages, OUString());
++            xSyncDbusSessionHelper->InstallPackageNames(vPackages, OUString());
              SolarMutexGuard aGuard;
              executeRestartDialog(comphelper::getProcessComponentContext(), nullptr, RESTART_REASON_MAILMERGE_INSTALL);
          }
+diff --git a/vcl/inc/unx/fontmanager.hxx b/vcl/inc/unx/fontmanager.hxx
+index 03d033e..14aebde 100644
+--- a/vcl/inc/unx/fontmanager.hxx
++++ b/vcl/inc/unx/fontmanager.hxx
+@@ -192,14 +192,10 @@ class VCL_PLUGIN_PUBLIC PrintFontManager
+     static void addFontconfigDir(const OString& rDirectory);
+ 
+     std::set<OString> m_aPreviousLangSupportRequests;
+-#if ENABLE_GIO
+-    std::vector<OString> m_aCurrentRequests;
+-#endif
++    std::vector<OUString> m_aCurrentRequests;
+     Timer m_aFontInstallerTimer;
+ 
+-#if ENABLE_GIO
+     DECL_LINK( autoInstallFontLangSupport, Timer*, void );
+-#endif
+     PrintFontManager();
+ public:
+     ~PrintFontManager();
 diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
-index 2c16e04..1cff42c 100644
+index 2c16e04..59acfa5 100644
 --- a/vcl/unx/generic/fontmanager/fontconfig.cxx
 +++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
-@@ -866,11 +866,13 @@ namespace
- #if ENABLE_GIO
-     guint get_xid_for_dbus()
-     {
+@@ -20,6 +20,7 @@
+ #include <memory>
+ #include <unx/fontmanager.hxx>
+ #include <impfont.hxx>
++#include <comphelper/sequence.hxx>
+ #include <vcl/svapp.hxx>
+ #include <vcl/sysdata.hxx>
+ #include <vcl/vclenum.hxx>
+@@ -31,8 +32,8 @@
+ #include <rtl/strbuf.hxx>
+ #include <unicode/uchar.h>
+ #include <unicode/uscript.h>
+-#include <config_gio.h>
+ #include <officecfg/Office/Common.hxx>
++#include <org/freedesktop/PackageKit/SyncDbusSessionHelper.hpp>
+ 
+ using namespace psp;
+ 
+@@ -40,10 +41,6 @@ using namespace psp;
+ #include <ft2build.h>
+ #include <fontconfig/fcfreetype.h>
+ 
+-#if ENABLE_GIO
+-#include <gio/gio.h>
+-#endif
+-
+ #include <cstdio>
+ #include <cstdarg>
+ 
+@@ -862,96 +859,28 @@ namespace
+             aBuf.append('-').append(pScriptCode);
+         return OStringToOUString(aBuf.makeStringAndClear(), RTL_TEXTENCODING_UTF8);
+     }
+-
+-#if ENABLE_GIO
+-    guint get_xid_for_dbus()
+-    {
 -        // FIXME: Application::GetActiveTopWindow only returns something sensible if LO currently has the focus
 -        // (which is not the case when you are trying to debug this...). It should instead return the last active window.
 -        const vcl::Window *pTopWindow = Application::IsHeadlessModeEnabled() ? nullptr : Application::GetActiveTopWindow();
-+        if (Application::IsHeadlessModeEnabled())
-+            return 0;
-+        const vcl::Window *pTopWindow = Application::GetActiveTopWindow();
-+        if (!pTopWindow)
-+            pTopWindow = Application::GetFirstTopLevelWindow();
-         const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
+-        const SystemEnvData* pEnvData = pTopWindow ? pTopWindow->GetSystemData() : nullptr;
 -        return pEnvData ? pEnvData->aWindow : 0;
-+        return pEnvData ? GetDbusId(*pEnvData) : 0;
-     }
- #endif
+-    }
+-#endif
  }
+ 
+-#if ENABLE_GIO
+ IMPL_LINK_NOARG(PrintFontManager, autoInstallFontLangSupport, Timer *, void)
+ {
+-    if (!officecfg::Office::Common::PackageKit::EnableFontInstallation::get())
+-        return;
+-
+-    guint xid = get_xid_for_dbus();
+-
+-    if (!xid)
++    try
+     {
+-        SAL_WARN("vcl", "Could not retrieve X Window ID for DBUS");
+-        return;
++        using namespace org::freedesktop::PackageKit;
++        css::uno::Reference<XSyncDbusSessionHelper> xSyncDbusSessionHelper(SyncDbusSessionHelper::create(comphelper::getProcessComponentContext()));
++        xSyncDbusSessionHelper->InstallFontconfigResources(comphelper::containerToSequence(m_aCurrentRequests), "hide-finished");
+     }
+-
+-
+-    GError *error = nullptr;
+-    /* get the DBUS session connection */
+-    GDBusConnection *session_connection = g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, &error);
+-    if (error != nullptr)
+-    {
+-        g_debug ("DBUS cannot connect : %s", error->message);
+-        g_error_free (error);
+-        return;
+-    }
+-
+-    /* get the proxy with gnome-session-manager */
+-    GDBusProxy *proxy = g_dbus_proxy_new_sync(session_connection,
+-                                              G_DBUS_PROXY_FLAGS_NONE,
+-                                              nullptr, // GDBusInterfaceInfo
+-                                              "org.freedesktop.PackageKit",
+-                                              "/org/freedesktop/PackageKit",
+-                                              "org.freedesktop.PackageKit.Modify",
+-                                              nullptr, // GCancellable
+-                                              &error);
+-    if (proxy == nullptr && error != nullptr)
+-    {
+-        g_debug("Could not get DBUS proxy: org.freedesktop.PackageKit: %s", error->message);
+-        g_error_free(error);
+-        return;
+-    }
+-
+-    GVariantBuilder *builder = g_variant_builder_new (G_VARIANT_TYPE("as")); // 'as'=array of strings
+-    for (std::vector<OString>::const_iterator aI = m_aCurrentRequests.begin(); aI != m_aCurrentRequests.end(); ++aI)
+-        g_variant_builder_add (builder, "s", aI->getStr());
+-
+-    GVariant *res = g_dbus_proxy_call_sync(proxy,
+-                                     "InstallFontconfigResources",
+-                                     // Create a new variant with the following types:
+-                                     //   'u'=guint32 (xid); 'as'=array of strings (builder); 's'=string ("hide-finished")
+-                                     // See also https://people.gnome.org/~ryanl/glib-docs/gvariant-format-strings.html
+-                                     g_variant_new("(uass)", xid, builder, "hide-finished"),
+-                                     G_DBUS_CALL_FLAGS_NONE,
+-                                     -1, // Timeout
+-                                     nullptr, // GCancellable
+-                                     &error);
+-
+-    if (res == nullptr && error != nullptr)
++    catch (const css::uno::Exception& e)
+     {
++        SAL_INFO("vcl", "InstallFontconfigResources problem, caught " << e);
+         // Disable this method from now on. It's simply not available on some systems
+         // and leads to an error dialog being shown each time this is called tdf#104883
+         std::shared_ptr<comphelper::ConfigurationChanges> batch( comphelper::ConfigurationChanges::create() );
+         officecfg::Office::Common::PackageKit::EnableFontInstallation::set(false, batch);
+         batch->commit();
+-        g_debug("InstallFontconfigResources problem : %s", error->message);
+-        g_error_free(error);
+-    }
+-    else
+-    {
+-        g_variant_unref(res);
+     }
+ 
+-    g_variant_builder_unref(builder);
+-    g_object_unref(G_OBJECT (proxy));
+-
+     m_aCurrentRequests.clear();
+ }
+-#endif
+ 
+ void PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissingCodes )
+ {
+@@ -1107,8 +1036,7 @@ void PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+                     }
+                 }
+                 OUString sStillMissing(pRemainingCodes.get(), nRemainingLen);
+-#if ENABLE_GIO
+-                if (get_xid_for_dbus())
++                if (!Application::IsHeadlessModeEnabled() && officecfg::Office::Common::PackageKit::EnableFontInstallation::get())
+                 {
+                     if (sStillMissing == rMissingCodes) //replaced nothing
+                     {
+@@ -1127,7 +1055,7 @@ void PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+                             if (!sTag.isEmpty() && m_aPreviousLangSupportRequests.find(sTag) == m_aPreviousLangSupportRequests.end())
+                             {
+                                 OString sReq = OString(":lang=") + sTag;
+-                                m_aCurrentRequests.push_back(sReq);
++                                m_aCurrentRequests.push_back(OUString::fromUtf8(sReq));
+                                 m_aPreviousLangSupportRequests.insert(sTag);
+                             }
+                         }
+@@ -1138,7 +1066,6 @@ void PrintFontManager::Substitute( FontSelectPattern &rPattern, OUString& rMissi
+                         m_aFontInstallerTimer.Start();
+                     }
+                 }
+-#endif
+                 rMissingCodes = sStillMissing;
+             }
+         }
+diff --git a/vcl/unx/generic/fontmanager/fontmanager.cxx b/vcl/unx/generic/fontmanager/fontmanager.cxx
+index c956345..d1743dd 100644
+--- a/vcl/unx/generic/fontmanager/fontmanager.cxx
++++ b/vcl/unx/generic/fontmanager/fontmanager.cxx
+@@ -146,10 +146,8 @@ PrintFontManager::PrintFontManager()
+     : m_nNextFontID( 1 )
+     , m_nNextDirAtom( 1 )
+ {
+-#if ENABLE_GIO
+     m_aFontInstallerTimer.SetInvokeHandler(LINK(this, PrintFontManager, autoInstallFontLangSupport));
+     m_aFontInstallerTimer.SetTimeout(5000);
+-#endif
+ }
+ 
+ PrintFontManager::~PrintFontManager()
 -- 
 2.9.5
 

@@ -1,0 +1,1748 @@
+From 51c3c572a23e4304029344e35b90c055207ce59c Mon Sep 17 00:00:00 2001
+From: Armin Le Grand <Armin.Le.Grand@cib.de>
+Date: Fri, 4 Aug 2017 18:56:43 +0200
+Subject: [PATCH] editviewoverlay: Allow EditView to run in Overlay
+
+This is the first basic functionality to get the active
+EditView with EditEngine work in the Overlay which all
+Apps support. Reason is that the current EditEngine 'plugs'
+into the Window and uses Invalidate() calls to repaint
+deeply everything under a text change. While this is
+acceptable for simple cases it can get very slow when
+there are excessive, expensive to paint objects in the
+background, e.g. MasterPages in Draw/Impress with gradients
+and other stuff. This was avoided in older versions (LO51)
+by 'guessing' a good BackgrundColor by the EditEngine,
+not invalidating but painting actively using that guess
+(with better or worse results) which someone removed.
+For the future it is anyways the better way to get the
+EditEngine functionality to Overlay and using Primitives,
+this will be a first step. This may enable Text Editing
+without repainting the Background (fast), using a non-XOR
+selection paint and more. It will need thorough testing
+and further experimenting due to EditEngine being used in
+many places (DrawObjects, Calc Cells, Formular Fields,
+Controls, ...)
+
+(cherry picked from commit f06b48a5dddab20fd1bbf9b5f3e8543593f5e590)
+
+Change-Id: Ib9eb0f3999fd61a82ddf7a60ab1ea6ccda3a60da
+---
+ editeng/source/editeng/editeng.cxx          |  10 +-
+ editeng/source/editeng/editundo.cxx         |   4 +-
+ editeng/source/editeng/editview.cxx         |  77 ++++--
+ editeng/source/editeng/impedit.cxx          | 136 +++++++---
+ editeng/source/editeng/impedit.hxx          |  34 ++-
+ editeng/source/editeng/impedit2.cxx         |  42 ++-
+ editeng/source/editeng/impedit3.cxx         |  18 +-
+ editeng/source/editeng/impedit4.cxx         |  28 +-
+ include/editeng/editeng.hxx                 |   2 +-
+ include/editeng/editview.hxx                |  30 ++-
+ include/svx/svdedxv.hxx                     |  12 +-
+ include/svx/svdotext.hxx                    |  10 +-
+ include/svx/svdoutl.hxx                     |   2 +
+ sc/source/ui/view/tabvwshc.cxx              |   2 +-
+ sd/source/ui/view/Outliner.cxx              |  11 +
+ sd/source/ui/view/ViewShellBase.cxx         |   2 +-
+ svx/source/svdraw/svdedxv.cxx               | 404 ++++++++++++++++++++++++++--
+ svx/source/svdraw/svdotextdecomposition.cxx |  13 +
+ svx/source/svdraw/svdotxat.cxx              |  20 +-
+ svx/source/svdraw/svdoutl.cxx               |  16 ++
+ sw/source/core/crsr/crsrsh.cxx              |   2 +-
+ 21 files changed, 737 insertions(+), 138 deletions(-)
+
+diff --git a/editeng/source/editeng/editeng.cxx b/editeng/source/editeng/editeng.cxx
+index e52377d85596..fa7e94a950db 100644
+--- a/editeng/source/editeng/editeng.cxx
++++ b/editeng/source/editeng/editeng.cxx
+@@ -636,7 +636,7 @@ ESelection EditEngine::GetWord( const ESelection& rSelection, sal_uInt16 nWordTy
+     return pE->pImpEditEngine->CreateESel( aSel );
+ }
+ 
+-void EditEngine::CursorMoved(ContentNode* pPrevNode)
++void EditEngine::CursorMoved(const ContentNode* pPrevNode)
+ {
+     pImpEditEngine->CursorMoved(pPrevNode);
+ }
+@@ -1173,7 +1173,7 @@ bool EditEngine::PostKeyEvent( const KeyEvent& rKeyEvent, EditView* pEditView, v
+                         break;
+                     }
+ 
+-                    pEditView->pImpEditView->DrawSelection();
++                    pEditView->pImpEditView->DrawSelectionXOR();
+                     pImpEditEngine->UndoActionStart( EDITUNDO_DELETE );
+                     aCurSel = pImpEditEngine->DeleteLeftOrRight( aCurSel, nDel, nMode );
+                     pImpEditEngine->UndoActionEnd();
+@@ -1213,7 +1213,7 @@ bool EditEngine::PostKeyEvent( const KeyEvent& rKeyEvent, EditView* pEditView, v
+             {
+                 if ( !bReadOnly )
+                 {
+-                    pEditView->pImpEditView->DrawSelection();
++                    pEditView->pImpEditView->DrawSelectionXOR();
+                     if ( !rKeyEvent.GetKeyCode().IsMod1() && !rKeyEvent.GetKeyCode().IsMod2() )
+                     {
+                         pImpEditEngine->UndoActionStart( EDITUNDO_INSERT );
+@@ -1268,7 +1268,7 @@ bool EditEngine::PostKeyEvent( const KeyEvent& rKeyEvent, EditView* pEditView, v
+                 if ( !bReadOnly && IsSimpleCharInput( rKeyEvent ) )
+                 {
+                     sal_Unicode nCharCode = rKeyEvent.GetCharCode();
+-                    pEditView->pImpEditView->DrawSelection();
++                    pEditView->pImpEditView->DrawSelectionXOR();
+                     // Autocorrection?
+                     if ( ( pImpEditEngine->GetStatus().DoAutoCorrect() ) &&
+                         ( SvxAutoCorrect::IsAutoCorrectChar( nCharCode ) ||
+@@ -1362,7 +1362,7 @@ bool EditEngine::PostKeyEvent( const KeyEvent& rKeyEvent, EditView* pEditView, v
+     pEditView->pImpEditView->SetEditSelection( aCurSel );
+     if (comphelper::LibreOfficeKit::isActive())
+     {
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+     }
+     pImpEditEngine->UpdateSelections();
+ 
+diff --git a/editeng/source/editeng/editundo.cxx b/editeng/source/editeng/editundo.cxx
+index 271a29cd62f4..47715a251e5c 100644
+--- a/editeng/source/editeng/editundo.cxx
++++ b/editeng/source/editeng/editundo.cxx
+@@ -66,7 +66,7 @@ bool EditUndoManager::Undo()
+         }
+     }
+ 
+-    mpEditEngine->GetActiveView()->GetImpEditView()->DrawSelection(); // Remove the old selection
++    mpEditEngine->GetActiveView()->GetImpEditView()->DrawSelectionXOR(); // Remove the old selection
+ 
+     mpEditEngine->SetUndoMode( true );
+     bool bDone = SfxUndoManager::Undo();
+@@ -101,7 +101,7 @@ bool EditUndoManager::Redo()
+         }
+     }
+ 
+-    mpEditEngine->GetActiveView()->GetImpEditView()->DrawSelection(); // Remove the old selection
++    mpEditEngine->GetActiveView()->GetImpEditView()->DrawSelectionXOR(); // Remove the old selection
+ 
+     mpEditEngine->SetUndoMode( true );
+     bool bDone = SfxUndoManager::Redo();
+diff --git a/editeng/source/editeng/editview.cxx b/editeng/source/editeng/editview.cxx
+index c8c9de850b39..e581d1bd4fdf 100644
+--- a/editeng/source/editeng/editview.cxx
++++ b/editeng/source/editeng/editview.cxx
+@@ -152,8 +152,12 @@ LanguageType EditView::CheckLanguage(
+     return nLang;
+ }
+ 
+-// class EditView
++// class EditViewCallbacks
++EditViewCallbacks::~EditViewCallbacks()
++{
++}
+ 
++// class EditView
+ EditView::EditView( EditEngine* pEng, vcl::Window* pWindow )
+ {
+     pImpEditView.reset( new ImpEditView( this, pEng, pWindow ) );
+@@ -163,6 +167,16 @@ EditView::~EditView()
+ {
+ }
+ 
++void EditView::setEditViewCallbacks(const EditViewCallbacks* pEditViewCallbacks)
++{
++    pImpEditView->setEditViewCallbacks(pEditViewCallbacks);
++}
++
++bool EditView::hasEditViewCallbacks() const
++{
++    return pImpEditView->hasEditViewCallbacks();
++}
++
+ ImpEditEngine* EditView::GetImpEditEngine() const
+ {
+     return pImpEditView->pEditEngine->pImpEditEngine.get();
+@@ -189,6 +203,23 @@ tools::Rectangle EditView::GetInvalidateRect() const
+     }
+ }
+ 
++void EditView::InvalidateWindow(const tools::Rectangle& rClipRect)
++{
++    if (pImpEditView->hasEditViewCallbacks())
++    {
++        // do not invalidate and trigger a global repaint, but forward
++        // the need for change to the applied EditViewCallback, can e.g.
++        // be used to visualize the active edit text in an OverlayObject
++        pImpEditView->mpEditViewCallbacks->EditViewInvalidate();
++    }
++    else
++    {
++        // classic mode: invalidate and trigger full repaint
++        // of the changed area
++        GetWindow()->Invalidate(rClipRect);
++    }
++}
++
+ void EditView::InvalidateOtherViewWindows( const tools::Rectangle& rInvRect )
+ {
+     if (comphelper::LibreOfficeKit::isActive())
+@@ -225,9 +256,7 @@ void EditView::SetSelection( const ESelection& rESel )
+     // so that empty attributes get cleaned up.
+     if ( !pImpEditView->GetEditSelection().HasRange() )
+     {
+-        // tdf#113591 Get node from EditDoc, as the selection might
+-        // have a pointer to an already deleted node.
+-        ContentNode* pNode = pImpEditView->pEditEngine->GetEditDoc().GetEndPaM().GetNode();
++        const ContentNode* pNode = pImpEditView->GetEditSelection().Max().GetNode();
+         pImpEditView->pEditEngine->CursorMoved( pNode );
+     }
+     EditSelection aNewSelection( pImpEditView->pEditEngine->pImpEditEngine->ConvertSelection(
+@@ -252,9 +281,9 @@ void EditView::SetSelection( const ESelection& rESel )
+         aNewSelection.Max() = EditPaM( pNode, pNode->Len() );
+     }
+ 
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->SetEditSelection( aNewSelection );
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     bool bGotoCursor = pImpEditView->DoAutoScroll();
+     ShowCursor( bGotoCursor );
+ }
+@@ -289,7 +318,7 @@ SvtScriptType EditView::GetSelectedScriptType() const
+ 
+ void EditView::GetSelectionRectangles(std::vector<tools::Rectangle>& rLogicRects) const
+ {
+-    return pImpEditView->GetSelectionRectangles(rLogicRects);
++    return pImpEditView->GetSelectionRectangles(pImpEditView->GetEditSelection(), rLogicRects);
+ }
+ 
+ void EditView::Paint( const tools::Rectangle& rRect, OutputDevice* pTargetDevice )
+@@ -384,7 +413,7 @@ void EditView::InsertText( const OUString& rStr, bool bSelect )
+ {
+ 
+     EditEngine* pEE = pImpEditView->pEditEngine;
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+ 
+     EditPaM aPaM1;
+     if ( bSelect )
+@@ -483,7 +512,7 @@ void EditView::SetAttribs( const SfxItemSet& rSet )
+ {
+     DBG_ASSERT( !pImpEditView->aEditSelection.IsInvalid(), "Blind Selection in ...." );
+ 
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->pEditEngine->SetAttribs( pImpEditView->GetEditSelection(), rSet, SetAttribsMode::WholeWord );
+     pImpEditView->pEditEngine->FormatAndUpdate( this );
+ }
+@@ -491,7 +520,7 @@ void EditView::SetAttribs( const SfxItemSet& rSet )
+ void EditView::RemoveAttribsKeepLanguages( bool bRemoveParaAttribs )
+ {
+ 
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->pEditEngine->UndoActionStart( EDITUNDO_RESETATTRIBS );
+     EditSelection aSelection( pImpEditView->GetEditSelection() );
+ 
+@@ -511,7 +540,7 @@ void EditView::RemoveAttribsKeepLanguages( bool bRemoveParaAttribs )
+ void EditView::RemoveAttribs( bool bRemoveParaAttribs, sal_uInt16 nWhich )
+ {
+ 
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->pEditEngine->UndoActionStart( EDITUNDO_RESETATTRIBS );
+     pImpEditView->pEditEngine->RemoveCharAttribs( pImpEditView->GetEditSelection(), bRemoveParaAttribs, nWhich  );
+     pImpEditView->pEditEngine->UndoActionEnd();
+@@ -545,7 +574,7 @@ void EditView::Redo()
+ sal_uInt32 EditView::Read( SvStream& rInput, EETextFormat eFormat, SvKeyValueIterator* pHTTPHeaderAttrs )
+ {
+     EditSelection aOldSel( pImpEditView->GetEditSelection() );
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->pEditEngine->pImpEditEngine->UndoActionStart( EDITUNDO_READ );
+     EditPaM aEndPaM = pImpEditView->pEditEngine->pImpEditEngine->Read( rInput, "", eFormat, aOldSel, pHTTPHeaderAttrs );
+     pImpEditView->pEditEngine->pImpEditEngine->UndoActionEnd();
+@@ -661,7 +690,7 @@ EditTextObject* EditView::CreateTextObject()
+ 
+ void EditView::InsertText( const EditTextObject& rTextObject )
+ {
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+ 
+     pImpEditView->pEditEngine->UndoActionStart( EDITUNDO_INSERT );
+     EditSelection aTextSel( pImpEditView->pEditEngine->InsertText( rTextObject, pImpEditView->GetEditSelection() ) );
+@@ -744,9 +773,9 @@ void EditView::TransliterateText( TransliterationFlags nTransliterationMode )
+     EditSelection aNewSel = pImpEditView->pEditEngine->TransliterateText( pImpEditView->GetEditSelection(), nTransliterationMode );
+     if ( aNewSel != aOldSel )
+     {
+-        pImpEditView->DrawSelection();
++        pImpEditView->DrawSelectionXOR();
+         pImpEditView->SetEditSelection( aNewSel );
+-        pImpEditView->DrawSelection();
++        pImpEditView->DrawSelectionXOR();
+     }
+ }
+ 
+@@ -754,7 +783,7 @@ void EditView::CompleteAutoCorrect( vcl::Window* pFrameWin )
+ {
+     if ( !pImpEditView->HasSelection() && pImpEditView->pEditEngine->pImpEditEngine->GetStatus().DoAutoCorrect() )
+     {
+-        pImpEditView->DrawSelection();
++        pImpEditView->DrawSelectionXOR();
+         EditSelection aSel = pImpEditView->GetEditSelection();
+         aSel = pImpEditView->pEditEngine->EndOfWord( aSel.Max() );
+         aSel = pImpEditView->pEditEngine->pImpEditEngine->AutoCorrect( aSel, 0, !IsInsertMode(), pFrameWin );
+@@ -1044,9 +1073,9 @@ void EditView::ExecuteSpellPopup( const Point& rPosPixel, Link<SpellCallbackInfo
+             {
+                 // Set Cursor before word...
+                 EditPaM aCursor = pImpEditView->GetEditSelection().Min();
+-                pImpEditView->DrawSelection();
++                pImpEditView->DrawSelectionXOR();
+                 pImpEditView->SetEditSelection( EditSelection( aCursor, aCursor ) );
+-                pImpEditView->DrawSelection();
++                pImpEditView->DrawSelectionXOR();
+                 // Crashes when no SfxApp
+                 pImpEditView->pEditEngine->pImpEditEngine->Spell( this, false );
+             }
+@@ -1115,17 +1144,17 @@ void EditView::ExecuteSpellPopup( const Point& rPosPixel, Link<SpellCallbackInfo
+ void EditView::SelectCurrentWord( sal_Int16 nWordType )
+ {
+     EditSelection aCurSel( pImpEditView->GetEditSelection() );
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     aCurSel = pImpEditView->pEditEngine->SelectWord(aCurSel.Max(), nWordType);
+     pImpEditView->SetEditSelection( aCurSel );
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     ShowCursor( true, false );
+ }
+ 
+ void EditView::InsertField( const SvxFieldItem& rFld )
+ {
+     EditEngine* pEE = pImpEditView->pEditEngine;
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pEE->UndoActionStart( EDITUNDO_INSERT );
+     EditPaM aPaM( pEE->InsertField( pImpEditView->GetEditSelection(), rFld ) );
+     pEE->UndoActionEnd();
+@@ -1413,16 +1442,16 @@ void EditView::SetCursorLogicPosition(const Point& rPosition, bool bPoint, bool
+ 
+     if (pImpEditView->GetEditSelection().Min() != aSelection.Min())
+         pImpEditView->pEditEngine->CursorMoved(pImpEditView->GetEditSelection().Min().GetNode());
+-    pImpEditView->DrawSelection(aSelection);
++    pImpEditView->DrawSelectionXOR(aSelection);
+     if (pImpEditView->GetEditSelection() != aSelection)
+         pImpEditView->SetEditSelection(aSelection);
+     ShowCursor(/*bGotoCursor=*/false);
+ }
+ 
+-void EditView::DrawSelection(OutlinerViewShell* pOtherShell)
++void EditView::DrawSelectionXOR(OutlinerViewShell* pOtherShell)
+ {
+     pImpEditView->RegisterOtherShell(pOtherShell);
+-    pImpEditView->DrawSelection();
++    pImpEditView->DrawSelectionXOR();
+     pImpEditView->RegisterOtherShell(nullptr);
+ }
+ 
+diff --git a/editeng/source/editeng/impedit.cxx b/editeng/source/editeng/impedit.cxx
+index dcecf17887a6..c4484c7534e9 100644
+--- a/editeng/source/editeng/impedit.cxx
++++ b/editeng/source/editeng/impedit.cxx
+@@ -90,6 +90,7 @@ ImpEditView::ImpEditView( EditView* pView, EditEngine* pEng, vcl::Window* pWindo
+     bClickedInSelection = false;
+     eSelectionMode      = EESelectionMode::TxtOnly;
+     eAnchorMode         = EEAnchorMode::TopLeft;
++    mpEditViewCallbacks = nullptr;
+     nInvMore            = 1;
+     nTravelXPos         = TRAVEL_X_DONTKNOW;
+     nControl            = EVControlBits::AUTOSCROLL | EVControlBits::ENABLEPASTE;
+@@ -97,6 +98,8 @@ ImpEditView::ImpEditView( EditView* pView, EditEngine* pEng, vcl::Window* pWindo
+ 
+     aEditSelection.Min() = pEng->GetEditDoc().GetStartPaM();
+     aEditSelection.Max() = pEng->GetEditDoc().GetEndPaM();
++
++    SelectionChanged();
+ }
+ 
+ ImpEditView::~ImpEditView()
+@@ -138,6 +141,8 @@ void ImpEditView::SetEditSelection( const EditSelection& rEditSelection )
+     // set state before notification
+     aEditSelection = rEditSelection;
+ 
++    SelectionChanged();
++
+     if (comphelper::LibreOfficeKit::isActive())
+         // Tiled rendering: selections are only painted when we are in selection mode.
+         pEditEngine->SetInSelectionMode(aEditSelection.HasRange());
+@@ -194,8 +199,41 @@ void lcl_translateTwips(vcl::Window& rParent, vcl::Window& rChild)
+     }
+ }
+ 
+-void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, OutputDevice* pTargetDevice )
++// EditView never had a central/secure place to react on SelectionChange since
++// Selection was changed in many places, often by not using SetEditSelection()
++// but (mis)using GetEditSelection() and manipulating this non-const return
++// value. Sorted this out now to have such a place, this is needed for safely
++// change/update the Selection visualization for enhanced mechanisms
++void ImpEditView::SelectionChanged()
+ {
++    if (hasEditViewCallbacks())
++    {
++        // use callback to tell about change in selection visualisation
++        mpEditViewCallbacks->EditViewSelectionChange();
++    }
++}
++
++// renamed from DrawSelection to DrawSelectionXOR to better reflect what this
++// method was used for: Paint Selection in XOR, change it and again paint it in XOR.
++// This can be safely assumed due to the EditView only being capable of painting the
++// selection in XOR until today.
++// This also means that all places calling DrawSelectionXOR are thoroughly weighted
++// and choosen to make this fragile XOR-paint water-proof and thus contain some
++// information in this sense.
++// Someone thankfully expanded it to collect the SelectionRectangles when called with
++// the Region*, see GetSelectionRectangles below.
++void ImpEditView::DrawSelectionXOR( EditSelection aTmpSel, vcl::Region* pRegion, OutputDevice* pTargetDevice )
++{
++    if (hasEditViewCallbacks() && !pRegion && !comphelper::LibreOfficeKit::isActive())
++    {
++        // we are done, do *not* visualize self
++        // CAUTION: do not use when comphelper::LibreOfficeKit::isActive()
++        // due to event stuff triggered below. That *should* probably be moved
++        // to SelectionChanged() which exists now, but I do not know enough about
++        // that stuff to do it
++        return;
++    }
++
+     if ( eSelectionMode == EESelectionMode::Hidden )
+         return;
+ 
+@@ -243,7 +281,7 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
+         pPolyPoly = new tools::PolyPolygon;
+     }
+ 
+-    DBG_ASSERT( !pEditEngine->IsIdleFormatterActive(), "DrawSelection: Not formatted!" );
++    DBG_ASSERT( !pEditEngine->IsIdleFormatterActive(), "DrawSelectionXOR: Not formatted!" );
+     aTmpSel.Adjust( pEditEngine->GetEditDoc() );
+ 
+     ContentNode* pStartNode = aTmpSel.Min().GetNode();
+@@ -332,7 +370,7 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
+                     if ( nTmpEndIndex > nEndIndex )
+                         nTmpEndIndex = nEndIndex;
+ 
+-                    DBG_ASSERT( nTmpEndIndex > nTmpStartIndex, "DrawSelection, Start >= End?" );
++                    DBG_ASSERT( nTmpEndIndex > nTmpStartIndex, "DrawSelectionXOR, Start >= End?" );
+ 
+                     long nX1 = pEditEngine->GetXPos(pTmpPortion, &rLine, nTmpStartIndex, true);
+                     long nX2 = pEditEngine->GetXPos(pTmpPortion, &rLine, nTmpEndIndex);
+@@ -447,18 +485,11 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
+     }
+ }
+ 
+-void ImpEditView::GetSelectionRectangles(std::vector<tools::Rectangle>& rLogicRects)
++void ImpEditView::GetSelectionRectangles(EditSelection aTmpSel, std::vector<tools::Rectangle>& rLogicRects)
+ {
+-    bool bMm100ToTwip = pOutWin->GetMapMode().GetMapUnit() == MapUnit::Map100thMM;
+     vcl::Region aRegion;
+-    DrawSelection(aEditSelection, &aRegion);
++    DrawSelectionXOR(aTmpSel, &aRegion);
+     aRegion.GetRegionRectangles(rLogicRects);
+-
+-    for (tools::Rectangle& rRectangle : rLogicRects)
+-    {
+-        if (bMm100ToTwip)
+-            rRectangle = OutputDevice::LogicToLogic(rRectangle, MapUnit::Map100thMM, MapUnit::MapTwip);
+-    }
+ }
+ 
+ void ImpEditView::ImplDrawHighlightRect( OutputDevice* _pTarget, const Point& rDocPosTopLeft, const Point& rDocPosBottomRight, tools::PolyPolygon* pPolyPoly )
+@@ -604,9 +635,9 @@ void ImpEditView::SetSelectionMode( EESelectionMode eNewMode )
+ {
+     if ( eSelectionMode != eNewMode )
+     {
+-        DrawSelection();
++        DrawSelectionXOR();
+         eSelectionMode = eNewMode;
+-        DrawSelection();    // redraw
++        DrawSelectionXOR();    // redraw
+     }
+ }
+ 
+@@ -627,6 +658,23 @@ void ImpEditView::SetOutputArea( const tools::Rectangle& rRect )
+         SetScrollDiffX( (sal_uInt16)aOutArea.GetWidth() * 2 / 10 );
+ }
+ 
++void ImpEditView::InvalidateAtWindow(const tools::Rectangle& rRect)
++{
++    if (hasEditViewCallbacks())
++    {
++        // do not invalidate and trigger a global repaint, but forward
++        // the need for change to the applied EditViewCallback, can e.g.
++        // be used to visualize the active edit text in an OverlayObject
++        mpEditViewCallbacks->EditViewInvalidate();
++    }
++    else
++    {
++        // classic mode: invalidate and trigger full repaint
++        // of the changed area
++        GetWindow()->Invalidate(rRect);
++    }
++}
++
+ void ImpEditView::ResetOutputArea( const tools::Rectangle& rRect )
+ {
+     // remember old out area
+@@ -643,38 +691,46 @@ void ImpEditView::ResetOutputArea( const tools::Rectangle& rRect )
+ 
+         if(aOldArea.Left() > aOutArea.Left())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOutArea.Left() - nMore, aOldArea.Top() - nMore, aOldArea.Left(), aOldArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOutArea.Left() - nMore, aOldArea.Top() - nMore, aOldArea.Left(), aOldArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+         else if(aOldArea.Left() < aOutArea.Left())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Left() - nMore, aOldArea.Top() - nMore, aOutArea.Left(), aOldArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOldArea.Left() - nMore, aOldArea.Top() - nMore, aOutArea.Left(), aOldArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+ 
+         if(aOldArea.Right() > aOutArea.Right())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOutArea.Right(), aOldArea.Top() - nMore, aOldArea.Right() + nMore, aOldArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOutArea.Right(), aOldArea.Top() - nMore, aOldArea.Right() + nMore, aOldArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+         else if(aOldArea.Right() < aOutArea.Right())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Right(), aOldArea.Top() - nMore, aOutArea.Right() + nMore, aOldArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOldArea.Right(), aOldArea.Top() - nMore, aOutArea.Right() + nMore, aOldArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+ 
+         if(aOldArea.Top() > aOutArea.Top())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Left() - nMore, aOutArea.Top() - nMore, aOldArea.Right() + nMore, aOldArea.Top()));
++            const tools::Rectangle aRect(aOldArea.Left() - nMore, aOutArea.Top() - nMore, aOldArea.Right() + nMore, aOldArea.Top());
++            InvalidateAtWindow(aRect);
+         }
+         else if(aOldArea.Top() < aOutArea.Top())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Left() - nMore, aOldArea.Top() - nMore, aOldArea.Right() + nMore, aOutArea.Top()));
++            const tools::Rectangle aRect(aOldArea.Left() - nMore, aOldArea.Top() - nMore, aOldArea.Right() + nMore, aOutArea.Top());
++            InvalidateAtWindow(aRect);
+         }
+ 
+         if(aOldArea.Bottom() > aOutArea.Bottom())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Left() - nMore, aOutArea.Bottom(), aOldArea.Right() + nMore, aOldArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOldArea.Left() - nMore, aOutArea.Bottom(), aOldArea.Right() + nMore, aOldArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+         else if(aOldArea.Bottom() < aOutArea.Bottom())
+         {
+-            GetWindow()->Invalidate(tools::Rectangle(aOldArea.Left() - nMore, aOldArea.Bottom(), aOldArea.Right() + nMore, aOutArea.Bottom() + nMore));
++            const tools::Rectangle aRect(aOldArea.Left() - nMore, aOldArea.Bottom(), aOldArea.Right() + nMore, aOutArea.Bottom() + nMore);
++            InvalidateAtWindow(aRect);
+         }
+     }
+ }
+@@ -1347,9 +1403,9 @@ bool ImpEditView::IsWrongSpelledWord( const EditPaM& rPaM, bool bMarkIfWrong )
+         bIsWrong = rPaM.GetNode()->GetWrongList()->HasWrong( aSel.Min().GetIndex(), aSel.Max().GetIndex() );
+         if ( bIsWrong && bMarkIfWrong )
+         {
+-            DrawSelection();
++            DrawSelectionXOR();
+             SetEditSelection( aSel );
+-            DrawSelection();
++            DrawSelectionXOR();
+         }
+     }
+     return bIsWrong;
+@@ -1370,9 +1426,9 @@ OUString ImpEditView::SpellIgnoreWord()
+         {
+             aWord = pEditEngine->pImpEditEngine->GetSelected( GetEditSelection() );
+             // And deselect
+-            DrawSelection();
++            DrawSelectionXOR();
+             SetEditSelection( EditSelection( aPaM, aPaM ) );
+-            DrawSelection();
++            DrawSelectionXOR();
+         }
+ 
+         if ( !aWord.isEmpty() )
+@@ -1396,7 +1452,7 @@ OUString ImpEditView::SpellIgnoreWord()
+ 
+ void ImpEditView::DeleteSelected()
+ {
+-    DrawSelection();
++    DrawSelectionXOR();
+ 
+     pEditEngine->pImpEditEngine->UndoActionStart( EDITUNDO_DELETE );
+ 
+@@ -1535,7 +1591,7 @@ void ImpEditView::Paste( css::uno::Reference< css::datatransfer::clipboard::XCli
+     EditSelection aSel( GetEditSelection() );
+     if ( aSel.HasRange() )
+     {
+-        DrawSelection();
++        DrawSelectionXOR();
+         aSel = pEditEngine->DeleteSelection(aSel);
+     }
+ 
+@@ -1619,14 +1675,20 @@ bool ImpEditView::IsInSelection( const EditPaM& rPaM )
+ void ImpEditView::CreateAnchor()
+ {
+     pEditEngine->SetInSelectionMode(true);
+-    GetEditSelection().Min() = GetEditSelection().Max();
++    EditSelection aNewSelection(GetEditSelection());
++    aNewSelection.Min() = aNewSelection.Max();
++    SetEditSelection(aNewSelection);
++    // const_cast<EditPaM&>(GetEditSelection().Min()) = GetEditSelection().Max();
+ }
+ 
+ void ImpEditView::DeselectAll()
+ {
+     pEditEngine->SetInSelectionMode(false);
+-    DrawSelection();
+-    GetEditSelection().Min() = GetEditSelection().Max();
++    DrawSelectionXOR();
++    EditSelection aNewSelection(GetEditSelection());
++    aNewSelection.Min() = aNewSelection.Max();
++    SetEditSelection(aNewSelection);
++    // const_cast<EditPaM&>(GetEditSelection().Min()) = GetEditSelection().Max();
+ }
+ 
+ bool ImpEditView::IsSelectionAtPoint( const Point& rPosPixel )
+@@ -1687,7 +1749,7 @@ bool ImpEditView::SetCursorAtPoint( const Point& rPointPixel )
+     }
+     else
+     {
+-        DrawSelection( aTmpNewSel );
++        DrawSelectionXOR( aTmpNewSel );
+     }
+ 
+     // set changed text selection
+@@ -1796,8 +1858,8 @@ void ImpEditView::dragGestureRecognized(const css::datatransfer::dnd::DragGestur
+             pDragAndDropInfo->pField = pField;
+             ContentNode* pNode = pEditEngine->GetEditDoc().GetObject( nPara );
+             aCopySel = EditSelection( EditPaM( pNode, nPos ), EditPaM( pNode, nPos+1 ) );
+-            GetEditSelection() = aCopySel;
+-            DrawSelection();
++            SetEditSelection(aCopySel);
++            DrawSelectionXOR();
+             bool bGotoCursor = DoAutoScroll();
+             ShowCursor( bGotoCursor, /*bForceCursor=*/false );
+         }
+@@ -1910,7 +1972,7 @@ void ImpEditView::dragDropEnd( const css::datatransfer::dnd::DragSourceDropEvent
+                     }
+                 }
+ 
+-                DrawSelection();
++                DrawSelectionXOR();
+                 EditSelection aDelSel( pEditEngine->pImpEditEngine->CreateSel( aToBeDelSel ) );
+                 DBG_ASSERT( !aDelSel.DbgIsBuggy( pEditEngine->GetEditDoc() ), "ToBeDel is buggy!" );
+                 pEditEngine->DeleteSelection(aDelSel);
+@@ -1920,7 +1982,7 @@ void ImpEditView::dragDropEnd( const css::datatransfer::dnd::DragSourceDropEvent
+                     SetEditSelection( pEditEngine->pImpEditEngine->CreateSel( aNewSel ) );
+                 }
+                 pEditEngine->pImpEditEngine->FormatAndUpdate( pEditEngine->pImpEditEngine->GetActiveView() );
+-                DrawSelection();
++                DrawSelectionXOR();
+             }
+             else
+             {
+@@ -1972,7 +2034,7 @@ void ImpEditView::drop( const css::datatransfer::dnd::DropTargetDropEvent& rDTDE
+             {
+                 bChanges = true;
+                 // remove Selection ...
+-                DrawSelection();
++                DrawSelectionXOR();
+                 EditPaM aPaM( pDragAndDropInfo->aDropDest );
+ 
+                 PasteOrDropInfos aPasteOrDropInfos;
+diff --git a/editeng/source/editeng/impedit.hxx b/editeng/source/editeng/impedit.hxx
+index 442f35e7c3b9..0072cd8d02da 100644
+--- a/editeng/source/editeng/impedit.hxx
++++ b/editeng/source/editeng/impedit.hxx
+@@ -260,6 +260,27 @@ private:
+     EditSelection       aEditSelection;
+     EEAnchorMode        eAnchorMode;
+ 
++    /// mechanism to change from the classic refresh mode that simply
++    // invalidates the area where text was changed. When set, the invalidate
++    // and the direct repaint of the Window-plugged EditView will be suppressed.
++    // Instead, a consumer that has registered using a EditViewCallbacks
++    // incarnation has to handle that. Used e.g. to represent the edited text
++    // in Draw/Impres in an OverlayObject which avoids evtl. expensive full
++    // repaints of the EditView(s)
++    const EditViewCallbacks* mpEditViewCallbacks;
++
++    bool hasEditViewCallbacks() const
++    {
++        return nullptr != mpEditViewCallbacks;
++    }
++
++    void setEditViewCallbacks(const EditViewCallbacks* pEditViewCallbacks)
++    {
++        mpEditViewCallbacks = pEditViewCallbacks;
++    }
++
++    void InvalidateAtWindow(const tools::Rectangle& rRect);
++
+ protected:
+ 
+     // DragAndDropClient
+@@ -317,13 +338,14 @@ public:
+     long            GetVisDocBottom() const { return aVisDocStartPos.Y() + ( !IsVertical() ? aOutArea.GetHeight() : aOutArea.GetWidth() ); }
+     tools::Rectangle       GetVisDocArea() const;
+ 
+-    EditSelection&  GetEditSelection()          { return aEditSelection; }
++    const EditSelection&  GetEditSelection()          { return aEditSelection; }
+     void            SetEditSelection( const EditSelection& rEditSelection );
+     bool            HasSelection() const { return aEditSelection.HasRange(); }
+ 
+-    void            DrawSelection() { DrawSelection( aEditSelection ); }
+-    void            DrawSelection( EditSelection, vcl::Region* pRegion = nullptr, OutputDevice* pTargetDevice = nullptr );
+-    void GetSelectionRectangles(std::vector<tools::Rectangle>& rLogicRects);
++    void SelectionChanged();
++    void            DrawSelectionXOR() { DrawSelectionXOR( aEditSelection ); }
++    void            DrawSelectionXOR( EditSelection, vcl::Region* pRegion = nullptr, OutputDevice* pTargetDevice = nullptr );
++    void GetSelectionRectangles(EditSelection aTmpSel, std::vector<tools::Rectangle>& rLogicRects);
+ 
+     vcl::Window*    GetWindow() const           { return pOutWin; }
+ 
+@@ -526,8 +548,8 @@ private:
+     // Methods...
+ 
+ 
+-    void                CursorMoved( ContentNode* pPrevNode );
+-    void                ParaAttribsChanged( ContentNode* pNode );
++    void                CursorMoved( const ContentNode* pPrevNode );
++    void                ParaAttribsChanged(ContentNode* pNode);
+     void                TextModified();
+     void                CalcHeight( ParaPortion* pPortion );
+ 
+diff --git a/editeng/source/editeng/impedit2.cxx b/editeng/source/editeng/impedit2.cxx
+index fb18ce45023c..31c92445b3a9 100644
+--- a/editeng/source/editeng/impedit2.cxx
++++ b/editeng/source/editeng/impedit2.cxx
+@@ -330,9 +330,9 @@ bool ImpEditEngine::MouseButtonDown( const MouseEvent& rMEvt, EditView* pView )
+             aSelEngine.CursorPosChanging( true, false );
+ 
+             EditSelection aNewSelection( SelectWord( aCurSel ) );
+-            pView->pImpEditView->DrawSelection();
++            pView->pImpEditView->DrawSelectionXOR();
+             pView->pImpEditView->SetEditSelection( aNewSelection );
+-            pView->pImpEditView->DrawSelection();
++            pView->pImpEditView->DrawSelectionXOR();
+             pView->ShowCursor();
+         }
+         else if ( rMEvt.GetClicks() == 3 )
+@@ -343,9 +343,9 @@ bool ImpEditEngine::MouseButtonDown( const MouseEvent& rMEvt, EditView* pView )
+             EditSelection aNewSelection( aCurSel );
+             aNewSelection.Min().SetIndex( 0 );
+             aNewSelection.Max().SetIndex( aCurSel.Min().GetNode()->Len() );
+-            pView->pImpEditView->DrawSelection();
++            pView->pImpEditView->DrawSelectionXOR();
+             pView->pImpEditView->SetEditSelection( aNewSelection );
+-            pView->pImpEditView->DrawSelection();
++            pView->pImpEditView->DrawSelectionXOR();
+             pView->ShowCursor();
+         }
+     }
+@@ -711,11 +711,13 @@ const SfxItemSet& ImpEditEngine::GetEmptyItemSet()
+ 
+ //  MISC
+ 
+-void ImpEditEngine::CursorMoved( ContentNode* pPrevNode )
++void ImpEditEngine::CursorMoved( const ContentNode* pPrevNode )
+ {
+     // Delete empty attributes, but only if paragraph is not empty!
+-    if ( pPrevNode->GetCharAttribs().HasEmptyAttribs() && pPrevNode->Len() )
+-        pPrevNode->GetCharAttribs().DeleteEmptyAttribs( aEditDoc.GetItemPool() );
++    if (pPrevNode->GetCharAttribs().HasEmptyAttribs() && pPrevNode->Len())
++    {
++        const_cast<ContentNode*>(pPrevNode)->GetCharAttribs().DeleteEmptyAttribs(aEditDoc.GetItemPool());
++    }
+ }
+ 
+ void ImpEditEngine::TextModified()
+@@ -916,15 +918,27 @@ EditSelection ImpEditEngine::MoveCursor( const KeyEvent& rKeyEvent, EditView* pE
+     aSelEngine.SetCurView( pEditView );
+     aSelEngine.CursorPosChanging( bKeyModifySelection, aTranslatedKeyEvent.GetKeyCode().IsMod1() );
+     EditPaM aOldEnd( pEditView->pImpEditView->GetEditSelection().Max() );
+-    pEditView->pImpEditView->GetEditSelection().Max() = aPaM;
++
++    {
++        EditSelection aNewSelection(pEditView->pImpEditView->GetEditSelection());
++        aNewSelection.Max() = aPaM;
++        pEditView->pImpEditView->SetEditSelection(aNewSelection);
++        // const_cast<EditPaM&>(pEditView->pImpEditView->GetEditSelection().Max()) = aPaM;
++    }
++
+     if ( bKeyModifySelection )
+     {
+         // Then the selection is expanded ... or the whole selection is painted in case of tiled rendering.
+         EditSelection aTmpNewSel( comphelper::LibreOfficeKit::isActive() ? pEditView->pImpEditView->GetEditSelection().Min() : aOldEnd, aPaM );
+-        pEditView->pImpEditView->DrawSelection( aTmpNewSel );
++        pEditView->pImpEditView->DrawSelectionXOR( aTmpNewSel );
+     }
+     else
+-        pEditView->pImpEditView->GetEditSelection().Min() = aPaM;
++    {
++        EditSelection aNewSelection(pEditView->pImpEditView->GetEditSelection());
++        aNewSelection.Min() = aPaM;
++        pEditView->pImpEditView->SetEditSelection(aNewSelection);
++        // const_cast<EditPaM&>(pEditView->pImpEditView->GetEditSelection().Min()) = aPaM;
++    }
+ 
+     return pEditView->pImpEditView->GetEditSelection();
+ }
+@@ -3432,12 +3446,12 @@ void ImpEditEngine::SetActiveView( EditView* pView )
+         return;
+ 
+     if ( pActiveView && pActiveView->HasSelection() )
+-        pActiveView->pImpEditView->DrawSelection();
++        pActiveView->pImpEditView->DrawSelectionXOR();
+ 
+     pActiveView = pView;
+ 
+     if ( pActiveView && pActiveView->HasSelection() )
+-        pActiveView->pImpEditView->DrawSelection();
++        pActiveView->pImpEditView->DrawSelectionXOR();
+ 
+     //  NN: Quick fix for #78668#:
+     //  When editing of a cell in Calc is ended, the edit engine is not deleted,
+@@ -4293,7 +4307,7 @@ void ImpEditEngine::IndentBlock( EditView* pEditView, bool bRight )
+             aNewSel.nEndPos = 0;
+         }
+ 
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->pImpEditView->SetEditSelection(
+                         pEditView->pImpEditView->GetEditSelection().Max() );
+         UndoActionStart( bRight ? EDITUNDO_INDENTBLOCK : EDITUNDO_UNINDENTBLOCK );
+@@ -4329,7 +4343,7 @@ void ImpEditEngine::IndentBlock( EditView* pEditView, bool bRight )
+         if ( pLastNode->Len() < aNewSel.nEndPos )
+             aNewSel.nEndPos = pLastNode->Len();
+         pEditView->pImpEditView->SetEditSelection( CreateSel( aNewSel ) );
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->pImpEditView->ShowCursor( false, true );
+     }
+ }
+diff --git a/editeng/source/editeng/impedit3.cxx b/editeng/source/editeng/impedit3.cxx
+index 3dd322789fd1..ce276d1f9a45 100644
+--- a/editeng/source/editeng/impedit3.cxx
++++ b/editeng/source/editeng/impedit3.cxx
+@@ -289,7 +289,10 @@ void ImpEditEngine::UpdateViews( EditView* pCurView )
+         {
+             // convert to window coordinates ....
+             aClipRect = pView->pImpEditView->GetWindowPos( aClipRect );
+-            pView->GetWindow()->Invalidate( aClipRect );
++
++            // moved to one executing method to allow finer control
++            pView->InvalidateWindow(aClipRect);
++
+             pView->InvalidateOtherViewWindows( aClipRect );
+         }
+     }
+@@ -3265,7 +3268,14 @@ void ImpEditEngine::Paint( OutputDevice* pOutDev, tools::Rectangle aClipRect, Po
+                                     nTextLen = aText.getLength();
+                                     ExtraPortionInfo *pExtraInfo = rTextPortion.GetExtraInfos();
+                                     // Do not split the Fields into different lines while editing
+-                                    if( bStripOnly && !bParsingFields && pExtraInfo && pExtraInfo->lineBreaksList.size() )
++                                    // With EditView on Overlay bStripOnly is now set for stripping to
++                                    // primitives. To stay compatible in EditMode use pActiveView to detect
++                                    // when we are in EditMode. For whatever reason URLs are drawn as single
++                                    // line in edit mode, originally clipped against edit area (which is no
++                                    // longer done in Overlay mode and allows to *read* the URL).
++                                    // It would be difficult to change this due to needed adaptions in
++                                    // EditEngine (look for lineBreaksList creation)
++                                    if( nullptr == pActiveView && bStripOnly && !bParsingFields && pExtraInfo && pExtraInfo->lineBreaksList.size() )
+                                     {
+                                         bParsingFields = true;
+                                         itSubLines = pExtraInfo->lineBreaksList.begin();
+@@ -3863,10 +3873,10 @@ void ImpEditEngine::Paint( ImpEditView* pView, const tools::Rectangle& rRect, Ou
+     else
+         pTarget->SetClipRegion();
+ 
+-    // In case of tiled rendering pass a region to DrawSelection(), so that
++    // In case of tiled rendering pass a region to DrawSelectionXOR(), so that
+     // selection callbacks are not emitted during every repaint.
+     vcl::Region aRegion;
+-    pView->DrawSelection(pView->GetEditSelection(), comphelper::LibreOfficeKit::isActive() ? &aRegion : nullptr, pTarget);
++    pView->DrawSelectionXOR(pView->GetEditSelection(), comphelper::LibreOfficeKit::isActive() ? &aRegion : nullptr, pTarget);
+ }
+ 
+ void ImpEditEngine::InsertContent( ContentNode* pNode, sal_Int32 nPos )
+diff --git a/editeng/source/editeng/impedit4.cxx b/editeng/source/editeng/impedit4.cxx
+index d1e688aed165..f1e2e18e2c34 100644
+--- a/editeng/source/editeng/impedit4.cxx
++++ b/editeng/source/editeng/impedit4.cxx
+@@ -1501,12 +1501,12 @@ EESpellState ImpEditEngine::Spell( EditView* pEditView, bool bMultipleDoc )
+ 
+     if ( !bMultipleDoc )
+     {
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         if ( aCurSel.Max().GetIndex() > aCurSel.Max().GetNode()->Len() )
+             aCurSel.Max().SetIndex( aCurSel.Max().GetNode()->Len() );
+         aCurSel.Min() = aCurSel.Max();
+         pEditView->pImpEditView->SetEditSelection( aCurSel );
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->ShowCursor( true, false );
+     }
+     EESpellState eState = pSpellInfo->eState;
+@@ -1626,12 +1626,12 @@ void ImpEditEngine::Convert( EditView* pEditView,
+ 
+     if ( !bMultipleDoc )
+     {
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         if ( aCurSel.Max().GetIndex() > aCurSel.Max().GetNode()->Len() )
+             aCurSel.Max().SetIndex( aCurSel.Max().GetNode()->Len() );
+         aCurSel.Min() = aCurSel.Max();
+         pEditView->pImpEditView->SetEditSelection( aCurSel );
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->ShowCursor( true, false );
+     }
+     delete pConvInfo;
+@@ -1829,9 +1829,9 @@ void ImpEditEngine::ImpConvert( OUString &rConvTxt, LanguageType &rConvTxtLang,
+         pConvInfo->aConvContinue = CreateEPaM( aCurSel.Max() );
+     }
+ 
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     pEditView->pImpEditView->SetEditSelection( aCurSel );
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     pEditView->ShowCursor( true, false );
+ 
+     rConvTxt = aRes;
+@@ -1899,9 +1899,9 @@ Reference< XSpellAlternatives > ImpEditEngine::ImpSpell( EditView* pEditView )
+             pSpellInfo->eState = EESpellState::ErrorFound;
+     }
+ 
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     pEditView->pImpEditView->SetEditSelection( aCurSel );
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     pEditView->ShowCursor( true, false );
+     return xSpellAlt;
+ }
+@@ -2491,9 +2491,9 @@ EESpellState ImpEditEngine::StartThesaurus( EditView* pEditView )
+     if (xDlg->Execute() == RET_OK)
+     {
+         // Replace Word...
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->pImpEditView->SetEditSelection( aCurSel );
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+         pEditView->InsertText(xDlg->GetWord());
+         pEditView->ShowCursor(true, false);
+     }
+@@ -2533,7 +2533,7 @@ sal_Int32 ImpEditEngine::StartSearchAndReplace( EditView* pEditView, const SvxSe
+         SvxSearchItem aTmpItem( rSearchItem );
+         aTmpItem.SetBackward( false );
+ 
+-        pEditView->pImpEditView->DrawSelection();
++        pEditView->pImpEditView->DrawSelectionXOR();
+ 
+         aCurSel.Adjust( aEditDoc );
+         EditPaM aStartPaM = aTmpItem.GetSelection() ? aCurSel.Min() : aEditDoc.GetStartPaM();
+@@ -2558,7 +2558,7 @@ sal_Int32 ImpEditEngine::StartSearchAndReplace( EditView* pEditView, const SvxSe
+         }
+         else
+         {
+-            pEditView->pImpEditView->DrawSelection();
++            pEditView->pImpEditView->DrawSelectionXOR();
+             pEditView->ShowCursor( true, false );
+         }
+     }
+@@ -2581,7 +2581,7 @@ bool ImpEditEngine::Search( const SvxSearchItem& rSearchItem, EditView* pEditVie
+         bFound = ImpSearch( rSearchItem, aSel, aStartPaM, aFoundSel );
+     }
+ 
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     if ( bFound )
+     {
+         // First, set the minimum, so the whole word is in the visible range.
+@@ -2592,7 +2592,7 @@ bool ImpEditEngine::Search( const SvxSearchItem& rSearchItem, EditView* pEditVie
+     else
+         pEditView->pImpEditView->SetEditSelection( aSel.Max() );
+ 
+-    pEditView->pImpEditView->DrawSelection();
++    pEditView->pImpEditView->DrawSelectionXOR();
+     pEditView->ShowCursor( true, false );
+     return bFound;
+ }
+diff --git a/include/editeng/editeng.hxx b/include/editeng/editeng.hxx
+index ff9bed37e27c..c426d72722c8 100644
+--- a/include/editeng/editeng.hxx
++++ b/include/editeng/editeng.hxx
+@@ -161,7 +161,7 @@ private:
+                        EditEngine&     operator=( const EditEngine& ) = delete;
+     EDITENG_DLLPRIVATE bool            PostKeyEvent( const KeyEvent& rKeyEvent, EditView* pView, vcl::Window* pFrameWin );
+ 
+-    EDITENG_DLLPRIVATE void CursorMoved(ContentNode* pPrevNode);
++    EDITENG_DLLPRIVATE void CursorMoved(const ContentNode* pPrevNode);
+     EDITENG_DLLPRIVATE void CheckIdleFormatter();
+     EDITENG_DLLPRIVATE bool IsIdleFormatterActive() const;
+     EDITENG_DLLPRIVATE ParaPortion* FindParaPortion(ContentNode* pNode);
+diff --git a/include/editeng/editview.hxx b/include/editeng/editview.hxx
+index 61dc4949ae63..0db9cdf15b52 100644
+--- a/include/editeng/editview.hxx
++++ b/include/editeng/editview.hxx
+@@ -71,6 +71,7 @@ namespace linguistic2 {
+     class XLanguageGuessing;
+ }
+ }}}
++namespace basegfx { class B2DRange; }
+ 
+ enum class ScrollRangeCheck
+ {
+@@ -78,6 +79,28 @@ enum class ScrollRangeCheck
+     PaperWidthTextSize = 2,   // VisArea must be within paper width, Text Size
+ };
+ 
++// Helper class that allows to set a callback at the EditView. When
++// set, Invalidates and repains are suppressed at the EditView, but
++// EditViewInvalidate() will be triggered to allow the consumer to
++// react itself as needed.
++// Also Selection visualization is suppressed and EditViewSelectionChange
++// is triggered when Selection changes and needs reaction.
++class EDITENG_DLLPUBLIC EditViewCallbacks
++{
++public:
++    EditViewCallbacks() {}
++    virtual ~EditViewCallbacks();
++
++    // call this when text visualization changed in any way. It
++    // will also update selection, so no need to call this self
++    // additionally (but will also do no harm)
++    virtual void EditViewInvalidate() const = 0;
++
++    // call this when only selection is changed. Text change will
++    // then *not* be checked and not be reacted on. Still, when
++    // only the selection is changed, this is useful and faster
++    virtual void EditViewSelectionChange() const = 0;
++};
+ 
+ class EDITENG_DLLPUBLIC EditView final
+ {
+@@ -104,6 +127,10 @@ public:
+                     EditView( EditEngine* pEng, vcl::Window* pWindow );
+                     ~EditView();
+ 
++    // set EditViewCallbacks for external handling of Repaints/Visualization
++    void setEditViewCallbacks(const EditViewCallbacks* pEditViewCallbacks);
++    bool hasEditViewCallbacks() const;
++
+     void            SetEditEngine( EditEngine* pEditEngine );
+     EditEngine*     GetEditEngine() const;
+ 
+@@ -116,6 +143,7 @@ public:
+ 
+     void            Paint( const tools::Rectangle& rRect, OutputDevice* pTargetDevice = nullptr );
+     tools::Rectangle       GetInvalidateRect() const;
++    void            InvalidateWindow(const tools::Rectangle& rClipRect);
+     void            InvalidateOtherViewWindows( const tools::Rectangle& rInvRect );
+     void            Invalidate();
+     Pair            Scroll( long nHorzScroll, long nVertScroll, ScrollRangeCheck nRangeCheck = ScrollRangeCheck::NoNegative );
+@@ -271,7 +299,7 @@ public:
+     /// Allows adjusting the point or mark of the selection to a document coordinate.
+     void SetCursorLogicPosition(const Point& rPosition, bool bPoint, bool bClearMark);
+     /// Trigger selection drawing callback in pOtherShell based on our shell's selection state.
+-    void DrawSelection(OutlinerViewShell* pOtherShell);
++    void DrawSelectionXOR(OutlinerViewShell* pOtherShell);
+ };
+ 
+ #endif // INCLUDED_EDITENG_EDITVIEW_HXX
+diff --git a/include/svx/svdedxv.hxx b/include/svx/svdedxv.hxx
+index b1bcbec1d39e..15505ffcac9b 100644
+--- a/include/svx/svdedxv.hxx
++++ b/include/svx/svdedxv.hxx
+@@ -25,6 +25,7 @@
+ #include <svx/svxdllapi.h>
+ #include <svx/svdglev.hxx>
+ #include <svx/selectioncontroller.hxx>
++#include <editeng/editview.hxx>
+ #include <memory>
+ 
+ class SdrOutliner;
+@@ -57,11 +58,20 @@ enum class SdrEndTextEditKind
+ // - macromod
+ 
+ 
+-class SVX_DLLPUBLIC SdrObjEditView: public SdrGlueEditView
++class SVX_DLLPUBLIC SdrObjEditView: public SdrGlueEditView, public EditViewCallbacks
+ {
+     friend class                SdrPageView;
+     friend class                ImpSdrEditPara;
+ 
++    // Now derived from EditViewCallbacks and overriding these callbacks to
++    // allow own EditText visualization
++    virtual void EditViewInvalidate() const override;
++    virtual void EditViewSelectionChange() const override;
++
++    // The OverlayObjects used for visualizing active TextEdit (currently
++    // using TextEditOverlayObject, but not limitied to it
++    sdr::overlay::OverlayObjectList           maTEOverlayGroup;
++
+ protected:
+     // TextEdit
+     SdrObjectWeakRef            mxTextEditObj;         // current object in TextEdit
+diff --git a/include/svx/svdotext.hxx b/include/svx/svdotext.hxx
+index 5b23e70fe25f..3690d50c09bb 100644
+--- a/include/svx/svdotext.hxx
++++ b/include/svx/svdotext.hxx
+@@ -607,11 +607,19 @@ public:
+         const drawinglayer::geometry::ViewInformation2D& aViewInformation) const;
+     void impHandleChainingEventsDuringDecomposition(SdrOutliner &rOutliner) const;
+ 
+-
+     // timing generators
+     void impGetBlinkTextTiming(drawinglayer::animation::AnimationEntryList& rAnimList) const;
+     void impGetScrollTextTiming(drawinglayer::animation::AnimationEntryList& rAnimList, double fFrameLength, double fTextLength) const;
+ 
++    // Direct decomposer for text visualization when you already have a prepared
++    // Outliner containing all the needed information
++    static void impDecomposeBlockTextPrimitiveDirect(
++        drawinglayer::primitive2d::Primitive2DContainer& rTarget,
++        SdrOutliner& rOutliner,
++        const basegfx::B2DHomMatrix& rNewTransformA,
++        const basegfx::B2DHomMatrix& rNewTransformB,
++        const basegfx::B2DRange& rClipRange);
++
+     /** returns false if the given pointer is NULL
+         or if the given SdrOutliner contains no text.
+         Also checks for one empty paragraph.
+diff --git a/include/svx/svdoutl.hxx b/include/svx/svdoutl.hxx
+index a9a885f68fac..5d1f9e842593 100644
+--- a/include/svx/svdoutl.hxx
++++ b/include/svx/svdoutl.hxx
+@@ -45,6 +45,8 @@ public:
+     const SdrPage* getVisualizedPage() const { return mpVisualizedPage; }
+ 
+     virtual OUString CalcFieldValue(const SvxFieldItem& rField, sal_Int32 nPara, sal_Int32 nPos, Color*& rpTxtColor, Color*& rpFldColor) override;
++
++    bool hasEditViewCallbacks() const;
+ };
+ 
+ #endif // INCLUDED_SVX_SVDOUTL_HXX
+diff --git a/sc/source/ui/view/tabvwshc.cxx b/sc/source/ui/view/tabvwshc.cxx
+index 7cbcaed65b9b..7f9d83e0804f 100644
+--- a/sc/source/ui/view/tabvwshc.cxx
++++ b/sc/source/ui/view/tabvwshc.cxx
+@@ -532,7 +532,7 @@ void ScTabViewShell::NotifyCursor(SfxViewShell* pOtherShell) const
+             rEditView.ShowCursor();
+             rEditView.RegisterOtherShell(nullptr);
+             // Text selection, if any.
+-            rEditView.DrawSelection(pOtherShell);
++            rEditView.DrawSelectionXOR(pOtherShell);
+         }
+         else
+         {
+diff --git a/sd/source/ui/view/Outliner.cxx b/sd/source/ui/view/Outliner.cxx
+index 002c6baf16ad..ad9e1c141d3c 100644
+--- a/sd/source/ui/view/Outliner.cxx
++++ b/sd/source/ui/view/Outliner.cxx
+@@ -801,6 +801,17 @@ bool SdOutliner::SearchAndReplaceOnce(std::vector<sd::SearchSelection>* pSelecti
+         std::vector<::tools::Rectangle> aLogicRects;
+         pOutlinerView->GetSelectionRectangles(aLogicRects);
+ 
++        // convert to twips if in 100thmm (seems as if LibreOfficeKit is based on twips?). Do this
++        // here where we have the only place needing this, *not* in ImpEditView::GetSelectionRectangles
++        // which makes that method unusable for others
++        if (pOutlinerView->GetWindow() && MapUnit::Map100thMM == pOutlinerView->GetWindow()->GetMapMode().GetMapUnit())
++        {
++            for (tools::Rectangle& rRectangle : aLogicRects)
++            {
++                rRectangle = OutputDevice::LogicToLogic(rRectangle, MapUnit::Map100thMM, MapUnit::MapTwip);
++            }
++        }
++
+         std::vector<OString> aLogicRectStrings;
+         std::transform(aLogicRects.begin(), aLogicRects.end(), std::back_inserter(aLogicRectStrings), [](const ::tools::Rectangle& rRectangle) { return rRectangle.toString(); });
+         OString sRectangles = comphelper::string::join("; ", aLogicRectStrings);
+diff --git a/sd/source/ui/view/ViewShellBase.cxx b/sd/source/ui/view/ViewShellBase.cxx
+index 308e28f890af..6fc0ff95756b 100644
+--- a/sd/source/ui/view/ViewShellBase.cxx
++++ b/sd/source/ui/view/ViewShellBase.cxx
+@@ -1006,7 +1006,7 @@ void ViewShellBase::NotifyCursor(SfxViewShell* pOtherShell) const
+         rEditView.ShowCursor();
+         rEditView.RegisterOtherShell(nullptr);
+         // Text selection, if any.
+-        rEditView.DrawSelection(pOtherShell);
++        rEditView.DrawSelectionXOR(pOtherShell);
+ 
+         // Shape text lock.
+         if (OutlinerView* pOutlinerView = pDrawView->GetTextEditOutlinerView())
+diff --git a/svx/source/svdraw/svdedxv.cxx b/svx/source/svdraw/svdedxv.cxx
+index 11fffc5c8a38..754e4a286e17 100644
+--- a/svx/source/svdraw/svdedxv.cxx
++++ b/svx/source/svdraw/svdedxv.cxx
+@@ -65,6 +65,9 @@
+ #include <comphelper/lok.hxx>
+ #include <sfx2/viewsh.hxx>
+ #include <svx/svdviter.hxx>
++#include <svx/sdr/overlay/overlayselection.hxx>
++#include <svx/sdr/overlay/overlaymanager.hxx>
++#include <svx/sdrpagewindow.hxx>
+ 
+ #include <memory>
+ 
+@@ -104,7 +107,6 @@ SdrObjEditView::~SdrObjEditView()
+     assert(nullptr == mpOldTextEditUndoManager); // should have been reset
+ }
+ 
+-
+ bool SdrObjEditView::IsAction() const
+ {
+     return IsMacroObj() || SdrGlueEditView::IsAction();
+@@ -354,39 +356,339 @@ void SdrObjEditView::ModelHasChanged()
+     }
+ }
+ 
++namespace
++{
++    /**
++        Helper class to visualize the content of an active EditView as an
++        OverlayObject. These objects work with Primitives and are handled
++        from the OverlayManager(s) in place as needed.
++
++        It allows complete visualization of the content of the active
++        EditView without the need of Invalidates triggered by the EditView
++        and thus avoiding potentially expensive repaints by using the
++        automatically buffered Overlay mechanism.
++
++        It buffers as amuch as possible locally and *only* triggers a real
++        change (see call to objectChange()) when really needed.
++     */
++    class TextEditOverlayObject : public sdr::overlay::OverlayObject
++    {
++    protected:
++        /// local access to associated sdr::overlay::OverlaySelection
++        sdr::overlay::OverlaySelection*     mpOverlaySelection;
++
++        /// local definition depends on active OutlinerView
++        OutlinerView&                       mrOutlinerView;
++
++        /// geometry definitions with buffering
++        basegfx::B2DRange                   maLastRange;
++        basegfx::B2DRange                   maRange;
++
++        /// text content definitions with buffering
++        drawinglayer::primitive2d::Primitive2DContainer     maTextPrimitives;
++        drawinglayer::primitive2d::Primitive2DContainer     maLastTextPrimitives;
++
++        /// bitfield
++        bool                    mbVisualizeSurroundingFrame : 1;
++
++        // geometry creation for OverlayObject, can use local *Last* values
++        virtual drawinglayer::primitive2d::Primitive2DContainer createOverlayObjectPrimitive2DSequence() override;
++
++    public:
++        TextEditOverlayObject(
++            const Color& rColor,
++            OutlinerView& rOutlinerView,
++            bool bVisualizeSurroundingFrame);
++        virtual ~TextEditOverlayObject() override;
++
++        // data read access
++        const sdr::overlay::OverlaySelection* getOverlaySelection() const { return mpOverlaySelection; }
++        const OutlinerView& getOutlinerView() const { return mrOutlinerView; }
++        bool getVisualizeSurroundingFrame() const { return mbVisualizeSurroundingFrame; }
++
++        /// override to check conditions for last createOverlayObjectPrimitive2DSequence
++        virtual drawinglayer::primitive2d::Primitive2DContainer getOverlayObjectPrimitive2DSequence() const override;
++
++        // data write access. In this OverlayObject we only have the
++        // callback that triggers detecting if something *has* changed
++        void checkDataChange(const basegfx::B2DRange& rMinTextEditArea);
++        void checkSelectionChange();
++    };
++
++    drawinglayer::primitive2d::Primitive2DContainer TextEditOverlayObject::createOverlayObjectPrimitive2DSequence()
++    {
++        drawinglayer::primitive2d::Primitive2DContainer aRetval;
++
++        /// outer frame visualization
++        if (getVisualizeSurroundingFrame())
++        {
++            const SvtOptionsDrawinglayer aSvtOptionsDrawinglayer;
++            const double fTransparence(aSvtOptionsDrawinglayer.GetTransparentSelectionPercent() * 0.01);
++            const sal_uInt16 nPixSiz(getOutlinerView().GetInvalidateMore() - 1);
++
++            aRetval.push_back(
++                new drawinglayer::primitive2d::OverlayRectanglePrimitive(
++                    maRange,
++                    getBaseColor().getBColor(),
++                    fTransparence,
++                    std::max(6, nPixSiz - 2), // grow
++                    0.0, // shrink
++                    0.0));
++        }
++
++        // add buffered TextPrimitives
++        aRetval.append(maTextPrimitives);
++
++        return aRetval;
++    }
++
++    TextEditOverlayObject::TextEditOverlayObject(
++        const Color& rColor,
++        OutlinerView& rOutlinerView,
++        bool bVisualizeSurroundingFrame)
++    :   OverlayObject(rColor),
++        mpOverlaySelection(nullptr),
++        mrOutlinerView(rOutlinerView),
++        maLastRange(),
++        maRange(),
++        maTextPrimitives(),
++        maLastTextPrimitives(),
++        mbVisualizeSurroundingFrame(bVisualizeSurroundingFrame)
++    {
++        // no AA for TextEdit overlay
++        allowAntiAliase(false);
++
++        // create local OverlaySelection - this is an integral part of EditText
++        // visualization
++        const std::vector< basegfx::B2DRange > aEmptySelection;
++        mpOverlaySelection = new sdr::overlay::OverlaySelection(
++            sdr::overlay::OverlayType::Transparent,
++            rColor,
++            aEmptySelection,
++            true);
++    }
++
++    TextEditOverlayObject::~TextEditOverlayObject()
++    {
++        if (getOverlaySelection())
++        {
++            delete mpOverlaySelection;
++            mpOverlaySelection = nullptr;
++        }
++
++        if (getOverlayManager())
++        {
++            getOverlayManager()->remove(*this);
++        }
++    }
++
++    drawinglayer::primitive2d::Primitive2DContainer TextEditOverlayObject::getOverlayObjectPrimitive2DSequence() const
++    {
++        if (!getPrimitive2DSequence().empty())
++        {
++            if (!maRange.equal(maLastRange) || maLastTextPrimitives != maTextPrimitives)
++            {
++                // conditions of last local decomposition have changed, delete to force new evaluation
++                const_cast<TextEditOverlayObject*>(this)->setPrimitive2DSequence(drawinglayer::primitive2d::Primitive2DContainer());
++            }
++        }
++
++        if (getPrimitive2DSequence().empty())
++        {
++            // remember new buffered values
++            const_cast<TextEditOverlayObject*>(this)->maLastRange = maRange;
++            const_cast<TextEditOverlayObject*>(this)->maLastTextPrimitives = maTextPrimitives;
++        }
++
++        // call base implementation
++        return OverlayObject::getOverlayObjectPrimitive2DSequence();
++    }
++
++    void TextEditOverlayObject::checkDataChange(const basegfx::B2DRange& rMinTextEditArea)
++    {
++        bool bObjectChange(false);
++
++        // check current range
++        const tools::Rectangle aOutArea(mrOutlinerView.GetOutputArea());
++        basegfx::B2DRange aNewRange(aOutArea.Left(), aOutArea.Top(), aOutArea.Right(), aOutArea.Bottom());
++        aNewRange.expand(rMinTextEditArea);
++
++        if (aNewRange != maRange)
++        {
++            maRange = aNewRange;
++            bObjectChange = true;
++        }
++
++        // check if text primitives did change
++        SdrOutliner* pSdrOutliner = dynamic_cast<SdrOutliner*>(getOutlinerView().GetOutliner());
++
++        if (pSdrOutliner)
++        {
++            // get TextPrimitives directly from active Outliner
++            basegfx::B2DHomMatrix aNewTransformA;
++            basegfx::B2DHomMatrix aNewTransformB;
++            basegfx::B2DRange aClipRange;
++            drawinglayer::primitive2d::Primitive2DContainer aNewTextPrimitives;
++
++            // active Outliner is always in unified oriented coordinate system (currently)
++            // so just translate to TopLeft of visible Range. Keep in mind that top-left
++            // depends on vertical text and top-to-bottom text attribures
++            const tools::Rectangle aVisArea(mrOutlinerView.GetVisArea());
++            const bool bVerticalWriting(pSdrOutliner->IsVertical());
++            const bool bTopToBottom(pSdrOutliner->IsTopToBottom());
++            const double fStartInX(
++                bVerticalWriting && bTopToBottom
++                ? aOutArea.Right() - aVisArea.Left()
++                : aOutArea.Left() - aVisArea.Left());
++            const double fStartInY(
++                bVerticalWriting && !bTopToBottom
++                ? aOutArea.Bottom() - aVisArea.Top()
++                : aOutArea.Top() - aVisArea.Top());
++
++            aNewTransformB.translate(
++                fStartInX,
++                fStartInY);
++
++            // get the current TextPrimitives. This is the most expensive part
++            // of this mechanism, it *may* be possible to buffer layouted
++            // primitives per ParaPortion with/in/dependent on the EditEngine
++            // content if needed. For now, get and compare
++            SdrTextObj::impDecomposeBlockTextPrimitiveDirect(
++                aNewTextPrimitives,
++                *pSdrOutliner,
++                aNewTransformA,
++                aNewTransformB,
++                aClipRange);
++
++            if (aNewTextPrimitives != maTextPrimitives)
++            {
++                maTextPrimitives = aNewTextPrimitives;
++                bObjectChange = true;
++            }
++        }
++
++        if (bObjectChange)
++        {
++            // if there really *was* a change signal the OverlayManager to
++            // refresh this object's visualization
++            objectChange();
++
++            // on data change, always do a SelectionChange, too
++            // since the selection is an integral part of text visualization
++            checkSelectionChange();
++        }
++    }
++
++    void TextEditOverlayObject::checkSelectionChange()
++    {
++        if (getOverlaySelection() && getOverlayManager())
++        {
++            std::vector<tools::Rectangle> aLogicRects;
++            std::vector<basegfx::B2DRange> aLogicRanges;
++            const Size aLogicPixel(getOverlayManager()->getOutputDevice().PixelToLogic(Size(1, 1)));
++
++            // get logic selection
++            getOutlinerView().GetSelectionRectangles(aLogicRects);
++
++            for (const auto& aRect : aLogicRects)
++            {
++                // convert from logic Rectangles to logic Ranges, do not forget to add
++                // one Unit (in this case logical units for one pixel, pre-calculated)
++                aLogicRanges.push_back(
++                    basegfx::B2DRange(
++                        aRect.Left() - aLogicPixel.Width(), aRect.Top() - aLogicPixel.Height(),
++                        aRect.Right() + aLogicPixel.Width(), aRect.Bottom() + aLogicPixel.Height()));
++            }
++
++            mpOverlaySelection->setRanges(aLogicRanges);
++        }
++    }
++} // end of anonymous namespace
+ 
+ // TextEdit
+ 
++// callback from the active EditView, forward to evtl. existing instances of the
++// TextEditOverlayObject(s). This will additionally update the selection which
++// is an integral part of the text visualization
++void SdrObjEditView::EditViewInvalidate() const
++{
++    if (IsTextEdit())
++    {
++        // MinTextRange may have changed. Forward it, too
++        const basegfx::B2DRange aMinTextRange(
++            aMinTextEditArea.Left(), aMinTextEditArea.Top(),
++            aMinTextEditArea.Right(), aMinTextEditArea.Bottom());
+ 
+-void SdrObjEditView::TextEditDrawing(SdrPaintWindow& rPaintWindow) const
++        for (sal_uInt32 a(0); a < maTEOverlayGroup.count(); a++)
++        {
++            TextEditOverlayObject* pCandidate = dynamic_cast< TextEditOverlayObject* >(&maTEOverlayGroup.getOverlayObject(a));
++
++            if (pCandidate)
++            {
++                pCandidate->checkDataChange(aMinTextRange);
++            }
++        }
++    }
++}
++
++// callback from the active EditView, forward to evtl. existing instances of the
++// TextEditOverlayObject(s). This cvall *only* updates the selection visualization
++// which is e.g. used when only the selection is changed, but not the text
++void SdrObjEditView::EditViewSelectionChange() const
+ {
+-    // draw old text edit stuff
+-    if(IsTextEdit())
++    if (IsTextEdit())
+     {
+-        const SdrOutliner* pActiveOutliner = GetTextEditOutliner();
++        for (sal_uInt32 a(0); a < maTEOverlayGroup.count(); a++)
++        {
++            TextEditOverlayObject* pCandidate = dynamic_cast< TextEditOverlayObject* >(&maTEOverlayGroup.getOverlayObject(a));
++
++            if (pCandidate)
++            {
++                pCandidate->checkSelectionChange();
++            }
++        }
++    }
++}
+ 
+-        if(pActiveOutliner)
++void SdrObjEditView::TextEditDrawing(SdrPaintWindow& rPaintWindow) const
++{
++    if (!comphelper::LibreOfficeKit::isActive())
++    {
++        // adapt all TextEditOverlayObject(s), so call EditViewInvalidate()
++        // to update accordingly (will update selection, too). Suppress new
++        // stuff when LibreOficeKit is active
++        EditViewInvalidate();
++    }
++    else
++    {
++        // draw old text edit stuff
++        if (IsTextEdit())
+         {
+-            const sal_uInt32 nViewCount(pActiveOutliner->GetViewCount());
++            const SdrOutliner* pActiveOutliner = GetTextEditOutliner();
+ 
+-            if(nViewCount)
++            if (pActiveOutliner)
+             {
+-                const vcl::Region& rRedrawRegion = rPaintWindow.GetRedrawRegion();
+-                const tools::Rectangle aCheckRect(rRedrawRegion.GetBoundRect());
++                const sal_uInt32 nViewCount(pActiveOutliner->GetViewCount());
+ 
+-                for(sal_uInt32 i(0); i < nViewCount; i++)
++                if (nViewCount)
+                 {
+-                    OutlinerView* pOLV = pActiveOutliner->GetView(i);
+-
+-                    // If rPaintWindow knows that the output device is a render
+-                    // context and is aware of the underlying vcl::Window,
+-                    // compare against that; that's how double-buffering can
+-                    // still find the matching OutlinerView.
+-                    OutputDevice* pOutputDevice = rPaintWindow.GetWindow() ? rPaintWindow.GetWindow() : &rPaintWindow.GetOutputDevice();
+-                    if(pOLV->GetWindow() == pOutputDevice || comphelper::LibreOfficeKit::isActive())
++                    const vcl::Region& rRedrawRegion = rPaintWindow.GetRedrawRegion();
++                    const tools::Rectangle aCheckRect(rRedrawRegion.GetBoundRect());
++
++                    for (sal_uInt32 i(0); i < nViewCount; i++)
+                     {
+-                        ImpPaintOutlinerView(*pOLV, aCheckRect, rPaintWindow.GetTargetOutputDevice());
+-                        return;
++                        OutlinerView* pOLV = pActiveOutliner->GetView(i);
++
++                        // If rPaintWindow knows that the output device is a render
++                        // context and is aware of the underlying vcl::Window,
++                        // compare against that; that's how double-buffering can
++                        // still find the matching OutlinerView.
++                        OutputDevice* pOutputDevice = rPaintWindow.GetWindow() ? rPaintWindow.GetWindow() : &rPaintWindow.GetOutputDevice();
++                        if (pOLV->GetWindow() == pOutputDevice || comphelper::LibreOfficeKit::isActive())
++                        {
++                            ImpPaintOutlinerView(*pOLV, aCheckRect, rPaintWindow.GetTargetOutputDevice());
++                            return;
++                        }
+                     }
+                 }
+             }
+@@ -514,8 +816,16 @@ OutlinerView* SdrObjEditView::ImpMakeOutlinerView(vcl::Window* pWin, OutlinerVie
+     // create OutlinerView
+     OutlinerView* pOutlView=pGivenView;
+     pTextEditOutliner->SetUpdateMode(false);
+-    if (pOutlView==nullptr) pOutlView = new OutlinerView(pTextEditOutliner,pWin);
+-    else pOutlView->SetWindow(pWin);
++
++    if (pOutlView == nullptr)
++    {
++        pOutlView = new OutlinerView(pTextEditOutliner, pWin);
++    }
++    else
++    {
++        pOutlView->SetWindow(pWin);
++    }
++
+     // disallow scrolling
+     EVControlBits nStat=pOutlView->GetControlWord();
+     nStat&=~EVControlBits::AUTOSCROLL;
+@@ -860,6 +1170,46 @@ bool SdrObjEditView::SdrBeginTextEdit(
+ 
+             pTextEditOutlinerView=ImpMakeOutlinerView(pWin,pGivenOutlinerView);
+ 
++            if (!comphelper::LibreOfficeKit::isActive() && pTextEditOutlinerView)
++            {
++                // activate visualization of EditView on Overlay, suppress when
++                // LibreOfficeKit is active
++                pTextEditOutlinerView->GetEditView().setEditViewCallbacks(this);
++
++                const SvtOptionsDrawinglayer aSvtOptionsDrawinglayer;
++                const Color aHilightColor(aSvtOptionsDrawinglayer.getHilightColor());
++                const SdrTextObj* pText = dynamic_cast<SdrTextObj*>(GetTextEditObject());
++                const bool bTextFrame(pText && pText->IsTextFrame());
++                const bool bFitToSize(pTextEditOutliner->GetControlWord() & EEControlBits::STRETCHING);
++                const bool bVisualizeSurroundingFrame(bTextFrame && !bFitToSize);
++                SdrPageView* pPageView = GetSdrPageView();
++
++                if (pPageView)
++                {
++                    for (sal_uInt32 b(0); b < pPageView->PageWindowCount(); b++)
++                    {
++                        const SdrPageWindow& rPageWindow = *pPageView->GetPageWindow(b);
++
++                        if (rPageWindow.GetPaintWindow().OutputToWindow())
++                        {
++                            rtl::Reference< sdr::overlay::OverlayManager > xManager = rPageWindow.GetOverlayManager();
++                            if (xManager.is())
++                            {
++                                TextEditOverlayObject* pNewTextEditOverlayObject = new TextEditOverlayObject(
++                                    aHilightColor,
++                                    *pTextEditOutlinerView,
++                                    bVisualizeSurroundingFrame);
++
++                                xManager->add(*pNewTextEditOverlayObject);
++                                xManager->add(const_cast<sdr::overlay::OverlaySelection&>(*pNewTextEditOverlayObject->getOverlaySelection()));
++
++                                maTEOverlayGroup.append(pNewTextEditOverlayObject);
++                            }
++                        }
++                    }
++                }
++            }
++
+             // check if this view is already inserted
+             sal_uIntPtr i2,nCount = pTextEditOutliner->GetViewCount();
+             for( i2 = 0; i2 < nCount; i2++ )
+@@ -1071,6 +1421,14 @@ SdrEndTextEditKind SdrObjEditView::SdrEndTextEdit(bool bDontDeleteReally)
+         GetModel()->Broadcast(aHint);
+     }
+ 
++    // if new mechanism was used, clean it up. At cleanup no need to check
++    // for LibreOfficeKit
++    if (pTextEditOutlinerView)
++    {
++        pTextEditOutlinerView->GetEditView().setEditViewCallbacks(nullptr);
++        maTEOverlayGroup.clear();
++    }
++
+     mxTextEditObj.reset(nullptr);
+     pTextEditPV=nullptr;
+     pTextEditWin=nullptr;
+diff --git a/svx/source/svdraw/svdotextdecomposition.cxx b/svx/source/svdraw/svdotextdecomposition.cxx
+index a05a428b6798..1fc947414375 100644
+--- a/svx/source/svdraw/svdotextdecomposition.cxx
++++ b/svx/source/svdraw/svdotextdecomposition.cxx
+@@ -1632,5 +1632,18 @@ void SdrTextObj::impDecomposeChainedTextPrimitive(
+     rTarget = aConverter.getPrimitive2DSequence();
+ }
+ 
++// Direct decomposer for text visualization when you already have a prepared
++// Outliner containing all the needed information
++void SdrTextObj::impDecomposeBlockTextPrimitiveDirect(
++    drawinglayer::primitive2d::Primitive2DContainer& rTarget,
++    SdrOutliner& rOutliner,
++    const basegfx::B2DHomMatrix& rNewTransformA,
++    const basegfx::B2DHomMatrix& rNewTransformB,
++    const basegfx::B2DRange& rClipRange)
++{
++    impTextBreakupHandler aConverter(rOutliner);
++    aConverter.decomposeBlockTextPrimitive(rNewTransformA, rNewTransformB, rClipRange);
++    rTarget.append(aConverter.getPrimitive2DSequence());
++}
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/svx/source/svdraw/svdotxat.cxx b/svx/source/svdraw/svdotxat.cxx
+index cf29c117594b..ef43879da4cd 100644
+--- a/svx/source/svdraw/svdotxat.cxx
++++ b/svx/source/svdraw/svdotxat.cxx
+@@ -287,8 +287,24 @@ bool SdrTextObj::AdjustTextFrameWidthAndHeight()
+         if (dynamic_cast<const SdrCaptionObj *>(this) != nullptr) { // this is a hack
+             static_cast<SdrCaptionObj*>(this)->ImpRecalcTail();
+         }
+-        SetChanged();
+-        BroadcastObjectChange();
++
++        // to not slow down EditView visualization on Overlay (see
++        // TextEditOverlayObject) it is necessary to suppress the
++        // Invalidates for the deep repaint when the size of the
++        // TextFrame changed (AdjustTextFrameWidthAndHeight returned
++        // true). The ObjectChanges are valid, invalidate will be
++        // done on EndTextEdit anyways
++        const bool bSuppressChangeWhenEditOnOverlay(
++            IsInEditMode() &&
++            GetTextEditOutliner() &&
++            GetTextEditOutliner()->hasEditViewCallbacks());
++
++        if (!bSuppressChangeWhenEditOnOverlay)
++        {
++            SetChanged();
++            BroadcastObjectChange();
++        }
++
+         SendUserCall(SdrUserCallType::Resize,aBoundRect0);
+     }
+     return bRet;
+diff --git a/svx/source/svdraw/svdoutl.cxx b/svx/source/svdraw/svdoutl.cxx
+index 1e3ea5e2e150..580dee39b174 100644
+--- a/svx/source/svdraw/svdoutl.cxx
++++ b/svx/source/svdraw/svdoutl.cxx
+@@ -24,6 +24,7 @@
+ #include <svx/svdmodel.hxx>
+ #include <editeng/eeitem.hxx>
+ #include <svl/itempool.hxx>
++#include <editeng/editview.hxx>
+ 
+ 
+ SdrOutliner::SdrOutliner( SfxItemPool* pItemPool, OutlinerMode nMode )
+@@ -94,4 +95,19 @@ const SdrTextObj* SdrOutliner::GetTextObj() const
+         return nullptr;
+ }
+ 
++bool SdrOutliner::hasEditViewCallbacks() const
++{
++    for (size_t a(0); a < GetViewCount(); a++)
++    {
++        OutlinerView* pOutlinerView = GetView(a);
++
++        if (pOutlinerView && pOutlinerView->GetEditView().hasEditViewCallbacks())
++        {
++            return true;
++        }
++    }
++
++    return false;
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sw/source/core/crsr/crsrsh.cxx b/sw/source/core/crsr/crsrsh.cxx
+index 197d7d4060c5..27008c6ddc79 100644
+--- a/sw/source/core/crsr/crsrsh.cxx
++++ b/sw/source/core/crsr/crsrsh.cxx
+@@ -1187,7 +1187,7 @@ void SwCursorShell::NotifyCursor(SfxViewShell* pOtherShell) const
+         rEditView.ShowCursor();
+         rEditView.RegisterOtherShell(nullptr);
+         // Text selection, if any.
+-        rEditView.DrawSelection(pOtherShell);
++        rEditView.DrawSelectionXOR(pOtherShell);
+ 
+         // Shape text lock.
+         if (OutlinerView* pOutlinerView = pView->GetTextEditOutlinerView())
+-- 
+2.14.3
+

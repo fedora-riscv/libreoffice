@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -252,6 +252,7 @@ Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch10: 0001-always-install-fc_local.conf-on-linux.patch
+Patch11: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2222,6 +2223,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jan 12 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.4.2-3
+- backport editviewoverlay to workaround unfortunate Overpass metrics
+
 * Tue Jan 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.4.2-2
 - Resolves: rhbz#1532323 hang in custom properties page on loss of focus
 

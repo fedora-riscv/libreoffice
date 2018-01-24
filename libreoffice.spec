@@ -254,6 +254,7 @@ Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch10: 0001-always-install-fc_local.conf-on-linux.patch
 Patch11: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch12: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
+Patch13: 0001-gtk3-single-click-with-selection-set-doesn-t-unselec.patch
 
 %if 0%{?rhel}
 # not upstreamed

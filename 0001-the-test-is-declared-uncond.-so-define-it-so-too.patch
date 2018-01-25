@@ -1,0 +1,45 @@
+From e2d31f1c91ca01f0071b884fdb067e6ed1cff2c3 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Wed, 31 Jan 2018 19:39:29 +0100
+Subject: [PATCH] the test is declared uncond., so define it so too
+
+Change-Id: Idd107c0eebd0f2782c25fb17e3756cde88c5f4dc
+---
+ sw/qa/extras/uiwriter/uiwriter.cxx | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/sw/qa/extras/uiwriter/uiwriter.cxx b/sw/qa/extras/uiwriter/uiwriter.cxx
+index a81d236d8277..98263624738c 100644
+--- a/sw/qa/extras/uiwriter/uiwriter.cxx
++++ b/sw/qa/extras/uiwriter/uiwriter.cxx
+@@ -5450,13 +5450,6 @@ void SwUiWriterTest::testSectionInTableInTable()
+     createDoc("tdf112109.fodt");
+ }
+ 
+-void SwUiWriterTest::testTdf114536()
+-{
+-    // This crashed in SwTextFormatter::MergeCharacterBorder() due to a
+-    // use after free.
+-    createDoc("tdf114536.odt");
+-}
+-
+ void SwUiWriterTest::testSectionInTableInTable2()
+ {
+     createDoc("split-section-in-nested-table.fodt");
+@@ -5607,6 +5600,13 @@ void SwUiWriterTest::testTdf113790()
+     CPPUNIT_ASSERT(dynamic_cast<SwXTextDocument *>(mxComponent.get()));
+ }
+ 
++void SwUiWriterTest::testTdf114536()
++{
++    // This crashed in SwTextFormatter::MergeCharacterBorder() due to a
++    // use after free.
++    createDoc("tdf114536.odt");
++}
++
+ CPPUNIT_TEST_SUITE_REGISTRATION(SwUiWriterTest);
+ CPPUNIT_PLUGIN_IMPLEMENT();
+ 
+-- 
+2.14.3
+

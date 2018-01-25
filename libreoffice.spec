@@ -56,8 +56,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -100,7 +100,7 @@ Source101:      %{external_url}/liborcus-0.13.1.tar.xz
 Source102:      %{external_url}/mdds-1.3.1.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
 Source104:      %{external_url}/libwps-0.4.8.tar.xz
-Source105:      %{external_url}/libpagemaker-0.0.3.tar.bz2
+Source105:      %{external_url}/libpagemaker-0.0.4.tar.xz
 Source106:      %{external_url}/libzmf-0.0.2.tar.xz
 Source107:      %{external_url}/libstaroffice-0.0.5.tar.xz
 Source108:      %{external_url}/harfbuzz-1.7.0.tar.bz2
@@ -109,7 +109,7 @@ Source110:      %{external_url}/gpgme-1.9.0.tar.bz2
 Source111:      %{external_url}/libgpg-error-1.27.tar.bz2
 Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source113:      %{external_url}/cppunit-1.14.0.tar.gz
-Source114:      %{external_url}/libqxp-0.0.0.tar.xz
+Source114:      %{external_url}/libqxp-0.0.1.tar.xz
 Source115:      %{external_url}/libepubgen-0.1.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
 
@@ -121,8 +121,8 @@ Provides: bundled(libcmis) = 0.5.1
 Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(libgpg-error) = 1.27
 Provides: bundled(liborcus) = 0.13.1
-Provides: bundled(libpagemaker) = 0.0.3
-Provides: bundled(libqxp) = 0.0.0
+Provides: bundled(libpagemaker) = 0.0.4
+Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(libstaroffice) = 0.0.5
 Provides: bundled(libwps) = 0.4.7
 Provides: bundled(libzmf) = 0.0.2
@@ -270,6 +270,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
+Patch6: 0001-the-test-is-declared-uncond.-so-define-it-so-too.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1028,6 +1029,7 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i6
 sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686
 sed -i -e /CppunitTest_sd_export_ooxml2/d sd/Module_sd.mk # i686
 sed -i -e /CppunitTest_sw_ooxmlexport4/d sw/Module_sw.mk
+sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 %if 0%{?rhel}
 sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
 sed -i -e /CppunitTest_writerperfect_draw/d writerperfect/Module_writerperfect.mk
@@ -2288,6 +2290,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Feb 04 2018 David Tardon <dtardon@redhat.com> - 1:6.0.0.3-1
+- update to 6.0.0 rc3
+
 * Wed Jan 31 2018 Michael Stahl <mstahl@fedoraproject.org> - 1:6.0.0.2-3
 - add lots of .abignore files to restrict abipkgdiff to shared objects
   that actually have a stable ABI

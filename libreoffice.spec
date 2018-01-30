@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2262,6 +2262,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jan 30 2018 Björn Esser <besser82@fedoraproject.org> - 1:6.0.0.2-2
+- Rebuilt for Boost 1.66.0
+
 * Fri Jan 12 2018 David Tardon <dtardon@redhat.com> - 1:6.0.0.2-1
 - update to 6.0.0 rc2
 

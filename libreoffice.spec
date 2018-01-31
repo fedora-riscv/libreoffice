@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1383,6 +1383,14 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 
+# restrict abipkgdiff to shared objects that actually have a stable ABI
+for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk2 gtk3 kde4 libreofficekit; do
+    cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
+[suppress_file]
+file_name_not_regexp=.*\.so\.[0-9]+
+_EOF
+done
+
 # install LibreOfficeKit
 install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
 install -m 0644 -p LOKDocView-%{girapiversion}.typelib %{buildroot}%{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
@@ -1492,6 +1500,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/help/main_transform.xsl
 %{baseinstdir}/presets
 %dir %{baseinstdir}/program
+%{baseinstdir}/program/core.abignore
 %{baseinstdir}/program/libbasprovlo.so
 %{baseinstdir}/program/libcairocanvaslo.so
 %{baseinstdir}/program/libcanvasfactorylo.so
@@ -1866,6 +1875,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
+%{baseinstdir}/program/base.abignore
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
@@ -1909,12 +1919,14 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files officebean
 %{baseinstdir}/program/classes/officebean.jar
+%{baseinstdir}/program/officebean.abignore
 %{baseinstdir}/program/libofficebean.so
 
 %files officebean-common
 %{_javadir}/%{name}/officebean.jar
 
 %files ogltrans
+%{baseinstdir}/program/ogltrans.abignore
 %{baseinstdir}/program/libOGLTranslo.so
 %{baseinstdir}/program/opengl/basicFragmentShader.glsl
 %{baseinstdir}/program/opengl/basicVertexShader.glsl
@@ -1937,6 +1949,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/ogltrans.xcd
 
 %files pdfimport
+%{baseinstdir}/program/pdfimport.abignore
 %{baseinstdir}/program/libpdfimportlo.so
 %{baseinstdir}/program/xpdfimport
 %{baseinstdir}/share/registry/pdfimport.xcd
@@ -1947,6 +1960,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc instdir/LICENSE
 
 %files calc
+%{baseinstdir}/program/calc.abignore
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -2003,6 +2017,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/msgbox.py*
 
 %files writer
+%{baseinstdir}/program/writer.abignore
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -2029,6 +2044,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
+%{baseinstdir}/program/impress.abignore
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
 %{baseinstdir}/program/libwpftimpresslo.so
@@ -2054,6 +2070,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files math
+%{baseinstdir}/program/math.abignore
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/share/registry/math.xcd
@@ -2071,6 +2088,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files graphicfilter
+%{baseinstdir}/program/graphicfilter.abignore
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libgraphicfilterlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
@@ -2083,6 +2101,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files postgresql
+%{baseinstdir}/program/postgresql.abignore
 %{baseinstdir}/program/libpostgresql-sdbclo.so
 %{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
@@ -2099,6 +2118,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/javavendors.xml
 %{baseinstdir}/program/jvmfwk3rc
 %{baseinstdir}/program/JREProperties.class
+%{baseinstdir}/program/ure.abignore
 %{baseinstdir}/program/libaffine_uno_uno.so
 %{baseinstdir}/program/libbinaryurplo.so
 %{baseinstdir}/program/libbootstraplo.so
@@ -2161,6 +2181,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{sdkinstdir}/examples/
 
 %files pyuno
+%{baseinstdir}/program/pyuno.abignore
 %{baseinstdir}/program/libpyuno.so
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/libpythonloaderlo.so
@@ -2236,17 +2257,21 @@ for theme in hicolor locolor; do
 done
 
 %files x11
+%{baseinstdir}/program/x11.abignore
 %{baseinstdir}/program/libvclplug_genlo.so
 
 %files gtk2
+%{baseinstdir}/program/gtk2.abignore
 %{baseinstdir}/program/libvclplug_gtklo.so
 
 %files gtk3
+%{baseinstdir}/program/gtk3.abignore
 %{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %if 0%{?fedora}
 
 %files kde4
+%{baseinstdir}/program/kde4.abignore
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
@@ -2255,6 +2280,7 @@ done
 %files -n libreofficekit
 %{baseinstdir}/share/libreofficekit
 %{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
+%{baseinstdir}/program/libreofficekit.abignore
 %{_libdir}/liblibreofficekitgtk.so
 
 %files -n libreofficekit-devel
@@ -2262,6 +2288,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jan 31 2018 Michael Stahl <mstahl@fedoraproject.org> - 1:6.0.0.2-3
+- add lots of .abignore files to restrict abipkgdiff to shared objects
+  that actually have a stable ABI
+
 * Tue Jan 30 2018 Björn Esser <besser82@fedoraproject.org> - 1:6.0.0.2-2
 - Rebuilt for Boost 1.66.0
 

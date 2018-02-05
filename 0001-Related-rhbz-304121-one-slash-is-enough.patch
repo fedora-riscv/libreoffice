@@ -1,0 +1,28 @@
+From 243f6720ce31f3d15446db1f098b7ac43de94f76 Mon Sep 17 00:00:00 2001
+From: David Tardon <dtardon@redhat.com>
+Date: Sun, 5 Nov 2017 20:41:03 +0100
+Subject: [PATCH] Related: rhbz#304121 one slash is enough
+
+(cherry picked from commit 1bacce999d7dad91b1f87baaf09b08e6b4629fad)
+
+Change-Id: I35fbca7592f3e17a071df567f691c62fe9232fc1
+---
+ ucbhelper/source/provider/contentinfo.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ucbhelper/source/provider/contentinfo.cxx b/ucbhelper/source/provider/contentinfo.cxx
+index 2ad3edc29d5d..cdbae40880fc 100644
+--- a/ucbhelper/source/provider/contentinfo.cxx
++++ b/ucbhelper/source/provider/contentinfo.cxx
+@@ -23,7 +23,7 @@
+ 
+  *************************************************************************/
+ #include <com/sun/star/beans/PropertyValue.hpp>
+-#include <com/sun/star//ucb/UnsupportedCommandException.hpp>
++#include <com/sun/star/ucb/UnsupportedCommandException.hpp>
+ #include <com/sun/star/ucb/XPropertySetRegistry.hpp>
+ 
+ #include "osl/mutex.hxx"
+-- 
+2.14.3
+

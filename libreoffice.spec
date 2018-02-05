@@ -1223,10 +1223,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
 #remove dummy .dat files
 rm -f %{buildroot}%{baseinstdir}/program/root?.dat
 
-# I don't think we need this...
-rm -f %{buildroot}%{baseinstdir}/share/classification/example*.xml
-rmdir %{buildroot}%{baseinstdir}/share/classification
-
 #set standard permissions for rpmlint
 find %{buildroot}%{baseinstdir} -exec chmod +w {} \;
 find %{buildroot}%{baseinstdir} -type d -exec chmod 0755 {} \;
@@ -1687,6 +1683,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/versionrc
 %{baseinstdir}/program/xid-fullscreen-on-all-monitors
 %dir %{baseinstdir}/share
+%dir %{baseinstdir}/share/classification
+%{baseinstdir}/share/classification/example*.xml
 %dir %{baseinstdir}/share/fonts
 %dir %{baseinstdir}/share/fonts/truetype
 %{baseinstdir}/share/fonts/truetype/fc_local.conf

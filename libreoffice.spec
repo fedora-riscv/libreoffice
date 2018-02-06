@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -256,6 +256,7 @@ Patch11: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch12: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
 Patch13: 0001-gtk3-single-click-with-selection-set-doesn-t-unselec.patch
 Patch14: 0001-Related-rhbz-304121-one-slash-is-enough.patch
+Patch15: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2224,6 +2225,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Feb 06 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.4.4.2-5-UNBUILT
+- Resolves: rhbz#1541486 Base table dialog title shown in wrong language
+
 * Tue Jan 23 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.4.2-4
 - Related: rhbz#1532323 patch not applied
 

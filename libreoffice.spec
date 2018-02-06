@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -271,6 +271,7 @@ Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
 Patch6: 0001-the-test-is-declared-uncond.-so-define-it-so-too.patch
+Patch7: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2288,6 +2289,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Feb 06 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.0.3-2-UNBUILT
+- Resolves: rhbz#1541486 Base table dialog title shown in wrong language
+
 * Sun Feb 04 2018 David Tardon <dtardon@redhat.com> - 1:6.0.0.3-1
 - update to 6.0.0 rc3
 

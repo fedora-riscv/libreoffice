@@ -251,12 +251,11 @@ Patch6: 0001-Improve-resizing-chevrons-so-the-control-point-is-a-.patch
 Patch7: 0001-Resolves-tdf-42873-videos-in-presenter-console-mispl.patch
 Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
-Patch10: 0001-always-install-fc_local.conf-on-linux.patch
-Patch11: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
-Patch12: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
-Patch13: 0001-gtk3-single-click-with-selection-set-doesn-t-unselec.patch
-Patch14: 0001-Related-rhbz-304121-one-slash-is-enough.patch
-Patch15: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
+Patch10: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
+Patch11: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
+Patch12: 0001-gtk3-single-click-with-selection-set-doesn-t-unselec.patch
+Patch13: 0001-Related-rhbz-304121-one-slash-is-enough.patch
+Patch14: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -253,9 +253,8 @@ Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch10: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch11: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
-Patch12: 0001-gtk3-single-click-with-selection-set-doesn-t-unselec.patch
-Patch13: 0001-Related-rhbz-304121-one-slash-is-enough.patch
-Patch14: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
+Patch12: 0001-Related-rhbz-304121-one-slash-is-enough.patch
+Patch13: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 
 %if 0%{?rhel}
 # not upstreamed

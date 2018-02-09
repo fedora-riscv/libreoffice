@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -282,6 +282,7 @@ Patch39: 0001-Compensate-for-loss-of-Type-1-Standard-Symbols-L-sub.patch
 Patch40: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch41: 0001-Resolves-tdf-114406-treat-as-the-operator-that-it-is.patch
 Patch42: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
+Patch43: 0001-limit-WEBSERVICE-to-http-s-protocols.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2376,7 +2377,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue Feb 06 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.3.7.2-7-UNBUILT
+* Fri Feb 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-8
+- CVE-2018-1055 WEBSERVICE formula woes
+
+* Tue Feb 06 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.3.7.2-7
 - Resolves: rhbz#1541486 Base table dialog title shown in wrong language
 
 * Tue Dec 12 2017 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-6

@@ -141,7 +141,6 @@ BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: expat-devel
 BuildRequires: fontpackages-devel
-BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libicu-devel
 BuildRequires: libjpeg-turbo-devel

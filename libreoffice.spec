@@ -77,7 +77,8 @@ Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-%global bundling_options %{?bundling_options} --without-system-hsqldb
+Source14:       %{external_url}/bae83fa5dc7f081768daace6e199adc3-glm-0.9.4.6-libreoffice.zip
+%global bundling_options %{?bundling_options} --without-system-hsqldb --without-system-glm
 
 %if 0%{?fedora}
 Source40:       %{external_url}/4b87018f7fff1d054939d19920b751a0-collada2gltf-master-cb1d97788a.tar.bz2
@@ -139,7 +140,6 @@ BuildRequires: %{libo_python}-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
-BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libicu-devel
 BuildRequires: libjpeg-turbo-devel

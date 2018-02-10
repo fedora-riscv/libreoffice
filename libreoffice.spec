@@ -843,6 +843,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T -X
 %langpack -l hr -n Croatian -F -H -Y -A -T -X
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
+%{baseinstdir}/share/wordbook/hu_AkH11.dic
 %langpack -l id -n Indonesian -F -H -Y -T
 %langpack -l it -n Italian -F -H -Y -M -A -T -X
 %langpack -l ja -n Japanese -F -A -s cjk -T -X

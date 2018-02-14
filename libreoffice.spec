@@ -220,7 +220,6 @@ BuildRequires: unixODBC-devel
 %if 0%{?fedora}
 BuildRequires: gpgmepp-devel
 BuildRequires: kdelibs4-devel
-BuildRequires: openCOLLADA-devel
 BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)

@@ -9,15 +9,18 @@
 # rhbz#715152 state vendor
 %if 0%{?rhel}
 %global vendoroption --with-vendor="Red Hat, Inc."
+%endif
+%if 0%{?fedora}
+%global vendoroption --with-vendor="The Fedora Project"
+%endif
+%if 0%{?rhel} && 0%{?rhel} < 8
 %global libo_use_python3 %{nil}
 %global libo_python python
 %global libo_python_sitearch %{python_sitearch}
-%endif
-%if 0%{?fedora}
+%else
 %global libo_use_python3 1
 %global libo_python python3
 %global libo_python_sitearch %{python3_sitearch}
-%global vendoroption --with-vendor="The Fedora Project"
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %global __jar_repack %{nil}
@@ -29,7 +32,9 @@
 %endif
 # URL for external projects' tarballs
 %global external_url http://dev-www.libreoffice.org/src
-%if 0%{?fedora}
+%if 0%{?rhel} && 0%{?rhel} < 8
+%nil
+%else
 %global weak_deps 1
 %global file_triggers 1
 %endif
@@ -94,7 +99,7 @@ Source46:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-math-symbolic.svg
 Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
 
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source101:      %{external_url}/liborcus-0.13.1.tar.xz
 Source102:      %{external_url}/mdds-1.3.1.tar.bz2
@@ -218,13 +223,18 @@ BuildRequires: unixODBC-devel
 
 # libs / headers - conditional
 %if 0%{?fedora}
-BuildRequires: gpgmepp-devel
 BuildRequires: kdelibs4-devel
+BuildRequires: pkgconfig(libe-book-0.1)
+%endif
+
+%if 0%{?rhel} && 0%{?rhel} < 8
+%nil
+%else
+BuildRequires: gpgmepp-devel
 BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libcmis-0.5)
-BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.13)
@@ -288,7 +298,7 @@ Patch500: 0001-disable-libe-book-support.patch
 %global name %{oldname}
 
 # rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.13\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
@@ -1066,7 +1076,7 @@ export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %define distrooptions --disable-eot --enable-python=system
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --with-system-ucpp
@@ -1557,7 +1567,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %{baseinstdir}/program/libstaroffice-0.0-lo.so.*
 %{baseinstdir}/program/libwps-0.4-lo.so.*
 %endif
@@ -1623,7 +1633,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
 %{baseinstdir}/program/libxsec_fw.so
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %{baseinstdir}/program/libassuan.so.0
 %{baseinstdir}/program/libgpg-error.so.0
 %{baseinstdir}/program/libgpgme.so.11
@@ -1960,7 +1970,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %{baseinstdir}/program/liborcus-0.12.so.*
 %{baseinstdir}/program/liborcus-parser-0.12.so.*
 %endif

@@ -1082,11 +1082,6 @@ export PYTHON_CFLAGS=`pkg-config --cflags python`
 export PYTHON_LIBS=`pkg-config --libs python`
 %endif
 
-%if 0%{?fedora}
-export MDDS_CFLAGS=`pkg-config --cflags mdds-1.0`
-export MDDS_LIBS=' '
-%endif
-
 aclocal -I m4
 autoconf
 

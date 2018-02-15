@@ -102,8 +102,8 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source101:      %{external_url}/liborcus-0.13.1.tar.gz
-Source114:      %{external_url}/libqxp-0.0.1.tar.xz
-Source115:      %{external_url}/libepubgen-0.1.0.tar.bz2
+Source102:      %{external_url}/libqxp-0.0.1.tar.xz
+Source103:      %{external_url}/libepubgen-0.1.0.tar.bz2
 %global bundling_options %{?bundling_options} --without-system-orcus --without-system-libqxp --without-system-libepubgen
 
 Provides: bundled(libepubgen) = 0.1.0
@@ -112,18 +112,18 @@ Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(ucpp) = 1.3.2
 
 %if 0%{?rhel} < 8
-Source102:      %{external_url}/mdds-1.3.1.tar.bz2
-Source103:      %{external_url}/libcmis-0.5.1.tar.gz
-Source104:      %{external_url}/libwps-0.4.8.tar.xz
-Source105:      %{external_url}/libpagemaker-0.0.4.tar.xz
-Source106:      %{external_url}/libzmf-0.0.2.tar.xz
-Source107:      %{external_url}/libstaroffice-0.0.5.tar.xz
-Source108:      %{external_url}/harfbuzz-1.7.0.tar.bz2
-Source109:      %{external_url}/graphite2-minimal-1.3.10.tgz
-Source110:      %{external_url}/gpgme-1.9.0.tar.bz2
-Source111:      %{external_url}/libgpg-error-1.27.tar.bz2
-Source112:      %{external_url}/libassuan-2.4.3.tar.bz2
-Source113:      %{external_url}/cppunit-1.14.0.tar.gz
+Source200:      %{external_url}/mdds-1.3.1.tar.bz2
+Source201:      %{external_url}/libcmis-0.5.1.tar.gz
+Source202:      %{external_url}/libwps-0.4.8.tar.xz
+Source203:      %{external_url}/libpagemaker-0.0.4.tar.xz
+Source204:      %{external_url}/libzmf-0.0.2.tar.xz
+Source205:      %{external_url}/libstaroffice-0.0.5.tar.xz
+Source206:      %{external_url}/harfbuzz-1.7.0.tar.bz2
+Source207:      %{external_url}/graphite2-minimal-1.3.10.tgz
+Source208:      %{external_url}/gpgme-1.9.0.tar.bz2
+Source209:      %{external_url}/libgpg-error-1.27.tar.bz2
+Source210:      %{external_url}/libassuan-2.4.3.tar.bz2
+Source211:      %{external_url}/cppunit-1.14.0.tar.gz
 %global bundling_options %{?bundling_options} --without-system-ucpp --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
 
 Provides: bundled(gpgme) = 1.9.0

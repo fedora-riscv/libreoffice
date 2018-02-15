@@ -100,6 +100,17 @@ Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
 
 %if 0%{?rhel}
+Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
+Source101:      %{external_url}/liborcus-0.13.1.tar.gz
+Source114:      %{external_url}/libqxp-0.0.1.tar.xz
+Source115:      %{external_url}/libepubgen-0.1.0.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-orcus --without-system-libqxp --without-system-libepubgen
+
+Provides: bundled(libepubgen) = 0.1.0
+Provides: bundled(liborcus) = 0.13.1
+Provides: bundled(libqxp) = 0.0.1
+Provides: bundled(ucpp) = 1.3.2
+
 %if 0%{?rhel} < 8
 Source102:      %{external_url}/mdds-1.3.1.tar.bz2
 Source103:      %{external_url}/libcmis-0.5.1.tar.gz
@@ -127,17 +138,6 @@ Provides: bundled(libwps) = 0.4.7
 Provides: bundled(libzmf) = 0.0.2
 Provides: bundled(mdds) = 1.3.1
 %endif
-
-Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.13.1.tar.gz
-Source114:      %{external_url}/libqxp-0.0.1.tar.xz
-Source115:      %{external_url}/libepubgen-0.1.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-orcus --without-system-libqxp --without-system-libepubgen
-
-Provides: bundled(libepubgen) = 0.1.0
-Provides: bundled(liborcus) = 0.13.1
-Provides: bundled(libqxp) = 0.0.1
-Provides: bundled(ucpp) = 1.3.2
 %endif
 
 # build tools

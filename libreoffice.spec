@@ -113,29 +113,19 @@ Provides: bundled(ucpp) = 1.3.2
 
 %if 0%{?rhel} < 8
 Source200:      %{external_url}/mdds-1.3.1.tar.bz2
-Source201:      %{external_url}/libcmis-0.5.1.tar.gz
-Source202:      %{external_url}/libwps-0.4.8.tar.xz
-Source203:      %{external_url}/libpagemaker-0.0.4.tar.xz
-Source204:      %{external_url}/libzmf-0.0.2.tar.xz
-Source205:      %{external_url}/libstaroffice-0.0.5.tar.xz
-Source206:      %{external_url}/harfbuzz-1.7.0.tar.bz2
-Source207:      %{external_url}/graphite2-minimal-1.3.10.tgz
-Source208:      %{external_url}/gpgme-1.9.0.tar.bz2
-Source209:      %{external_url}/libgpg-error-1.27.tar.bz2
-Source210:      %{external_url}/libassuan-2.4.3.tar.bz2
-Source211:      %{external_url}/cppunit-1.14.0.tar.gz
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-mdds --without-system-libcmis --without-system-libwps --without-system-libpagemaker --without-system-libzmf --without-system-libstaroffice --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
+Source201:      %{external_url}/harfbuzz-1.7.0.tar.bz2
+Source202:      %{external_url}/graphite2-minimal-1.3.10.tgz
+Source203:      %{external_url}/gpgme-1.9.0.tar.bz2
+Source204:      %{external_url}/libgpg-error-1.27.tar.bz2
+Source205:      %{external_url}/libassuan-2.4.3.tar.bz2
+Source206:      %{external_url}/cppunit-1.14.0.tar.gz
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
 
 Provides: bundled(gpgme) = 1.9.0
 Provides: bundled(graphite2) = 1.3.10
 Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
-Provides: bundled(libcmis) = 0.5.1
 Provides: bundled(libgpg-error) = 1.27
-Provides: bundled(libpagemaker) = 0.0.4
-Provides: bundled(libstaroffice) = 0.0.5
-Provides: bundled(libwps) = 0.4.7
-Provides: bundled(libzmf) = 0.0.2
 Provides: bundled(mdds) = 1.3.1
 %endif
 %endif
@@ -197,6 +187,7 @@ BuildRequires: pkgconfig(lcms2)
 BuildRequires: pkgconfig(libabw-0.1)
 BuildRequires: pkgconfig(libcdr-0.1)
 BuildRequires: pkgconfig(libclucene-core)
+BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libexttextcat)
@@ -206,12 +197,16 @@ BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
+BuildRequires: pkgconfig(libpagemaker-0.0)
 BuildRequires: pkgconfig(librevenge-0.0)
+BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
 BuildRequires: pkgconfig(libwpd-0.10)
 BuildRequires: pkgconfig(libwpg-0.3)
+BuildRequires: pkgconfig(libwps-0.4)
 BuildRequires: pkgconfig(libxml-2.0)
 BuildRequires: pkgconfig(libxslt)
+BuildRequires: pkgconfig(libzmf-0.0)
 BuildRequires: pkgconfig(mythes)
 BuildRequires: pkgconfig(neon)
 BuildRequires: pkgconfig(nss)
@@ -239,12 +234,7 @@ BuildRequires: gpgmepp-devel
 BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
-BuildRequires: pkgconfig(libcmis-0.5)
 BuildRequires: pkgconfig(libeot)
-BuildRequires: pkgconfig(libpagemaker-0.0)
-BuildRequires: pkgconfig(libstaroffice-0.0)
-BuildRequires: pkgconfig(libwps-0.4)
-BuildRequires: pkgconfig(libzmf-0.0)
 BuildRequires: pkgconfig(mdds-1.2)
 %if 0%{?fedora}
 BuildRequires: pkgconfig(libepubgen-0.1)
@@ -1574,10 +1564,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
-%if 0%{?rhel} && 0%{?rhel} < 8
-%{baseinstdir}/program/libstaroffice-0.0-lo.so.*
-%{baseinstdir}/program/libwps-0.4-lo.so.*
-%endif
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so

@@ -102,13 +102,9 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 Source101:      %{external_url}/liborcus-0.13.1.tar.gz
-Source102:      %{external_url}/libqxp-0.0.1.tar.xz
-Source103:      %{external_url}/libepubgen-0.1.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus --without-system-libqxp --without-system-libepubgen
+%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus
 
-Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(liborcus) = 0.13.1
-Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(ucpp) = 1.3.2
 
 %if 0%{?rhel} < 8
@@ -119,13 +115,17 @@ Source203:      %{external_url}/gpgme-1.9.0.tar.bz2
 Source204:      %{external_url}/libgpg-error-1.27.tar.bz2
 Source205:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source206:      %{external_url}/cppunit-1.14.0.tar.gz
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit
+Source207:      %{external_url}/libqxp-0.0.1.tar.xz
+Source208:      %{external_url}/libepubgen-0.1.0.tar.bz2
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
 
 Provides: bundled(gpgme) = 1.9.0
 Provides: bundled(graphite2) = 1.3.10
 Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
+Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(libgpg-error) = 1.27
+Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(mdds) = 1.3.1
 %endif
 %endif
@@ -235,11 +235,11 @@ BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
+BuildRequires: pkgconfig(libepubgen-0.1)
+BuildRequires: pkgconfig(libqxp-0.0)
 BuildRequires: pkgconfig(mdds-1.2)
 %if 0%{?fedora}
-BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.13)
-BuildRequires: pkgconfig(libqxp-0.0)
 %endif
 %endif
 

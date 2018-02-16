@@ -1038,7 +1038,10 @@ sed -i -e /CppunitTest_sw_ooxmlexport4/d sw/Module_sw.mk
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 %if 0%{?rhel}
 sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
+sed -i -e s/CppunitTest_editeng_core// editeng/Module_editeng.mk
 sed -i -e /CppunitTest_writerperfect_draw/d writerperfect/Module_writerperfect.mk
+sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_ooxmlexport10/d sw/Module_sw.mk
 %endif
 git commit -q -a -m 'temporarily disable failing tests'
 

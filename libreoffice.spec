@@ -295,7 +295,7 @@ Patch500: 0001-disable-libe-book-support.patch
 %global name %{oldname}
 
 # rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel} && 0%{?rhel} < 8
+%if 0%{?rhel}
 %global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.13\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
@@ -1980,7 +1980,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%if 0%{?rhel} && 0%{?rhel} < 8
+%if 0%{?rhel}
 %{baseinstdir}/program/liborcus-0.12.so.*
 %{baseinstdir}/program/liborcus-parser-0.12.so.*
 %endif

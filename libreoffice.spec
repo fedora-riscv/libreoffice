@@ -1385,6 +1385,7 @@ install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_data
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
 
+%if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
 for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk2 gtk3 kde4 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
@@ -1392,6 +1393,7 @@ for pkg in core base officebean ogltrans pdfimport calc writer impress math grap
 file_name_not_regexp=.*\.so\.[0-9]+
 _EOF
 done
+%endif
 
 # install LibreOfficeKit
 install -m 0755 -d %{buildroot}%{_libdir}/girepository-1.0
@@ -1502,7 +1504,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/help/main_transform.xsl
 %{baseinstdir}/presets
 %dir %{baseinstdir}/program
+%if 0%{?fedora}
 %{baseinstdir}/program/core.abignore
+%endif
 %{baseinstdir}/program/libbasprovlo.so
 %{baseinstdir}/program/libcairocanvaslo.so
 %{baseinstdir}/program/libcanvasfactorylo.so
@@ -1875,7 +1879,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
+%if 0%{?fedora}
 %{baseinstdir}/program/base.abignore
+%endif
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
 %{baseinstdir}/program/libhsqldb.so
@@ -1919,14 +1925,18 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 
 %files officebean
 %{baseinstdir}/program/classes/officebean.jar
+%if 0%{?fedora}
 %{baseinstdir}/program/officebean.abignore
+%endif
 %{baseinstdir}/program/libofficebean.so
 
 %files officebean-common
 %{_javadir}/%{name}/officebean.jar
 
 %files ogltrans
+%if 0%{?fedora}
 %{baseinstdir}/program/ogltrans.abignore
+%endif
 %{baseinstdir}/program/libOGLTranslo.so
 %{baseinstdir}/program/opengl/basicFragmentShader.glsl
 %{baseinstdir}/program/opengl/basicVertexShader.glsl
@@ -1949,7 +1959,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/share/registry/ogltrans.xcd
 
 %files pdfimport
+%if 0%{?fedora}
 %{baseinstdir}/program/pdfimport.abignore
+%endif
 %{baseinstdir}/program/libpdfimportlo.so
 %{baseinstdir}/program/xpdfimport
 %{baseinstdir}/share/registry/pdfimport.xcd
@@ -1960,7 +1972,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %doc instdir/LICENSE
 
 %files calc
+%if 0%{?fedora}
 %{baseinstdir}/program/calc.abignore
+%endif
 %{baseinstdir}/program/libanalysislo.so
 %{baseinstdir}/program/libcalclo.so
 %{baseinstdir}/program/libdatelo.so
@@ -2017,7 +2031,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/msgbox.py*
 
 %files writer
+%if 0%{?fedora}
 %{baseinstdir}/program/writer.abignore
+%endif
 %{baseinstdir}/program/libhwplo.so
 %{baseinstdir}/program/liblwpftlo.so
 %{baseinstdir}/program/libmswordlo.so
@@ -2044,7 +2060,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files impress
+%if 0%{?fedora}
 %{baseinstdir}/program/impress.abignore
+%endif
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libPresenterScreenlo.so
 %{baseinstdir}/program/libwpftimpresslo.so
@@ -2070,7 +2088,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files math
+%if 0%{?fedora}
 %{baseinstdir}/program/math.abignore
+%endif
 %{baseinstdir}/program/libsmlo.so
 %{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/share/registry/math.xcd
@@ -2088,7 +2108,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %endif
 
 %files graphicfilter
+%if 0%{?fedora}
 %{baseinstdir}/program/graphicfilter.abignore
+%endif
 %{baseinstdir}/program/libflashlo.so
 %{baseinstdir}/program/libgraphicfilterlo.so
 %{baseinstdir}/program/libsvgfilterlo.so
@@ -2101,7 +2123,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
 
 %files postgresql
+%if 0%{?fedora}
 %{baseinstdir}/program/postgresql.abignore
+%endif
 %{baseinstdir}/program/libpostgresql-sdbclo.so
 %{baseinstdir}/program/libpostgresql-sdbc-impllo.so
 %{baseinstdir}/program/postgresql-sdbc.ini
@@ -2118,7 +2142,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/javavendors.xml
 %{baseinstdir}/program/jvmfwk3rc
 %{baseinstdir}/program/JREProperties.class
+%if 0%{?fedora}
 %{baseinstdir}/program/ure.abignore
+%endif
 %{baseinstdir}/program/libaffine_uno_uno.so
 %{baseinstdir}/program/libbinaryurplo.so
 %{baseinstdir}/program/libbootstraplo.so
@@ -2181,7 +2207,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{sdkinstdir}/examples/
 
 %files pyuno
+%if 0%{?fedora}
 %{baseinstdir}/program/pyuno.abignore
+%endif
 %{baseinstdir}/program/libpyuno.so
 %{baseinstdir}/program/pythonloader.py*
 %{baseinstdir}/program/libpythonloaderlo.so
@@ -2257,21 +2285,29 @@ for theme in hicolor locolor; do
 done
 
 %files x11
+%if 0%{?fedora}
 %{baseinstdir}/program/x11.abignore
+%endif
 %{baseinstdir}/program/libvclplug_genlo.so
 
 %files gtk2
+%if 0%{?fedora}
 %{baseinstdir}/program/gtk2.abignore
+%endif
 %{baseinstdir}/program/libvclplug_gtklo.so
 
 %files gtk3
+%if 0%{?fedora}
 %{baseinstdir}/program/gtk3.abignore
+%endif
 %{baseinstdir}/program/libvclplug_gtk3lo.so
 
 %if 0%{?fedora}
 
 %files kde4
+%if 0%{?fedora}
 %{baseinstdir}/program/kde4.abignore
+%endif
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
@@ -2280,7 +2316,9 @@ done
 %files -n libreofficekit
 %{baseinstdir}/share/libreofficekit
 %{_libdir}/girepository-1.0/LOKDocView-%{girapiversion}.typelib
+%if 0%{?fedora}
 %{baseinstdir}/program/libreofficekit.abignore
+%endif
 %{_libdir}/liblibreofficekitgtk.so
 
 %files -n libreofficekit-devel

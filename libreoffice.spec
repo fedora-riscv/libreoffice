@@ -101,10 +101,8 @@ Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 
 %if 0%{?rhel}
 Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-Source101:      %{external_url}/liborcus-0.13.1.tar.gz
-%global bundling_options %{?bundling_options} --without-system-ucpp --without-system-orcus
+%global bundling_options %{?bundling_options} --without-system-ucpp
 
-Provides: bundled(liborcus) = 0.13.1
 Provides: bundled(ucpp) = 1.3.2
 
 %if 0%{?rhel} < 8
@@ -117,7 +115,8 @@ Source205:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source206:      %{external_url}/cppunit-1.14.0.tar.gz
 Source207:      %{external_url}/libqxp-0.0.1.tar.xz
 Source208:      %{external_url}/libepubgen-0.1.0.tar.bz2
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen
+Source209:      %{external_url}/liborcus-0.13.1.tar.gz
+%global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen --without-system-orcus
 
 Provides: bundled(gpgme) = 1.9.0
 Provides: bundled(graphite2) = 1.3.10
@@ -125,6 +124,7 @@ Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
 Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(libgpg-error) = 1.27
+Provides: bundled(liborcus) = 0.13.1
 Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(mdds) = 1.3.1
 %endif
@@ -236,11 +236,9 @@ BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
+BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libqxp-0.0)
 BuildRequires: pkgconfig(mdds-1.2)
-%if 0%{?fedora}
-BuildRequires: pkgconfig(liborcus-0.13)
-%endif
 %endif
 
 # java stuff
@@ -295,7 +293,7 @@ Patch500: 0001-disable-libe-book-support.patch
 %global name %{oldname}
 
 # rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 8
 %global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.13\\.so.*$
 %global __provides_exclude %{libo_bundled_libs_filter}
 %global __requires_exclude %{libo_bundled_libs_filter}
@@ -1980,9 +1978,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%if 0%{?rhel}
-%{baseinstdir}/program/liborcus-0.12.so.*
-%{baseinstdir}/program/liborcus-parser-0.12.so.*
+%if 0%{?rhel} && 0%{?rhel} < 8
+%{baseinstdir}/program/liborcus-0.13.so.*
+%{baseinstdir}/program/liborcus-parser-0.13.so.*
 %endif
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so

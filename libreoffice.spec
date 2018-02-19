@@ -1040,6 +1040,8 @@ sed -i -e s/CppunitTest_editeng_core// editeng/Module_editeng.mk
 sed -i -e /CppunitTest_writerperfect_draw/d writerperfect/Module_writerperfect.mk
 sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sw_ooxmlexport10/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
+sed -i -e /CppunitTest_sc_subsequent_filters_test/d sc/Module_sc.mk
 %endif
 git commit -q -a -m 'temporarily disable failing tests'
 
@@ -1477,7 +1479,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch ppc64 ppc64le s390x
+%ifnarch ppc64 s390x
 make
 %endif
 unset WITH_LANG

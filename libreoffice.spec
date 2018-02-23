@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.1
+%global libo_version 6.0.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -115,7 +115,7 @@ Source205:      %{external_url}/libassuan-2.4.3.tar.bz2
 Source206:      %{external_url}/cppunit-1.14.0.tar.gz
 Source207:      %{external_url}/libqxp-0.0.1.tar.xz
 Source208:      %{external_url}/libepubgen-0.1.0.tar.bz2
-Source209:      %{external_url}/liborcus-0.13.1.tar.gz
+Source209:      %{external_url}/liborcus-0.13.3.tar.gz
 %global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen --without-system-orcus
 
 Provides: bundled(gpgme) = 1.9.0
@@ -124,7 +124,7 @@ Provides: bundled(harfbuzz) = 1.7.0
 Provides: bundled(libassuan) = 2.4.3
 Provides: bundled(libepubgen) = 0.1.0
 Provides: bundled(libgpg-error) = 1.27
-Provides: bundled(liborcus) = 0.13.1
+Provides: bundled(liborcus) = 0.13.3
 Provides: bundled(libqxp) = 0.0.1
 Provides: bundled(mdds) = 1.3.1
 %endif
@@ -274,6 +274,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
+Patch6: 0001-Update-orcus-to-0.13.3-and-make-necessary-adjustment.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1033,6 +1034,7 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i6
 sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686
 sed -i -e /CppunitTest_sd_export_ooxml2/d sd/Module_sd.mk # i686
 sed -i -e /CppunitTest_sw_ooxmlexport4/d sw/Module_sw.mk
+sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 %if 0%{?rhel}
 sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
@@ -2326,6 +2328,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Feb 23 2018 David Tardon <dtardon@redhat.com> - 1:6.0.2.1-1
+- update to 6.0.2 rc1
+
 * Wed Feb 14 2018 David Tardon <dtardon@redhat.com> - 1:6.0.1.1-2
 - rebuild for poppler 0.62.0
 

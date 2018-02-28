@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 5.4.5
+%global libo_version 5.4.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -253,8 +253,6 @@ Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch10: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch11: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
-Patch12: 0001-Related-rhbz-304121-one-slash-is-enough.patch
-Patch13: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2223,6 +2221,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Feb 28 2018 David Tardon <dtardon@redhat.com> - 1:5.4.6.1-1
+- update to 5.4.6 rc1
+
 * Fri Feb 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.5.1-1
 - CVE-2018-1055 WEBSERVICE formula woes
 

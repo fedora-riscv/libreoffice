@@ -1,4 +1,4 @@
-From af8675040370ab7911fe9045fe546338abee20d2 Mon Sep 17 00:00:00 2001
+From 94a945d71492f4edd2c9c3d6be2f794b99f91886 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 16 Mar 2018 16:50:42 +0000
 Subject: [PATCH] rhbz#1392145 ensure titlebar close button matches 'outside'
@@ -7,12 +7,12 @@ Subject: [PATCH] rhbz#1392145 ensure titlebar close button matches 'outside'
 Change-Id: I20e925c58adb56acd4d1a63720d330c8b6613441
 ---
  vcl/inc/unx/gtk/gtkframe.hxx  |  1 +
- vcl/source/app/svmain.cxx     |  3 ++-
+ vcl/source/app/svmain.cxx     | 11 ++++++++++-
  vcl/unx/gtk3/gtk3gtkframe.cxx | 32 +++++++++++++++++++++++++++++++-
- 3 files changed, 34 insertions(+), 2 deletions(-)
+ 3 files changed, 42 insertions(+), 2 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index 0c9b002cb264..bf0ade47db2a 100644
+index cf644b2..ca1d38c 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
 @@ -173,6 +173,7 @@ class GtkSalFrame : public SalFrame
@@ -24,7 +24,7 @@ index 0c9b002cb264..bf0ade47db2a 100644
  #endif
      GtkEventBox*                    m_pEventBox;
 diff --git a/vcl/source/app/svmain.cxx b/vcl/source/app/svmain.cxx
-index 8f546feb5f78..63931e8f23b2 100644
+index d5bab35..d38fc19 100644
 --- a/vcl/source/app/svmain.cxx
 +++ b/vcl/source/app/svmain.cxx
 @@ -31,7 +31,7 @@
@@ -36,19 +36,27 @@ index 8f546feb5f78..63931e8f23b2 100644
  #include <unotools/syslocaleoptions.hxx>
  #include <vcl/svapp.hxx>
  #include <vcl/vclmain.hxx>
-@@ -335,6 +335,7 @@ bool InitVCL()
-         OUString aLocaleString(SvtSysLocaleOptions().GetRealUILanguageTag().getGlibcLocaleString(".UTF-8"));
-         if (!aLocaleString.isEmpty())
-         {
-+            MsLangId::getSystemUILanguage(); //call this now to pin what the system UI really was
-             OUString envVar("LANGUAGE");
-             osl_setEnvironment(envVar.pData, aLocaleString.pData);
-         }
+@@ -324,6 +324,15 @@ bool InitVCL()
+         // soffice/sfx implementation creates the global service manager
+         pSVData->mpApp->Init();
+ 
++    try
++    {
++        MsLangId::getSystemUILanguage(); //call this now to pin what the system UI really was
++    }
++    catch (const uno::Exception &e)
++    {
++        SAL_INFO("vcl.app", "Unable to get ui language: '" << e);
++    }
++
+     pSVData->mpDefInst->AfterAppInit();
+ 
+     // Fetch AppFileName and make it absolute before the workdir changes...
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 27a65caa3612..c8c98f5c5255 100644
+index c69aa3f..786d005 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -74,6 +74,8 @@
+@@ -77,6 +77,8 @@
  #  include <cstdio>
  #endif
  
@@ -57,7 +65,7 @@ index 27a65caa3612..c8c98f5c5255 100644
  #include <cstdlib>
  #include <cmath>
  
-@@ -477,6 +479,7 @@ bool GtkSalFrame::doKeyCallback( guint state,
+@@ -484,6 +486,7 @@ bool GtkSalFrame::doKeyCallback( guint state,
  
  GtkSalFrame::GtkSalFrame( SalFrame* pParent, SalFrameStyleFlags nStyle )
      : m_nXScreen( getDisplay()->GetDefaultXScreen() )
@@ -65,7 +73,7 @@ index 27a65caa3612..c8c98f5c5255 100644
      , m_pGraphics(nullptr)
      , m_bGraphics(false)
  {
-@@ -489,6 +492,7 @@ GtkSalFrame::GtkSalFrame( SalFrame* pParent, SalFrameStyleFlags nStyle )
+@@ -496,6 +499,7 @@ GtkSalFrame::GtkSalFrame( SalFrame* pParent, SalFrameStyleFlags nStyle )
  
  GtkSalFrame::GtkSalFrame( SystemParentData* pSysData )
      : m_nXScreen( getDisplay()->GetDefaultXScreen() )
@@ -73,7 +81,7 @@ index 27a65caa3612..c8c98f5c5255 100644
      , m_pGraphics(nullptr)
      , m_bGraphics(false)
  {
-@@ -1241,6 +1245,27 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
+@@ -1272,6 +1276,27 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
          gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), eType );
          gtk_window_set_gravity( GTK_WINDOW(m_pWindow), GDK_GRAVITY_STATIC );
          gtk_window_set_resizable( GTK_WINDOW(m_pWindow), bool(nStyle & SalFrameStyleFlags::SIZEABLE) );
@@ -99,9 +107,9 @@ index 27a65caa3612..c8c98f5c5255 100644
 +        }
 +#endif
      }
-     else if( nStyle & SalFrameStyleFlags::FLOAT )
+     else if( (nStyle & SalFrameStyleFlags::FLOAT) )
          gtk_window_set_type_hint( GTK_WINDOW(m_pWindow), GDK_WINDOW_TYPE_HINT_POPUP_MENU );
-@@ -1332,7 +1357,12 @@ void GtkSalFrame::SetTitle( const OUString& rTitle )
+@@ -1366,7 +1391,12 @@ void GtkSalFrame::SetTitle( const OUString& rTitle )
  {
      m_aTitle = rTitle;
      if( m_pWindow && ! isChild() )

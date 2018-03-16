@@ -1,0 +1,124 @@
+From f07e2496963baf8f7c0fecc79e7a420544075d98 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Fri, 16 Mar 2018 14:21:01 +0100
+Subject: [PATCH] sdk/lib dir missing from Linux installation sets
+
+...after cfd2691e5bf398304d7816227b933e53907b6204 "[API CHANGE] Remove salcpprt
+static library" had removed the sole regular File item from gid_Dir_Lib_Sdk,
+leaving only Unixlink items.  But the solenv/bin/modules/installer.pm code used
+to only auto-create any directories that contain regular Files.  Changed that to
+also consider Unixlinks in addition to regular Files.
+
+And to add insult to injury, the code in
+solenv/bin/modules/installer/simplepackage.pm creating the actual symlinks
+represented by the Unixlink items silently does nothing when a symlink cannot be
+created (because the partent dir is missing).  To be fixed in another follow-up
+commit.
+
+Change-Id: Ic7a682a17ac59c789c85c56c825dd623bc59428c
+---
+ solenv/bin/modules/installer.pm             | 31 ++++++++++++++---------------
+ solenv/bin/modules/installer/scriptitems.pm |  9 ++++++---
+ 2 files changed, 21 insertions(+), 19 deletions(-)
+
+diff --git a/solenv/bin/modules/installer.pm b/solenv/bin/modules/installer.pm
+index cd72284c5bc8..b11e55b09077 100644
+--- a/solenv/bin/modules/installer.pm
++++ b/solenv/bin/modules/installer.pm
+@@ -632,6 +632,18 @@ sub run {
+ 
+         installer::scpzipfiles::resolving_scpzip_replace_flag($filesinproductlanguageresolvedarrayref, $allvariableshashref, "File", $languagestringref);
+ 
++        #########################################################
++        # language dependent unix links part
++        #########################################################
++
++        installer::logger::print_message( "... analyzing unix links ...\n" );
++
++        my $unixlinksinproductlanguageresolvedarrayref = installer::scriptitems::resolving_all_languages_in_productlists($unixlinksinproductarrayref, $languagesarrayref);
++
++        installer::scriptitems::changing_name_of_language_dependent_keys($unixlinksinproductlanguageresolvedarrayref);
++
++        installer::scriptitems::get_Destination_Directory_For_Item_From_Directorylist($unixlinksinproductlanguageresolvedarrayref, $dirsinproductarrayref);
++
+         ############################################
+         # Collecting directories for epm list file
+         ############################################
+@@ -645,8 +657,7 @@ sub run {
+         # It will be possible, that in the setup script only those directoies have to be defined,
+         # that have a CREATE flag. All other directories are created, if they contain at least one file.
+ 
+-        my ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref);
+-
++        my ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref, $unixlinksinproductlanguageresolvedarrayref);
+         ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_with_create_flag_from_directoryarray($dirsinproductlanguageresolvedarrayref, $alldirectoryhash);
+ 
+         #########################################################
+@@ -685,18 +696,6 @@ sub run {
+ 
+         installer::scriptitems::resolve_links_with_flag_relative($linksinproductlanguageresolvedarrayref);
+ 
+-        #########################################################
+-        # language dependent unix links part
+-        #########################################################
+-
+-        installer::logger::print_message( "... analyzing unix links ...\n" );
+-
+-        my $unixlinksinproductlanguageresolvedarrayref = installer::scriptitems::resolving_all_languages_in_productlists($unixlinksinproductarrayref, $languagesarrayref);
+-
+-        installer::scriptitems::changing_name_of_language_dependent_keys($unixlinksinproductlanguageresolvedarrayref);
+-
+-        installer::scriptitems::get_Destination_Directory_For_Item_From_Directorylist($unixlinksinproductlanguageresolvedarrayref, $dirsinproductarrayref);
+-
+         #########################################################
+         # language dependent part for profiles and profileitems
+         #########################################################
+@@ -810,7 +809,7 @@ sub run {
+             @{$folderitemsinproductlanguageresolvedarrayref} = (); # no folderitems in languagepacks
+ 
+             # Collecting the directories again, to include only the language specific directories
+-            ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref);
++            ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref, $unixlinksinproductlanguageresolvedarrayref);
+             ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_with_create_flag_from_directoryarray($dirsinproductlanguageresolvedarrayref, $alldirectoryhash);
+             @$directoriesforepmarrayref = sort { $a->{"HostName"} cmp $b->{"HostName"} } @$directoriesforepmarrayref;
+ 
+@@ -831,7 +830,7 @@ sub run {
+             @{$folderitemsinproductlanguageresolvedarrayref} = (); # no folderitems in helppacks
+ 
+             # Collecting the directories again, to include only the language specific directories
+-            ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref);
++            ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_from_filesarray($filesinproductlanguageresolvedarrayref, $unixlinksinproductlanguageresolvedarrayref);
+             ($directoriesforepmarrayref, $alldirectoryhash) = installer::scriptitems::collect_directories_with_create_flag_from_directoryarray($dirsinproductlanguageresolvedarrayref, $alldirectoryhash);
+             @$directoriesforepmarrayref = sort { $a->{"HostName"} cmp $b->{"HostName"} } @$directoriesforepmarrayref;
+ 
+diff --git a/solenv/bin/modules/installer/scriptitems.pm b/solenv/bin/modules/installer/scriptitems.pm
+index b9572dcb27dc..01f29f067198 100644
+--- a/solenv/bin/modules/installer/scriptitems.pm
++++ b/solenv/bin/modules/installer/scriptitems.pm
+@@ -1584,7 +1584,10 @@ sub optimize_list
+ 
+ sub collect_directories_from_filesarray
+ {
+-    my ($filesarrayref) = @_;
++    my ($filesarrayref, $unixlinksarrayref) = @_;
++    my @allfiles;
++    push @allfiles, @{$filesarrayref};
++    push @allfiles, @{$unixlinksarrayref};
+ 
+     my @alldirectories = ();
+     my %alldirectoryhash = ();
+@@ -1594,9 +1597,9 @@ sub collect_directories_from_filesarray
+     # Preparing this already as hash, although the only needed value at the moment is the HostName
+     # But also adding: "specificlanguage" and "Dir" (for instance gid_Dir_Program)
+ 
+-    for ( my $i = 0; $i <= $#{$filesarrayref}; $i++ )
++    for ( my $i = 0; $i <= $#allfiles; $i++ )
+     {
+-        my $onefile = ${$filesarrayref}[$i];
++        my $onefile = $allfiles[$i];
+         my $destinationpath = $onefile->{'destination'};
+         installer::pathanalyzer::get_path_from_fullqualifiedname(\$destinationpath);
+         $destinationpath =~ s/\Q$installer::globals::separator\E\s*$//;     # removing ending slashes or backslashes
+-- 
+2.14.3
+

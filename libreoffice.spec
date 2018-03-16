@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -276,6 +276,7 @@ Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
 Patch6: 0001-Update-orcus-to-0.13.3-and-make-necessary-adjustment.patch
 Patch7: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
+Patch8: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2329,6 +2330,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Mar 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.2.1-3-UNBUILT
+- Resolves: rhbz#1392145 ensure titlebar close button matches 'outside' direction
+
 * Fri Mar 16 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.2.1-2
 - lib dir missing from libreoffice-sdk
 

@@ -46,7 +46,7 @@ index d5bab35..d38fc19 100644
 +    }
 +    catch (const uno::Exception &e)
 +    {
-+        SAL_INFO("vcl.app", "Unable to get ui language: '" << e);
++        //SAL_INFO("vcl.app", "Unable to get ui language: '" << e);
 +    }
 +
      pSVData->mpDefInst->AfterAppInit();

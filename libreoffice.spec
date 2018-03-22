@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.2
+%global libo_version 6.0.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -274,8 +274,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-Update-orcus-to-0.13.3-and-make-necessary-adjustment.patch
-Patch7: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
+Patch6: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2329,6 +2328,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Mar 22 2018 David Tardon <dtardon@redhat.com> - 1:6.0.3.1-1
+- update to 6.0.3 rc1
+
 * Fri Mar 16 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.2.1-2
 - lib dir missing from libreoffice-sdk
 

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2328,6 +2328,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Mar 23 2018 Marek Kasik <mkasik@redhat.com> - 1:6.0.3.1-2
+- Rebuild for poppler-0.63.0
+
 * Thu Mar 22 2018 David Tardon <dtardon@redhat.com> - 1:6.0.3.1-1
 - update to 6.0.3 rc1
 

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -685,8 +685,6 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-filters%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit
@@ -2328,6 +2326,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Mar 29 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.1-3
+- Related: rhbz#1066844 drop libreofficekit requires
+
 * Fri Mar 23 2018 Marek Kasik <mkasik@redhat.com> - 1:6.0.3.1-2
 - Rebuild for poppler-0.63.0
 

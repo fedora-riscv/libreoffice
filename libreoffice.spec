@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.2
+%global libo_version 6.0.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -274,9 +274,8 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-Update-orcus-to-0.13.3-and-make-necessary-adjustment.patch
-Patch7: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
-Patch8: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
+Patch6: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
+Patch7: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -687,8 +686,6 @@ A plug-in for LibreOffice that enables integration into the KDE desktop environm
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-filters%{?_isa} = %{epoch}:%{version}-%{release}
 License: MPLv2.0
 
 %description -n libreofficekit
@@ -2330,7 +2327,16 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Mar 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.2.1-3-UNBUILT
+* Thu Mar 29 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.1-3
+- Related: rhbz#1066844 drop libreofficekit requires
+
+* Fri Mar 23 2018 Marek Kasik <mkasik@redhat.com> - 1:6.0.3.1-2
+- Rebuild for poppler-0.63.0
+
+* Thu Mar 22 2018 David Tardon <dtardon@redhat.com> - 1:6.0.3.1-1
+- update to 6.0.3 rc1
+
+* Fri Mar 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.2.1-3
 - Resolves: rhbz#1392145 ensure titlebar close button matches 'outside' direction
 
 * Fri Mar 16 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.2.1-2

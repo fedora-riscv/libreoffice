@@ -274,8 +274,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
-Patch7: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
+Patch6: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 
 %if 0%{?rhel}
 # not upstreamed

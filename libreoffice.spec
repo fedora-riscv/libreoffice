@@ -198,6 +198,7 @@ BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(libpagemaker-0.0)
+BuildRequires: pkgconfig(libpq)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
@@ -218,7 +219,6 @@ BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
-BuildRequires: postgresql-devel
 BuildRequires: unixODBC-devel
 
 # libs / headers - conditional
@@ -558,7 +558,6 @@ Summary: PostgreSQL connector for LibreOffice
 Requires: %{name}-base%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: postgresql-libs%{?_isa}
 
 %description postgresql
 A PostgreSQL connector for the database front-end for LibreOffice. Allows

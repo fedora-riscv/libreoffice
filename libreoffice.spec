@@ -215,7 +215,7 @@ BuildRequires: pkgconfig(redland)
 BuildRequires: pkgconfig(sane-backends)
 BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
-BuildRequires: pkgconfig(xmlsec1)
+BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel

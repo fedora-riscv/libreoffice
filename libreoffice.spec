@@ -61,8 +61,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -198,6 +198,7 @@ BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(libpagemaker-0.0)
+BuildRequires: pkgconfig(libpq)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)
@@ -218,7 +219,6 @@ BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
-BuildRequires: postgresql-devel
 BuildRequires: unixODBC-devel
 
 # libs / headers - conditional
@@ -274,8 +274,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
-Patch7: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
+Patch6: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -559,7 +558,6 @@ Summary: PostgreSQL connector for LibreOffice
 Requires: %{name}-base%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: postgresql-libs%{?_isa}
 
 %description postgresql
 A PostgreSQL connector for the database front-end for LibreOffice. Allows
@@ -2327,6 +2325,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Mar 29 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-1
+- latest version
+
 * Thu Mar 29 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.1-3
 - Related: rhbz#1066844 drop libreofficekit requires
 

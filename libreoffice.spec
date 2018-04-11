@@ -145,6 +145,7 @@ BuildRequires: git
 BuildRequires: gnupg2
 BuildRequires: gperf
 BuildRequires: icu
+BuildRequires: libtool-ltdl
 BuildRequires: make
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}

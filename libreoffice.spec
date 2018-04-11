@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -77,17 +77,15 @@ Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c31
 Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-Source10:       %{external_url}/xmlsec1-1.2.25.tar.gz
-Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+Source10:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
+Source11:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
 Provides: bundled(rhino) = 1.5
-Provides: bundled(xmlsec1) = 1.2.25
 Provides: bundled(xsltml) = 2.1.2
 
 # symbolic icons
@@ -217,6 +215,7 @@ BuildRequires: pkgconfig(redland)
 BuildRequires: pkgconfig(sane-backends)
 BuildRequires: pkgconfig(xext)
 BuildRequires: pkgconfig(xinerama)
+BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
@@ -1128,7 +1127,6 @@ touch autogen.lastrun
  --with-system-libs \
  --without-export-validation \
  --without-fonts \
- --without-system-xmlsec \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  %{distrooptions} \
@@ -2325,6 +2323,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Apr 10 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-2
+- finally drop bundled xmlsec1
+
 * Thu Mar 29 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-1
 - latest version
 

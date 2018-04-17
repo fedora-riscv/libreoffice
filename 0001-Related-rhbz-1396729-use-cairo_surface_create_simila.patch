@@ -1,0 +1,241 @@
+From f770a69457b5e0432b396d5d1bd62cdc9db8e1ed Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 11 Apr 2018 11:06:37 +0100
+Subject: [PATCH] Related: rhbz#1396729 use cairo_surface_create_similar
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+where we can
+
+Change-Id: If6fd729a9cbf834faef33586b5bd886aad2fbe1d
+Reviewed-on: https://gerrit.libreoffice.org/52726
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit b524de950c6eb0bc61d05d41fe69b67ab59b16c6)
+
+cairo_surface_create_similar_image is >= cairo 1.12.0
+
+(cherry picked from commit 2ca4b505b25e13c9f422c28252f5b7533b8e3270)
+
+Change-Id: I1805e5680beff6c632016686aa661efe25a8c2f8
+---
+ vcl/headless/svpgdi.cxx     | 20 ++++++++++++++++----
+ vcl/headless/svpinst.cxx    |  6 ++++--
+ vcl/headless/svpvd.cxx      | 40 ++++++++++++++++++++++++++--------------
+ vcl/inc/headless/svpgdi.hxx |  1 +
+ vcl/inc/headless/svpvd.hxx  |  9 ++-------
+ vcl/qt5/Qt5Instance.cxx     |  8 +++++---
+ vcl/unx/gtk/gtkinst.cxx     |  2 +-
+ 7 files changed, 55 insertions(+), 31 deletions(-)
+
+diff --git a/vcl/headless/svpgdi.cxx b/vcl/headless/svpgdi.cxx
+index 67433a2b30e1..b490121750db 100644
+--- a/vcl/headless/svpgdi.cxx
++++ b/vcl/headless/svpgdi.cxx
+@@ -1239,7 +1239,13 @@ SalBitmap* SvpSalGraphics::getBitmap( long nX, long nY, long nWidth, long nHeigh
+ 
+ SalColor SvpSalGraphics::getPixel( long nX, long nY )
+ {
+-    cairo_surface_t *target = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 1, 1);
++#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 12, 0)
++    cairo_surface_t *target = cairo_surface_create_similar_image(m_pSurface,
++#else
++    cairo_surface_t *target = cairo_image_surface_create(
++#endif
++            CAIRO_FORMAT_ARGB32, 1, 1);
++
+     cairo_t* cr = cairo_create(target);
+ 
+     cairo_rectangle(cr, 0, 0, 1, 1);
+@@ -1398,9 +1404,15 @@ cairo_surface_t* SvpSalGraphics::createCairoSurface(const BitmapBuffer *pBuffer)
+ 
+ cairo_t* SvpSalGraphics::createTmpCompatibleCairoContext() const
+ {
+-    cairo_surface_t *target = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+-                                                         m_aFrameSize.getX() * m_fScale,
+-                                                         m_aFrameSize.getY() * m_fScale);
++#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 12, 0)
++    cairo_surface_t *target = cairo_surface_create_similar_image(m_pSurface,
++#else
++    cairo_surface_t *target = cairo_image_surface_create(
++#endif
++            CAIRO_FORMAT_ARGB32,
++            m_aFrameSize.getX() * m_fScale,
++            m_aFrameSize.getY() * m_fScale);
++
+ #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+     cairo_surface_set_device_scale(target, m_fScale, m_fScale);
+ #endif
+diff --git a/vcl/headless/svpinst.cxx b/vcl/headless/svpinst.cxx
+index 9912186c729c..c39ffaeb5205 100644
+--- a/vcl/headless/svpinst.cxx
++++ b/vcl/headless/svpinst.cxx
+@@ -219,12 +219,14 @@ void SvpSalInstance::DestroyObject( SalObject* pObject )
+ 
+ #ifndef IOS
+ 
+-SalVirtualDevice* SvpSalInstance::CreateVirtualDevice( SalGraphics* /* pGraphics */,
++SalVirtualDevice* SvpSalInstance::CreateVirtualDevice( SalGraphics* pGraphics,
+                                                        long &nDX, long &nDY,
+                                                        DeviceFormat eFormat,
+                                                        const SystemGraphicsData* /* pData */ )
+ {
+-    SvpSalVirtualDevice* pNew = new SvpSalVirtualDevice(eFormat, 1);
++    SvpSalGraphics *pSvpSalGraphics = dynamic_cast<SvpSalGraphics*>(pGraphics);
++    assert(pSvpSalGraphics);
++    SvpSalVirtualDevice* pNew = new SvpSalVirtualDevice(eFormat, pSvpSalGraphics->getSurface());
+     pNew->SetSize( nDX, nDY );
+     return pNew;
+ }
+diff --git a/vcl/headless/svpvd.cxx b/vcl/headless/svpvd.cxx
+index cf78ebc8eb7d..4172fc383744 100644
+--- a/vcl/headless/svpvd.cxx
++++ b/vcl/headless/svpvd.cxx
+@@ -30,9 +30,18 @@
+ 
+ using namespace basegfx;
+ 
++SvpSalVirtualDevice::SvpSalVirtualDevice(DeviceFormat eFormat, cairo_surface_t* pRefSurface)
++    : m_eFormat(eFormat)
++    , m_pRefSurface(pRefSurface)
++    , m_pSurface(nullptr)
++{
++    cairo_surface_reference(m_pRefSurface);
++}
++
+ SvpSalVirtualDevice::~SvpSalVirtualDevice()
+ {
+     cairo_surface_destroy(m_pSurface);
++    cairo_surface_destroy(m_pRefSurface);
+ }
+ 
+ SalGraphics* SvpSalVirtualDevice::AcquireGraphics()
+@@ -67,9 +76,6 @@ bool SvpSalVirtualDevice::SetSizeUsingBuffer( long nNewDX, long nNewDY,
+     {
+         m_aFrameSize = basegfx::B2IVector(nNewDX, nNewDY);
+ 
+-        nNewDX *= m_fScale;
+-        nNewDY *= m_fScale;
+-
+         if (m_pSurface)
+         {
+             cairo_surface_destroy(m_pSurface);
+@@ -77,23 +83,29 @@ bool SvpSalVirtualDevice::SetSizeUsingBuffer( long nNewDX, long nNewDY,
+ 
+         if (m_eFormat == DeviceFormat::BITMASK)
+         {
+-            m_pSurface = cairo_image_surface_create(CAIRO_FORMAT_A1,
++            m_pSurface = cairo_surface_create_similar(m_pRefSurface, CAIRO_CONTENT_ALPHA,
+                                 nNewDX, nNewDY);
+         }
+-        else
++        else if (pBuffer)
+         {
+-            m_pSurface = pBuffer ?
+-                             cairo_image_surface_create_for_data(pBuffer, CAIRO_FORMAT_ARGB32,
+-                                   nNewDX, nNewDY,
+-                                   cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, nNewDX))
+-                                 :
+-                             cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+-                                   nNewDX, nNewDY);
+-        }
++#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
++            double fXScale, fYScale;
++            cairo_surface_get_device_scale(m_pRefSurface, &fXScale, &fYScale);
++            nNewDX *= fXScale;
++            nNewDY *= fYScale;
++#endif
++
++            m_pSurface = cairo_image_surface_create_for_data(pBuffer, CAIRO_FORMAT_ARGB32,
++                                nNewDX, nNewDY, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, nNewDX));
+ 
+ #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+-        cairo_surface_set_device_scale(m_pSurface, m_fScale, m_fScale);
++            cairo_surface_set_device_scale(m_pSurface, fXScale, fYScale);
+ #endif
++        }
++        else
++        {
++            m_pSurface = cairo_surface_create_similar(m_pRefSurface, CAIRO_CONTENT_COLOR_ALPHA, nNewDX, nNewDY);
++        }
+ 
+         // update device in existing graphics
+         for (auto const& graphic : m_aGraphics)
+diff --git a/vcl/inc/headless/svpgdi.hxx b/vcl/inc/headless/svpgdi.hxx
+index 8204538cb132..dae0145b8c58 100644
+--- a/vcl/inc/headless/svpgdi.hxx
++++ b/vcl/inc/headless/svpgdi.hxx
+@@ -89,6 +89,7 @@ class VCL_DLLPUBLIC SvpSalGraphics : public SalGraphics
+ public:
+     static GlyphCache& getPlatformGlyphCache();
+     void setSurface(cairo_surface_t* pSurface, const basegfx::B2IVector& rSize);
++    cairo_surface_t* getSurface() const { return m_pSurface; }
+     static cairo_user_data_key_t* getDamageKey();
+ 
+ private:
+diff --git a/vcl/inc/headless/svpvd.hxx b/vcl/inc/headless/svpvd.hxx
+index 704488cdfae0..51d6af9cb499 100644
+--- a/vcl/inc/headless/svpvd.hxx
++++ b/vcl/inc/headless/svpvd.hxx
+@@ -30,18 +30,13 @@ typedef struct _cairo_surface cairo_surface_t;
+ class VCL_DLLPUBLIC SvpSalVirtualDevice : public SalVirtualDevice
+ {
+     DeviceFormat                        m_eFormat;
++    cairo_surface_t*                    m_pRefSurface;
+     cairo_surface_t*                    m_pSurface;
+     basegfx::B2IVector                  m_aFrameSize;
+-    double                              m_fScale;
+     std::vector< SvpSalGraphics* >      m_aGraphics;
+ 
+ public:
+-    SvpSalVirtualDevice(DeviceFormat eFormat, double fScale)
+-        : m_eFormat(eFormat)
+-        , m_pSurface(nullptr)
+-        , m_fScale(fScale)
+-    {
+-    }
++    SvpSalVirtualDevice(DeviceFormat eFormat, cairo_surface_t* pRefSurface);
+     virtual ~SvpSalVirtualDevice() override;
+ 
+     // SalVirtualDevice
+diff --git a/vcl/qt5/Qt5Instance.cxx b/vcl/qt5/Qt5Instance.cxx
+index c61a29a01935..0d128c2bc97c 100644
+--- a/vcl/qt5/Qt5Instance.cxx
++++ b/vcl/qt5/Qt5Instance.cxx
+@@ -84,13 +84,15 @@ SalObject* Qt5Instance::CreateObject(SalFrame* pParent, SystemWindowData*, bool
+ 
+ void Qt5Instance::DestroyObject(SalObject* pObject) { delete pObject; }
+ 
+-SalVirtualDevice* Qt5Instance::CreateVirtualDevice(SalGraphics* /* pGraphics */, long& nDX,
+-                                                   long& nDY, DeviceFormat eFormat,
++SalVirtualDevice* Qt5Instance::CreateVirtualDevice(SalGraphics* pGraphics, long& nDX, long& nDY,
++                                                   DeviceFormat eFormat,
+                                                    const SystemGraphicsData* /* pData */)
+ {
+     if (m_bUseCairo)
+     {
+-        SvpSalVirtualDevice* pVD = new SvpSalVirtualDevice(eFormat, 1);
++        SvpSalGraphics* pSvpSalGraphics = dynamic_cast<SvpSalGraphics*>(pGraphics);
++        assert(pSvpSalGraphics);
++        SvpSalVirtualDevice* pVD = new SvpSalVirtualDevice(eFormat, pSvpSalGraphics->getSurface());
+         pVD->SetSize(nDX, nDY);
+         return pVD;
+     }
+diff --git a/vcl/unx/gtk/gtkinst.cxx b/vcl/unx/gtk/gtkinst.cxx
+index 62b02a36a33f..ee03a340a12f 100644
+--- a/vcl/unx/gtk/gtkinst.cxx
++++ b/vcl/unx/gtk/gtkinst.cxx
+@@ -336,7 +336,7 @@ SalVirtualDevice* GtkInstance::CreateVirtualDevice( SalGraphics *pG,
+     (void) pGd;
+     SvpSalGraphics *pSvpSalGraphics = dynamic_cast<SvpSalGraphics*>(pG);
+     assert(pSvpSalGraphics);
+-    SvpSalVirtualDevice* pNew = new SvpSalVirtualDevice(eFormat, pSvpSalGraphics->getScale());
++    SvpSalVirtualDevice* pNew = new SvpSalVirtualDevice(eFormat, pSvpSalGraphics->getSurface());
+     pNew->SetSize( nDX, nDY );
+     return pNew;
+ #else
+-- 
+2.14.3
+

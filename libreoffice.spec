@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -255,6 +255,7 @@ Patch10: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch11: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
 Patch12: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
 Patch13: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
+Patch14: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2223,6 +2224,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Apr 18 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.6.2-4
+- Related: rhbz#1396729 use cairo_surface_create_similar
+
 * Fri Mar 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.6.2-3
 - Resolves: rhbz#1392145 ensure titlebar close button matches 'outside' direction
 

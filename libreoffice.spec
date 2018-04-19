@@ -277,6 +277,7 @@ Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
 Patch6: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 Patch7: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
 Patch8: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
+Patch9: 0001-Related-tdf-116951-rhbz-1569331-end-should-be-in-ter.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2326,8 +2327,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Apr 19 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.3.2-4-UNBUILT
+* Thu Apr 19 2018 Stephan Bergmann <sbergman@redhat.com> - 1:6.0.3.2-4
 - Resolves: rhbz#1568579 LibreOffice --headless zombie process
+- Related: rhbz#1569331 end should be in terms of unicode chars, not bytes
 
 * Tue Apr 17 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-3
 - Related: rhbz#1396729 use cairo_surface_create_similar

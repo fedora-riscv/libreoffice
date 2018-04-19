@@ -1,0 +1,43 @@
+From cff779551db2eedf5b16d49213fc5e2179414256 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 19 Apr 2018 20:12:40 +0100
+Subject: [PATCH] Related: tdf#116951 rhbz#1569331 end should be in terms of
+ unicode chars
+
+not bytes
+
+Change-Id: I05114019abb6c283586cd5c23ed1d148c9cf71d3
+---
+ vcl/unx/gtk/gtksalframe.cxx   | 2 +-
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
+index 9fd86abccc3d..ad4b00d26927 100644
+--- a/vcl/unx/gtk/gtksalframe.cxx
++++ b/vcl/unx/gtk/gtksalframe.cxx
+@@ -3560,7 +3560,7 @@ void GtkSalFrame::IMHandler::signalIMPreeditChanged( GtkIMContext*, gpointer im_
+ 
+         pango_attr_iterator_range (iter, &start, &end);
+         if (end == G_MAXINT)
+-            end = pText ? strlen (pText) : 0;
++            end = pText ? g_utf8_strlen(pText, -1) : 0;
+         if (end == start)
+             continue;
+ 
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 1db3a469973f..113fcb425963 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -3978,7 +3978,7 @@ void GtkSalFrame::IMHandler::signalIMPreeditChanged( GtkIMContext*, gpointer im_
+ 
+         pango_attr_iterator_range (iter, &start, &end);
+         if (end == G_MAXINT)
+-            end = pText ? strlen (pText) : 0;
++            end = pText ? g_utf8_strlen(pText, -1) : 0;
+         if (end == start)
+             continue;
+ 
+-- 
+2.14.3
+

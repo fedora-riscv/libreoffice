@@ -1,0 +1,126 @@
+From 1b3cf7e967aa103181a3203f5d504d49b49a5ab2 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 19 Apr 2018 13:59:16 +0200
+Subject: [PATCH] tdf#95843: Wait for fire_glxtest_process also in --headless
+ mode
+
+Discussed with mmeeks on IRC that fire_glxtest_process is probably called as
+early as possible so that its reuslt is ready by the time it is needed in the
+non-headless case.  So best fix for headless is probably to just wait for the
+sub-process at an opportune point, instead of redesigning the whole mess so that
+fire_glxtest_process would only be called once its result is actually needed.
+
+Change-Id: I4ea9c9d54b83c9695a3b72317e68fed0c410da0e
+Reviewed-on: https://gerrit.libreoffice.org/53154
+Tested-by: Jenkins <ci@libreoffice.org>
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+(cherry picked from commit 4bacf58f4af44ac8c4632b43289ccfcc07e5820c)
+---
+ desktop/inc/app.hxx                |  1 +
+ desktop/source/app/app.cxx         |  9 +++++++++
+ desktop/source/app/sofficemain.cxx |  4 ++++
+ vcl/inc/opengl/x11/glxtest.hxx     |  2 ++
+ vcl/unx/glxtest.cxx                | 16 ++++++++++++++++
+ 5 files changed, 32 insertions(+)
+
+diff --git a/desktop/inc/app.hxx b/desktop/inc/app.hxx
+index 0e5f8774d3c3..d0ef2a66818a 100644
+--- a/desktop/inc/app.hxx
++++ b/desktop/inc/app.hxx
+@@ -181,6 +181,7 @@ OUString ReplaceStringHookProc(const OUString& rStr);
+ 
+ #if defined( UNX ) && !defined MACOSX && !defined IOS && !defined ANDROID && !defined LIBO_HEADLESS
+ bool fire_glxtest_process();
++void reap_glxtest_process();
+ #endif
+ 
+ #endif // INCLUDED_DESKTOP_INC_APP_HXX
+diff --git a/desktop/source/app/app.cxx b/desktop/source/app/app.cxx
+index 192793ea42f1..583ea189165f 100644
+--- a/desktop/source/app/app.cxx
++++ b/desktop/source/app/app.cxx
+@@ -1595,6 +1595,15 @@ int Desktop::Main()
+         CheckOpenCLCompute(xDesktop);
+ #endif
+ 
++        // In headless mode, reap the process started by fire_glxtest_process() early in soffice_main
++        // (desktop/source/app/sofficemain.cxx), in a code block that needs to be covered by the same
++        // #if condition as this code block:
++#if defined( UNX ) && !defined MACOSX && !defined IOS && !defined ANDROID && !defined(LIBO_HEADLESS) && HAVE_FEATURE_OPENGL
++        if (rCmdLineArgs.IsHeadless()) {
++            reap_glxtest_process();
++        }
++#endif
++
+         // Release solar mutex just before we wait for our client to connect
+         {
+             SolarMutexReleaser aReleaser;
+diff --git a/desktop/source/app/sofficemain.cxx b/desktop/source/app/sofficemain.cxx
+index 657614962489..67c1efe4a799 100644
+--- a/desktop/source/app/sofficemain.cxx
++++ b/desktop/source/app/sofficemain.cxx
+@@ -122,6 +122,10 @@ extern "C" int DESKTOP_DLLPUBLIC soffice_main()
+ #if defined( UNX ) && !defined MACOSX && !defined IOS && !defined ANDROID && !defined(LIBO_HEADLESS) && HAVE_FEATURE_OPENGL
+     /* Run test for OpenGL support in own process to avoid crash with broken
+      * OpenGL drivers. Start process as early as possible.
++     * In non-headless mode, the process will be reaped in X11OpenGLDeviceInfo::GetData
++     * (vcl/opengl/x11/X11DeviceInfo.cxx).  In headless mode, the process will be reaped late in
++     * Desktop::Main (desktop/source/app/app.cxx), in a code block that needs to be covered by the
++     * same #if condition as this code block.
+      */
+     bool bSuccess = fire_glxtest_process();
+     SAL_WARN_IF(!bSuccess, "desktop.opengl", "problems with glxtest");
+diff --git a/vcl/inc/opengl/x11/glxtest.hxx b/vcl/inc/opengl/x11/glxtest.hxx
+index 979f795de139..d74436aae111 100644
+--- a/vcl/inc/opengl/x11/glxtest.hxx
++++ b/vcl/inc/opengl/x11/glxtest.hxx
+@@ -18,6 +18,8 @@ VCL_DLLPUBLIC pid_t* getGlxPid();
+ 
+ bool fire_glxtest_process();
+ 
++void reap_glxtest_process();
++
+ #endif
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/unx/glxtest.cxx b/vcl/unx/glxtest.cxx
+index b0cdde234c2b..70d34fb7318d 100644
+--- a/vcl/unx/glxtest.cxx
++++ b/vcl/unx/glxtest.cxx
+@@ -27,6 +27,8 @@
+ #include <string.h>
+ #include <signal.h>
+ 
++#include <sys/wait.h>
++
+ #include <opengl/x11/glxtest.hxx>
+ 
+ #ifdef __SUNPRO_CC
+@@ -36,6 +38,8 @@
+ #include <X11/Xlib.h>
+ #include <X11/Xutil.h>
+ 
++#include <sal/log.hxx>
++
+ // stuff from glx.h
+ typedef struct __GLXcontextRec *GLXContext;
+ typedef XID GLXPixmap;
+@@ -275,3 +279,15 @@ bool fire_glxtest_process()
+   *glxtest_pid = pid;
+   return true;
+ }
++
++void reap_glxtest_process() {
++    pid_t * pid = getGlxPid();
++    if (*pid != 0) {
++        // Use WNOHANG, as it is probably better to have a (rather harmless) zombie child process
++        // hanging around for the duration of the calling process, than to potentially block the
++        // calling process here:
++        pid_t e = waitpid(*pid, nullptr, WNOHANG);
++        SAL_INFO_IF(
++            e <= 0, "vcl.opengl", "waiting for glxtest process " << *pid << " failed with " << e);
++    }
++}
+-- 
+2.14.3
+

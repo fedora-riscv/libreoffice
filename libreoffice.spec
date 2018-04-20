@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -283,6 +283,7 @@ Patch40: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch41: 0001-Resolves-tdf-114406-treat-as-the-operator-that-it-is.patch
 Patch42: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 Patch43: 0001-limit-WEBSERVICE-to-http-s-protocols.patch
+Patch44: 0001-ofz-5747-short-sal_Int32-like-in-StgDataStrm.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2377,6 +2378,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Apr 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-9
+- CVE-2018-10119 Use After Free in Structured Storage parser
+
 * Fri Feb 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-8
 - CVE-2018-1055 WEBSERVICE formula woes
 

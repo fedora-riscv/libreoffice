@@ -1,4 +1,4 @@
-From fdd41c995d1f719e92c6f083e780226114762f05 Mon Sep 17 00:00:00 2001
+From 7002e601415f29c18212bbecb30caf4b5cdae5bc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Sat, 27 Jan 2018 19:38:12 +0000
 Subject: [PATCH] ofz#5747 short->sal_Int32 like in StgDataStrm
@@ -16,10 +16,10 @@ Tested-by: Caolán McNamara <caolanm@redhat.com>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/sot/source/sdstor/stgstrms.cxx b/sot/source/sdstor/stgstrms.cxx
-index 00a1a53c4314..efa03cd14d20 100644
+index 7063a4c..d9ec341 100644
 --- a/sot/source/sdstor/stgstrms.cxx
 +++ b/sot/source/sdstor/stgstrms.cxx
-@@ -1066,7 +1066,7 @@ sal_Int32 StgSmallStrm::Read( void* pBuf, sal_Int32 n )
+@@ -1047,7 +1047,7 @@ sal_Int32 StgSmallStrm::Read( void* pBuf, sal_Int32 n )
      // small stream is likely to be < 64 KBytes.
      if( ( m_nPos + n ) > m_nSize )
          n = m_nSize - m_nPos;
@@ -28,16 +28,16 @@ index 00a1a53c4314..efa03cd14d20 100644
      while( n )
      {
          short nBytes = m_nPageSize - m_nOffset;
-@@ -1083,7 +1083,7 @@ sal_Int32 StgSmallStrm::Read( void* pBuf, sal_Int32 n )
+@@ -1059,7 +1059,7 @@ sal_Int32 StgSmallStrm::Read( void* pBuf, sal_Int32 n )
                  break;
              // all reading through the stream
-             short nRes = static_cast<short>(m_pData->Read( static_cast<sal_uInt8*>(pBuf) + nDone, nBytes ));
+             short nRes = (short) m_pData->Read( static_cast<sal_uInt8*>(pBuf) + nDone, nBytes );
 -            nDone = nDone + nRes;
 +            nDone += nRes;
              m_nPos += nRes;
              n -= nRes;
              m_nOffset = m_nOffset + nRes;
-@@ -1102,7 +1102,7 @@ sal_Int32 StgSmallStrm::Write( const void* pBuf, sal_Int32 n )
+@@ -1078,7 +1078,7 @@ sal_Int32 StgSmallStrm::Write( const void* pBuf, sal_Int32 n )
  {
      // you can safely assume that reads are not huge, since the
      // small stream is likely to be < 64 KBytes.
@@ -46,10 +46,10 @@ index 00a1a53c4314..efa03cd14d20 100644
      if( ( m_nPos + n ) > m_nSize )
      {
          sal_Int32 nOld = m_nPos;
-@@ -1126,7 +1126,7 @@ sal_Int32 StgSmallStrm::Write( const void* pBuf, sal_Int32 n )
+@@ -1102,7 +1102,7 @@ sal_Int32 StgSmallStrm::Write( const void* pBuf, sal_Int32 n )
              if( !m_pData->Pos2Page( nDataPos ) )
                  break;
-             short nRes = static_cast<short>(m_pData->Write( static_cast<sal_uInt8 const *>(pBuf) + nDone, nBytes ));
+             short nRes = (short) m_pData->Write( static_cast<sal_uInt8 const *>(pBuf) + nDone, nBytes );
 -            nDone = nDone + nRes;
 +            nDone += nRes;
              m_nPos += nRes;

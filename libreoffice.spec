@@ -284,6 +284,7 @@ Patch41: 0001-Resolves-tdf-114406-treat-as-the-operator-that-it-is.patch
 Patch42: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 Patch43: 0001-limit-WEBSERVICE-to-http-s-protocols.patch
 Patch44: 0001-ofz-5747-short-sal_Int32-like-in-StgDataStrm.patch
+Patch45: 0001-ofz-6173-check-index-before-use.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2380,6 +2381,7 @@ done
 %changelog
 * Fri Apr 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-9
 - CVE-2018-10119 Use After Free in Structured Storage parser
+- CVE-2018-10120 Heap Buffer Overflow in MSWord Customizations parsing
 
 * Fri Feb 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-8
 - CVE-2018-1055 WEBSERVICE formula woes

@@ -1,0 +1,37 @@
+From a1e24ab0a98ea6155c581907aca42532311218df Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 24 Apr 2018 11:39:20 +0100
+Subject: [PATCH] Resolves: tdf#116951 rhbz#1569331 start is G_MAXINT
+
+and text is nullptr, seeing as an end G_MAXINT translates to str len,
+assume the same for start
+
+Change-Id: I76b8bb0e66694129d36bbe08a6d55fc434f3434f
+---
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 113fcb425963..8a18974d2635 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -3977,8 +3977,14 @@ void GtkSalFrame::IMHandler::signalIMPreeditChanged( GtkIMContext*, gpointer im_
+         ExtTextInputAttr sal_attr = ExtTextInputAttr::NONE;
+ 
+         pango_attr_iterator_range (iter, &start, &end);
+-        if (end == G_MAXINT)
+-            end = pText ? g_utf8_strlen(pText, -1) : 0;
++        if (start == G_MAXINT || end == G_MAXINT)
++        {
++            auto len = pText ? g_utf8_strlen(pText, -1) : 0;
++            if (end == G_MAXINT)
++                end = len;
++            if (start == G_MAXINT)
++                start = len;
++        }
+         if (end == start)
+             continue;
+ 
+-- 
+2.14.3
+

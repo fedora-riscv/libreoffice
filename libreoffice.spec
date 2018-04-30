@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2328,6 +2328,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Apr 30 2018 Pete Walter <pwalter@fedoraproject.org> - 1:6.0.3.2-6
+- Rebuild for ICU 61.1
+
 * Tue Apr 24 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-5
 - Resolves: tdf#116951 rhbz#1569331 start is G_MAXINT
 

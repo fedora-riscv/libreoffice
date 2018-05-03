@@ -98,10 +98,6 @@ Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
 
 %if 0%{?rhel}
-Source100:      %{external_url}/0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
-%global bundling_options %{?bundling_options} --without-system-ucpp
-
-Provides: bundled(ucpp) = 1.3.2
 
 %if 0%{?rhel} < 8
 Source200:      %{external_url}/mdds-1.3.1.tar.bz2
@@ -150,8 +146,8 @@ BuildRequires: make
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}
 BuildRequires: libappstream-glib
-BuildRequires: ucpp
 %endif
+BuildRequires: ucpp
 BuildRequires: zip
 
 # libs / headers - common
@@ -1079,7 +1075,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --enable-python=system
+%define distrooptions --disable-eot --enable-python=system --with-system-ucpp
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --with-system-ucpp
 %endif

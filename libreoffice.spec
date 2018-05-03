@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -352,7 +352,6 @@ Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
-Recommends: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %else
 # these two plugins used to be part of core--keep it that way
 Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
@@ -361,8 +360,8 @@ Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
-Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %endif
+Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
@@ -2328,6 +2327,12 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu May 3 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-7
+- rhbz#1573845 won't start without at least Langpack-en-US.xcd
+
+* Mon Apr 30 2018 Pete Walter <pwalter@fedoraproject.org> - 1:6.0.3.2-6
+- Rebuild for ICU 61.1
+
 * Tue Apr 24 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.3.2-5
 - Resolves: tdf#116951 rhbz#1569331 start is G_MAXINT
 

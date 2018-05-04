@@ -1,4 +1,4 @@
-From cd25a97bbadc0a5c1fd6b0e8603c8b6ebd051926 Mon Sep 17 00:00:00 2001
+From 1bb6279a11f38136679c4165d0fc071a161b5c4b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Tue, 1 May 2018 12:57:02 +0100
 Subject: [PATCH] set Referer on link mediadescriptor
@@ -11,18 +11,20 @@ Reviewed-on: https://gerrit.libreoffice.org/53693
 Tested-by: Jenkins <ci@libreoffice.org>
 Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
 ---
- sw/source/filter/xml/xmltexti.cxx | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ sw/source/filter/xml/xmltexti.cxx | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/sw/source/filter/xml/xmltexti.cxx b/sw/source/filter/xml/xmltexti.cxx
-index 78cab08507f0..33548de42f6c 100644
+index 537dbca..d1498cf 100644
 --- a/sw/source/filter/xml/xmltexti.cxx
 +++ b/sw/source/filter/xml/xmltexti.cxx
-@@ -570,16 +570,21 @@ uno::Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOOoLink(
+@@ -572,17 +572,22 @@ uno::Reference< XPropertySet > SwXMLTextImportHelper::createAndInsertOOoLink(
+ 
          uno::Sequence< beans::PropertyValue > aMediaDescriptor( 1 );
          aMediaDescriptor[0].Name = "URL";
-         aMediaDescriptor[0].Value <<= aURLObj.GetMainURL( INetURLObject::DecodeMechanism::NONE );
+-        aMediaDescriptor[0].Value <<= OUString( aURLObj.GetMainURL( INetURLObject::DecodeMechanism::NONE ) );
 -        if ( pDoc->GetDocShell() && pDoc->GetDocShell()->GetMedium() )
++        aMediaDescriptor[0].Value <<= aURLObj.GetMainURL( INetURLObject::DecodeMechanism::NONE );
 +
 +        if (SfxMedium* pMedium = pDoc->GetDocShell() ? pDoc->GetDocShell()->GetMedium() : nullptr)
          {

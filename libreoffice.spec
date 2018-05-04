@@ -257,6 +257,7 @@ Patch12: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
 Patch13: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
 Patch14: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
 Patch15: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
+Patch16: 0001-set-Referer-on-link-mediadescriptor.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2225,8 +2226,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Apr 19 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.4.6.2-5-UNBUILT
+* Fri May 4 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.6.2-5
 - Resolves: rhbz#1568579 LibreOffice --headless zombie process
+- rhbz#1575000 CVE-2018-10583 allow embedded links to smb resources
+  to be blocked
 
 * Wed Apr 18 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.6.2-4
 - Related: rhbz#1396729 use cairo_surface_create_similar

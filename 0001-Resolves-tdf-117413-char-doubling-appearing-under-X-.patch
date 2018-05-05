@@ -1,4 +1,4 @@
-From ba30f47d00850edbbfd157b664d5af97697d7a4a Mon Sep 17 00:00:00 2001
+From 0db09cb8b38b13a125050261fd64ff5318d30791 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 4 May 2018 17:15:37 +0100
 Subject: [PATCH] Resolves: tdf#117413 char doubling appearing under X with
@@ -14,10 +14,10 @@ Change-Id: Ic51679a71523e8cc76832858411b102d915638cf
  2 files changed, 22 insertions(+), 16 deletions(-)
 
 diff --git a/vcl/unx/generic/gdi/cairotextrender.cxx b/vcl/unx/generic/gdi/cairotextrender.cxx
-index 00532c8644b9..10edfd0e5001 100644
+index c1b4ff1..6d51d1f 100644
 --- a/vcl/unx/generic/gdi/cairotextrender.cxx
 +++ b/vcl/unx/generic/gdi/cairotextrender.cxx
-@@ -151,6 +151,26 @@ namespace
+@@ -164,6 +164,26 @@ namespace
      }
  }
  
@@ -43,8 +43,8 @@ index 00532c8644b9..10edfd0e5001 100644
 +
  void CairoTextRender::DrawTextLayout(const CommonSalLayout& rLayout)
  {
-     const FreetypeFont& rFont = *rLayout.getFreetypeFont();
-@@ -191,7 +211,7 @@ void CairoTextRender::DrawTextLayout(const CommonSalLayout& rLayout)
+     const FreetypeFont& rFont = rLayout.getFontData();
+@@ -204,7 +224,7 @@ void CairoTextRender::DrawTextLayout(const CommonSalLayout& rLayout)
       * least change the SalFrame etc impls to dtor the SalGraphics *before* the
       * destruction of the windows they reference
      */
@@ -54,10 +54,10 @@ index 00532c8644b9..10edfd0e5001 100644
      {
          SAL_WARN("vcl", "no cairo context for text");
 diff --git a/vcl/unx/generic/gdi/x11cairotextrender.cxx b/vcl/unx/generic/gdi/x11cairotextrender.cxx
-index 105d0a0392bd..8960bd1c6bb1 100644
+index 612b921..7ca4dfd 100644
 --- a/vcl/unx/generic/gdi/x11cairotextrender.cxx
 +++ b/vcl/unx/generic/gdi/x11cairotextrender.cxx
-@@ -36,21 +36,7 @@ GlyphCache& X11CairoTextRender::getPlatformGlyphCache()
+@@ -49,21 +49,7 @@ GlyphCache& X11CairoTextRender::getPlatformGlyphCache()
  
  cairo_t* X11CairoTextRender::getCairoContext()
  {

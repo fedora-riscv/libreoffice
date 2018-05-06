@@ -1478,7 +1478,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch ppc64 s390x
+%ifnarch ppc64 s390x aarch64
 make
 %endif
 unset WITH_LANG

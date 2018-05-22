@@ -60,7 +60,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Release:        10%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and Artistic and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -285,6 +285,7 @@ Patch42: 0001-rhbz-1541486-Fix-localized-ness-of-ooSetupFactoryUIN.patch
 Patch43: 0001-limit-WEBSERVICE-to-http-s-protocols.patch
 Patch44: 0001-ofz-5747-short-sal_Int32-like-in-StgDataStrm.patch
 Patch45: 0001-ofz-6173-check-index-before-use.patch
+Patch46: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2379,6 +2380,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue May 22 2018 Eike Rathke <erack@redhat.com> - 1:5.3.7.2-10
+- Resolves: tdf#117093 sanitize the active grid window value
+
 * Fri Apr 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.3.7.2-9
 - CVE-2018-10119 Use After Free in Structured Storage parser
 - CVE-2018-10120 Heap Buffer Overflow in MSWord Customizations parsing

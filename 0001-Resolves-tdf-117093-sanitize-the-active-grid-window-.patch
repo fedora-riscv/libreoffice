@@ -1,0 +1,127 @@
+From d88536d12554737429e836a5953f49b64cb47883 Mon Sep 17 00:00:00 2001
+Message-Id: <d88536d12554737429e836a5953f49b64cb47883.1526999795.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 17 May 2018 14:07:16 +0200
+Subject: [PATCH] Resolves: tdf#117093 sanitize the active grid window value
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Don't know yet how that could had happened, but the sample
+document has a bad ActiveSplitRange value that doesn't match
+HorizontalSplitMode and VerticalSplitMode.
+
+* sanitize the value when reading view settings
+* prevent writing such value to help versions that don't sanitize
+
+Change-Id: I1b450c7b8102148a24d545ff7568f725d7492a6a
+---
+ sc/source/ui/inc/viewdata.hxx  | 12 ++++++++++++
+ sc/source/ui/view/viewdata.cxx | 34 +++++++++++++++++++++-------------
+ 2 files changed, 33 insertions(+), 13 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch"
+
+diff --git a/sc/source/ui/inc/viewdata.hxx b/sc/source/ui/inc/viewdata.hxx
+index 1a62a909d10c..a66f0508c56f 100644
+--- a/sc/source/ui/inc/viewdata.hxx
++++ b/sc/source/ui/inc/viewdata.hxx
+@@ -161,6 +161,18 @@ private:
+     void            ReadUserDataSequence(
+                         const css::uno::Sequence <css::beans::PropertyValue>& rSettings,
+                         ScViewData& rViewData, SCTAB nTab, bool& rHasZoom);
++
++    /** Sanitize the active split range value to not point into a grid window
++        that would never be initialized due to non-matching split modes.
++
++        This is to be done when reading settings from file formats or
++        configurations that could have arbitrary values. The caller is
++        reponsible for actually assigning the new value to eWhichActive because
++        we want this function to be const to be able to call the check from
++        anywhere.
++     */
++    SAL_WARN_UNUSED_RESULT ScSplitPos SanitizeWhichActive() const;
++
+ public:
+     ~ScViewDataTable();
+ };
+diff --git a/sc/source/ui/view/viewdata.cxx b/sc/source/ui/view/viewdata.cxx
+index c6111917c6ec..ad1abf35294a 100644
+--- a/sc/source/ui/view/viewdata.cxx
++++ b/sc/source/ui/view/viewdata.cxx
+@@ -151,8 +151,12 @@ void ScViewDataTable::WriteUserDataSequence(uno::Sequence <beans::PropertyValue>
+             pSettings[SC_VERTICAL_SPLIT_POSITION].Value <<= sal_Int32(nFixPosY);
+         else
+             pSettings[SC_VERTICAL_SPLIT_POSITION].Value <<= sal_Int32(nVSplitPos);
++        // Prevent writing odd settings that would make crash versions that
++        // don't apply SanitizeWhichActive() when reading the settings.
++        // See tdf#117093
++        const ScSplitPos eActiveSplitRange = SanitizeWhichActive();
+         pSettings[SC_ACTIVE_SPLIT_RANGE].Name = SC_ACTIVESPLITRANGE;
+-        pSettings[SC_ACTIVE_SPLIT_RANGE].Value <<= sal_Int16(eWhichActive);
++        pSettings[SC_ACTIVE_SPLIT_RANGE].Value <<= sal_Int16(eActiveSplitRange);
+         pSettings[SC_POSITION_LEFT].Name = SC_POSITIONLEFT;
+         pSettings[SC_POSITION_LEFT].Value <<= sal_Int32(nPosX[SC_SPLIT_LEFT]);
+         pSettings[SC_POSITION_RIGHT].Name = SC_POSITIONRIGHT;
+@@ -309,6 +313,7 @@ void ScViewDataTable::ReadUserDataSequence(const uno::Sequence <beans::PropertyV
+         // Fallback to common SdrModel processing
+         else rViewData.GetDocument()->GetDrawLayer()->ReadUserDataSequenceValue(&aSettings[i]);
+     }
++
+     if (eHSplitMode == SC_SPLIT_FIX)
+         nFixPosX = SanitizeCol( static_cast<SCCOL>( bHasHSplitInTwips ? nTempPosHTw : nTempPosH ));
+     else
+@@ -318,6 +323,20 @@ void ScViewDataTable::ReadUserDataSequence(const uno::Sequence <beans::PropertyV
+         nFixPosY = SanitizeRow( static_cast<SCROW>( bHasVSplitInTwips ? nTempPosVTw : nTempPosV ));
+     else
+         nVSplitPos = bHasVSplitInTwips ? static_cast< long >( nTempPosVTw * rViewData.GetPPTY() ) : nTempPosV;
++
++    eWhichActive = SanitizeWhichActive();
++}
++
++ScSplitPos ScViewDataTable::SanitizeWhichActive() const
++{
++    if ((WhichH(eWhichActive) == SC_SPLIT_RIGHT && eHSplitMode == SC_SPLIT_NONE) ||
++            (WhichV(eWhichActive) == SC_SPLIT_TOP && eVSplitMode == SC_SPLIT_NONE))
++    {
++        SAL_WARN("sc.ui","ScViewDataTable::SanitizeWhichActive - bad eWhichActive " << eWhichActive);
++        // The default always initialized grid window is SC_SPLIT_BOTTOMLEFT.
++        return SC_SPLIT_BOTTOMLEFT;
++    }
++    return eWhichActive;
+ }
+ 
+ ScViewData::ScViewData( ScDocShell* pDocSh, ScTabViewShell* pViewSh ) :
+@@ -2447,18 +2466,7 @@ void ScViewData::ReadUserData(const OUString& rData)
+             maTabData[nPos]->nPosY[0] = SanitizeRow( aTabOpt.getToken(9,cTabSep).toInt32());
+             maTabData[nPos]->nPosY[1] = SanitizeRow( aTabOpt.getToken(10,cTabSep).toInt32());
+ 
+-            // test whether the active part according to SplitMode exists at all
+-            //  (Bug #44516#)
+-            ScSplitPos eTest = maTabData[nPos]->eWhichActive;
+-            if ( ( WhichH( eTest ) == SC_SPLIT_RIGHT &&
+-                    maTabData[nPos]->eHSplitMode == SC_SPLIT_NONE ) ||
+-                 ( WhichV( eTest ) == SC_SPLIT_TOP &&
+-                    maTabData[nPos]->eVSplitMode == SC_SPLIT_NONE ) )
+-            {
+-                // then back to default again (bottom left)
+-                maTabData[nPos]->eWhichActive = SC_SPLIT_BOTTOMLEFT;
+-                OSL_FAIL("SplitPos had to be corrected");
+-            }
++            maTabData[nPos]->eWhichActive = maTabData[nPos]->SanitizeWhichActive();
+         }
+         ++nPos;
+     }
+
+--------------erAck-patch-parts--
+
+

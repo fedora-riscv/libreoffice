@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -260,6 +260,7 @@ Patch15: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
 Patch16: 0001-set-Referer-on-link-mediadescriptor.patch
 Patch17: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
 Patch18: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
+Patch19: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2228,6 +2229,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue May 22 2018 Eike Rathke <erack@redhat.com> - 1:5.4.6.2-8-UNBUILT
+- Resolves: tdf#117093 sanitize the active grid window value
+
 * Wed May 9 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.4.6.2-7
 - Fix a potential crash when using the dconf configuration backend
 

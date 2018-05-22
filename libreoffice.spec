@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 5.4.6
+%global libo_version 5.4.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -253,14 +253,12 @@ Patch8: 0001-impress-constantly-trying-to-create-an-internal-Side.patch
 Patch9: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch10: 0001-editviewoverlay-Allow-EditView-to-run-in-Overlay.patch
 Patch11: 0001-tdf-100922-Refactor-Custom-Properties-page.patch
-Patch12: 0001-sdk-lib-dir-missing-from-Linux-installation-sets.patch
-Patch13: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
-Patch14: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
-Patch15: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
-Patch16: 0001-set-Referer-on-link-mediadescriptor.patch
-Patch17: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
-Patch18: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
-Patch19: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
+Patch12: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
+Patch13: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
+Patch14: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
+Patch15: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
+Patch16: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
+Patch17: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2229,7 +2227,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue May 22 2018 Eike Rathke <erack@redhat.com> - 1:5.4.6.2-8-UNBUILT
+* Tue May 22 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.7.2-1
+- latest 5.4.7 update release
+
+* Tue May 22 2018 Eike Rathke <erack@redhat.com> - 1:5.4.6.2-8
 - Resolves: tdf#117093 sanitize the active grid window value
 
 * Wed May 9 2018 Stephan Bergmann <sbergman@redhat.com> - 1:5.4.6.2-7

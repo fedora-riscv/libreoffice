@@ -270,14 +270,13 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-rhbz-1392145-ensure-titlebar-close-button-matches-ou.patch
-Patch7: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
-Patch8: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
-Patch9: 0001-Related-tdf-116951-rhbz-1569331-end-should-be-in-ter.patch
-Patch10: 0001-Resolves-tdf-116951-rhbz-1569331-start-is-G_MAXINT.patch
-Patch11: 0001-set-Referer-on-link-mediadescriptor.patch
-Patch12: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
-Patch13: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
+Patch6: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
+Patch7: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
+Patch8: 0001-Related-tdf-116951-rhbz-1569331-end-should-be-in-ter.patch
+Patch9: 0001-Resolves-tdf-116951-rhbz-1569331-start-is-G_MAXINT.patch
+Patch10: 0001-set-Referer-on-link-mediadescriptor.patch
+Patch11: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
+Patch12: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,0 +1,80 @@
+From 47b299c7de49edd3bddd743d6d9bdcf49a09ec39 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 25 May 2018 14:37:03 +0100
+Subject: [PATCH] tdf#117601 a11y crash after merging cells
+
+this is similar to tdf#87199, in this case the accessibiles for the merged
+cells are not visible so not removed when their frame is deleted, but remain
+in the cache pointing to invalid frames.
+
+Change-Id: Ibc5b9f27541683b8f3604839fa3d1431380a4039
+---
+ sw/inc/accmap.hxx                    |  3 +++
+ sw/source/core/access/acccontext.cxx |  6 +++++-
+ sw/source/core/access/accmap.cxx     | 11 ++++++++---
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/sw/inc/accmap.hxx b/sw/inc/accmap.hxx
+index fc7f665da383..c78bea3e0e51 100644
+--- a/sw/inc/accmap.hxx
++++ b/sw/inc/accmap.hxx
+@@ -277,6 +277,9 @@ public:
+     Point PixelToCore (const Point& rPoint) const;
+     tools::Rectangle CoreToPixel (const tools::Rectangle& rRect) const;
+ 
++    // is there a known accessibility impl cached for the frame
++    bool Contains(const SwFrame *pFrame) const;
++
+ private:
+     /** get mapping mode for LogicToPixel and PixelToLogic conversions
+ 
+diff --git a/sw/source/core/access/acccontext.cxx b/sw/source/core/access/acccontext.cxx
+index 628ad727dc47..efb6b415d372 100644
+--- a/sw/source/core/access/acccontext.cxx
++++ b/sw/source/core/access/acccontext.cxx
+@@ -402,8 +402,12 @@ void SwAccessibleContext::DisposeChildren(const SwFrame *pFrame,
+         if( pLower )
+         {
+             ::rtl::Reference< SwAccessibleContext > xAccImpl;
+-            if( rLower.IsAccessible( GetShell()->IsPreview() ) )
++            if (rLower.IsAccessible(GetShell()->IsPreview())
++                       // tdf#117601 dispose the darn thing if it ever was accessible
++                    || GetMap()->Contains(pLower))
++            {
+                 xAccImpl = GetMap()->GetContextImpl( pLower, false );
++            }
+             if( xAccImpl.is() )
+                 xAccImpl->Dispose( bRecursive );
+             else
+diff --git a/sw/source/core/access/accmap.cxx b/sw/source/core/access/accmap.cxx
+index 712b70873507..43cc0974625e 100644
+--- a/sw/source/core/access/accmap.cxx
++++ b/sw/source/core/access/accmap.cxx
+@@ -2158,6 +2158,11 @@ void SwAccessibleMap::RemoveContext( const SdrObject *pObj )
+     }
+ }
+ 
++bool SwAccessibleMap::Contains(const SwFrame *pFrame) const
++{
++    return (pFrame && mpFrameMap && mpFrameMap->find(pFrame) != mpFrameMap->end());
++}
++
+ void SwAccessibleMap::A11yDispose( const SwFrame *pFrame,
+                                    const SdrObject *pObj,
+                                    vcl::Window* pWindow,
+@@ -2173,9 +2178,9 @@ void SwAccessibleMap::A11yDispose( const SwFrame *pFrame,
+     OSL_ENSURE( !aFrameOrObj.GetSwFrame() || aFrameOrObj.GetSwFrame()->IsAccessibleFrame(),
+             "non accessible frame should be disposed" );
+ 
+-    if (aFrameOrObj.IsAccessible( GetShell()->IsPreview() )
+-            // fdo#87199 dispose the darn thing if it ever was accessible
+-        || (pFrame && mpFrameMap && mpFrameMap->find(pFrame) != mpFrameMap->end()))
++    if (aFrameOrObj.IsAccessible(GetShell()->IsPreview())
++               // fdo#87199 dispose the darn thing if it ever was accessible
++            || Contains(pFrame))
+     {
+         ::rtl::Reference< SwAccessibleContext > xAccImpl;
+         ::rtl::Reference< SwAccessibleContext > xParentAccImpl;
+-- 
+2.14.3
+

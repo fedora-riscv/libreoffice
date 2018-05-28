@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -277,6 +277,7 @@ Patch9: 0001-Resolves-tdf-116951-rhbz-1569331-start-is-G_MAXINT.patch
 Patch10: 0001-set-Referer-on-link-mediadescriptor.patch
 Patch11: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
 Patch12: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
+Patch13: 0001-tdf-117601-a11y-crash-after-merging-cells.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2325,6 +2326,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon May 28 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.4.2-2
+- Resolves: rhbz#1582324 crash after merging writer table cells
+
 * Fri May 25 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.4.2-1
 - latest 6.0 release
 

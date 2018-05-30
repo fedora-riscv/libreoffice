@@ -1,0 +1,162 @@
+From b00316cfeafa6cab4f21ec56514cc680b43ef461 Mon Sep 17 00:00:00 2001
+Message-Id: <b00316cfeafa6cab4f21ec56514cc680b43ef461.1527686410.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 29 May 2018 23:40:44 +0200
+Subject: [PATCH] Resolves: tdf#117819 append trailing '0' as needed before
+ separator insertion
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+To insert separators, literal strings between digits and other,
+the formatter operates backwards on the string obtained from
+doubleToUString() cleaned of the decimal separator. The number of
+decimals returned by doubleToUString() may be less than the
+decimals of the number format as entered by the user, which lead
+to separators inserted at wrong positions. This wrong behavior was
+triggered respectively made more obvious by
+
+    commit 0f6203edf74832f84d8263d7a544d679203a4efc
+    CommitDate: Wed Jan 13 14:47:57 2016 +0100
+
+        tdf#96918 display accurate integer double values up to (2^53)-1
+
+which for integer values returns at most 15 decimals ('0' in this
+case).
+
+Before operating on the decimals' part ensure that the number of
+decimals matches the digits requested, and if shorter append
+trailing '0' characters for the required amount so the separators
+(and other strings) are inserted at the correct positions.
+
+Change-Id: Ic02652699ea7d6fae3b2b3348f6f7d183319e043
+---
+ include/svl/zformat.hxx        |  1 +
+ svl/source/numbers/zformat.cxx | 31 +++++++++++++++++++++++++------
+ 2 files changed, 26 insertions(+), 6 deletions(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-117819-append-trailing-0-as-needed-befo.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-117819-append-trailing-0-as-needed-befo.patch"
+
+diff --git a/include/svl/zformat.hxx b/include/svl/zformat.hxx
+index e10060c04240..26e2c1743020 100644
+--- a/include/svl/zformat.hxx
++++ b/include/svl/zformat.hxx
+@@ -594,6 +594,7 @@ private:
+ 
+     SVL_DLLPRIVATE bool ImpDecimalFill( OUStringBuffer& sStr,
+                                  double& rNumber,
++                                 sal_Int32 nDecPos,
+                                  sal_uInt16 j,
+                                  sal_uInt16 nIx,
+                                  bool bInteger );
+diff --git a/svl/source/numbers/zformat.cxx b/svl/source/numbers/zformat.cxx
+index 361fe5c40571..66d22841ef3f 100644
+--- a/svl/source/numbers/zformat.cxx
++++ b/svl/source/numbers/zformat.cxx
+@@ -2501,6 +2501,7 @@ bool SvNumberformat::ImpGetScientificOutput(double fNumber,
+     OUStringBuffer ExpStr;
+     short nExpSign = 1;
+     sal_Int32 nExPos = sStr.indexOf('E');
++    sal_Int32 nDecPos = -1;
+ 
+     if ( nExPos >= 0 )
+     {
+@@ -2559,6 +2560,8 @@ bool SvNumberformat::ImpGetScientificOutput(double fNumber,
+ 
+         while((index = sStr.indexOf('.', index)) >= 0)
+         {
++            if (nDecPos < 0)
++                nDecPos = index;
+             sStr.remove(index, 1);
+         }
+     }
+@@ -2608,7 +2611,7 @@ bool SvNumberformat::ImpGetScientificOutput(double fNumber,
+     }
+     else
+     {
+-        bRes |= ImpDecimalFill(sStr, fNumber, j, nIx, false);
++        bRes |= ImpDecimalFill(sStr, fNumber, nDecPos, j, nIx, false);
+     }
+ 
+     if (bSign)
+@@ -4082,6 +4085,7 @@ bool SvNumberformat::ImpGetNumberOutput(double fNumber,
+         }
+     }
+     sal_uInt16 i, j;
++    sal_Int32 nDecPos = -1;
+     bool bInteger = false;
+     if ( rInfo.nThousand != FLAG_STANDARD_IN_FORMAT )
+     {
+@@ -4133,17 +4137,17 @@ bool SvNumberformat::ImpGetNumberOutput(double fNumber,
+             sStr = ::rtl::math::doubleToUString( fNumber, rtl_math_StringFormat_F, 0, '.');
+             sStr.stripStart('0'); // Strip leading zeros
+         }
+-        sal_Int32 nPoint = sStr.indexOf('.' );
+-        if ( nPoint >= 0)
++        nDecPos = sStr.indexOf('.' );
++        if ( nDecPos >= 0)
+         {
+-            const sal_Unicode* p = sStr.getStr() + nPoint;
++            const sal_Unicode* p = sStr.getStr() + nDecPos;
+             while ( *++p == '0' )
+                 ;
+             if ( !*p )
+             {
+                 bInteger = true;
+             }
+-            sStr.remove( nPoint, 1 ); //  Remove .
++            sStr.remove( nDecPos, 1 ); //  Remove .
+         }
+         if (bSign && (sStr.isEmpty() ||
+                       comphelper::string::getTokenCount(sStr.toString(), '0') == sStr.getLength()+1))   // Only 00000
+@@ -4155,7 +4159,7 @@ bool SvNumberformat::ImpGetNumberOutput(double fNumber,
+                                         // Edit backwards:
+     j = NumFor[nIx].GetCount()-1;       // Last symbol
+                                         // Decimal places:
+-    bRes |= ImpDecimalFill( sStr, fNumber, j, nIx, bInteger );
++    bRes |= ImpDecimalFill( sStr, fNumber, nDecPos, j, nIx, bInteger );
+     if (bSign)
+     {
+         sStr.insert(0, '-');
+@@ -4166,6 +4170,7 @@ bool SvNumberformat::ImpGetNumberOutput(double fNumber,
+ 
+ bool SvNumberformat::ImpDecimalFill( OUStringBuffer& sStr,  // number string
+                                    double& rNumber,       // number
++                                   sal_Int32 nDecPos,     // decimals start
+                                    sal_uInt16 j,          // symbol index within format code
+                                    sal_uInt16 nIx,        // subformat index
+                                    bool bInteger)         // is integer
+@@ -4210,6 +4215,20 @@ bool SvNumberformat::ImpDecimalFill( OUStringBuffer& sStr,  // number string
+                 const OUString& rStr = rInfo.sStrArray[j];
+                 const sal_Unicode* p1 = rStr.getStr();
+                 const sal_Unicode* p = p1 + rStr.getLength();
++                // In case the number of decimals passed are less than the
++                // "digits" given, append trailing '0' characters, which here
++                // means insert them because literal strings may have been
++                // appended already. If they weren't to be '0' characters
++                // they'll be changed below, as if decimals with trailing zeros
++                // were passed.
++                if (nDecPos >= 0 && nDecPos <= k)
++                {
++                    sal_Int32 nAppend = rStr.getLength() - (k - nDecPos);
++                    while (nAppend-- > 0)
++                    {
++                        sStr.insert( k++, '0');
++                    }
++                }
+                 while (k && p1 < p--)
+                 {
+                     const sal_Unicode c = *p;
+
+--------------erAck-patch-parts--
+
+

@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -259,6 +259,7 @@ Patch14: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
 Patch15: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
 Patch16: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
 Patch17: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
+Patch18: 0001-Resolves-tdf-117819-append-trailing-0-as-needed-befo.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2227,6 +2228,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed May 30 2018 Eike Rathke <erack@redhat.com> - 1:5.4.7.2-2
+- Resolves: tdf#117819 append trailing '0' as needed before separator insertion
+
 * Tue May 22 2018 Caolán McNamara <caolanm@redhat.com> - 1:5.4.7.2-1
 - latest 5.4.7 update release
 

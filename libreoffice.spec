@@ -32,10 +32,12 @@
 %endif
 # URL for external projects' tarballs
 %global external_url http://dev-www.libreoffice.org/src
+%if 0%{?fedora}
+%global weak_deps 1
+%endif
 %if 0%{?rhel} && 0%{?rhel} < 8
 %nil
 %else
-%global weak_deps 1
 %global file_triggers 1
 %endif
 %global girapiversion 0.1
@@ -62,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2326,6 +2328,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jun 05 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.4.2-3
+- use weak deps for fedora only
+
 * Mon May 28 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.4.2-2
 - Resolves: rhbz#1582324 crash after merging writer table cells
 

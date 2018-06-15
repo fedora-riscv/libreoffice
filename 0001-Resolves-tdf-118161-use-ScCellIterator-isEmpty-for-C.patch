@@ -1,0 +1,62 @@
+From 5ca4a37500e9b3dc558f1563299c30e5253d4069 Mon Sep 17 00:00:00 2001
+Message-Id: <5ca4a37500e9b3dc558f1563299c30e5253d4069.1529078457.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Thu, 14 Jun 2018 15:00:14 +0200
+Subject: [PATCH] Resolves: tdf#118161 use ScCellIterator::isEmpty() for
+ COUNTA()
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+... instead of hasEmptyData() that considers inherited svEmptyCell
+as well.
+
+Effectively a regression from
+
+    commit 0e9e3be6f51436c1e5bf1481a434a85e334c09ea
+    CommitDate: Tue Mar 26 01:41:17 2013 -0400
+
+	More on ScCellIterator usage migration.
+
+that started to include mpCurFormula->IsEmpty() in
+ScCellIterator::isEmpty() which later was renamed to
+ScCellIterator::hasEmptyData() and isEmpty() introduced for real
+empty.
+
+Change-Id: Iec97d58080016c28bc9a7e47d056e4d301263928
+(cherry picked from commit cfe2e4eb835c06b24adabd60c7a3fddbd3f4dbc9)
+Reviewed-on: https://gerrit.libreoffice.org/55804
+Tested-by: Jenkins
+Reviewed-by: Kohei Yoshida <libreoffice@kohei.us>
+---
+ sc/source/core/tool/interpr6.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-118161-use-ScCellIterator-isEmpty-for-C.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-118161-use-ScCellIterator-isEmpty-for-C.patch"
+
+diff --git a/sc/source/core/tool/interpr6.cxx b/sc/source/core/tool/interpr6.cxx
+index cf0553b813b9..ab7c2ec5ac21 100644
+--- a/sc/source/core/tool/interpr6.cxx
++++ b/sc/source/core/tool/interpr6.cxx
+@@ -696,7 +696,7 @@ double ScInterpreter::IterateParameters( ScIterFunc eFunc, bool bTextAsZero )
+                     ScCellIterator aIter( pDok, aRange, mnSubTotalFlags );
+                     for (bool bHas = aIter.first(); bHas; bHas = aIter.next())
+                     {
+-                        if ( !aIter.hasEmptyData() )
++                        if ( !aIter.isEmpty() )
+                         {
+                             ++nCount;
+                         }
+
+--------------erAck-patch-parts--
+
+

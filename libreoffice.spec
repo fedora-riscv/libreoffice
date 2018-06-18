@@ -261,6 +261,7 @@ Patch16: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
 Patch17: 0001-Resolves-tdf-117093-sanitize-the-active-grid-window-.patch
 Patch18: 0001-Resolves-tdf-117819-append-trailing-0-as-needed-befo.patch
 Patch19: 0001-Resolves-tdf-118161-use-ScCellIterator-isEmpty-for-C.patch
+Patch20: 0001-Resolves-tdf-118073-one-leading-0-is-significant-for.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2229,8 +2230,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Jun 15 2018 Eike Rathke <erack@redhat.com> - 1:5.4.7.2-3
+* Mon Jun 18 2018 Eike Rathke <erack@redhat.com> - 1:5.4.7.2-3
 - Resolves: tdf#118161 use ScCellIterator::isEmpty() for COUNTA()
+- Resolves: tdf#118073 one leading 0 is significant for 0.
 
 * Wed May 30 2018 Eike Rathke <erack@redhat.com> - 1:5.4.7.2-2
 - Resolves: tdf#117819 append trailing '0' as needed before separator insertion

@@ -1,0 +1,53 @@
+From 25c1ecc3b88cbc73260e313e3ec1a9b3be92f9d8 Mon Sep 17 00:00:00 2001
+Message-Id: <25c1ecc3b88cbc73260e313e3ec1a9b3be92f9d8.1529334942.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 18 Jun 2018 13:53:04 +0200
+Subject: [PATCH] Resolves: tdf#118073 one leading 0 is significant for 0.
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Regression from
+
+    commit 9a6527a98fb968b3fe6bc293ff7520a9480d43d0
+    CommitDate: Mon Jun 27 21:57:52 2016 +0200
+
+        stringToDouble() do not parse separator without digit as 0.0
+
+Change-Id: I9d90aedc324ef0938297224297d89817e3fd1e90
+Reviewed-on: https://gerrit.libreoffice.org/56028
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Jenkins
+(cherry picked from commit 5c0783cecb0b141885a25ca26220614ad3125f8e)
+---
+ sal/rtl/math.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Resolves-tdf-118073-one-leading-0-is-significant-for.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Resolves-tdf-118073-one-leading-0-is-significant-for.patch"
+
+diff --git a/sal/rtl/math.cxx b/sal/rtl/math.cxx
+index 7eeeb85b4013..e33fa01b8f52 100644
+--- a/sal/rtl/math.cxx
++++ b/sal/rtl/math.cxx
+@@ -712,7 +712,7 @@ inline double stringToDouble(CharT const * pBegin, CharT const * pEnd,
+         while (p != pEnd && (*p == CharT('0') || *p == cGroupSeparator))
+             ++p;
+ 
+-        CharT const * pFirstSignificant = p;
++        CharT const * pFirstSignificant = ((p > pBegin && *(p-1) == CharT('0')) ? p-1 : p);
+         long nValExp = 0;       // carry along exponent of mantissa
+ 
+         // integer part of mantissa
+
+--------------erAck-patch-parts--
+
+

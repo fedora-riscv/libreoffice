@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.4
+%global libo_version 6.0.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -272,15 +272,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-Related-rhbz-1396729-use-cairo_surface_create_simila.patch
-Patch7: 0001-tdf-95843-Wait-for-fire_glxtest_process-also-in-head.patch
-Patch8: 0001-Related-tdf-116951-rhbz-1569331-end-should-be-in-ter.patch
-Patch9: 0001-Resolves-tdf-116951-rhbz-1569331-start-is-G_MAXINT.patch
-Patch10: 0001-set-Referer-on-link-mediadescriptor.patch
-Patch11: 0001-Resolves-tdf-117413-char-doubling-appearing-under-X-.patch
-Patch12: 0001-Missing-template-clone-in-configmgr-dconf-mode.patch
-Patch13: 0001-tdf-117601-a11y-crash-after-merging-cells.patch
-Patch14: 0001-tdf-117537-block-rentry-to-CheckAndMarkUnknownFont.patch
+Patch6: 0001-tdf-117537-block-rentry-to-CheckAndMarkUnknownFont.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2329,6 +2321,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jun 22 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.5.2-1
+- latest 6.0 release
+
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 1:6.0.4.2-5
 - Rebuilt for Python 3.7
 

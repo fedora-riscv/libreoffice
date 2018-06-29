@@ -343,3 +343,36 @@ index 0173a4ad5fbf..697875b193e3 100644
 -- 
 2.17.1
 
+From 4d06789a836f1a271399cd9955b2cb96030f393a Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Tue, 19 Dec 2017 15:22:09 +0100
+Subject: [PATCH] vcl: explicitly qualify ICU types with icu:: namespace
+
+It will be required by ICU 61 anyway, see
+https://ssl.icu-project.org/repos/icu/trunk/icu4c/readme.html#RecBuild
+
+Change-Id: Iecb30b903e9a67252147a8cc78c641621d763755
+(cherry picked from commit f240332f8e965ea17b70b0ccaa9990ce0a53cfc6)
+Reviewed-on: https://gerrit.libreoffice.org/56735
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ vcl/inc/scrptrun.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/inc/scrptrun.h b/vcl/inc/scrptrun.h
+index cbe151df491d..46a5c08f3ab5 100644
+--- a/vcl/inc/scrptrun.h
++++ b/vcl/inc/scrptrun.h
+@@ -58,7 +58,7 @@ struct ParenStackEntry
+     }
+ };
+ 
+-class ScriptRun : public UObject {
++class ScriptRun : public icu::UObject {
+ public:
+ 
+     ScriptRun(const UChar chars[], int32_t length);
+-- 
+2.17.1
+

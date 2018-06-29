@@ -296,3 +296,50 @@ index b81ffed22937..0ec2347fb332 100644
 -- 
 2.17.1
 
+From 63ebde2117d768c974252db9c4d9cce1ef4334c6 Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 18 Dec 2017 20:33:03 +0100
+Subject: [PATCH] Explicitly qualify ICU types with icu:: namespace
+
+It will be required by ICU 61 anyway, see
+https://ssl.icu-project.org/repos/icu/trunk/icu4c/readme.html#RecBuild
+
+Change-Id: Ia051e8e2aa64b0e32a7f16a2afebaef0e4ebf531
+Reviewed-on: https://gerrit.libreoffice.org/46739
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+(cherry picked from commit ad3b7c27cdc957a8a38876c040e86a81c3cf7003)
+Reviewed-on: https://gerrit.libreoffice.org/56713
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ i18nutil/source/utility/unicode.cxx | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/i18nutil/source/utility/unicode.cxx b/i18nutil/source/utility/unicode.cxx
+index 0173a4ad5fbf..697875b193e3 100644
+--- a/i18nutil/source/utility/unicode.cxx
++++ b/i18nutil/source/utility/unicode.cxx
+@@ -750,15 +750,15 @@ OUString SAL_CALL unicode::formatPercent(double dNumber,
+ 
+     icu::Locale aLocale = LanguageTagIcu::getIcuLocale(aLangTag);
+ 
+-    std::unique_ptr<NumberFormat> xF(
+-        NumberFormat::createPercentInstance(aLocale, errorCode));
++    std::unique_ptr<icu::NumberFormat> xF(
++        icu::NumberFormat::createPercentInstance(aLocale, errorCode));
+     if(U_FAILURE(errorCode))
+     {
+-        SAL_WARN("i18n", "NumberFormat::createPercentInstance failed");
++        SAL_WARN("i18n", "icu::NumberFormat::createPercentInstance failed");
+         return OUString::number(dNumber) + "%";
+     }
+ 
+-    UnicodeString output;
++    icu::UnicodeString output;
+     xF->format(dNumber/100, output);
+     OUString aRet(reinterpret_cast<const sal_Unicode *>(output.getBuffer()),
+         output.length());
+-- 
+2.17.1
+

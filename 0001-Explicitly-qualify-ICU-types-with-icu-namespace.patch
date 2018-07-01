@@ -376,3 +376,35 @@ index cbe151df491d..46a5c08f3ab5 100644
 -- 
 2.17.1
 
+From 39d2a681dd6b6b8b94770d7cade9099936e46e2d Mon Sep 17 00:00:00 2001
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 18 Dec 2017 20:38:59 +0100
+Subject: [PATCH] Explicitly qualify ICU types with icu:: namespace
+
+It will be required by ICU 61 anyway, see
+https://ssl.icu-project.org/repos/icu/trunk/icu4c/readme.html#RecBuild
+
+Change-Id: If7f1330550981fd28eb7eea6329f21e116291cca
+Reviewed-on: https://gerrit.libreoffice.org/46740
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Eike Rathke <erack@redhat.com>
+---
+ lotuswordpro/source/filter/localtime.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lotuswordpro/source/filter/localtime.cxx b/lotuswordpro/source/filter/localtime.cxx
+index 47d202412724..3805c5d6f973 100644
+--- a/lotuswordpro/source/filter/localtime.cxx
++++ b/lotuswordpro/source/filter/localtime.cxx
+@@ -174,7 +174,7 @@ bool LtgLocalTime(long rtime,LtTm& rtm)
+ 
+     if ((rtime > 3 * DAY_SEC)&&(rtime < LONG_MAX - 3 * DAY_SEC))
+     {
+-        TimeZone* pLocalZone = TimeZone::createDefault();
++        icu::TimeZone* pLocalZone = icu::TimeZone::createDefault();
+         long offset = (pLocalZone->getRawOffset())/1000;
+         delete pLocalZone;
+         long ltime = rtime + offset;
+-- 
+2.17.1
+

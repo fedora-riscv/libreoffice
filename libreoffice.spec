@@ -274,6 +274,7 @@ Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
 Patch6: 0001-tdf-117537-block-rentry-to-CheckAndMarkUnknownFont.patch
 Patch7: 0001-Explicitly-qualify-ICU-types-with-icu-namespace.patch
+Patch8: 0001-const-fixes-for-python3-devel-3.7.0-1.fc29.x86_64.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2325,6 +2326,7 @@ done
 * Fri Jun 22 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.5.2-1
 - latest 6.0 release
 - fix for ICU 61
+- fix for Python 3.7
 
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 1:6.0.4.2-5
 - Rebuilt for Python 3.7

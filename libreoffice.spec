@@ -218,6 +218,7 @@ BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
+BuildRequires: /usr/bin/python
 
 # libs / headers - conditional
 %if 0%{?fedora}

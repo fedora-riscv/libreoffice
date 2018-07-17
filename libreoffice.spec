@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.5
+%global libo_version 6.0.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -63,8 +63,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.1
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -218,6 +218,7 @@ BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
+BuildRequires: /usr/bin/python
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -272,7 +273,6 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-tdf-117537-block-rentry-to-CheckAndMarkUnknownFont.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1256,6 +1256,8 @@ ln -s %{_datadir}/autocorr %{buildroot}%{baseinstdir}/share/autocorr
 
 #remove it in case we didn't build with gcj
 rm -f %{buildroot}%{baseinstdir}/program/classes/sandbox.jar
+# we don't need this in the install
+rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 #remove dummy .dat files
 rm -f %{buildroot}%{baseinstdir}/program/root?.dat
@@ -1476,14 +1478,9 @@ done
 %check
 %ifnarch ppc64 s390x aarch64
 make
-%endif
-unset WITH_LANG
-# work around flawed accessibility check
-export JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY="1"
-export OOO_TEST_SOFFICE=path:%{buildroot}%{baseinstdir}/program/soffice
-# timeout -k 2m 2h make smoketest.subsequentcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
+%endif
 
 %files
 
@@ -2321,8 +2318,22 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jul 17 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-2
+- Resolves: rhbz#1601882 fails to build with --nocheck
+
+* Tue Jul 17 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-1
+- latest 6.0 release
+
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:6.0.5.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Tue Jul 10 2018 Pete Walter <pwalter@fedoraproject.org> - 1:6.0.5.2-2
+- Rebuild for ICU 62
+
 * Fri Jun 22 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.5.2-1
 - latest 6.0 release
+- fix for ICU 61
+- fix for Python 3.7
 
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 1:6.0.4.2-5
 - Rebuilt for Python 3.7

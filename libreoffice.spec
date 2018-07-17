@@ -273,9 +273,8 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-tdf-117537-block-rentry-to-CheckAndMarkUnknownFont.patch
-Patch7: 0001-Explicitly-qualify-ICU-types-with-icu-namespace.patch
-Patch8: 0001-const-fixes-for-python3-devel-3.7.0-1.fc29.x86_64.patch
+Patch6: 0001-Explicitly-qualify-ICU-types-with-icu-namespace.patch
+Patch7: 0001-const-fixes-for-python3-devel-3.7.0-1.fc29.x86_64.patch
 
 %if 0%{?rhel}
 # not upstreamed

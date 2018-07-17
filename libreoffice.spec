@@ -277,6 +277,8 @@ Patch6: 0001-forcepoint-fix-out-of-bounds-read-in-ICU.patch
 Patch7: 0001-Upgrade-to-ICU-61.1.patch
 Patch8: 0001-Keep-the-still-relevant-part-of-external-icu-icu4c-u.patch
 Patch9: 0001-We-use-ICU-61-now.patch
+Patch10: 0001-Upgrade-to-ICU-62.1.patch
+Patch11: 0001-Use-ICU_MAJOR-instead-of-hard-coded-Upgrade-to-ICU-6.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2324,6 +2326,7 @@ done
 %changelog
 * Tue Jul 17 2018 Eike Rathke <erack@redhat.com> - 1:6.0.6.1-3
 - Upgrade to ICU 61.1
+- Upgrade to ICU 62.1
 
 * Tue Jul 17 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-2
 - Resolves: rhbz#1601882 fails to build with --nocheck

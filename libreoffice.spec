@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -273,6 +273,13 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-gtk3-only-for-3.20.patch
 Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
 Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
+Patch6: 0001-forcepoint-fix-out-of-bounds-read-in-ICU.patch
+Patch7: 0001-Upgrade-to-ICU-61.1.patch
+Patch8: 0001-Keep-the-still-relevant-part-of-external-icu-icu4c-u.patch
+Patch9: 0001-We-use-ICU-61-now.patch
+Patch10: 0001-Upgrade-to-ICU-62.1.patch
+Patch11: 0001-Use-ICU_MAJOR-instead-of-hard-coded-Upgrade-to-ICU-6.patch
+Patch12: covscan.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2318,6 +2325,13 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jul 18 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-4
+- Resolves: rhbz#1602589 fix covscan issues
+
+* Tue Jul 17 2018 Eike Rathke <erack@redhat.com> - 1:6.0.6.1-3
+- Upgrade to ICU 61.1
+- Upgrade to ICU 62.1
+
 * Tue Jul 17 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-2
 - Resolves: rhbz#1601882 fails to build with --nocheck
 

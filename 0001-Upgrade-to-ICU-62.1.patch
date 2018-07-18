@@ -1,0 +1,236 @@
+From 86dfa34c6d83b70923d462fecad316dafd9a1fc4 Mon Sep 17 00:00:00 2001
+Message-Id: <86dfa34c6d83b70923d462fecad316dafd9a1fc4.1531839924.git.erack@redhat.com>
+From: Eike Rathke <erack@redhat.com>
+Date: Mon, 16 Jul 2018 15:20:32 +0200
+Subject: [PATCH] Upgrade to ICU 62.1
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I9426e77aa85cfe068df59db47b8ac50b59cd4eb3
+Reviewed-on: https://gerrit.libreoffice.org/57500
+Reviewed-by: Eike Rathke <erack@redhat.com>
+Tested-by: Jenkins
+---
+ configure.ac                        |  2 +-
+ download.lst                        |  8 +++----
+ external/icu/UnpackedTarball_icu.mk |  1 -
+ external/icu/icu4c-mkdir.patch.1    |  6 ++---
+ external/icu/ofz4860.patch.2        | 25 ---------------------
+ i18nutil/source/utility/unicode.cxx | 23 +++++++++++++++++++
+ include/svx/strings.hrc             | 11 +++++++++
+ svx/source/dialog/charmap.cxx       | 35 +++++++++++++++++++++++++++++
+ 8 files changed, 77 insertions(+), 34 deletions(-)
+ delete mode 100644 external/icu/ofz4860.patch.2
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-Upgrade-to-ICU-62.1.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-Upgrade-to-ICU-62.1.patch"
+
+diff --git a/configure.ac b/configure.ac
+index 23b3fd4953c9..2fd11a9b3d19 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -9066,7 +9066,7 @@ SYSTEM_GENBRK=
+ SYSTEM_GENCCODE=
+ SYSTEM_GENCMN=
+ 
+-ICU_MAJOR=61
++ICU_MAJOR=62
+ ICU_MINOR=1
+ ICU_RECLASSIFIED_PREPEND_SET_EMPTY="TRUE"
+ ICU_RECLASSIFIED_CONDITIONAL_JAPANESE_STARTER="TRUE"
+diff --git a/download.lst b/download.lst
+index dd3519b74a8d..0d4e974ed105 100644
+--- a/download.lst
++++ b/download.lst
+@@ -102,10 +102,10 @@ export HUNSPELL_SHA256SUM := 3cd9ceb062fe5814f668e4f22b2fa6e3ba0b339b921739541ce
+ export HUNSPELL_TARBALL := hunspell-1.6.2.tar.gz
+ export HYPHEN_SHA256SUM := 304636d4eccd81a14b6914d07b84c79ebb815288c76fe027b9ebff6ff24d5705
+ export HYPHEN_TARBALL := 5ade6ae2a99bc1e9e57031ca88d36dad-hyphen-2.8.8.tar.gz
+-export ICU_SHA256SUM := d007f89ae8a2543a53525c74359b65b36412fa84b3349f1400be6dcf409fafef
+-export ICU_TARBALL := icu4c-61_1-src.tgz
+-export ICU_DATA_SHA256SUM := d149ed0985b5a6e16a9d8ed66f105dd58fd334c276779f74241cfa656ed2830a
+-export ICU_DATA_TARBALL := icu4c-61_1-data.zip
++export ICU_SHA256SUM := 3dd9868d666350dda66a6e305eecde9d479fb70b30d5b55d78a1deffb97d5aa3
++export ICU_TARBALL := icu4c-62_1-src.tgz
++export ICU_DATA_SHA256SUM := 93bcaf58cfa9223972da79cb8e0f94819ace4995db6041b84f4d9bd810246d1d
++export ICU_DATA_TARBALL := icu4c-62_1-data.zip
+ export JFREEREPORT_FLOW_ENGINE_SHA256SUM := 233f66e8d25c5dd971716d4200203a612a407649686ef3b52075d04b4c9df0dd
+ export JFREEREPORT_FLOW_ENGINE_TARBALL := ba2930200c9f019c2d93a8c88c651a0f-flow-engine-0.9.4.zip
+ export JFREEREPORT_FLUTE_SHA256SUM := 1b5b24f7bc543c0362b667692f78db8bab4ed6dafc6172f104d0bd3757d8a133
+diff --git a/external/icu/UnpackedTarball_icu.mk b/external/icu/UnpackedTarball_icu.mk
+index c789e6eb8d84..6800c1fb5ea8 100644
+--- a/external/icu/UnpackedTarball_icu.mk
++++ b/external/icu/UnpackedTarball_icu.mk
+@@ -34,7 +34,6 @@ $(eval $(call gb_UnpackedTarball_add_patches,icu,\
+ 	external/icu/icu4c-clang-cl.patch.1 \
+ 	$(if $(filter-out ANDROID,$(OS)),external/icu/icu4c-icudata-stdlibs.patch.1) \
+ 	external/icu/icu4c-khmerbreakengine.patch.1 \
+-	external/icu/ofz4860.patch.2 \
+ 	external/icu/icu4c-61-werror-shadow.patch.1 \
+ ))
+ 
+diff --git a/external/icu/icu4c-mkdir.patch.1 b/external/icu/icu4c-mkdir.patch.1
+index 3234f151b677..7de4cf51174c 100644
+--- a/external/icu/icu4c-mkdir.patch.1
++++ b/external/icu/icu4c-mkdir.patch.1
+@@ -1,10 +1,10 @@
+ diff -ur icu.org/source/data/Makefile.in icu/source/data/Makefile.in
+---- icu.org/source/data/Makefile.in	2016-06-15 20:58:17.000000000 +0200
+-+++ icu/source/data/Makefile.in	2017-04-21 22:29:00.747158002 +0200
++--- icu.org/source/data/Makefile.in	2018-06-21 11:39:15.000000000 +0200
+++++ icu/source/data/Makefile.in	2018-07-16 13:18:26.928109541 +0200
+ @@ -367,6 +367,7 @@
+  ifeq ($(PKGDATA_MODE),dll)
+  SO_VERSION_DATA = $(OUTTMPDIR)/icudata.res
+- $(SO_VERSION_DATA) : $(MISCSRCDIR)/icudata.rc
++ $(SO_VERSION_DATA) : $(MISCSRCDIR)/icudata.rc | build-dir
+ +	mkdir -p $(OUTTMPDIR)
+  ifeq ($(MSYS_RC_MODE),1)
+  	rc.exe -i$(srcdir)/../common -i$(top_builddir)/common -fo$@ $(CPPFLAGS) $<
+diff --git a/external/icu/ofz4860.patch.2 b/external/icu/ofz4860.patch.2
+deleted file mode 100644
+index 14114d52878b..000000000000
+--- a/external/icu/ofz4860.patch.2
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From 529ba01ee606940ca273b187be8ce9ba31cf2d90 Mon Sep 17 00:00:00 2001
+-From: David Tardon <dtardon@redhat.com>
+-Date: Fri, 19 Jan 2018 10:41:02 +0100
+-Subject: [PATCH] ofz#4860 fix past-the-end read from array
+-
+----
+- icu4c/source/common/locmap.cpp | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/icu4c/source/common/locmap.cpp b/icu4c/source/common/locmap.cpp
+-index cbb2b810a..6d62d8310 100644
+---- a/icu4c/source/common/locmap.cpp
+-+++ b/icu4c/source/common/locmap.cpp
+-@@ -1015,7 +1015,7 @@ static const char*
+- getPosixID(const ILcidPosixMap *this_0, uint32_t hostID)
+- {
+-     uint32_t i;
+--    for (i = 0; i <= this_0->numRegions; i++)
+-+    for (i = 0; i < this_0->numRegions; i++)
+-     {
+-         if (this_0->regionMaps[i].hostID == hostID)
+-         {
+--- 
+-2.14.3
+-
+diff --git a/i18nutil/source/utility/unicode.cxx b/i18nutil/source/utility/unicode.cxx
+index 6d90b15ca42e..876750d6119d 100644
+--- a/i18nutil/source/utility/unicode.cxx
++++ b/i18nutil/source/utility/unicode.cxx
+@@ -726,6 +726,29 @@ OString unicode::getExemplarLanguageForUScriptCode(UScriptCode eScript)
+         case USCRIPT_ZANABAZAR_SQUARE:
+             sRet = "mn-Zanb";   // abugida to write Mongolian
+             break;
++#endif
++#if (U_ICU_VERSION_MAJOR_NUM >= 62)
++        case USCRIPT_DOGRA:
++            sRet = "dgo";       // Dogri proper
++            break;
++        case USCRIPT_GUNJALA_GONDI:
++            sRet = "wsg";       // Adilabad Gondi
++            break;
++        case USCRIPT_MAKASAR:
++            sRet = "mak";
++            break;
++        case USCRIPT_MEDEFAIDRIN:
++            sRet = "mis-Medf";  // Uncoded with script
++            break;
++        case USCRIPT_HANIFI_ROHINGYA:
++            sRet = "rhg";
++            break;
++        case USCRIPT_SOGDIAN:
++            sRet = "sog";
++            break;
++        case USCRIPT_OLD_SOGDIAN:
++            sRet = "sog";
++            break;
+ #endif
+     }
+     return sRet;
+# Slightly adapted to rawhide/F29 libreoffice-6-0-6
+diff --git a/include/svx/strings.hrc b/include/svx/strings.hrc
+index 86c2215ac1c4..18fd984a1bd8 100644
+--- a/include/svx/strings.hrc
++++ b/include/svx/strings.hrc
+@@ -1656,6 +1656,17 @@
+ #define RID_SUBSETSTR_SOYOMBO                               NC_("RID_SUBSETMAP", "Soyombo")
+ #define RID_SUBSETSTR_SYRIAC_SUPPLEMENT                     NC_("RID_SUBSETMAP", "Syriac Supplement")
+ #define RID_SUBSETSTR_ZANABAZAR_SQUARE                      NC_("RID_SUBSETMAP", "Zanabazar Square")
++#define RID_SUBSETSTR_CHESS_SYMBOLS                         NC_("RID_SUBSETMAP", "Chess Symbols")
++#define RID_SUBSETSTR_DOGRA                                 NC_("RID_SUBSETMAP", "Dogra")
++#define RID_SUBSETSTR_GEORGIAN_EXTENDED                     NC_("RID_SUBSETMAP", "Georgian Extended")
++#define RID_SUBSETSTR_GUNJALA_GONDI                         NC_("RID_SUBSETMAP", "Gunjala Gondi")
++#define RID_SUBSETSTR_HANIFI_ROHINGYA                       NC_("RID_SUBSETMAP", "Hanifi Rohingya")
++#define RID_SUBSETSTR_INDIC_SIYAQ_NUMBERS                   NC_("RID_SUBSETMAP", "Indic Siyaq Numbers")
++#define RID_SUBSETSTR_MAKASAR                               NC_("RID_SUBSETMAP", "Makasar")
++#define RID_SUBSETSTR_MAYAN_NUMERALS                        NC_("RID_SUBSETMAP", "Mayan Numerals")
++#define RID_SUBSETSTR_MEDEFAIDRIN                           NC_("RID_SUBSETMAP", "Medefaidrin")
++#define RID_SUBSETSTR_OLD_SOGDIAN                           NC_("RID_SUBSETMAP", "Old Sogdian")
++#define RID_SUBSETSTR_SOGDIAN                               NC_("RID_SUBSETMAP", "Sogdian")
+ 
+ #endif
+ 
+diff --git a/svx/source/dialog/charmap.cxx b/svx/source/dialog/charmap.cxx
+index 3bf3a01d520f..fcaa955541df 100644
+--- a/svx/source/dialog/charmap.cxx
++++ b/svx/source/dialog/charmap.cxx
+@@ -1744,6 +1744,41 @@ void SubsetMap::InitList()
+                     aAllSubsets.emplace_back( 0x11A00, 0x11A4F, SvxResId(RID_SUBSETSTR_ZANABAZAR_SQUARE) );
+                     break;
+ #endif
++#if (U_ICU_VERSION_MAJOR_NUM >= 62)
++                case UBLOCK_CHESS_SYMBOLS:
++                    aAllSubsets.emplace_back( 0x1FA00, 0x1FA6F, SvxResId(RID_SUBSETSTR_CHESS_SYMBOLS) );
++                    break;
++                case UBLOCK_DOGRA:
++                    aAllSubsets.emplace_back( 0x11800, 0x1184F, SvxResId(RID_SUBSETSTR_DOGRA) );
++                    break;
++                case UBLOCK_GEORGIAN_EXTENDED:
++                    aAllSubsets.emplace_back( 0x1C90, 0x1CBF, SvxResId(RID_SUBSETSTR_GEORGIAN_EXTENDED) );
++                    break;
++                case UBLOCK_GUNJALA_GONDI:
++                    aAllSubsets.emplace_back( 0x11D60, 0x11DAF, SvxResId(RID_SUBSETSTR_GUNJALA_GONDI) );
++                    break;
++                case UBLOCK_HANIFI_ROHINGYA:
++                    aAllSubsets.emplace_back( 0x10D00, 0x10D3F, SvxResId(RID_SUBSETSTR_HANIFI_ROHINGYA) );
++                    break;
++                case UBLOCK_INDIC_SIYAQ_NUMBERS:
++                    aAllSubsets.emplace_back( 0x1EC70, 0x1ECBF, SvxResId(RID_SUBSETSTR_INDIC_SIYAQ_NUMBERS) );
++                    break;
++                case UBLOCK_MAKASAR:
++                    aAllSubsets.emplace_back( 0x11EE0, 0x11EFF, SvxResId(RID_SUBSETSTR_MAKASAR) );
++                    break;
++                case UBLOCK_MAYAN_NUMERALS:
++                    aAllSubsets.emplace_back( 0x1D2E0, 0x1D2FF, SvxResId(RID_SUBSETSTR_MAYAN_NUMERALS) );
++                    break;
++                case UBLOCK_MEDEFAIDRIN:
++                    aAllSubsets.emplace_back( 0x16E40, 0x16E9F, SvxResId(RID_SUBSETSTR_MEDEFAIDRIN) );
++                    break;
++                case UBLOCK_OLD_SOGDIAN:
++                    aAllSubsets.emplace_back( 0x10F00, 0x10F2F, SvxResId(RID_SUBSETSTR_OLD_SOGDIAN) );
++                    break;
++                case UBLOCK_SOGDIAN:
++                    aAllSubsets.emplace_back( 0x10F30, 0x10F6F, SvxResId(RID_SUBSETSTR_SOGDIAN) );
++                    break;
++#endif
+ 
+             }
+ 
+
+--------------erAck-patch-parts--
+
+

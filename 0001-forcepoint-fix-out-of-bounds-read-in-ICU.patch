@@ -1,0 +1,74 @@
+From 2b69156c43261ceae55eb4d3b644c4c2d73231ba Mon Sep 17 00:00:00 2001
+Message-Id: <2b69156c43261ceae55eb4d3b644c4c2d73231ba.1531843216.git.erack@redhat.com>
+From: David Tardon <dtardon@redhat.com>
+Date: Tue, 6 Mar 2018 15:17:13 +0100
+Subject: [PATCH] forcepoint: fix out-of-bounds read in ICU
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="------------erAck-patch-parts"
+
+This is a multi-part message in MIME format.
+--------------erAck-patch-parts
+Content-Type: text/plain; charset=UTF-8; format=fixed
+Content-Transfer-Encoding: 8bit
+
+
+Change-Id: I5061d38d0e7df0de9a5c7574d522ce69934e4a24
+---
+ external/icu/UnpackedTarball_icu.mk |  1 +
+ external/icu/ofz4860.patch.2        | 25 +++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+ create mode 100644 external/icu/ofz4860.patch.2
+
+
+--------------erAck-patch-parts
+Content-Type: text/x-patch; name="0001-forcepoint-fix-out-of-bounds-read-in-ICU.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment; filename="0001-forcepoint-fix-out-of-bounds-read-in-ICU.patch"
+
+diff --git a/external/icu/UnpackedTarball_icu.mk b/external/icu/UnpackedTarball_icu.mk
+index 499650976a55..a4d0b16ecb36 100644
+--- a/external/icu/UnpackedTarball_icu.mk
++++ b/external/icu/UnpackedTarball_icu.mk
+@@ -35,6 +35,7 @@ $(eval $(call gb_UnpackedTarball_add_patches,icu,\
+ 	$(if $(filter-out ANDROID,$(OS)),external/icu/icu4c-icudata-stdlibs.patch.1) \
+ 	external/icu/icu4c-khmerbreakengine.patch.1 \
+ 	external/icu/icu4c-59-werror-shadow.patch.1 \
++	external/icu/ofz4860.patch.2 \
+ ))
+ 
+ $(eval $(call gb_UnpackedTarball_add_file,icu,source/data/brkitr/khmerdict.dict,external/icu/khmerdict.dict))
+diff --git a/external/icu/ofz4860.patch.2 b/external/icu/ofz4860.patch.2
+new file mode 100644
+index 000000000000..14114d52878b
+--- /dev/null
++++ b/external/icu/ofz4860.patch.2
+@@ -0,0 +1,25 @@
++From 529ba01ee606940ca273b187be8ce9ba31cf2d90 Mon Sep 17 00:00:00 2001
++From: David Tardon <dtardon@redhat.com>
++Date: Fri, 19 Jan 2018 10:41:02 +0100
++Subject: [PATCH] ofz#4860 fix past-the-end read from array
++
++---
++ icu4c/source/common/locmap.cpp | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/icu4c/source/common/locmap.cpp b/icu4c/source/common/locmap.cpp
++index cbb2b810a..6d62d8310 100644
++--- a/icu4c/source/common/locmap.cpp
+++++ b/icu4c/source/common/locmap.cpp
++@@ -1015,7 +1015,7 @@ static const char*
++ getPosixID(const ILcidPosixMap *this_0, uint32_t hostID)
++ {
++     uint32_t i;
++-    for (i = 0; i <= this_0->numRegions; i++)
+++    for (i = 0; i < this_0->numRegions; i++)
++     {
++         if (this_0->regionMaps[i].hostID == hostID)
++         {
++-- 
++2.14.3
++
+
+--------------erAck-patch-parts--
+
+

@@ -1,0 +1,113 @@
+From fa5f426359bbe1b6a9c521130bf7bbee2e60f69f Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Wed, 18 Jul 2018 15:31:31 +0100
+Subject: [PATCH] foo
+
+---
+ filter/source/svg/presentation_engine.js                | 8 ++------
+ helpcontent2/to-wiki/wikiconv2.py                       | 2 --
+ solenv/bin/pack_images.py                               | 2 +-
+ wizards/com/sun/star/wizards/agenda/TopicsControl.py    | 6 ++++--
+ wizards/com/sun/star/wizards/document/OfficeDocument.py | 1 -
+ 5 files changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/filter/source/svg/presentation_engine.js b/filter/source/svg/presentation_engine.js
+index 7dbe377..f4b9db2 100644
+--- a/filter/source/svg/presentation_engine.js
++++ b/filter/source/svg/presentation_engine.js
+@@ -7987,7 +7987,7 @@ AnimationBaseNode3.prototype.info = function( bVerbose )
+             sInfo += ';  keyTimes: ' + this.getKeyTimes().join( ',' );
+ 
+         // values
+-        if( this.getKeyTimes().length )
++        if( this.getValues().length )
+             sInfo += ';  values: ' + this.getValues().join( ',' );
+ 
+         // formula
+@@ -12170,7 +12170,6 @@ SlideTransition.prototype.createSlideTransition = function( aLeavingSlide, aEnte
+ 
+                 case PUSHWIPE_TRANSITION:
+                 {
+-                    var bCombined = false;
+                     var aDirection = null;
+                     switch( this.eTransitionSubType )
+                     {
+@@ -12192,10 +12191,7 @@ SlideTransition.prototype.createSlideTransition = function( aLeavingSlide, aEnte
+                             aDirection = { x: -1.0, y: 0.0 };
+                             break;
+                     }
+-                    if( bCombined )
+-                        return null;
+-                    else
+-                        return new MovingSlideChange( aLeavingSlide, aEnteringSlide, aDirection, aDirection );
++                    return new MovingSlideChange( aLeavingSlide, aEnteringSlide, aDirection, aDirection );
+                 }
+ 
+                 case SLIDEWIPE_TRANSITION:
+diff --git a/helpcontent2/to-wiki/wikiconv2.py b/helpcontent2/to-wiki/wikiconv2.py
+index 93f72eb..55ff72f 100755
+--- a/helpcontent2/to-wiki/wikiconv2.py
++++ b/helpcontent2/to-wiki/wikiconv2.py
+@@ -1071,8 +1071,6 @@ class Item(ElementBase):
+                 sys.stderr.write('Unhandled item type. Possibly type has been localized.\n')
+             finally:
+                 raise UnhandledItemType
+-        return replace_text(self.text)
+-
+ 
+ class Paragraph(ElementBase):
+     def __init__(self, attrs, parent):
+diff --git a/solenv/bin/pack_images.py b/solenv/bin/pack_images.py
+index 0f493c8..384b61d 100755
+--- a/solenv/bin/pack_images.py
++++ b/solenv/bin/pack_images.py
+@@ -512,7 +512,7 @@ def parse_image_list(imagelist_filenames):
+ 
+                     if line.startswith('%MODULE%'):
+                         key = line.replace('%MODULE%/', '')
+-                        if key in global_image_list:
++                        if key in module_image_list:
+                             module_image_list[key] += 1
+                         else:
+                             module_image_list[key] = 0
+diff --git a/wizards/com/sun/star/wizards/agenda/TopicsControl.py b/wizards/com/sun/star/wizards/agenda/TopicsControl.py
+index cc42aa9..6ba529c 100644
+--- a/wizards/com/sun/star/wizards/agenda/TopicsControl.py
++++ b/wizards/com/sun/star/wizards/agenda/TopicsControl.py
+@@ -458,8 +458,9 @@ class TopicsControl(ControlScroller):
+ 
+     def rowDown(self, guiRow=None, control=None):
+         try:
+-            if guiRow is None and control is None:
++            if guiRow is None:
+                 guiRow = self.lastFocusRow - self.nscrollvalue
++            if control is None:
+                 control = self.lastFocusControl
+             # only perform if this is not the last row.
+             actuallRow = guiRow + self.nscrollvalue
+@@ -490,8 +491,9 @@ class TopicsControl(ControlScroller):
+ 
+     def rowUp(self, guiRow=None, control=None):
+         try:
+-            if guiRow is None and control is None:
++            if guiRow is None:
+                 guiRow = self.lastFocusRow - self.nscrollvalue
++            if control is None:
+                 control = self.lastFocusControl
+             # only perform if this is not the first row
+             actuallRow = guiRow + self.nscrollvalue
+diff --git a/wizards/com/sun/star/wizards/document/OfficeDocument.py b/wizards/com/sun/star/wizards/document/OfficeDocument.py
+index 3886f1e..acef613 100644
+--- a/wizards/com/sun/star/wizards/document/OfficeDocument.py
++++ b/wizards/com/sun/star/wizards/document/OfficeDocument.py
+@@ -234,7 +234,6 @@ class OfficeDocument(object):
+                 bState = False
+ 
+         else:
+-            xComponent.dispose()
+             bState = True
+ 
+         return bState
+-- 
+2.14.4
+

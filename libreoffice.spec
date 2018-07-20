@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -280,6 +280,7 @@ Patch9: 0001-We-use-ICU-61-now.patch
 Patch10: 0001-Upgrade-to-ICU-62.1.patch
 Patch11: 0001-Use-ICU_MAJOR-instead-of-hard-coded-Upgrade-to-ICU-6.patch
 Patch12: covscan.patch
+Patch13: 0001-implement-pdf-export-of-underline-for-outlined-font.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2325,6 +2326,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jul 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-5
+- implement export of underline in outlined font for simple case
+
 * Wed Jul 18 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-4
 - Resolves: rhbz#1602589 fix covscan issues
 

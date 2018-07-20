@@ -1,4 +1,4 @@
-From 778d1008a683acc25bd01f12387ae3d86ad3619c Mon Sep 17 00:00:00 2001
+From d01b115cb9db9200900f78d614d220b6bec1eb7d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 20 Jul 2018 14:49:17 +0100
 Subject: [PATCH] implement pdf export of underline for outlined font
@@ -12,10 +12,10 @@ Change-Id: I7d670a543475b6457cb2827e74a05bba6c4a91ea
  1 file changed, 21 insertions(+)
 
 diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
-index f623344d06e0..3071fb1371f4 100644
+index 58711a9d862b..bf932ad17ef8 100644
 --- a/vcl/source/gdi/pdfwriter_impl.cxx
 +++ b/vcl/source/gdi/pdfwriter_impl.cxx
-@@ -7408,6 +7408,27 @@ void PDFWriterImpl::drawStraightTextLine( OStringBuffer& aLine, long nWidth, Fon
+@@ -7384,6 +7384,27 @@ void PDFWriterImpl::drawStraightTextLine( OStringBuffer& aLine, long nWidth, Fon
      if ( !nLineHeight )
          return;
  
@@ -40,7 +40,7 @@ index f623344d06e0..3071fb1371f4 100644
 +        return;
 +    }
 +
-     m_aPages.back().appendMappedLength( static_cast<sal_Int32>(nLineHeight), aLine );
+     m_aPages.back().appendMappedLength( (sal_Int32)nLineHeight, aLine );
      aLine.append( " w " );
      appendStrokingColor( aColor, aLine );
 -- 

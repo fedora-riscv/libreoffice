@@ -1,0 +1,48 @@
+From 778d1008a683acc25bd01f12387ae3d86ad3619c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 20 Jul 2018 14:49:17 +0100
+Subject: [PATCH] implement pdf export of underline for outlined font
+
+just the simplest case of a straight solid line which is outlined,
+i.e. border in font color and filled with white
+
+Change-Id: I7d670a543475b6457cb2827e74a05bba6c4a91ea
+---
+ vcl/source/gdi/pdfwriter_impl.cxx | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
+index f623344d06e0..3071fb1371f4 100644
+--- a/vcl/source/gdi/pdfwriter_impl.cxx
++++ b/vcl/source/gdi/pdfwriter_impl.cxx
+@@ -7408,6 +7408,27 @@ void PDFWriterImpl::drawStraightTextLine( OStringBuffer& aLine, long nWidth, Fon
+     if ( !nLineHeight )
+         return;
+ 
++    // outline attribute ?
++    if (m_aCurrentPDFState.m_aFont.IsOutline() && eTextLine == LINESTYLE_SINGLE)
++    {
++        appendStrokingColor(aColor, aLine); // stroke with text color
++        aLine.append( " " );
++        Color aNonStrokeColor(COL_WHITE);   // fill with white
++        appendNonStrokingColor(aNonStrokeColor, aLine);
++        aLine.append( "\n" );
++        aLine.append( "0.25 w \n" ); // same line thickness as in drawLayout
++
++        // draw rectangle instead
++        aLine.append( "0 " );
++        m_aPages.back().appendMappedLength( static_cast<sal_Int32>(-nLinePos * 1.5), aLine );
++        aLine.append( " " );
++        m_aPages.back().appendMappedLength( static_cast<sal_Int32>(nWidth), aLine, false );
++        aLine.append( ' ' );
++        m_aPages.back().appendMappedLength( static_cast<sal_Int32>(nLineHeight), aLine );
++        aLine.append( " re h B\n" );
++        return;
++    }
++
+     m_aPages.back().appendMappedLength( static_cast<sal_Int32>(nLineHeight), aLine );
+     aLine.append( " w " );
+     appendStrokingColor( aColor, aLine );
+-- 
+2.17.0
+

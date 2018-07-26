@@ -1,0 +1,25 @@
+From fa5f426359bbe1b6a9c521130bf7bbee2e60f69f Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Wed, 18 Jul 2018 15:31:31 +0100
+Subject: [PATCH] foo
+
+---
+ helpcontent2/to-wiki/wikiconv2.py                       | 2 --
+ 5 files changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/helpcontent2/to-wiki/wikiconv2.py b/helpcontent2/to-wiki/wikiconv2.py
+index 93f72eb..55ff72f 100755
+--- a/helpcontent2/to-wiki/wikiconv2.py
++++ b/helpcontent2/to-wiki/wikiconv2.py
+@@ -1071,8 +1071,6 @@ class Item(ElementBase):
+                 sys.stderr.write('Unhandled item type. Possibly type has been localized.\n')
+             finally:
+                 raise UnhandledItemType
+-        return replace_text(self.text)
+-
+ 
+ class Paragraph(ElementBase):
+     def __init__(self, attrs, parent):
+-- 
+2.14.4
+

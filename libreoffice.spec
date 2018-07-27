@@ -1140,7 +1140,7 @@ touch autogen.lastrun
  %{?bundling_options} \
  %{?archoptions}
 
-ulimit -c unlimited
+ulimit -c unlimited || true
 
 make verbose=true build-nocheck
 

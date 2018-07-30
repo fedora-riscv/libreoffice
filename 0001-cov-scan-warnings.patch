@@ -1,4 +1,4 @@
-From 785e0f776e3d5c962e0c74fcae0c376763055dcb Mon Sep 17 00:00:00 2001
+From 062651e294437750d0e2f2e56fc6d50ff4a5c412 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 26 Jul 2018 13:08:01 +0100
 Subject: [PATCH] cov scan warnings
@@ -64,6 +64,10 @@ Change-Id: I21cc4af40429fa3ef4284d6c0ea592b05bf36620
 bodge it
 
 Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
+
+Related: rhbz#1602589 rework to avoid bogus cppcheck double free warning
+
+Change-Id: Ie673de68f39b903536c2287b8989fe6afcc9fd66
 ---
  bridges/source/cpp_uno/shared/bridge.cxx      |   2 +-
  bridges/source/jni_uno/jni_bridge.cxx         |   4 +-
@@ -76,6 +80,7 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
  .../accelerators/acceleratorconfiguration.cxx |   4 +-
  idlc/source/parser.y                          |   2 +-
  include/LibreOfficeKit/LibreOfficeKitInit.h   |   4 +-
+ include/vcl/bitmap.hxx                        |  14 +-
  pyuno/source/module/pyuno_dlopenwrapper.c     |   1 +
  registry/source/reflwrit.cxx                  |   8 +-
  registry/source/regimpl.cxx                   | 124 ++++++---------
@@ -96,6 +101,7 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
  sc/source/ui/undo/undodat.cxx                 |   6 +-
  sc/source/ui/view/viewdata.cxx                |   2 +
  .../ui/animations/CustomAnimationPane.cxx     |   2 +
+ sd/source/ui/unoidl/unosrch.cxx               |  71 +++------
  sfx2/source/control/itemdel.cxx               |   2 +-
  solenv/bin/pack_images.py                     |   2 +-
  soltools/cpp/_unix.c                          |   1 +
@@ -105,11 +111,14 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
  sw/source/ui/index/cnttab.cxx                 |   9 +-
  unoidl/source/legacyprovider.cxx              |  32 ++--
  unotest/source/cpp/officeconnection.cxx       |   2 +-
+ vcl/source/bitmap/BitmapScaleConvolution.cxx  |  62 ++++----
+ vcl/source/gdi/bitmap3.cxx                    |  10 +-
+ vcl/source/gdi/bitmap4.cxx                    |  53 +++----
  vcl/source/gdi/pdfwriter_impl.cxx             |   1 +
  vcl/unx/generic/plugadapt/salplug.cxx         |   1 +
  .../sun/star/wizards/agenda/TopicsControl.py  |   6 +-
  .../star/wizards/document/OfficeDocument.py   |   1 -
- 44 files changed, 211 insertions(+), 259 deletions(-)
+ 49 files changed, 306 insertions(+), 374 deletions(-)
 
 diff --git a/bridges/source/cpp_uno/shared/bridge.cxx b/bridges/source/cpp_uno/shared/bridge.cxx
 index 556350022e48..186d89aa1956 100644
@@ -379,6 +388,38 @@ index a0c111a9e0e2..71f4f2e68b04 100644
 +    // coverity[leaked_storage] - on purpose
      return pSym2( install_path, user_profile_url );
  }
+ 
+diff --git a/include/vcl/bitmap.hxx b/include/vcl/bitmap.hxx
+index 66a056448b53..d38aabac32f3 100644
+--- a/include/vcl/bitmap.hxx
++++ b/include/vcl/bitmap.hxx
+@@ -667,9 +667,9 @@ public:
+                                 Bitmap& aNewBitmap,
+                                 BitmapReadAccess const * pReadAcc,
+                                 int aNumberOfContributions,
+-                                const double* pWeights,
+-                                int const * pPixels,
+-                                const int* pCount );
++                                const std::vector<double>& rWeights,
++                                const std::vector<int>& rPixels,
++                                const std::vector<int>& rCounts );
+ 
+     SAL_DLLPRIVATE bool     ImplMakeMono( sal_uInt8 cThreshold );
+     SAL_DLLPRIVATE bool     ImplMakeGreyscales( sal_uInt16 nGreyscales );
+@@ -704,10 +704,10 @@ public:
+     SAL_DLLPRIVATE static void ImplBlurContributions(
+                                 const int aSize,
+                                 const int aNumberOfContributions,
+-                                const double* pBlurVector,
+-                                double*& pWeights,
+-                                int*& pPixels,
+-                                int*& pCount );
++                                const std::vector<double>& rBlurVector,
++                                std::vector<double>& pWeights,
++                                std::vector<int>& rPixels,
++                                std::vector<int>& rCounts );
+ 
+ public:
  
 diff --git a/pyuno/source/module/pyuno_dlopenwrapper.c b/pyuno/source/module/pyuno_dlopenwrapper.c
 index 5654cb0f8f0a..44e711653e35 100644
@@ -1734,6 +1775,159 @@ index c00aedf6c607..14bc19266ed2 100644
              if( aDownEffectPos != rEffectSequence.end() )
              {
                  EffectSequence::iterator aInsertPos( rEffectSequence.erase( aDownEffectPos ) );
+diff --git a/sd/source/ui/unoidl/unosrch.cxx b/sd/source/ui/unoidl/unosrch.cxx
+index a254bbe4a8b6..737710bcf4b2 100644
+--- a/sd/source/ui/unoidl/unosrch.cxx
++++ b/sd/source/ui/unoidl/unosrch.cxx
+@@ -56,11 +56,10 @@ class SearchContext_impl
+ {
+     uno::Reference< drawing::XShapes > mxShapes;
+     sal_Int32 mnIndex;
+-    SearchContext_impl* mpParent;
+ 
+ public:
+-    SearchContext_impl( uno::Reference< drawing::XShapes > const & xShapes, SearchContext_impl* pParent = nullptr )
+-        : mxShapes( xShapes ), mnIndex( -1 ), mpParent( pParent ) {}
++    SearchContext_impl(uno::Reference<drawing::XShapes> const& xShapes)
++        : mxShapes( xShapes ), mnIndex( -1 ) {}
+ 
+     uno::Reference< drawing::XShape > firstShape()
+     {
+@@ -78,8 +77,6 @@ public:
+         }
+         return xShape;
+     }
+-
+-    SearchContext_impl* getParent() const { return mpParent; }
+ };
+ 
+ /* ================================================================= */
+@@ -113,7 +110,7 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+     uno::Reference< drawing::XShapes >  xShapes;
+     uno::Reference< drawing::XShape >  xShape;
+ 
+-    SearchContext_impl* pContext = nullptr;
++    std::vector<SearchContext_impl> aContexts;
+     if(mpPage)
+     {
+         uno::Reference< drawing::XDrawPage > xPage( mpPage );
+@@ -122,8 +119,8 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+ 
+         if( xShapes.is() && (xShapes->getCount() > 0) )
+         {
+-            pContext = new SearchContext_impl( xShapes );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xShapes));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+@@ -154,34 +151,24 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+         uno::Reference< drawing::XShapes > xGroupShape( xShape, uno::UNO_QUERY );
+         if( xGroupShape.is() && ( xGroupShape->getCount() > 0 ) )
+         {
+-            pContext = new SearchContext_impl( xGroupShape, pContext );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xGroupShape));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+-            if( pContext )
+-                xShape = pContext->nextShape();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+             else
+                 xShape = nullptr;
+         }
+ 
+         // test parent contexts for next shape if none
+         // is found in the current context
+-        while( pContext && !xShape.is() )
++        while (!aContexts.empty() && !xShape.is())
+         {
+-            if( pContext->getParent() )
+-            {
+-                SearchContext_impl* pOldContext = pContext;
+-                pContext = pContext->getParent();
+-                delete pOldContext;
+-                xShape = pContext->nextShape();
+-            }
+-            else
+-            {
+-                delete pContext;
+-                pContext = nullptr;
+-                xShape = nullptr;
+-            }
++            aContexts.pop_back();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+         }
+     }
+ 
+@@ -210,7 +197,7 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+     uno::Reference< drawing::XShapes >  xShapes;
+     uno::Reference< drawing::XShape >  xShape;
+ 
+-    SearchContext_impl* pContext = nullptr;
++    std::vector<SearchContext_impl> aContexts;
+     if(mpPage)
+     {
+         uno::Reference< drawing::XDrawPage >  xPage( mpPage );
+@@ -218,8 +205,8 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+ 
+         if( xShapes.is() && xShapes->getCount() > 0 )
+         {
+-            pContext = new SearchContext_impl( xShapes );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xShapes));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+@@ -259,34 +246,24 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+ 
+         if( xGroupShape.is() && xGroupShape->getCount() > 0 )
+         {
+-            pContext = new SearchContext_impl( xGroupShape, pContext );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xGroupShape));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+-            if( pContext )
+-                xShape = pContext->nextShape();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+             else
+                 xShape = nullptr;
+         }
+ 
+         // test parent contexts for next shape if none
+         // is found in the current context
+-        while( pContext && !xShape.is() )
++        while (!aContexts.empty() && !xShape.is())
+         {
+-            if( pContext->getParent() )
+-            {
+-                SearchContext_impl* pOldContext = pContext;
+-                pContext = pContext->getParent();
+-                delete pOldContext;
+-                xShape = pContext->nextShape();
+-            }
+-            else
+-            {
+-                delete pContext;
+-                pContext = nullptr;
+-                xShape = nullptr;
+-            }
++            aContexts.pop_back();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+         }
+     }
+ 
 diff --git a/sfx2/source/control/itemdel.cxx b/sfx2/source/control/itemdel.cxx
 index 9ee76fd6a2bb..806b0895f2a5 100644
 --- a/sfx2/source/control/itemdel.cxx
@@ -1929,6 +2123,324 @@ index a82471e3b921..c85ad7b72e5f 100644
          CPPUNIT_ASSERT_EQUAL(
              osl_Process_E_None,
              osl_executeProcess(
+diff --git a/vcl/source/bitmap/BitmapScaleConvolution.cxx b/vcl/source/bitmap/BitmapScaleConvolution.cxx
+index 49aed5d5940b..a8b9bc4b2494 100644
+--- a/vcl/source/bitmap/BitmapScaleConvolution.cxx
++++ b/vcl/source/bitmap/BitmapScaleConvolution.cxx
+@@ -36,9 +36,9 @@ void ImplCalculateContributions(
+     const long aSourceSize,
+     const long aDestinationSize,
+     long& aNumberOfContributions,
+-    double*& pWeights,
+-    long*& pPixels,
+-    long*& pCount,
++    std::vector<double>& rWeights,
++    std::vector<long>& rPixels,
++    std::vector<long>& rCounts,
+     const Kernel& aKernel)
+ {
+     const double fSamplingRadius(aKernel.GetWidth());
+@@ -48,9 +48,9 @@ void ImplCalculateContributions(
+ 
+     aNumberOfContributions = (long(fabs(ceil(fScaledRadius))) * 2) + 1;
+     const long nAllocSize(aDestinationSize * aNumberOfContributions);
+-    pWeights = new double[nAllocSize];
+-    pPixels = new long[nAllocSize];
+-    pCount = new long[aDestinationSize];
++    rWeights.resize(nAllocSize);
++    rPixels.resize(nAllocSize);
++    rCounts.resize(aDestinationSize);
+ 
+     for(long i(0); i < aDestinationSize; i++)
+     {
+@@ -74,13 +74,13 @@ void ImplCalculateContributions(
+             const long aPixelIndex(MinMax(j, 0, aSourceSize - 1));
+             const long nIndex(aIndex + aCurrentCount);
+ 
+-            pWeights[nIndex] = aWeight;
+-            pPixels[nIndex] = aPixelIndex;
++            rWeights[nIndex] = aWeight;
++            rPixels[nIndex] = aPixelIndex;
+ 
+             aCurrentCount++;
+         }
+ 
+-        pCount[i] = aCurrentCount;
++        rCounts[i] = aCurrentCount;
+     }
+ }
+ 
+@@ -100,13 +100,13 @@ bool ImplScaleConvolutionHor(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+ 
+     if(pReadAcc)
+     {
+-        double* pWeights = nullptr;
+-        long* pPixels = nullptr;
+-        long* pCount = nullptr;
++        std::vector<double> aWeights;
++        std::vector<long> aPixels;
++        std::vector<long> aCounts;
+         long aNumberOfContributions(0);
+ 
+         const long nHeight(rSource.GetSizePixel().Height());
+-        ImplCalculateContributions(nWidth, nNewWidth, aNumberOfContributions, pWeights, pPixels, pCount, aKernel);
++        ImplCalculateContributions(nWidth, nNewWidth, aNumberOfContributions, aWeights, aPixels, aCounts, aKernel);
+         rTarget = Bitmap(Size(nNewWidth, nHeight), 24);
+         Bitmap::ScopedWriteAccess pWriteAcc(rTarget);
+         bool bResult(nullptr != pWriteAcc);
+@@ -123,21 +123,21 @@ bool ImplScaleConvolutionHor(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+                     double aValueGreen(0.0);
+                     double aValueBlue(0.0);
+ 
+-                    for(long j(0); j < pCount[x]; j++)
++                    for(long j(0); j < aCounts[x]; j++)
+                     {
+                         const long aIndex(aBaseIndex + j);
+-                        const double aWeight(pWeights[aIndex]);
++                        const double aWeight(aWeights[aIndex]);
+                         BitmapColor aColor;
+ 
+                         aSum += aWeight;
+ 
+                         if(pReadAcc->HasPalette())
+                         {
+-                            aColor = pReadAcc->GetPaletteColor(pReadAcc->GetPixelIndex(y, pPixels[aIndex]));
++                            aColor = pReadAcc->GetPaletteColor(pReadAcc->GetPixelIndex(y, aPixels[aIndex]));
+                         }
+                         else
+                         {
+-                            aColor = pReadAcc->GetPixel(y, pPixels[aIndex]);
++                            aColor = pReadAcc->GetPixel(y, aPixels[aIndex]);
+                         }
+ 
+                         aValueRed += aWeight * aColor.GetRed();
+@@ -157,9 +157,9 @@ bool ImplScaleConvolutionHor(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+             pWriteAcc.reset();
+         }
+ 
+-        delete[] pWeights;
+-        delete[] pCount;
+-        delete[] pPixels;
++        aWeights.clear();
++        aCounts.clear();
++        aPixels.clear();
+ 
+         if(bResult)
+         {
+@@ -186,13 +186,13 @@ bool ImplScaleConvolutionVer(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+ 
+     if(pReadAcc)
+     {
+-        double* pWeights = nullptr;
+-        long* pPixels = nullptr;
+-        long* pCount = nullptr;
++        std::vector<double> aWeights;
++        std::vector<long> aPixels;
++        std::vector<long> aCounts;
+         long aNumberOfContributions(0);
+ 
+         const long nWidth(rSource.GetSizePixel().Width());
+-        ImplCalculateContributions(nHeight, nNewHeight, aNumberOfContributions, pWeights, pPixels, pCount, aKernel);
++        ImplCalculateContributions(nHeight, nNewHeight, aNumberOfContributions, aWeights, aPixels, aCounts, aKernel);
+         rTarget = Bitmap(Size(nWidth, nNewHeight), 24);
+         Bitmap::ScopedWriteAccess pWriteAcc(rTarget);
+         bool bResult(nullptr != pWriteAcc);
+@@ -209,21 +209,21 @@ bool ImplScaleConvolutionVer(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+                     double aValueGreen(0.0);
+                     double aValueBlue(0.0);
+ 
+-                    for(long j(0); j < pCount[y]; j++)
++                    for(long j(0); j < aCounts[y]; j++)
+                     {
+                         const long aIndex(aBaseIndex + j);
+-                        const double aWeight(pWeights[aIndex]);
++                        const double aWeight(aWeights[aIndex]);
+                         BitmapColor aColor;
+ 
+                         aSum += aWeight;
+ 
+                         if(pReadAcc->HasPalette())
+                         {
+-                            aColor = pReadAcc->GetPaletteColor(pReadAcc->GetPixelIndex(pPixels[aIndex], x));
++                            aColor = pReadAcc->GetPaletteColor(pReadAcc->GetPixelIndex(aPixels[aIndex], x));
+                         }
+                         else
+                         {
+-                            aColor = pReadAcc->GetPixel(pPixels[aIndex], x);
++                            aColor = pReadAcc->GetPixel(aPixels[aIndex], x);
+                         }
+ 
+                         aValueRed += aWeight * aColor.GetRed();
+@@ -248,9 +248,9 @@ bool ImplScaleConvolutionVer(Bitmap& rSource, Bitmap& rTarget, const double& rSc
+             }
+         }
+ 
+-        delete[] pWeights;
+-        delete[] pCount;
+-        delete[] pPixels;
++        aWeights.clear();
++        aCounts.clear();
++        aPixels.clear();
+ 
+         if(bResult)
+         {
+diff --git a/vcl/source/gdi/bitmap3.cxx b/vcl/source/gdi/bitmap3.cxx
+index b509f6059737..70225ce146c9 100644
+--- a/vcl/source/gdi/bitmap3.cxx
++++ b/vcl/source/gdi/bitmap3.cxx
+@@ -2127,7 +2127,9 @@ bool Bitmap::Adjust( short nLuminancePercent, short nContrastPercent,
+     return bRet;
+ }
+ 
+-bool Bitmap::ImplConvolutionPass(Bitmap& aNewBitmap, BitmapReadAccess const * pReadAcc, int aNumberOfContributions, const double* pWeights, int const * pPixels, const int* pCount)
++bool Bitmap::ImplConvolutionPass(Bitmap& aNewBitmap, BitmapReadAccess const * pReadAcc, int aNumberOfContributions,
++                                 const std::vector<double>& rWeights, const std::vector<int>& rPixels,
++                                 const std::vector<int>& rCounts)
+ {
+     if (!pReadAcc)
+         return false;
+@@ -2153,12 +2155,12 @@ bool Bitmap::ImplConvolutionPass(Bitmap& aNewBitmap, BitmapReadAccess const * pR
+             aBaseIndex = nSourceX * aNumberOfContributions;
+             aSum = aValueRed = aValueGreen = aValueBlue = 0.0;
+ 
+-            for (int j = 0; j < pCount[nSourceX]; ++j)
++            for (int j = 0; j < rCounts[nSourceX]; ++j)
+             {
+                 aIndex = aBaseIndex + j;
+-                aSum += aWeight = pWeights[ aIndex ];
++                aSum += aWeight = rWeights[ aIndex ];
+ 
+-                aColor = pReadAcc->GetColor(nSourceY, pPixels[aIndex]);
++                aColor = pReadAcc->GetColor(nSourceY, rPixels[aIndex]);
+ 
+                 aValueRed += aWeight * aColor.GetRed();
+                 aValueGreen += aWeight * aColor.GetGreen();
+diff --git a/vcl/source/gdi/bitmap4.cxx b/vcl/source/gdi/bitmap4.cxx
+index d5e995770993..28bd9fab7f3f 100644
+--- a/vcl/source/gdi/bitmap4.cxx
++++ b/vcl/source/gdi/bitmap4.cxx
+@@ -1042,10 +1042,10 @@ bool Bitmap::ImplPopArt()
+     return bRet;
+ }
+ 
+-double* MakeBlurKernel(const double radius, int& rows) {
++std::vector<double> MakeBlurKernel(const double radius, int& rows) {
+     int intRadius = (int) radius + 1.0;
+     rows = intRadius * 2 + 1;
+-    double* matrix = new double[rows];
++    std::vector<double> matrix(rows);
+ 
+     double sigma = radius / 3;
+     double radius2 = radius * radius;
+@@ -1064,11 +1064,12 @@ double* MakeBlurKernel(const double radius, int& rows) {
+ }
+ 
+ void Bitmap::ImplBlurContributions( const int aSize, const int aNumberOfContributions,
+-                                    const double* pBlurVector, double*& pWeights, int*& pPixels, int*& pCount )
++                                    const std::vector<double>& rBlurVector,
++                                    std::vector<double>& rWeights, std::vector<int>& rPixels, std::vector<int>& rCounts)
+ {
+-    pWeights = new double[ aSize*aNumberOfContributions ];
+-    pPixels = new int[ aSize*aNumberOfContributions ];
+-    pCount = new int[ aSize ];
++    rWeights.resize(aSize*aNumberOfContributions);
++    rPixels.resize(aSize*aNumberOfContributions);
++    rCounts.resize(aSize);
+ 
+     int aLeft, aRight, aCurrentCount, aPixelIndex;
+     double aWeight;
+@@ -1080,7 +1081,7 @@ void Bitmap::ImplBlurContributions( const int aSize, const int aNumberOfContribu
+         aCurrentCount = 0;
+         for ( int j = aLeft; j <= aRight; j++ )
+         {
+-            aWeight = pBlurVector[aCurrentCount];
++            aWeight = rBlurVector[aCurrentCount];
+ 
+             // Mirror edges
+             if (j < 0)
+@@ -1102,12 +1103,12 @@ void Bitmap::ImplBlurContributions( const int aSize, const int aNumberOfContribu
+                 aWeight = 0.0;
+             }
+ 
+-            pWeights[ i*aNumberOfContributions + aCurrentCount ] = aWeight;
+-            pPixels[ i*aNumberOfContributions + aCurrentCount ] = aPixelIndex;
++            rWeights[ i*aNumberOfContributions + aCurrentCount ] = aWeight;
++            rPixels[ i*aNumberOfContributions + aCurrentCount ] = aPixelIndex;
+ 
+             aCurrentCount++;
+         }
+-        pCount[ i ] = aCurrentCount;
++        rCounts[ i ] = aCurrentCount;
+     }
+ }
+ 
+@@ -1126,31 +1127,31 @@ bool Bitmap::ImplSeparableBlurFilter(const double radius)
+ 
+     // Prepare Blur Vector
+     int aNumberOfContributions;
+-    double* pBlurVector = MakeBlurKernel(radius, aNumberOfContributions);
++    std::vector<double> aBlurVector(MakeBlurKernel(radius, aNumberOfContributions));
+ 
+-    double* pWeights;
+-    int* pPixels;
+-    int* pCount;
++    std::vector<double> aWeights;
++    std::vector<int> aPixels;
++    std::vector<int> aCounts;
+ 
+     // Do horizontal filtering
+-    ImplBlurContributions( nWidth, aNumberOfContributions, pBlurVector, pWeights, pPixels, pCount);
++    ImplBlurContributions( nWidth, aNumberOfContributions, aBlurVector, aWeights, aPixels, aCounts);
+ 
+     ScopedReadAccess pReadAcc(*this);
+ 
+     // switch coordinates as convolution pass transposes result
+     Bitmap aNewBitmap( Size( nHeight, nWidth ), 24 );
+ 
+-    bool bResult = ImplConvolutionPass( aNewBitmap, pReadAcc.get(), aNumberOfContributions, pWeights, pPixels, pCount );
++    bool bResult = ImplConvolutionPass( aNewBitmap, pReadAcc.get(), aNumberOfContributions, aWeights, aPixels, aCounts );
+ 
+     // Cleanup
+     pReadAcc.reset();
+-    delete[] pWeights;
+-    delete[] pPixels;
+-    delete[] pCount;
++    aWeights.clear();
++    aPixels.clear();
++    aCounts.clear();
+ 
+     if ( !bResult )
+     {
+-        delete[] pBlurVector;
++        aBlurVector.clear();
+         return bResult;
+     }
+ 
+@@ -1158,18 +1159,18 @@ bool Bitmap::ImplSeparableBlurFilter(const double radius)
+     ImplAssignWithSize( aNewBitmap );
+ 
+     // Do vertical filtering
+-    ImplBlurContributions(nHeight, aNumberOfContributions, pBlurVector, pWeights, pPixels, pCount );
++    ImplBlurContributions(nHeight, aNumberOfContributions, aBlurVector, aWeights, aPixels, aCounts );
+ 
+     pReadAcc = ScopedReadAccess(*this);
+     aNewBitmap = Bitmap( Size( nWidth, nHeight ), 24 );
+-    bResult = ImplConvolutionPass( aNewBitmap, pReadAcc.get(), aNumberOfContributions, pWeights, pPixels, pCount );
++    bResult = ImplConvolutionPass( aNewBitmap, pReadAcc.get(), aNumberOfContributions, aWeights, aPixels, aCounts );
+ 
+     // Cleanup
+     pReadAcc.reset();
+-    delete[] pWeights;
+-    delete[] pCount;
+-    delete[] pPixels;
+-    delete[] pBlurVector;
++    aWeights.clear();
++    aCounts.clear();
++    aPixels.clear();
++    aBlurVector.clear();
+ 
+     if ( !bResult )
+         return bResult;
 diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
 index 58711a9d862b..f6eea9242327 100644
 --- a/vcl/source/gdi/pdfwriter_impl.cxx
@@ -1992,5 +2504,5 @@ index 3886f1eb1c70..acef6139f737 100644
  
          return bState
 -- 
-2.17.0
+2.17.1
 

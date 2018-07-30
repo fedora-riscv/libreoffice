@@ -1,4 +1,4 @@
-From 785e0f776e3d5c962e0c74fcae0c376763055dcb Mon Sep 17 00:00:00 2001
+From 3409d091b30149f511a235df39a523333e25777e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 26 Jul 2018 13:08:01 +0100
 Subject: [PATCH] cov scan warnings
@@ -96,6 +96,7 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
  sc/source/ui/undo/undodat.cxx                 |   6 +-
  sc/source/ui/view/viewdata.cxx                |   2 +
  .../ui/animations/CustomAnimationPane.cxx     |   2 +
+ sd/source/ui/unoidl/unosrch.cxx               |  71 +++------
  sfx2/source/control/itemdel.cxx               |   2 +-
  solenv/bin/pack_images.py                     |   2 +-
  soltools/cpp/_unix.c                          |   1 +
@@ -109,7 +110,7 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
  vcl/unx/generic/plugadapt/salplug.cxx         |   1 +
  .../sun/star/wizards/agenda/TopicsControl.py  |   6 +-
  .../star/wizards/document/OfficeDocument.py   |   1 -
- 44 files changed, 211 insertions(+), 259 deletions(-)
+ 45 files changed, 235 insertions(+), 306 deletions(-)
 
 diff --git a/bridges/source/cpp_uno/shared/bridge.cxx b/bridges/source/cpp_uno/shared/bridge.cxx
 index 556350022e48..186d89aa1956 100644
@@ -1734,6 +1735,159 @@ index c00aedf6c607..14bc19266ed2 100644
              if( aDownEffectPos != rEffectSequence.end() )
              {
                  EffectSequence::iterator aInsertPos( rEffectSequence.erase( aDownEffectPos ) );
+diff --git a/sd/source/ui/unoidl/unosrch.cxx b/sd/source/ui/unoidl/unosrch.cxx
+index a254bbe4a8b6..737710bcf4b2 100644
+--- a/sd/source/ui/unoidl/unosrch.cxx
++++ b/sd/source/ui/unoidl/unosrch.cxx
+@@ -56,11 +56,10 @@ class SearchContext_impl
+ {
+     uno::Reference< drawing::XShapes > mxShapes;
+     sal_Int32 mnIndex;
+-    SearchContext_impl* mpParent;
+ 
+ public:
+-    SearchContext_impl( uno::Reference< drawing::XShapes > const & xShapes, SearchContext_impl* pParent = nullptr )
+-        : mxShapes( xShapes ), mnIndex( -1 ), mpParent( pParent ) {}
++    SearchContext_impl(uno::Reference<drawing::XShapes> const& xShapes)
++        : mxShapes( xShapes ), mnIndex( -1 ) {}
+ 
+     uno::Reference< drawing::XShape > firstShape()
+     {
+@@ -78,8 +77,6 @@ public:
+         }
+         return xShape;
+     }
+-
+-    SearchContext_impl* getParent() const { return mpParent; }
+ };
+ 
+ /* ================================================================= */
+@@ -113,7 +110,7 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+     uno::Reference< drawing::XShapes >  xShapes;
+     uno::Reference< drawing::XShape >  xShape;
+ 
+-    SearchContext_impl* pContext = nullptr;
++    std::vector<SearchContext_impl> aContexts;
+     if(mpPage)
+     {
+         uno::Reference< drawing::XDrawPage > xPage( mpPage );
+@@ -122,8 +119,8 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+ 
+         if( xShapes.is() && (xShapes->getCount() > 0) )
+         {
+-            pContext = new SearchContext_impl( xShapes );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xShapes));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+@@ -154,34 +151,24 @@ sal_Int32 SAL_CALL SdUnoSearchReplaceShape::replaceAll( const uno::Reference< ut
+         uno::Reference< drawing::XShapes > xGroupShape( xShape, uno::UNO_QUERY );
+         if( xGroupShape.is() && ( xGroupShape->getCount() > 0 ) )
+         {
+-            pContext = new SearchContext_impl( xGroupShape, pContext );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xGroupShape));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+-            if( pContext )
+-                xShape = pContext->nextShape();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+             else
+                 xShape = nullptr;
+         }
+ 
+         // test parent contexts for next shape if none
+         // is found in the current context
+-        while( pContext && !xShape.is() )
++        while (!aContexts.empty() && !xShape.is())
+         {
+-            if( pContext->getParent() )
+-            {
+-                SearchContext_impl* pOldContext = pContext;
+-                pContext = pContext->getParent();
+-                delete pOldContext;
+-                xShape = pContext->nextShape();
+-            }
+-            else
+-            {
+-                delete pContext;
+-                pContext = nullptr;
+-                xShape = nullptr;
+-            }
++            aContexts.pop_back();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+         }
+     }
+ 
+@@ -210,7 +197,7 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+     uno::Reference< drawing::XShapes >  xShapes;
+     uno::Reference< drawing::XShape >  xShape;
+ 
+-    SearchContext_impl* pContext = nullptr;
++    std::vector<SearchContext_impl> aContexts;
+     if(mpPage)
+     {
+         uno::Reference< drawing::XDrawPage >  xPage( mpPage );
+@@ -218,8 +205,8 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+ 
+         if( xShapes.is() && xShapes->getCount() > 0 )
+         {
+-            pContext = new SearchContext_impl( xShapes );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xShapes));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+@@ -259,34 +246,24 @@ uno::Reference< css::container::XIndexAccess > SAL_CALL SdUnoSearchReplaceShape:
+ 
+         if( xGroupShape.is() && xGroupShape->getCount() > 0 )
+         {
+-            pContext = new SearchContext_impl( xGroupShape, pContext );
+-            xShape = pContext->firstShape();
++            aContexts.push_back(SearchContext_impl(xGroupShape));
++            xShape = aContexts.back().firstShape();
+         }
+         else
+         {
+-            if( pContext )
+-                xShape = pContext->nextShape();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+             else
+                 xShape = nullptr;
+         }
+ 
+         // test parent contexts for next shape if none
+         // is found in the current context
+-        while( pContext && !xShape.is() )
++        while (!aContexts.empty() && !xShape.is())
+         {
+-            if( pContext->getParent() )
+-            {
+-                SearchContext_impl* pOldContext = pContext;
+-                pContext = pContext->getParent();
+-                delete pOldContext;
+-                xShape = pContext->nextShape();
+-            }
+-            else
+-            {
+-                delete pContext;
+-                pContext = nullptr;
+-                xShape = nullptr;
+-            }
++            aContexts.pop_back();
++            if (!aContexts.empty())
++                xShape = aContexts.back().nextShape();
+         }
+     }
+ 
 diff --git a/sfx2/source/control/itemdel.cxx b/sfx2/source/control/itemdel.cxx
 index 9ee76fd6a2bb..806b0895f2a5 100644
 --- a/sfx2/source/control/itemdel.cxx
@@ -1992,5 +2146,5 @@ index 3886f1eb1c70..acef6139f737 100644
  
          return bState
 -- 
-2.17.0
+2.17.1
 

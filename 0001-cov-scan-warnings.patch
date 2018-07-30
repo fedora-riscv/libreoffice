@@ -1,4 +1,4 @@
-From 062651e294437750d0e2f2e56fc6d50ff4a5c412 Mon Sep 17 00:00:00 2001
+From b2549a70cb5d27f9c869451650c289ca831af97d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 26 Jul 2018 13:08:01 +0100
 Subject: [PATCH] cov scan warnings
@@ -68,6 +68,31 @@ Change-Id: Ie9e4e3173a91f5380a98d629c8a67d2ebb9c6c14
 Related: rhbz#1602589 rework to avoid bogus cppcheck double free warning
 
 Change-Id: Ie673de68f39b903536c2287b8989fe6afcc9fd66
+
+SHELLCHECK_WARNING, VERBOSE is unused
+
+gengal.sh was originally based on unopkg.sh
+which had this --verbose switch...
+
+commit 164027e48899faaee284242eaca04b8aa5545319
+Date:   Fri Apr 5 16:39:24 2013 +0100
+
+    gengal: re-base on original tool.
+
+    new wrapper based on unopkg.sh.
+    work re-based on original SUSE implementation.
+
+and unopkg.sh later had VERBOSE removed...
+
+commit 1fc195f7e830619d56cc4c56043b154bc3a72b02
+Author: Stephan Bergmann <sbergman@redhat.com>
+Date:   Thu Oct 17 15:34:53 2013 +0200
+
+    Simplify code (VERBOSE was unused)
+
+but gengal.sh retained its unused VERBOSE variable
+
+Change-Id: I56aa830aef829c7727550fcaf7aed5058fffdc78
 ---
  bridges/source/cpp_uno/shared/bridge.cxx      |   2 +-
  bridges/source/jni_uno/jni_bridge.cxx         |   4 +-
@@ -107,6 +132,7 @@ Change-Id: Ie673de68f39b903536c2287b8989fe6afcc9fd66
  soltools/cpp/_unix.c                          |   1 +
  soltools/mkdepend/parse.c                     |   1 +
  svtools/source/svhtml/htmlout.cxx             |   2 +-
+ svx/source/gengal/gengal.sh                   |   2 -
  sw/source/core/text/itrform2.cxx              |   2 +
  sw/source/ui/index/cnttab.cxx                 |   9 +-
  unoidl/source/legacyprovider.cxx              |  32 ++--
@@ -118,7 +144,7 @@ Change-Id: Ie673de68f39b903536c2287b8989fe6afcc9fd66
  vcl/unx/generic/plugadapt/salplug.cxx         |   1 +
  .../sun/star/wizards/agenda/TopicsControl.py  |   6 +-
  .../star/wizards/document/OfficeDocument.py   |   1 -
- 49 files changed, 306 insertions(+), 374 deletions(-)
+ 50 files changed, 306 insertions(+), 376 deletions(-)
 
 diff --git a/bridges/source/cpp_uno/shared/bridge.cxx b/bridges/source/cpp_uno/shared/bridge.cxx
 index 556350022e48..186d89aa1956 100644
@@ -1991,6 +2017,19 @@ index a4d030631398..4d3ff3006a73 100644
              nLen = lcl_FlushContext(rContext, cBuffer, nFlags);
              sal_Char *pBuffer = cBuffer;
              while( nLen-- )
+diff --git a/svx/source/gengal/gengal.sh b/svx/source/gengal/gengal.sh
+index b4d10458650a..5f644c6702bb 100755
+--- a/svx/source/gengal/gengal.sh
++++ b/svx/source/gengal/gengal.sh
+@@ -55,8 +55,6 @@ for arg in "$@"
+ do
+   case "$arg" in
+        -env:*) BOOTSTRAPVARS=$BOOTSTRAPVARS" ""$arg";;
+-       -v) VERBOSE=true;;
+-       --verbose) VERBOSE=true;;
+   esac
+ done
+ 
 diff --git a/sw/source/core/text/itrform2.cxx b/sw/source/core/text/itrform2.cxx
 index e762ab1f5842..68850b179d3f 100644
 --- a/sw/source/core/text/itrform2.cxx

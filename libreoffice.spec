@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2327,6 +2327,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jul 31 2018 Florian Weimer <fweimer@redhat.com> - 1:6.0.6.1-7
+- Rebuild with fixed binutils
+
 * Thu Jul 26 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.1-6
 - Related: rhbz#1602589 fix/silence more covscan warnings
 

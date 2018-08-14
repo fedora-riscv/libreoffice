@@ -2327,7 +2327,7 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Aug 14 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.2-1
+* Tue Aug 14 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.2-1
 - latest version
 
 * Tue Jul 31 2018 Florian Weimer <fweimer@redhat.com> - 1:6.0.6.1-7

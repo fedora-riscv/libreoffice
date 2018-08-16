@@ -1622,7 +1622,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
-%{baseinstdir}/program/libxsec_fw.so
 %if 0%{?rhel} && 0%{?rhel} < 8
 %{baseinstdir}/program/libassuan.so.0
 %{baseinstdir}/program/libgpg-error.so.0
@@ -1741,9 +1740,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_breeze_dark.zip
 %{baseinstdir}/share/config/images_elementary.zip
-%{baseinstdir}/share/config/images_galaxy.zip
 %{baseinstdir}/share/config/images_helpimg.zip
-%{baseinstdir}/share/config/images_hicontrast.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
 %{baseinstdir}/share/config/images_tango.zip

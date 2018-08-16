@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.0.6
+%global libo_version 6.1.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -63,7 +63,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.3
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -266,22 +266,9 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 # want a nice abrt report
 Patch0: 0001-don-t-suppress-crashes.patch
 # not upstreamed
-Patch1: 0001-Related-tdf-106100-recover-mangled-svg-in-presentati.patch
+Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
-Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
-# not upstreamed
-Patch3: 0001-gtk3-only-for-3.20.patch
-Patch4: 0001-Related-tdf-105998-except-cut-and-paste-as-bitmap-in.patch
-Patch5: 0001-request-installation-of-langpack-via-packagekit.patch
-Patch6: 0001-forcepoint-fix-out-of-bounds-read-in-ICU.patch
-Patch7: 0001-Upgrade-to-ICU-61.1.patch
-Patch8: 0001-Keep-the-still-relevant-part-of-external-icu-icu4c-u.patch
-Patch9: 0001-We-use-ICU-61-now.patch
-Patch10: 0001-Upgrade-to-ICU-62.1.patch
-Patch11: 0001-Use-ICU_MAJOR-instead-of-hard-coded-Upgrade-to-ICU-6.patch
-Patch12: 0001-implement-pdf-export-of-underline-for-outlined-font.patch
-Patch13: 0001-cov-scan-help-warnings.patch
-Patch14: 0001-cov-scan-warnings.patch
+Patch2: 0001-gtk3-only-for-3.20.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2327,6 +2314,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Aug 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.0.3-1
+- 6.1.X series
+
 * Tue Aug 14 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.2-1
 - latest version
 

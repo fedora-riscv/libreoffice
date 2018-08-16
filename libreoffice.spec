@@ -1537,7 +1537,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libctllo.so
 %{baseinstdir}/program/libcuilo.so
 %{baseinstdir}/program/libdbalo.so
-%{baseinstdir}/program/libdbahsqllo
+%{baseinstdir}/program/libdbahsqllo.so
 %{baseinstdir}/program/libdbaselo.so
 %{baseinstdir}/program/libdbaxmllo.so
 %{baseinstdir}/program/libdbmmlo.so

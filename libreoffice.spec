@@ -238,6 +238,7 @@ BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libqxp-0.0)
 BuildRequires: pkgconfig(mdds-1.2)
+BuildRequires: libnumbertext-devel
 %endif
 
 # java stuff

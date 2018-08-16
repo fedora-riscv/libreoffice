@@ -1122,6 +1122,7 @@ touch autogen.lastrun
  --with-system-libs \
  --without-export-validation \
  --without-fonts \
+ --without-lxml \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  %{distrooptions} \

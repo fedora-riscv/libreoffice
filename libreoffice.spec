@@ -1537,6 +1537,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libctllo.so
 %{baseinstdir}/program/libcuilo.so
 %{baseinstdir}/program/libdbalo.so
+%{baseinstdir}/program/libdbahsqllo
 %{baseinstdir}/program/libdbaselo.so
 %{baseinstdir}/program/libdbaxmllo.so
 %{baseinstdir}/program/libdbmmlo.so
@@ -1739,8 +1740,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_breeze_dark.zip
+%{baseinstdir}/share/config/images_colibre.zip
 %{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_helpimg.zip
+%{baseinstdir}/share/config/images_karasa_jaga.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
 %{baseinstdir}/share/config/images_tango.zip
@@ -1971,6 +1974,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/liborcus-0.13.so.*
 %{baseinstdir}/program/liborcus-parser-0.13.so.*
 %endif
+%{baseinstdir}/program/libnumbertextlo.so
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
 %{baseinstdir}/program/libscdlo.so

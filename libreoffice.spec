@@ -944,6 +944,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
 %autocorr -l de -n German -L
+%autocorr -l el -n Greek
 %autocorr -l es -n Spanish -L
 %autocorr -l fa -n Farsi
 %autocorr -l fi -n Finnish

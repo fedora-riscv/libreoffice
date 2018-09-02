@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -235,11 +235,12 @@ BuildRequires: pkgconfig(graphite2)
 BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
-BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(libqxp-0.0)
 %if 0%{?rhel}
+BuildRequires: pkgconfig(liborcus-0.13)
 BuildRequires: pkgconfig(mdds-1.2)
 %else
+BuildRequires: pkgconfig(liborcus-0.14)
 BuildRequires: pkgconfig(mdds-1.4)
 %endif
 BuildRequires: libnumbertext-devel
@@ -276,6 +277,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-gtk3-only-for-3.20.patch
 %if !0%{?rhel}
 Patch3: 0001-mdds-1.4.1-is-now-a-minimum-requirement.patch
+Patch4: 0001-Update-orcus-to-0.14.0.patch
 %endif
 
 %if 0%{?rhel}
@@ -2325,6 +2327,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Sep 02 2018 David Tardon <dtardon@redhat.com> - 1:6.1.0.3-2
+- rebuild for liborcus 0.14.0
+
 * Thu Aug 16 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.0.3-1
 - 6.1.X series
 

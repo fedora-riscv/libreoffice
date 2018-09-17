@@ -1,4 +1,4 @@
-From 23c88ddd5990f9a4d921ec69240ff5175254d89a Mon Sep 17 00:00:00 2001
+From 3debd23d47d1fcbef76033c739a0b7003824d4ca Mon Sep 17 00:00:00 2001
 From: Noel Grandin <noel.grandin@collabora.co.uk>
 Date: Sat, 11 Aug 2018 13:25:09 +0200
 Subject: [PATCH] Update mdds to 1.4.1
@@ -34,18 +34,19 @@ Tested-by: Jenkins
 Reviewed-by: Kohei Yoshida <libreoffice@kohei.us>
 (cherry picked from commit 4d1f735fcf064b18ef2848cc1f5a2a0616b0b33d)
 
-Change-Id: I676a8408e97cc8134009f764736cad68513c89ad
 fd08fc4a2ed75039e5292a35ff08726e0126c77f
 647bcfbdd8e0417990ed93b25c1bca00f60df709
+
+Change-Id: I676a8408e97cc8134009f764736cad68513c89ad
 ---
  configure.ac                          |   2 +-
  download.lst                          |   4 +-
  external/mdds/UnpackedTarball_mdds.mk |   3 -
  external/mdds/c++17.patch             |  22 ---
- sc/inc/scmatrix.hxx                   |   4 +-
+ sc/inc/scmatrix.hxx                   |   6 +-
  sc/source/core/tool/interpr3.cxx      |   4 +-
- sc/source/core/tool/scmatrix.cxx      | 204 +++++++++++++++++++-------
- 7 files changed, 158 insertions(+), 85 deletions(-)
+ sc/source/core/tool/scmatrix.cxx      | 208 +++++++++++++++++++-------
+ 7 files changed, 161 insertions(+), 88 deletions(-)
  delete mode 100644 external/mdds/c++17.patch
 
 diff --git a/configure.ac b/configure.ac
@@ -120,7 +121,7 @@ index d96910f34e68..000000000000
 -         void operator() (const element_block_type* p)
 -         {
 diff --git a/sc/inc/scmatrix.hxx b/sc/inc/scmatrix.hxx
-index 9be335fbc06b..fd563ff30f05 100644
+index 9be335fbc06b..b1bc5e0e3047 100644
 --- a/sc/inc/scmatrix.hxx
 +++ b/sc/inc/scmatrix.hxx
 @@ -399,7 +399,7 @@ public:
@@ -133,6 +134,15 @@ index 9be335fbc06b..fd563ff30f05 100644
      virtual void ExecuteOperation(const std::pair<size_t, size_t>& rStartPos, const std::pair<size_t, size_t>& rEndPos,
              DoubleOpFunction aDoubleFunc, BoolOpFunction aBoolFunc, StringOpFunction aStringFunc,
 @@ -617,7 +617,7 @@ public:
+     virtual void DivOp(bool bFlag, double fVal, ScMatrix& rMat) override;
+     virtual void PowOp(bool bFlag, double fVal, ScMatrix& rMat) override;
+ 
+-    virtual std::vector<ScMatrix::IterateResult> Collect(bool bTextAsZero, const std::vector<std::unique_ptr<sc::op::Op>>& aOp) override;
++    virtual std::vector<ScMatrix::IterateResult> Collect(const std::vector<std::unique_ptr<sc::op::Op>>& aOp) override;
+ 
+     virtual void ExecuteOperation(const std::pair<size_t, size_t>& rStartPos, const std::pair<size_t, size_t>& rEndPos,
+             DoubleOpFunction aDoubleFunc, BoolOpFunction aBoolFunc, StringOpFunction aStringFunc,
+@@ -837,7 +837,7 @@ public:
      virtual void DivOp(bool bFlag, double fVal, ScMatrix& rMat) override;
      virtual void PowOp(bool bFlag, double fVal, ScMatrix& rMat) override;
  
@@ -161,7 +171,7 @@ index 28e8cd9a9c48..88c0d8353783 100644
      fSumSqr2 = aVal2[1].mfFirst + aVal2[1].mfRest;
      fCount2 = aVal2[2].mnCount;
 diff --git a/sc/source/core/tool/scmatrix.cxx b/sc/source/core/tool/scmatrix.cxx
-index 7f8c8767e917..66b993b9432a 100644
+index 7f8c8767e917..7dadec9f0b57 100644
 --- a/sc/source/core/tool/scmatrix.cxx
 +++ b/sc/source/core/tool/scmatrix.cxx
 @@ -160,6 +160,12 @@ public:
@@ -665,6 +675,19 @@ index 7f8c8767e917..66b993b9432a 100644
  }
  
  ScFullMatrix& ScFullMatrix::operator+= ( const ScFullMatrix& r )
+@@ -4216,10 +4314,10 @@ void ScVectorRefMatrix::PowOp(bool bFlag, double fVal, ScMatrix& rMat)
+     mpFullMatrix->PowOp(bFlag, fVal, rMat);
+ }
+ 
+-std::vector<ScMatrix::IterateResult> ScVectorRefMatrix::Collect(bool bTextAsZero, const std::vector<std::unique_ptr<sc::op::Op>>& aOp)
++std::vector<ScMatrix::IterateResult> ScVectorRefMatrix::Collect(const std::vector<std::unique_ptr<sc::op::Op>>& aOp)
+ {
+     ensureFullMatrix();
+-    return mpFullMatrix->Collect(bTextAsZero, aOp);
++    return mpFullMatrix->Collect(aOp);
+ }
+ 
+ void ScVectorRefMatrix::ExecuteOperation(const std::pair<size_t, size_t>& rStartPos,
 -- 
 2.17.1
 

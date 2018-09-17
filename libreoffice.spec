@@ -276,7 +276,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
 %if !0%{?rhel}
-Patch3: 0001-mdds-1.4.1-is-now-a-minimum-requirement.patch
+Patch3: 0001-Update-mdds-to-1.4.1.patch
 Patch4: 0001-Update-orcus-to-0.14.0.patch
 %endif
 

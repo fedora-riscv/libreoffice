@@ -218,7 +218,7 @@ BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
-BuildRequires: /usr/bin/python
+BuildRequires: /usr/bin/python3
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -375,7 +375,7 @@ The shared core libraries and support files for LibreOffice.
 Summary: Python support for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{libo_python}%{?_isa}
+Requires: /usr/bin/python3
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both

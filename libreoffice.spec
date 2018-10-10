@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.1.1
+%global libo_version 6.1.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -32,12 +32,10 @@
 %endif
 # URL for external projects' tarballs
 %global external_url http://dev-www.libreoffice.org/src
-%if 0%{?fedora}
-%global weak_deps 1
-%endif
 %if 0%{?rhel} && 0%{?rhel} < 8
 %nil
 %else
+%global weak_deps 1
 %global file_triggers 1
 %endif
 %global girapiversion 0.1
@@ -63,7 +61,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -320,15 +318,6 @@ formats, including Microsoft Office File Formats.
 Summary: All import / export filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
-Recommends: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
-%else
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
@@ -336,7 +325,6 @@ Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
 
 %description filters
 Metapackage to pull in all subpackages that contain import or export
@@ -349,18 +337,15 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
 %if 0%{?weak_deps}
 Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-Recommends: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
-Recommends: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
-Recommends: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 %else
 # these two plugins used to be part of core--keep it that way
 Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
+%endif
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
-%endif
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
@@ -801,7 +786,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %if 0%{?weak_deps} \
 %{-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{lang})} \
-%{-T:Recommends: %{name}-help-%{lang}} \
+%{-T:Requires: %{name}-help-%{lang}} \
 %endif \
 \
 %description %{pkgname} \
@@ -2327,6 +2312,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Oct 10 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-1
+- latest version
+- rhbz#1637848 keep Supplements but not Recommends
+
 * Fri Sep 14 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.1.2-1
 - latest version
 

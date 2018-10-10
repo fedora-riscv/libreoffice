@@ -16,10 +16,12 @@
 %if 0%{?rhel} && 0%{?rhel} < 8
 %global libo_use_python3 %{nil}
 %global libo_python python
+%global libo_python_executable %{__python2}
 %global libo_python_sitearch %{python_sitearch}
 %else
 %global libo_use_python3 1
 %global libo_python python3
+%global libo_python_executable %{__python3}
 %global libo_python_sitearch %{python3_sitearch}
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
@@ -216,7 +218,7 @@ BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
-BuildRequires: /usr/bin/python3
+BuildRequires: %{libo_python_executable}
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -360,7 +362,7 @@ The shared core libraries and support files for LibreOffice.
 Summary: Python support for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: /usr/bin/python3
+Requires: %{libo_python_executable}
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both

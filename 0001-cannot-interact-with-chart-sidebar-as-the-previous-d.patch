@@ -1,0 +1,27 @@
+From adc876ad22a8c4135350b95146eac39b794ed74a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 22 Oct 2018 14:37:14 +0100
+Subject: [PATCH] cannot interact with chart sidebar as the previous deck is
+ still active
+
+Change-Id: I7972ef73b8c11ae78569fa1c7dc0a244ebba3f30
+---
+ sfx2/source/sidebar/SidebarController.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
+index 9765f16540bd..198f136922c4 100644
+--- a/sfx2/source/sidebar/SidebarController.cxx
++++ b/sfx2/source/sidebar/SidebarController.cxx
+@@ -752,6 +752,8 @@ void SidebarController::SwitchToDeck (
+     if (bForceNewPanels && !bForceNewDeck) // already forced if bForceNewDeck
+         CreatePanels(rDeckDescriptor.msId, rContext);
+ 
++    if (mpCurrentDeck && mpCurrentDeck != rDeckDescriptor.mpDeck)
++        mpCurrentDeck->Hide();
+     mpCurrentDeck.reset(rDeckDescriptor.mpDeck);
+ 
+     if ( ! mpCurrentDeck)
+-- 
+2.17.1
+

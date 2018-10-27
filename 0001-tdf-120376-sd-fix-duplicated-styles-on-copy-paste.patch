@@ -1,0 +1,41 @@
+From 69561c112dbaac0df32500e5c50e1ea3236d4b50 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <Michael.Stahl@cib.de>
+Date: Sat, 27 Oct 2018 19:56:00 +0200
+Subject: [PATCH] tdf#120376 sd: fix duplicated styles on copy/paste
+
+Unfortunately the comparison was inverted, so a style is copied
+iff it already exists, which is clearly the reviewer's fault...
+
+(regression from 57db6e24b5ad43d447c30e44a112c74c7e75b46b)
+
+Change-Id: I3425982feb08e980eca9243cc16120897b65a70f
+---
+ sd/source/core/stlpool.cxx | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sd/source/core/stlpool.cxx b/sd/source/core/stlpool.cxx
+index ff2a55a22f80..47c105a7d38a 100644
+--- a/sd/source/core/stlpool.cxx
++++ b/sd/source/core/stlpool.cxx
+@@ -651,7 +651,7 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
+             pExistingSheet =
+                 GetStyleSheetByPositionInIndex(aSheetsWithName.front());
+             if (!rRenameSuffix.isEmpty() &&
+-                pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false))
++                !pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false))
+             {
+                 // we have found a sheet with the same name, but different contents. Try to find a new name.
+                 // If we already have a sheet with the new name, and it is equal to the one in the source pool,
+@@ -663,7 +663,8 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
+                     aTmpName = aName + rRenameSuffix + OUString::number(nSuffix);
+                     pExistingSheet = Find(aTmpName, eFamily);
+                     nSuffix++;
+-                } while( pExistingSheet && pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false) );
++                } while (pExistingSheet &&
++                        !pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false));
+                 aName = aTmpName;
+                 bAddToList = true;
+             }
+-- 
+2.17.1
+

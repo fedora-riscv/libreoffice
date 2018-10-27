@@ -1,4 +1,4 @@
-From 69561c112dbaac0df32500e5c50e1ea3236d4b50 Mon Sep 17 00:00:00 2001
+From 96e6a375a03bc4bfc7f269c4e6e20cc867ae66e2 Mon Sep 17 00:00:00 2001
 From: Michael Stahl <Michael.Stahl@cib.de>
 Date: Sat, 27 Oct 2018 19:56:00 +0200
 Subject: [PATCH] tdf#120376 sd: fix duplicated styles on copy/paste
@@ -14,23 +14,23 @@ Change-Id: I3425982feb08e980eca9243cc16120897b65a70f
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/sd/source/core/stlpool.cxx b/sd/source/core/stlpool.cxx
-index ff2a55a22f80..47c105a7d38a 100644
+index c627970..f7e81e1 100644
 --- a/sd/source/core/stlpool.cxx
 +++ b/sd/source/core/stlpool.cxx
-@@ -651,7 +651,7 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
+@@ -652,7 +652,7 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
              pExistingSheet =
-                 GetStyleSheetByPositionInIndex(aSheetsWithName.front());
+                 GetStyleSheetByPositionInIndex(aSheetsWithName.front()).get();
              if (!rRenameSuffix.isEmpty() &&
--                pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false))
+-                pExistingSheet->GetItemSet().Equals(xSheet->GetItemSet(), false))
 +                !pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false))
              {
                  // we have found a sheet with the same name, but different contents. Try to find a new name.
                  // If we already have a sheet with the new name, and it is equal to the one in the source pool,
-@@ -663,7 +663,8 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
+@@ -664,7 +664,8 @@ void SdStyleSheetPool::CopySheets(SdStyleSheetPool& rSourcePool, SfxStyleFamily
                      aTmpName = aName + rRenameSuffix + OUString::number(nSuffix);
                      pExistingSheet = Find(aTmpName, eFamily);
                      nSuffix++;
--                } while( pExistingSheet && pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false) );
+-                } while( pExistingSheet && pExistingSheet->GetItemSet().Equals(xSheet->GetItemSet(), false) );
 +                } while (pExistingSheet &&
 +                        !pExistingSheet->GetItemSet().Equals(pSheet->GetItemSet(), false));
                  aName = aTmpName;

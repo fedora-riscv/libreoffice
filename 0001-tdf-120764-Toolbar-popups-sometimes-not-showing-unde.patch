@@ -1,0 +1,79 @@
+From dbe7ccd28aa37068f2f319dd506ecd09bb56af80 Mon Sep 17 00:00:00 2001
+From: Maxim Monastirsky <momonasmon@gmail.com>
+Date: Tue, 23 Oct 2018 01:37:25 +0300
+Subject: [PATCH] tdf#120764 Toolbar popups sometimes not showing under Wayland
+
+This happens with gtk 3.24 if the toolbar button is
+clicked when the tooltip of that button is visible.
+The warning gtk emits is "Tried to map a popup with a
+non-top most parent".
+
+The solution is to hide the tooltip early on mouse
+button press event processing. (gtk does hiding too,
+but in a way which isn't useful here - see the code
+comment. We also have similar code for the non-native
+case in ImplHandleMouseEvent of winproc.cxx.)
+
+Note that it's likely a gtk bug, as this new tooltip
+behavior breaks some native cases too, e.g. combo boxes
+with tooltips. But we can't leave our toolbars broken
+until this is fixed upstream.
+
+Change-Id: I1ce8bffcd78a3bcbbfe2ffdd1bd006ae5dc79618
+Reviewed-on: https://gerrit.libreoffice.org/62207
+Tested-by: Jenkins
+Reviewed-by: Maxim Monastirsky <momonasmon@gmail.com>
+(cherry picked from commit b8bf751f9f5e2cb718175c0f2c4b2be762dcf614)
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  1 +
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index 04ec68a7854e..94547848659e 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -537,6 +537,7 @@ public:
+ #if GTK_CHECK_VERSION(3,0,0)
+     virtual void                PositionByToolkit(const tools::Rectangle& rRect, FloatWinPopupFlags nFlags) override;
+     virtual void                SetModal(bool bModal) override;
++    void                        HideTooltip();
+     virtual bool                ShowTooltip(const OUString& rHelpText, const tools::Rectangle& rHelpArea) override;
+     virtual void*               ShowPopover(const OUString& rHelpText, vcl::Window* pParent, const tools::Rectangle& rHelpArea, QuickHelpFlags nFlags) override;
+     virtual bool                UpdatePopover(void* nId, const OUString& rHelpText, vcl::Window* pParent, const tools::Rectangle& rHelpArea) override;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index b172132feb77..71ab50efc813 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -2496,6 +2496,12 @@ bool GtkSalFrame::ShowTooltip(const OUString& rHelpText, const tools::Rectangle&
+     return true;
+ }
+ 
++void GtkSalFrame::HideTooltip()
++{
++    m_aTooltip.clear();
++    gtk_widget_trigger_tooltip_query(getMouseEventWidget());
++}
++
+ namespace
+ {
+     void set_pointing_to(GtkPopover *pPopOver, vcl::Window* pParent, const tools::Rectangle& rHelpArea, const SalFrameGeometry& rGeometry)
+@@ -2620,6 +2626,15 @@ gboolean GtkSalFrame::signalButton( GtkWidget*, GdkEventButton* pEvent, gpointer
+     GtkWidget* pEventWidget = pThis->getMouseEventWidget();
+     bool bDifferentEventWindow = pEvent->window != widget_get_window(pEventWidget);
+ 
++    // tdf#120764 It isn't allowed under wayland to have two visible popups that share
++    // the same top level parent. The problem is that since gtk 3.24 tooltips are also
++    // implemented as popups, which means that we cannot show any popup if there is a
++    // visible tooltip. In fact, gtk will hide the tooltip by itself after this handler,
++    // in case of a button press event. But if we intend to show a popup on button press
++    // it will be too late, so just do it here:
++    if (pEvent->type == GDK_BUTTON_PRESS)
++        pThis->HideTooltip();
++
+     SalMouseEvent aEvent;
+     SalEvent nEventType = SalEvent::NONE;
+     switch( pEvent->type )
+-- 
+2.17.1
+

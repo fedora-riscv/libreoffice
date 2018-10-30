@@ -16,10 +16,12 @@
 %if 0%{?rhel} && 0%{?rhel} < 8
 %global libo_use_python3 %{nil}
 %global libo_python python
+%global libo_python_executable %{__python2}
 %global libo_python_sitearch %{python_sitearch}
 %else
 %global libo_use_python3 1
 %global libo_python python3
+%global libo_python_executable %{__python3}
 %global libo_python_sitearch %{python3_sitearch}
 %endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
@@ -62,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -216,7 +218,7 @@ BuildRequires: pkgconfig(xmlsec1-nss)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: unixODBC-devel
-BuildRequires: /usr/bin/python
+BuildRequires: %{libo_python_executable}
 
 # libs / headers - conditional
 %if 0%{?fedora}
@@ -268,6 +270,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
+Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -351,7 +354,7 @@ The shared core libraries and support files for LibreOffice.
 Summary: Python support for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{libo_python}%{?_isa}
+Requires: %{libo_python_executable}
 
 %description pyuno
 Python bindings for the LibreOffice UNO component model. Allows scripts both
@@ -2303,6 +2306,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 30 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-2
+- Related: rhbz#1644128 gtk tooltip problems
+
 * Wed Oct 10 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-1
 - latest version
 - rhbz#1637848 keep Supplements but not Recommends

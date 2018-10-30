@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -279,6 +279,7 @@ Patch2: 0001-gtk3-only-for-3.20.patch
 Patch3: 0001-Update-mdds-to-1.4.1.patch
 Patch4: 0001-Update-orcus-to-0.14.0.patch
 %endif
+Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2314,6 +2315,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 30 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-2
+- Related: rhbz#1644128 gtk tooltip problems
+
 * Wed Oct 10 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-1
 - latest version
 - rhbz#1637848 keep Supplements but not Recommends

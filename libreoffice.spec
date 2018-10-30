@@ -13,17 +13,9 @@
 %if 0%{?fedora}
 %global vendoroption --with-vendor="The Fedora Project"
 %endif
-%if 0%{?rhel} && 0%{?rhel} < 8
-%global libo_use_python3 %{nil}
-%global libo_python python
-%global libo_python_executable %{__python2}
-%global libo_python_sitearch %{python_sitearch}
-%else
-%global libo_use_python3 1
 %global libo_python python3
 %global libo_python_executable %{__python3}
 %global libo_python_sitearch %{python3_sitearch}
-%endif
 # rhbz#465664 jar-repacking breaks help by reordering META-INF/MANIFEST.MF
 %global __jar_repack %{nil}
 # make it easier to download sources from pre-release site
@@ -34,12 +26,6 @@
 %endif
 # URL for external projects' tarballs
 %global external_url http://dev-www.libreoffice.org/src
-%if 0%{?rhel} && 0%{?rhel} < 8
-%nil
-%else
-%global weak_deps 1
-%global file_triggers 1
-%endif
 %global girapiversion 0.1
 
 # get english only and no-langpacks for a faster smoketest build
@@ -64,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -98,33 +84,6 @@ Source45:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/
 Source46:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-main-symbolic.svg
 Source47:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-math-symbolic.svg
 Source48:       https://raw.githubusercontent.com/gnome-design-team/gnome-icons/master/apps-symbolic/Adwaita/scalable/apps/libreoffice-writer-symbolic.svg
-
-%if 0%{?rhel}
-
-%if 0%{?rhel} < 8
-Source200:      %{external_url}/mdds-1.3.1.tar.bz2
-Source201:      %{external_url}/harfbuzz-1.7.0.tar.bz2
-Source202:      %{external_url}/graphite2-minimal-1.3.10.tgz
-Source203:      %{external_url}/gpgme-1.9.0.tar.bz2
-Source204:      %{external_url}/libgpg-error-1.27.tar.bz2
-Source205:      %{external_url}/libassuan-2.4.3.tar.bz2
-Source206:      %{external_url}/cppunit-1.14.0.tar.gz
-Source207:      %{external_url}/libqxp-0.0.1.tar.xz
-Source208:      %{external_url}/libepubgen-0.1.0.tar.bz2
-Source209:      %{external_url}/liborcus-0.13.3.tar.gz
-%global bundling_options %{?bundling_options} --without-system-mdds --without-system-harfbuzz --without-system-graphite --without-system-gpgmepp --without-system-cppunit --without-system-libqxp --without-system-libepubgen --without-system-orcus
-
-Provides: bundled(gpgme) = 1.9.0
-Provides: bundled(graphite2) = 1.3.10
-Provides: bundled(harfbuzz) = 1.7.0
-Provides: bundled(libassuan) = 2.4.3
-Provides: bundled(libepubgen) = 0.1.0
-Provides: bundled(libgpg-error) = 1.27
-Provides: bundled(liborcus) = 0.13.3
-Provides: bundled(libqxp) = 0.0.1
-Provides: bundled(mdds) = 1.3.1
-%endif
-%endif
 
 # build tools
 BuildRequires: autoconf
@@ -226,9 +185,6 @@ BuildRequires: kdelibs4-devel
 BuildRequires: pkgconfig(libe-book-0.1)
 %endif
 
-%if 0%{?rhel} && 0%{?rhel} < 8
-%nil
-%else
 BuildRequires: gpgmepp-devel
 BuildRequires: pkgconfig(cppunit) >= 1.14.0
 BuildRequires: pkgconfig(graphite2)
@@ -236,15 +192,9 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
-%if 0%{?rhel}
-BuildRequires: pkgconfig(liborcus-0.13)
-BuildRequires: pkgconfig(mdds-1.2)
-%else
 BuildRequires: pkgconfig(liborcus-0.14)
 BuildRequires: pkgconfig(mdds-1.4)
-%endif
 BuildRequires: libnumbertext-devel
-%endif
 
 # java stuff
 BuildRequires: ant
@@ -274,12 +224,9 @@ Patch0: 0001-don-t-suppress-crashes.patch
 # not upstreamed
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
-Patch2: 0001-gtk3-only-for-3.20.patch
-%if !0%{?rhel}
-Patch3: 0001-Update-mdds-to-1.4.1.patch
-Patch4: 0001-Update-orcus-to-0.14.0.patch
-%endif
-Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
+Patch2: 0001-Update-mdds-to-1.4.1.patch
+Patch3: 0001-Update-orcus-to-0.14.0.patch
+Patch4: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -297,13 +244,6 @@ Patch500: 0001-disable-libe-book-support.patch
 %global name %{name}-data
 %global lodatadocdir %{_pkgdocdir}
 %global name %{oldname}
-
-# rhbz#1085420 make sure we do not provide bundled libraries
-%if 0%{?rhel} && 0%{?rhel} < 8
-%global libo_bundled_libs_filter ^liborcus(-parser)?-0\\.13\\.so.*$
-%global __provides_exclude %{libo_bundled_libs_filter}
-%global __requires_exclude %{libo_bundled_libs_filter}
-%endif
 
 %if 0%{?__isa_bits} == 64
 %global mark64 ()(64bit)
@@ -338,14 +278,7 @@ Summary: Core modules for LibreOffice
 Requires: %{name}-%{fontname}-fonts = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
 Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-%else
-# these two plugins used to be part of core--keep it that way
-Requires: %{name}-gtk2%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-gtk3%{?_isa} = %{epoch}:%{version}-%{release}
-%endif
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
@@ -626,9 +559,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
 Supplements: (%{name}-core%{?_isa} and Xserver)
-%endif
 
 %description x11
 A plug-in for LibreOffice that enables generic X11 support.
@@ -640,9 +571,7 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
 Supplements: (%{name}-core%{?_isa} and gtk2%{?_isa})
-%endif
 
 %description gtk2
 A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
@@ -652,9 +581,7 @@ Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
-%if 0%{?weak_deps}
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
-%endif
 
 %description gtk3
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
@@ -700,9 +627,7 @@ Summary: Additional support for debugging with gdb
 Requires: gdb%{?_isa}
 Requires: %{libo_python}-six
 Requires: libreoffice-core%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?weak_deps}
 Supplements: libreoffice-debuginfo%{?_isa}
-%endif
 
 %description gdb-debug-support
 This package provides gdb pretty printers for package %{name}.
@@ -786,11 +711,9 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-r:Requires: %{-r*}} \
 %{-p:Provides: %{name}-langpack-%{-p*} = %{epoch}:%{version}-%{release}} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
-%if 0%{?weak_deps} \
 %{-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{lang})} \
 %{-T:Requires: %{name}-help-%{lang}} \
-%endif \
 \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for LibreOffice. \
@@ -1068,19 +991,13 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --enable-python=system --with-system-ucpp
+%define distrooptions --disable-eot
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4 --with-system-ucpp
+%define distrooptions --enable-eot --enable-kde4
 %endif
 
 %if %{with langpacks}
 %define with_lang --with-lang='%{langpack_langs}'
-%endif
-
-%if ! 0%{libo_use_python3}
-export PYTHON=%{_bindir}/python
-export PYTHON_CFLAGS=`pkg-config --cflags python`
-export PYTHON_LIBS=`pkg-config --libs python`
 %endif
 
 aclocal -I m4
@@ -1123,6 +1040,8 @@ touch autogen.lastrun
  --without-lxml \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
+ --enable-python=system \
+ --with-system-ucpp \
  %{distrooptions} \
  %{?bundling_options} \
  %{?archoptions}
@@ -1621,12 +1540,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
 %{baseinstdir}/program/libxoflo.so
-%if 0%{?rhel} && 0%{?rhel} < 8
-%{baseinstdir}/program/libassuan.so.0
-%{baseinstdir}/program/libgpg-error.so.0
-%{baseinstdir}/program/libgpgme.so.11
-%{baseinstdir}/program/libgpgmepp.so.6
-%endif
 %{baseinstdir}/program/libxsec_xmlsec.so
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
@@ -1854,14 +1767,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/ooffice.1*
 %{_mandir}/man1/ooviewdoc.1*
 
-%if ! 0%{?file_triggers}
-%post core
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun core
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
-
 %files base
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
@@ -1883,14 +1788,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-base.desktop
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
-
-%if ! 0%{?file_triggers}
-%post base
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun base
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
 
 %files bsh
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
@@ -1968,10 +1865,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{baseinstdir}/program/libdatelo.so
 %{baseinstdir}/program/libforlo.so
 %{baseinstdir}/program/libforuilo.so
-%if 0%{?rhel} && 0%{?rhel} < 8
-%{baseinstdir}/program/liborcus-0.13.so.*
-%{baseinstdir}/program/liborcus-parser-0.13.so.*
-%endif
 %{baseinstdir}/program/libnumbertextlo.so
 %{baseinstdir}/program/libpricinglo.so
 %{baseinstdir}/program/libsclo.so
@@ -1990,14 +1883,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oocalc
 %{_mandir}/man1/oocalc.1*
 
-%if ! 0%{?file_triggers}
-%post calc
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun calc
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
-
 %files draw
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
@@ -2006,14 +1891,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-draw.desktop
 %{_bindir}/oodraw
 %{_mandir}/man1/oodraw.1*
-
-%if ! 0%{?file_triggers}
-%post draw
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun draw
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
 
 %files emailmerge
 %{baseinstdir}/program/mailmerge.py*
@@ -2040,14 +1917,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/oowriter
 %{_mandir}/man1/oowriter.1*
 
-%if ! 0%{?file_triggers}
-%post writer
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun writer
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
-
 %files impress
 %if 0%{?fedora}
 %{baseinstdir}/program/impress.abignore
@@ -2068,14 +1937,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_bindir}/ooimpress
 %{_mandir}/man1/ooimpress.1*
 
-%if ! 0%{?file_triggers}
-%post impress
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun impress
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
-
 %files math
 %if 0%{?fedora}
 %{baseinstdir}/program/math.abignore
@@ -2087,14 +1948,6 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{_datadir}/applications/libreoffice-math.desktop
 %{_bindir}/oomath
 %{_mandir}/man1/oomath.1*
-
-%if ! 0%{?file_triggers}
-%post math
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-
-%postun math
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-%endif
 
 %files graphicfilter
 %if 0%{?fedora}
@@ -2213,11 +2066,9 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %{libo_python_sitearch}/officehelper.py*
-%if 0%{libo_use_python3}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %{libo_python_sitearch}/__pycache__/officehelper.cpython-*
-%endif
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %files librelogo
@@ -2246,19 +2097,12 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 %license instdir/LICENSE
 
 %post data
-%if ! 0%{?file_triggers}
-touch --no-create %{_datadir}/mime/packages &> /dev/null || :
-%endif
 for theme in hicolor locolor; do
     touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
 done
 
 %postun data
 if [ $1 -eq 0 ] ; then
-%if ! 0%{?file_triggers}
-    touch --no-create %{_datadir}/mime/packages &> /dev/null || :
-    update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-%endif
     for theme in hicolor locolor; do
         touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
         gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
@@ -2266,9 +2110,6 @@ if [ $1 -eq 0 ] ; then
 fi
 
 %posttrans data
-%if ! 0%{?file_triggers}
-update-mime-database %{?fedora:-n} %{_datadir}/mime &> /dev/null || :
-%endif
 for theme in hicolor locolor; do
     gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
 done
@@ -2315,6 +2156,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Nov 07 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-3
+- drop rhel 7 conditionals
+
 * Tue Oct 30 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-2
 - Related: rhbz#1644128 gtk tooltip problems
 

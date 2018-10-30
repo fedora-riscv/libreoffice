@@ -64,7 +64,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -284,6 +284,7 @@ Patch13: 0001-cov-scan-help-warnings.patch
 Patch14: 0001-cov-scan-warnings.patch
 Patch15: 0001-cannot-interact-with-chart-sidebar-as-the-previous-d.patch
 Patch16: 0001-tdf-120376-sd-fix-duplicated-styles-on-copy-paste.patch
+Patch17: 0001-Resolves-rhbz-1610692-rectangles-ctor-takes-topleft-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2329,6 +2330,11 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 30 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.2-4
+- rhbz#1644232 silence annoying
+  'gtk_widget_queue_draw_area: assertion 'height >= 0' failed'
+  warning
+
 * Sat Oct 27 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.0.6.2-3
 - tdf#120376 fix duplicated styles on copy paste in draw
 

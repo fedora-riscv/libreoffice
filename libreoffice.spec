@@ -861,6 +861,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l de -n German -F -H -Y -M -A -T -X
 %langpack -l dz -n Dzongkha -F -s ctl -T
 %langpack -l el -n Greek -F -H -Y -M -A -T
+%langpack -l eo -n Esperanto -F -H -M -T -X
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
 %langpack -l et -n Estonian -F -H -Y -T
 %langpack -l eu -n Basque -F -H -Y -T

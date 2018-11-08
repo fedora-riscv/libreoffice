@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -564,23 +564,12 @@ Supplements: (%{name}-core%{?_isa} and Xserver)
 %description x11
 A plug-in for LibreOffice that enables generic X11 support.
 
-%package gtk2
-Summary: LibreOffice GTK+ 2 integration plug-in
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-x11%{?_isa} = %{epoch}:%{version}-%{release}
-Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
-Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-Supplements: (%{name}-core%{?_isa} and gtk2%{?_isa})
-
-%description gtk2
-A plug-in for LibreOffice that enables integration into GTK+ 2 environment.
-
 %package gtk3
 Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
+Obsoletes: libreoffice-gtk2 < 1:6.1.2.1-3
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
@@ -1019,6 +1008,7 @@ touch autogen.lastrun
  --disable-openssl \
  --disable-pdfium \
  --disable-systray \
+ --disable-gtk \
  --enable-dconf \
  --enable-evolution2 \
  --enable-ext-nlpsolver \
@@ -1299,7 +1289,7 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 %if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
-for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk2 gtk3 kde4 libreofficekit; do
+for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk3 kde4 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
 [suppress_file]
 file_name_not_regexp=.*\.so\.[0-9]+
@@ -2120,12 +2110,6 @@ done
 %endif
 %{baseinstdir}/program/libvclplug_genlo.so
 
-%files gtk2
-%if 0%{?fedora}
-%{baseinstdir}/program/gtk2.abignore
-%endif
-%{baseinstdir}/program/libvclplug_gtklo.so
-
 %files gtk3
 %if 0%{?fedora}
 %{baseinstdir}/program/gtk3.abignore
@@ -2156,6 +2140,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 08 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-4
+- drop gtk2 support and obsolete it
+
 * Wed Nov 07 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-3
 - drop rhel 7 conditionals
 

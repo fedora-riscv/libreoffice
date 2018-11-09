@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -269,6 +269,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
 Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
+Patch6: 0001-blacklist-svMatrix-for-calc-threaded-calculation.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2304,6 +2305,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Nov 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-3
+- Related: rhbz#1645905 oom with threaded calculation
+
 * Tue Oct 30 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-2
 - Related: rhbz#1644128 gtk tooltip problems
 

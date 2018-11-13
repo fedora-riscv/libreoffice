@@ -1624,7 +1624,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libvbaeventslo.so
 %{baseinstdir}/program/libvclcanvaslo.so
 %{baseinstdir}/program/versionrc
-%{baseinstdir}/program/xid-fullscreen-on-all-monitors
 %dir %{baseinstdir}/share
 %dir %{baseinstdir}/share/classification
 %{baseinstdir}/share/classification/example*.xml

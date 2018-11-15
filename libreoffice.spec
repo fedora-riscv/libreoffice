@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -186,6 +186,14 @@ BuildRequires: %{libo_python_executable}
 %if 0%{?fedora}
 BuildRequires: kdelibs4-devel
 BuildRequires: pkgconfig(libe-book-0.1)
+BuildRequires: qt5-qtbase-devel
+BuildRequires: qt5-qtx11extras-devel
+BuildRequires: kf5-kconfig-devel
+BuildRequires: kf5-kcoreaddons-devel
+BuildRequires: kf5-kdelibs4support-devel
+BuildRequires: kf5-ki18n-devel
+BuildRequires: kf5-kio-devel
+BuildRequires: kf5-kwindowsystem-devel
 %endif
 
 BuildRequires: gpgmepp-devel
@@ -582,14 +590,25 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 %if 0%{?fedora}
 
 %package kde4
-Summary: LibreOffice KDE integration plug-in
+Summary: LibreOffice KDE4 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description kde4
-A plug-in for LibreOffice that enables integration into the KDE desktop environment.
+A plug-in for LibreOffice that enables integration into the KDE4 desktop environment.
+
+%package kf5
+Summary: LibreOffice KDE Frameworks 5 integration plug-in
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
+Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+#Supplements: (libreoffice-core and plasma-workspace)
+
+%description kf5
+A plug-in for LibreOffice that enables integration into the KDE Frameworks 5.
 
 %endif
 
@@ -986,7 +1005,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %define distrooptions --disable-eot
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4
+%define distrooptions --enable-eot --enable-kde4 --enable-gtk3-kde5
 %endif
 
 %if %{with langpacks}
@@ -2128,6 +2147,10 @@ done
 %{baseinstdir}/program/libkde4be1lo.so
 %{baseinstdir}/program/libvclplug_kde4lo.so
 
+%files kf5
+%{baseinstdir}/program/libvclplug_gtk3_kde5lo.so
+%{baseinstdir}/program/lo_kde5filepicker
+
 %endif
 
 %files -n libreofficekit
@@ -2143,6 +2166,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Nov 14 2018 Rex Dieter <rdieter@fedoraproject.org> - 1:6.1.2-6
+- -kf5 subpackage: include support for --enable-gtk3-kde5 (#1647233)
+- -kde4: adjust summary/description s/KDE/KDE4/
+
 * Tue Nov 13 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-5
 - Rebuild for hunspell 1.7.0
 

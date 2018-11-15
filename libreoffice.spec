@@ -1,3 +1,7 @@
+# This package depends on automagic byte compilation
+# https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_2
+%global _python_bytecompile_extra 1
+
 # download path contains version without the last (fourth) digit
 %global libo_version 6.1.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually

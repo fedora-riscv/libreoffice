@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -581,7 +581,7 @@ Summary: LibreOffice GTK+ 3 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
-Obsoletes: libreoffice-gtk2 < 1:6.1.2.1-3
+Obsoletes: libreoffice-gtk2 < 1:6.2.0.0
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
@@ -2166,6 +2166,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-7
+- Resolves: rhbz#1651469 improve obsoletes
+
 * Wed Nov 14 2018 Rex Dieter <rdieter@fedoraproject.org> - 1:6.1.2-6
 - -kf5 subpackage: include support for --enable-gtk3-kde5 (#1647233)
 - -kde4: adjust summary/description s/KDE/KDE4/

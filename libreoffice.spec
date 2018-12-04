@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -725,7 +725,11 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-p:Provides: %{name}-langpack-%{-p*}%{?_isa} = %{epoch}:%{version}-%{release}} \
 %{-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{lang})} \
+%if 0%{?rhel} \
 %{-T:Requires: %{name}-help-%{lang}} \
+%else \
+%{-T:Recommends: %{name}-help-%{lang}} \
+%endif \
 \
 %description %{pkgname} \
 Provides additional %{langname} translations and resources for LibreOffice. \
@@ -2166,6 +2170,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Dec 04 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-8
+- Resolves: rhbz#1639174 desire to block en-help install
+
 * Tue Nov 20 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-7
 - Resolves: rhbz#1651469 improve obsoletes
 

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -780,7 +780,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %if 0%{?weak_deps} \
 %{-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{-p*})} \
 %{!-p:Supplements: (%{name}-core%{?_isa} and langpacks-%{lang})} \
-%{-T:Requires: %{name}-help-%{lang}} \
+%{-T:Recommends: %{name}-help-%{lang}} \
 %endif \
 \
 %description %{pkgname} \
@@ -2306,6 +2306,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Dec 04 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-4
+- Resolves: rhbz#1639174 desire to block en-help install
+
 * Fri Nov 09 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-3
 - Related: rhbz#1645905 oom with threaded calculation
 

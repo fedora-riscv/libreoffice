@@ -1,0 +1,73 @@
+From 08755c7f3c285576ba29fe8dd875b18d0792de39 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 4 Dec 2018 13:01:14 +0000
+Subject: [PATCH] tdf#121855 like osx case don't search near-infinite calc grid
+ for focus
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Ie6bccd2781fbbdc5f4d5dc2eb6903191aafe8265
+Reviewed-on: https://gerrit.libreoffice.org/64520
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit cd0c794a6cfaf9c008682596d2cdae6aa57c8bbf)
+---
+ vcl/osx/a11ywrapper.mm        | 2 +-
+ vcl/unx/gtk/gtksalframe.cxx   | 7 +++++++
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 7 +++++++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/osx/a11ywrapper.mm b/vcl/osx/a11ywrapper.mm
+index 67e155e81e53..b35a1d22745d 100644
+--- a/vcl/osx/a11ywrapper.mm
++++ b/vcl/osx/a11ywrapper.mm
+@@ -992,7 +992,7 @@ Reference < XAccessibleContext > hitTestRunner ( css::awt::Point point,
+             bool bSafeToIterate = true;
+             sal_Int32 nCount = rxAccessibleContext -> getAccessibleChildCount();
+ 
+-            if ( nCount < 0 || nCount > SAL_MAX_UINT16 /* slow enough for anyone */ )
++            if (nCount < 0 || nCount > SAL_MAX_UINT16 /* slow enough for anyone */)
+                 bSafeToIterate = false;
+             else { // manages descendants is an horror from the a11y standards guys.
+                 Reference< XAccessibleStateSet > xStateSet;
+diff --git a/vcl/unx/gtk/gtksalframe.cxx b/vcl/unx/gtk/gtksalframe.cxx
+index 16e716b16daa..56cb33520443 100644
+--- a/vcl/unx/gtk/gtksalframe.cxx
++++ b/vcl/unx/gtk/gtksalframe.cxx
+@@ -3666,6 +3666,13 @@ uno::Reference<accessibility::XAccessibleEditableText>
+         }
+     }
+ 
++    bool bSafeToIterate = true;
++    sal_Int32 nCount = xContext->getAccessibleChildCount();
++    if (nCount < 0 || nCount > SAL_MAX_UINT16 /* slow enough for anyone */)
++        bSafeToIterate = false;
++    if (!bSafeToIterate)
++        return uno::Reference< accessibility::XAccessibleEditableText >();
++
+     for (sal_Int32 i = 0; i < xContext->getAccessibleChildCount(); ++i)
+     {
+         uno::Reference< accessibility::XAccessible > xChild = xContext->getAccessibleChild(i);
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 71ab50efc813..95e616473608 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -4213,6 +4213,13 @@ uno::Reference<accessibility::XAccessibleEditableText>
+         }
+     }
+ 
++    bool bSafeToIterate = true;
++    sal_Int32 nCount = xContext->getAccessibleChildCount();
++    if (nCount < 0 || nCount > SAL_MAX_UINT16 /* slow enough for anyone */)
++        bSafeToIterate = false;
++    if (!bSafeToIterate)
++        return uno::Reference< accessibility::XAccessibleEditableText >();
++
+     for (sal_Int32 i = 0; i < xContext->getAccessibleChildCount(); ++i)
+     {
+         uno::Reference< accessibility::XAccessible > xChild = xContext->getAccessibleChild(i);
+-- 
+2.19.2
+

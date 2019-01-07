@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.1.2
+%global libo_version 6.1.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -61,8 +61,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -270,6 +270,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-gtk3-only-for-3.20.patch
 Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
 Patch6: 0001-blacklist-svMatrix-for-calc-threaded-calculation.patch
+Patch7: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2306,6 +2307,11 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jan 07 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.4.2-1
+- latest version
+- Resolves: rhbz#1662616 crash in macro dialog editor
+- Resolves: rhbz#1662512 a11y freeze in calc
+
 * Tue Dec 04 2018 Caolán McNamara <caolanm@redhat.com> - 1:6.1.2.1-4
 - Resolves: rhbz#1639174 desire to block en-help install
 

@@ -268,9 +268,8 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
-Patch5: 0001-tdf-120764-Toolbar-popups-sometimes-not-showing-unde.patch
-Patch6: 0001-blacklist-svMatrix-for-calc-threaded-calculation.patch
-Patch7: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
+Patch3: 0001-blacklist-svMatrix-for-calc-threaded-calculation.patch
+Patch4: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
 
 %if 0%{?rhel}
 # not upstreamed

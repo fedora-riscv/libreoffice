@@ -110,6 +110,7 @@ BuildRequires: libtool-ltdl-devel
 BuildRequires: make
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}
+BuildRequires: glibc-all-langpacks
 BuildRequires: libappstream-glib
 %endif
 BuildRequires: ucpp

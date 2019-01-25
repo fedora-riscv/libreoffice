@@ -3,6 +3,7 @@ From: =?UTF-8?q?Bj=C3=B6rn=20Esser?= <besser82@fedoraproject.org>
 Date: Fri, 25 Jan 2019 21:56:28 +0100
 Subject: [PATCH] Fix build with poppler-0.73.0
 
+Code by Marek Kasik.
 ---
  .../pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx  | 30 +++++++++----------
  .../pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx  | 30 +++++++++----------
@@ -49,6 +50,15 @@ index 06e4faead..6d196d7d1 100644
 +        const char* pURI = static_cast<LinkURI*>(pAction)->getURI()->c_str();
  
          std::vector<char> aEsc( lcl_escapeLineFeeds(pURI) );
+ 
+@@ -578,7 +578,7 @@ void PDFOutDev::restoreState(GfxState*)
+     printf( "restoreState\n" );
+ }
+ 
+-void PDFOutDev::setDefaultCTM(double *pMat)
++void PDFOutDev::setDefaultCTM(const double *pMat)
+ {
+     assert(pMat);
  
 @@ -753,7 +753,7 @@ void PDFOutDev::updateFont(GfxState *state)
  
@@ -123,7 +133,7 @@ diff --git a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx b/sdext/sourc
 index 7e65f085d..2dd2fff96 100644
 --- a/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx
 +++ b/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.hxx
-@@ -151,17 +151,17 @@ namespace pdfi
+@@ -151,22 +151,22 @@ namespace pdfi
  
          // Does this device use upside-down coordinates?
          // (Upside-down means (0,0) is the top left corner of the page.)
@@ -145,6 +155,12 @@ index 7e65f085d..2dd2fff96 100644
  
          //----- initialization and control
  
+         // Set default transform matrix.
+-        virtual void setDefaultCTM(double *ctm) override;
++        virtual void setDefaultCTM(const double *ctm) override;
+ 
+         // Start a page.
+         virtual void startPage(int pageNum, GfxState *state
 @@ -233,40 +233,40 @@ namespace pdfi
  
          //----- image drawing

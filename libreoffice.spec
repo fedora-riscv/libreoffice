@@ -239,7 +239,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-Update-mdds-to-1.4.1.patch
 Patch3: 0001-Update-orcus-to-0.14.0.patch
 Patch4: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
-Patch5: libreoffice-poppler-0.73.0.patch
+Patch5: 0001-Fix-build-with-poppler-0.73.0.patch
 
 %if 0%{?rhel}
 # not upstreamed

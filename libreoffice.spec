@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -240,6 +240,7 @@ Patch2: 0001-Update-mdds-to-1.4.1.patch
 Patch3: 0001-Update-orcus-to-0.14.0.patch
 Patch4: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
 Patch5: 0001-Fix-build-with-poppler-0.73.0.patch
+Patch6: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2172,6 +2173,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jan 31 2019 Kalev Lember <klember@redhat.com> - 1:6.1.4.2-4
+- Rebuilt for Boost 1.69
+
 * Sat Jan 26 2019 Marek Kasik <mkasik@redhat.com> - 1:6.1.4.2-3
 - Additional fixes needed for rebuild
 

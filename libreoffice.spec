@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -269,6 +269,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
 Patch3: 0001-tdf-121855-like-osx-case-don-t-search-near-infinite-.patch
+Patch4: 0001-Resolves-tdf-105602-fix-extended-help-for-non-dispat.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2305,6 +2306,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Feb 01 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.4.2-2
+- Resolves: rhbz#1671340 extended tooltips not working in impress
+
 * Mon Jan 07 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.4.2-1
 - latest version
 - Resolves: rhbz#1662616 crash in macro dialog editor

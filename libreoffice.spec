@@ -283,8 +283,7 @@ Patch12: 0001-implement-pdf-export-of-underline-for-outlined-font.patch
 Patch13: 0001-cov-scan-help-warnings.patch
 Patch14: 0001-cov-scan-warnings.patch
 Patch15: 0001-cannot-interact-with-chart-sidebar-as-the-previous-d.patch
-Patch16: 0001-tdf-120376-sd-fix-duplicated-styles-on-copy-paste.patch
-Patch17: 0001-Resolves-rhbz-1610692-rectangles-ctor-takes-topleft-.patch
+Patch16: 0001-Resolves-rhbz-1610692-rectangles-ctor-takes-topleft-.patch
 
 %if 0%{?rhel}
 # not upstreamed

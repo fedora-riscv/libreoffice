@@ -74,6 +74,7 @@ Source11:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source13:       %{external_url}/49a64f3bcf20a7909ba2751349231d6652ded9cd2840e961b5164d09de3ffa63-opens___.ttf
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
@@ -108,6 +109,7 @@ BuildRequires: gperf
 BuildRequires: icu
 BuildRequires: libtool-ltdl-devel
 BuildRequires: make
+BuildRequires: mariadb-connector-c-devel
 BuildRequires: perl(Digest::MD5)
 %if 0%{?fedora}
 BuildRequires: glibc-all-langpacks
@@ -1510,7 +1512,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/libmtfrendererlo.so
-%{baseinstdir}/program/libmysqllo.so
 %{baseinstdir}/program/libodbclo.so
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
@@ -1567,65 +1568,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmsformslo.so
 %{baseinstdir}/program/opencl
 %dir %{baseinstdir}/program/opengl
-%{baseinstdir}/program/opengl/areaHashCRC64TFragmentShader.glsl
-%{baseinstdir}/program/opengl/areaScaleFragmentShader.glsl
-%{baseinstdir}/program/opengl/areaScaleFastFragmentShader.glsl
-%{baseinstdir}/program/opengl/backgroundFragmentShader.glsl
-%{baseinstdir}/program/opengl/backgroundVertexShader.glsl
-%{baseinstdir}/program/opengl/blendedTextureFragmentShader.glsl
-%{baseinstdir}/program/opengl/blendedTextureVertexShader.glsl
-%{baseinstdir}/program/opengl/combinedFragmentShader.glsl
-%{baseinstdir}/program/opengl/combinedTextureFragmentShader.glsl
-%{baseinstdir}/program/opengl/combinedTextureVertexShader.glsl
-%{baseinstdir}/program/opengl/combinedVertexShader.glsl
-%{baseinstdir}/program/opengl/commonFragmentShader.glsl
-%{baseinstdir}/program/opengl/commonVertexShader.glsl
-%{baseinstdir}/program/opengl/convolutionFragmentShader.glsl
-%{baseinstdir}/program/opengl/debugFragmentShader.glsl
-%{baseinstdir}/program/opengl/debugVertexShader.glsl
-%{baseinstdir}/program/opengl/diffTextureFragmentShader.glsl
-%{baseinstdir}/program/opengl/dumbVertexShader.glsl
-%{baseinstdir}/program/opengl/dummyVertexShader.glsl
-%{baseinstdir}/program/opengl/greyscaleFragmentShader.glsl
-%{baseinstdir}/program/opengl/invert50FragmentShader.glsl
-%{baseinstdir}/program/opengl/lineFragmentShader.glsl
-%{baseinstdir}/program/opengl/lineVertexShader.glsl
-%{baseinstdir}/program/opengl/linearGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/linearMultiColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/linearTwoColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/maskedTextureFragmentShader.glsl
-%{baseinstdir}/program/opengl/maskedTextureVertexShader.glsl
-%{baseinstdir}/program/opengl/maskFragmentShader.glsl
-%{baseinstdir}/program/opengl/pickingFragmentShader.glsl
-%{baseinstdir}/program/opengl/pickingVertexShader.glsl
-%{baseinstdir}/program/opengl/radialGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/radialMultiColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/radialTwoColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/rectangularMultiColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/rectangularTwoColorGradientFragmentShader.glsl
-%{baseinstdir}/program/opengl/renderTextureFragmentShader.glsl
-%{baseinstdir}/program/opengl/renderTextureVertexShader.glsl
-%{baseinstdir}/program/opengl/replaceColorFragmentShader.glsl
-%{baseinstdir}/program/opengl/screenTextFragmentShader.glsl
-%{baseinstdir}/program/opengl/screenTextVertexShader.glsl
-%{baseinstdir}/program/opengl/shape3DFragmentShader.glsl
-%{baseinstdir}/program/opengl/shape3DFragmentShaderBatch.glsl
-%{baseinstdir}/program/opengl/shape3DFragmentShaderBatchScroll.glsl
-%{baseinstdir}/program/opengl/shape3DFragmentShaderV300.glsl
-%{baseinstdir}/program/opengl/shape3DVertexShader.glsl
-%{baseinstdir}/program/opengl/shape3DVertexShaderBatch.glsl
-%{baseinstdir}/program/opengl/shape3DVertexShaderBatchScroll.glsl
-%{baseinstdir}/program/opengl/shape3DVertexShaderV300.glsl
-%{baseinstdir}/program/opengl/solidFragmentShader.glsl
-%{baseinstdir}/program/opengl/symbolFragmentShader.glsl
-%{baseinstdir}/program/opengl/symbolVertexShader.glsl
-%{baseinstdir}/program/opengl/textFragmentShader.glsl
-%{baseinstdir}/program/opengl/textFragmentShaderBatch.glsl
-%{baseinstdir}/program/opengl/textVertexShader.glsl
-%{baseinstdir}/program/opengl/textVertexShaderBatch.glsl
-%{baseinstdir}/program/opengl/textureFragmentShader.glsl
-%{baseinstdir}/program/opengl/textureVertexShader.glsl
-%{baseinstdir}/program/opengl/transformedTextureVertexShader.glsl
+%{baseinstdir}/program/opengl/*.glsl
 %{baseinstdir}/program/types/offapi.rdb
 %{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common

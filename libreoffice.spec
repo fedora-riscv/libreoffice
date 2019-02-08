@@ -1510,6 +1510,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/libmtfrendererlo.so
+%{baseinstdir}/program/libmysql_jdbclo.so
+%{baseinstdir}/program/libmysqlclo.so
 %{baseinstdir}/program/libodbclo.so
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
@@ -1614,6 +1616,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
 %{baseinstdir}/share/config/images_tango.zip
+%{baseinstdir}/share/config/images_breeze_svg.zip
+%{baseinstdir}/share/config/images_colibre_svg.zip
+%{baseinstdir}/share/config/images_elementary_svg.zip
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/*/ui

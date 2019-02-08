@@ -832,7 +832,6 @@ Rules for auto-correcting common %{langname} typing errors. \
 %dir %{_datadir}/autocorr \
 %{-L:%{_datadir}/autocorr/acor_%{lang}.dat} \
 %{!-L:%{_datadir}/autocorr/acor_%{lang}-*.dat} \
-%{-i:%{_datadir}/autocorr/acor_%{-i*}-*.dat} \
 %{nil}
 
 %langpack -l en -n English -F -h en-US -Y -M -A -E -L en-US -T -X -g en_US
@@ -953,8 +952,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l ru -n Russian
 %autocorr -l sk -n Slovak
 %autocorr -l sl -n Slovenian
-#rhbz#452379 clump serbian autocorrections together
-%autocorr -l sr -n Serbian -i sr-Latn -i sr
+%autocorr -l sr -n Serbian
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese

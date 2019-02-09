@@ -880,7 +880,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l cs -n Czech
 %autocorr -l da -n Danish
 %autocorr -l de -n German -L
-%define autocorr_lang Upper Sorbian
+%define autocorr_lang Lower Sorbian
 %autocorr -l dsb -n %{autocorr_lang} -L
 %autocorr -l el -n Greek
 %autocorr -l es -n Spanish -L

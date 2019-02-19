@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -269,6 +269,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-gtk3-only-for-3.20.patch
 Patch3: 0001-Resolves-tdf-105602-fix-extended-help-for-non-dispat.patch
+Patch4: 0001-Related-tdf-121721-use-premultiply-unpremultiply-tab.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2303,6 +2304,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Feb 19 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.5.2-2
+- tdf#121721 speed up gradient drawing
+
 * Thu Feb 07 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.5.2-1
 - latest 6.1 release
 

@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -239,6 +239,8 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # not upstreamed
 Patch2: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
+Patch3: 0001-Resolves-tdf-122623-theme-unwanted-tab-into-invisibi.patch
+Patch4: 0001-tdf-122393-move-to-overflow-row-on-using-left-right-.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2119,6 +2121,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Feb 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.0.3-2
+- Resolves: tdf#122623 theme unwanted tab into invisibilty
+
 * Thu Feb 07 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.0.3-1
 - latest version
 

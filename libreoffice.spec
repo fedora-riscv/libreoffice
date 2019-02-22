@@ -241,7 +241,8 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
 Patch3: 0001-Resolves-tdf-122623-theme-unwanted-tab-into-invisibi.patch
 Patch4: 0001-tdf-122393-move-to-overflow-row-on-using-left-right-.patch
-Patch5: 0001-menu-of-currency-combobox-in-format-cells-is-too-nar.patch
+Patch5: 0001-Resolves-tdf-122467-drop-down-field-name-is-too-narr.patch
+Patch6: 0001-menu-of-currency-combobox-in-format-cells-is-too-nar.patch
 
 %if 0%{?rhel}
 # not upstreamed

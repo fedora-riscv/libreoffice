@@ -2124,7 +2124,7 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Feb 15 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.0.3-4
+* Mon Feb 25 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.0.3-4
 - Related: rhbz#1678319 workaround weird compilation result
 
 * Thu Feb 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.0.3-3

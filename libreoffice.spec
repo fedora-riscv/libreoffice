@@ -241,6 +241,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
 Patch3: 0001-menu-of-currency-combobox-in-format-cells-is-too-nar.patch
 Patch4: 0001-rhbz-1687589-KDE4-gpoll_wrapper-can-be-called-with-S.patch
+Patch5: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
 
 %if 0%{?rhel}
 # not upstreamed

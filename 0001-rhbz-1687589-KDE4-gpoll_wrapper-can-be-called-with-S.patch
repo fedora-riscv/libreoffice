@@ -1,0 +1,47 @@
+From ad313992da1cf89f5825a4d1eb020392b5e32c6d Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 19 Mar 2019 17:29:53 +0100
+Subject: [PATCH] rhbz#1687589: KDE4 gpoll_wrapper can be called with
+ SolarMutex unlocked
+
+...when called from MountOperation::Mount (ucb/source/ucp/gio/gio_content.cxx),
+which itself contains a SolarMutexReleaser since
+2eb36dc4b846ab5886ae71fd2978b56b2a2d1d08 "Hack to not leave SolarMutex released
+after g_main_loop_run call".  So calling SolarMutexReleaser ctor in
+gpoll_wrapper will then cause comphelper::GenericSolarMutex::doRelease
+(comphelper/source/misc/solarmutex.cxx) to call std::abort() because the
+SolarMutex is not locked.
+
+Change-Id: If893b427e404cf3d9e48430f84cff7d32b61bf87
+Reviewed-on: https://gerrit.libreoffice.org/69436
+Tested-by: Jenkins
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+---
+ vcl/unx/kde4/KDEXLib.cxx | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/vcl/unx/kde4/KDEXLib.cxx b/vcl/unx/kde4/KDEXLib.cxx
+index 0852c543a6d7..22274690842b 100644
+--- a/vcl/unx/kde4/KDEXLib.cxx
++++ b/vcl/unx/kde4/KDEXLib.cxx
+@@ -210,8 +210,15 @@ static GPollFunc old_gpoll = nullptr;
+ 
+ static gint gpoll_wrapper( GPollFD* ufds, guint nfds, gint timeout )
+ {
+-    SolarMutexReleaser aReleaser;
+-    return old_gpoll( ufds, nfds, timeout );
++    if (GetSalData()->m_pInstance->GetYieldMutex()->IsCurrentThread())
++    {
++        SolarMutexReleaser aReleaser;
++        return old_gpoll( ufds, nfds, timeout );
++    }
++    else
++    {
++        return old_gpoll( ufds, nfds, timeout );
++    }
+ }
+ #endif
+ 
+-- 
+2.20.1
+

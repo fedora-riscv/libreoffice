@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -242,6 +242,7 @@ Patch2: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
 Patch3: 0001-menu-of-currency-combobox-in-format-cells-is-too-nar.patch
 Patch4: 0001-rhbz-1687589-KDE4-gpoll_wrapper-can-be-called-with-S.patch
 Patch5: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
+Patch6: 0001-rhbz-1690732-basic-font-variation-support.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2122,6 +2123,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Mar 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.1.2-5
+- Resolves: rhbz#1690732 basic font variation support
+
 * Wed Mar 20 2019 Stephan Bergmann <sbergman@redhat.com> - 1:6.2.1.2-4
 - Resolves: rhbz#1687589 KDE4 gpoll_wrapper can be called with SolarMutex locked
 

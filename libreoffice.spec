@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -802,7 +802,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X
 %langpack -l cy -n Welsh -F -H -Y
 %langpack -l da -n Danish -F -H -Y -M -A -T -X
-%langpack -l de -n German -F -H -Y -A -T -X
+%langpack -l de -n German -F -H -Y -M -A -T -X
 %langpack -l dz -n Dzongkha -F -s ctl -T
 %langpack -l el -n Greek -F -H -Y -M -A -T
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
@@ -2123,6 +2123,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Mar 27 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-2
+- Related: rhbz#1692584 mythes-de is available again
+
 * Tue Apr 02 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-1
 - latest stable release
 

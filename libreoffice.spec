@@ -2123,7 +2123,7 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Wed Mar 27 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-2
+* Thu Apr 04 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-2
 - Related: rhbz#1692584 mythes-de is available again
 
 * Tue Apr 02 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-1

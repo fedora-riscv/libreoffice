@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -244,6 +244,7 @@ Patch4: 0001-rhbz-1687589-KDE4-gpoll_wrapper-can-be-called-with-S.patch
 Patch5: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
 Patch6: 0001-rhbz-1690732-basic-font-variation-support.patch
 Patch7: 0001-rhbz-1699347-__glibcxx_requires_subscript-enabled-in.patch
+Patch8: 0001-no-home-as-templates.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2124,6 +2125,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Apr 13 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-4
+- tdf#119890 followup Forbid HOME to be the default dir for templates
+
 * Fri Apr 12 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-3
 - Resolves: rhbz#1699347 __glibcxx_requires_subscript-enabled enabled
 

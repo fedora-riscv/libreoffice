@@ -1186,7 +1186,7 @@ pushd %{buildroot}%{baseinstdir}/share/autocorr
 %make_autocorr_aliases -l nl-NL nl-AW
 %make_autocorr_aliases -l sv-SE sv-FI
 %else
-rm -f acor_[a-df-z]*.dat acor_e[su]*.dat
+rm -f acor_[a-df-z]*.dat acor_e[lsu]*.dat
 %endif
 popd
 #rhbz#484055 make these shared across multiple applications

@@ -1,0 +1,32 @@
+From 222274828b6da2e90de857c0c40c343b9bdd5b2c Mon Sep 17 00:00:00 2001
+From: Milan Crha <mcrha@redhat.com>
+Date: Thu, 25 Apr 2019 08:38:52 +0100
+Subject: [PATCH] Resolves: rhbz#1702810 Prepare for upcoming libebook soname
+ version bump
+
+as noted here:
+https://mail.gnome.org/archives/desktop-devel-list/2019-April/msg00016.html
+
+wrt:
+https://gitlab.gnome.org/GNOME/evolution-data-server/issues/33
+
+Change-Id: I88f900b3adf12de545b1d2d16da67eae22fde748
+---
+ connectivity/source/drivers/evoab2/EApi.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/connectivity/source/drivers/evoab2/EApi.cxx b/connectivity/source/drivers/evoab2/EApi.cxx
+index 41bc62c9ab20..c802778cff2e 100644
+--- a/connectivity/source/drivers/evoab2/EApi.cxx
++++ b/connectivity/source/drivers/evoab2/EApi.cxx
+@@ -21,6 +21,7 @@
+ #define  DECLARE_FN_POINTERS 1
+ #include "EApi.h"
+ static const char *eBookLibNames[] = {
++    "libebook-1.2.so.20", // evolution-data-server 3.33.2+
+     "libebook-1.2.so.19", // evolution-data-server 3.24+
+     "libebook-1.2.so.16",
+     "libebook-1.2.so.15",
+-- 
+2.20.1
+

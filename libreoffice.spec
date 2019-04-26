@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -69,8 +69,10 @@ Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c31
 Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+%if 0%{?fedora}
 Source10:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source11:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
+%endif
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
@@ -78,7 +80,9 @@ Source13:       %{external_url}/49a64f3bcf20a7909ba2751349231d6652ded9cd2840e961
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
+%if 0%{?fedora}
 Provides: bundled(rhino) = 1.5
+%endif
 Provides: bundled(xsltml) = 2.1.2
 
 # symbolic icons
@@ -307,6 +311,10 @@ Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?rhel}
+Obsoletes: libreoffice-bsh < 1:6.2.2.3
+Obsoletes: libreoffice-rhino < 1:6.2.2.3
+%endif
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -336,6 +344,7 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 GUI database front-end for LibreOffice. Allows creation and management of 
 databases through a GUI.
 
+%if 0%{?fedora}
 %package bsh
 Summary: BeanShell support for LibreOffice
 Requires: bsh
@@ -343,6 +352,14 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description bsh
 Support BeanShell scripts in LibreOffice.
+
+%package rhino
+Summary: JavaScript support for LibreOffice
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description rhino
+Support JavaScript scripts in LibreOffice.
+%endif
 
 %package officebean
 Summary: JavaBean for LibreOffice Components
@@ -361,13 +378,6 @@ BuildArch: noarch
 
 %description officebean-common
 Arch-independent part of %{name}-officebean.
-
-%package rhino
-Summary: JavaScript support for LibreOffice
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-
-%description rhino
-Support JavaScript scripts in LibreOffice.
 
 %package wiki-publisher
 Summary: Create Wiki articles on MediaWiki servers with LibreOffice
@@ -1017,7 +1027,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot
+%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
 %else # fedora
 %define distrooptions --enable-eot --enable-kde4 --enable-gtk3-kde5
 %endif
@@ -1761,6 +1771,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
 
+%if 0%{?fedora}
 %files bsh
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
 %{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
@@ -1771,6 +1782,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/classes/ScriptProviderForJavaScript.jar
 %{baseinstdir}/program/services/scriptproviderforjavascript.rdb
 %{baseinstdir}/share/Scripts/javascript
+%endif
 
 %files wiki-publisher
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
@@ -2126,6 +2138,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Apr 26 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-6
+- Related: rhbz#1703375 disable bsh and rhino for rhel
+
 * Thu Apr 25 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-5
 - Resolves: rhbz#1702810 Prepare for upcoming libebook
 

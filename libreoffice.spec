@@ -241,15 +241,10 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 Patch0: 0001-don-t-suppress-crashes.patch
 # not upstreamed
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
-# not upstreamed
-Patch2: 0001-Upgrade-external-boost-to-Boost-1.69.0.patch
-Patch3: 0001-menu-of-currency-combobox-in-format-cells-is-too-nar.patch
-Patch4: 0001-rhbz-1687589-KDE4-gpoll_wrapper-can-be-called-with-S.patch
-Patch5: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
-Patch6: 0001-rhbz-1690732-basic-font-variation-support.patch
-Patch7: 0001-rhbz-1699347-__glibcxx_requires_subscript-enabled-in.patch
-Patch8: 0001-no-home-as-templates.patch
-Patch9: 0001-Resolves-rhbz-1702810-Prepare-for-upcoming-libebook-.patch
+Patch2: 0001-rhbz-1690732-basic-font-variation-support.patch
+Patch3: 0001-rhbz-1699347-__glibcxx_requires_subscript-enabled-in.patch
+Patch4: 0001-no-home-as-templates.patch
+Patch5: 0001-Resolves-rhbz-1702810-Prepare-for-upcoming-libebook-.patch
 
 %if 0%{?rhel}
 # not upstreamed

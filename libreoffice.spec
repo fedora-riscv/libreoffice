@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.2.2
+%global libo_version 6.2.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2138,6 +2138,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Apr 30 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.3.2-1
+- latest stable release
+
 * Fri Apr 26 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.2.2-6
 - Related: rhbz#1703375 disable bsh and rhino for rhel
 

@@ -1508,6 +1508,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libemfiolo.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
+%{baseinstdir}/program/libfirebird_sdbclo.so
 %{baseinstdir}/program/libgielo.so
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libindex_data.so

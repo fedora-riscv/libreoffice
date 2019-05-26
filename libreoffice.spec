@@ -1050,7 +1050,6 @@ touch autogen.lastrun
  --with-parallelism=$SMP_MFLAGS \
  --disable-coinmp \
  --disable-fetch-external \
- --disable-firebird-sdbc \
  --disable-openssl \
  --disable-pdfium \
  --disable-systray \
@@ -2139,6 +2138,7 @@ done
 %changelog
 * Sun May 26 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.3.2-5
 - Resolves: rhbz#1713827 protect against null ViewShell
+- Resolves: rhbz#1713827 stop disabling firebird-sdbc
 
 * Thu May 23 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.3.2-4
 - Resolves: rhbz#1712823 crash in extended tooltips over pattern editor

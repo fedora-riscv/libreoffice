@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -247,6 +247,7 @@ Patch4: 0001-no-home-as-templates.patch
 Patch5: 0001-Resolves-rhbz-1702810-Prepare-for-upcoming-libebook-.patch
 Patch6: 0001-Resolves-rhbz-1712823-prefer-help-strings-to-a11y-st.patch
 Patch7: 0001-Resolves-tdf-125099-round-duration-results-in-interp.patch
+Patch8: 0001-Resolves-rhbz-1713827-protect-against-null-ViewShell.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2136,6 +2137,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun May 26 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.3.2-5
+- Resolves: rhbz#1713827 protect against null ViewShell
+
 * Thu May 23 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.3.2-4
 - Resolves: rhbz#1712823 crash in extended tooltips over pattern editor
 - Resolves: rhbz#1711143 calc not rounding time calculation correctly

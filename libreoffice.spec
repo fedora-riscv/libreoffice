@@ -127,6 +127,7 @@ BuildRequires: %{libo_python}-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
+BuildRequires: firebird-devel
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel

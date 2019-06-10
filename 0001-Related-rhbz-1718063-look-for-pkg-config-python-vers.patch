@@ -1,0 +1,28 @@
+From 8c9cd3856067b8cbac26cb6228b2fce786001a3c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 10 Jun 2019 20:11:48 +0100
+Subject: [PATCH] Related: rhbz#1718063 look for pkg-config
+ python-version-embed
+
+Change-Id: I7048171501e32d29f9d5a58f0d5fc0b96b318a4e
+---
+ configure.ac | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index e14d3b4f4d45..fa58f9ff3591 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8462,6 +8462,9 @@ if test $enable_python = system; then
+         if test -z "$PKG_CONFIG"; then
+             PYTHON_CFLAGS="-I$python_include"
+             PYTHON_LIBS="-L$python_libdir -lpython$python_version $python_libs"
++        elif $PKG_CONFIG --exists python-$python_version-embed; then
++            PYTHON_CFLAGS="`$PKG_CONFIG --cflags python-$python_version-embed`"
++            PYTHON_LIBS="`$PKG_CONFIG --libs python-$python_version-embed` $python_libs"
+         elif $PKG_CONFIG --exists python-$python_version; then
+             PYTHON_CFLAGS="`$PKG_CONFIG --cflags python-$python_version`"
+             PYTHON_LIBS="`$PKG_CONFIG --libs python-$python_version` $python_libs"
+-- 
+2.21.0
+

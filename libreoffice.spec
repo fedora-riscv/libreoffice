@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -732,7 +732,7 @@ This package provides gdb pretty printers for package %{name}.
 Summary: %{langname} language pack for LibreOffice \
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
-%{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
+%{-f:Recommends: langpacks-%{-f*}}%{!-f:%{-F:Recommends: langpacks-%{lang}}} \
 %{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
@@ -853,7 +853,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
@@ -866,7 +866,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn
 %langpack -l ss -n Swati -F -H
 %define langpack_lang Southern Sotho
-%langpack -l st -n %{langpack_lang} -F -H
+# note that langpacks-st seems to be missing as of the time of writing, so no -F here
+%langpack -l st -n %{langpack_lang} -H
 %langpack -l sv -n Swedish -F -H -Y -M -A -T -X
 %langpack -l ta -n Tamil -F -H -Y -s ctl -T
 %langpack -l te -n Telugu -F -H -Y
@@ -878,9 +879,9 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H
 %langpack -l xh -n Xhosa -F -H
 %define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
+%langpack -l zh-Hans -n %{langpack_lang} -f zh_CN -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
 %define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
+%langpack -l zh-Hant -n %{langpack_lang} -f zh_TW -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
 %langpack -l zu -n Zulu -F -H -Y
 %undefine langpack_lang
 
@@ -2137,6 +2138,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jun 11 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-4
+- Resolves: rhbz#1667039 drop Requires: font(:lang=XX) requires in
+  favor of langpacks
+
 * Mon Jun 10 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-3
 - Related: rhbz#1718063 look for pkg-config python-version-embed
 

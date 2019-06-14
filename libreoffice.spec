@@ -248,6 +248,7 @@ Patch4: 0001-Resolves-tdf-125099-round-duration-results-in-interp.patch
 Patch5: 0001-Resolves-rhbz-1713827-protect-against-null-ViewShell.patch
 Patch6: 0001-Resolves-rhbz-1719378-wrong-signature-for-GtkGesture.patch
 Patch7: 0001-tdf-122198-don-t-remove-db-after-close.patch
+Patch8: 0001-Resolves-tdf-125808-empty-labels-in-pivot-table-from.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2142,6 +2143,7 @@ done
 
 %changelog
 * Fri Jun 14 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-4
+- Resolves: tdf#125808 empty labels in pivot table
 - Resolves: rhbz#1720483 make all app rpms depend on pdfimport
 
 * Wed Jun 12 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-3

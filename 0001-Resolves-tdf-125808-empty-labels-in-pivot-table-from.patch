@@ -1,0 +1,43 @@
+From 3a6f6aa7f338c053781a9d19ce8b74d0b3791d03 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 11 Jun 2019 09:44:40 +0100
+Subject: [PATCH] Resolves: tdf#125808 empty labels in pivot table from
+ registered data source
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+since...
+
+commit 238cadd315901cbacfd9304bb1205e9f53f13eae
+Date:   Wed Apr 10 04:30:25 2019 +0530
+
+    dpcache : use case-insensitive normalization of...
+
+Change-Id: I19057bde268ec07561da323bc694536dcad03a95
+Reviewed-on: https://gerrit.libreoffice.org/73806
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sc/source/core/data/dpcache.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sc/source/core/data/dpcache.cxx b/sc/source/core/data/dpcache.cxx
+index 6222ab6ec6b4..3f096f380ad2 100644
+--- a/sc/source/core/data/dpcache.cxx
++++ b/sc/source/core/data/dpcache.cxx
+@@ -367,8 +367,8 @@ std::vector<OUString> normalizeLabels(const std::vector<InitColumnData>& rColDat
+ 
+ std::vector<OUString> normalizeLabels(const ScDPCache::DBConnector& rDB, const sal_Int32 nLabelCount)
+ {
+-    std::vector<OUString> aLabels(nLabelCount+1);
+-    aLabels.push_back(ScResId(STR_PIVOT_DATA));
++    std::vector<OUString> aLabels(1u, ScResId(STR_PIVOT_DATA));
++    aLabels.reserve(nLabelCount + 1);
+ 
+     LabelSet aExistingNames;
+ 
+-- 
+2.20.1
+

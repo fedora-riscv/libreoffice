@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -431,6 +431,7 @@ mathematical symbols.
 Summary: LibreOffice Word Processor Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
+Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -449,6 +450,7 @@ Enables the LibreOffice writer module to mail-merge to email.
 Summary: LibreOffice Spreadsheet Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
+Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -459,8 +461,8 @@ The LibreOffice Spreadsheet application.
 Summary: LibreOffice Drawing Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
-Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -471,6 +473,7 @@ The LibreOffice Drawing Application.
 Summary: LibreOffice Presentation Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
+Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
@@ -481,6 +484,7 @@ The LibreOffice Presentation Application.
 %package math
 Summary: LibreOffice Equation Editor Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -2138,6 +2142,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jun 14 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-5
+- Resolves: rhbz#1720483 make all app rpms depend on pdfimport
+
 * Tue Jun 11 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.4.2-4
 - Resolves: rhbz#1667039 drop Requires: font(:lang=XX) requires in
   favor of langpacks

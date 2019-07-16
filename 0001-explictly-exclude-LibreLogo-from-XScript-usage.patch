@@ -1,0 +1,47 @@
+From 3dd024a28a98a9d4b4efc3c7ec6acaa94d2b25fd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 7 Jun 2019 14:04:07 +0100
+Subject: [PATCH] explictly exclude LibreLogo from XScript usage
+
+Change-Id: I567647f0e2f8b82e4ef2995c673abe82f4564228
+Reviewed-on: https://gerrit.libreoffice.org/73708
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ sfx2/source/doc/objmisc.cxx | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/sfx2/source/doc/objmisc.cxx b/sfx2/source/doc/objmisc.cxx
+index e245800f2fec..beea5170e44d 100644
+--- a/sfx2/source/doc/objmisc.cxx
++++ b/sfx2/source/doc/objmisc.cxx
+@@ -1340,6 +1340,16 @@ namespace
+     }
+ }
+ 
++namespace {
++
++// don't allow LibreLogo to be used with our mouseover/etc dom-alike events
++bool UnTrustedScript(const OUString& rScriptURL)
++{
++    return rScriptURL.startsWithIgnoreAsciiCase("vnd.sun.star.script:LibreLogo");
++}
++
++}
++
+ ErrCode SfxObjectShell::CallXScript( const Reference< XInterface >& _rxScriptContext, const OUString& _rScriptURL,
+     const Sequence< Any >& aParams, Any& aRet, Sequence< sal_Int16 >& aOutParamIndex, Sequence< Any >& aOutParam, bool bRaiseError, const css::uno::Any* pCaller )
+ {
+@@ -1352,6 +1362,9 @@ ErrCode SfxObjectShell::CallXScript( const Reference< XInterface >& _rxScriptCon
+     if ( bIsDocumentScript && !lcl_isScriptAccessAllowed_nothrow( _rxScriptContext ) )
+         return ERRCODE_IO_ACCESSDENIED;
+ 
++    if ( UnTrustedScript(_rScriptURL) )
++        return ERRCODE_IO_ACCESSDENIED;
++
+     bool bCaughtException = false;
+     Any aException;
+     try
+-- 
+2.21.0
+

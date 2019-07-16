@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -273,6 +273,8 @@ Patch4: 0001-Related-tdf-121721-use-premultiply-unpremultiply-tab.patch
 Patch5: 0001-rhbz-1687589-KDE4-gpoll_wrapper-can-be-called-with-S.patch
 Patch6: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
 Patch7: 0001-rhbz-1699347-__glibcxx_requires_subscript-enabled-in.patch
+Patch8: 0001-explictly-exclude-LibreLogo-from-XScript-usage.patch
+Patch9: 0001-More-uses-of-referer-URL-with-SvxBrushItem.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2307,6 +2309,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jul 16 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-2
+- CVE-2019-9848 + CVE-2019-9849
+
 * Wed May 08 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-1
 - last stable 6.1.6 release
 

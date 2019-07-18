@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -240,6 +240,7 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch0: 0001-don-t-suppress-crashes.patch
+Patch1: 0001-missing-LDAP.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1537,7 +1538,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
-%{baseinstdir}/program/librecentfile.so
 %{baseinstdir}/program/libsaxlo.so
 %{baseinstdir}/program/libscnlo.so
 %{baseinstdir}/program/libscriptframe.so
@@ -2134,6 +2134,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jul 18 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-2
+- missing ldap support
+
 * Tue Jul 16 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-1
 - move rawhide to 6.3.0
 

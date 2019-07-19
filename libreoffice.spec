@@ -1345,6 +1345,7 @@ install -m 0644 -p include/LibreOfficeKit/* %{buildroot}%{_includedir}/LibreOffi
 
 rm -rf %{buildroot}%{baseinstdir}/readmes
 rm -rf %{buildroot}%{baseinstdir}/licenses
+rm -rf %{buildroot}%{baseinstdir}/share/theme_definitions
 
 # to-do, remove this in libreoffice 4.4 when --without-ppds is gone, it'll do the right thing on its own then
 install -m 0755 -d %{buildroot}%{baseinstdir}/share/psprint/driver
@@ -1622,10 +1623,13 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_karasa_jaga.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
+%{baseinstdir}/share/config/images_sifr_svg.zip
 %{baseinstdir}/share/config/images_tango.zip
 %{baseinstdir}/share/config/images_breeze_svg.zip
 %{baseinstdir}/share/config/images_colibre_svg.zip
 %{baseinstdir}/share/config/images_elementary_svg.zip
+%dir %{baseinstdir}/share/tipoftheday
+%{baseinstdir}/share/tipoftheday/*.png
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/*/ui
@@ -1710,6 +1714,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/setuprc
 %{baseinstdir}/program/intro.png
 %{baseinstdir}/program/intro-highres.png
+%{baseinstdir}/program/opencltest
 %{baseinstdir}/program/soffice
 %{baseinstdir}/program/soffice.bin
 %{baseinstdir}/program/sofficerc
@@ -2101,7 +2106,9 @@ done
 %if 0%{?fedora}
 %{baseinstdir}/program/kde5.abignore
 %endif
+%{baseinstdir}/program/libkde5be1lo.so
 %{baseinstdir}/program/libvclplug_kde5lo.so
+%{baseinstdir}/program/libvclplug_qt5lo.so
 
 %files kf5
 %{baseinstdir}/program/libvclplug_gtk3_kde5lo.so

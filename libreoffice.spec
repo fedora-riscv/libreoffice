@@ -192,7 +192,6 @@ BuildRequires: %{libo_python_executable}
 
 # libs / headers - conditional
 %if 0%{?fedora}
-BuildRequires: kdelibs4-devel
 BuildRequires: pkgconfig(libe-book-0.1)
 BuildRequires: qt5-qtbase-devel
 BuildRequires: qt5-qtx11extras-devel
@@ -602,15 +601,16 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 
 %if 0%{?fedora}
 
-%package kde4
-Summary: LibreOffice KDE4 integration plug-in
+%package kde5
+Summary: LibreOffice KDE5 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes: libreoffice-kde4 < 1:6.3.0.0
 
-%description kde4
-A plug-in for LibreOffice that enables integration into the KDE4 desktop environment.
+%description kde5
+A plug-in for LibreOffice that enables integration into the KDE5 desktop environment.
 
 %package kf5
 Summary: LibreOffice KDE Frameworks 5 integration plug-in
@@ -1001,13 +1001,6 @@ mv .git .git-rpm
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 
-%if 0%{?fedora}
-# KDE bits
-export QT4DIR=%{_qt4_prefix}
-export KDE4DIR=%{_kde4_prefix}
-export PATH=$QT4DIR/bin:$PATH
-%endif
-
 #use the RPM_OPT_FLAGS but remove the OOo overridden ones
 for i in $RPM_OPT_FLAGS; do
         case "$i" in
@@ -1026,7 +1019,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %if 0%{?rhel}
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
 %else # fedora
-%define distrooptions --enable-eot --enable-kde4 --enable-gtk3-kde5
+%define distrooptions --enable-eot --enable-kde5 --enable-gtk3-kde5
 %endif
 
 %if %{with langpacks}
@@ -1331,7 +1324,7 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 %if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
-for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk3 kde4 libreofficekit; do
+for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk3 kde5 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
 [suppress_file]
 file_name_not_regexp=.*\.so\.[0-9]+
@@ -2105,12 +2098,11 @@ done
 
 %if 0%{?fedora}
 
-%files kde4
+%files kde5
 %if 0%{?fedora}
-%{baseinstdir}/program/kde4.abignore
+%{baseinstdir}/program/kde5.abignore
 %endif
-%{baseinstdir}/program/libkde4be1lo.so
-%{baseinstdir}/program/libvclplug_kde4lo.so
+%{baseinstdir}/program/libvclplug_kde5lo.so
 
 %files kf5
 %{baseinstdir}/program/libvclplug_gtk3_kde5lo.so
@@ -2131,8 +2123,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Jul 18 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-2
+* Fri Jul 19 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-2
 - missing ldap support
+- kde4 support is gone, replace with kde5
 
 * Tue Jul 16 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-1
 - move rawhide to 6.3.0

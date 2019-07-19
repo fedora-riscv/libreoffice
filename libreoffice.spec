@@ -980,7 +980,6 @@ sed -i -e /CppunitTest_services/d postprocess/Module_postprocess.mk # i686
 sed -i -e /CppunitTest_sd_export_ooxml2/d sd/Module_sd.mk # i686
 sed -i -e /CppunitTest_sw_ooxmlexport4/d sw/Module_sw.mk
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
-sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 %if 0%{?rhel}
 sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
 sed -i -e s/CppunitTest_editeng_core// editeng/Module_editeng.mk

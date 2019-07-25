@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2129,6 +2129,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:6.3.0.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Fri Jul 19 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.1-2
 - missing ldap support
 - kde4 support is gone, replace with kde5

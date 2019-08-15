@@ -1,0 +1,68 @@
+From 143eedd298113bb20c2807baa49a4c83c2cef70b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 26 Jul 2019 13:25:31 +0100
+Subject: [PATCH 1/3] decode url escape codes and check each path segment
+
+Change-Id: Ie8f7cef912e8dacbc2a0bca73534a7a242a53ca1
+Reviewed-on: https://gerrit.libreoffice.org/76378
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+Tested-by: Jenkins
+(cherry picked from commit 7942929685fafb0f9c82feb8da7279e5103c87f0)
+Reviewed-on: https://gerrit.libreoffice.org/76451
+Reviewed-by: Thorsten Behrens <Thorsten.Behrens@CIB.de>
+Tested-by: Thorsten Behrens <Thorsten.Behrens@CIB.de>
+---
+ sfx2/source/doc/objmisc.cxx | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/sfx2/source/doc/objmisc.cxx b/sfx2/source/doc/objmisc.cxx
+index 8594e9522e48..7e9288524b34 100644
+--- a/sfx2/source/doc/objmisc.cxx
++++ b/sfx2/source/doc/objmisc.cxx
+@@ -41,6 +41,8 @@
+ #include <com/sun/star/script/provider/XScriptProvider.hpp>
+ #include <com/sun/star/script/provider/XScriptProviderSupplier.hpp>
+ #include <com/sun/star/ucb/SimpleFileAccess.hpp>
++#include <com/sun/star/uri/UriReferenceFactory.hpp>
++#include <com/sun/star/uri/XVndSunStarScriptUrlReference.hpp>
+ #include <com/sun/star/util/XModifiable.hpp>
+ 
+ #include <toolkit/helper/vclunohelper.hxx>
+@@ -1351,7 +1353,33 @@ namespace {
+ // don't allow LibreLogo to be used with our mouseover/etc dom-alike events
+ bool UnTrustedScript(const OUString& rScriptURL)
+ {
+-    return rScriptURL.startsWithIgnoreAsciiCase("vnd.sun.star.script:LibreLogo");
++    if (!rScriptURL.startsWith("vnd.sun.star.script:"))
++        return false;
++
++    // ensure URL Escape Codes are decoded
++    css::uno::Reference<css::uri::XUriReference> uri(
++        css::uri::UriReferenceFactory::create(comphelper::getProcessComponentContext())->parse(rScriptURL));
++    css::uno::Reference<css::uri::XVndSunStarScriptUrl> sfUri(uri, css::uno::UNO_QUERY);
++
++    if (!sfUri.is())
++        return false;
++
++    // pyuno encodes path separator as |
++    OUString sScript = sfUri->getName().replace('|', '/');
++
++    // check if any path portion matches LibreLogo and ban it if it does
++    sal_Int32 nIndex = 0;
++    do
++    {
++        OUString aToken = sScript.getToken(0, '/', nIndex);
++        if (aToken.startsWithIgnoreAsciiCase("LibreLogo"))
++        {
++            return true;
++        }
++    }
++    while (nIndex >= 0);
++
++    return false;
+ }
+ 
+ }
+-- 
+2.21.0
+

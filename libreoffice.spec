@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -275,6 +275,9 @@ Patch6: 0001-rhbz-1690645-null-deref-of-pEntry-when-GetCurEntry-r.patch
 Patch7: 0001-rhbz-1699347-__glibcxx_requires_subscript-enabled-in.patch
 Patch8: 0001-explictly-exclude-LibreLogo-from-XScript-usage.patch
 Patch9: 0001-More-uses-of-referer-URL-with-SvxBrushItem.patch
+Patch10: 0001-decode-url-escape-codes-and-check-each-path-segment.patch
+Patch11: 0002-expand-LibreLogo-check-to-global-events.patch
+Patch12: 0003-keep-name-percent-encoded.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2309,6 +2312,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Aug 15 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-3
+- CVE-2019-9850 + CVE-2019-9851 + CVE-2019-9852
+
 * Tue Jul 16 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-2
 - CVE-2019-9848 + CVE-2019-9849
 

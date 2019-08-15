@@ -1,0 +1,99 @@
+From 292fe2f32df0e9096e63383eb45924eceb2179db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 23 Jul 2019 15:31:05 +0100
+Subject: [PATCH 2/3] expand LibreLogo check to global events
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Reviewed-on: https://gerrit.libreoffice.org/76189
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 4a66c7eda6ccde26a42c4e31725248c59940255d)
+
+Change-Id: I7f436983ba0eb4b76b02d08ee52626e54b103d5f
+Reviewed-on: https://gerrit.libreoffice.org/76305
+Reviewed-by: Thorsten Behrens <Thorsten.Behrens@CIB.de>
+Tested-by: Thorsten Behrens <Thorsten.Behrens@CIB.de>
+---
+ include/sfx2/objsh.hxx               |  2 ++
+ sfx2/source/doc/objmisc.cxx          |  6 +-----
+ sfx2/source/notify/eventsupplier.cxx | 18 ++++++++++++------
+ 3 files changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/include/sfx2/objsh.hxx b/include/sfx2/objsh.hxx
+index d04758567c80..ed09fc6e2acb 100644
+--- a/include/sfx2/objsh.hxx
++++ b/include/sfx2/objsh.hxx
+@@ -404,6 +404,8 @@ public:
+     */
+     bool                        AdjustMacroMode();
+ 
++    static bool                 UnTrustedScript(const OUString& rScriptURL);
++
+     SvKeyValueIterator*         GetHeaderAttributes();
+     void                        ClearHeaderAttributesForSourceViewHack();
+     void                        SetHeaderAttributesForSourceViewHack();
+diff --git a/sfx2/source/doc/objmisc.cxx b/sfx2/source/doc/objmisc.cxx
+index 7e9288524b34..9b82742302ab 100644
+--- a/sfx2/source/doc/objmisc.cxx
++++ b/sfx2/source/doc/objmisc.cxx
+@@ -1348,10 +1348,8 @@ namespace
+     }
+ }
+ 
+-namespace {
+-
+ // don't allow LibreLogo to be used with our mouseover/etc dom-alike events
+-bool UnTrustedScript(const OUString& rScriptURL)
++bool SfxObjectShell::UnTrustedScript(const OUString& rScriptURL)
+ {
+     if (!rScriptURL.startsWith("vnd.sun.star.script:"))
+         return false;
+@@ -1382,8 +1380,6 @@ bool UnTrustedScript(const OUString& rScriptURL)
+     return false;
+ }
+ 
+-}
+-
+ ErrCode SfxObjectShell::CallXScript( const Reference< XInterface >& _rxScriptContext, const OUString& _rScriptURL,
+     const Sequence< Any >& aParams, Any& aRet, Sequence< sal_Int16 >& aOutParamIndex, Sequence< Any >& aOutParam, bool bRaiseError, const css::uno::Any* pCaller )
+ {
+diff --git a/sfx2/source/notify/eventsupplier.cxx b/sfx2/source/notify/eventsupplier.cxx
+index 78667a1d8036..2656e9c213ec 100644
+--- a/sfx2/source/notify/eventsupplier.cxx
++++ b/sfx2/source/notify/eventsupplier.cxx
+@@ -207,18 +207,24 @@ void SfxEvents_Impl::Execute( uno::Any const & aEventData, const document::Docum
+         else if (aType == "Service" ||
+                   aType == "Script")
+         {
+-            if ( !aScript.isEmpty() )
++            bool bAllowed = false;
++            util::URL aURL;
++            if (!aScript.isEmpty())
+             {
+-                SfxViewFrame* pView = pDoc ?
+-                    SfxViewFrame::GetFirst( pDoc ) :
+-                    SfxViewFrame::Current();
+-
+                 uno::Reference < util::XURLTransformer > xTrans( util::URLTransformer::create( ::comphelper::getProcessComponentContext() ) );
+ 
+-                util::URL aURL;
+                 aURL.Complete = aScript;
+                 xTrans->parseStrict( aURL );
+ 
++                bAllowed = !SfxObjectShell::UnTrustedScript(aURL.Complete);
++            }
++
++            if (bAllowed)
++            {
++                SfxViewFrame* pView = pDoc ?
++                    SfxViewFrame::GetFirst( pDoc ) :
++                    SfxViewFrame::Current();
++
+                 uno::Reference
+                     < frame::XDispatchProvider > xProv;
+ 
+-- 
+2.21.0
+

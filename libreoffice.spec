@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2128,6 +2128,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 1:6.3.0.4-2
+- Rebuilt for Python 3.8
+
 * Thu Aug 08 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-1
 - upgrade to RC4
 

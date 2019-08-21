@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -210,8 +210,8 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
-BuildRequires: pkgconfig(liborcus-0.14)
-BuildRequires: pkgconfig(mdds-1.4)
+BuildRequires: pkgconfig(liborcus-0.15)
+BuildRequires: pkgconfig(mdds-1.5)
 BuildRequires: libnumbertext-devel
 
 # java stuff
@@ -239,6 +239,8 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch0: 0001-don-t-suppress-crashes.patch
+# backported
+Patch1: 0001-Switch-mdds-to-1.5.0-and-liborcus-to-0.15.0.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2128,6 +2130,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Aug 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-3
+- Resolves: rhbz#1743894 make build with mdds-1.5
+
 * Mon Aug 19 2019 Miro Hrončok <mhroncok@redhat.com> - 1:6.3.0.4-2
 - Rebuilt for Python 3.8
 

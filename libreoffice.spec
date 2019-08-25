@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -297,6 +297,7 @@ Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
+Requires: firebird
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
@@ -2130,6 +2131,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Aug 25 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-4
+- Resolves: rhbz#1744876 firebird not an automatically dependency
+
 * Wed Aug 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-3
 - Resolves: rhbz#1743894 make build with mdds-1.5
 

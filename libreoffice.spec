@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -239,6 +239,7 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch0: 0001-don-t-suppress-crashes.patch
+Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1417,7 +1418,7 @@ done
 
 %check
 %ifnarch ppc64 s390x aarch64
-# make
+make
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
@@ -2129,6 +2130,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Aug 29 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-3
+- Resolves: rhbz#1736810 disable opencl by default again
+
 * Sun Aug 25 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-2
 - Resolves: rhbz#1744876 firebird not an automatically dependency
 

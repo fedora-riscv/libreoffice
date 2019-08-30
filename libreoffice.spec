@@ -1418,7 +1418,7 @@ done
 
 %check
 %ifnarch ppc64 s390x aarch64
-make
+# make
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif

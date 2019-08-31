@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -299,7 +299,6 @@ Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
-Requires: firebird
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
@@ -326,6 +325,7 @@ to be written in python.
 
 %package base
 Summary: Database front-end for LibreOffice
+Requires: firebird
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
@@ -1500,7 +1500,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libemfiolo.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
-%{baseinstdir}/program/libfirebird_sdbclo.so
 %{baseinstdir}/program/libgielo.so
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libindex_data.so
@@ -1754,6 +1753,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
+%{baseinstdir}/program/libfirebird_sdbclo.so
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so
@@ -2133,6 +2133,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Aug 31 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-6
+- Related: rhbz#1747596 see if a depend on firebird from just base is
+  sufficient
+
 * Thu Aug 29 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.0.4-5
 - Resolves: rhbz#1736810 disable opencl by default again
 

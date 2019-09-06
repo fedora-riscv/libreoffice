@@ -1420,7 +1420,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch ppc64 s390x aarch64
+%ifnarch ppc64 s390x aarch64 armv7hl
 make
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -278,6 +278,8 @@ Patch9: 0001-More-uses-of-referer-URL-with-SvxBrushItem.patch
 Patch10: 0001-decode-url-escape-codes-and-check-each-path-segment.patch
 Patch11: 0002-expand-LibreLogo-check-to-global-events.patch
 Patch12: 0003-keep-name-percent-encoded.patch
+Patch13: 0001-construct-final-url-from-parsed-output.patch
+Patch14: 0002-Improve-check.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2312,6 +2314,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 6 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-4
+- CVE-2019-9854 + CVE-2019-9855
+
 * Thu Aug 15 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-3
 - CVE-2019-9850 + CVE-2019-9851 + CVE-2019-9852
 

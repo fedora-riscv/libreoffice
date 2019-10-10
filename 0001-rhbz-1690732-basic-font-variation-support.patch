@@ -1,4 +1,4 @@
-From f13d0ae5a68c3ae93d2839a1cc8ff3fe96622a6e Mon Sep 17 00:00:00 2001
+From a2e539c921fbfb70cb68fc8a0adf0430c73868ba Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 20 Mar 2019 15:41:20 +0000
 Subject: [PATCH] rhbz#1690732 basic font variation support
@@ -26,7 +26,7 @@ Change-Id: I95ef68aecfd59687ae9aae58e01e394c83c6ea9e
  10 files changed, 129 insertions(+), 36 deletions(-)
 
 diff --git a/vcl/inc/unx/fc_fontoptions.hxx b/vcl/inc/unx/fc_fontoptions.hxx
-index 4e21a4d28c3e..c5ea38ce4f54 100644
+index 4e21a4d..c5ea38c 100644
 --- a/vcl/inc/unx/fc_fontoptions.hxx
 +++ b/vcl/inc/unx/fc_fontoptions.hxx
 @@ -34,7 +34,7 @@ public:
@@ -39,7 +39,7 @@ index 4e21a4d28c3e..c5ea38ce4f54 100644
      static void         cairo_font_options_substitute(FcPattern* pPattern);
  private:
 diff --git a/vcl/inc/unx/fontmanager.hxx b/vcl/inc/unx/fontmanager.hxx
-index e19b5f3fc9ae..d796aba7e944 100644
+index e19b5f3..d796aba 100644
 --- a/vcl/inc/unx/fontmanager.hxx
 +++ b/vcl/inc/unx/fontmanager.hxx
 @@ -131,6 +131,7 @@ class VCL_PLUGIN_PUBLIC PrintFontManager
@@ -70,7 +70,7 @@ index e19b5f3fc9ae..d796aba7e944 100644
      int getFontAscend( fontID nFontID ) const;
  
 diff --git a/vcl/inc/unx/freetype_glyphcache.hxx b/vcl/inc/unx/freetype_glyphcache.hxx
-index 774eec877957..3c09fe9b4157 100644
+index 774eec8..3c09fe9 100644
 --- a/vcl/inc/unx/freetype_glyphcache.hxx
 +++ b/vcl/inc/unx/freetype_glyphcache.hxx
 @@ -55,10 +55,9 @@ private:
@@ -104,7 +104,7 @@ index 774eec877957..3c09fe9b4157 100644
      sal_IntPtr const mnFontId;
      FontAttributes  maDevFontAttributes;
 diff --git a/vcl/inc/unx/glyphcache.hxx b/vcl/inc/unx/glyphcache.hxx
-index 59811d6a144a..77a764e6e058 100644
+index 26f0f8b..15c6e7e 100644
 --- a/vcl/inc/unx/glyphcache.hxx
 +++ b/vcl/inc/unx/glyphcache.hxx
 @@ -57,9 +57,9 @@ public:
@@ -128,16 +128,16 @@ index 59811d6a144a..77a764e6e058 100644
      bool                    TestFont() const { return mbFaceOk;}
      FT_Face                 GetFtFace() const;
      int                     GetLoadFlags() const { return (mnLoadFlags & ~FT_LOAD_IGNORE_TRANSFORM); }
-@@ -117,6 +118,7 @@ public:
- 
-     FreetypeFontInstance*   GetFontInstance() const { return mpFontInstance.get(); }
+@@ -123,6 +124,7 @@ public:
+     // "Improve complex rendering at high ppem"
+     static bool             AlmostHorizontalDrainsRenderingPool();
  
 +    void                    SetFontVariationsOnHBFont(hb_font_t* pHbFace) const;
  private:
      friend class GlyphCache;
      friend class FreetypeFontInstance;
 diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
-index 76598746bec6..7205ef386668 100644
+index 7659874..7205ef3 100644
 --- a/vcl/unx/generic/fontmanager/fontconfig.cxx
 +++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
 @@ -467,6 +467,22 @@ static void lcl_FcFontSetRemove(FcFontSet* pFSet, int i)
@@ -282,7 +282,7 @@ index 76598746bec6..7205ef386668 100644
                      getFontFastInfo( aFont, rInfo );
              }
 diff --git a/vcl/unx/generic/fontmanager/fontmanager.cxx b/vcl/unx/generic/fontmanager/fontmanager.cxx
-index 394c5484a5bd..16e8b786dc88 100644
+index 394c548..16e8b78 100644
 --- a/vcl/unx/generic/fontmanager/fontmanager.cxx
 +++ b/vcl/unx/generic/fontmanager/fontmanager.cxx
 @@ -108,6 +108,7 @@ PrintFontManager::PrintFont::PrintFont()
@@ -334,10 +334,10 @@ index 394c5484a5bd..16e8b786dc88 100644
  {
      typedef struct {
 diff --git a/vcl/unx/generic/gdi/cairotextrender.cxx b/vcl/unx/generic/gdi/cairotextrender.cxx
-index c8956d02226b..f9e6a0a522a1 100644
+index deb956d..03bf4c8 100644
 --- a/vcl/unx/generic/gdi/cairotextrender.cxx
 +++ b/vcl/unx/generic/gdi/cairotextrender.cxx
-@@ -408,12 +408,13 @@ void CairoTextRender::GetDevFontList( PhysicalFontCollection* pFontCollection )
+@@ -428,12 +428,13 @@ void CairoTextRender::GetDevFontList( PhysicalFontCollection* pFontCollection )
  
          // normalize face number to the GlyphCache
          int nFaceNum = rMgr.getFontFaceNumber( aInfo.m_nID );
@@ -353,7 +353,7 @@ index c8956d02226b..f9e6a0a522a1 100644
  
      // announce glyphcache fonts
 diff --git a/vcl/unx/generic/glyphs/freetype_glyphcache.cxx b/vcl/unx/generic/glyphs/freetype_glyphcache.cxx
-index 42bf6d0a98b9..1fcb0938ef77 100644
+index b1e4bad..6317d16 100644
 --- a/vcl/unx/generic/glyphs/freetype_glyphcache.cxx
 +++ b/vcl/unx/generic/glyphs/freetype_glyphcache.cxx
 @@ -47,6 +47,7 @@
@@ -429,7 +429,7 @@ index 42bf6d0a98b9..1fcb0938ef77 100644
  void FreetypeFontInfo::ReleaseFaceFT()
  {
      if (--mnRefCount <= 0)
-@@ -289,8 +329,8 @@ FT_Face FreetypeFont::GetFtFace() const
+@@ -309,8 +349,8 @@ FT_Face FreetypeFont::GetFtFace() const
      return maFaceFT;
  }
  
@@ -440,7 +440,7 @@ index 42bf6d0a98b9..1fcb0938ef77 100644
  {
      if( rNormalizedName.isEmpty() )
          return;
-@@ -299,7 +339,7 @@ void GlyphCache::AddFontFile( const OString& rNormalizedName,
+@@ -319,7 +359,7 @@ void GlyphCache::AddFontFile( const OString& rNormalizedName,
          return;
  
      FreetypeFontInfo* pFontInfo = new FreetypeFontInfo( rDevFontAttr,
@@ -449,7 +449,7 @@ index 42bf6d0a98b9..1fcb0938ef77 100644
      m_aFontInfoList[ nFontId ].reset(pFontInfo);
      if( m_nMaxFontId < nFontId )
          m_nMaxFontId = nFontId;
-@@ -441,7 +481,7 @@ const FontConfigFontOptions* FreetypeFont::GetFontOptions() const
+@@ -461,7 +501,7 @@ const FontConfigFontOptions* FreetypeFont::GetFontOptions() const
      if (!mxFontOptions)
      {
          mxFontOptions.reset(GetFCFontOptions(mpFontInfo->GetFontAttributes(), mpFontInstance->GetFontSelectPattern().mnHeight));
@@ -458,7 +458,7 @@ index 42bf6d0a98b9..1fcb0938ef77 100644
      }
      return mxFontOptions.get();
  }
-@@ -461,6 +501,11 @@ int FreetypeFont::GetFontFaceIndex() const
+@@ -481,6 +521,11 @@ int FreetypeFont::GetFontFaceIndex() const
      return mpFontInfo->GetFontFaceIndex();
  }
  
@@ -471,7 +471,7 @@ index 42bf6d0a98b9..1fcb0938ef77 100644
  {
      if( maSizeFT )
 diff --git a/vcl/unx/generic/glyphs/glyphcache.cxx b/vcl/unx/generic/glyphs/glyphcache.cxx
-index b541fe1861fe..d4a32f30a521 100644
+index b541fe1..d4a32f3 100644
 --- a/vcl/unx/generic/glyphs/glyphcache.cxx
 +++ b/vcl/unx/generic/glyphs/glyphcache.cxx
 @@ -298,7 +298,10 @@ static hb_blob_t* getFontTable(hb_face_t* /*face*/, hb_tag_t nTableTag, void* pU
@@ -487,7 +487,7 @@ index b541fe1861fe..d4a32f30a521 100644
  
  bool FreetypeFontInstance::ImplGetGlyphBoundRect(sal_GlyphId nId, tools::Rectangle& rRect, bool bVertical) const
 diff --git a/vcl/unx/generic/print/genpspgraphics.cxx b/vcl/unx/generic/print/genpspgraphics.cxx
-index e40b9fd5cc82..c5675bfa3bcd 100644
+index e40b9fd..c5675bf 100644
 --- a/vcl/unx/generic/print/genpspgraphics.cxx
 +++ b/vcl/unx/generic/print/genpspgraphics.cxx
 @@ -694,9 +694,10 @@ bool GenPspGraphics::AddTempDevFontHelper( PhysicalFontCollection* pFontCollecti
@@ -503,5 +503,5 @@ index e40b9fd5cc82..c5675bfa3bcd 100644
  
      // announce new font to device's font list
 -- 
-2.21.0
+2.20.1
 

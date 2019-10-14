@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,6 +243,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 # not upstreamed
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-rhbz-1690732-basic-font-variation-support.patch
+Patch3: 0001-tdf-128138-sw_redlinehide-fix-infinite-loop-in-FindA.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2137,6 +2138,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Oct 14 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.8.2-2
+- rhbz#1761199 infinite loop in attributes search
+
 * Thu Oct 10 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.8.2-1
 - latest stable release
 

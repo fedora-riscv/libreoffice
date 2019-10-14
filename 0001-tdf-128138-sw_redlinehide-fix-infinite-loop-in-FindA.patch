@@ -1,0 +1,44 @@
+From f51021a30d9126dcd3384c268517f74481d11c1e Mon Sep 17 00:00:00 2001
+From: Michael Stahl <Michael.Stahl@cib.de>
+Date: Mon, 14 Oct 2019 14:56:48 +0200
+Subject: [PATCH] tdf#128138 sw_redlinehide: fix infinite loop in
+ FindAttrsImpl()
+
+The code looked wrong previously, always assigning the end of the text
+node regardless of direction, but it turns out the improvement caused an
+infinite loop... let's just swap things after the loop, seems simpler
+than adding another if at the assignments.
+
+(regression from 4caef398af256be5f0c2a159129b528ee3702e5c)
+
+Change-Id: I098f5265fa86d6a2511a80a02230899a7a303a88
+Reviewed-on: https://gerrit.libreoffice.org/80774
+Tested-by: Jenkins
+Reviewed-by: Michael Stahl <michael.stahl@cib.de>
+---
+ sw/source/core/crsr/findattr.cxx | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/sw/source/core/crsr/findattr.cxx b/sw/source/core/crsr/findattr.cxx
+index 9d5f2745afda..37be1ceec435 100644
+--- a/sw/source/core/crsr/findattr.cxx
++++ b/sw/source/core/crsr/findattr.cxx
+@@ -1198,9 +1198,12 @@ static bool FindAttrsImpl(SwPaM & rSearchPam,
+         }
+     }
+ 
+-    // if backward search, switch point and mark
+-    if( bFound && !bSrchForward )
+-        rSearchPam.Exchange();
++    // in search direction, mark precedes point, because the next iteration
++    // starts at point
++    if (bFound)
++    {
++        rSearchPam.Normalize(!bSrchForward);
++    }
+ 
+     return bFound;
+ }
+-- 
+2.21.0
+

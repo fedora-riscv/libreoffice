@@ -1,0 +1,38 @@
+From 46368abd5ca52498e1b6843e9748672ec39b79f0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 13 Oct 2019 20:48:14 +0100
+Subject: [PATCH] Related: tdf#124729 check error status before continuing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: Ic39e569121b2646995b8dec50c3941db65fdd500
+Reviewed-on: https://gerrit.libreoffice.org/80745
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
+index 9831762f4a43..15f01258d0ed 100644
+--- a/vcl/unx/gtk3/gtk3gtkinst.cxx
++++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
+@@ -1063,7 +1063,12 @@ private:
+ 
+         GdkWindow *pWindow = gtk_widget_get_window(pParent);
+         m_pContext = gdk_window_create_gl_context(pWindow, nullptr);
+-        gdk_gl_context_realize(m_pContext, nullptr);
++        if (!m_pContext)
++            return false;
++
++        if (!gdk_gl_context_realize(m_pContext, nullptr))
++            return false;
++
+         gdk_gl_context_make_current(m_pContext);
+         glGenFramebuffersEXT(1, &m_nFrameBuffer);
+         glGenRenderbuffersEXT(1, &m_nRenderBuffer);
+-- 
+2.21.0
+

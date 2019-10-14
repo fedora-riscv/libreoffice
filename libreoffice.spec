@@ -244,6 +244,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-rhbz-1690732-basic-font-variation-support.patch
 Patch3: 0001-tdf-128138-sw_redlinehide-fix-infinite-loop-in-FindA.patch
+Patch4: 0001-Related-tdf-124729-check-error-status-before-continu.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2140,6 +2141,7 @@ done
 %changelog
 * Mon Oct 14 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.8.2-2
 - rhbz#1761199 infinite loop in attributes search
+- tdf#124729 check error status before continuing
 
 * Thu Oct 10 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.2.8.2-1
 - latest stable release

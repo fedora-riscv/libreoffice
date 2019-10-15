@@ -1,0 +1,29 @@
+From 713d7f9139e17ba7eafe42b7447272d9f2baf26b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 15 Oct 2019 14:06:51 +0100
+Subject: [PATCH] Related: tdf#124729 check for gtk_gl_area_get_error before
+ continuing
+
+Change-Id: Ib87f32c2fa8c561981920ea688ea723c8e59bead
+---
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
+index b8ceadda4e0c..f1de1bbfbacb 100644
+--- a/vcl/unx/gtk3/gtk3gtkinst.cxx
++++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
+@@ -1475,6 +1475,10 @@ private:
+         gtk_widget_show_all(pParent);
+ 
+         gtk_gl_area_make_current(GTK_GL_AREA(m_pGLArea));
++
++        if (gtk_gl_area_get_error(GTK_GL_AREA(m_pGLArea)))
++            return false;
++
+         gtk_gl_area_attach_buffers(GTK_GL_AREA(m_pGLArea));
+         glGenFramebuffersEXT(1, &m_nAreaFrameBuffer);
+ 
+-- 
+2.20.1
+

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -282,6 +282,7 @@ Patch13: 0001-construct-final-url-from-parsed-output.patch
 Patch14: 0002-Improve-check.patch
 Patch15: 0001-Properly-obtain-location.patch
 Patch16: 0001-Related-tdf-124729-check-error-status-before-continu.patch
+Patch17: 0001-Related-tdf-124729-check-for-gtk_gl_area_get_error-b.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2316,6 +2317,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 15 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-7
+- tdf#124729 more check error status before continuing
+
 * Mon Oct 14 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.1.6.3-6
 - tdf#124729 check error status before continuing
 

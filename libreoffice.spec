@@ -1624,6 +1624,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_helpimg.zip
 %{baseinstdir}/share/config/images_karasa_jaga.zip
+%{baseinstdir}/share/config/images_karasa_jaga_svg.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
 %{baseinstdir}/share/config/images_sifr_svg.zip

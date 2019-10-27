@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.3.2
+%global libo_version 6.3.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -1621,6 +1621,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_helpimg.zip
 %{baseinstdir}/share/config/images_karasa_jaga.zip
+%{baseinstdir}/share/config/images_karasa_jaga_svg.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
 %{baseinstdir}/share/config/images_sifr_svg.zip
@@ -2130,6 +2131,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Oct 24 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-1
+- latest stable release
+
 * Thu Sep 26 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.2.2-1
 - latest stable release
 

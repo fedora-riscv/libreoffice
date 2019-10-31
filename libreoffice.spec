@@ -241,6 +241,7 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-setting-has-default-true-on-an-element-in-a-GtkPopov.patch
+Patch3: 0001-Resolves-rhbz-1766990-starmath-might-not-be-availabl.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2134,6 +2135,7 @@ done
 
 %changelog
 * Thu Oct 31 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-2
+- Resolves: rhbz#1766990 starmath might not be installed
 - fix crashes related to line and color menubutton popups
 
 * Thu Oct 24 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-1

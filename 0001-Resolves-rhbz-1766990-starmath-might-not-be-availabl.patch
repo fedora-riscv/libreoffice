@@ -1,0 +1,57 @@
+From 872e3b5021d3f7ff9476c071939f69f82bfcd75b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 31 Oct 2019 11:26:35 +0000
+Subject: [PATCH] Resolves: rhbz#1766990 starmath might not be available
+
+Change-Id: If2e02d8da85a2af576d9563c455487ac3463c935
+---
+ .../source/rtftok/rtfdocumentimpl.cxx         | 33 +++++++++++--------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
+
+diff --git a/writerfilter/source/rtftok/rtfdocumentimpl.cxx b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+index a2d0d1635e7c..5a9d71d1b9e5 100644
+--- a/writerfilter/source/rtftok/rtfdocumentimpl.cxx
++++ b/writerfilter/source/rtftok/rtfdocumentimpl.cxx
+@@ -2857,20 +2857,25 @@ RTFError RTFDocumentImpl::popState()
+             OUString aName;
+             uno::Reference<embed::XEmbeddedObject> xObject
+                 = aContainer.CreateEmbeddedObject(aGlobalName.GetByteSequence(), aName);
+-            uno::Reference<util::XCloseable> xComponent(xObject->getComponent(),
+-                                                        uno::UNO_SET_THROW);
+-            // gcc4.4 (and 4.3 and possibly older) have a problem with dynamic_cast directly to the target class,
+-            // so help it with an intermediate cast. I'm not sure what exactly the problem is, seems to be unrelated
+-            // to RTLD_GLOBAL, so most probably a gcc bug.
+-            auto& rImport
+-                = dynamic_cast<oox::FormulaImportBase&>(dynamic_cast<SfxBaseModel&>(*xComponent));
+-            rImport.readFormulaOoxml(m_aMathBuffer);
+-            auto pValue = new RTFValue(xObject);
+-            RTFSprms aMathAttributes;
+-            aMathAttributes.set(NS_ooxml::LN_starmath, pValue);
+-            writerfilter::Reference<Properties>::Pointer_t pProperties
+-                = new RTFReferenceProperties(aMathAttributes);
+-            Mapper().props(pProperties);
++            if (xObject) // rhbz#1766990 starmath might not be available
++            {
++                uno::Reference<util::XCloseable> xComponent(xObject->getComponent(),
++                                                            uno::UNO_SET_THROW);
++                // gcc4.4 (and 4.3 and possibly older) have a problem with dynamic_cast directly to the target class,
++                // so help it with an intermediate cast. I'm not sure what exactly the problem is, seems to be unrelated
++                // to RTLD_GLOBAL, so most probably a gcc bug.
++                auto& rImport = dynamic_cast<oox::FormulaImportBase&>(
++                    dynamic_cast<SfxBaseModel&>(*xComponent));
++                rImport.readFormulaOoxml(m_aMathBuffer);
++
++                auto pValue = new RTFValue(xObject);
++                RTFSprms aMathAttributes;
++                aMathAttributes.set(NS_ooxml::LN_starmath, pValue);
++                writerfilter::Reference<Properties>::Pointer_t pProperties
++                    = new RTFReferenceProperties(aMathAttributes);
++                Mapper().props(pProperties);
++            }
++
+             m_aMathBuffer = oox::formulaimport::XmlStreamBuilder();
+         }
+         break;
+-- 
+2.20.1
+

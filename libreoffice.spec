@@ -1019,7 +1019,8 @@ export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
-%else # fedora
+%else
+# fedora
 %define distrooptions --enable-eot --enable-kde5 --enable-gtk3-kde5
 %endif
 

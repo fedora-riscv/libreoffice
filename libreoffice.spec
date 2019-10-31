@@ -243,6 +243,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch2: 0001-Switch-mdds-to-1.5.0-and-liborcus-to-0.15.0.patch
+Patch3: 0001-setting-has-default-true-on-an-element-in-a-GtkPopov.patch
 
 %if 0%{?rhel}
 # not upstreamed

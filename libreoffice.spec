@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -245,6 +245,8 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-Switch-mdds-to-1.5.0-and-liborcus-to-0.15.0.patch
 Patch3: 0001-setting-has-default-true-on-an-element-in-a-GtkPopov.patch
 Patch4: 0001-Resolves-rhbz-1766990-starmath-might-not-be-availabl.patch
+Patch5: 0001-rhbz-1773525-reducing-the-amount-of-saved-search-rep.patch
+Patch6: 0002-rhbz-1773525-wrong-elements-removed-from-saved-entri.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2137,6 +2139,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Nov 18 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-3
+- rhbz#1773525 fix find&replace search save limit
+
 * Sat Nov 02 2019 Pete Walter <pwalter@fedoraproject.org> - 1:6.3.3.2-2
 - Rebuild for ICU 65
 

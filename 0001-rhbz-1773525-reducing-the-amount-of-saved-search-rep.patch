@@ -1,0 +1,49 @@
+From d788f8d023bc323d6d392e9192af03fb37acc79d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 18 Nov 2019 12:42:41 +0000
+Subject: [PATCH 1/2] rhbz#1773525 reducing the amount of saved search/replace
+ entries didn't work
+
+Change-Id: I1512ef507130718859271079e603a95cf2105c58
+---
+ svx/source/dialog/srchdlg.cxx | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/svx/source/dialog/srchdlg.cxx b/svx/source/dialog/srchdlg.cxx
+index 92fa6a1603ee..a2d2747e0221 100644
+--- a/svx/source/dialog/srchdlg.cxx
++++ b/svx/source/dialog/srchdlg.cxx
+@@ -149,7 +149,7 @@ struct SearchDlg_Impl
+     }
+ };
+ 
+-static void ListToStrArr_Impl( sal_uInt16 nId, std::vector<OUString>& rStrLst, weld::ComboBox& rCBox )
++static void ListToStrArr_Impl(sal_uInt16 nId, std::vector<OUString>& rStrLst, weld::ComboBox& rCBox, sal_uInt16 nRememberSize)
+ {
+     const SfxStringListItem* pSrchItem =
+         static_cast<const SfxStringListItem*>(SfxGetpApp()->GetItem( nId ));
+@@ -158,6 +158,9 @@ static void ListToStrArr_Impl( sal_uInt16 nId, std::vector<OUString>& rStrLst, w
+     {
+         std::vector<OUString> aLst = pSrchItem->GetList();
+ 
++        if (aLst.size() > nRememberSize)
++            aLst.resize(nRememberSize);
++
+         for (const OUString & s : aLst)
+         {
+             rStrLst.push_back(s);
+@@ -375,9 +378,9 @@ void SvxSearchDialog::Construct_Impl()
+ 
+     // Get stored search-strings from the application
+     ListToStrArr_Impl(SID_SEARCHDLG_SEARCHSTRINGS,
+-                       aSearchStrings, *m_xSearchLB);
++                       aSearchStrings, *m_xSearchLB, nRememberSize);
+     ListToStrArr_Impl(SID_SEARCHDLG_REPLACESTRINGS,
+-                       aReplaceStrings, *m_xReplaceLB);
++                       aReplaceStrings, *m_xReplaceLB, nRememberSize);
+ 
+     InitControls_Impl();
+ 
+-- 
+2.20.1
+

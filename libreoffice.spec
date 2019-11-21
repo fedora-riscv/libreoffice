@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -244,6 +244,7 @@ Patch2: 0001-setting-has-default-true-on-an-element-in-a-GtkPopov.patch
 Patch3: 0001-Resolves-rhbz-1766990-starmath-might-not-be-availabl.patch
 Patch4: 0001-rhbz-1773525-reducing-the-amount-of-saved-search-rep.patch
 Patch5: 0002-rhbz-1773525-wrong-elements-removed-from-saved-entri.patch
+Patch6: 0001-tdf-128399-sw-btlr-fix-clicking-to-lower-rotated-cel.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2136,6 +2137,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 21 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-4
+- rhbz#1774688 backport bltr cell clicking fix
+
 * Mon Nov 18 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-3
 - rhbz#1773525 fix find&replace search save limit
 

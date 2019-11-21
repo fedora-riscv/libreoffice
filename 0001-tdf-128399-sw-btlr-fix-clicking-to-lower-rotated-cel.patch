@@ -1,0 +1,94 @@
+From fe7deff845c39a351a92b8e01168a527fc237a9b Mon Sep 17 00:00:00 2001
+From: Miklos Vajna <vmiklos@collabora.com>
+Date: Tue, 29 Oct 2019 15:29:59 +0100
+Subject: [PATCH] tdf#128399 sw btlr: fix clicking to lower rotated cell
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In case a table has more than 1 btlr cells in multiple rows, the first
+captured the mouse.
+
+This was because SwFrame::GetPaintArea() assumed that left and right
+edges can be compared directly, without going via the SwRectFnSet
+abstraction. This works for hozizontal and plain vertical directions,
+but not for btlr.
+
+(cherry picked from commit 435ab51ec8920033b7865f27f4afee8a852a0b31)
+
+Conflicts:
+	sw/qa/extras/layout/layout.cxx
+
+Change-Id: Ia3bd7623a5d8d9ad3bdfabceb10adc0dbf105059
+Reviewed-on: https://gerrit.libreoffice.org/81733
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sw/qa/extras/layout/data/tdf128399.docx | Bin 0 -> 13132 bytes
+ sw/qa/extras/layout/layout.cxx          |  27 ++++++++++++++++++++++++
+ sw/source/core/layout/ssfrm.cxx         |  13 ++++++------
+ 3 files changed, 34 insertions(+), 6 deletions(-)
+ create mode 100644 sw/qa/extras/layout/data/tdf128399.docx
+
+diff --git a/sw/source/core/layout/ssfrm.cxx b/sw/source/core/layout/ssfrm.cxx
+index 8ff47322e0c0..90b5e2958af2 100644
+--- a/sw/source/core/layout/ssfrm.cxx
++++ b/sw/source/core/layout/ssfrm.cxx
+@@ -623,6 +623,7 @@ const SwRect SwFrame::GetPaintArea() const
+     SwRect aRect = IsRowFrame() ? GetUpper()->getFrameArea() : getFrameArea();
+     const bool bVert = IsVertical();
+     SwRectFn fnRect = bVert ? ( IsVertLR() ? (IsVertLRBT() ? fnRectVertL2RB2T : fnRectVertL2R) : fnRectVert ) : fnRectHori;
++    SwRectFnSet aRectFnSet(this);
+     long nRight = (aRect.*fnRect->fnGetRight)();
+     long nLeft  = (aRect.*fnRect->fnGetLeft)();
+     const SwFrame* pTmp = this;
+@@ -651,9 +652,9 @@ const SwRect SwFrame::GetPaintArea() const
+             pTmp->IsCellFrame() || pTmp->IsRowFrame() || //nobody leaves a table!
+             pTmp->IsRootFrame() )
+         {
+-            if( bLeft || nLeft < nTmpLeft )
++            if( bLeft || aRectFnSet.XDiff(nTmpLeft, nLeft) > 0 )
+                 nLeft = nTmpLeft;
+-            if( bRight || nTmpRight < nRight )
++            if( bRight || aRectFnSet.XDiff(nRight, nTmpRight) > 0 )
+                 nRight = nTmpRight;
+             if( pTmp->IsPageFrame() || pTmp->IsFlyFrame() || pTmp->IsRootFrame() )
+                 break;
+@@ -666,14 +667,14 @@ const SwRect SwFrame::GetPaintArea() const
+             // the first column has _no_ influence to the left range
+             if( bR2L ? pTmp->GetNext() : pTmp->GetPrev() )
+             {
+-                if( bLeft || nLeft < nTmpLeft )
++                if( bLeft || aRectFnSet.XDiff(nTmpLeft, nLeft) > 0 )
+                     nLeft = nTmpLeft;
+                 bLeft = false;
+             }
+              // the last column has _no_ influence to the right range
+             if( bR2L ? pTmp->GetPrev() : pTmp->GetNext() )
+             {
+-                if( bRight || nTmpRight < nRight )
++                if( bRight || aRectFnSet.XDiff(nRight, nTmpRight) > 0 )
+                     nRight = nTmpRight;
+                 bRight = false;
+             }
+@@ -686,14 +687,14 @@ const SwRect SwFrame::GetPaintArea() const
+             // the next frame of a body frame may be a footnotecontainer or
+             // a footer. The footnotecontainer has the same direction like
+             // the body frame.
+-            if( pTmp->GetPrev() && ( bLeft || nLeft < nTmpLeft ) )
++            if( pTmp->GetPrev() && ( bLeft || aRectFnSet.XDiff(nTmpLeft, nLeft) > 0 ) )
+             {
+                 nLeft = nTmpLeft;
+                 bLeft = false;
+             }
+             if( pTmp->GetNext() &&
+                 ( pTmp->GetNext()->IsFooterFrame() || pTmp->GetNext()->GetNext() )
+-                && ( bRight || nTmpRight < nRight ) )
++                && ( bRight || aRectFnSet.XDiff(nRight, nTmpRight) > 0 ) )
+             {
+                 nRight = nTmpRight;
+                 bRight = false;
+-- 
+2.23.0
+

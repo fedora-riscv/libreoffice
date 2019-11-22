@@ -1,0 +1,37 @@
+From 821ae197db7d28aee0d25a74acbacee0b1b09d7c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 22 Nov 2019 10:10:27 +0000
+Subject: [PATCH] Resolves: rhbz#1775544 crash in navigator
+
+see demo reproducer in rhbz#1775544 nChildCount is a count of all
+descendants not just direct children.
+
+Just looping while FirstChild returns something is sufficient.
+
+Change-Id: If7b16032731d694bfffaae22faad5fe194d1822f
+---
+ sw/source/uibase/utlui/content.cxx | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/sw/source/uibase/utlui/content.cxx b/sw/source/uibase/utlui/content.cxx
+index 468ba6cbfa16..3353bc6350e7 100644
+--- a/sw/source/uibase/utlui/content.cxx
++++ b/sw/source/uibase/utlui/content.cxx
+@@ -2272,12 +2272,8 @@ bool SwContentTree::HasContentChanged()
+                     }
+                     if(bRemoveChildren)
+                     {
+-                        for(size_t j = 0; j < nChildCount; ++j)
+-                        {
+-                            SvTreeListEntry *const pRemove = FirstChild(pEntry);
+-                            assert(pRemove);
+-                            GetModel()->Remove(pRemove);
+-                        }
++                        while (SvTreeListEntry *const pRemove = FirstChild(pEntry))
++                            RemoveEntry(pRemove);
+                     }
+                     if(!nChildCount)
+                     {
+-- 
+2.20.1
+

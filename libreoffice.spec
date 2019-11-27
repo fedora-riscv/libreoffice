@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1302,8 +1302,8 @@ for file in *.desktop; do
         -e "s/$PRODUCTVERSIONSHORT//g" \
         $file
 done
-# rhbz#156677 / rhbz#186515 do not show math and startcenter
-sed -i -e /NoDisplay/s/false/true/ math.desktop startcenter.desktop
+# rhbz#186515 do not show startcenter
+sed -i -e /NoDisplay/s/false/true/ startcenter.desktop
 # relocate the .desktop and icon files
 install -m 0755 -d %{buildroot}%{_datadir}/applications
 for app in base calc draw impress math startcenter writer xsltfilter; do
@@ -2139,6 +2139,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Nov 27 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-4
+- rhbz#1776774 undo rhbz#156677 and stop customizing math.desktop
+
 * Mon Nov 18 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-3
 - rhbz#1773525 fix find&replace search save limit
 

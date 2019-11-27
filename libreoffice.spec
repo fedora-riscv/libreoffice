@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -246,6 +246,8 @@ Patch4: 0001-rhbz-1773525-reducing-the-amount-of-saved-search-rep.patch
 Patch5: 0002-rhbz-1773525-wrong-elements-removed-from-saved-entri.patch
 Patch6: 0001-tdf-128399-sw-btlr-fix-clicking-to-lower-rotated-cel.patch
 Patch7: 0001-Resolves-rhbz-1775544-crash-in-navigator.patch
+Patch8: 0001-get_active-should-be-true-when-activated-but-menu-no.patch
+Patch9: 0002-don-t-put-focus-into-unmapped-windows.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2138,6 +2140,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Nov 27 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-6
+- focus stuck inside unmapped color selector windows
+
 * Fri Nov 22 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-5
 - rhbz#1775544 crash in updating entries in writer navigator
 

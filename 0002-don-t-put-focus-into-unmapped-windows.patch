@@ -1,0 +1,169 @@
+From 9102713d40b034987bd00c4de70b6e92c8414115 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 27 Nov 2019 14:58:00 +0000
+Subject: [PATCH] don't put focus into unmapped windows
+
+defer until the color selectors are activated to grab focus, otherwise
+esc doesn't work to close a dialog under gtk3 until focus is put
+into some visible widget
+
+Change-Id: I297c2738c4103024bbefd70bbcb5d72b8429dd3e
+---
+ include/svtools/ctrlbox.hxx        |  1 +
+ include/svx/colorbox.hxx           |  3 +++
+ include/svx/colorwindow.hxx        |  3 ++-
+ svtools/source/control/ctrlbox.cxx | 13 +++++++------
+ svx/source/tbxctrls/tbcontrl.cxx   | 16 +++++++++++++---
+ 5 files changed, 26 insertions(+), 10 deletions(-)
+
+diff --git a/include/svtools/ctrlbox.hxx b/include/svtools/ctrlbox.hxx
+index b11dc4c..0217076 100644
+--- a/include/svtools/ctrlbox.hxx
++++ b/include/svtools/ctrlbox.hxx
+@@ -255,6 +255,7 @@ private:
+     DECL_LINK(StyleUpdated, weld::Widget&, void);
+     DECL_LINK(ValueSelectHdl, SvtValueSet*, void);
+     DECL_LINK(FocusHdl, weld::Widget&, void);
++    DECL_LINK(ToggleHdl, weld::ToggleButton&, void);
+     DECL_LINK(NoneHdl, weld::Button&, void);
+ 
+     void            UpdateEntries();
+diff --git a/include/svx/colorbox.hxx b/include/svx/colorbox.hxx
+index ed4241f..8cad4a6 100644
+--- a/include/svx/colorbox.hxx
++++ b/include/svx/colorbox.hxx
+@@ -109,6 +109,9 @@ private:
+     void createColorWindow();
+     void LockWidthRequest();
+     ColorWindow* getColorWindow() const;
++
++    DECL_LINK(ToggleHdl, weld::ToggleButton&, void);
++
+ public:
+     ColorListBox(std::unique_ptr<weld::MenuButton> pControl, weld::Window* pWindow);
+     ~ColorListBox();
+diff --git a/include/svx/colorwindow.hxx b/include/svx/colorwindow.hxx
+index 4398c0c..8de8259 100644
+--- a/include/svx/colorwindow.hxx
++++ b/include/svx/colorwindow.hxx
+@@ -138,7 +138,6 @@ private:
+     DECL_LINK(SelectPaletteHdl, weld::ComboBox&, void);
+     DECL_LINK(AutoColorClickHdl, weld::Button&, void);
+     DECL_LINK(OpenPickerClickHdl, weld::Button&, void);
+-    DECL_LINK(FocusHdl, weld::Widget&, void);
+ 
+     static bool SelectValueSetEntry(ColorValueSet* pColorSet, const Color& rColor);
+     static NamedColor GetSelectEntryColor(SvtValueSet const * pColorSet);
+@@ -161,6 +160,8 @@ public:
+     void                SelectEntry(const Color& rColor);
+     NamedColor          GetSelectEntryColor() const;
+ 
++    DECL_LINK(FocusHdl, weld::Widget&, void);
++
+     virtual void        statusChanged( const css::frame::FeatureStateEvent& rEvent ) override;
+ 
+ };
+diff --git a/svtools/source/control/ctrlbox.cxx b/svtools/source/control/ctrlbox.cxx
+index d4eacc2..2c865ff 100644
+--- a/svtools/source/control/ctrlbox.cxx
++++ b/svtools/source/control/ctrlbox.cxx
+@@ -1534,6 +1534,7 @@ SvtLineListBox::SvtLineListBox(std::unique_ptr<weld::MenuButton> pControl)
+ 
+     m_xTopLevel->connect_focus_in(LINK(this, SvtLineListBox, FocusHdl));
+     m_xControl->set_popover(m_xTopLevel.get());
++    m_xControl->connect_toggled(LINK(this, SvtLineListBox, ToggleHdl));
+ 
+     // lock size to these maxes height/width so it doesn't jump around in size
+     m_xControl->set_label(GetLineStyleName(SvxBorderLineStyle::NONE));
+@@ -1561,6 +1562,12 @@ IMPL_LINK_NOARG(SvtLineListBox, FocusHdl, weld::Widget&, void)
+         m_xLineSet->GrabFocus();
+ }
+ 
++IMPL_LINK(SvtLineListBox, ToggleHdl, weld::ToggleButton&, rButton, void)
++{
++    if (rButton.get_active())
++        FocusHdl(*m_xTopLevel);
++}
++
+ IMPL_LINK_NOARG(SvtLineListBox, NoneHdl, weld::Button&, void)
+ {
+     SelectEntry(SvxBorderLineStyle::NONE);
+@@ -1593,15 +1600,9 @@ sal_Int32 SvtLineListBox::GetStylePos( sal_Int32 nListPos )
+ void SvtLineListBox::SelectEntry(SvxBorderLineStyle nStyle)
+ {
+     if (nStyle == SvxBorderLineStyle::NONE)
+-    {
+         m_xLineSet->SetNoSelection();
+-        m_xNoneButton->grab_focus();
+-    }
+     else
+-    {
+         m_xLineSet->SelectItem(static_cast<sal_Int16>(nStyle) + 1);
+-        m_xLineSet->GrabFocus();
+-    }
+     UpdatePreview();
+ }
+ 
+diff --git a/svx/source/tbxctrls/tbcontrl.cxx b/svx/source/tbxctrls/tbcontrl.cxx
+index 7ec4a5b..2d13792 100644
+--- a/svx/source/tbxctrls/tbcontrl.cxx
++++ b/svx/source/tbxctrls/tbcontrl.cxx
+@@ -1805,7 +1805,10 @@ ColorWindow::ColorWindow(std::shared_ptr<PaletteManager> const & rPaletteManager
+ 
+ IMPL_LINK_NOARG(ColorWindow, FocusHdl, weld::Widget&, void)
+ {
+-    mxColorSet->GrabFocus();
++    if (mxColorSet->IsNoSelection() && mpDefaultButton)
++        mpDefaultButton->grab_focus();
++    else
++        mxColorSet->GrabFocus();
+ }
+ 
+ void SvxColorWindow::ShowNoneButton()
+@@ -2011,7 +2014,9 @@ IMPL_LINK(ColorWindow, AutoColorClickHdl, weld::Button&, rButton, void)
+ {
+     NamedColor aNamedColor = &rButton == mxButtonAutoColor.get() ? GetAutoColor() : GetNoneColor();
+ 
++    mxColorSet->SetNoSelection();
+     mxRecentColorSet->SetNoSelection();
++    mpDefaultButton = &rButton;
+ 
+     if (mpMenuButton->get_active())
+         mpMenuButton->set_active(false);
+@@ -2195,14 +2200,12 @@ void ColorWindow::SelectEntry(const NamedColor& rNamedColor)
+     if (mxButtonAutoColor->get_visible() && (rColor == COL_TRANSPARENT || rColor == COL_AUTO))
+     {
+         mpDefaultButton = mxButtonAutoColor.get();
+-        mxButtonAutoColor->grab_focus();
+         return;
+     }
+ 
+     if (mxButtonNoneColor->get_visible() && rColor == COL_NONE_COLOR)
+     {
+         mpDefaultButton = mxButtonNoneColor.get();
+-        mxButtonNoneColor->grab_focus();
+         return;
+     }
+ 
+@@ -4046,11 +4049,18 @@ ColorListBox::ColorListBox(std::unique_ptr<weld::MenuButton> pControl, weld::Win
+     , m_nSlotId(0)
+     , m_bShowNoneButton(false)
+ {
++    m_xButton->connect_toggled(LINK(this, ColorListBox, ToggleHdl));
+     m_aSelectedColor = GetAutoColor(m_nSlotId);
+     LockWidthRequest();
+     ShowPreview(m_aSelectedColor);
+ }
+ 
++IMPL_LINK(ColorListBox, ToggleHdl, weld::ToggleButton&, rButton, void)
++{
++    if (rButton.get_active())
++        getColorWindow()->FocusHdl(*m_xButton);
++}
++
+ ColorListBox::~ColorListBox()
+ {
+ }
+-- 
+2.20.1
+

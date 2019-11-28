@@ -1,4 +1,4 @@
-From d6066793429a70a9178df5373021daed4f4cfe2f Mon Sep 17 00:00:00 2001
+From fd7b2f5fbbee23fc2ab9722fcd605921b7184113 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 28 Nov 2019 09:50:36 +0000
 Subject: [PATCH] rhbz#1775767 null deref
@@ -11,7 +11,7 @@ Change-Id: I6941055f9a02b36b5fe621fe89f49f62beb87e67
  3 files changed, 29 insertions(+), 25 deletions(-)
 
 diff --git a/include/sfx2/sidebar/Theme.hxx b/include/sfx2/sidebar/Theme.hxx
-index e018e029db16..5829a9a85356 100644
+index 16a4798..b7eaf88 100644
 --- a/include/sfx2/sidebar/Theme.hxx
 +++ b/include/sfx2/sidebar/Theme.hxx
 @@ -175,7 +175,7 @@ public:
@@ -24,10 +24,10 @@ index e018e029db16..5829a9a85356 100644
      std::vector<Image> maImages;
      std::vector<Color> maColors;
 diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
-index 794cfef82b81..478824a72d00 100644
+index 0cad779..764d4e3 100644
 --- a/sfx2/source/sidebar/SidebarController.cxx
 +++ b/sfx2/source/sidebar/SidebarController.cxx
-@@ -302,9 +302,12 @@ void SAL_CALL SidebarController::disposing()
+@@ -258,9 +258,12 @@ void SAL_CALL SidebarController::disposing()
          mpParentWindow = nullptr;
      }
  
@@ -44,7 +44,7 @@ index 794cfef82b81..478824a72d00 100644
      maContextChangeUpdate.CancelRequest();
      maAsynchronousDeckSwitch.CancelRequest();
 diff --git a/sfx2/source/sidebar/Theme.cxx b/sfx2/source/sidebar/Theme.cxx
-index 90ab20e46f15..328623f8ee2e 100644
+index bc6236d..1ef350e 100644
 --- a/sfx2/source/sidebar/Theme.cxx
 +++ b/sfx2/source/sidebar/Theme.cxx
 @@ -34,9 +34,10 @@ using namespace css::uno;
@@ -96,7 +96,7 @@ index 90ab20e46f15..328623f8ee2e 100644
 +    return pTheme->maPaints[nIndex];
  }
  
- Wallpaper Theme::GetWallpaper (const ThemeItem eItem)
+ const Wallpaper Theme::GetWallpaper (const ThemeItem eItem)
 @@ -104,8 +105,8 @@ sal_Int32 Theme::GetInteger (const ThemeItem eItem)
      const PropertyType eType (GetPropertyType(eItem));
      OSL_ASSERT(eType==PT_Integer);
@@ -156,5 +156,5 @@ index 90ab20e46f15..328623f8ee2e 100644
  
  Reference<beans::XPropertySetInfo> SAL_CALL Theme::getPropertySetInfo()
 -- 
-2.23.0
+2.20.1
 

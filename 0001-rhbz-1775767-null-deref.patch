@@ -1,0 +1,160 @@
+From d6066793429a70a9178df5373021daed4f4cfe2f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 28 Nov 2019 09:50:36 +0000
+Subject: [PATCH] rhbz#1775767 null deref
+
+Change-Id: I6941055f9a02b36b5fe621fe89f49f62beb87e67
+---
+ include/sfx2/sidebar/Theme.hxx            |  2 +-
+ sfx2/source/sidebar/SidebarController.cxx |  9 +++--
+ sfx2/source/sidebar/Theme.cxx             | 43 ++++++++++++-----------
+ 3 files changed, 29 insertions(+), 25 deletions(-)
+
+diff --git a/include/sfx2/sidebar/Theme.hxx b/include/sfx2/sidebar/Theme.hxx
+index e018e029db16..5829a9a85356 100644
+--- a/include/sfx2/sidebar/Theme.hxx
++++ b/include/sfx2/sidebar/Theme.hxx
+@@ -175,7 +175,7 @@ public:
+     virtual sal_Bool SAL_CALL hasPropertyByName (const OUString& rsName) override;
+ 
+ private:
+-    static Theme& GetCurrentTheme();
++    static Theme* GetCurrentTheme();
+ 
+     std::vector<Image> maImages;
+     std::vector<Color> maColors;
+diff --git a/sfx2/source/sidebar/SidebarController.cxx b/sfx2/source/sidebar/SidebarController.cxx
+index 794cfef82b81..478824a72d00 100644
+--- a/sfx2/source/sidebar/SidebarController.cxx
++++ b/sfx2/source/sidebar/SidebarController.cxx
+@@ -302,9 +302,12 @@ void SAL_CALL SidebarController::disposing()
+         mpParentWindow = nullptr;
+     }
+ 
+-    Theme::GetPropertySet()->removePropertyChangeListener(
+-        "",
+-        static_cast<css::beans::XPropertyChangeListener*>(this));
++    Reference<beans::XPropertySet> xPropertySet = Theme::GetPropertySet();
++    if (xPropertySet)
++    {
++        xPropertySet->removePropertyChangeListener("",
++            static_cast<css::beans::XPropertyChangeListener*>(this));
++    }
+ 
+     maContextChangeUpdate.CancelRequest();
+     maAsynchronousDeckSwitch.CancelRequest();
+diff --git a/sfx2/source/sidebar/Theme.cxx b/sfx2/source/sidebar/Theme.cxx
+index 90ab20e46f15..328623f8ee2e 100644
+--- a/sfx2/source/sidebar/Theme.cxx
++++ b/sfx2/source/sidebar/Theme.cxx
+@@ -34,9 +34,10 @@ using namespace css::uno;
+ 
+ namespace sfx2 { namespace sidebar {
+ 
+-Theme& Theme::GetCurrentTheme()
++Theme* Theme::GetCurrentTheme()
+ {
+-    return SfxGetpApp()->GetSidebarTheme();
++    SfxApplication* pApp = SfxGetpApp();
++    return pApp ? &pApp->GetSidebarTheme() : nullptr;
+ }
+ 
+ Theme::Theme()
+@@ -67,8 +68,8 @@ Image Theme::GetImage (const ThemeItem eItem)
+     const PropertyType eType (GetPropertyType(eItem));
+     OSL_ASSERT(eType==PT_Image);
+     const sal_Int32 nIndex (GetIndex(eItem, eType));
+-    const Theme& rTheme (GetCurrentTheme());
+-    return rTheme.maImages[nIndex];
++    const Theme* pTheme (GetCurrentTheme());
++    return pTheme->maImages[nIndex];
+ }
+ 
+ Color Theme::GetColor (const ThemeItem eItem)
+@@ -76,11 +77,11 @@ Color Theme::GetColor (const ThemeItem eItem)
+     const PropertyType eType (GetPropertyType(eItem));
+     OSL_ASSERT(eType==PT_Color || eType==PT_Paint);
+     const sal_Int32 nIndex (GetIndex(eItem, eType));
+-    const Theme& rTheme (GetCurrentTheme());
++    const Theme* pTheme (GetCurrentTheme());
+     if (eType == PT_Color)
+-        return rTheme.maColors[nIndex];
++        return pTheme->maColors[nIndex];
+     else if (eType == PT_Paint)
+-        return rTheme.maPaints[nIndex].GetColor();
++        return pTheme->maPaints[nIndex].GetColor();
+     else
+         return COL_WHITE;
+ }
+@@ -90,8 +91,8 @@ const Paint& Theme::GetPaint (const ThemeItem eItem)
+     const PropertyType eType (GetPropertyType(eItem));
+     OSL_ASSERT(eType==PT_Paint);
+     const sal_Int32 nIndex (GetIndex(eItem, eType));
+-    const Theme& rTheme (GetCurrentTheme());
+-    return rTheme.maPaints[nIndex];
++    const Theme* pTheme (GetCurrentTheme());
++    return pTheme->maPaints[nIndex];
+ }
+ 
+ Wallpaper Theme::GetWallpaper (const ThemeItem eItem)
+@@ -104,8 +105,8 @@ sal_Int32 Theme::GetInteger (const ThemeItem eItem)
+     const PropertyType eType (GetPropertyType(eItem));
+     OSL_ASSERT(eType==PT_Integer);
+     const sal_Int32 nIndex (GetIndex(eItem, eType));
+-    const Theme& rTheme (GetCurrentTheme());
+-    return rTheme.maIntegers[nIndex];
++    const Theme* pTheme (GetCurrentTheme());
++    return pTheme->maIntegers[nIndex];
+ }
+ 
+ bool Theme::GetBoolean (const ThemeItem eItem)
+@@ -113,28 +114,28 @@ bool Theme::GetBoolean (const ThemeItem eItem)
+     const PropertyType eType (GetPropertyType(eItem));
+     OSL_ASSERT(eType==PT_Boolean);
+     const sal_Int32 nIndex (GetIndex(eItem, eType));
+-    const Theme& rTheme (GetCurrentTheme());
+-    return rTheme.maBooleans[nIndex];
++    const Theme* pTheme (GetCurrentTheme());
++    return pTheme->maBooleans[nIndex];
+ }
+ 
+ bool Theme::IsHighContrastMode()
+ {
+-    const Theme& rTheme (GetCurrentTheme());
+-    return rTheme.mbIsHighContrastMode;
++    const Theme* pTheme (GetCurrentTheme());
++    return pTheme->mbIsHighContrastMode;
+ }
+ 
+ void Theme::HandleDataChange()
+ {
+-    Theme& rTheme (GetCurrentTheme());
++    Theme* pTheme (GetCurrentTheme());
+ 
+-    if ( ! rTheme.mbIsHighContrastModeSetManually)
++    if (!pTheme->mbIsHighContrastModeSetManually)
+     {
+         // Do not modify mbIsHighContrastMode when it was manually set.
+-        GetCurrentTheme().mbIsHighContrastMode = Application::GetSettings().GetStyleSettings().GetHighContrastMode();
+-        rTheme.maRawValues[Bool_IsHighContrastModeActive] <<= GetCurrentTheme().mbIsHighContrastMode;
++        GetCurrentTheme()->mbIsHighContrastMode = Application::GetSettings().GetStyleSettings().GetHighContrastMode();
++        pTheme->maRawValues[Bool_IsHighContrastModeActive] <<= GetCurrentTheme()->mbIsHighContrastMode;
+     }
+ 
+-    GetCurrentTheme().UpdateTheme();
++    GetCurrentTheme()->UpdateTheme();
+ }
+ 
+ void Theme::InitializeTheme()
+@@ -369,7 +370,7 @@ void SAL_CALL Theme::disposing()
+ 
+ Reference<beans::XPropertySet> Theme::GetPropertySet()
+ {
+-    return Reference<beans::XPropertySet>(static_cast<XWeak*>(&GetCurrentTheme()), UNO_QUERY);
++    return Reference<beans::XPropertySet>(static_cast<XWeak*>(GetCurrentTheme()), UNO_QUERY);
+ }
+ 
+ Reference<beans::XPropertySetInfo> SAL_CALL Theme::getPropertySetInfo()
+-- 
+2.23.0
+

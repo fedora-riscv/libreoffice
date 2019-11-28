@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -248,6 +248,7 @@ Patch6: 0001-tdf-128399-sw-btlr-fix-clicking-to-lower-rotated-cel.patch
 Patch7: 0001-Resolves-rhbz-1775544-crash-in-navigator.patch
 Patch8: 0001-get_active-should-be-true-when-activated-but-menu-no.patch
 Patch9: 0002-don-t-put-focus-into-unmapped-windows.patch
+Patch10: 0001-rhbz-1775767-null-deref.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2140,6 +2141,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 28 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-7
+- rhbz#1775767 fix null deref
+
 * Wed Nov 27 2019 Caolán McNamara <caolanm@redhat.com> - 1:6.3.3.2-6
 - focus stuck inside unmapped color selector windows
 

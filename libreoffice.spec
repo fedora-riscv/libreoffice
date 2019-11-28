@@ -401,7 +401,6 @@ programming model when more complex, nonlinear programming is required.
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description ogltrans
@@ -473,6 +472,7 @@ The LibreOffice Drawing Application.
 Summary: LibreOffice Presentation Application
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-data = %{epoch}:%{version}-%{release}
+Requires: %{name}-ogltrans%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}

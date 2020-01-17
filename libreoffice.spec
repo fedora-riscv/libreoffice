@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -248,6 +248,7 @@ Patch4: 0001-Resolves-rhbz-1766990-starmath-might-not-be-availabl.patch
 Patch5: 0001-rhbz-1773525-reducing-the-amount-of-saved-search-rep.patch
 Patch6: 0002-rhbz-1773525-wrong-elements-removed-from-saved-entri.patch
 Patch7: 0001-Fix-build-with-poppler-0.83.patch
+Patch8: 0001-Fix-build-with-poppler-0.82.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2140,6 +2141,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jan 17 2020 Marek Kasik <mkasik@redhat.com> - 1:6.3.3.2-6
+- Rebuild for poppler-0.84.0
+
 * Fri Jan 17 2020 Marek Kasik <mkasik@redhat.com> - 1:6.3.3.2-5
 - Rebuild for poppler-0.84.0
 

@@ -241,6 +241,7 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-rhbz-1775767-null-deref.patch
+Patch3: 0001-Adapt-SAL_WARN-to-C-20-deleted-ostream-for-sal_Unico.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -244,6 +244,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch2: 0001-Switch-mdds-to-1.5.0-and-liborcus-to-0.15.0.patch
 Patch3: 0001-Fix-build-with-poppler-0.83.patch
+Patch4: 0001-Adapt-SAL_WARN-to-C-20-deleted-ostream-for-sal_Unico.patch
 
 %if 0%{?rhel}
 # not upstreamed

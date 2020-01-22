@@ -1,0 +1,59 @@
+From b8bb7fd853db5d0d7cc4ea9120efb1a707e46c22 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 3 Dec 2019 11:56:33 +0100
+Subject: [PATCH] Adapt SAL_WARN to C++20 deleted ostream << for sal_Unicode
+ (aka char16_t)
+
+<http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1423r3.html> "char8_t
+backward compatibility remediation", as implemented now by <https://gcc.gnu.org/
+git/?p=gcc.git;a=commit;h=0c5b35933e5b150df0ab487efb2f11ef5685f713> "libstdc++:
+P1423R3 char8_t remediation (2/4)" for -std=c++2a, deletes operator << overloads
+that would print an integer rather than a (presumably expected) character.
+
+Change-Id: Ic70d3e90e4b990d297e35f07379fe4952e138820
+Reviewed-on: https://gerrit.libreoffice.org/84321
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ basegfx/source/polygon/b2dsvgpolypolygon.cxx | 2 +-
+ starmath/source/ooxmlimport.cxx              | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/basegfx/source/polygon/b2dsvgpolypolygon.cxx b/basegfx/source/polygon/b2dsvgpolypolygon.cxx
+index 2fdacad3653f..490bcd69c9a6 100644
+--- a/basegfx/source/polygon/b2dsvgpolypolygon.cxx
++++ b/basegfx/source/polygon/b2dsvgpolypolygon.cxx
+@@ -648,7 +648,7 @@ namespace basegfx
+                     default:
+                     {
+                         SAL_WARN("basegfx", "importFromSvgD(): skipping tags in svg:d element (unknown: \""
+-                                << aCurrChar
++                                << OUString(aCurrChar)
+                                 << "\")!");
+                         ++nPos;
+                         break;
+diff --git a/starmath/source/ooxmlimport.cxx b/starmath/source/ooxmlimport.cxx
+index f0913f157078..731daa054120 100644
+--- a/starmath/source/ooxmlimport.cxx
++++ b/starmath/source/ooxmlimport.cxx
+@@ -223,7 +223,7 @@ OUString SmOoxmlImport::handleAcc()
+             break;
+         default:
+             acc = "acute";
+-            SAL_WARN( "starmath.ooxml", "Unknown m:chr in m:acc \'" << accChr << "\'" );
++            SAL_WARN( "starmath.ooxml", "Unknown m:chr in m:acc \'" << OUString(accChr) << "\'" );
+             break;
+     }
+     OUString e = readOMathArgInElement( M_TOKEN( e ));
+@@ -554,7 +554,7 @@ OUString SmOoxmlImport::handleNary()
+             ret = "sum";
+             break;
+         default:
+-            SAL_WARN( "starmath.ooxml", "Unknown m:nary chr \'" << chr << "\'" );
++            SAL_WARN( "starmath.ooxml", "Unknown m:nary chr \'" << OUString(chr) << "\'" );
+             break;
+     }
+     if( !subHide )
+-- 
+2.24.1
+

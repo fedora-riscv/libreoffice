@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.3.4
+%global libo_version 6.4.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -53,7 +53,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.3
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -242,9 +242,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 # rhbz#1736810 disable opencl by default again
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
-Patch2: 0001-Switch-mdds-to-1.5.0-and-liborcus-to-0.15.0.patch
-Patch3: 0001-Fix-build-with-poppler-0.83.patch
-Patch4: 0001-Adapt-SAL_WARN-to-C-20-deleted-ostream-for-sal_Unico.patch
+Patch2: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2137,6 +2135,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jan 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.0.3-1
+- latest release
+
 * Wed Jan 22 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.4.2-1
 - latest stable release
 

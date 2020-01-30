@@ -243,7 +243,7 @@ Patch0: 0001-don-t-suppress-crashes.patch
 Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch2: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
-Patch3: fix-detecting-qrcodegen.patch
+Patch3: 0001-fix-detecting-qrcodegen.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -1,0 +1,26 @@
+From f36e1ba5d000bd7d06d40205668f2b53b238ccba Mon Sep 17 00:00:00 2001
+From: Thierry Vignaud <thierry.vignaud@gmail.com>
+Date: Thu, 30 Jan 2020 11:19:20 +0000
+Subject: [PATCH] fix detecting qrcodegen
+
+Change-Id: Ib945b57420083489273cefc5655eb50932b5a3f8
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d4a737aeaeb1..a3ac0d4b866f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10255,7 +10255,7 @@ if test "$with_system_qrcodegen" = "yes"; then
+     AC_MSG_RESULT([external])
+     SYSTEM_QRCODEGEN=TRUE
+     AC_LANG_PUSH([C++])
+-    AC_CHECK_HEADER(qrcodegen/QrCode.hpp, [],
++    AC_CHECK_HEADER(qrcodegencpp/QrCode.hpp, [],
+         [AC_MSG_ERROR(qrcodegen headers not found.)], [#include <stdexcept>])
+     AC_CHECK_LIB([qrcodegencpp], [main], [:],
+         [ AC_MSG_ERROR(qrcodegen C++ library not found.) ], [])
+-- 
+2.23.0
+

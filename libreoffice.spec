@@ -247,6 +247,7 @@ Patch2: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-Fix-build-with-poppler-0.83.patch
 Patch5: 0001-Adapt-SAL_WARN-to-C-20-deleted-ostream-for-sal_Unico.patch
+Patch6: 0001-Adapt-to-C-20-deleted-ostream-for-sal_Unicode-aka-ch.patch
 
 %if 0%{?rhel}
 # not upstreamed

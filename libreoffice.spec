@@ -131,6 +131,7 @@ BuildRequires: firebird-devel
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel
+BuildRequires: libqrcodegencpp
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel

@@ -245,6 +245,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch2: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch3: 0001-fix-detecting-qrcodegen.patch
+Patch4: 0001-Fix-build-with-poppler-0.83.patch
 
 %if 0%{?rhel}
 # not upstreamed

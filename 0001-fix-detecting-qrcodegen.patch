@@ -1,4 +1,4 @@
-From c6f0220b8a5278a27f8f7484e1ceabe78241ed5c Mon Sep 17 00:00:00 2001
+From 5875af20a84ccf4a8a0fd22989d3bb520b8320ab Mon Sep 17 00:00:00 2001
 From: Thierry Vignaud <thierry.vignaud@gmail.com>
 Date: Thu, 30 Jan 2020 11:19:20 +0000
 Subject: [PATCH] fix detecting qrcodegen
@@ -10,10 +10,10 @@ Change-Id: Ib945b57420083489273cefc5655eb50932b5a3f8
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index d4a737aeaeb1..a3ac0d4b866f 100644
+index 1e4724a..6d6f4ce 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -10255,7 +10255,7 @@ if test "$with_system_qrcodegen" = "yes"; then
+@@ -10034,7 +10034,7 @@ if test "$with_system_qrcodegen" = "yes"; then
      AC_MSG_RESULT([external])
      SYSTEM_QRCODEGEN=TRUE
      AC_LANG_PUSH([C++])
@@ -23,11 +23,11 @@ index d4a737aeaeb1..a3ac0d4b866f 100644
      AC_CHECK_LIB([qrcodegencpp], [main], [:],
          [ AC_MSG_ERROR(qrcodegen C++ library not found.) ], [])
 diff --git a/cui/source/dialogs/QrCodeGenDialog.cxx b/cui/source/dialogs/QrCodeGenDialog.cxx
-index 7daaee9afa04..29878c4b45b5 100644
+index d936219..e0fc4fc 100644
 --- a/cui/source/dialogs/QrCodeGenDialog.cxx
 +++ b/cui/source/dialogs/QrCodeGenDialog.cxx
-@@ -16,7 +16,7 @@
- #include <vcl/weld.hxx>
+@@ -17,7 +17,7 @@
+ #include <sal/log.hxx>
  
  #if defined(SYSTEM_QRCODEGEN)
 -#include <qrcodegen/QrCode.hpp>
@@ -36,5 +36,5 @@ index 7daaee9afa04..29878c4b45b5 100644
  #include <QrCode.hpp>
  #endif
 -- 
-2.23.0
+2.24.1
 

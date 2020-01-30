@@ -1099,7 +1099,7 @@ pushd $WORKDIR/CustomTarget/sysui/share/libreoffice
 popd
 mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
-cp -pr $WORKDIR/CustomTarget/sysui/share/output/girepository-1.0/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
+cp -pr $WORKDIR/CustomTarget/sysui/share/libreoffice/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
 
 %if %{with smallbuild}
 # remove the biggest offenders

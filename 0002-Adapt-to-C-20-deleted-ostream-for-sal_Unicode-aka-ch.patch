@@ -1,0 +1,63 @@
+From 1f0c54c250c2390962105128dcf871aad0689323 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 3 Dec 2019 13:58:23 +0100
+Subject: [PATCH] Adapt to C++20 deleted ostream << for sal_Unicode* (aka
+ char16_t*)
+
+<http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1423r3.html> "char8_t
+backward compatibility remediation", as implemented now by <https://gcc.gnu.org/
+git/?p=gcc.git;a=commit;h=0c5b35933e5b150df0ab487efb2f11ef5685f713> "libstdc++:
+P1423R3 char8_t remediation (2/4)" for -std=c++2a, deletes operator << overloads
+that would print a pointer rather than a (presumably expected) string.
+
+But here it should be fine to print pointers, esp. as there are null pointers
+involved.
+
+Change-Id: I62fad4cb9eaaa612989f035f686086ef29093d70
+Reviewed-on: https://gerrit.libreoffice.org/84351
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ svl/qa/unit/test_INetContentType.cxx | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/svl/qa/unit/test_INetContentType.cxx b/svl/qa/unit/test_INetContentType.cxx
+index e4a464e479f2..b68796726e0e 100644
+--- a/svl/qa/unit/test_INetContentType.cxx
++++ b/svl/qa/unit/test_INetContentType.cxx
+@@ -39,8 +39,8 @@ public:
+ void Test::testBad() {
+     OUString in("foo=bar");
+     CPPUNIT_ASSERT_EQUAL(
+-        static_cast<sal_Unicode const *>(nullptr),
+-        INetMIME::scanContentType(in));
++        static_cast<void const *>(nullptr),
++        static_cast<void const *>(INetMIME::scanContentType(in)));
+     OUString t;
+     OUString s;
+     INetContentTypeParameterList ps;
+@@ -53,8 +53,8 @@ void Test::testBad() {
+ void Test::testFull() {
+     OUString in("foo/bar;baz=boz");
+     CPPUNIT_ASSERT_EQUAL(
+-        in.getStr() + in.getLength(),
+-        INetMIME::scanContentType(in));
++        static_cast<void const *>(in.getStr() + in.getLength()),
++        static_cast<void const *>(INetMIME::scanContentType(in)));
+     OUString t;
+     OUString s;
+     INetContentTypeParameterList ps;
+@@ -69,8 +69,8 @@ void Test::testFull() {
+ void Test::testFollow() {
+     OUString in("foo/bar;baz=boz;base64,");
+     CPPUNIT_ASSERT_EQUAL(
+-        in.getStr() + std::strlen("foo/bar;baz=boz"),
+-        INetMIME::scanContentType(in));
++        static_cast<void const *>(in.getStr() + std::strlen("foo/bar;baz=boz")),
++        static_cast<void const *>(INetMIME::scanContentType(in)));
+     OUString t;
+     OUString s;
+     INetContentTypeParameterList ps;
+-- 
+2.24.1
+

@@ -1,4 +1,4 @@
-From 5d8f0fad50f90195a11873c70ddab4644f5839ea Mon Sep 17 00:00:00 2001
+From 5411370da57bb7f43469ac25b65c2adb05bf1ba3 Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Tue, 3 Dec 2019 13:46:24 +0100
 Subject: [PATCH] Adapt CPPUNIT_ASSERT to C++20 deleted ostream << for
@@ -41,7 +41,7 @@ Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
  create mode 100644 include/o3tl/cppunittraitshelper.hxx
 
 diff --git a/cppu/qa/cppumaker/test_cppumaker.cxx b/cppu/qa/cppumaker/test_cppumaker.cxx
-index 3ea46f5c93ce..1b8efda8a972 100644
+index 3ea46f5..1b8efda 100644
 --- a/cppu/qa/cppumaker/test_cppumaker.cxx
 +++ b/cppu/qa/cppumaker/test_cppumaker.cxx
 @@ -360,6 +360,7 @@
@@ -53,7 +53,7 @@ index 3ea46f5c93ce..1b8efda8a972 100644
  
  #include <cstddef>
 diff --git a/cppu/qa/test_any.cxx b/cppu/qa/test_any.cxx
-index f5fbc0c9dbc8..7dfed7a714de 100644
+index f5fbc0c..7dfed7a 100644
 --- a/cppu/qa/test_any.cxx
 +++ b/cppu/qa/test_any.cxx
 @@ -46,6 +46,7 @@
@@ -65,7 +65,7 @@ index f5fbc0c9dbc8..7dfed7a714de 100644
  #include <rtl/ustring.hxx>
  
 diff --git a/i18npool/qa/cppunit/test_breakiterator.cxx b/i18npool/qa/cppunit/test_breakiterator.cxx
-index a1d423879109..a41cd821857c 100644
+index a1d4238..a41cd82 100644
 --- a/i18npool/qa/cppunit/test_breakiterator.cxx
 +++ b/i18npool/qa/cppunit/test_breakiterator.cxx
 @@ -11,6 +11,7 @@
@@ -78,7 +78,7 @@ index a1d423879109..a41cd821857c 100644
  #include <unicode/uvernum.h>
 diff --git a/include/o3tl/cppunittraitshelper.hxx b/include/o3tl/cppunittraitshelper.hxx
 new file mode 100644
-index 000000000000..d9f75a61b4c8
+index 0000000..d9f75a6
 --- /dev/null
 +++ b/include/o3tl/cppunittraitshelper.hxx
 @@ -0,0 +1,27 @@
@@ -110,7 +110,7 @@ index 000000000000..d9f75a61b4c8
 +
 +/* vim:set shiftwidth=4 softtabstop=4 expandtab cinoptions=b1,g0,N-s cinkeys+=0=break: */
 diff --git a/sal/qa/rtl/oustring/rtl_OUString2.cxx b/sal/qa/rtl/oustring/rtl_OUString2.cxx
-index 52e8656efd96..4a3a405d8fc5 100644
+index 52e8656..4a3a405 100644
 --- a/sal/qa/rtl/oustring/rtl_OUString2.cxx
 +++ b/sal/qa/rtl/oustring/rtl_OUString2.cxx
 @@ -30,6 +30,8 @@
@@ -123,7 +123,7 @@ index 52e8656efd96..4a3a405d8fc5 100644
  #include <valueequal.hxx>
  
 diff --git a/sal/qa/rtl/oustringbuffer/test_oustringbuffer_appendchar.cxx b/sal/qa/rtl/oustringbuffer/test_oustringbuffer_appendchar.cxx
-index f1a151fdc836..80ce83b1d2d0 100644
+index f1a151f..80ce83b 100644
 --- a/sal/qa/rtl/oustringbuffer/test_oustringbuffer_appendchar.cxx
 +++ b/sal/qa/rtl/oustringbuffer/test_oustringbuffer_appendchar.cxx
 @@ -7,6 +7,9 @@
@@ -137,7 +137,7 @@ index f1a151fdc836..80ce83b1d2d0 100644
  #include <cppunit/TestFixture.h>
  #include <cppunit/TestAssert.h>
 diff --git a/sal/qa/rtl/strings/test_oustring_stringliterals.cxx b/sal/qa/rtl/strings/test_oustring_stringliterals.cxx
-index 33902e28ad3b..9c7116ef5edb 100644
+index 33902e2..9c7116e 100644
 --- a/sal/qa/rtl/strings/test_oustring_stringliterals.cxx
 +++ b/sal/qa/rtl/strings/test_oustring_stringliterals.cxx
 @@ -14,6 +14,7 @@
@@ -149,7 +149,7 @@ index 33902e28ad3b..9c7116ef5edb 100644
  #include <config_global.h>
  #include <cppunit/TestFixture.h>
 diff --git a/sal/qa/rtl/textenc/rtl_textcvt.cxx b/sal/qa/rtl/textenc/rtl_textcvt.cxx
-index 795950a0347a..0bf6c5647ff0 100644
+index 795950a..0bf6c56 100644
 --- a/sal/qa/rtl/textenc/rtl_textcvt.cxx
 +++ b/sal/qa/rtl/textenc/rtl_textcvt.cxx
 @@ -27,6 +27,7 @@
@@ -161,7 +161,7 @@ index 795950a0347a..0bf6c5647ff0 100644
  #include <rtl/ustring.hxx>
  #include <rtl/tencinfo.h>
 diff --git a/starmath/qa/cppunit/test_node.cxx b/starmath/qa/cppunit/test_node.cxx
-index 1bcb32a0913e..dba0b9ff3c40 100644
+index 1bcb32a..dba0b9f 100644
 --- a/starmath/qa/cppunit/test_node.cxx
 +++ b/starmath/qa/cppunit/test_node.cxx
 @@ -10,6 +10,7 @@
@@ -173,7 +173,7 @@ index 1bcb32a0913e..dba0b9ff3c40 100644
  #include <vcl/virdev.hxx>
  
 diff --git a/starmath/qa/extras/mmlexport-test.cxx b/starmath/qa/extras/mmlexport-test.cxx
-index b26fcc1baac1..737885d5f73e 100644
+index b26fcc1..737885d 100644
 --- a/starmath/qa/extras/mmlexport-test.cxx
 +++ b/starmath/qa/extras/mmlexport-test.cxx
 @@ -8,6 +8,8 @@
@@ -186,7 +186,7 @@ index b26fcc1baac1..737885d5f73e 100644
  #include <test/xmltesttools.hxx>
  #include <unotools/tempfile.hxx>
 diff --git a/svl/qa/unit/lockfiles/test_lockfiles.cxx b/svl/qa/unit/lockfiles/test_lockfiles.cxx
-index 91920344d248..a14a89f605a2 100644
+index 9192034..a14a89f 100644
 --- a/svl/qa/unit/lockfiles/test_lockfiles.cxx
 +++ b/svl/qa/unit/lockfiles/test_lockfiles.cxx
 @@ -13,6 +13,7 @@
@@ -198,7 +198,7 @@ index 91920344d248..a14a89f605a2 100644
  #include <svl/lockfilecommon.hxx>
  #include <svl/documentlockfile.hxx>
 diff --git a/svl/qa/unit/test_lngmisc.cxx b/svl/qa/unit/test_lngmisc.cxx
-index f3071111b189..5193eb33e159 100644
+index f307111..5193eb3 100644
 --- a/svl/qa/unit/test_lngmisc.cxx
 +++ b/svl/qa/unit/test_lngmisc.cxx
 @@ -7,6 +7,9 @@
@@ -212,7 +212,7 @@ index f3071111b189..5193eb33e159 100644
  #include <cppunit/TestAssert.h>
  #include <cppunit/TestFixture.h>
 diff --git a/sw/qa/extras/ooxmlexport/ooxmlexport.cxx b/sw/qa/extras/ooxmlexport/ooxmlexport.cxx
-index cb252c87ded9..75e890338e62 100644
+index 1fd030a..10cb429 100644
 --- a/sw/qa/extras/ooxmlexport/ooxmlexport.cxx
 +++ b/sw/qa/extras/ooxmlexport/ooxmlexport.cxx
 @@ -19,6 +19,7 @@
@@ -224,7 +224,7 @@ index cb252c87ded9..75e890338e62 100644
  
  class Test : public SwModelTestBase
 diff --git a/sw/qa/extras/ooxmlexport/ooxmlexport5.cxx b/sw/qa/extras/ooxmlexport/ooxmlexport5.cxx
-index 14ba1cde9683..b6e86799cb75 100644
+index 2560cf8..0537b62 100644
 --- a/sw/qa/extras/ooxmlexport/ooxmlexport5.cxx
 +++ b/sw/qa/extras/ooxmlexport/ooxmlexport5.cxx
 @@ -16,6 +16,7 @@
@@ -236,7 +236,7 @@ index 14ba1cde9683..b6e86799cb75 100644
  #include <ndindex.hxx>
  #include <pam.hxx>
 diff --git a/sw/qa/extras/ooxmlimport/ooxmlimport.cxx b/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
-index 2bc6a526fd99..956f75414488 100644
+index 26b0b56..dddb41f 100644
 --- a/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
 +++ b/sw/qa/extras/ooxmlimport/ooxmlimport.cxx
 @@ -45,6 +45,7 @@
@@ -248,12 +248,12 @@ index 2bc6a526fd99..956f75414488 100644
  #include <comphelper/sequenceashashmap.hxx>
  #include <com/sun/star/text/GraphicCrop.hpp>
 diff --git a/sw/qa/extras/rtfexport/rtfexport4.cxx b/sw/qa/extras/rtfexport/rtfexport4.cxx
-index 4590b7fa0b4e..f714b0519caf 100644
+index 92b672c..fdfdc07 100644
 --- a/sw/qa/extras/rtfexport/rtfexport4.cxx
 +++ b/sw/qa/extras/rtfexport/rtfexport4.cxx
-@@ -11,7 +11,7 @@
- 
+@@ -12,7 +12,7 @@
  #include <com/sun/star/text/WritingMode2.hpp>
+ #include <com/sun/star/text/XDocumentIndex.hpp>
  #include <com/sun/star/style/ParagraphAdjust.hpp>
 -
 +#include <o3tl/cppunittraitshelper.hxx>
@@ -261,7 +261,7 @@ index 4590b7fa0b4e..f714b0519caf 100644
  
  #include <doc.hxx>
 diff --git a/sw/qa/extras/rtfimport/rtfimport.cxx b/sw/qa/extras/rtfimport/rtfimport.cxx
-index a88dddf2f086..0688b24460df 100644
+index a88dddf..0688b24 100644
 --- a/sw/qa/extras/rtfimport/rtfimport.cxx
 +++ b/sw/qa/extras/rtfimport/rtfimport.cxx
 @@ -42,7 +42,7 @@
@@ -274,7 +274,7 @@ index a88dddf2f086..0688b24460df 100644
  #include <vcl/settings.hxx>
  #include <comphelper/sequenceashashmap.hxx>
 diff --git a/sw/qa/extras/uiwriter/uiwriter.cxx b/sw/qa/extras/uiwriter/uiwriter.cxx
-index 27cd93fb857e..1ede61bc5bad 100644
+index 52003fe..266e8ac 100644
 --- a/sw/qa/extras/uiwriter/uiwriter.cxx
 +++ b/sw/qa/extras/uiwriter/uiwriter.cxx
 @@ -99,6 +99,7 @@
@@ -286,7 +286,7 @@ index 27cd93fb857e..1ede61bc5bad 100644
  #include <osl/file.hxx>
  #include <osl/thread.hxx>
 diff --git a/vcl/qa/cppunit/mnemonic.cxx b/vcl/qa/cppunit/mnemonic.cxx
-index f2ed9e542054..e870e1d29c98 100644
+index f2ed9e5..e870e1d 100644
 --- a/vcl/qa/cppunit/mnemonic.cxx
 +++ b/vcl/qa/cppunit/mnemonic.cxx
 @@ -7,6 +7,9 @@

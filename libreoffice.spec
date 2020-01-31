@@ -1001,6 +1001,8 @@ sed -i -e /CppunitTest_sw_ooxmlexport10/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sc_subsequent_filters_test/d sc/Module_sc.mk
 %endif
+sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
+
 git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.

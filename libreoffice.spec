@@ -812,86 +812,86 @@ Rules for auto-correcting common %{langname} typing errors. \
 
 %if %{with langpacks}
 
-%langpack -l af -n Afrikaans -F -H -Y -A
-%langpack -l ar -n Arabic -F -H -s ctl -T
-%langpack -l as -n Assamese -F -H -Y
+%langpack -l af -n Afrikaans -F -H -Y -A -X
+%langpack -l ar -n Arabic -F -H -s ctl -T -X
+%langpack -l as -n Assamese -F -H -Y -X
 %langpack -l bg -n Bulgarian -F -H -Y -M -A -T -X
-%langpack -l bn -n Bengali -F -H -Y -T
-%langpack -l br -n Breton -F -H
+%langpack -l bn -n Bengali -F -H -Y -T -X
+%langpack -l br -n Breton -F -H -X
 %langpack -l ca -n Catalan -F -H -Y -M -A -T -X
 %langpack -l cs -n Czech -F -H -Y -M -A -T -X
-%langpack -l cy -n Welsh -F -H -Y
+%langpack -l cy -n Welsh -F -H -Y -X
 %langpack -l da -n Danish -F -H -Y -M -A -T -X
 %langpack -l de -n German -F -H -Y -M -A -T -X
-%langpack -l dz -n Dzongkha -F -s ctl -T
-%langpack -l el -n Greek -F -H -Y -M -A -T
-%langpack -l eo -n Esperanto -F -H -M -T
+%langpack -l dz -n Dzongkha -F -s ctl -T -X
+%langpack -l el -n Greek -F -H -Y -M -A -T -X
+%langpack -l eo -n Esperanto -F -H -M -T -X
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
-%langpack -l et -n Estonian -F -H -Y -T
-%langpack -l eu -n Basque -F -H -Y -T
+%langpack -l et -n Estonian -F -H -Y -T -X
+%langpack -l eu -n Basque -F -H -Y -T -X
 %langpack -l fa -n Farsi -A -H -Y -s ctl -X
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -X
 %langpack -l fr -n French -F -H -Y -M -A -T -X
-%langpack -l ga -n Irish -F -H -Y -M -A
-%langpack -l gl -n Galician -F -H -Y -T
-%langpack -l gu -n Gujarati -F -H -Y -s ctl -T
-%langpack -l he -n Hebrew -F -H -s ctl -T
+%langpack -l ga -n Irish -F -H -Y -M -A -X
+%langpack -l gl -n Galician -F -H -Y -T -X
+%langpack -l gu -n Gujarati -F -H -Y -s ctl -T -X
+%langpack -l he -n Hebrew -F -H -s ctl -T -X
 %langpack -l hi -n Hindi -F -H -Y -s ctl -T -X
 %langpack -l hr -n Croatian -F -H -Y -A -T -X
 %langpack -l hu -n Hungarian -F -H -Y -M -A -T -X
 %{baseinstdir}/share/wordbook/hu_AkH11.dic
-%langpack -l id -n Indonesian -F -H -Y -T
+%langpack -l id -n Indonesian -F -H -Y -T -X
 %langpack -l it -n Italian -F -H -Y -M -A -T -X
 %langpack -l ja -n Japanese -F -A -s cjk -T -X
-%langpack -l kk -n Kazakh -F -H
-%langpack -l kn -n Kannada -F -H -Y
+%langpack -l kk -n Kazakh -F -H -X
+%langpack -l kn -n Kannada -F -H -Y -X
 %langpack -l ko -n Korean -F -H -A -s cjk -T -X
 %langpack -l lt -n Lithuanian -F -H -Y -A -T -X
-%langpack -l lv -n Latvian -F -H -Y -M -T
-%langpack -l mai -n Maithili -F
-%langpack -l ml -n Malayalam -F -H -Y
-%langpack -l mr -n Marathi -F -H -Y
-%langpack -l nb -n Bokmal -F -H -Y -M -T
-%langpack -l nl -n Dutch -F -H -Y -M -A -T -X
+%langpack -l lv -n Latvian -F -H -Y -M -T -X
+%langpack -l mai -n Maithili -F -X
+%langpack -l ml -n Malayalam -F -H -Y -X
+%langpack -l mr -n Marathi -F -H -Y -X
+%langpack -l nb -n Bokmal -F -H -Y -M -T -X
+%langpack -l nl -n Dutch -F -H -Y -M -A -T -X -X
 %langpack -l nn -n Nynorsk -F -H -Y -M -T
 %define langpack_lang Southern Ndebele
-%langpack -l nr -n %{langpack_lang} -F -H
+%langpack -l nr -n %{langpack_lang} -F -H -X
 %define langpack_lang Northern Sotho
-%langpack -l nso -n %{langpack_lang} -F -H
-%langpack -l or -n Odia -F -H -Y -s ctl
-%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN
+%langpack -l nso -n %{langpack_lang} -F -H -X
+%langpack -l or -n Odia -F -H -Y -s ctl -X
+%langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
-%langpack -l si -n Sinhalese -F -H -S ctl -T
+%langpack -l si -n Sinhalese -F -H -S ctl -T -X
 %langpack -l sk -n Slovak -F -H -Y -M -A -T -X
 %langpack -l sl -n Slovenian -F -H -Y -M -A -T -X
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn
-%langpack -l ss -n Swati -F -H
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn -x sr-Latn -x sr
+%langpack -l ss -n Swati -F -H -X
 %define langpack_lang Southern Sotho
 # note that langpacks-st seems to be missing as of the time of writing, so no -F here
-%langpack -l st -n %{langpack_lang} -H
+%langpack -l st -n %{langpack_lang} -H -X
 %langpack -l sv -n Swedish -F -H -Y -M -A -T -X
-%langpack -l ta -n Tamil -F -H -Y -s ctl -T
-%langpack -l te -n Telugu -F -H -Y
-%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th
-%langpack -l tn -n Tswana -F -H
+%langpack -l ta -n Tamil -F -H -Y -s ctl -T -X
+%langpack -l te -n Telugu -F -H -Y -X
+%langpack -l th -n Thai -F -H -s ctl -c ctlseqcheck_th -X
+%langpack -l tn -n Tswana -F -H -X
 %langpack -l tr -n Turkish -F -A -T -X
-%langpack -l ts -n Tsonga -F -H
-%langpack -l uk -n Ukrainian -F -H -Y -M -T
-%langpack -l ve -n Venda -F -H
-%langpack -l xh -n Xhosa -F -H
+%langpack -l ts -n Tsonga -F -H -X
+%langpack -l uk -n Ukrainian -F -H -Y -M -T -X
+%langpack -l ve -n Venda -F -H -X
+%langpack -l xh -n Xhosa -F -H -X
 %define langpack_lang Simplified Chinese
 %langpack -l zh-Hans -n %{langpack_lang} -f zh_CN -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
 %define langpack_lang Traditional Chinese
 %langpack -l zh-Hant -n %{langpack_lang} -f zh_TW -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
-%langpack -l zu -n Zulu -F -H -Y
+%langpack -l zu -n Zulu -F -H -Y -X
 %undefine langpack_lang
 
 %endif
@@ -1493,7 +1493,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdbahsqllo.so
 %{baseinstdir}/program/libdbaselo.so
 %{baseinstdir}/program/libdbaxmllo.so
-%{baseinstdir}/program/libdbmmlo.so
+#{baseinstdir}/program/libdbmmlo.so
 %{baseinstdir}/program/libdbpool2.so
 %{baseinstdir}/program/libdbtoolslo.so
 %{baseinstdir}/program/libdbulo.so
@@ -1757,6 +1757,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
+%{baseinstdir}/program/access2base.py
 %if 0%{?fedora}
 %{baseinstdir}/program/base.abignore
 %endif
@@ -2119,8 +2120,8 @@ done
 %if 0%{?fedora}
 %{baseinstdir}/program/kde5.abignore
 %endif
-%{baseinstdir}/program/libkde5be1lo.so
-%{baseinstdir}/program/libvclplug_kde5lo.so
+%{baseinstdir}/program/libkf5be1lo.so
+%{baseinstdir}/program/libvclplug_kf5lo.so
 %{baseinstdir}/program/libvclplug_qt5lo.so
 
 %files kf5

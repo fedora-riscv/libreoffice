@@ -1054,7 +1054,6 @@ touch autogen.lastrun
  --disable-fetch-external \
  --disable-openssl \
  --disable-pdfium \
- --disable-systray \
  --disable-gtk \
  --enable-dconf \
  --enable-evolution2 \

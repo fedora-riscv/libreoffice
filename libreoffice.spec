@@ -252,6 +252,7 @@ Patch7: 0001-Adapt-o3tl-span-to-P1872R0.patch
 Patch8: 0001-Adapt-CPPUNIT_ASSERT-to-C-20-deleted-ostream-for-sal.patch
 Patch9: 0002-Adapt-to-C-20-deleted-ostream-for-sal_Unicode-aka-ch.patch
 Patch10: 0001-opengl-slide-transitions-not-working-with-glm-GLM-0..patch
+Patch11: 0001-SdImportTest-testPDFImportShared-fails-for-disable-p.patch
 
 %if 0%{?rhel}
 # not upstreamed

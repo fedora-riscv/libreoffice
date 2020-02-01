@@ -874,7 +874,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %{baseinstdir}/share/wordbook/sl.dic
 
 #rhbz#452379 clump serbian translations together
-%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn -x sr-Latn -x sr
+%langpack -l sr -n Serbian -F -H -Y -A -i sr-Latn -k sr@latin -j sr_Latn -x sr*
 %langpack -l ss -n Swati -F -H -X
 %define langpack_lang Southern Sotho
 # note that langpacks-st seems to be missing as of the time of writing, so no -F here

@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -288,7 +288,6 @@ Summary: All import / export filters
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
@@ -416,7 +415,6 @@ Requires good quality 3D support for your graphics card for best experience.
 %package pdfimport
 Summary: PDF Importer for LibreOffice Draw
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-draw%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description pdfimport
@@ -1663,6 +1661,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
 %dir %{baseinstdir}/share/registry
+%{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/share/registry/gnome.xcd
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
@@ -1877,7 +1876,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/oocalc.1*
 
 %files draw
-%{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
 %{_datadir}/metainfo/libreoffice-draw.appdata.xml
@@ -2147,6 +2145,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Feb 10 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.0.3-2
+- rhbz#1793632 make draw subpackage just a superficial package for
+  draw launcher
+
 * Wed Jan 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.0.3-1
 - latest release
 

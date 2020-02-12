@@ -1042,6 +1042,10 @@ autoconf
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 
+%if 0%{?flatpak}
+%define flatpakoptions --with-boost-libdir=%{_libdir} --with-beanshell-jar=/app/share/java/bsh.jar --with-commons-logging-jar=/app/share/java/commons-logging.jar --with-flute-jar=/app/share/java/flute.jar --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}
+%endif
+
 # TODO: enable coinmp?
 # avoid running autogen.sh on make
 touch autogen.lastrun
@@ -1079,7 +1083,8 @@ touch autogen.lastrun
  --with-system-ucpp \
  %{distrooptions} \
  %{?bundling_options} \
- %{?archoptions}
+ %{?archoptions} \
+ %{?flatpakoptions}
 
 ulimit -c unlimited || true
 
@@ -1286,6 +1291,10 @@ chmod a+x unopkg
 
 sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE8} > libreoffice
 chmod a+x libreoffice
+
+%if 0%{?flatpak}
+sed -i -e 's|/usr/lib|/app/lib|g' unopkg libreoffice
+%endif
 
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
@@ -2054,9 +2063,11 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %{libo_python_sitearch}/officehelper.py*
+%if ! 0%{?flatpak}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %{libo_python_sitearch}/__pycache__/officehelper.cpython-*
+%endif
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %files librelogo

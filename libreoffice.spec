@@ -142,8 +142,6 @@ BuildRequires: pkgconfig(epoxy)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
 BuildRequires: pkgconfig(expat)
 BuildRequires: pkgconfig(freetype2)
-BuildRequires: pkgconfig(glew) >= 1.10.0
-BuildRequires: pkgconfig(glu)
 BuildRequires: pkgconfig(gobject-introspection-1.0)
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)

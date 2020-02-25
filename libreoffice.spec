@@ -1620,6 +1620,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_breeze_dark.zip
+%{baseinstdir}/share/config/images_breeze_dark_svg.zip
 %{baseinstdir}/share/config/images_colibre.zip
 %{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_helpimg.zip
@@ -1627,6 +1628,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_karasa_jaga_svg.zip
 %{baseinstdir}/share/config/images_sifr.zip
 %{baseinstdir}/share/config/images_sifr_dark.zip
+%{baseinstdir}/share/config/images_sifr_dark_svg.zip
 %{baseinstdir}/share/config/images_sifr_svg.zip
 %{baseinstdir}/share/config/images_tango.zip
 %{baseinstdir}/share/config/images_breeze_svg.zip

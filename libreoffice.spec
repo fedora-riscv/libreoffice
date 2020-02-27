@@ -1286,6 +1286,10 @@ chmod a+x unopkg
 sed -e s/LAUNCHER/soffice/g -e s/BRAND/libreoffice/g %{SOURCE8} > libreoffice
 chmod a+x libreoffice
 
+%if 0%{?flatpak}
+sed -i -e 's|/usr/lib|/app/lib|g' unopkg libreoffice
+%endif
+
 # rhbz#499474 provide a /usr/bin/soffice for .recently-used.xbel
 ln -s %{baseinstdir}/program/soffice soffice
 # rhbz#499474 provide a /usr/bin/openoffice.org for backwards compat

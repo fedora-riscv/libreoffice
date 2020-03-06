@@ -1,4 +1,4 @@
-From a169975e3598f306e09eed5bf9c55ce41bbd99e1 Mon Sep 17 00:00:00 2001
+From 2a34d8f44d3f45af7bf2394a93817a6ede75baba Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Fri, 6 Mar 2020 10:11:48 +0000
 Subject: [PATCH] rhbz#1810732 crash/assert inserting document with initial
@@ -6,10 +6,12 @@ Subject: [PATCH] rhbz#1810732 crash/assert inserting document with initial
 
 Change-Id: Idae665c926856922a25a1228ed34f3cae96e4bdd
 ---
- sw/qa/extras/uiwriter/data/rhbz1810732.docx  | Bin 0 -> 12107 bytes
- sw/qa/extras/uiwriter/uiwriter.cxx           |  21 +++++++++++++++++++
- writerfilter/source/dmapper/DomainMapper.cxx |   4 +++-
- 3 files changed, 24 insertions(+), 1 deletion(-)
+ sw/qa/extras/uiwriter/data/rhbz1810732.docx   | Bin 0 -> 12107 bytes
+ sw/qa/extras/uiwriter/uiwriter.cxx            |  21 ++++++++++++++++++
+ writerfilter/source/dmapper/DomainMapper.cxx  |   4 +++-
+ .../source/dmapper/DomainMapper_Impl.cxx      |   4 ++++
+ .../source/dmapper/DomainMapper_Impl.hxx      |   1 +
+ 5 files changed, 29 insertions(+), 1 deletion(-)
  create mode 100644 sw/qa/extras/uiwriter/data/rhbz1810732.docx
 
 diff --git a/sw/qa/extras/uiwriter/data/rhbz1810732.docx b/sw/qa/extras/uiwriter/data/rhbz1810732.docx
@@ -295,6 +297,33 @@ index 81193ea..4edc51a 100644
  }
  
  OUString DomainMapper::getOrCreateCharStyle( PropertyValueVector_t& rCharProperties, bool bAlwaysCreate )
+diff --git a/writerfilter/source/dmapper/DomainMapper_Impl.cxx b/writerfilter/source/dmapper/DomainMapper_Impl.cxx
+index 15c6ae130ecd..743c07de9959 100644
+--- a/writerfilter/source/dmapper/DomainMapper_Impl.cxx
++++ b/writerfilter/source/dmapper/DomainMapper_Impl.cxx
+@@ -667,6 +667,10 @@ PropertyMapPtr DomainMapper_Impl::GetTopContextOfType(ContextType eId)
+     return pRet;
+ }
+ 
++bool DomainMapper_Impl::HasTopText() const
++{
++    return !m_aTextAppendStack.empty();
++}
+ 
+ uno::Reference< text::XTextAppend > const &  DomainMapper_Impl::GetTopTextAppend()
+ {
+diff --git a/writerfilter/source/dmapper/DomainMapper_Impl.hxx b/writerfilter/source/dmapper/DomainMapper_Impl.hxx
+index 456ab3df371e..fac34be0adac 100644
+--- a/writerfilter/source/dmapper/DomainMapper_Impl.hxx
++++ b/writerfilter/source/dmapper/DomainMapper_Impl.hxx
+@@ -684,6 +684,7 @@ public:
+     }
+     PropertyMapPtr GetTopContextOfType(ContextType eId);
+ 
++    bool HasTopText() const;
+     css::uno::Reference<css::text::XTextAppend> const & GetTopTextAppend();
+     FieldContextPtr const & GetTopFieldContext();
+ 
 -- 
 2.24.1
 

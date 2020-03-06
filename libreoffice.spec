@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -243,6 +243,7 @@ Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch2: 0001-rhbz-1775767-null-deref.patch
 Patch3: 0001-Adapt-SAL_WARN-to-C-20-deleted-ostream-for-sal_Unico.patch
 Patch4: 0001-opengl-slide-transitions-not-working-with-glm-GLM-0..patch
+Patch5: 0001-rhbz-1810732-crash-assert-inserting-document-with-in.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2146,6 +2147,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Mar 06 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.4.2-3
+- rhbz#1810732 crash inserting a specific .docx into a document
+
 * Fri Jan 31 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.4.2-2
 - get opengl slide transitions working with glm >= 0.9.9.0
 

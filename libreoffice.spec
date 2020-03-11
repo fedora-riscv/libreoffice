@@ -731,7 +731,11 @@ This package provides gdb pretty printers for package %{name}.
 Summary: %{langname} language pack for LibreOffice \
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
+%if 0%{?rhel} && 0%{?rhel} < 9 \
+%{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
+%else \
 %{-f:Recommends: langpacks-%{-f*}}%{!-f:%{-F:Recommends: langpacks-%{lang}}} \
+%endif \
 %{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \

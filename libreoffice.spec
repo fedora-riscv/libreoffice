@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -280,7 +280,6 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-graphicfilter%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-impress%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-math%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-xsltfilter%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -1595,6 +1594,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/services/services.rdb
 %{baseinstdir}/program/libsimplecanvaslo.so
 %{baseinstdir}/program/libslideshowlo.so
+%{baseinstdir}/program/libsmlo.so
+%{baseinstdir}/program/libsmdlo.so
 %{baseinstdir}/program/libsofficeapp.so
 %{baseinstdir}/program/libstringresourcelo.so
 %{baseinstdir}/program/libsysshlo.so
@@ -1661,6 +1662,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/gnome.xcd
 %{baseinstdir}/share/registry/lingucomponent.xcd
 %{baseinstdir}/share/registry/main.xcd
+%{baseinstdir}/share/registry/math.xcd
 %{baseinstdir}/share/registry/oo-ad-ldap.xcd.sample
 %{baseinstdir}/share/registry/oo-ldap.xcd.sample
 %dir %{baseinstdir}/share/registry/res
@@ -1925,12 +1927,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/ooimpress.1*
 
 %files math
-%if 0%{?fedora}
-%{baseinstdir}/program/math.abignore
-%endif
-%{baseinstdir}/program/libsmlo.so
-%{baseinstdir}/program/libsmdlo.so
-%{baseinstdir}/share/registry/math.xcd
 %{baseinstdir}/program/smath
 %{_datadir}/applications/libreoffice-math.desktop
 %{_bindir}/oomath
@@ -2141,6 +2137,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Mar 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-2
+- rhbz#1776774 make math subpackage just a superficial package for
+  math launcher
+
 * Tue Feb 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-1
 - 6.4.1 beta 2
 

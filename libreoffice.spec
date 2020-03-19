@@ -1331,7 +1331,7 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 %if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
-for pkg in core base officebean ogltrans pdfimport calc writer impress math graphicfilter postgresql ure pyuno x11 gtk3 kde5 libreofficekit; do
+for pkg in core base officebean ogltrans pdfimport calc writer impress graphicfilter postgresql ure pyuno x11 gtk3 kde5 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
 [suppress_file]
 file_name_not_regexp=.*\.so\.[0-9]+

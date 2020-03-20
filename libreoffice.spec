@@ -1238,7 +1238,8 @@ rm -rf %{buildroot}%{baseinstdir}/share/fonts/truetype/*.ttf
 # move platform-independent data into shared dir
 install -m 0755 -d %{buildroot}%{datadir}
 rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE* %{buildroot}%{baseinstdir}/NOTICE
-# rhbz#1473749 ensure display of files in about dialogs works
+# rhbz#1473749 ensure display of files in license/about dialogs works
+ln -sr %{buildroot}%{lodatadocdir}/LICENSE.fodt %{buildroot}%{baseinstdir}/LICENSE.fodt
 ln -sr %{buildroot}%{lodatadocdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
@@ -1439,6 +1440,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files core
 %dir %{baseinstdir}
 %{baseinstdir}/CREDITS.fodt
+%{baseinstdir}/LICENSE.fodt
 %dir %{baseinstdir}/help
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
@@ -2142,6 +2144,7 @@ done
 %changelog
 * Fri Mar 20 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-3
 - disable tip-of-the-day dialog by default
+- help->license->license doesn't do anything
 
 * Wed Mar 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-2
 - rhbz#1776774 make math subpackage just a superficial package for

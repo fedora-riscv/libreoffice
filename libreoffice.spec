@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -238,12 +238,14 @@ Requires: %{name}-emailmerge%{?_isa} = %{epoch}:%{version}-%{release}
 # not upstreamed: upstream wants an automatic restart after a crash; we
 # want a nice abrt report
 Patch0: 0001-don-t-suppress-crashes.patch
+# disable tip-of-the-day dialog by default
+Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 # rhbz#1736810 disable opencl by default again
-Patch1: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
+Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
-Patch2: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
-Patch3: 0001-fix-detecting-qrcodegen.patch
-Patch4: 0001-Adapt-o3tl-span-to-removal-of-std-span-cbegin-et-al.patch
+Patch3: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
+Patch4: 0001-fix-detecting-qrcodegen.patch
+Patch5: 0001-Adapt-o3tl-span-to-removal-of-std-span-cbegin-et-al.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2138,6 +2140,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Mar 20 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-3
+- disable tip-of-the-day dialog by default
+
 * Wed Mar 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-2
 - rhbz#1776774 make math subpackage just a superficial package for
   math launcher

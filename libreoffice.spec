@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1239,8 +1239,8 @@ rm -rf %{buildroot}%{baseinstdir}/share/fonts/truetype/*.ttf
 install -m 0755 -d %{buildroot}%{datadir}
 rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE* %{buildroot}%{baseinstdir}/NOTICE
 # rhbz#1473749 ensure display of files in license/about dialogs works
-ln -sr %{buildroot}%{lodatadocdir}/LICENSE.fodt %{buildroot}%{baseinstdir}/LICENSE.fodt
 ln -sr %{buildroot}%{lodatadocdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
+ln -sr %{buildroot}%{lodatadocdir}/LICENSE.html %{buildroot}%{baseinstdir}/LICENSE.html
 
 #ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
 #have snuck through
@@ -1440,7 +1440,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files core
 %dir %{baseinstdir}
 %{baseinstdir}/CREDITS.fodt
-%{baseinstdir}/LICENSE.fodt
+%{baseinstdir}/LICENSE.html
 %dir %{baseinstdir}/help
 %{baseinstdir}/help/idxcaption.xsl
 %{baseinstdir}/help/idxcontent.xsl
@@ -2142,9 +2142,11 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Mar 23 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-4
+- help->license->license doesn't do anything
+
 * Fri Mar 20 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-3
 - disable tip-of-the-day dialog by default
-- help->license->license doesn't do anything
 
 * Wed Mar 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.1.2-2
 - rhbz#1776774 make math subpackage just a superficial package for

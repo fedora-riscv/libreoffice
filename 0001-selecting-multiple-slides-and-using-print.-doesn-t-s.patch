@@ -1,0 +1,55 @@
+From c82b891dc9370d4bf72bc07752884603df7d05ac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 24 Mar 2020 14:51:09 +0000
+Subject: [PATCH] selecting multiple slides and using "print..." doesn't set
+ selection as range
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+start impress, copy the default slide a few times, select more than
+one slide and use "print..."
+
+"slides" is selected, but just the first selected slide is shown in the range
+
+since...
+
+commit 76e22667625ce8d16dfaa8617a199b774e987a70
+Date:   Thu Jun 14 23:29:34 2018 -0300
+
+    Configures page range in print dialog
+
+where
+
+aPageRange = aBuf.getStr()
+
+was removed, but if that line is removed then the surrounding loop
+of "for (auto pPage: *pPageSelection)" just accumulates text
+in the OUStringBuffer to then discard it and no longer makes sense
+
+perhaps this was an oversight rather than a planned change.
+
+Change-Id: I39e76c70714ee39d189016179fb1d13a71ec74ae
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/90994
+Tested-by: Jenkins
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+---
+ sd/source/ui/view/DocumentRenderer.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sd/source/ui/view/DocumentRenderer.cxx b/sd/source/ui/view/DocumentRenderer.cxx
+index bb59ccda6b1b..b91771f623c4 100644
+--- a/sd/source/ui/view/DocumentRenderer.cxx
++++ b/sd/source/ui/view/DocumentRenderer.cxx
+@@ -616,6 +616,7 @@ namespace {
+                         else
+                             aBuf.append(',');
+                         aBuf.append(OUString::number(pPage->GetPageNum() / 2 + 1));
++                        aPageRange = aBuf.getStr();
+                     }
+                     nPrintRange = 1;
+                 }
+-- 
+2.24.1
+

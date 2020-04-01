@@ -1,0 +1,54 @@
+From 22005041f829d85e675ea27bdee1770af58a1ea0 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Mon, 3 Jun 2019 16:21:24 +0200
+Subject: [PATCH] AppendInfoBar can return null
+
+e.g., when opening the old help window ("Help - LibreOffice Help" in a build
+configured with --with-help to "build the old local help" (configure.ac))
+
+Change-Id: Icecd224774b98811ddf9545c5fa83a85fab259fc
+Reviewed-on: https://gerrit.libreoffice.org/73390
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ sfx2/source/view/viewfrm.cxx | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/sfx2/source/view/viewfrm.cxx b/sfx2/source/view/viewfrm.cxx
+index 5620f4396e8f..ed8ffa200ef6 100644
+--- a/sfx2/source/view/viewfrm.cxx
++++ b/sfx2/source/view/viewfrm.cxx
+@@ -1239,16 +1239,20 @@ void SfxViewFrame::Notify( SfxBroadcaster& /*rBC*/, const SfxHint& rHint )
+                     if ((iCurrent > iLast) && !Application::IsHeadlessModeEnabled() && !bIsUITest)
+                     {
+                         VclPtr<SfxInfoBarWindow> pInfoBar = AppendInfoBar("whatsnew", SfxResId(STR_WHATSNEW_TEXT), InfoBarType::Info);
+-                        VclPtrInstance<PushButton> xWhatsNewButton(&GetWindow());
+-                        xWhatsNewButton->SetText(SfxResId(STR_WHATSNEW_BUTTON));
+-                        xWhatsNewButton->SetSizePixel(xWhatsNewButton->GetOptimalSize());
+-                        xWhatsNewButton->SetClickHdl(LINK(this, SfxViewFrame, WhatsNewHandler));
+-                        pInfoBar->addButton(xWhatsNewButton);
+-
+-                        //update lastversion
+-                        std::shared_ptr<comphelper::ConfigurationChanges> batch(comphelper::ConfigurationChanges::create());
+-                        officecfg::Setup::Product::ooSetupLastVersion::set(sSetupVersion, batch);
+-                        batch->commit();
++                        if (pInfoBar)
++                        {
++                            VclPtrInstance<PushButton> xWhatsNewButton(&GetWindow());
++                            xWhatsNewButton->SetText(SfxResId(STR_WHATSNEW_BUTTON));
++                            xWhatsNewButton->SetSizePixel(xWhatsNewButton->GetOptimalSize());
++                            xWhatsNewButton->SetClickHdl(LINK(this, SfxViewFrame, WhatsNewHandler));
++                            pInfoBar->addButton(xWhatsNewButton);
++
++                            //update lastversion
++                            std::shared_ptr<comphelper::ConfigurationChanges> batch(comphelper::ConfigurationChanges::create());
++                            officecfg::Setup::Product::ooSetupLastVersion::set(
++                                sSetupVersion, batch);
++                            batch->commit();
++                        }
+                     }
+                 }
+ 
+-- 
+2.25.1
+

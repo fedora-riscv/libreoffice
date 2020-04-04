@@ -1,0 +1,26 @@
+From 1a1a8a95d6f36411e1110bf9b6d27b7d58dd685b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 4 Apr 2020 19:27:41 +0100
+Subject: [PATCH] rhbz#1820868 deref of null xLayoutManager
+
+Change-Id: Ib396ef9f5b019b08a181eeb5a8eb983bdb401db4
+---
+ svx/source/dialog/srchdlg.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/svx/source/dialog/srchdlg.cxx b/svx/source/dialog/srchdlg.cxx
+index 1f95fbe21a7c..445bc318718b 100644
+--- a/svx/source/dialog/srchdlg.cxx
++++ b/svx/source/dialog/srchdlg.cxx
+@@ -2440,6 +2440,8 @@ OUString SvxSearchDialogWrapper::GetSearchLabel()
+             pViewFrame->GetFrame().GetFrameInterface(), css::uno::UNO_QUERY_THROW);
+     css::uno::Reference< css::frame::XLayoutManager > xLayoutManager;
+     xPropSet->getPropertyValue("LayoutManager") >>= xLayoutManager;
++    if (!xLayoutManager.is())
++        return OUString();
+     css::uno::Reference< css::ui::XUIElement > xUIElement =
+         xLayoutManager->getElement("private:resource/toolbar/findbar");
+     if (!xUIElement.is())
+-- 
+2.25.1
+

@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.4.2
+%global libo_version 6.4.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -245,7 +245,6 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch4: 0001-fix-detecting-qrcodegen.patch
-Patch5: 0001-Adapt-o3tl-span-to-removal-of-std-span-cbegin-et-al.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2153,6 +2152,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Apr 16 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.3.2-1
+- latest stable
+
 * Mon Mar 30 2020 Thierry Vignaud <tvgnaud@mredhat.com> 1:6.4.2.2-1
 - 6.4.2.2
 

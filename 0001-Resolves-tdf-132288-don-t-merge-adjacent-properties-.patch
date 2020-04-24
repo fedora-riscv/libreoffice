@@ -1,0 +1,116 @@
+From 0acce38f9e93779e3cae490b5286eda4f344ccf8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 24 Apr 2020 16:38:26 +0100
+Subject: [PATCH] Resolves: tdf#132288 don't merge adjacent properties for
+ spell checking
+
+spell checking relies on each attribute chunk being unmerged with identical
+adjacent chunks
+
+Change-Id: Ia835fa054cad0dee4304f16724b9eb0c29b46102
+---
+ cui/source/dialogs/SpellDialog.cxx |  2 ++
+ editeng/inc/editdoc.hxx            |  3 +++
+ editeng/source/editeng/editdoc.cxx | 12 +++++++++++-
+ editeng/source/editeng/editeng.cxx |  4 ++++
+ include/editeng/editeng.hxx        |  5 +++++
+ 5 files changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/cui/source/dialogs/SpellDialog.cxx b/cui/source/dialogs/SpellDialog.cxx
+index 1bb15c934552..b5e28ffd2023 100644
+--- a/cui/source/dialogs/SpellDialog.cxx
++++ b/cui/source/dialogs/SpellDialog.cxx
+@@ -1142,6 +1142,8 @@ void SentenceEditWindow_Impl::SetDrawingArea(weld::DrawingArea* pDrawingArea)
+                pDrawingArea->get_text_height() * 6);
+     pDrawingArea->set_size_request(aSize.Width(), aSize.Height());
+     WeldEditView::SetDrawingArea(pDrawingArea);
++    // tdf#132288 don't merge equal adjacent attributes
++    m_xEditEngine->DisableAttributeExpanding();
+ }
+ 
+ SentenceEditWindow_Impl::~SentenceEditWindow_Impl()
+diff --git a/editeng/inc/editdoc.hxx b/editeng/inc/editdoc.hxx
+index 089addc59c07..258fa945912c 100644
+--- a/editeng/inc/editdoc.hxx
++++ b/editeng/inc/editdoc.hxx
+@@ -747,6 +747,7 @@ private:
+ 
+     bool            bOwnerOfPool:1;
+     bool            bModified:1;
++    bool            bDisableAttributeExpanding:1;
+ 
+ private:
+     void            ImplDestroyContents();
+@@ -761,6 +762,8 @@ public:
+     bool            IsModified() const      { return bModified; }
+     void            SetModified( bool b );
+ 
++    void            DisableAttributeExpanding() { bDisableAttributeExpanding = true; }
++
+     void            SetModifyHdl( const Link<LinkParamNone*,void>& rLink ) { aModifyHdl = rLink; }
+ 
+     void            CreateDefFont( bool bUseStyles );
+diff --git a/editeng/source/editeng/editdoc.cxx b/editeng/source/editeng/editdoc.cxx
+index 73a356054741..aacc0b2c7b6b 100644
+--- a/editeng/source/editeng/editdoc.cxx
++++ b/editeng/source/editeng/editdoc.cxx
+@@ -1906,7 +1906,8 @@ EditDoc::EditDoc( SfxItemPool* pPool ) :
+     bIsTopToBottomVert(false),
+     bIsFixedCellHeight(false),
+     bOwnerOfPool(pPool == nullptr),
+-    bModified(false)
++    bModified(false),
++    bDisableAttributeExpanding(false)
+ {
+     // Don't create an empty node, Clear() will be called in EditEngine-CTOR
+ };
+@@ -2354,6 +2355,15 @@ void EditDoc::InsertAttribInSelection( ContentNode* pNode, sal_Int32 nStart, sal
+ 
+     RemoveAttribs( pNode, nStart, nEnd, pStartingAttrib, pEndingAttrib, rPoolItem.Which() );
+ 
++    // tdf#132288  By default inserting an attribute beside another that is of
++    // the same type expands the original instead of inserting another. But the
++    // spell check dialog doesn't want that behaviour
++    if (bDisableAttributeExpanding)
++    {
++        pStartingAttrib = nullptr;
++        pEndingAttrib = nullptr;
++    }
++
+     if ( pStartingAttrib && pEndingAttrib &&
+          ( *(pStartingAttrib->GetItem()) == rPoolItem ) &&
+          ( *(pEndingAttrib->GetItem()) == rPoolItem ) )
+diff --git a/editeng/source/editeng/editeng.cxx b/editeng/source/editeng/editeng.cxx
+index 458f71b34d3f..f46106a5773c 100644
+--- a/editeng/source/editeng/editeng.cxx
++++ b/editeng/source/editeng/editeng.cxx
+@@ -2802,6 +2802,10 @@ bool EditEngine::IsPageOverflow() {
+     return pImpEditEngine->IsPageOverflow();
+ }
+ 
++void EditEngine::DisableAttributeExpanding() {
++    pImpEditEngine->GetEditDoc().DisableAttributeExpanding();
++}
++
+ EFieldInfo::EFieldInfo()
+ {
+ }
+diff --git a/include/editeng/editeng.hxx b/include/editeng/editeng.hxx
+index f585ce8b5796..7d4129c0ad0b 100644
+--- a/include/editeng/editeng.hxx
++++ b/include/editeng/editeng.hxx
+@@ -618,6 +618,11 @@ public:
+     sal_Int32 GetOverflowingLineNum() const;
+     void ClearOverflowingParaNum();
+     bool IsPageOverflow();
++
++    // tdf#132288  By default inserting an attribute beside another that is of
++    // the same type expands the original instead of inserting another. But the
++    // spell check dialog doesn't want that behaviour
++    void DisableAttributeExpanding();
+ };
+ 
+ #endif // INCLUDED_EDITENG_EDITENG_HXX
+-- 
+2.25.3
+

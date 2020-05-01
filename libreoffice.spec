@@ -245,6 +245,8 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch4: 0001-fix-detecting-qrcodegen.patch
+Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
+Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1322,6 +1324,13 @@ for app in base calc draw impress math startcenter writer xsltfilter; do
     install -m 0644 -p $app.desktop %{buildroot}%{_datadir}/applications/libreoffice-$app.desktop
 done
 popd
+%if 0%{?flatpak}
+# Transform the libreoffice-*.desktop files into
+# org.libreoffice.LibreOffice.*.desktop ones:
+solenv/bin/assemble-flatpak-desktop.sh %{buildroot}%{_datadir}/applications/ \
+ %{buildroot}%{_datadir}/applications/
+rm %{buildroot}%{_datadir}/applications/libreoffice-*.desktop
+%endif
 
 pushd $WORKDIR/os-integration
 #get rid of the gnome icons and other unneeded files
@@ -1393,6 +1402,19 @@ install -m 0644 -p %{SOURCE46} %{buildroot}%{_datadir}/icons/hicolor/symbolic/ap
 install -m 0644 -p %{SOURCE47} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
 install -m 0644 -p %{SOURCE48} %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps
 
+%if 0%{?flatpak}
+# Duplicate icons/*/*/apps/libreoffice-* as
+# icons/*/*/apps/org.libreoffice.LibreOffice.* (so they end up "with both their
+# original libreoffice-* name as well as the org.libreoffice name needed by
+# Flatpak, which fixes the window icons", see <https://github.com/flathub/
+# org.libreoffice.LibreOffice/commit/945f6caad87658b1df1e8918bd5f64939058ab7f>
+# "clean up desktop integration"):
+for i in %{buildroot}%{_datadir}/icons/*/*/apps/libreoffice-*; do
+    cp -a "$i" \
+     "$(dirname "$i")"/org.libreoffice.LibreOffice."${i##*/apps/libreoffice-}"
+done
+%endif
+
 # install man pages
 install -m 0755 -d %{buildroot}%{_mandir}/man1
 install -m 0644 -p sysui/desktop/man/*.1 %{buildroot}%{_mandir}/man1
@@ -1420,6 +1442,24 @@ appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
 appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-impress.appdata.xml \
   https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
+%endif
+%if 0%{?flatpak}
+# Assemble the libreoffice-*.appdata.xml files into a single
+# org.libreoffice.LibreOffice.appdata.xml; first create the single file:
+solenv/bin/assemble-flatpak-appdata-step1.sh \
+ %{buildroot}%{_datadir}/metainfo/ 0
+# ...then update the screenshots in the single file (see above):
+appstream-util replace-screenshots \
+ %{buildroot}%{_datadir}/metainfo/org.libreoffice.LibreOffice.appdata.xml \
+ https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
+ https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png \
+ https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png \
+ https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png \
+ https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png
+# ...then append the original files to the single file:
+solenv/bin/assemble-flatpak-appdata-step2.sh \
+ %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
+rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 
 # rhbz#1247399 - move stable API jars to noarch java location
@@ -1753,7 +1793,12 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/filter/vml-shape-types
 %{baseinstdir}/share/xdg/
 %{baseinstdir}/program/redirectrc
+%if 0%{?flatpak}
+%{_datadir}/metainfo/org.libreoffice.LibreOffice.appdata.xml
+%{_datadir}/applications/org.libreoffice.LibreOffice.desktop
+%else
 %{_datadir}/applications/libreoffice-startcenter.desktop
+%endif
 #launchers
 %{_bindir}/libreoffice
 %{_bindir}/openoffice.org
@@ -1785,8 +1830,12 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/base.xcd
 %{baseinstdir}/share/registry/reportbuilder.xcd
 %{baseinstdir}/program/sbase
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.base.desktop
+%else
 %{_datadir}/metainfo/libreoffice-base.appdata.xml
 %{_datadir}/applications/libreoffice-base.desktop
+%endif
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
 
@@ -1881,16 +1930,24 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.calc.desktop
+%else
 %{_datadir}/metainfo/libreoffice-calc.appdata.xml
 %{_datadir}/applications/libreoffice-calc.desktop
+%endif
 %{_bindir}/oocalc
 %{_mandir}/man1/oocalc.1*
 
 %files draw
 %{baseinstdir}/program/pagein-draw
 %{baseinstdir}/program/sdraw
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.draw.desktop
+%else
 %{_datadir}/metainfo/libreoffice-draw.appdata.xml
 %{_datadir}/applications/libreoffice-draw.desktop
+%endif
 %{_bindir}/oodraw
 %{_mandir}/man1/oodraw.1*
 
@@ -1914,8 +1971,12 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/writer.xcd
 %{baseinstdir}/program/pagein-writer
 %{baseinstdir}/program/swriter
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.writer.desktop
+%else
 %{_datadir}/metainfo/libreoffice-writer.appdata.xml
 %{_datadir}/applications/libreoffice-writer.desktop
+%endif
 %{_bindir}/oowriter
 %{_mandir}/man1/oowriter.1*
 
@@ -1934,14 +1995,22 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/impress.xcd
 %{baseinstdir}/program/pagein-impress
 %{baseinstdir}/program/simpress
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.impress.desktop
+%else
 %{_datadir}/metainfo/libreoffice-impress.appdata.xml
 %{_datadir}/applications/libreoffice-impress.desktop
+%endif
 %{_bindir}/ooimpress
 %{_mandir}/man1/ooimpress.1*
 
 %files math
 %{baseinstdir}/program/smath
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.math.desktop
+%else
 %{_datadir}/applications/libreoffice-math.desktop
+%endif
 %{_bindir}/oomath
 %{_mandir}/man1/oomath.1*
 
@@ -1958,7 +2027,11 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files xsltfilter
 %{baseinstdir}/share/xslt
 %{baseinstdir}/share/registry/xsltfilter.xcd
+%if 0%{?flatpak}
+%{_datadir}/applications/org.libreoffice.LibreOffice.xsltfilter.desktop
+%else
 %{_datadir}/applications/libreoffice-xsltfilter.desktop
+%endif
 
 %files postgresql
 %if 0%{?fedora}
@@ -2081,6 +2154,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*
 %{_datadir}/icons/locolor/*/*/libreoffice*
+%if 0%{?flatpak}
+%{_datadir}/icons/hicolor/*/*/org.libreoffice.LibreOffice.*
+%{_datadir}/icons/locolor/*/*/org.libreoffice.LibreOffice.*
+%endif
 %{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
 # TODO: rename -data to -core-common?

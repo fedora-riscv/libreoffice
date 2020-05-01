@@ -1,0 +1,64 @@
+From acca5c87e73255db350a02d13bf34a62efaf9c93 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 21 Apr 2020 14:07:24 +0200
+Subject: [PATCH] Flatpak: Add /app/bin/libreoffice ->
+ /app/libreoffice/program/soffice symlink
+
+Which removes the need to rewrite the
+
+  Exec=${UNIXBASISROOTNAME}
+
+lines from sysui/desktop/menus/*.desktop, and helps to harmonize the plain
+Flatpak build with the one done from Fedora RPMs (see
+<https://src.fedoraproject.org/flatpaks/libreoffice>).
+
+(Also change the manifest command from an absolute path to a filename relative
+to PATH.  It is not clear to me which one would be better or more conventional,
+but at least <https://docs.flatpak.org/en/latest/manifests.html> also uses just
+a filename in its example.)
+
+Change-Id: I69c380b84503bf3d85801093fb92567852ceb00b
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/92837
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ solenv/bin/assemble-flatpak.sh | 4 ++--
+ solenv/flatpak-manifest.in     | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/solenv/bin/assemble-flatpak.sh b/solenv/bin/assemble-flatpak.sh
+index b4bce2d4d172..0738fcd59ad2 100755
+--- a/solenv/bin/assemble-flatpak.sh
++++ b/solenv/bin/assemble-flatpak.sh
+@@ -14,13 +14,13 @@
+ set -e
+ 
+ cp -r "${PREFIXDIR?}"/lib/libreoffice /app/
++ln -s /app/libreoffice/program/soffice /app/bin/libreoffice
+ 
+ ## libreoffice-*.desktop -> org.libreoffice.LibreOffice.*.desktop:
+ mkdir -p /app/share/applications
+ for i in "${PREFIXDIR?}"/share/applications/libreoffice-*.desktop
+ do
+- sed -e 's,^Exec=libreoffice,Exec=/app/libreoffice/program/soffice,' \
+-  -e 's/^Icon=libreoffice-/Icon=org.libreoffice.LibreOffice./' "$i" \
++ sed -e 's/^Icon=libreoffice-/Icon=org.libreoffice.LibreOffice./' "$i" \
+   >/app/share/applications/org.libreoffice.LibreOffice."${i#"${PREFIXDIR?}"/share/applications/libreoffice-}"
+ done
+ mv /app/share/applications/org.libreoffice.LibreOffice.startcenter.desktop \
+diff --git a/solenv/flatpak-manifest.in b/solenv/flatpak-manifest.in
+index 9f64a142dd68..754b6b6dbbe1 100644
+--- a/solenv/flatpak-manifest.in
++++ b/solenv/flatpak-manifest.in
+@@ -6,7 +6,7 @@
+     "sdk-extensions": [
+         "org.freedesktop.Sdk.Extension.openjdk11"
+     ],
+-    "command": "/app/libreoffice/program/soffice",
++    "command": "libreoffice",
+     "modules": [
+         {
+             "name": "openjdk",
+-- 
+2.26.0
+

@@ -247,7 +247,8 @@ Patch3: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
-Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
+Patch7: 0001-Resolves-tdf-127782-New-Print-dialog-is-too-high.patch
+Patch8: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
 
 %if 0%{?rhel}
 # not upstreamed

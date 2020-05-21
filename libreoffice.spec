@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.4.3
+%global libo_version 6.4.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -247,9 +247,8 @@ Patch3: 0001-replace-boost-bimap-in-sdext-pdfimport.patch
 Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
-Patch7: 0001-Resolves-tdf-127782-New-Print-dialog-is-too-high.patch
-Patch8: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
-Patch9: 0001-Keep-order-of-GDK-input-events-intact.patch
+Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
+Patch8: 0001-Keep-order-of-GDK-input-events-intact.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2232,6 +2231,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu May 21 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.4.2-1
+- latest stable
+
 * Fri May 15 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.3.2-3
 - Related: rhbz#1377293 Keep order of GDK input events intact
 

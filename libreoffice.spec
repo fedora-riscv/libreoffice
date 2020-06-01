@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -249,6 +249,7 @@ Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
 Patch8: 0001-Keep-order-of-GDK-input-events-intact.patch
+Patch9: 0001-tdf-132169-we-always-get-the-value-in-MapUnit-Map100.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2231,6 +2232,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jun 01 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.4.2-2
+- Resolves: rhbz#132169 fix line width toolbar spinbutton
+
 * Thu May 21 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.4.2-1
 - latest stable
 

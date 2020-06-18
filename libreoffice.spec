@@ -54,7 +54,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -247,6 +247,7 @@ Patch5: 0001-AppendInfoBar-can-return-null.patch
 Patch6: 0001-rhbz-1820868-deref-of-null-xLayoutManager.patch
 Patch7: 0001-Resolves-tdf-132288-don-t-merge-adjacent-properties-.patch
 Patch8: 0001-Keep-order-of-GDK-input-events-intact.patch
+Patch9: 0001-limit-forms-to-http-s.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2150,6 +2151,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jun 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.6.2-4
+- Resolves: rhbz#1848347 CVE-2020-12803 limit forms to http[s]
+
 * Thu May 14 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.6.2-3
 - Related: rhbz#1377293 Keep order of GDK input events intact
 

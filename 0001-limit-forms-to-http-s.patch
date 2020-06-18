@@ -1,0 +1,49 @@
+From 5ccd49e9224aed60057cdc339b27b2c5e2316a17 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 11 May 2020 20:46:43 +0100
+Subject: [PATCH] limit forms to http[s]
+
+Change-Id: I3ed0bc626f693ec03f610dc7361f93cad914c9d8
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/93993
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+(cherry picked from commit 5d101a65c31e6c2f8dd0edffe05f69055cbd481c)
+---
+ forms/source/xforms/submission.cxx            | 3 +++
+ forms/source/xforms/submission/submission.hxx | 6 ++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/forms/source/xforms/submission.cxx b/forms/source/xforms/submission.cxx
+index 3074619981c9..7da6a1e45c9a 100644
+--- a/forms/source/xforms/submission.cxx
++++ b/forms/source/xforms/submission.cxx
+@@ -252,6 +252,9 @@ bool Submission::doSubmit( const Reference< XInteractionHandler >& xHandler )
+         return false;
+     }
+ 
++    if (!xSubmission->IsWebProtocol())
++        return false;
++
+     CSubmission::SubmissionResult aResult = xSubmission->submit( xHandler );
+ 
+     if (aResult == CSubmission::SUCCESS)
+diff --git a/forms/source/xforms/submission/submission.hxx b/forms/source/xforms/submission/submission.hxx
+index 77d59b1f740e..a459f471ba0d 100644
+--- a/forms/source/xforms/submission/submission.hxx
++++ b/forms/source/xforms/submission/submission.hxx
+@@ -126,6 +126,12 @@ public:
+         , m_xContext(::comphelper::getProcessComponentContext())
+     {}
+ 
++    bool IsWebProtocol() const
++    {
++        INetProtocol eProtocol = m_aURLObj.GetProtocol();
++        return eProtocol == INetProtocol::Http || eProtocol == INetProtocol::Https;
++    }
++
+     virtual ~CSubmission() {}
+ 
+     virtual SubmissionResult submit(const css::uno::Reference< css::task::XInteractionHandler >& ) = 0;
+-- 
+2.25.4
+

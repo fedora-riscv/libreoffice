@@ -248,6 +248,7 @@ Patch6: 0001-rhbz-1820868-deref-of-null-xLayoutManager.patch
 Patch7: 0001-Resolves-tdf-132288-don-t-merge-adjacent-properties-.patch
 Patch8: 0001-Keep-order-of-GDK-input-events-intact.patch
 Patch9: 0001-limit-forms-to-http-s.patch
+Patch10: 0001-use-the-LinkManager-persist-to-determine-the-Referer.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2153,6 +2154,7 @@ done
 %changelog
 * Thu Jun 18 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.6.2-4
 - Resolves: rhbz#1848347 CVE-2020-12803 limit forms to http[s]
+- Resolves: CVE-2020-12802 improve docx steathmode import
 
 * Thu May 14 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.3.6.2-3
 - Related: rhbz#1377293 Keep order of GDK input events intact

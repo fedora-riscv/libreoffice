@@ -1,0 +1,47 @@
+From 7d55207ec310956e5bd05aa5901a9f7ff9e53492 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 11 May 2020 17:02:50 +0100
+Subject: [PATCH] use the LinkManager persist to determine the Referer
+
+Change-Id: I4e93878972492a93af368ffa0560412132431a24
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/94061
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+(cherry picked from commit 3ee652e1c18186a5de47797aa4b02defcb29c210)
+---
+ svx/source/svdraw/svdograf.cxx | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/svx/source/svdraw/svdograf.cxx b/svx/source/svdraw/svdograf.cxx
+index d7fa90ba0bd3..8cfe94a3bc4e 100644
+--- a/svx/source/svdraw/svdograf.cxx
++++ b/svx/source/svdraw/svdograf.cxx
+@@ -19,8 +19,10 @@
+ 
+ #include <unotools/streamwrap.hxx>
+ 
++#include <sfx2/docfile.hxx>
+ #include <sfx2/lnkbase.hxx>
+ #include <math.h>
++#include <sfx2/objsh.hxx>
+ #include <tools/helpers.hxx>
+ #include <sot/exchange.hxx>
+ #include <sot/formats.hxx>
+@@ -108,8 +110,13 @@ SdrGraphicLink::SdrGraphicLink(SdrGrafObj& rObj)
+     {
+         sfx2::LinkManager::GetDisplayNames( this, nullptr, &rGrafObj.aFileName, nullptr, &rGrafObj.aFilterName );
+ 
++        OUString sReferer(getReferer());
++        SfxObjectShell * sh = pLinkManager->GetPersist();
++        if (sh != nullptr && sh->HasName())
++            sReferer = sh->GetMedium()->GetName();
++
+         Graphic aGraphic;
+-        if (sfx2::LinkManager::GetGraphicFromAny(rMimeType, rValue, getReferer(), aGraphic, nullptr))
++        if (sfx2::LinkManager::GetGraphicFromAny(rMimeType, rValue, sReferer, aGraphic, nullptr))
+         {
+             rGrafObj.ImpSetLinkedGraphic(aGraphic);
+         }
+-- 
+2.25.4
+

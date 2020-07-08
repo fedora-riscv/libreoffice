@@ -599,6 +599,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
 Obsoletes: libreoffice-gtk2 < 1:6.2.0.0
+Obsoletes: libreoffice-gtk2-debuginfo < 1:6.2.0.0
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3

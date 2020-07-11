@@ -3,7 +3,7 @@
 %global _python_bytecompile_extra 1
 
 # download path contains version without the last (fourth) digit
-%global libo_version 6.4.4
+%global libo_version 6.4.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -248,8 +248,6 @@ Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
-Patch8: 0001-Keep-order-of-GDK-input-events-intact.patch
-Patch9: 0001-tdf-132169-we-always-get-the-value-in-MapUnit-Map100.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -602,6 +600,7 @@ Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gstreamer1(element-gtksink)%{?mark64}
 Obsoletes: libreoffice-gtk2 < 1:6.2.0.0
+Obsoletes: libreoffice-gtk2-debuginfo < 1:6.2.0.0
 Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
@@ -2232,17 +2231,23 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Jun 01 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.4.2-2
-- Resolves: rhbz#132169 fix line width toolbar spinbutton
+* Sat Jul 11 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-1
+- latest stable
+
+* Sat Jul 11 2020 Jiri Vanek <jvanek@redhat.com> - 1:6.4.4.2-4
+- Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11
+
+* Sat May 30 2020 Jonathan Wakely <jwakely@redhat.com> - 1:6.4.4.2-3
+- Rebuilt for Boost 1.73
+
+* Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 1:6.4.4.2-2
+- Rebuilt for Python 3.9
 
 * Thu May 21 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.4.2-1
 - latest stable
 
-* Fri May 15 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.3.2-3
-- Related: rhbz#1377293 Keep order of GDK input events intact
-
-* Thu May 07 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.3.2-2
-- backport tdf#127782 print dialog size changes
+* Sun May 17 2020 Pete Walter <pwalter@fedoraproject.org> - 1:6.4.3.2-2
+- Rebuild for ICU 67
 
 * Thu Apr 16 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.3.2-1
 - latest stable

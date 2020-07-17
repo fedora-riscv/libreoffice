@@ -1,0 +1,32 @@
+From 6620df396db0db8d6c26e0a970568ce88fec6644 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 17 Jul 2020 20:29:41 +0100
+Subject: [PATCH] drop stuff
+
+Change-Id: I1622df61ee0eb0b35a6546c2fbb0aaefd0af8b79
+---
+ vcl/Module_vcl.mk | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/vcl/Module_vcl.mk b/vcl/Module_vcl.mk
+index 5620f188c7f2..ebb932ac2a59 100644
+--- a/vcl/Module_vcl.mk
++++ b/vcl/Module_vcl.mk
+@@ -32,13 +32,7 @@ $(eval $(call gb_Module_add_targets,vcl,\
+ 		$(if $(ENABLE_MACOSX_SANDBOX),, \
+ 			$(if $(DISABLE_GUI),, \
+ 				Executable_ui-previewer)) \
+-		$(if $(filter LINUX MACOSX SOLARIS WNT %BSD,$(OS)), \
+-			Executable_outdevgrind \
+-			$(if $(DISABLE_GUI),, \
+-				Executable_vcldemo \
+-				Executable_icontest \
+-				Executable_visualbackendtest \
+-				Executable_mtfdemo ))) \
++		) \
+ ))
+ 
+ ifeq ($(CROSS_COMPILING)$(DISABLE_DYNLOADING),)
+-- 
+2.26.2
+

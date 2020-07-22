@@ -1,0 +1,39 @@
+From 77580b12520f218a85b13330743f0d6fe700dca3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 22 Jul 2020 14:11:38 +0100
+Subject: [PATCH] fix f33 build
+
+Change-Id: I68a9a58ac33eca0163c5f97ab61a264db75ae544
+---
+ chart2/source/model/template/CandleStickChartType.cxx | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/chart2/source/model/template/CandleStickChartType.cxx b/chart2/source/model/template/CandleStickChartType.cxx
+index 606d51a6c035..10c8114da941 100644
+--- a/chart2/source/model/template/CandleStickChartType.cxx
++++ b/chart2/source/model/template/CandleStickChartType.cxx
+@@ -216,8 +216,8 @@ uno::Sequence< OUString > SAL_CALL CandleStickChartType::getSupportedMandatoryRo
+ {
+     bool bShowFirst = true;
+     bool bShowHiLow = false;
+-    getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
+-    getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
++    ::property::OPropertySet::getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
++    ::property::OPropertySet::getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
+ 
+     std::vector< OUString > aMandRoles;
+ 
+@@ -240,8 +240,8 @@ Sequence< OUString > SAL_CALL CandleStickChartType::getSupportedOptionalRoles()
+ {
+     bool bShowFirst = true;
+     bool bShowHiLow = false;
+-    getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
+-    getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
++    ::property::OPropertySet::getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
++    ::property::OPropertySet::getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
+ 
+     std::vector< OUString > aOptRoles;
+ 
+-- 
+2.26.2
+

@@ -1,0 +1,38 @@
+From d4b1a6e8e2f16ca18b002269f8cef005ad603eec Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Sat, 25 Jul 2020 00:06:16 +0100
+Subject: [PATCH] using seems to have gone wrong
+
+---
+ chart2/source/model/template/CandleStickChartType.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/chart2/source/model/template/CandleStickChartType.cxx b/chart2/source/model/template/CandleStickChartType.cxx
+index 606d51a..1b0a7db 100644
+--- a/chart2/source/model/template/CandleStickChartType.cxx
++++ b/chart2/source/model/template/CandleStickChartType.cxx
+@@ -216,8 +216,10 @@ uno::Sequence< OUString > SAL_CALL CandleStickChartType::getSupportedMandatoryRo
+ {
+     bool bShowFirst = true;
+     bool bShowHiLow = false;
++#if 0
+     getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
+     getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
++#endif
+ 
+     std::vector< OUString > aMandRoles;
+ 
+@@ -240,8 +242,10 @@ Sequence< OUString > SAL_CALL CandleStickChartType::getSupportedOptionalRoles()
+ {
+     bool bShowFirst = true;
+     bool bShowHiLow = false;
++#if 0
+     getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_FIRST ) >>= bShowFirst;
+     getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
++#endif
+ 
+     std::vector< OUString > aOptRoles;
+ 
+-- 
+2.26.2
+

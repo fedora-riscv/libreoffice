@@ -33,6 +33,19 @@ index 606d51a6c035..10c8114da941 100644
 +    ::property::OPropertySet::getFastPropertyValue( PROP_CANDLESTICKCHARTTYPE_SHOW_HIGH_LOW ) >>= bShowHiLow;
  
      std::vector< OUString > aOptRoles;
+
+diff --git a/forms/source/component/ImageControl.cxx b/forms/source/component/ImageControl.cxx
+index 12d44e5..4f7a64b 100644
+--- a/forms/source/component/ImageControl.cxx
++++ b/forms/source/component/ImageControl.cxx
+@@ -305,7 +305,7 @@ sal_Bool OImageControlModel::convertFastPropertyValue(Any& rConvertedValue, Any&
+ 
+         case PROPERTY_ID_GRAPHIC:
+         {
+-            const Reference< XGraphic > xGraphic( getFastPropertyValue( PROPERTY_ID_GRAPHIC ), UNO_QUERY );
++            const Reference< XGraphic > xGraphic( OImageControlModel::getFastPropertyValue( PROPERTY_ID_GRAPHIC ), UNO_QUERY );
+             return tryPropertyValue( rConvertedValue, rOldValue, rValue, xGraphic );
+         }
  
 -- 
 2.26.2

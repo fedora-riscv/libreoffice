@@ -1,0 +1,25 @@
+From 06acb7b4cb3a476b359449b9042534f99e6bc02c Mon Sep 17 00:00:00 2001
+From: rpmbuild <rpmbuild@fedoraproject.org>
+Date: Fri, 24 Jul 2020 20:37:13 +0100
+Subject: [PATCH] workaround internal compiler error
+
+---
+ vcl/workben/vcldemo.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/workben/vcldemo.cxx b/vcl/workben/vcldemo.cxx
+index 74dc6fb..9655a77 100644
+--- a/vcl/workben/vcldemo.cxx
++++ b/vcl/workben/vcldemo.cxx
+@@ -1730,7 +1730,7 @@ class DemoWin : public WorkWindow
+         }
+         virtual ~RenderThread() override
+         {
+-            join();
++            salhelper::Thread::join();
+         }
+         virtual void execute() override
+         {
+-- 
+2.26.2
+

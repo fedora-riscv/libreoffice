@@ -1,7 +1,3 @@
-# This package depends on automagic byte compilation
-# https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_2
-%global _python_bytecompile_extra 1
-
 # download path contains version without the last (fourth) digit
 %global libo_version 6.4.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
@@ -1238,6 +1234,9 @@ mv -f %{buildroot}%{baseinstdir}/program/unohelper.py* .
 mv -f %{buildroot}%{baseinstdir}/program/officehelper.py* .
 popd
 
+#https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_3
+%py_byte_compile %{libo_python_executable} %{buildroot}%{baseinstdir}/program
+
 # rhbz#477435 package opensymbol separately
 pushd %{buildroot}%{baseinstdir}/share/fonts/truetype
 install -d -m 0755 %{buildroot}%{_fontdir}
@@ -2233,8 +2232,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Jul 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-3
+* Sat Jul 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-3
 - Related: rhbz#1859588 workaround vcldemo ICE
+- add py_byte_compile call for
+  https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_3
 
 * Tue Jul 14 2020 Jiri Vanek <jvanek@redhat.com> - 1:6.4.5.2-2
 - Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11

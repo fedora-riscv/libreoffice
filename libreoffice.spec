@@ -250,7 +250,6 @@ Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
 Patch8: 0001-fix-f33-build.patch
 Patch9: 0001-workaround-internal-compiler-error.patch
-Patch10: 0001-using-seems-to-have-gone-wrong.patch
 
 %if 0%{?rhel}
 # not upstreamed

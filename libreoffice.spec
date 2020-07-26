@@ -1236,6 +1236,7 @@ popd
 
 #https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_3
 %py_byte_compile %{libo_python_executable} %{buildroot}%{baseinstdir}/program
+rm -rf %{buildroot}%{baseinstdir}/program/__pycache__
 
 # rhbz#477435 package opensymbol separately
 pushd %{buildroot}%{baseinstdir}/share/fonts/truetype

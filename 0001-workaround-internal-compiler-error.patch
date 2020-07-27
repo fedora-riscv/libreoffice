@@ -34,6 +34,19 @@ index 74dc6fb..9655a77 100644
          }
          virtual void execute() override
          {
+diff --git a/comphelper/source/misc/asyncnotification.cxx b/comphelper/source/misc/asyncnotification.cxx
+index c73bd22..2095359 100644
+--- a/comphelper/source/misc/asyncnotification.cxx
++++ b/comphelper/source/misc/asyncnotification.cxx
+@@ -195,7 +195,7 @@ namespace comphelper
+             if (pNotifier)
+             {
+                 pNotifier->terminate();
+-                pNotifier->join();
++                pNotifier->AsyncEventNotifierAutoJoin::join();
+             }
+         }
+         // note it's possible that g_Notifiers isn't empty now in case of leaks,
 -- 
 2.26.2
 

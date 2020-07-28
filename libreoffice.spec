@@ -1480,7 +1480,6 @@ done
 
 %check
 %ifnarch ppc64 s390x aarch64 armv7hl
-# disable to allow broken build for dependencies
 make
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

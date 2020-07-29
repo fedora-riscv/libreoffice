@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -244,6 +244,7 @@ Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
+Patch8: 0001-rhbz-1861794-csv-fixed-width-import-missing-split-ha.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2231,6 +2232,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jul 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-5
+- Resolves: rhbz#1861794 missing csv fixed width handles
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:6.4.5.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 

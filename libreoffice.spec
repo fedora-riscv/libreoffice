@@ -1,7 +1,3 @@
-# This package depends on automagic byte compilation
-# https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_2
-%global _python_bytecompile_extra 1
-
 # download path contains version without the last (fourth) digit
 %global libo_version 6.4.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
@@ -54,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -248,6 +244,7 @@ Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
+Patch8: 0001-rhbz-1861794-csv-fixed-width-import-missing-split-ha.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1235,6 +1232,10 @@ rm -f %{buildroot}%{baseinstdir}/program/uno.py*
 mv -f %{buildroot}%{baseinstdir}/program/unohelper.py* .
 mv -f %{buildroot}%{baseinstdir}/program/officehelper.py* .
 popd
+
+#https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_3
+%py_byte_compile %{libo_python_executable} %{buildroot}%{baseinstdir}/program
+rm -rf %{buildroot}%{baseinstdir}/program/__pycache__
 
 # rhbz#477435 package opensymbol separately
 pushd %{buildroot}%{baseinstdir}/share/fonts/truetype
@@ -2231,6 +2232,20 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jul 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-5
+- Resolves: rhbz#1861794 missing csv fixed width handles
+
+* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:6.4.5.2-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Sat Jul 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-3
+- Related: rhbz#1859588 workaround vcldemo ICE
+- add py_byte_compile call for
+  https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation_phase_3
+
+* Tue Jul 14 2020 Jiri Vanek <jvanek@redhat.com> - 1:6.4.5.2-2
+- Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11
+
 * Sat Jul 11 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-1
 - latest stable
 

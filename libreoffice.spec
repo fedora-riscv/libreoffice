@@ -1010,7 +1010,11 @@ mv .git .git-rpm
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 
-#use the RPM_OPT_FLAGS but remove the OOo overridden ones
+# This package fails its testsuite when LTO is enabled.
+# see: https://bugs.documentfoundation.org/show_bug.cgi?id=126442
+%define _lto_cflags %{nil}
+
+#use the RPM_OPT_FLAGS but remove the LibreOffice overridden ones
 for i in $RPM_OPT_FLAGS; do
         case "$i" in
                 -pipe|-Wall|-Werror*|-fexceptions) continue;;

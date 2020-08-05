@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -605,23 +605,16 @@ A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
 
 %if 0%{?fedora}
 
-%package kde5
-Summary: LibreOffice KDE5 integration plug-in
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
-Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes: libreoffice-kde4 < 1:6.3.0.0
-
-%description kde5
-A plug-in for LibreOffice that enables integration into the KDE5 desktop environment.
-
 %package kf5
 Summary: LibreOffice KDE Frameworks 5 integration plug-in
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes: libreoffice-kde4 < 1:6.3.0.0
+Obsoletes: libreoffice-kde5 < 1:6.4.5.3
+Obsoletes: libreoffice-kde4-debuginfo < 1:6.3.0.0
+Obsoletes: libreoffice-kde5-debuginfo < 1:6.4.5.3
 #Supplements: (libreoffice-core and plasma-workspace)
 
 %description kf5
@@ -1033,7 +1026,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
 %else
 # fedora
-%define distrooptions --enable-eot --enable-kde5 --enable-gtk3-kde5
+%define distrooptions --enable-eot --enable-kf5
 %endif
 
 %if %{with langpacks}
@@ -1358,7 +1351,7 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 %if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
-for pkg in core base officebean ogltrans pdfimport calc writer impress graphicfilter postgresql ure pyuno x11 gtk3 kde5 libreofficekit; do
+for pkg in core base officebean ogltrans pdfimport calc writer impress graphicfilter postgresql ure pyuno x11 gtk3 kf5 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
 [suppress_file]
 file_name_not_regexp=.*\.so\.[0-9]+
@@ -2209,17 +2202,11 @@ done
 
 %if 0%{?fedora}
 
-%files kde5
-%if 0%{?fedora}
-%{baseinstdir}/program/kde5.abignore
-%endif
+%files kf5
+%{baseinstdir}/program/kf5.abignore
 %{baseinstdir}/program/libkf5be1lo.so
 %{baseinstdir}/program/libvclplug_kf5lo.so
 %{baseinstdir}/program/libvclplug_qt5lo.so
-
-%files kf5
-%{baseinstdir}/program/libvclplug_gtk3_kde5lo.so
-%{baseinstdir}/program/lo_kde5filepicker
 
 %endif
 
@@ -2236,6 +2223,11 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Aug 05 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-6
+- Resolves: rhbz#1745771
+  + drop the GTK3-KF5 VCL plugin (formerly subpackage kf5)
+  + rename the current -kde5 subpackage (the Qt5/KF5 VCL plugin) to -kf5
+
 * Wed Jul 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.5.2-5
 - Resolves: rhbz#1861794 missing csv fixed width handles
 

@@ -999,6 +999,12 @@ mv .git .git-rpm
 # path to external tarballs
 EXTSRCDIR=`dirname %{SOURCE0}`
 
+# On i686, CustomTarget_testtools/uno_test from the testsuite fails when LTO is
+# enabled:
+%ifarch i686
+%define _lto_cflags %{nil}
+%endif
+
 #use the RPM_OPT_FLAGS but remove the LibreOffice overridden ones
 for i in $RPM_OPT_FLAGS; do
         case "$i" in
@@ -1469,7 +1475,7 @@ done
 
 %check
 %ifnarch ppc64 s390x aarch64 armv7hl
-make
+make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif

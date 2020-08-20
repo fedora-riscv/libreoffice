@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.0
+%global libo_version 7.0.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -49,7 +49,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -241,7 +241,6 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
-Patch4: 0001-rhbz-1861794-csv-fixed-width-import-missing-split-ha.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2222,6 +2221,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Aug 20 2020 Thierry Vignaud <tvignaud@redhat.com> 7.0.1.1-1
+- 7.0.1 RC1
+
 * Thu Aug 06 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.0.3-1
 - 7.0.0
 

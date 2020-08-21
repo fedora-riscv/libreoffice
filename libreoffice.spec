@@ -244,8 +244,7 @@ Patch4: 0001-fix-detecting-qrcodegen.patch
 Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
-Patch8: 0001-rhbz-1861794-csv-fixed-width-import-missing-split-ha.patch
-Patch9: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
+Patch8: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 
 %if 0%{?rhel}
 # not upstreamed

@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -242,6 +242,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-Pass-fno-lto-unconditionally.patch
+Patch5: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2222,10 +2223,13 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Aug 21 2020 Stephan Bergmann <sbergman@redhat.com> 7.0.1.1-2
+* Fri Aug 21 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.1-3
+- rhbz#1870501 crash on reexport of odg
+
+* Fri Aug 21 2020 Stephan Bergmann <sbergman@redhat.com> 1:7.0.1.1-2
 - Build the binary UNO bridge with -fno-lto
 
-* Thu Aug 20 2020 Thierry Vignaud <tvignaud@redhat.com> 7.0.1.1-1
+* Thu Aug 20 2020 Thierry Vignaud <tvignaud@redhat.com> 1:7.0.1.1-1
 - 7.0.1 RC1
 
 * Thu Aug 06 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.0.3-1

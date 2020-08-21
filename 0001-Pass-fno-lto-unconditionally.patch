@@ -1,0 +1,57 @@
+From 7b0ab85b4042cb38221ca5c9794b70c87443181f Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 20 Aug 2020 14:54:31 +0200
+Subject: [PATCH] Pass -fno-lto unconditionally
+
+At least when building the libreoffice rpm on Fedora 33, the relevant -flto...
+flags are passed in via the global CFLAGS/CXXFLAGS, and no --enable-lto
+configure option is given.  That caused this library to be built with LTO there,
+which in turn caused at least aarch64 to fail the %check step with
+
+> ### unexpected exception content! failed
+> ### unexpected exception content! failed
+> ### unexpected exception content! failed
+> exception test failed
+> oneway exception test failed
+> exception occurred: error: test failed! testtools/source/bridgetest/bridgetest.cxx:1176
+>
+> > error: error: test failed! testtools/source/bridgetest/bridgetest.cxx:1176
+> > dying...make[1]: *** [testtools/CustomTarget_uno_test.mk:25: workdir/CustomTarget/testtools/uno_test.done] Error 1
+> make: *** [Makefile:166: CustomTarget_testtools/uno_test] Error 2
+
+The easiest fix appears to pass -fno-lto unconditionally:  For one, both GCC and
+Clang appear to support it since before our baseline versions (GCC: baseline
+7.0.0, presumably supported since <https://gcc.gnu.org/git/?p=gcc.git;a=commit;
+h=d7f09764d7bc66b9997c811c22e11efc87b44792> "Merge lto branch into trunk" in
+releases/gcc-4.5; Clang: baseline 5.0.2 (at least on Linux), presumably
+supported since <https://github.com/llvm/llvm-project/commit/
+10d0868efb320fc33ced13b0abeea7070cd41635> "Driver: Support -fno-lto" in
+releases/3.0.x).  For another, the other (few) places in the code that check
+ENABLE_LTO appear not to be relevant at least for that Fedora 33 rpm build, so
+there appears to be no incentive to make that build configure --enable-lto as an
+alternative to this fix.
+
+Change-Id: I4735403660e57ef73b99d6a8cc5945c6d8e2af73
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/101129
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ bridges/Library_cpp_uno.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bridges/Library_cpp_uno.mk b/bridges/Library_cpp_uno.mk
+index 5e78bcb676a6..0c6b255f52ad 100644
+--- a/bridges/Library_cpp_uno.mk
++++ b/bridges/Library_cpp_uno.mk
+@@ -212,7 +212,7 @@ $(eval $(call gb_Library_add_cxxflags,gcc3_uno,\
+ 	$(if $(filter armeabi-v7a,$(ANDROID_APP_ABI)),-I$(ANDROID_BINUTILS_PREBUILT_ROOT)/lib/gcc/arm-linux-androideabi/4.9.x/include) \
+ 	-fno-omit-frame-pointer \
+ 	-fno-strict-aliasing \
+-	$(if $(filter TRUE,$(ENABLE_LTO)),-fno-lto) \
++	-fno-lto \
+ 	$(if $(filter TRUE,$(HAVE_GCC_AVX)),-mno-avx) \
+ ))
+ 
+-- 
+2.26.2
+

@@ -243,6 +243,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-Pass-fno-lto-unconditionally.patch
 Patch5: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
+Patch6: 0001-CppunitTest_sw_htmlexport-The-actual-PNG-data-does-n.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -1475,7 +1476,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x aarch64
+%ifnarch s390x
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

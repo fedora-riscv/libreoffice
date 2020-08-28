@@ -1475,7 +1475,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch ppc64 s390x aarch64
+%ifnarch s390x aarch64
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar

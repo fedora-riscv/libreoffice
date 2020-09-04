@@ -1,0 +1,43 @@
+From 1104a217092f7a609166113c2e911589f62b647c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 4 Sep 2020 19:38:52 +0100
+Subject: [PATCH] rhbz#1875377 if sort order is equivalent keep order
+ fontconfig presents
+
+there are two fonts in fedora 32/33 for regular Cantarell
+
+/usr/share/fonts/cantarell/Cantarell-Regular.otf
+and
+/usr/share/fonts/cantarell/Cantarell-VF.otf
+
+where VF is the Variable Font version. The Cantarell-Regular
+ones has a CFF table and export to pdf creates a font subset
+that works perfectly fine. The VF one does not have a CFF
+table and the fallback case doesn't work for pdf export.
+
+Both have the same version, use a stable sort to retain
+their relative order that fontconfig presents so we use
+the Cantarell-Regular version we would see if we didn't
+sort by version at all.
+
+Change-Id: I750006b980810fc59e0a152d42ae17f29f46e3b3
+---
+ vcl/unx/generic/fontmanager/fontconfig.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+index dea4cd548949..a87c2c21094c 100644
+--- a/vcl/unx/generic/fontmanager/fontconfig.cxx
++++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
+@@ -213,7 +213,7 @@ FcFontSet* FontCfgWrapper::getFontSet()
+         addFontSet( FcSetSystem );
+         addFontSet( FcSetApplication );
+ 
+-        ::std::sort(m_pFontSet->fonts,m_pFontSet->fonts+m_pFontSet->nfont,SortFont());
++        std::stable_sort(m_pFontSet->fonts,m_pFontSet->fonts+m_pFontSet->nfont,SortFont());
+     }
+ 
+     return m_pFontSet;
+-- 
+2.26.2
+

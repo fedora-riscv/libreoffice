@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -207,7 +207,11 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
+%if 0%{?fedora} && 0%{?fedora} > 33
+BuildRequires: pkgconfig(liborcus-0.16)
+%else
 BuildRequires: pkgconfig(liborcus-0.15)
+%endif
 BuildRequires: pkgconfig(mdds-1.5)
 BuildRequires: libnumbertext-devel
 
@@ -246,6 +250,9 @@ Patch4: 0001-Pass-fno-lto-unconditionally.patch
 Patch5: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-CppunitTest_sw_htmlexport-The-actual-PNG-data-does-n.patch
 Patch7: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
+%if 0%{?fedora} && 0%{?fedora} > 33
+Patch8: 0001-Upgrade-liborcus-to-0.16.0.patch
+%endif
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2226,7 +2233,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Fri Sep 04 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-2
+* Thu Sep 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-4
+- upgrade liborcus
+
+* Fri Sep 04 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-3
 - rhbz#1875377 prefer Cantarell-Regular to Cantarell-VF
 
 * Thu Sep 03 2020 Merlin Mathesius <mmathesi@redhat.com> - 1:7.0.1.2-2

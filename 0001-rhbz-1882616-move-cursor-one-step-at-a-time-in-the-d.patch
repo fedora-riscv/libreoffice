@@ -1,0 +1,75 @@
+From ab41de1f744af115886fe272ccff2a5160c1bffa Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 25 Sep 2020 11:22:03 +0100
+Subject: [PATCH] rhbz#1882616 move cursor one step at a time in the desired
+ direction
+
+until we get to the target position. The break iterator operates in graphemes
+so we can't just move Left/Right the amount of utf-16 we want to move.
+
+Change-Id: I25d4e9285deae374f85dcaadbf4601bc213a89de
+---
+ sw/source/core/edit/editsh.cxx | 40 +++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
+
+diff --git a/sw/source/core/edit/editsh.cxx b/sw/source/core/edit/editsh.cxx
+index e4f26588d0af..1e16460f49e2 100644
+--- a/sw/source/core/edit/editsh.cxx
++++ b/sw/source/core/edit/editsh.cxx
+@@ -983,7 +983,8 @@ OUString SwEditShell::DeleteExtTextInput( bool bInsText )
+ 
+ void SwEditShell::SetExtTextInputData( const CommandExtTextInputData& rData )
+ {
+-    const SwPosition& rPos = *GetCursor()->GetPoint();
++    SwPaM* pCurrentCursor = GetCursor();
++    const SwPosition& rPos = *pCurrentCursor->GetPoint();
+     SwExtTextInput* pInput = GetDoc()->GetExtTextInput( rPos.nNode.GetNode() );
+     if( !pInput )
+         return;
+@@ -1000,10 +1001,39 @@ void SwEditShell::SetExtTextInputData( const CommandExtTextInputData& rData )
+     // ugly but works
+     ShowCursor();
+     const sal_Int32 nDiff = nNewCursorPos - rPos.nContent.GetIndex();
+-    if( 0 > nDiff )
+-        Left( -nDiff, CRSR_SKIP_CHARS );
+-    else if( 0 < nDiff )
+-        Right( nDiff, CRSR_SKIP_CHARS );
++    if( nDiff != 0)
++    {
++        bool bLeft = nDiff < 0;
++        sal_Int32 nMaxGuard = std::abs(nDiff);
++        while (true)
++        {
++            auto nOldPos = pCurrentCursor->GetPoint()->nContent.GetIndex();
++            if (bLeft)
++                Left(1, CRSR_SKIP_CHARS);
++            else
++                Right(1, CRSR_SKIP_CHARS);
++            auto nNewPos = pCurrentCursor->GetPoint()->nContent.GetIndex();
++
++            // expected success
++            if (nNewPos == nNewCursorPos)
++                break;
++
++            if (nNewPos == nOldPos)
++            {
++                // if there was no movement, we have failed for some reason
++                SAL_WARN("sw.core", "IM cursor move failed");
++                break;
++            }
++
++            if (--nMaxGuard == 0)
++            {
++                // if it takes more cursor moves than there are utf-16 chars to move past
++                // something has probably gone wrong
++                SAL_WARN("sw.core", "IM abandoning cursor positioning");
++                break;
++            }
++        }
++    }
+ 
+     SetOverwriteCursor( rData.IsCursorOverwrite() );
+ 
+-- 
+2.26.2
+

@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -253,6 +253,7 @@ Patch7: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
 %if 0%{?fedora} && 0%{?fedora} > 33
 Patch8: 0001-Upgrade-liborcus-to-0.16.0.patch
 %endif
+Patch9: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2233,6 +2234,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-5
+- Resolves: rhbz#1882616 IM cursor pos problem with emojis in writer
+
 * Thu Sep 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-4
 - upgrade liborcus
 

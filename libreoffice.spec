@@ -207,7 +207,7 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
-%if 0%{?fedora} && 0%{?fedora} > 33
+%if 0%{?fedora} > 33 || 0%{?rhel} > 8
 BuildRequires: pkgconfig(liborcus-0.16)
 %else
 BuildRequires: pkgconfig(liborcus-0.15)
@@ -250,7 +250,7 @@ Patch4: 0001-Pass-fno-lto-unconditionally.patch
 Patch5: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-CppunitTest_sw_htmlexport-The-actual-PNG-data-does-n.patch
 Patch7: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
-%if 0%{?fedora} && 0%{?fedora} > 33
+%if 0%{?fedora} > 33 || 0%{?rhel} > 8
 Patch8: 0001-Upgrade-liborcus-to-0.16.0.patch
 %endif
 Patch9: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch

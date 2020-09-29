@@ -1,4 +1,4 @@
-From 335d3831dc1d418c37467ab2589c4b0416d86277 Mon Sep 17 00:00:00 2001
+From f1cace2cd06b20fc1431f15892a4293fa3601b39 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 8 Jul 2020 10:13:26 +0100
 Subject: [PATCH] use gdk_wayland_window_set_application_id when it becomes
@@ -20,11 +20,11 @@ after mapped it definitely works
 Change-Id: Ide0fa636ee26acea0d938aef08532b9396fe901a
 ---
  vcl/inc/unx/gtk/gtkframe.hxx  |  3 +++
- vcl/unx/gtk3/gtk3gtkframe.cxx | 48 +++++++++++++++++++++++++++++------
- 2 files changed, 43 insertions(+), 8 deletions(-)
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 49 +++++++++++++++++++++++++++++------
+ 2 files changed, 44 insertions(+), 8 deletions(-)
 
 diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
-index ccf9064966bd..49b69375f0f7 100644
+index ccf9064..49b6937 100644
 --- a/vcl/inc/unx/gtk/gtkframe.hxx
 +++ b/vcl/inc/unx/gtk/gtkframe.hxx
 @@ -206,6 +206,7 @@ class GtkSalFrame : public SalFrame
@@ -45,10 +45,18 @@ index ccf9064966bd..49b69375f0f7 100644
      cairo_surface_t*                m_pSurface;
      basegfx::B2IVector              m_aFrameSize;
 diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
-index 786aa40474d6..771d35222985 100644
+index 786aa40..624c75a 100644
 --- a/vcl/unx/gtk3/gtk3gtkframe.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
-@@ -922,6 +922,7 @@ void GtkSalFrame::InitCommon()
+@@ -55,6 +55,7 @@
+ 
+ #include <cstdlib>
+ #include <cmath>
++#include <dlfcn.h>
+ 
+ #include <com/sun/star/accessibility/XAccessibleEditableText.hpp>
+ #include <com/sun/star/awt/MouseButton.hpp>
+@@ -922,6 +923,7 @@ void GtkSalFrame::InitCommon()
      m_pDropTarget       = nullptr;
      m_pDragSource       = nullptr;
      m_bGeometryIsProvisional = false;
@@ -56,7 +64,7 @@ index 786aa40474d6..771d35222985 100644
      m_ePointerStyle     = static_cast<PointerStyle>(0xffff);
      m_pSalMenu          = nullptr;
      m_nWatcherId        = 0;
-@@ -1217,6 +1218,28 @@ void GtkSalFrame::SetTitle( const OUString& rTitle )
+@@ -1217,6 +1219,28 @@ void GtkSalFrame::SetTitle( const OUString& rTitle )
      }
  }
  
@@ -85,7 +93,7 @@ index 786aa40474d6..771d35222985 100644
  void GtkSalFrame::SetIcon( sal_uInt16 nIcon )
  {
      if( (m_nStyle & (SalFrameStyleFlags::PLUG|SalFrameStyleFlags::SYSTEMCHILD|SalFrameStyleFlags::FLOAT|SalFrameStyleFlags::INTRO|SalFrameStyleFlags::OWNERDRAWDECORATION))
-@@ -1240,7 +1263,8 @@ void GtkSalFrame::SetIcon( sal_uInt16 nIcon )
+@@ -1240,7 +1264,8 @@ void GtkSalFrame::SetIcon( sal_uInt16 nIcon )
      else
          appicon = g_strdup ("libreoffice-startcenter");
  
@@ -95,7 +103,7 @@ index 786aa40474d6..771d35222985 100644
      g_free (appicon);
  }
  
-@@ -1309,13 +1333,18 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
+@@ -1309,13 +1334,18 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
              }
  
  #if defined(GDK_WINDOWING_WAYLAND)
@@ -121,7 +129,7 @@ index 786aa40474d6..771d35222985 100644
              {
                  OString sOrigName(g_get_prgname());
                  g_set_prgname("libreoffice-startcenter");
-@@ -3039,6 +3068,9 @@ gboolean GtkSalFrame::signalMap(GtkWidget *, GdkEvent*, gpointer frame)
+@@ -3039,6 +3069,9 @@ gboolean GtkSalFrame::signalMap(GtkWidget *, GdkEvent*, gpointer frame)
  {
      GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
  

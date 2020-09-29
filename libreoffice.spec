@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -247,6 +247,7 @@ Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
 Patch8: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch9: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
 Patch10: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
+Patch11: 0001-use-gdk_wayland_window_set_application_id-when-it-be.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2234,6 +2235,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Sep 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.6.2-4
+- gdk_wayland_window_set_application_id has become available
+
 * Mon Sep 28 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.6.2-3
 - export HYPERLINK target in html clipboard export
 

@@ -1,0 +1,136 @@
+From 335d3831dc1d418c37467ab2589c4b0416d86277 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 8 Jul 2020 10:13:26 +0100
+Subject: [PATCH] use gdk_wayland_window_set_application_id when it becomes
+ available
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I60775dcbfbc396f195a71f219668944d0bfecf31
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/98325
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 2d8e2813ddc87f7ce03b97e4d603df11613461f0)
+
+gdk_wayland_window_set_application_id doesn't work when called early
+
+after mapped it definitely works
+
+Change-Id: Ide0fa636ee26acea0d938aef08532b9396fe901a
+---
+ vcl/inc/unx/gtk/gtkframe.hxx  |  3 +++
+ vcl/unx/gtk3/gtk3gtkframe.cxx | 48 +++++++++++++++++++++++++++++------
+ 2 files changed, 43 insertions(+), 8 deletions(-)
+
+diff --git a/vcl/inc/unx/gtk/gtkframe.hxx b/vcl/inc/unx/gtk/gtkframe.hxx
+index ccf9064966bd..49b69375f0f7 100644
+--- a/vcl/inc/unx/gtk/gtkframe.hxx
++++ b/vcl/inc/unx/gtk/gtkframe.hxx
+@@ -206,6 +206,7 @@ class GtkSalFrame : public SalFrame
+     GtkDropTarget*                  m_pDropTarget;
+     GtkDragSource*                  m_pDragSource;
+     bool                            m_bGeometryIsProvisional;
++    bool                            m_bIconSetWhileUnmapped;
+ 
+     GtkSalMenu*                     m_pSalMenu;
+ 
+@@ -315,6 +316,8 @@ class GtkSalFrame : public SalFrame
+ 
+     void SetScreen( unsigned int nNewScreen, SetType eType, tools::Rectangle const *pSize = nullptr );
+ 
++    void SetIcon(const char* pIcon);
++
+ public:
+     cairo_surface_t*                m_pSurface;
+     basegfx::B2IVector              m_aFrameSize;
+diff --git a/vcl/unx/gtk3/gtk3gtkframe.cxx b/vcl/unx/gtk3/gtk3gtkframe.cxx
+index 786aa40474d6..771d35222985 100644
+--- a/vcl/unx/gtk3/gtk3gtkframe.cxx
++++ b/vcl/unx/gtk3/gtk3gtkframe.cxx
+@@ -922,6 +922,7 @@ void GtkSalFrame::InitCommon()
+     m_pDropTarget       = nullptr;
+     m_pDragSource       = nullptr;
+     m_bGeometryIsProvisional = false;
++    m_bIconSetWhileUnmapped = false;
+     m_ePointerStyle     = static_cast<PointerStyle>(0xffff);
+     m_pSalMenu          = nullptr;
+     m_nWatcherId        = 0;
+@@ -1217,6 +1218,28 @@ void GtkSalFrame::SetTitle( const OUString& rTitle )
+     }
+ }
+ 
++void GtkSalFrame::SetIcon(const char* appicon)
++{
++    gtk_window_set_icon_name(GTK_WINDOW(m_pWindow), appicon);
++
++#if defined(GDK_WINDOWING_WAYLAND)
++    if (DLSYM_GDK_IS_WAYLAND_DISPLAY(getGdkDisplay()))
++    {
++        static auto set_application_id = reinterpret_cast<void (*) (GdkWindow*, const char*)>(
++                                             dlsym(nullptr, "gdk_wayland_window_set_application_id"));
++        if (set_application_id)
++        {
++            GdkWindow* gdkWindow = gtk_widget_get_window(m_pWindow);
++            set_application_id(gdkWindow, appicon);
++
++            // gdk_wayland_window_set_application_id doesn't seem to work before
++            // the window is mapped, so set this for real when/if we are mapped
++            m_bIconSetWhileUnmapped = !gtk_widget_get_mapped(m_pWindow);
++        }
++    }
++#endif
++}
++
+ void GtkSalFrame::SetIcon( sal_uInt16 nIcon )
+ {
+     if( (m_nStyle & (SalFrameStyleFlags::PLUG|SalFrameStyleFlags::SYSTEMCHILD|SalFrameStyleFlags::FLOAT|SalFrameStyleFlags::INTRO|SalFrameStyleFlags::OWNERDRAWDECORATION))
+@@ -1240,7 +1263,8 @@ void GtkSalFrame::SetIcon( sal_uInt16 nIcon )
+     else
+         appicon = g_strdup ("libreoffice-startcenter");
+ 
+-    gtk_window_set_icon_name (GTK_WINDOW (m_pWindow), appicon);
++    SetIcon(appicon);
++
+     g_free (appicon);
+ }
+ 
+@@ -1309,13 +1333,18 @@ void GtkSalFrame::Show( bool bVisible, bool /*bNoActivate*/ )
+             }
+ 
+ #if defined(GDK_WINDOWING_WAYLAND)
+-            //rhbz#1334915, gnome#779143, tdf#100158
+-            //gtk under wayland lacks a way to change the app_id
+-            //of a window, so brute force everything as a
+-            //startcenter when initially shown to at least get
+-            //the default LibreOffice icon and not the broken
+-            //app icon
+-            if (DLSYM_GDK_IS_WAYLAND_DISPLAY(getGdkDisplay()))
++            /*
++             rhbz#1334915, gnome#779143, tdf#100158
++             https://gitlab.gnome.org/GNOME/gtk/-/issues/767
++
++             before gdk_wayland_window_set_application_id was available gtk
++             under wayland lacked a way to change the app_id of a window, so
++             brute force everything as a startcenter when initially shown to at
++             least get the default LibreOffice icon and not the broken app icon
++            */
++            static bool bAppIdImmutable = DLSYM_GDK_IS_WAYLAND_DISPLAY(getGdkDisplay()) &&
++                                          !dlsym(nullptr, "gdk_wayland_window_set_application_id");
++            if (bAppIdImmutable)
+             {
+                 OString sOrigName(g_get_prgname());
+                 g_set_prgname("libreoffice-startcenter");
+@@ -3039,6 +3068,9 @@ gboolean GtkSalFrame::signalMap(GtkWidget *, GdkEvent*, gpointer frame)
+ {
+     GtkSalFrame* pThis = static_cast<GtkSalFrame*>(frame);
+ 
++    if (pThis->m_bIconSetWhileUnmapped)
++        pThis->SetIcon(gtk_window_get_icon_name(GTK_WINDOW(pThis->m_pWindow)));
++
+     pThis->CallCallbackExc( SalEvent::Resize, nullptr );
+     pThis->TriggerPaintEvent();
+ 
+-- 
+2.26.2
+

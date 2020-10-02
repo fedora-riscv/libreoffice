@@ -1,0 +1,44 @@
+From 96fc7531331f45a314416000150b1141e5686f38 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 2 Oct 2020 16:21:02 +0100
+Subject: [PATCH] tdf#137209 unparent widgets in fragment dtor
+
+Change-Id: I819514fd2b97e2cc8daad71a7f3b0b27afe6136d
+---
+ sw/source/ui/dbui/createaddresslistdialog.cxx | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/sw/source/ui/dbui/createaddresslistdialog.cxx b/sw/source/ui/dbui/createaddresslistdialog.cxx
+index ae4d354ea29d..994a6045cea5 100644
+--- a/sw/source/ui/dbui/createaddresslistdialog.cxx
++++ b/sw/source/ui/dbui/createaddresslistdialog.cxx
+@@ -53,11 +53,13 @@ struct SwAddressFragment
+     std::unique_ptr<weld::Builder> m_xBuilder;
+     std::unique_ptr<weld::Label> m_xLabel;
+     std::unique_ptr<weld::Entry> m_xEntry;
++    weld::Container* m_pGrid;
+ 
+     SwAddressFragment(weld::Container* pGrid, int nLine)
+         : m_xBuilder(Application::CreateBuilder(pGrid, "modules/swriter/ui/addressfragment.ui"))
+         , m_xLabel(m_xBuilder->weld_label("label"))
+         , m_xEntry(m_xBuilder->weld_entry("entry"))
++        , m_pGrid(pGrid)
+     {
+         m_xLabel->set_grid_left_attach(0);
+         m_xLabel->set_grid_top_attach(nLine);
+@@ -65,6 +67,12 @@ struct SwAddressFragment
+         m_xEntry->set_grid_left_attach(1);
+         m_xEntry->set_grid_top_attach(nLine);
+     }
++
++    virtual ~SwAddressFragment()
++    {
++        m_pGrid->move(m_xEntry.get(), nullptr);
++        m_pGrid->move(m_xLabel.get(), nullptr);
++    }
+ };
+ 
+ class SwAddressControl_Impl
+-- 
+2.26.2
+

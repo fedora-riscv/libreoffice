@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        7%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -624,7 +624,7 @@ Obsoletes: libreoffice-kde4 < 1:6.3.0.0
 Obsoletes: libreoffice-kde5 < 1:6.4.5.3
 Obsoletes: libreoffice-kde4-debuginfo < 1:6.3.0.0
 Obsoletes: libreoffice-kde5-debuginfo < 1:6.4.5.3
-#Supplements: (libreoffice-core and plasma-workspace)
+Supplements: (%{name}-core%{?_isa} and plasma-workspace)
 
 %description kf5
 A plug-in for LibreOffice that enables integration into the KDE Frameworks 5.
@@ -2235,6 +2235,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 06 2020 Rex Dieter <rdieter@fedoraproject.org> - 1:7.0.1.2-7
+- -kf5: enable Supplements: (%%name-core and plasma-workspace)
+
 * Tue Sep 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-6
 - export HYPERLINK target in html clipboard export
 

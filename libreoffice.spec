@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.1
+%global libo_version 7.0.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -246,15 +246,12 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
-Patch4: 0001-Pass-fno-lto-unconditionally.patch
-Patch5: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
-Patch6: 0001-CppunitTest_sw_htmlexport-The-actual-PNG-data-does-n.patch
-Patch7: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
+Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 %if 0%{?fedora} > 33 || 0%{?rhel} > 8
-Patch8: 0001-Upgrade-liborcus-to-0.16.0.patch
+Patch5: 0001-Upgrade-liborcus-to-0.16.0.patch
 %endif
-Patch9: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
-Patch10: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
+Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
+Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -624,7 +621,7 @@ Obsoletes: libreoffice-kde4 < 1:6.3.0.0
 Obsoletes: libreoffice-kde5 < 1:6.4.5.3
 Obsoletes: libreoffice-kde4-debuginfo < 1:6.3.0.0
 Obsoletes: libreoffice-kde5-debuginfo < 1:6.4.5.3
-#Supplements: (libreoffice-core and plasma-workspace)
+Supplements: (%{name}-core%{?_isa} and plasma-workspace)
 
 %description kf5
 A plug-in for LibreOffice that enables integration into the KDE Frameworks 5.
@@ -2235,6 +2232,12 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Oct 10 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.2.2-1
+- latest version
+
+* Tue Oct 06 2020 Rex Dieter <rdieter@fedoraproject.org> - 1:7.0.1.2-7
+- -kf5: enable Supplements: (%%name-core and plasma-workspace)
+
 * Tue Sep 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.1.2-6
 - export HYPERLINK target in html clipboard export
 

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 6.4.6
+%global libo_version 6.4.7
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -245,10 +245,9 @@ Patch5: 0001-Flatpak-Add-app-bin-libreoffice-app-libreoffice-prog.patch
 Patch6: 0001-Restructure-solenv-bin-assemble-flatpak.sh.patch
 Patch7: 0001-Related-tdf-127782-resize-the-print-dialog-to-its-op.patch
 Patch8: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
-Patch9: 0001-rhbz-1875377-if-sort-order-is-equivalent-keep-order-.patch
-Patch10: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch11: 0001-use-gdk_wayland_window_set_application_id-when-it-be.patch
-Patch12: 0001-tdf-137209-unparent-widgets-in-fragment-dtor.patch
+Patch9: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
+Patch10: 0001-use-gdk_wayland_window_set_application_id-when-it-be.patch
+Patch11: 0001-tdf-137209-unparent-widgets-in-fragment-dtor.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2236,6 +2235,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Oct 12 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-1
+- latest stable version
+
 * Fri Oct 02 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.6.2-5
 - tdf#137209 unparent widgets in fragment dtor
 

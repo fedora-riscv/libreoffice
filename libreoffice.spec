@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -618,9 +618,9 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin = %{epoch}:%{version}-%{release}
 Provides: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 Obsoletes: libreoffice-kde4 < 1:6.3.0.0
-Obsoletes: libreoffice-kde5 < 1:6.4.5.3
+Obsoletes: libreoffice-kde5 < 1:6.4.7.3
 Obsoletes: libreoffice-kde4-debuginfo < 1:6.3.0.0
-Obsoletes: libreoffice-kde5-debuginfo < 1:6.4.5.3
+Obsoletes: libreoffice-kde5-debuginfo < 1:6.4.7.3
 Supplements: (%{name}-core%{?_isa} and plasma-workspace)
 
 %description kf5
@@ -2232,6 +2232,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Oct 24 18:45:56 CEST 2020 David Tardon <dtardon@redhat.com> - 1:7.0.2.2-2
+- fix upgrade from Fedora 32
+
 * Sat Oct 10 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.2.2-1
 - latest version
 

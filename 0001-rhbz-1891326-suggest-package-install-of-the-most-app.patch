@@ -1,0 +1,37 @@
+From 42c62def5f94ae070ac98bd75e3da1381982ebe7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 25 Oct 2020 20:39:50 +0000
+Subject: [PATCH] rhbz#1891326 suggest package install of the most appropiate
+ pt langpack
+
+Change-Id: I87ff1a941a3a5dc0c321440a9c286ae73c9d0384
+---
+ svtools/source/misc/langhelp.cxx | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/svtools/source/misc/langhelp.cxx b/svtools/source/misc/langhelp.cxx
+index e64a3b869076..9f1e84ba4580 100644
+--- a/svtools/source/misc/langhelp.cxx
++++ b/svtools/source/misc/langhelp.cxx
+@@ -139,6 +139,18 @@ OUString getInstalledLocaleForSystemUILanguage(const css::uno::Sequence<OUString
+                         aPackages.emplace_back("libreoffice-langpack-zh-Hans");
+                     else if (MsLangId::isTraditionalChinese(eType))
+                         aPackages.emplace_back("libreoffice-langpack-zh-Hant");
++                    else if (install == "pt")
++                    {
++                        if (aWantedTag.getCountry().equalsIgnoreAsciiCase("PT"))
++                            aPackages.emplace_back("libreoffice-langpack-pt-PT");
++                        else if (aWantedTag.getCountry().equalsIgnoreAsciiCase("BR"))
++                            aPackages.emplace_back("libreoffice-langpack-pt-BR");
++                        else
++                        {
++                            aPackages.emplace_back("libreoffice-langpack-pt-PT");
++                            aPackages.emplace_back("libreoffice-langpack-pt-BR");
++                        }
++                    }
+                     else
+                         aPackages.emplace_back("libreoffice-langpack-" + install);
+                 }
+-- 
+2.26.2
+

@@ -253,6 +253,7 @@ Patch5: 0001-Upgrade-liborcus-to-0.16.0.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
+Patch9: 0001-fix-disable-pdfium-build.patch
 
 %if 0%{?rhel}
 # not upstreamed

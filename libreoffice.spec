@@ -933,6 +933,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %autocorr -l sv -n Swedish
 %autocorr -l tr -n Turkish
 %autocorr -l vi -n Vietnamese
+%autocorr -l vro -n Võro
 %autocorr -l zh -n Chinese
 
 %endif

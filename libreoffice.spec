@@ -858,8 +858,19 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l or -n Odia -F -H -Y -s ctl -X
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
+
+%if 0%{?rhel} && 0%{?rhel} < 9
+
+%define langpack_lang Brazilian Portuguese
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%else
+
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%endif
+
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
@@ -884,10 +895,25 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l uk -n Ukrainian -F -H -Y -M -T -X
 %langpack -l ve -n Venda -F -H -X
 %langpack -l xh -n Xhosa -F -H -X
+
+%if 0%{?rhel} && 0%{?rhel} < 9
+
+%define langpack_lang Simplified Chinese
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
+
+%define langpack_lang Traditional Chinese
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
+
+%else
+
 %define langpack_lang Simplified Chinese
 %langpack -l zh-Hans -n %{langpack_lang} -f zh_CN -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
+
 %define langpack_lang Traditional Chinese
 %langpack -l zh-Hant -n %{langpack_lang} -f zh_TW -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
+
+%endif
+
 %langpack -l zu -n Zulu -F -H -Y -X
 %undefine langpack_lang
 

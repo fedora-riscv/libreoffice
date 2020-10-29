@@ -311,6 +311,7 @@ Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
+Obsoletes: libreoffice-math-debuginfo < 1:6.4.7.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?rhel}

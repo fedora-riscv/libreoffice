@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -249,6 +249,7 @@ Patch9: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch10: 0001-use-gdk_wayland_window_set_application_id-when-it-be.patch
 Patch11: 0001-tdf-137209-unparent-widgets-in-fragment-dtor.patch
 Patch12: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
+Patch13: 0001-Resolves-rhbz-1893846-if-last-close-had-insert-index.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2236,6 +2237,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Nov 02 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-3
+- rhbz#1893846 crash on restoration of insert, index in new doc
+
 * Mon Oct 26 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-2
 - rhbz#1891326 suggest pt-PT langpack install under pt_PT locale
 

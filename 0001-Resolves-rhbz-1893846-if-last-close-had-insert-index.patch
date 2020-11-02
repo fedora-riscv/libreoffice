@@ -1,0 +1,30 @@
+From 0810398a3be71306fb75c8ed4f000ca2d7a1fb6f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 2 Nov 2020 19:27:04 +0000
+Subject: [PATCH] Resolves: rhbz#1893846 if last close had insert, index dialog
+ open
+
+when starting a new writer document
+
+Change-Id: I83131c01aa53208a321abade48d48a6f7965d0ff
+---
+ sw/source/ui/index/swuiidxmrk.cxx | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sw/source/ui/index/swuiidxmrk.cxx b/sw/source/ui/index/swuiidxmrk.cxx
+index 33a0eab8cd69..5eca069b963b 100644
+--- a/sw/source/ui/index/swuiidxmrk.cxx
++++ b/sw/source/ui/index/swuiidxmrk.cxx
+@@ -955,7 +955,8 @@ SwIndexMarkFloatDlg::SwIndexMarkFloatDlg(SfxBindings* _pBindings,
+         "modules/swriter/ui/indexentry.ui", "IndexEntryDialog")
+     , m_aContent(m_xDialog, *m_xBuilder, bNew, *::GetActiveWrtShell())
+ {
+-    m_aContent.ReInitDlg(*::GetActiveWrtShell());
++    if (SwWrtShell* pSh = ::GetActiveWrtShell())
++        m_aContent.ReInitDlg(*pSh);
+     Initialize(pInfo);
+ }
+ 
+-- 
+2.28.0
+

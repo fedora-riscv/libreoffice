@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -254,6 +254,7 @@ Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
 Patch9: 0001-fix-disable-pdfium-build.patch
+Patch10: 0001-gcc11.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2262,6 +2263,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 02 2020 Jeff Law <law@redhat.com> - 1:7.0.3.2-2
+- Fix missing #include for gcc-11
+
 * Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.2-1
 - latest version
 

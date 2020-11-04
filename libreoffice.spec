@@ -252,6 +252,7 @@ Patch12: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
 Patch13: 0001-Resolves-rhbz-1893846-if-last-close-had-insert-index.patch
 Patch14: 0001-Fix-use-of-uninitialized-SwFEShell-bTableCopied.patch
 Patch15: 0001-cid-1460969-Uninitialized-scalar-field.patch
+Patch16: 0001-resource-leak.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2242,6 +2243,7 @@ done
 * Wed Nov 04 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-4.UNBUILT
 - Fix use of uninitialized SwFEShell::bTableCopied
 - cid#1460969 Uninitialized scalar field
+- fix resource leak in gtk3atktextattributes.cxx
 
 * Mon Nov 02 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-3
 - rhbz#1893846 crash on restoration of insert, index in new doc

@@ -1,0 +1,25 @@
+From c6dc272867b116d2632cef87cb6d36303c1890a3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 4 Nov 2020 11:02:21 +0000
+Subject: [PATCH] resource leak
+
+Change-Id: I1abd8acef55d5bdb4744ecf1a62d8e1396de0e3f
+---
+ vcl/unx/gtk3/a11y/gtk3atktextattributes.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/vcl/unx/gtk3/a11y/gtk3atktextattributes.cxx b/vcl/unx/gtk3/a11y/gtk3atktextattributes.cxx
+index 52f0a34cd3a2..483283cadab5 100644
+--- a/vcl/unx/gtk3/a11y/gtk3atktextattributes.cxx
++++ b/vcl/unx/gtk3/a11y/gtk3atktextattributes.cxx
+@@ -987,6 +987,7 @@ TabStopList2String( const uno::Any& rAny, bool default_tabs )
+             {
+                 gchar * old_tab_str = ret;
+                 ret = g_strconcat(old_tab_str, " ", tab_str, nullptr);
++                g_free( tab_str );
+                 g_free( old_tab_str );
+             }
+             else
+-- 
+2.28.0
+

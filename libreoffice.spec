@@ -2263,7 +2263,7 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue Nov 02 2020 Jeff Law <law@redhat.com> - 1:7.0.3.2-2
+* Tue Nov 03 2020 Jeff Law <law@redhat.com> - 1:7.0.3.2-2
 - Fix missing #include for gcc-11
 
 * Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.2-1

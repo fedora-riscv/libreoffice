@@ -247,9 +247,6 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
-%if 0%{?fedora} > 33 || 0%{?rhel} > 8
-Patch5: 0001-Upgrade-liborcus-to-0.16.0.patch
-%endif
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
@@ -257,10 +254,10 @@ Patch9: 0001-fix-disable-pdfium-build.patch
 Patch10: 0001-gcc11.patch
 Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
 
-%if 0%{?rhel}
+# Patches with numbers above 100 are applied conditionally
+Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
-%endif
 
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
@@ -985,13 +982,10 @@ gpgv2 --keyring ./keyring.gpg %{SOURCE5} %{SOURCE4}
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 4
 rm -rf git-hooks */git-hooks
 
-# set up git repo
-git init
-git config user.name rpmbuild
-git config user.email rpmbuild@fedoraproject.org
-git config gc.auto 0 # disable auto packing
-git add -A
-git commit -q -a -m %{name}-%{version}
+# This is normally done by %%autosetup -S git_am,
+# but that does not work with multiple -b options, so we use plain %%setup above
+%global __scm git_am
+%__scm_setup_git_am
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -1005,7 +999,14 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 git commit -q -a -m 'add Red Hat colors to palette'
 
 # apply patches
-git am %{patches}
+%autopatch -M 99
+%if 0%{?fedora} > 33 || 0%{?rhel} > 8
+%apply_patch -q %{PATCH101}
+%endif
+%if 0%{?rhel}
+%apply_patch -q %{PATCH500}
+%endif
+
 
 sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk # i686
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le

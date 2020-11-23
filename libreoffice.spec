@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -254,6 +254,8 @@ Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
 Patch9: 0001-fix-disable-pdfium-build.patch
+Patch10: 0001-gcc11.patch
+Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -311,6 +313,7 @@ Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
 Obsoletes: libreoffice-headless < 1:4.4.0.0
+Obsoletes: libreoffice-math-debuginfo < 1:6.4.7.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
 %if 0%{?rhel}
@@ -858,8 +861,19 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l or -n Odia -F -H -Y -s ctl -X
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
+
+%if 0%{?rhel} && 0%{?rhel} < 9
+
+%define langpack_lang Brazilian Portuguese
+%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%else
+
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%endif
+
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
 %langpack -l ru -n Russian -F -H -Y -M -A -T -X
@@ -884,10 +898,25 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l uk -n Ukrainian -F -H -Y -M -T -X
 %langpack -l ve -n Venda -F -H -X
 %langpack -l xh -n Xhosa -F -H -X
+
+%if 0%{?rhel} && 0%{?rhel} < 9
+
+%define langpack_lang Simplified Chinese
+%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
+
+%define langpack_lang Traditional Chinese
+%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
+
+%else
+
 %define langpack_lang Simplified Chinese
 %langpack -l zh-Hans -n %{langpack_lang} -f zh_CN -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
+
 %define langpack_lang Traditional Chinese
 %langpack -l zh-Hant -n %{langpack_lang} -f zh_TW -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
+
+%endif
+
 %langpack -l zu -n Zulu -F -H -Y -X
 %undefine langpack_lang
 
@@ -2235,7 +2264,13 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.2-1
+* Mon Nov 23 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-3
+- Resolves: rhbz#1900428 don't crash on invalid index used in StarBasic macro
+
+* Tue Nov 03 2020 Jeff Law <law@redhat.com> - 1:7.0.3.1-2
+- Fix missing #include for gcc-11
+
+* Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-1
 - latest version
 
 * Sun Oct 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.2.2-3

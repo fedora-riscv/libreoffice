@@ -1,0 +1,38 @@
+From 800731dd5910e5af928f05a77a921abe13ec8346 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 23 Nov 2020 10:04:38 +0000
+Subject: [PATCH] Resolves: rhbz#1900428 don't crash on invalid index used in
+ StarBasic macro
+
+Change-Id: I05064f7e9216c9c43b49950b309afe72466857a6
+---
+ dbaccess/source/core/api/RowSetBase.cxx | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/dbaccess/source/core/api/RowSetBase.cxx b/dbaccess/source/core/api/RowSetBase.cxx
+index 0bbe5e80ae0a..df8c46a72554 100644
+--- a/dbaccess/source/core/api/RowSetBase.cxx
++++ b/dbaccess/source/core/api/RowSetBase.cxx
+@@ -230,11 +230,16 @@ const ORowSetValue& ORowSetBase::impl_getValue(sal_Int32 columnIndex)
+             OSL_ENSURE( pTemp != reinterpret_cast<void*>(0xfeeefeee),"HALT!" );
+         }
+         OSL_ENSURE(!m_aCurrentRow.isNull() && m_aCurrentRow < m_pCache->getEnd() && aCacheIter != m_pCache->m_aCacheIterators.end(),"Invalid iterator set for currentrow!");
+-        ORowSetRow rRow = *m_aCurrentRow;
+-        OSL_ENSURE(rRow.is() && o3tl::make_unsigned(columnIndex) < rRow->size(),"Invalid size of vector!");
+ #endif
++        ORowSetRow rRow = *m_aCurrentRow;
++        bool bValidPosition = rRow.is() && o3tl::make_unsigned(columnIndex) < rRow->size();
++        if (!bValidPosition)
++        {
++            SAL_WARN("dbaccess", "ORowSetBase::getValue: Invalid size of vector!");
++            ::dbtools::throwSQLException( DBA_RES( RID_STR_CURSOR_BEFORE_OR_AFTER ), StandardSQLState::INVALID_CURSOR_POSITION, *m_pMySelf );
++        }
+         m_nLastColumnIndex = columnIndex;
+-        return (**m_aCurrentRow)[m_nLastColumnIndex];
++        return (*rRow)[m_nLastColumnIndex];
+     }
+ 
+     // we should normally never reach this
+-- 
+2.28.0
+

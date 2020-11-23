@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -255,6 +255,7 @@ Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
 Patch9: 0001-fix-disable-pdfium-build.patch
 Patch10: 0001-gcc11.patch
+Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2263,10 +2264,13 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue Nov 03 2020 Jeff Law <law@redhat.com> - 1:7.0.3.2-2
+* Mon Nov 23 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-3
+- Resolves: rhbz#1900428 don't crash on invalid index used in StarBasic macro
+
+* Tue Nov 03 2020 Jeff Law <law@redhat.com> - 1:7.0.3.1-2
 - Fix missing #include for gcc-11
 
-* Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.2-1
+* Thu Oct 29 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-1
 - latest version
 
 * Sun Oct 25 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.2.2-3

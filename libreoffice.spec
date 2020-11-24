@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -253,6 +253,7 @@ Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
 Patch9: 0001-fix-disable-pdfium-build.patch
 Patch10: 0001-gcc11.patch
 Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
+Patch12: 0001-fix-unit-test-with-non-pdfium-build.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2265,6 +2266,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-4
+- Resolves: rhbz#1900937 fix null deref in non-pdfium build
+
 * Mon Nov 23 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-3
 - Resolves: rhbz#1900428 don't crash on invalid index used in StarBasic macro
 

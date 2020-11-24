@@ -1,0 +1,36 @@
+From 3c19d5bd51673d3ec776ac7b3a4e43137b98b789 Mon Sep 17 00:00:00 2001
+From: Noel Grandin <noelgrandin@gmail.com>
+Date: Thu, 20 Aug 2020 21:54:25 +0200
+Subject: [PATCH] fix unit-test with non-pdfium build
+
+otherwise testSwappingPageNumber will crash accessing out of
+bounds element in vector.
+
+Change-Id: I07499e79d523931e1f3cc02a5150f033e1ea9578
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/101094
+Tested-by: Jenkins
+Reviewed-by: Noel Grandin <noel.grandin@collabora.co.uk>
+(cherry picked from commit 17798a503bc67f2a38f4b558e37447d1ea8f4623)
+---
+ filter/source/pdf/pdfdecomposer.cxx | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/filter/source/pdf/pdfdecomposer.cxx b/filter/source/pdf/pdfdecomposer.cxx
+index e053fd215369..e54206e4c175 100644
+--- a/filter/source/pdf/pdfdecomposer.cxx
++++ b/filter/source/pdf/pdfdecomposer.cxx
+@@ -70,7 +70,10 @@ uno::Sequence<uno::Reference<graphic::XPrimitive2D>> SAL_CALL XPdfDecomposer::ge
+         nPageIndex = 0;
+ 
+     std::vector<Bitmap> aBitmaps;
+-    vcl::RenderPDFBitmaps(xPdfData.getConstArray(), xPdfData.getLength(), aBitmaps, nPageIndex, 1);
++    int rv = vcl::RenderPDFBitmaps(xPdfData.getConstArray(), xPdfData.getLength(), aBitmaps,
++                                   nPageIndex, 1);
++    if (rv == 0)
++        return {}; // happens if we do not have PDFium
+ 
+     BitmapEx aReplacement(aBitmaps[0]);
+ 
+-- 
+2.28.0
+

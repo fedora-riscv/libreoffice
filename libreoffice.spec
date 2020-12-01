@@ -125,7 +125,9 @@ BuildRequires: %{libo_python}-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
+%if 0%{?fedora}
 BuildRequires: firebird-devel
+%endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel
@@ -335,7 +337,9 @@ to be written in python.
 
 %package base
 Summary: Database front-end for LibreOffice
+%if 0%{?fedora}
 Requires: firebird
+%endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
@@ -1065,7 +1069,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
+%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
 %define distrooptions --enable-eot --enable-kf5
@@ -1866,7 +1870,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
+%if 0%{?fedora}
 %{baseinstdir}/program/libfirebird_sdbclo.so
+%endif
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so

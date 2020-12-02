@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.3
+%global libo_version 7.0.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -251,11 +251,7 @@ Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
-Patch9: 0001-fix-disable-pdfium-build.patch
 Patch10: 0001-gcc11.patch
-Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
-Patch12: 0001-fix-unit-test-with-non-pdfium-build.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2272,6 +2268,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Dec 02 2020 Thierry Vignaud <tv@mageia.org> 1:7.0.4.1-1
+- Update to 7.0.4 RC1
+
 * Tue Nov 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-4
 - Resolves: rhbz#1900937 fix null deref in non-pdfium build
 

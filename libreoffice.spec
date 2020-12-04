@@ -252,6 +252,7 @@ Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch10: 0001-gcc11.patch
+Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch

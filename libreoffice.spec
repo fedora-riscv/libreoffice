@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.3
+%global libo_version 7.0.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -49,8 +49,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.1
-Release:        4%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -125,7 +125,9 @@ BuildRequires: %{libo_python}-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
+%if 0%{?fedora}
 BuildRequires: firebird-devel
+%endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel
@@ -249,11 +251,8 @@ Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch8: 0001-rhbz-1891326-suggest-package-install-of-the-most-app.patch
-Patch9: 0001-fix-disable-pdfium-build.patch
 Patch10: 0001-gcc11.patch
-Patch11: 0001-Resolves-rhbz-1900428-don-t-crash-on-invalid-index-u.patch
-Patch12: 0001-fix-unit-test-with-non-pdfium-build.patch
+Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -335,7 +334,9 @@ to be written in python.
 
 %package base
 Summary: Database front-end for LibreOffice
+%if 0%{?fedora}
 Requires: firebird
+%endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
@@ -1065,7 +1066,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript
+%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
 %define distrooptions --enable-eot --enable-kf5
@@ -1866,7 +1867,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
+%if 0%{?fedora}
 %{baseinstdir}/program/libfirebird_sdbclo.so
+%endif
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so
@@ -2266,6 +2269,12 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Dec 09 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-1
+- latest version
+
+* Wed Dec 02 2020 Thierry Vignaud <tv@mageia.org> 1:7.0.4.1-1
+- Update to 7.0.4 RC1
+
 * Tue Nov 24 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.3.1-4
 - Resolves: rhbz#1900937 fix null deref in non-pdfium build
 

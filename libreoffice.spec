@@ -2149,11 +2149,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{libo_python_sitearch}/uno.py*
 %{libo_python_sitearch}/unohelper.py*
 %{libo_python_sitearch}/officehelper.py*
-%if ! 0%{?flatpak}
 %{libo_python_sitearch}/__pycache__/uno.cpython-*
 %{libo_python_sitearch}/__pycache__/unohelper.cpython-*
 %{libo_python_sitearch}/__pycache__/officehelper.cpython-*
-%endif
 %{baseinstdir}/share/registry/pyuno.xcd
 
 %files librelogo

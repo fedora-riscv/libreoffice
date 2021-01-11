@@ -253,6 +253,7 @@ Patch13: 0001-Resolves-rhbz-1893846-if-last-close-had-insert-index.patch
 Patch14: 0001-Fix-use-of-uninitialized-SwFEShell-bTableCopied.patch
 Patch15: 0001-cid-1460969-Uninitialized-scalar-field.patch
 Patch16: 0001-resource-leak.patch
+Patch17: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
 
 %if 0%{?rhel}
 # not upstreamed
@@ -2241,7 +2242,8 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Wed Nov 04 2020 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-4.UNBUILT
+* Mon Jan 11 2021 Caolán McNamara <caolanm@redhat.com> - 1:6.4.7.2-4
+- Resolves: rhbz#1913828 SfxViewFrame::Current() can return null
 - Fix use of uninitialized SwFEShell::bTableCopied
 - cid#1460969 Uninitialized scalar field
 - fix resource leak in gtk3atktextattributes.cxx

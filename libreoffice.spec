@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -253,6 +253,7 @@ Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch10: 0001-gcc11.patch
 Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
+Patch12: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2271,6 +2272,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jan 11 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-3
+- Resolves: rhbz#1913828 SfxViewFrame::Current() can return null
+
 * Sun Dec 20 2020 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-2
 - workaround for make check failure
 

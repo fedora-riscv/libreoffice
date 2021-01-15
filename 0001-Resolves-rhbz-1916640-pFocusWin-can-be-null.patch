@@ -1,0 +1,28 @@
+From bfc75a2f7595d542ea4190faba46bd31bf37263b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 15 Jan 2021 11:47:57 +0000
+Subject: [PATCH] Resolves: rhbz#1916640 pFocusWin can be null
+
+Change-Id: Ib901b1d849b2e54c61bd3e8626eb8262e73b832d
+---
+ sfx2/source/sidebar/TabBar.cxx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sfx2/source/sidebar/TabBar.cxx b/sfx2/source/sidebar/TabBar.cxx
+index 4f49bd461364..47c59f15ec32 100644
+--- a/sfx2/source/sidebar/TabBar.cxx
++++ b/sfx2/source/sidebar/TabBar.cxx
+@@ -302,8 +302,8 @@ Image TabBar::GetItemImage(const DeckDescriptor& rDeckDescriptor) const
+ 
+ IMPL_LINK_NOARG(TabBar::Item, HandleClick, Button*, void)
+ {
+-    vcl::Window* pFocusWin = Application::GetFocusWindow();
+-    pFocusWin->GrabFocusToDocument();
++    if (vcl::Window* pFocusWin = Application::GetFocusWindow())
++        pFocusWin->GrabFocusToDocument();
+     try
+     {
+         maDeckActivationFunctor(msDeckId);
+-- 
+2.28.0
+

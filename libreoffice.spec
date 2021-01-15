@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2272,6 +2272,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jan 15 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-4
+- rebuild for poppler
+
 * Mon Jan 11 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-3
 - Resolves: rhbz#1913828 SfxViewFrame::Current() can return null
 

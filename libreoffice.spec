@@ -254,6 +254,7 @@ Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
 Patch10: 0001-gcc11.patch
 Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
 Patch12: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
+Patch13: 0001-rhbz-1918152-fix-FTBFS.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch

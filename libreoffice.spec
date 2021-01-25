@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2273,6 +2273,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jan 25 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-6
+- really rebuild for Boost 1.75
+
 * Fri Jan 22 2021 Jonathan Wakely <jwakely@redhat.com> - 1:7.0.4.2-5
 - Rebuilt for Boost 1.75
 

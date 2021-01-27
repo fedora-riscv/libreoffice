@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        7%{?libo_prerelease}%{?dist}
+Release:        8%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -356,6 +356,7 @@ databases through a GUI.
 %package bsh
 Summary: BeanShell support for LibreOffice
 Requires: bsh
+Requires: java >= 1:1.6
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description bsh
@@ -363,6 +364,7 @@ Support BeanShell scripts in LibreOffice.
 
 %package rhino
 Summary: JavaScript support for LibreOffice
+Requires: java >= 1:1.6
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description rhino
@@ -2274,6 +2276,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jan 28 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.0.4.2-8-UNBUILT
+- Make libreoffice-bsh, libreoffice-rhino depend on full java
+
 * Wed Jan 27 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-7
 - Resolves: rhbz#1916539 text not wrapping in right hand help brower pane
 

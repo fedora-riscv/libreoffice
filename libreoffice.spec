@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.4
+%global libo_version 7.1.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -49,8 +49,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        9%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -73,7 +73,7 @@ Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
 Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source14:       %{external_url}/884ed41809687c3e168fc7c19b16585149ff058eca79acbf3ee784f6630704cc-opens___.ttf
+Source14:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
@@ -121,6 +121,7 @@ BuildRequires: zip
 
 # libs / headers - common
 BuildRequires: %{libo_python}-devel
+BuildRequires: Box2D-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
@@ -247,17 +248,10 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
-Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
-Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
-Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch10: 0001-gcc11.patch
-Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
-Patch12: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
-Patch13: 0001-rhbz-1918152-fix-FTBFS.patch
-Patch14: 0001-tdf-138727-help-browser-didn-t-flow-text.patch
+Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
+Patch5: 0001-tdf-138727-help-browser-didn-t-flow-text.patch
+Patch6: 0001-don-t-need-FindBin-if-disable-openssl-used.patch
 
-# Patches with numbers above 100 are applied conditionally
-Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1006,9 +1000,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 
 # apply patches
 %autopatch -M 99
-%if 0%{?fedora} > 33 || 0%{?rhel} > 8
-%apply_patch -q %{PATCH101}
-%endif
 %if 0%{?rhel}
 %apply_patch -q %{PATCH500}
 %endif
@@ -1037,6 +1028,7 @@ sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sc_subsequent_filters_test/d sc/Module_sc.mk
 %endif
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
+sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
 
 git commit -q -a -m 'temporarily disable failing tests'
 
@@ -1392,9 +1384,6 @@ for icon in `find icons -path '*/512x512' -prune -o -type f -print`; do
     install -m 0755 -d %{buildroot}%{_datadir}/`dirname $icon`
     install -m 0644 -p $icon %{buildroot}%{_datadir}/`echo $icon | sed -e s@libreoffice$ICONVERSION-@libreoffice-@ | sed -e s@libreoffice$PRODUCTVERSION-@libreoffice-@`
 done
-install -m 0755 -d %{buildroot}%{_datadir}/mime-info
-install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.keys %{buildroot}%{_datadir}/mime-info/libreoffice.keys
-install -m 0644 -p mime-info/libreoffice$PRODUCTVERSION.mime %{buildroot}%{_datadir}/mime-info/libreoffice.mime
 #add our mime-types, e.g. for .oxt extensions
 install -m 0755 -d %{buildroot}%{_datadir}/mime/packages
 install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_datadir}/mime/packages/libreoffice.xml
@@ -1622,7 +1611,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liblocaledata_es.so
 %{baseinstdir}/program/liblocaledata_euro.so
 %{baseinstdir}/program/liblocaledata_others.so
-%{baseinstdir}/program/libmcnttype.so
 %{baseinstdir}/program/libmorklo.so
 %{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
@@ -1743,7 +1731,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_sukapura.zip
 %{baseinstdir}/share/config/images_sukapura_svg.zip
 %dir %{baseinstdir}/share/tipoftheday
-%{baseinstdir}/share/tipoftheday/*.png
+%{baseinstdir}/share/tipoftheday/*
+%dir %{baseinstdir}/share/toolbarmode
+%{baseinstdir}/share/toolbarmode/*
 %dir %{baseinstdir}/share/config/soffice.cfg
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/*/ui
@@ -1795,11 +1785,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libbasegfxlo.so
 # TODO: shouldn't it have lo suffix?
 %{baseinstdir}/program/libcomphelper.so
-%{baseinstdir}/program/libfwelo.so
-%{baseinstdir}/program/libfwilo.so
 %{baseinstdir}/program/libfwklo.so
-%{baseinstdir}/program/libfwllo.so
-%{baseinstdir}/program/libfwmlo.so
 # TODO: shouldn't it have lo suffix?
 %{baseinstdir}/program/libi18nutil.so
 %{baseinstdir}/program/libpackage2.so
@@ -1841,6 +1827,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/filter
 %{baseinstdir}/share/filter/oox-drawingml-adj-names
 %{baseinstdir}/share/filter/oox-drawingml-cs-presets
+%{baseinstdir}/share/filter/signature-line.svg
+%{baseinstdir}/share/filter/signature-line-draw.svg
 %{baseinstdir}/share/filter/vml-shape-types
 %{baseinstdir}/share/xdg/
 %{baseinstdir}/program/redirectrc
@@ -2203,12 +2191,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files data
 %{_datadir}/icons/hicolor/*/*/libreoffice*
-%{_datadir}/icons/locolor/*/*/libreoffice*
 %if 0%{?flatpak}
 %{_datadir}/icons/hicolor/*/*/org.libreoffice.LibreOffice.*
-%{_datadir}/icons/locolor/*/*/org.libreoffice.LibreOffice.*
 %endif
-%{_datadir}/mime-info/libreoffice.*
 %{_datadir}/mime/packages/libreoffice.xml
 # TODO: rename -data to -core-common?
 %dir %{_javadir}/%{name}
@@ -2221,22 +2206,16 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %license instdir/LICENSE
 
 %post data
-for theme in hicolor locolor; do
-    touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
-done
+touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 
 %postun data
 if [ $1 -eq 0 ] ; then
-    for theme in hicolor locolor; do
-        touch --no-create %{_datadir}/icons/$theme &>/dev/null || :
-        gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
-    done
+    touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+    gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 fi
 
 %posttrans data
-for theme in hicolor locolor; do
-    gtk-update-icon-cache -q %{_datadir}/icons/$theme &>/dev/null || :
-done
+gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 
 %files x11
 %if 0%{?fedora}
@@ -2273,7 +2252,17 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Jan 28 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.0.4.2-9-UNBUILT
+* Wed Feb 03 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.0.3-1
+- bump to 7.1.0 series
+- drop integrated 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
+- drop integrated 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
+- drop integrated 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
+- drop integrated 0001-gcc11.patch
+- drop integrated 0001-disable-tests-that-don-t-work-without-pdfium.patch
+- drop integrated 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
+- drop integrated 0001-Upgrade-liborcus-to-0.16.0.patch
+
+* Thu Jan 28 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.0.4.2-9
 - Make libreoffice-bsh, libreoffice-rhino depend on full java
 
 * Wed Jan 27 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-8

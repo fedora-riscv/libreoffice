@@ -1,0 +1,26 @@
+From 1e0d719535929c32eefef53a24bf3b1628bea05c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 3 Feb 2021 15:37:03 +0000
+Subject: [PATCH] don't need FindBin if --disable-openssl used
+
+Change-Id: I786ca760b8f4e606945acfc9b2667c2305c014d1
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 75f5543703f2..e6607334b067 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -5985,7 +5985,7 @@ fi
+ if test "$with_system_hsqldb" = "yes"; then
+     perl_use_string="$perl_use_string ; use Archive::Zip"
+ fi
+-if test "$with_system_openssl" != "yes"; then
++if test "$enable_openssl" = "yes" -a "$with_system_openssl" != "yes"; then
+     # OpenSSL needs that to build
+     perl_use_string="$perl_use_string ; use FindBin"
+ fi
+-- 
+2.29.2
+

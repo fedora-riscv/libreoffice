@@ -1092,6 +1092,7 @@ touch autogen.lastrun
  %{?with_lang} \
  --with-parallelism=$SMP_MFLAGS \
  --disable-coinmp \
+ --disable-community-flavor \
  --disable-fetch-external \
  --disable-openssl \
  --disable-pdfium \

@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2250,6 +2250,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Feb 05 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.0.3-2
+- use classic brand
+
 * Wed Feb 03 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.0.3-1
 - bump to 7.1.0 series
 - drop integrated 0001-rhbz-1870501-crash-on-reexport-of-odg.patch

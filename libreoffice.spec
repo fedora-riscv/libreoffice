@@ -1004,8 +1004,6 @@ git commit -q -a -m 'add Red Hat colors to palette'
 %apply_patch -q %{PATCH500}
 %endif
 
-
-sed -i -e /CppunitTest_sw_ooxmlexport7/d sw/Module_sw.mk # i686
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sw_ww8export/d sw/Module_sw.mk
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x

@@ -127,11 +127,11 @@ BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 %if 0%{?fedora}
 BuildRequires: firebird-devel
+BuildRequires: libqrcodegencpp-devel
 %endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel
-BuildRequires: libqrcodegencpp-devel
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
@@ -1060,7 +1060,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
+%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc --disable-qrcodegen
 %else
 # fedora
 %define distrooptions --enable-eot --enable-kf5

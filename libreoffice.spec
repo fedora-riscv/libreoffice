@@ -1007,8 +1007,8 @@ sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
 sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk # ppc64*
 sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk # aarch64/ppc64*
-sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # i686
-sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # i686
+sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # ppc64le
+sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # ppc64le
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 %if 0%{?rhel}

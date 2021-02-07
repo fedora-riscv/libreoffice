@@ -1011,15 +1011,6 @@ sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # ppc6
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # ppc64le
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
-%if 0%{?rhel}
-sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
-sed -i -e s/CppunitTest_editeng_core// editeng/Module_editeng.mk
-sed -i -e /CppunitTest_writerperfect_draw/d writerperfect/Module_writerperfect.mk
-sed -i -e /CppunitTest_sw_ooxmlimport/d sw/Module_sw.mk
-sed -i -e /CppunitTest_sw_ooxmlexport10/d sw/Module_sw.mk
-sed -i -e /CppunitTest_sw_uiwriter/d sw/Module_sw.mk
-sed -i -e /CppunitTest_sc_subsequent_filters_test/d sc/Module_sc.mk
-%endif
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
 sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
 

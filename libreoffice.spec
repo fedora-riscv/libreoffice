@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        8%{?libo_prerelease}%{?dist}
+Release:        9%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -256,6 +256,7 @@ Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
 Patch12: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
 Patch13: 0001-rhbz-1918152-fix-FTBFS.patch
 Patch14: 0001-tdf-138727-help-browser-didn-t-flow-text.patch
+Patch15: 0001-Resolves-rhbz-1931423-start-update-timer-in-IM-event.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2276,7 +2277,10 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Jan 28 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.0.4.2-8-UNBUILT
+* Wed Feb 24 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-9
+- Resolves: rhbz#1931423 start update timer on IM command
+
+* Thu Jan 28 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.0.4.2-8
 - Make libreoffice-bsh, libreoffice-rhino depend on full java
 
 * Wed Jan 27 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-7

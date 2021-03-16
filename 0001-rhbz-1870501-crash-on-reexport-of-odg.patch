@@ -1,4 +1,4 @@
-From cfb57e040db31cdfe7f6e592a13bb4352e85a6df Mon Sep 17 00:00:00 2001
+From 10d4f508be8bcda72126011eb6ef51ddf1ac33f8 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 20 Aug 2020 12:56:36 +0100
 Subject: [PATCH] rhbz#1870501 crash on reexport of odg
@@ -24,7 +24,7 @@ Change-Id: I1a49dab9578699c42fe845e8ec42de40159dec3d
  create mode 100644 sd/qa/unit/data/odg/rhbz1870501.odg
 
 diff --git a/include/xmloff/unointerfacetouniqueidentifiermapper.hxx b/include/xmloff/unointerfacetouniqueidentifiermapper.hxx
-index a78713f85d13..332005e720ac 100644
+index a78713f..332005e 100644
 --- a/include/xmloff/unointerfacetouniqueidentifiermapper.hxx
 +++ b/include/xmloff/unointerfacetouniqueidentifiermapper.hxx
 @@ -24,6 +24,7 @@
@@ -7784,7 +7784,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/sd/qa/unit/export-tests.cxx b/sd/qa/unit/export-tests.cxx
-index a2186fae62af..6b7ed0c030d0 100644
+index b5db56f..c76fe0e 100644
 --- a/sd/qa/unit/export-tests.cxx
 +++ b/sd/qa/unit/export-tests.cxx
 @@ -76,6 +76,7 @@ public:
@@ -7792,19 +7792,19 @@ index a2186fae62af..6b7ed0c030d0 100644
      void testGlow();
      void testSoftEdges();
 +    void testRhbz1870501();
+     void testTdf128550();
  
      CPPUNIT_TEST_SUITE(SdExportTest);
- 
-@@ -112,6 +113,7 @@ public:
+@@ -113,6 +114,7 @@ public:
      CPPUNIT_TEST(testTdf126761);
      CPPUNIT_TEST(testGlow);
      CPPUNIT_TEST(testSoftEdges);
 +    CPPUNIT_TEST(testRhbz1870501);
+     CPPUNIT_TEST(testTdf128550);
  
      CPPUNIT_TEST_SUITE_END();
+@@ -1321,6 +1323,13 @@ void SdExportTest::testTdf128550()
  
-@@ -1307,6 +1309,13 @@ void SdExportTest::testSoftEdges()
-     xDocShRef->DoClose();
  }
  
 +void SdExportTest::testRhbz1870501()
@@ -7818,7 +7818,7 @@ index a2186fae62af..6b7ed0c030d0 100644
  
  CPPUNIT_PLUGIN_IMPLEMENT();
 diff --git a/xmloff/source/core/unointerfacetouniqueidentifiermapper.cxx b/xmloff/source/core/unointerfacetouniqueidentifiermapper.cxx
-index d2e29422ae1c..ce54fe971d44 100644
+index d2e2942..ce54fe9 100644
 --- a/xmloff/source/core/unointerfacetouniqueidentifiermapper.cxx
 +++ b/xmloff/source/core/unointerfacetouniqueidentifiermapper.cxx
 @@ -21,6 +21,7 @@
@@ -7953,7 +7953,7 @@ index d2e29422ae1c..ce54fe971d44 100644
  
  }
 diff --git a/xmloff/source/draw/ximpshap.cxx b/xmloff/source/draw/ximpshap.cxx
-index fdfbbc2562a8..5fc3d295e113 100644
+index fdfbbc2..5fc3d29 100644
 --- a/xmloff/source/draw/ximpshap.cxx
 +++ b/xmloff/source/draw/ximpshap.cxx
 @@ -3462,6 +3462,9 @@ SvXMLImportContextRef SdXMLFrameShapeContext::CreateChildContext( sal_uInt16 nPr
@@ -7983,5 +7983,5 @@ index fdfbbc2562a8..5fc3d295e113 100644
  
      if( !mxImplContext.is() )
 -- 
-2.26.2
+2.29.2
 

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.4
+%global libo_version 7.0.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        10%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -158,7 +158,6 @@ BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libetonyek-0.1)
 BuildRequires: pkgconfig(libexttextcat)
 BuildRequires: pkgconfig(libfreehand-0.1)
-BuildRequires: pkgconfig(libidn)
 BuildRequires: pkgconfig(liblangtag)
 BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
@@ -251,13 +250,8 @@ Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch10: 0001-gcc11.patch
-Patch11: 0001-disable-tests-that-don-t-work-without-pdfium.patch
-Patch12: 0001-rhbz-1913828-SfxViewFrame-Current-can-return-null.patch
-Patch13: 0001-rhbz-1918152-fix-FTBFS.patch
-Patch14: 0001-tdf-138727-help-browser-didn-t-flow-text.patch
-Patch15: 0001-Resolves-rhbz-1931423-start-update-timer-in-IM-event.patch
-Patch16: 0001-tdf-140833-show-ScHeaderControl-help-tip-after-doubl.patch
+Patch8: 0001-Resolves-rhbz-1931423-start-update-timer-in-IM-event.patch
+Patch9: 0001-tdf-140833-show-ScHeaderControl-help-tip-after-doubl.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2278,7 +2272,8 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Sun Mar 07 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.4.2-10.unreleased
+* Tue Mar 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.5.2-1
+- latest stable release
 - Resolves: tdf#140833 show ScHeaderControl help popover after double-click time
   expires as double click is getting sent to underlying window under wayland
 

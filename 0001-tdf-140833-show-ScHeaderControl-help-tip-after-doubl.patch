@@ -1,0 +1,163 @@
+From 77c91688ddfdb5238019b557fc25a4603aacd2ff Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 6 Mar 2021 21:34:22 +0000
+Subject: [PATCH] tdf#140833 show ScHeaderControl help tip after double click
+ time has expired
+
+so under gtk the popover isn't active when the double click is processed
+by gtk because under load on wayland the double click is getting handled
+by something else and getting sent to the the window underneath our
+window
+
+Change-Id: Ie3afcf45c69b7b947b1aeb787478f947deca9307
+---
+ sc/source/ui/inc/hdrcont.hxx  |  6 +++++
+ sc/source/ui/view/hdrcont.cxx | 44 ++++++++++++++++++++++++++---------
+ 2 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/sc/source/ui/inc/hdrcont.hxx b/sc/source/ui/inc/hdrcont.hxx
+index 08be7eba5010..d3210062d43f 100644
+--- a/sc/source/ui/inc/hdrcont.hxx
++++ b/sc/source/ui/inc/hdrcont.hxx
+@@ -21,6 +21,7 @@
+ #define INCLUDED_SC_SOURCE_UI_INC_HDRCONT_HXX
+ 
+ #include <vcl/window.hxx>
++#include <vcl/timer.hxx>
+ #include <scdllapi.h>
+ #include <types.hxx>
+ 
+@@ -36,6 +37,7 @@ class ScHeaderControl : public vcl::Window
+ {
+ private:
+     SelectionEngine*    pSelEngine;
++    Timer               aShowHelpTimer;
+     vcl::Font           aNormFont;
+     vcl::Font           aBoldFont;
+     bool                bBoldSet;
+@@ -67,9 +69,12 @@ private:
+     SCCOLROW        GetMousePos( const MouseEvent& rMEvt, bool& rBorder ) const;
+     bool            IsSelectionAllowed(SCCOLROW nPos) const;
+     void            ShowDragHelp();
++    void            HideDragHelp();
+ 
+     void            DoPaint( SCCOLROW nStart, SCCOLROW nEnd );
+ 
++    DECL_LINK(ShowDragHelpHdl, Timer*, void);
++
+ protected:
+     ScTabView*      pTabView;
+ 
+@@ -105,6 +110,7 @@ protected:
+ 
+     virtual void    DrawInvert( long nDragPos );
+     virtual void    Command( const CommandEvent& rCEvt ) override;
++    virtual void    dispose() override;
+ 
+ public:
+             ScHeaderControl( vcl::Window* pParent, SelectionEngine* pSelectionEngine,
+diff --git a/sc/source/ui/view/hdrcont.cxx b/sc/source/ui/view/hdrcont.cxx
+index a8aeb47f9f88..0f74b3c0cdb2 100644
+--- a/sc/source/ui/view/hdrcont.cxx
++++ b/sc/source/ui/view/hdrcont.cxx
+@@ -48,6 +48,7 @@ ScHeaderControl::ScHeaderControl( vcl::Window* pParent, SelectionEngine* pSelect
+                                   SCCOLROW nNewSize, bool bNewVertical, ScTabView* pTab ) :
+             Window      ( pParent ),
+             pSelEngine  ( pSelectionEngine ),
++            aShowHelpTimer("sc HeaderControl Popover Timer"),
+             bVertical   ( bNewVertical ),
+             nSize       ( nNewSize ),
+             nMarkStart  ( 0 ),
+@@ -88,9 +89,18 @@ ScHeaderControl::ScHeaderControl( vcl::Window* pParent, SelectionEngine* pSelect
+     nWidth = nSmallWidth = aSize.Width();
+     nBigWidth = LogicToPixel( Size( GetTextWidth("8888888"), 0 ) ).Width() + 5;
+ 
++    aShowHelpTimer.SetInvokeHandler(LINK(this, ScHeaderControl, ShowDragHelpHdl));
++    aShowHelpTimer.SetTimeout(GetSettings().GetMouseSettings().GetDoubleClickTime());
++
+     SetBackground();
+ }
+ 
++void ScHeaderControl::dispose()
++{
++    aShowHelpTimer.Stop();
++    vcl::Window::dispose();
++}
++
+ void ScHeaderControl::SetWidth( long nNew )
+ {
+     OSL_ENSURE( bVertical, "SetWidth works only on row headers" );
+@@ -652,7 +662,11 @@ void ScHeaderControl::MouseButtonDown( const MouseEvent& rMEvt )
+             else
+                 nDragStart = rMEvt.GetPosPixel().X();
+             nDragPos = nDragStart;
+-            ShowDragHelp();
++            // tdf#140833 launch help tip to show after the double click time has expired
++            // so under gtk the popover isn't active when the double click is processed
++            // by gtk because under load on wayland the double click is getting handled
++            // by something else and getting sent to the the window underneath our window
++            aShowHelpTimer.Start();
+             DrawInvert( nDragPos );
+ 
+             StartTracking();
+@@ -713,11 +727,7 @@ void ScHeaderControl::MouseButtonUp( const MouseEvent& rMEvt )
+     {
+         DrawInvert( nDragPos );
+         ReleaseMouse();
+-        if (nTipVisible)
+-        {
+-            Help::HidePopover(this, nTipVisible);
+-            nTipVisible = nullptr;
+-        }
++        HideDragHelp();
+         bDragging = false;
+ 
+         long nScrPos    = GetScrPos( nDragNo );
+@@ -885,11 +895,7 @@ void ScHeaderControl::StopMarking()
+     if ( bDragging )
+     {
+         DrawInvert( nDragPos );
+-        if (nTipVisible)
+-        {
+-            Help::HidePopover(this, nTipVisible);
+-            nTipVisible = nullptr;
+-        }
++        HideDragHelp();
+         bDragging = false;
+     }
+ 
+@@ -902,8 +908,14 @@ void ScHeaderControl::StopMarking()
+         ReleaseMouse();
+ }
+ 
++IMPL_LINK_NOARG(ScHeaderControl, ShowDragHelpHdl, Timer*, void)
++{
++    ShowDragHelp();
++}
++
+ void ScHeaderControl::ShowDragHelp()
+ {
++    aShowHelpTimer.Stop();
+     if (Help::IsQuickHelpEnabled())
+     {
+         long nScrPos    = GetScrPos( nDragNo );
+@@ -943,6 +955,16 @@ void ScHeaderControl::ShowDragHelp()
+     }
+ }
+ 
++void ScHeaderControl::HideDragHelp()
++{
++    aShowHelpTimer.Stop();
++    if (nTipVisible)
++    {
++        Help::HidePopover(this, nTipVisible);
++        nTipVisible = nullptr;
++    }
++}
++
+ void ScHeaderControl::RequestHelp( const HelpEvent& rHEvt )
+ {
+     //  If the own QuickHelp is displayed, don't let RequestHelp remove it
+-- 
+2.29.2
+

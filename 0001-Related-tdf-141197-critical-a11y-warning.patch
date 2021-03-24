@@ -1,0 +1,43 @@
+From 2beb3922391ae1a6f1d26128d82c0e34cb963af3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 23 Mar 2021 14:55:09 +0000
+Subject: [PATCH] Related: tdf#141197 critical a11y warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+** (soffice:19098): CRITICAL **: 13:44:40.365:
+AtkObject* atk_object_wrapper_ref(const com::sun::star::uno::Reference<com::sun::star::accessibility::XAccessible>&, bool):
+assertion 'bool(rxAccessible)' failed
+
+probably since...
+
+commit cbc18cc904c652a936c4b68fba4d975bd89b5abd
+Date:   Mon Nov 23 21:03:28 2020 +0100
+
+    tdf#138425 vcl/gtk activate main menu in UpdateFull
+
+Change-Id: Ieb181e02bb0d2a907aec8534349ec2a80fd9c7e3
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/113000
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+---
+ vcl/source/window/menu.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/vcl/source/window/menu.cxx b/vcl/source/window/menu.cxx
+index 4fb964f2f008..233f531cfcaf 100644
+--- a/vcl/source/window/menu.cxx
++++ b/vcl/source/window/menu.cxx
+@@ -1303,7 +1303,7 @@ css::uno::Reference<css::accessibility::XAccessible> Menu::GetAccessible()
+     // Since PopupMenu are sometimes shared by different instances of MenuBar, the mxAccessible member gets
+     // overwritten and may contain a disposed object when the initial menubar gets set again. So use the
+     // mxAccessible member only for sub menus.
+-    if ( pStartedFrom )
++    if (pStartedFrom && pStartedFrom != this)
+     {
+         for ( sal_uInt16 i = 0, nCount = pStartedFrom->GetItemCount(); i < nCount; ++i )
+         {
+-- 
+2.30.2
+

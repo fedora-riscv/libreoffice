@@ -121,6 +121,7 @@ BuildRequires: zip
 
 # libs / headers - common
 BuildRequires: %{libo_python}-devel
+BuildRequires: %{libo_python}-setuptools
 BuildRequires: Box2D-devel
 BuildRequires: boost-devel
 BuildRequires: cups-devel

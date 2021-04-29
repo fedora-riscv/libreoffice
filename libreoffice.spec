@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -830,6 +830,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l fa -n Farsi -A -H -Y -s ctl -X
 %langpack -l fi -n Finnish -F -r libreoffice-voikko -A -T -X
 %langpack -l fr -n French -F -H -Y -M -A -T -X
+%langpack -l fy -n Frisian -F -H -X
 %langpack -l ga -n Irish -F -H -Y -M -A -X
 %langpack -l gl -n Galician -F -H -Y -T -X
 %langpack -l gu -n Gujarati -F -H -Y -s ctl -T -X
@@ -2236,6 +2237,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Apr 29 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.2.2-3
+- Resolves: rhbz#1955013 build libreoffice-langpack-fy for libreoffice
+
 * Mon Apr 12 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.1.2.2-2
 - Related: rhbz#1895921 Get rid of apache-commons-logging
 

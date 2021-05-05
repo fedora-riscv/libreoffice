@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -252,6 +252,7 @@ Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
 Patch5: 0001-Related-tdf-141197-critical-a11y-warning.patch
 Patch6: 0001-tdf-141197-if-we-have-a-sysobj-child-then-include-th.patch
 Patch7: 0001-Get-rid-of-apache-commons-logging.patch
+Patch8: 0001-rhbz-1956977-crash-on-switch-from-active-comment-to-.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2237,6 +2238,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed May 05 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.2.2-4
+- Resolves: rhbz#1956977 Impress crashes on switch from commenting to slide sorter
+
 * Thu Apr 29 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.2.2-3
 - Resolves: rhbz#1955013 build libreoffice-langpack-fy for libreoffice
 

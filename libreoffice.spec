@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.1.2
+%global libo_version 7.1.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -249,11 +249,9 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
-Patch5: 0001-Related-tdf-141197-critical-a11y-warning.patch
-Patch6: 0001-tdf-141197-if-we-have-a-sysobj-child-then-include-th.patch
-Patch7: 0001-Get-rid-of-apache-commons-logging.patch
-Patch8: 0001-rhbz-1956977-crash-on-switch-from-active-comment-to-.patch
-Patch9: 0001-Related-tdf-138888-fix-assertion-on-avmedia-MediaCon.patch
+Patch5: 0001-Get-rid-of-apache-commons-logging.patch
+Patch6: 0001-rhbz-1956977-crash-on-switch-from-active-comment-to-.patch
+Patch7: 0001-Related-tdf-138888-fix-assertion-on-avmedia-MediaCon.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2239,6 +2237,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu May 06 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.3.2-1
+- latest version
+
 * Wed May 05 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.2.2-4
 - Resolves: rhbz#1956977 Impress crashes on switch from commenting to slide sorter
 - Resolves: rhbz#1957034 fix assertion on avmedia volumne control

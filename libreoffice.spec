@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.0.5
+%global libo_version 7.0.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -250,8 +250,6 @@ Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1870501-crash-on-reexport-of-odg.patch
 Patch6: 0001-rhbz-1882616-move-cursor-one-step-at-a-time-in-the-d.patch
 Patch7: 0001-export-HYPERLINK-target-in-html-clipboard-export.patch
-Patch8: 0001-Resolves-rhbz-1931423-start-update-timer-in-IM-event.patch
-Patch9: 0001-tdf-140833-show-ScHeaderControl-help-tip-after-doubl.patch
 
 # Patches with numbers above 100 are applied conditionally
 Patch101: 0001-Upgrade-liborcus-to-0.16.0.patch
@@ -2272,6 +2270,9 @@ done
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu May 13 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.6.2-1
+- latest stable release
+
 * Tue Mar 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.0.5.2-1
 - latest stable release
 - Resolves: tdf#140833 show ScHeaderControl help popover after double-click time

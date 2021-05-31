@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -252,6 +252,8 @@ Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
 Patch5: 0001-Get-rid-of-apache-commons-logging.patch
 Patch6: 0001-rhbz-1956977-crash-on-switch-from-active-comment-to-.patch
 Patch7: 0001-Related-tdf-138888-fix-assertion-on-avmedia-MediaCon.patch
+Patch8: 0001-Adapt-to-libstdc-Implement-LWG-1203-for-rvalue-iostr.patch
+Patch9: 0001-Adapt-to-hamcrest-2.2-3.fc35.noarch.rpm.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2237,6 +2239,10 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon May 31 2021 Stephan Bergmann <sbergman@redhat.com> - 1:7.1.3.2-3
+- Resolves: rhbz#1965975 Adapt to "libstdc++: Implement LWG 1203 for rvalue iostreams"
+- Resolves: rhbz#1965975 Adapt to hamcrest-2.2-3.fc35.noarch.rpm
+
 * Thu May 20 2021 Pete Walter <pwalter@fedoraproject.org> - 1:7.1.3.2-2
 - Rebuild for ICU 69
 

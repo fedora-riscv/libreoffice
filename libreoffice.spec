@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2240,6 +2240,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 1:7.1.3.2-5
+- Rebuilt for Python 3.10
+
 * Wed Jun 02 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.3.2-4
 - gtk3: workaround missing gdk_threads_enter calls in gio errordialog callback
 

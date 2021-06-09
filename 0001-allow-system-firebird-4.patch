@@ -1,0 +1,31 @@
+From 66ea8a7caf3edc9bcdb2bfea58cb0fcf0b40b898 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 9 Jun 2021 13:41:30 +0100
+Subject: [PATCH] allow system firebird 4
+
+Change-Id: I330065f61d2d0fdfeeaeba4ee2e739e222d1c665
+---
+ configure.ac | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 077684be36b4..e860d4a5f199 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -10103,11 +10103,10 @@ if test "$enable_firebird_sdbc" = "yes" ; then
+         AC_MSG_CHECKING([Firebird version])
+         if test -n "${FIREBIRD_VERSION}"; then
+             FIREBIRD_MAJOR=`echo $FIREBIRD_VERSION | cut -d"." -f1`
+-            FIREBIRD_MINOR=`echo $FIREBIRD_VERSION | cut -d"." -f2`
+-            if test "$FIREBIRD_MAJOR" -eq "3" -a "$FIREBIRD_MINOR" -eq "0"; then
++            if test "$FIREBIRD_MAJOR" -ge "3"; then
+                 AC_MSG_RESULT([OK])
+             else
+-                AC_MSG_ERROR([Ensure firebird 3.0.x is installed])
++                AC_MSG_ERROR([Ensure firebird >= 3 is installed])
+             fi
+         else
+             save_CFLAGS="${CFLAGS}"
+-- 
+2.31.1
+

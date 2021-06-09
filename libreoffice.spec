@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -255,6 +255,7 @@ Patch7: 0001-Related-tdf-138888-fix-assertion-on-avmedia-MediaCon.patch
 Patch8: 0001-Adapt-to-libstdc-Implement-LWG-1203-for-rvalue-iostr.patch
 Patch9: 0001-Adapt-to-hamcrest-2.2-3.fc35.noarch.rpm.patch
 Patch10: 0001-gtk3-workaround-missing-gdk_threads_enter-calls-in-e.patch
+Patch11: 0001-Replace-inet_ntoa-with-inet_ntop.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2240,6 +2241,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jun 09 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.3.2-6
+- replace 'badfuncs' of inet_addr and inet_ntoa
+
 * Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 1:7.1.3.2-5
 - Rebuilt for Python 3.10
 

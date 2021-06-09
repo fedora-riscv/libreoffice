@@ -1,0 +1,40 @@
+From ba66a3c76c8bd2f7f1e86b4a628b92951fcf82b3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 9 Jun 2021 09:35:28 +0100
+Subject: [PATCH 2/2] xmllint: Namespace prefix menu on menuseparator is not
+ defined
+
+xmllint --noout dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml
+dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml:24: namespace error : Namespace prefix menu on menuseparator is not defined
+ <menu:menuseparator/>
+
+should be a toolbarseparator here
+
+a problem since...
+
+commit 4f810905fa74128871f2fe924a3d28a79f4e4261
+Date:   Tue Mar 5 15:42:19 2019 +0100
+
+    sync dbaccess ui files with swriter ui file structure
+
+Change-Id: I000efac56a0af10bca7c22fba6f88f469ae9b272
+---
+ dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml b/dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml
+index b3c2c9c37eef..78e698df3883 100644
+--- a/dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml
++++ b/dbaccess/uiconfig/dbapp/toolbar/formobjectbar.xml
+@@ -21,7 +21,7 @@
+  <toolbar:toolbaritem xlink:href=".uno:DBNewForm"/>
+  <toolbar:toolbaritem xlink:href=".uno:DBFormOpen"/>
+  <toolbar:toolbaritem xlink:href=".uno:DBFormEdit"/>
+- <menu:menuseparator/>
++ <toolbar:toolbarseparator/>
+  <toolbar:toolbaritem xlink:href=".uno:DBFormDelete"/>
+  <toolbar:toolbaritem xlink:href=".uno:DBFormRename"/>
+  <toolbar:toolbarseparator/>
+-- 
+2.31.1
+

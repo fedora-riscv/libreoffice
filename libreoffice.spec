@@ -2245,6 +2245,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 * Wed Jun 09 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.4.2-1
 - latest version
 - replace 'badfuncs' of inet_addr and inet_ntoa
+- allow system firebird-4
 
 * Fri Jun 04 2021 Python Maint <python-maint@redhat.com> - 1:7.1.3.2-5
 - Rebuilt for Python 3.10

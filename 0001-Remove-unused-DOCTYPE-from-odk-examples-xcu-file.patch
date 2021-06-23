@@ -1,0 +1,36 @@
+From a344462ccb324b14dbf17391146f78d84307cbec Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 22 Jun 2021 14:14:34 +0200
+Subject: [PATCH] Remove unused DOCTYPE from odk/examples xcu file
+
+The declared entities have apparently never been referenced ever since the
+file's introduction in 9fa09d43d0dc0ec0ac71bad31b85ce7fc302ee90 "INTEGRATION:
+CWS sdkinspector2".  (And at least xmlreader skips and ignores the content of
+such document type declarations anyway.)
+
+Change-Id: I8263200f52bb5f1692090995574619f9c0ec478f
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/117658
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ odk/examples/java/Inspector/ObjectInspector.xcu | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/odk/examples/java/Inspector/ObjectInspector.xcu b/odk/examples/java/Inspector/ObjectInspector.xcu
+index b7696086629c..d6fb08a0f8ce 100644
+--- a/odk/examples/java/Inspector/ObjectInspector.xcu
++++ b/odk/examples/java/Inspector/ObjectInspector.xcu
+@@ -16,10 +16,6 @@
+  *   except in compliance with the License. You may obtain a copy of
+  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
+ -->
+-<!DOCTYPE local [
+-    <!ENTITY ProductName "Object Inspector">
+-    <!ENTITY ProductVersion "0.8">
+-]>
+ <oor:component-data
+     xmlns:oor="http://openoffice.org/2001/registry"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+-- 
+2.31.1
+

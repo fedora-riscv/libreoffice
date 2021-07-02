@@ -1,0 +1,36 @@
+From 3766e78348d52b9491179c32e9062e25e58250f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 27 May 2021 11:13:29 +0100
+Subject: [PATCH] add missing xmlns:loext to example_sl-SI.xml
+
+added to example.xml by
+
+commit 71ee09947d5a71105d64fd225bb3672dfa7ce834
+Date:   Tue Sep 19 15:37:04 2017 +0200
+
+    TSCP: add advanced classification dialog
+
+but not to example_sl-SI.xml
+
+Change-Id: I8aa46554867db8c51bd118b6cc87e649b922cdfb
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/116157
+Tested-by: Jenkins
+Reviewed-by: Adolfo Jayme Barrientos <fitojb@ubuntu.com>
+---
+ sfx2/classification/example_sl-SI.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sfx2/classification/example_sl-SI.xml b/sfx2/classification/example_sl-SI.xml
+index 99e04a7aab71..13a4bcfdf29a 100644
+--- a/sfx2/classification/example_sl-SI.xml
++++ b/sfx2/classification/example_sl-SI.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0"?>
+-<baf:BusinessAuthorization xmlns:baf="urn:tscp:names:baf:1.1">
++<baf:BusinessAuthorization xmlns:baf="urn:tscp:names:baf:1.1" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0">
+     <baf:PolicyAuthorityName>Avtoriteta primera politike TSCP</baf:PolicyAuthorityName>
+     <baf:PolicyName>Primer politike TSCP</baf:PolicyName>
+     <baf:AdministrativeData>
+-- 
+2.31.1
+

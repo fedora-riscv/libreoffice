@@ -264,6 +264,7 @@ Patch11: 0001-dtd-files-are-not-xml-files-and-shouldn-t-have-xml-h.patch
 Patch12: 0002-xmllint-Namespace-prefix-menu-on-menuseparator-is-no.patch
 Patch13: 0001-allow-system-firebird-4.patch
 Patch14: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
+Patch15: 0001-math.desktop-include-Spreadsheet-category.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

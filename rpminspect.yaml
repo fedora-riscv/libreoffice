@@ -1,0 +1,6 @@
+runpath:
+  allowed_origin_paths:
+    # this is the real part after $ORIGIN
+    - /../../program
+    # but match this because that is what rpminspect turns it into
+    - /program

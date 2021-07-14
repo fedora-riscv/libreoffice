@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -263,6 +263,7 @@ Patch13: 0001-allow-system-firebird-4.patch
 Patch14: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
 Patch15: 0001-math.desktop-include-Spreadsheet-category.patch
 Patch16: 0001-add-missing-xmlns-loext-to-example_sl-SI.xml.patch
+Patch17: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2248,6 +2249,10 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Jul 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.4.2-3
+- Related: rhbz#1980800 allow convert to csv to write each sheet to
+  a separate file
+
 * Wed Jun 30 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.4.2-2
 - Remove unused DOCTYPE from odk/examples xcu file
 - drop bsh buildrequires in rhel

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.1.4
+%global libo_version 7.1.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -252,18 +252,12 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-fix-detecting-qrcodegen.patch
 Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
 Patch5: 0001-Get-rid-of-apache-commons-logging.patch
-Patch6: 0001-Adapt-to-libstdc-Implement-LWG-1203-for-rvalue-iostr.patch
-Patch7: 0001-Adapt-to-hamcrest-2.2-3.fc35.noarch.rpm.patch
-Patch8: 0001-gtk3-workaround-missing-gdk_threads_enter-calls-in-e.patch
-Patch9: 0001-Replace-inet_ntoa-with-inet_ntop.patch
-Patch10: 0001-Simplify-construction-of-a-hardcoded-IPv4-address.patch
-Patch11: 0001-dtd-files-are-not-xml-files-and-shouldn-t-have-xml-h.patch
-Patch12: 0002-xmllint-Namespace-prefix-menu-on-menuseparator-is-no.patch
-Patch13: 0001-allow-system-firebird-4.patch
-Patch14: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
-Patch15: 0001-math.desktop-include-Spreadsheet-category.patch
-Patch16: 0001-add-missing-xmlns-loext-to-example_sl-SI.xml.patch
-Patch17: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
+Patch6: 0001-gtk3-workaround-missing-gdk_threads_enter-calls-in-e.patch
+Patch7: 0001-Replace-inet_ntoa-with-inet_ntop.patch
+Patch8: 0001-Simplify-construction-of-a-hardcoded-IPv4-address.patch
+Patch9: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
+Patch10: 0001-math.desktop-include-Spreadsheet-category.patch
+Patch11: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2249,6 +2243,10 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Jul 18 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.5.2-1
+- latest version
+- drop merged patches
+
 * Wed Jul 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.4.2-3
 - Related: rhbz#1980800 allow convert to csv to write each sheet to
   a separate file

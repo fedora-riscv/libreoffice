@@ -54,6 +54,9 @@ Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
+# rhbz#1969393 firebird is unavailable at the moment
+ExcludeArch:    s390x
+
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
 Source1:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz.asc
 Source2:        %{source_url}/libreoffice-help-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -127,9 +130,7 @@ BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 %if 0%{?fedora}
-%ifnarch s390x
 BuildRequires: firebird-devel
-%endif
 BuildRequires: libqrcodegencpp-devel
 %endif
 BuildRequires: glm-devel
@@ -340,9 +341,7 @@ to be written in python.
 %package base
 Summary: Database front-end for LibreOffice
 %if 0%{?fedora}
-%ifnarch s390x
 Requires: firebird
-%endif
 %endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
@@ -1063,11 +1062,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc --disable-qrcodegen
 %else
 # fedora
-%ifarch s390x
-%define distrooptions --enable-eot --enable-kf5 --disable-firebird-sdbc
-%else
 %define distrooptions --enable-eot --enable-kf5
-%endif
 %endif
 
 %if %{with langpacks}
@@ -1861,9 +1856,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
 %if 0%{?fedora}
-%ifnarch s390x
 %{baseinstdir}/program/libfirebird_sdbclo.so
-%endif
 %endif
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so

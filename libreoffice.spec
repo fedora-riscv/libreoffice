@@ -1080,6 +1080,10 @@ autoconf
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 
+%ifarch armv7hl
+SMP_MFLAGS=3
+%endif
+
 %if 0%{?flatpak}
 %define flatpakoptions --with-beanshell-jar=/app/share/java/bsh.jar --with-boost-libdir=%{_libdir} --with-external-dict-dir=/app/share/myspell --with-external-hyph-dir=/app/share/hyphen --with-external-thes-dir=/app/share/mythes --with-flute-jar=/app/share/java/flute.jar --with-jdk-home=/app/lib/jvm/java --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}
 %endif

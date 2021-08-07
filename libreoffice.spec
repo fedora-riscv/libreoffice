@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2243,6 +2243,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Aug 07 2021 Jonathan Wakely <jwakely@redhat.com> - 1:7.1.5.2-4
+- Rebuilt for Boost 1.76
+
 * Wed Aug 04 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.5.2-3
 - rebuild for poppler rebase to 21.07.0
 

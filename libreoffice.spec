@@ -1008,9 +1008,13 @@ rm -rf git-hooks */git-hooks
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
 %{__git} add --force h*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [i-n]*
+%{__git} add --force i*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [o-s]*
+%{__git} add --force [j-n]*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force [o-r]*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force s*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
 %{__git} add --force t*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"

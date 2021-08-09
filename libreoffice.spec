@@ -1002,24 +1002,8 @@ rm -rf git-hooks */git-hooks
 %{__git} config user.name rpm-build
 %{__git} config user.email '<rpm-build>'
 %{__git} config gc.auto 0
-%{__git} add --force [A-Z]*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [a-g]*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force h*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force i*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [j-n]*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [o-r]*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force s*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force t*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [u-z]*
-%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} ls-files -z --others | xargs -0 -n 1000 %{__git} add --force
+%{__git} ls-files -z | xargs -0 -n 1000 %{__git} commit --allow-empty --author "rpm-build <rpm-build>" -m "%{NAME}-%{VERSION} base"
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \

@@ -1004,9 +1004,17 @@ rm -rf git-hooks */git-hooks
 %{__git} config gc.auto 0
 %{__git} add --force [A-Z]*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [a-n]*
+%{__git} add --force [a-g]*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
-%{__git} add --force [o-z]*
+%{__git} add --force h*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force [i-n]*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force [o-s]*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force t*
+%{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
+%{__git} add --force [u-z]*
 %{__git} commit --allow-empty -a --author 'rpm-build <rpm-build>' -m "%{NAME}-%{VERSION} base"
 
 #Customize Palette to add Red Hat colours

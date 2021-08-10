@@ -999,8 +999,9 @@ rm -rf git-hooks */git-hooks
 %global __scm git_am
 
 #rhbz#1920183 see if this helps to avoid armv7hl OOM
-%{__git} config --global pack.windowMemory "100m"
-%{__git} config --global pack.packSizeLimit "100m"
+%{__git} config --global pack.windowMemory "1m"
+%{__git} config --global pack.packSizeLimit "1m"
+%{__git} config --global pack.compression 0
 %{__git} config --global pack.threads "1"
 
 %__scm_setup_git_am

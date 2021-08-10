@@ -996,15 +996,10 @@ rm -rf git-hooks */git-hooks
 
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
-%global __scm git_am
+# global __scm git_am
+# __scm_setup_git_am
 
-#rhbz#1920183 see if this helps to avoid armv7hl OOM
-%{__git} config --global pack.windowMemory "1m"
-%{__git} config --global pack.packSizeLimit "1m"
-%{__git} config --global pack.compression 0
-%{__git} config --global pack.threads "1"
-
-%__scm_setup_git_am
+%define _default_patch_flags --no-backup-if-mismatch -p1
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -1015,7 +1010,7 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
+# git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -M 99
@@ -1034,12 +1029,12 @@ sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.m
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
 sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
 
-git commit -q -a -m 'temporarily disable failing tests'
+# git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm
-mv .git .git-rpm
+# mv .git .git-rpm
 
 %build
 # path to external tarballs

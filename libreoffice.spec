@@ -997,6 +997,12 @@ rm -rf git-hooks */git-hooks
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
 %global __scm git_am
+
+#rhbz#1920183 see if this helps to avoid armv7hl OOM
+%{__git} config --global pack.windowMemory "100m"
+%{__git} config --global pack.packSizeLimit "100m"
+%{__git} config --global pack.threads "1"
+
 %__scm_setup_git_am
 
 #Customize Palette to add Red Hat colours

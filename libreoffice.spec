@@ -1014,7 +1014,7 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-git commit -q -a -m 'add Red Hat colors to palette'
+git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -M 99

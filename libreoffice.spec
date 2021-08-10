@@ -997,13 +997,7 @@ rm -rf git-hooks */git-hooks
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
 %global __scm git_am
-
-%{__git} init
-%{__git} config user.name rpm-build
-%{__git} config user.email '<rpm-build>'
-%{__git} config gc.auto 0
-%{__git} ls-files -z --others | xargs -0 -n 1000 %{__git} add --force
-%{__git} ls-files -z | xargs -0 -n 1000 %{__git} commit --allow-empty --author "rpm-build <rpm-build>" -m "%{NAME}-%{VERSION} base"
+%__scm_setup_git_am
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \

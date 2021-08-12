@@ -258,6 +258,7 @@ Patch9: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
 Patch10: 0001-math.desktop-include-Spreadsheet-category.patch
 Patch11: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
 Patch12: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
+Patch13: 0001-Resolves-tdf-132739-two-style-tags-where-there-shoul.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2245,6 +2246,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Thu Aug 12 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.5.2-5
 - replace use of ucpp with gcc cpp
+- Resolves: tdf#132739 two html style tags where there should be just one
 
 * Sat Aug 07 2021 Jonathan Wakely <jwakely@redhat.com> - 1:7.1.5.2-4
 - Rebuilt for Boost 1.76

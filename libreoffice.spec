@@ -1132,7 +1132,13 @@ touch autogen.lastrun
  %{?archoptions} \
  %{?flatpakoptions}
 
-make verbose=true build-nocheck
+if ! make verbose=true build-nocheck; then
+    echo "build attempt 1 failed"
+    if ! make verbose=true build-nocheck; then
+        echo "build attempt 2 failed"
+        make verbose=true GMAKE_OPTIONS=-rj1 build-nocheck
+    fi
+fi
 
 #generate the icons and mime type stuff
 export DESTDIR=../output

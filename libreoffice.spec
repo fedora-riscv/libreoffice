@@ -49,7 +49,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
+Version:        %{libo_version}.4
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -2257,8 +2257,11 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Sat Aug 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.3-1
+* Mon Aug 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-1
 - upgrade to 7.2.0
+
+* Sat Aug 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.3-1
+- prep upgrade to 7.2.0
 
 * Thu Aug 12 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.5.2-5
 - replace use of ucpp with gcc cpp

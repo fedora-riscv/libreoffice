@@ -98,7 +98,6 @@ BuildRequires: bc
 BuildRequires: binutils
 BuildRequires: bison
 BuildRequires: desktop-file-utils
-BuildRequires: doxygen
 BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
@@ -1118,6 +1117,7 @@ touch autogen.lastrun
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  --enable-python=system \
  --with-idlc-cpp=cpp \
+ --without-doxygen \
  --disable-zxing \
  %{distrooptions} \
  %{?bundling_options} \
@@ -2259,6 +2259,8 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Mon Aug 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-1
 - upgrade to 7.2.0
+- temp disable doxygen due to:
+  nothing provides libclang.so.12()(64bit) needed by doxygen-1:1.9.1-10.fc35.x86_64
 
 * Sat Aug 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.3-1
 - prep upgrade to 7.2.0

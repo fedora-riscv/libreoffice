@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.1.5
+%global libo_version 7.2.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -49,8 +49,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.4
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -129,7 +129,6 @@ BuildRequires: fontpackages-devel
 %ifnarch s390x
 BuildRequires: firebird-devel
 %endif
-BuildRequires: libqrcodegencpp-devel
 %endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
@@ -250,17 +249,9 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 # rhbz#1736810 disable opencl by default again
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
-Patch3: 0001-fix-detecting-qrcodegen.patch
-Patch4: 0001-rhbz-1918152-fix-FTBFS.patch
-Patch5: 0001-Get-rid-of-apache-commons-logging.patch
-Patch6: 0001-gtk3-workaround-missing-gdk_threads_enter-calls-in-e.patch
-Patch7: 0001-Replace-inet_ntoa-with-inet_ntop.patch
-Patch8: 0001-Simplify-construction-of-a-hardcoded-IPv4-address.patch
-Patch9: 0001-Remove-unused-DOCTYPE-from-odk-examples-xcu-file.patch
-Patch10: 0001-math.desktop-include-Spreadsheet-category.patch
-Patch11: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
-Patch12: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
-Patch13: 0001-Resolves-tdf-132739-two-style-tags-where-there-shoul.patch
+Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
+Patch4: 0001-Resolves-tdf-132739-two-style-tags-where-there-shoul.patch
+Patch5: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -1063,7 +1054,7 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc --disable-qrcodegen
+%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
 %ifarch s390x
@@ -1108,8 +1099,8 @@ touch autogen.lastrun
  --enable-evolution2 \
  --enable-ext-nlpsolver \
  --enable-ext-wiki-publisher \
- --enable-gtk3 \
  --enable-introspection \
+ --enable-odk \
  --enable-release-build \
  --enable-scripting-beanshell \
  --enable-scripting-javascript \
@@ -1127,6 +1118,7 @@ touch autogen.lastrun
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  --enable-python=system \
  --with-idlc-cpp=cpp \
+ --disable-zxing \
  %{distrooptions} \
  %{?bundling_options} \
  %{?archoptions} \
@@ -1606,7 +1598,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libemfiolo.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
-%{baseinstdir}/program/libgielo.so
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libindex_data.so
 %{baseinstdir}/program/libfilelo.so
@@ -1623,7 +1614,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/liblocaledata_es.so
 %{baseinstdir}/program/liblocaledata_euro.so
 %{baseinstdir}/program/liblocaledata_others.so
-%{baseinstdir}/program/libmorklo.so
 %{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
 %{baseinstdir}/program/libmtfrendererlo.so
@@ -2181,6 +2171,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/pythonloader.unorc
 %{baseinstdir}/program/pythonscript.py*
 %{baseinstdir}/program/pyuno.so
+%{baseinstdir}/program/scriptforge.py*
 %{baseinstdir}/program/services/pyuno.rdb
 %{baseinstdir}/program/services/scriptproviderforpython.rdb
 %{baseinstdir}/program/wizards
@@ -2266,6 +2257,12 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Aug 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-1
+- upgrade to 7.2.0
+
+* Sat Aug 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.3-1
+- prep upgrade to 7.2.0
+
 * Thu Aug 12 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.5.2-5
 - replace use of ucpp with gcc cpp
 - Resolves: tdf#132739 two html style tags where there should be just one

@@ -252,6 +252,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Resolves-tdf-132739-two-style-tags-where-there-shoul.patch
 Patch5: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
+Patch6: 0001-arm-nStackBytes-was-already-the-right-amount-of-byte.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

@@ -126,9 +126,7 @@ BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 %if 0%{?fedora}
-%ifnarch s390x
 BuildRequires: firebird-devel
-%endif
 %endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
@@ -333,9 +331,7 @@ to be written in python.
 %package base
 Summary: Database front-end for LibreOffice
 %if 0%{?fedora}
-%ifnarch s390x
 Requires: firebird
-%endif
 %endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
@@ -1058,11 +1054,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
-%ifarch s390x
-%define distrooptions --enable-eot --enable-kf5 --disable-firebird-sdbc
-%else
 %define distrooptions --enable-eot --enable-kf5
-%endif
 %endif
 
 %if %{with langpacks}
@@ -1865,9 +1857,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
 %if 0%{?fedora}
-%ifnarch s390x
 %{baseinstdir}/program/libfirebird_sdbclo.so
-%endif
 %endif
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so

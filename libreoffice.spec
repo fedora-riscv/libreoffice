@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -126,9 +126,7 @@ BuildRequires: boost-devel
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 %if 0%{?fedora}
-%ifnarch s390x
 BuildRequires: firebird-devel
-%endif
 %endif
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
@@ -333,9 +331,7 @@ to be written in python.
 %package base
 Summary: Database front-end for LibreOffice
 %if 0%{?fedora}
-%ifnarch s390x
 Requires: firebird
-%endif
 %endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
@@ -1058,11 +1054,7 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
-%ifarch s390x
-%define distrooptions --enable-eot --enable-kf5 --disable-firebird-sdbc
-%else
 %define distrooptions --enable-eot --enable-kf5
-%endif
 %endif
 
 %if %{with langpacks}
@@ -1074,6 +1066,10 @@ autoconf
 
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
+
+%ifarch armv7hl
+SMP_MFLAGS=2
+%endif
 
 %if 0%{?flatpak}
 %define flatpakoptions --with-beanshell-jar=/app/share/java/bsh.jar --with-boost-libdir=%{_libdir} --with-external-dict-dir=/app/share/myspell --with-external-hyph-dir=/app/share/hyphen --with-external-thes-dir=/app/share/mythes --with-flute-jar=/app/share/java/flute.jar --with-jdk-home=/app/lib/jvm/java --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}
@@ -1861,9 +1857,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
 %if 0%{?fedora}
-%ifnarch s390x
 %{baseinstdir}/program/libfirebird_sdbclo.so
-%endif
 %endif
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
@@ -2254,6 +2248,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Aug 20 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-2
+- s390x firebird is available again
+
 * Mon Aug 16 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-1
 - upgrade to 7.2.0
 

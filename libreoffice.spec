@@ -1068,7 +1068,7 @@ SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 
 %ifarch armv7hl
-SMP_MFLAGS=3
+SMP_MFLAGS=2
 %endif
 
 %if 0%{?flatpak}

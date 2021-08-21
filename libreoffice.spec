@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.4
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -250,7 +250,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Resolves-tdf-132739-two-style-tags-where-there-shoul.patch
 Patch5: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-Patch6: 0001-arm-nStackBytes-was-already-the-right-amount-of-byte.patch
+Patch6: 0001-arm-fix-bridge.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -1511,7 +1511,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x %{arm}
+%ifnarch s390x
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
@@ -2248,6 +2248,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Aug 21 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-3
+- fix arm32 uno bridge
+
 * Fri Aug 20 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.0.4-2
 - s390x firebird is available again
 

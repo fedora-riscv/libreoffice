@@ -257,6 +257,7 @@ Patch8: 0001-Simplify-construction-of-a-hardcoded-IPv4-address.patch
 Patch9: 0001-math.desktop-include-Spreadsheet-category.patch
 Patch10: 0001-rhbz-1980800-allow-convert-to-csv-to-write-each-shee.patch
 Patch11: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
+Patch12: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

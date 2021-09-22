@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2251,6 +2251,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Sep 22 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-3
+- reenable make check for s390x
+
 * Fri Sep 10 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-2
 - remove obscure rhino and bsh scripting for fedora >= 36 like in rhel
 

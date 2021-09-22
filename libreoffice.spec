@@ -1015,6 +1015,11 @@ sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
 sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
+%ifarch s390x
+sed -i -e /CppunitTest_dbaccess_hsqlbinary_import/d dbaccess/Module_dbaccess.mk
+sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
+sed -i -e /CustomTarget_uno_test/d testtools/Module_testtools.mk
+%endif
 
 # git commit -q -a -m 'temporarily disable failing tests'
 
@@ -1511,11 +1516,9 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
-%endif
 
 %files
 

@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1029,6 +1029,11 @@ sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
 sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
+%ifarch s390x
+sed -i -e /CppunitTest_dbaccess_hsqlbinary_import/d dbaccess/Module_dbaccess.mk
+sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
+sed -i -e /CustomTarget_uno_test/d testtools/Module_testtools.mk
+%endif
 
 # git commit -q -a -m 'temporarily disable failing tests'
 
@@ -1518,11 +1523,9 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
-%endif
 
 %files
 
@@ -2257,6 +2260,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 23 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.7.2-4
+- enable make check on s390x
+
 * Sun Nov 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.7.2-3
 - add 7.1 fixes that missed 7.1.7
 

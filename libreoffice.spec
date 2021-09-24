@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -66,7 +66,7 @@ Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/dtoa-20180411.tgz
 Source10:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-%if 0%{?fedora}
+%if 0%{?fedora} && 0%{?fedora} < 36
 Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
 Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
 %endif
@@ -77,7 +77,7 @@ Source14:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
-%if 0%{?fedora}
+%if 0%{?fedora} && 0%{?fedora} < 36
 Provides: bundled(rhino) = 1.5
 %endif
 Provides: bundled(xsltml) = 2.1.2
@@ -217,7 +217,7 @@ BuildRequires: libnumbertext-devel
 
 # java stuff
 BuildRequires: ant
-%if 0%{?fedora}
+%if 0%{?fedora} && 0%{?fedora} < 36
 BuildRequires: bsh
 %endif
 BuildRequires: java-devel
@@ -307,9 +307,9 @@ Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-math-debuginfo < 1:6.4.7.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?rhel}
-Obsoletes: libreoffice-bsh < 1:6.2.2.3
-Obsoletes: libreoffice-rhino < 1:6.2.2.3
+%if 0%{?fedora} > 35 || 0%{?rhel}
+Obsoletes: libreoffice-bsh < 1:7.3.0.4
+Obsoletes: libreoffice-rhino < 1:7.3.0.4
 %endif
 
 %description core
@@ -343,7 +343,7 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 GUI database front-end for LibreOffice. Allows creation and management of 
 databases through a GUI.
 
-%if 0%{?fedora}
+%if 0%{?fedora} && 0%{?fedora} < 36
 %package bsh
 Summary: BeanShell support for LibreOffice
 Requires: bsh
@@ -1015,6 +1015,11 @@ sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
 sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
+%ifarch s390x
+sed -i -e /CppunitTest_dbaccess_hsqlbinary_import/d dbaccess/Module_dbaccess.mk
+sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
+sed -i -e /CustomTarget_uno_test/d testtools/Module_testtools.mk
+%endif
 
 # git commit -q -a -m 'temporarily disable failing tests'
 
@@ -1052,7 +1057,11 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
 %else
 # fedora
+%if 0%{?fedora} > 35
+%define distrooptions --enable-eot --enable-kf5 --disable-scripting-beanshell --disable-scripting-javascript
+%else
 %define distrooptions --enable-eot --enable-kf5
+%endif
 %endif
 
 %if %{with langpacks}
@@ -1093,8 +1102,6 @@ touch autogen.lastrun
  --enable-introspection \
  --enable-odk \
  --enable-release-build \
- --enable-scripting-beanshell \
- --enable-scripting-javascript \
  --enable-symbols \
  --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/myspell \
@@ -1509,11 +1516,9 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
-%endif
 
 %files
 
@@ -1873,7 +1878,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
 
-%if 0%{?fedora}
+%if 0%{?fedora} && 0%{?fedora} < 36
 %files bsh
 %{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
 %{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
@@ -2246,6 +2251,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 10 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-2
+- remove obscure rhino and bsh scripting for fedora >= 36 like in rhel
+
 * Thu Sep 09 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-1
 - upgrade to 7.2.1
 

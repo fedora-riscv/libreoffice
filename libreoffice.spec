@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1508,7 +1508,7 @@ install -m 0755 -d %{buildroot}%{_javadir}/%{name}
 for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
     j=`basename $jar`
     case ${j%.jar} in
-        juh|jurt|ridl|unoloader|unoil|officebean)
+        juh|jurt|libreoffice|ridl|unoloader|unoil|officebean)
             mv $jar %{buildroot}%{_javadir}/%{name}
             ln -sr %{buildroot}%{_javadir}/%{name}/$j $jar
             ;;
@@ -2140,6 +2140,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{_javadir}/%{name}
 %{_javadir}/%{name}/juh.jar
 %{_javadir}/%{name}/jurt.jar
+%{_javadir}/%{name}/libreoffice.jar
 %{_javadir}/%{name}/ridl.jar
 %{_javadir}/%{name}/unoloader.jar
 %license instdir/LICENSE
@@ -2251,6 +2252,12 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Oct 05 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-4
+- rhbz#2010520 move libroffice.jar to noarch java location
+
+* Wed Sep 22 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-3
+- reenable make check for s390x
+
 * Fri Sep 10 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-2
 - remove obscure rhino and bsh scripting for fedora >= 36 like in rhel
 

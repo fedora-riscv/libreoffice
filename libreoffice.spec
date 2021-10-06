@@ -983,10 +983,8 @@ rm -rf git-hooks */git-hooks
 
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
-# global __scm git_am
-# __scm_setup_git_am
-
-%define _default_patch_flags --no-backup-if-mismatch -p1
+%global __scm git_am
+%__scm_setup_git_am
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -997,7 +995,7 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-# git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
+git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -M 99
@@ -1021,12 +1019,12 @@ sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
 sed -i -e /CustomTarget_uno_test/d testtools/Module_testtools.mk
 %endif
 
-# git commit -q -a -m 'temporarily disable failing tests'
+git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.
 # We do not want that. Note: it is still possible to use
 # git --git-dir=.git-rpm
-# mv .git .git-rpm
+mv .git .git-rpm
 
 %build
 # path to external tarballs
@@ -1073,10 +1071,6 @@ autoconf
 
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
-
-%ifarch armv7hl
-SMP_MFLAGS=2
-%endif
 
 %if 0%{?flatpak}
 %define flatpakoptions --with-beanshell-jar=/app/share/java/bsh.jar --with-boost-libdir=%{_libdir} --with-external-dict-dir=/app/share/myspell --with-external-hyph-dir=/app/share/hyphen --with-external-thes-dir=/app/share/mythes --with-flute-jar=/app/share/java/flute.jar --with-jdk-home=/app/lib/jvm/java --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}

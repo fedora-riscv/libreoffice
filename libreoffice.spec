@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.2.1
+%global libo_version 7.2.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2246,6 +2246,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Oct 07 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.2.2-1
+- upgrade to 7.2.2 (likely will fix rhbz#2011384)
+
 * Tue Oct 05 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.1.2-4
 - rhbz#2010520 move libroffice.jar to noarch java location
 

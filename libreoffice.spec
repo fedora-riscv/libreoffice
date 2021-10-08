@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1043,7 +1043,7 @@ for i in $RPM_OPT_FLAGS; do
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
-%ifarch s390 aarch64
+%ifarch s390 %{arm} aarch64
 # these builders typically do not have enough memory to link the big libs with -g2
 ARCH_FLAGS="$ARCH_FLAGS -g1"
 %endif
@@ -2246,6 +2246,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Oct 08 2021 Kalev Lember <klember@redhat.com> - 1:7.2.2.2-2
+- Use -g1 on arm builders as well
+
 * Thu Oct 07 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.2.2-1
 - upgrade to 7.2.2 (likely will fix rhbz#2011384)
 

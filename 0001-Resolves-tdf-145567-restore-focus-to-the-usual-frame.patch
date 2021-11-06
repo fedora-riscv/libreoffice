@@ -1,4 +1,4 @@
-From 2eaf28eccae97857d712cfa613cec2bebbb6d802 Mon Sep 17 00:00:00 2001
+From ea6cfca48017b76bfeb8898e6d9e47b3011a3add Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Sat, 6 Nov 2021 21:32:21 +0000
 Subject: [PATCH] Resolves: tdf#145567 restore focus to the usual frame focus
@@ -9,14 +9,41 @@ arbitrary widget.
 
 Change-Id: I82c30c94121dc43b2ea1b4fbc66a0a3e79f7e664
 ---
- vcl/unx/gtk3/gtk3gtkinst.cxx | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ vcl/unx/gtk3/gtk3gtkinst.cxx | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/vcl/unx/gtk3/gtk3gtkinst.cxx b/vcl/unx/gtk3/gtk3gtkinst.cxx
-index a5d233e2f95e..fce7afe90ef6 100644
+index a5d233e2f95e..0fddb27aaa2d 100644
 --- a/vcl/unx/gtk3/gtk3gtkinst.cxx
 +++ b/vcl/unx/gtk3/gtk3gtkinst.cxx
-@@ -16635,6 +16635,14 @@ private:
+@@ -1899,6 +1899,26 @@ GdkDragAction VclToGdk(sal_Int8 dragOperation)
+     return eRet;
+ }
+ 
++GtkWindow* get_active_window()
++{
++    GtkWindow* pFocus = nullptr;
++
++    GList* pList = gtk_window_list_toplevels();
++
++    for (GList* pEntry = pList; pEntry; pEntry = pEntry->next)
++    {
++        if (gtk_window_has_toplevel_focus(GTK_WINDOW(pEntry->data)))
++        {
++            pFocus = GTK_WINDOW(pEntry->data);
++            break;
++        }
++    }
++
++    g_list_free(pList);
++
++    return pFocus;
++}
++
+ class GtkInstanceWidget : public virtual weld::Widget
+ {
+ protected:
+@@ -16635,6 +16655,14 @@ private:
          // rehook handler and let vcl cycle its own way through this widget's
          // children
          pFrame->AllowCycleFocusOut();

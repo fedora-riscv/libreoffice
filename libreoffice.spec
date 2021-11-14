@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -260,6 +260,8 @@ Patch11: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch12: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch13: 0001-document-new-shouldn-t-get-prefixed-to-become-libreo.patch
 Patch14: 0001-Resolves-tdf-145567-restore-focus-to-the-usual-frame.patch
+Patch15: 0001-Resolves-tdf-140250-don-t-share-adjustments-between-.patch
+Patch16: 0001-fix-comparison-when-searching-cache.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2254,6 +2256,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Nov 14 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.7.2-3
+- add 7.1 fixes that missed 7.1.7
+
 * Sat Nov 06 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.7.2-2
 - Resolves: tdf#145567 restore start center focus to the right widget
 

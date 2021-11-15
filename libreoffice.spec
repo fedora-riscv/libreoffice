@@ -262,6 +262,7 @@ Patch13: 0001-document-new-shouldn-t-get-prefixed-to-become-libreo.patch
 Patch14: 0001-Resolves-tdf-145567-restore-focus-to-the-usual-frame.patch
 Patch15: 0001-Resolves-tdf-140250-don-t-share-adjustments-between-.patch
 Patch16: 0001-fix-comparison-when-searching-cache.patch
+Patch17: 0001-tdf-121546-sw-don-t-use-undo-array-s-m_pOutlineNodes.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

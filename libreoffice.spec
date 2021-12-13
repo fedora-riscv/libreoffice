@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -213,6 +213,7 @@ BuildRequires: pkgconfig(liborcus-0.16)
 BuildRequires: pkgconfig(liborcus-0.15)
 %endif
 BuildRequires: pkgconfig(mdds-1.5)
+BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
 
 # java stuff
@@ -1110,7 +1111,6 @@ touch autogen.lastrun
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  --enable-python=system \
  --with-idlc-cpp=cpp \
- --disable-zxing \
  %{distrooptions} \
  %{?bundling_options} \
  %{?archoptions} \
@@ -2246,6 +2246,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Dec 13 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.4.1-2
+- Resolves: rhbz#2028991 fix insert, object, QR code
+
 * Mon Dec 06 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.2.4.1-1
 - upgrade to 7.2.4
 

@@ -213,6 +213,7 @@ BuildRequires: pkgconfig(liborcus-0.16)
 BuildRequires: pkgconfig(liborcus-0.15)
 %endif
 BuildRequires: pkgconfig(mdds-1.5)
+BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
 
 # java stuff

@@ -569,7 +569,7 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description glade
 %{name}-glade contains a catalog of LibreOffice-specific widgets for
-glade and ui-previewer tool to check the visual appearance of dialogs.
+glade tool to check the visual appearance of dialogs.
 
 %package librelogo
 Summary: LibreLogo scripting language
@@ -2180,7 +2180,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/Scripts/python/LibreLogo
 
 %files glade
-%{baseinstdir}/program/ui-previewer
 %{_datadir}/glade
 %{_datadir}/glade3
 

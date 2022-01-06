@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -263,6 +263,7 @@ Patch14: 0001-Resolves-tdf-145567-restore-focus-to-the-usual-frame.patch
 Patch15: 0001-Resolves-tdf-140250-don-t-share-adjustments-between-.patch
 Patch16: 0001-fix-comparison-when-searching-cache.patch
 Patch17: 0001-tdf-121546-sw-don-t-use-undo-array-s-m_pOutlineNodes.patch
+Patch18: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2260,6 +2261,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jan 06 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.1.8.1-2
+- fix annocheck warning about missing .note.gnu.property-stack
+
 * Mon Dec 06 2021 Caolán McNamara <caolanm@redhat.com> - 1:7.1.8.1-1
 - upgrade to 7.1.8
 

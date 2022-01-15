@@ -1,4 +1,4 @@
-From a48aba582520b813f3976bd6d059402e6554a3d1 Mon Sep 17 00:00:00 2001
+From 85da04887089580fa7551b57f740c6a62507dae1 Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Mon, 9 Aug 2021 23:07:12 +0200
 Subject: [PATCH] Missing includes for libstdc++ 12
@@ -14,6 +14,7 @@ Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
  chart2/source/view/inc/PlottingPositionHelper.hxx             | 4 ++++
  compilerplugins/clang/test/unusedfields.cxx                   | 1 +
  connectivity/source/inc/java/tools.hxx                        | 4 ++++
+ extensions/source/propctrlr/handlerhelper.hxx                 | 1 +
  filter/source/xsltdialog/xmlfilterjar.hxx                     | 1 +
  forms/source/component/EventThread.hxx                        | 1 +
  forms/source/xforms/propertysetbase.hxx                       | 1 +
@@ -33,7 +34,7 @@ Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
  xmlsecurity/source/gpg/SecurityEnvironment.hxx                | 3 +++
  xmlsecurity/source/helper/ooxmlsecparser.hxx                  | 1 +
  xmlsecurity/source/helper/xsecparser.hxx                      | 1 +
- 22 files changed, 57 insertions(+)
+ 23 files changed, 58 insertions(+)
 
 diff --git a/chart2/source/view/inc/PlottingPositionHelper.hxx b/chart2/source/view/inc/PlottingPositionHelper.hxx
 index 0962868b0f31..d687cb902453 100644
@@ -77,6 +78,18 @@ index bc9759fa9a88..44a35ecee3f9 100644
  #include <com/sun/star/beans/PropertyValue.hpp>
  #include <com/sun/star/uno/Sequence.h>
  
+diff --git a/extensions/source/propctrlr/handlerhelper.hxx b/extensions/source/propctrlr/handlerhelper.hxx
+index a53a24a9256f..1d32db9c0573 100644
+--- a/extensions/source/propctrlr/handlerhelper.hxx
++++ b/extensions/source/propctrlr/handlerhelper.hxx
+@@ -26,6 +26,7 @@
+ #include <com/sun/star/beans/PropertyAttribute.hpp>
+ #include <com/sun/star/beans/Optional.hpp>
+ 
++#include <memory>
+ #include <vector>
+ 
+ namespace weld { class Builder; class Widget; class Window; }
 diff --git a/filter/source/xsltdialog/xmlfilterjar.hxx b/filter/source/xsltdialog/xmlfilterjar.hxx
 index 6f02e5f99de0..1d8e52fc3e18 100644
 --- a/filter/source/xsltdialog/xmlfilterjar.hxx

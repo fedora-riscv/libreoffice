@@ -1,7 +1,7 @@
-From 56b0ab3d21ba5e620ad0630ca062c30805c37416 Mon Sep 17 00:00:00 2001
+From a48aba582520b813f3976bd6d059402e6554a3d1 Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Mon, 9 Aug 2021 23:07:12 +0200
-Subject: [PATCH] Missing include
+Subject: [PATCH] Missing includes for libstdc++ 12
 
 (for std::unique_ptr, with recent libstdc++ 12 trunk)
 
@@ -18,6 +18,7 @@ Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
  forms/source/component/EventThread.hxx                        | 1 +
  forms/source/xforms/propertysetbase.hxx                       | 1 +
  fpicker/source/office/contentenumeration.hxx                  | 4 ++++
+ framework/inc/uielement/toolbarwrapper.hxx                    | 2 ++
  include/oox/crypto/StrongEncryptionDataSpace.hxx              | 4 ++++
  include/sfx2/sidebar/SidebarPanelBase.hxx                     | 4 ++++
  include/svtools/imageresourceaccess.hxx                       | 4 ++++
@@ -32,7 +33,7 @@ Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
  xmlsecurity/source/gpg/SecurityEnvironment.hxx                | 3 +++
  xmlsecurity/source/helper/ooxmlsecparser.hxx                  | 1 +
  xmlsecurity/source/helper/xsecparser.hxx                      | 1 +
- 21 files changed, 55 insertions(+)
+ 22 files changed, 57 insertions(+)
 
 diff --git a/chart2/source/view/inc/PlottingPositionHelper.hxx b/chart2/source/view/inc/PlottingPositionHelper.hxx
 index 0962868b0f31..d687cb902453 100644
@@ -127,6 +128,19 @@ index 9dcfae687883..bc2180c53c47 100644
  #include <com/sun/star/ucb/XCommandEnvironment.hpp>
  #include <salhelper/thread.hxx>
  #include <ucbhelper/content.hxx>
+diff --git a/framework/inc/uielement/toolbarwrapper.hxx b/framework/inc/uielement/toolbarwrapper.hxx
+index 55142f98d500..da90455b21da 100644
+--- a/framework/inc/uielement/toolbarwrapper.hxx
++++ b/framework/inc/uielement/toolbarwrapper.hxx
+@@ -25,6 +25,8 @@
+ #include <com/sun/star/ui/XUIFunctionListener.hpp>
+ #include <com/sun/star/uno/XComponentContext.hpp>
+ 
++#include <memory>
++
+ namespace weld
+ {
+     class Builder;
 diff --git a/include/oox/crypto/StrongEncryptionDataSpace.hxx b/include/oox/crypto/StrongEncryptionDataSpace.hxx
 index 59be5c9832a0..cd7156515ab3 100644
 --- a/include/oox/crypto/StrongEncryptionDataSpace.hxx

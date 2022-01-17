@@ -1512,7 +1512,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-# TEMP for gcc 12 #
+# TEMP for gcc 12: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104007
 rm -rf hwpfilter/qa/cppunit/data/fail/skipblock-1.hwp
 make unitcheck slowcheck
 # we don't need this anymore

@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1076,7 +1076,7 @@ SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]
 
 %if 0%{?flatpak}
-%define flatpakoptions --with-beanshell-jar=/app/share/java/bsh.jar --with-boost-libdir=%{_libdir} --with-external-dict-dir=/app/share/myspell --with-external-hyph-dir=/app/share/hyphen --with-external-thes-dir=/app/share/mythes --with-flute-jar=/app/share/java/flute.jar --with-jdk-home=/app/lib/jvm/java --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}
+%define flatpakoptions --with-beanshell-jar=/app/share/java/bsh.jar --with-boost-libdir=%{_libdir} --with-external-dict-dir=/app/share/hunspell --with-external-hyph-dir=/app/share/hyphen --with-external-thes-dir=/app/share/mythes --with-flute-jar=/app/share/java/flute.jar --with-jdk-home=/app/lib/jvm/java --with-jfreereport-jar=/app/share/java/flow-engine.jar --with-libbase-jar=/app/share/java/libbase.jar --with-libfonts-jar=/app/share/java/libfonts.jar --with-libformula-jar=/app/share/java/libformula.jar --with-liblayout-jar=/app/share/java/liblayout.jar --with-libloader-jar=/app/share/java/libloader.jar --with-librepository-jar=/app/share/java/librepository.jar --with-libserializer-jar=/app/share/java/libserializer.jar --with-libxml-jar=/app/share/java/libxml.jar --with-sac-jar=/app/share/java/sac.jar FIREBIRDCONFIG=%{_libdir}/fb_config QT4INC=%{_includedir}
 %endif
 
 # TODO: enable coinmp?
@@ -1101,7 +1101,7 @@ touch autogen.lastrun
  --enable-release-build \
  --enable-symbols \
  --with-build-version="%{version}-%{release}" \
- --with-external-dict-dir=/usr/share/myspell \
+ --with-external-dict-dir=/usr/share/hunspell \
  --with-external-tar="$EXTSRCDIR" \
  --with-help \
  --with-system-dicts \
@@ -2249,6 +2249,10 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jan 24 2022 Parag Nemade <pnemade AT redhat DOT com> - 1:7.2.5.2-4
+- Update hunspell dictionary directory path
+  https://fedoraproject.org/wiki/Changes/Hunspell_dictionary_dir_change
+
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:7.2.5.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 

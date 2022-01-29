@@ -1,0 +1,61 @@
+From a6827c3787f3056444586979750f97d3e963f6f2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 24 Jan 2022 20:09:49 +0000
+Subject: [PATCH] tdf#146971 changing a11y desc to replace %PRODUCTNAME has
+ perf issues
+
+so leave it alone, and do the conversion just for the originally
+report situation as a safely backportable change with a follow up
+to not allow us to get into this situation in the first place
+
+Change-Id: I4f95f85791d0f937e53d7541804870b2cbf62b44
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/128821
+Reviewed-by: Michael Stahl <michael.stahl@allotropia.de>
+Tested-by: Jenkins
+---
+ vcl/unx/gtk3/gtkinst.cxx | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
+
+diff --git a/vcl/unx/gtk3/gtkinst.cxx b/vcl/unx/gtk3/gtkinst.cxx
+index 94184ca3db42..aa5b0685aa21 100644
+--- a/vcl/unx/gtk3/gtkinst.cxx
++++ b/vcl/unx/gtk3/gtkinst.cxx
+@@ -21349,7 +21349,15 @@ namespace {
+             const char* pDesc = pAtkObject ? atk_object_get_description(pAtkObject) : nullptr;
+             if (pDesc && pDesc[0])
+             {
+-                gtk_tooltip_set_text(tooltip, pDesc);
++                if (ResHookProc pStringReplace = Translate::GetReadStringHook())
++                {
++                    // tdf#142704 %PRODUCTNAME shown in extended tips
++                    OUString aDesc(pDesc, strlen(pDesc), RTL_TEXTENCODING_UTF8);
++                    aDesc = (*pStringReplace)(aDesc);
++                    gtk_tooltip_set_text(tooltip, OUStringToOString(aDesc, RTL_TEXTENCODING_UTF8).getStr());
++                }
++                else
++                    gtk_tooltip_set_text(tooltip, pDesc);
+                 return true;
+             }
+ #endif
+@@ -21670,18 +21678,6 @@ private:
+                 aTooltip = (*m_pStringReplace)(aTooltip);
+                 gtk_widget_set_tooltip_text(pWidget, OUStringToOString(aTooltip, RTL_TEXTENCODING_UTF8).getStr());
+             }
+-
+-#if !GTK_CHECK_VERSION(4, 0, 0)
+-            // tdf#142704 %PRODUCTNAME shown in extended tips
+-            AtkObject* pAtkObject = gtk_widget_get_accessible(pWidget);
+-            const char* pDesc = pAtkObject ? atk_object_get_description(pAtkObject) : nullptr;
+-            if (pDesc && pDesc[0])
+-            {
+-                OUString aDesc(pDesc, strlen(pDesc), RTL_TEXTENCODING_UTF8);
+-                aDesc = (*m_pStringReplace)(aDesc);
+-                atk_object_set_description(pAtkObject, OUStringToOString(aDesc, RTL_TEXTENCODING_UTF8).getStr());
+-            }
+-#endif
+         }
+ 
+         // expand placeholder and collect potentially missing mnemonics
+-- 
+2.33.1
+

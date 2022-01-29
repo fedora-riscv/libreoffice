@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -251,6 +251,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
+Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2246,6 +2247,10 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Jan 29 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-2
+- tdf#146971 don't change a11y desc to replace PRODUCTNAME, may solve
+  rhbz#2047319
+
 * Thu Jan 06 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-1
 - upgrade to 7.2.5
 

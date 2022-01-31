@@ -50,7 +50,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2247,6 +2247,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jan 31 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-3
+- bump n-v-r
+
 * Sat Jan 29 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-2
 - tdf#146971 don't change a11y desc to replace PRODUCTNAME, may solve
   rhbz#2047319

@@ -259,6 +259,7 @@ Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
+Patch7: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2261,8 +2262,8 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Jan 31 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-3
-- bump n-v-r
+* Wed Feb 02 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-3
+- rhbz#2047319 drop the SolarMutex before QApplication::init()
 
 * Sat Jan 29 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-2
 - tdf#146971 don't change a11y desc to replace PRODUCTNAME, may solve

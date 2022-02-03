@@ -73,20 +73,13 @@ Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/dtoa-20180411.tgz
 Source10:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
-%if 0%{?fedora} && 0%{?fedora} < 36
-Source11:       %{external_url}/798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-Source12:       %{external_url}/35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
-%endif
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source14:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
+Source11:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source12:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
-%if 0%{?fedora} && 0%{?fedora} < 36
-Provides: bundled(rhino) = 1.5
-%endif
 Provides: bundled(xsltml) = 2.1.2
 
 # symbolic icons
@@ -214,20 +207,13 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
-%if 0%{?fedora} > 33 || 0%{?rhel} > 8
-BuildRequires: pkgconfig(liborcus-0.16)
-%else
-BuildRequires: pkgconfig(liborcus-0.15)
-%endif
-BuildRequires: pkgconfig(mdds-1.5)
+BuildRequires: pkgconfig(liborcus-0.17)
+BuildRequires: pkgconfig(mdds-2.0)
 BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
 
 # java stuff
 BuildRequires: ant
-%if 0%{?fedora} && 0%{?fedora} < 36
-BuildRequires: bsh
-%endif
 BuildRequires: java-devel
 BuildRequires: junit
 BuildRequires: pentaho-reporting-flow-engine
@@ -316,10 +302,8 @@ Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-math-debuginfo < 1:6.4.7.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
 Provides: libreoffice-headless%{?_isa} = %{epoch}:%{version}-%{release}
-%if 0%{?fedora} > 35 || 0%{?rhel}
 Obsoletes: libreoffice-bsh < 1:7.3.0.4
 Obsoletes: libreoffice-rhino < 1:7.3.0.4
-%endif
 
 %description core
 The shared core libraries and support files for LibreOffice.
@@ -351,25 +335,6 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
 databases through a GUI.
-
-%if 0%{?fedora} && 0%{?fedora} < 36
-%package bsh
-Summary: BeanShell support for LibreOffice
-Requires: bsh
-Requires: java >= 1:1.6
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-
-%description bsh
-Support BeanShell scripts in LibreOffice.
-
-%package rhino
-Summary: JavaScript support for LibreOffice
-Requires: java >= 1:1.6
-Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
-
-%description rhino
-Support JavaScript scripts in LibreOffice.
-%endif
 
 %package officebean
 Summary: JavaBean for LibreOffice Components
@@ -741,11 +706,7 @@ This package provides gdb pretty printers for package %{name}.
 Summary: %{langname} language pack for LibreOffice \
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release} \
 %{-a:Requires: autocorr-%{-a*}}%{!-a:%{-A:Requires: autocorr-%{lang}}} \
-%if 0%{?rhel} && 0%{?rhel} < 9 \
-%{-f:Requires: font(:lang=%{-f*})}%{!-f:%{-F:Requires: font(:lang=%{lang})}} \
-%else \
 %{-f:Recommends: langpacks-%{-f*}}%{!-f:%{-F:Recommends: langpacks-%{lang}}} \
-%endif \
 %{-h:Requires: hunspell-%{-h*}}%{!-h:%{-H:Requires: hunspell-%{lang}}} \
 %{-m:Requires: mythes-%{-m*}}%{!-m:%{-M:Requires: mythes-%{lang}}} \
 %{-y:Requires: hyphen-%{-y*}}%{!-y:%{-Y:Requires: hyphen-%{lang}}} \
@@ -867,17 +828,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 
-%if 0%{?rhel} && 0%{?rhel} < 9
-
-%define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
-
-%else
-
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
-
-%endif
 
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
@@ -904,23 +856,11 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ve -n Venda -F -H -X
 %langpack -l xh -n Xhosa -F -H -X
 
-%if 0%{?rhel} && 0%{?rhel} < 9
-
-%define langpack_lang Simplified Chinese
-%langpack -l zh-Hans -n %{langpack_lang} -f zh-cn -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
-
-%define langpack_lang Traditional Chinese
-%langpack -l zh-Hant -n %{langpack_lang} -f zh-tw -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
-
-%else
-
 %define langpack_lang Simplified Chinese
 %langpack -l zh-Hans -n %{langpack_lang} -f zh_CN -a zh -p zh_CN -s cjk -T -L zh-CN -x zh-CN -g zh_CN
 
 %define langpack_lang Traditional Chinese
 %langpack -l zh-Hant -n %{langpack_lang} -f zh_TW -a zh -p zh_TW -s cjk -T -L zh-TW -x zh-TW -g zh_TW
-
-%endif
 
 %langpack -l zu -n Zulu -F -H -Y -X
 %undefine langpack_lang
@@ -1061,14 +1001,10 @@ export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
 
 %if 0%{?rhel}
-%define distrooptions --disable-eot --disable-scripting-beanshell --disable-scripting-javascript --disable-firebird-sdbc
+%define distrooptions --disable-eot --disable-firebird-sdbc
 %else
 # fedora
-%if 0%{?fedora} > 35
-%define distrooptions --enable-eot --enable-kf5 --disable-scripting-beanshell --disable-scripting-javascript
-%else
 %define distrooptions --enable-eot --enable-kf5
-%endif
 %endif
 
 %if %{with langpacks}
@@ -1119,6 +1055,7 @@ touch autogen.lastrun
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  --enable-python=system \
  --with-idlc-cpp=cpp \
+ --disable-scripting-beanshell --disable-scripting-javascript \
  %{distrooptions} \
  %{?bundling_options} \
  %{?archoptions} \
@@ -1887,19 +1824,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
 
-%if 0%{?fedora} && 0%{?fedora} < 36
-%files bsh
-%{baseinstdir}/program/classes/ScriptProviderForBeanShell.jar
-%{baseinstdir}/program/services/scriptproviderforbeanshell.rdb
-%{baseinstdir}/share/Scripts/beanshell
-
-%files rhino
-%{baseinstdir}/program/classes/js.jar
-%{baseinstdir}/program/classes/ScriptProviderForJavaScript.jar
-%{baseinstdir}/program/services/scriptproviderforjavascript.rdb
-%{baseinstdir}/share/Scripts/javascript
-%endif
-
 %files wiki-publisher
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
 %{baseinstdir}/share/extensions/wiki-publisher
@@ -2262,6 +2186,8 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Wed Feb 02 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.0.3-1
 - 7.3.0 release
+- drop conditionals for rhel < 9
+- drop conditionals for fedora < 36
 
 * Tue Feb 01 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-5
 - Related: rhbz#2029810 set NoDisplay=true for .desktop on s390x/aarch64

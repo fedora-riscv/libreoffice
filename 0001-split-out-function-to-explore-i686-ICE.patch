@@ -1,14 +1,14 @@
-From 4358a5df96b0989b6074dde0509711598ab5d26e Mon Sep 17 00:00:00 2001
+From bc39839446e13e31ad4e95943446c08876853eb9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 3 Feb 2022 14:29:21 +0000
-Subject: [PATCH] split out function to explore i686 ICE
+Subject: [PATCH 2/2] split out function to explore i686 ICE
 
 Change-Id: I75afe56b248236f30a96876e2aed96f5dd887df1
 ---
  sc/Library_sc.mk                 |   1 +
- sc/source/core/tool/bahttext.cxx | 242 +++++++++++++++++++++++++++++++
+ sc/source/core/tool/bahttext.cxx | 238 +++++++++++++++++++++++++++++++
  sc/source/core/tool/interpr2.cxx | 181 -----------------------
- 3 files changed, 243 insertions(+), 181 deletions(-)
+ 3 files changed, 239 insertions(+), 181 deletions(-)
  create mode 100644 sc/source/core/tool/bahttext.cxx
 
 diff --git a/sc/Library_sc.mk b/sc/Library_sc.mk
@@ -25,10 +25,10 @@ index 936ca33901ee..f31bbd3f5f8c 100644
      sc/source/core/tool/cellform \
 diff --git a/sc/source/core/tool/bahttext.cxx b/sc/source/core/tool/bahttext.cxx
 new file mode 100644
-index 000000000000..8d113019b2d8
+index 000000000000..76b99973271d
 --- /dev/null
 +++ b/sc/source/core/tool/bahttext.cxx
-@@ -0,0 +1,242 @@
+@@ -0,0 +1,238 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/*
 + * This file is part of the LibreOffice project.
@@ -83,15 +83,13 @@ index 000000000000..8d113019b2d8
 +#define UTF8_TH_MINUS "\340\270\245\340\270\232"
 +
 +// local functions
-+namespace
-+{
-+void lclSplitBlock(double& rfInt, sal_Int32& rnBlock, double fValue, double fSize)
++static void lclSplitBlock(double& rfInt, sal_Int32& rnBlock, double fValue, double fSize)
 +{
 +    rnBlock = static_cast<sal_Int32>(modf((fValue + 0.1) / fSize, &rfInt) * fSize + 0.1);
 +}
 +
 +/** Appends a digit (0 to 9) to the passed string. */
-+void lclAppendDigit(OStringBuffer& rText, sal_Int32 nDigit)
++static void lclAppendDigit(OStringBuffer& rText, sal_Int32 nDigit)
 +{
 +    switch (nDigit)
 +    {
@@ -134,7 +132,7 @@ index 000000000000..8d113019b2d8
 +    @param nDigit  A digit in the range from 1 to 9.
 +    @param nPow10  A value in the range from 2 to 5.
 + */
-+void lclAppendPow10(OStringBuffer& rText, sal_Int32 nDigit, sal_Int32 nPow10)
++static void lclAppendPow10(OStringBuffer& rText, sal_Int32 nDigit, sal_Int32 nPow10)
 +{
 +    OSL_ENSURE((1 <= nDigit) && (nDigit <= 9), "lclAppendPow10 - illegal digit");
 +    lclAppendDigit(rText, nDigit);
@@ -158,7 +156,7 @@ index 000000000000..8d113019b2d8
 +}
 +
 +/** Appends a block of 6 digits (value from 1 to 999,999) to the passed string. */
-+void lclAppendBlock(OStringBuffer& rText, sal_Int32 nValue)
++static void lclAppendBlock(OStringBuffer& rText, sal_Int32 nValue)
 +{
 +    OSL_ENSURE((1 <= nValue) && (nValue <= 999999), "lclAppendBlock - illegal value");
 +    if (nValue >= 100000)
@@ -199,8 +197,6 @@ index 000000000000..8d113019b2d8
 +    else if (nOne > 0)
 +        lclAppendDigit(rText, nOne);
 +}
-+
-+} // namespace
 +
 +void ScInterpreter::ScBahtText()
 +{

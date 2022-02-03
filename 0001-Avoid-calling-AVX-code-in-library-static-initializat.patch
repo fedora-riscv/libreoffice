@@ -1,0 +1,45 @@
+From 3f96d70ce7f31d556b995733b44cb8715b64e329 Mon Sep 17 00:00:00 2001
+From: Thorsten Behrens <thorsten.behrens@allotropia.de>
+Date: Mon, 31 Jan 2022 22:45:37 +0100
+Subject: [PATCH 1/2] Avoid calling AVX code in library static initialization
+
+Despite 26072b8db7ba53f00c83197cb064229a76001989 and
+12c6b1ef6a824b09778163ec83fc44bb196e65db, Linux builds using
+RH devtoolset-7 gcc7 still hit occasional unit test crashes
+with illegal instructions.
+
+Backtrace is always:
+
+> #0  __static_initialization_and_destruction_0 (__initialize_p=1, __priority=65535) at core/sc/source/core/tool/arraysumAVX.cxx:20
+> #1  _GLOBAL__sub_I_arraysumAVX.cxx(void) () at core/sc/source/core/tool/arraysumAVX.cxx:112
+>
+
+So lets make sure initializer is run only on function entry.
+
+Change-Id: I69f5cb725e4d72fb346166b21870612473f974b8
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/129246
+Tested-by: Jenkins
+Reviewed-by: Thorsten Behrens <thorsten.behrens@allotropia.de>
+(cherry picked from commit d140817428cdbb519efa496f578bf6c054c94361)
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/129251
+Reviewed-by: Xisco Fauli <xiscofauli@libreoffice.org>
+---
+ sc/source/core/tool/arraysumAVX.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sc/source/core/tool/arraysumAVX.cxx b/sc/source/core/tool/arraysumAVX.cxx
+index e256248047d0..4d9ee02285e7 100644
+--- a/sc/source/core/tool/arraysumAVX.cxx
++++ b/sc/source/core/tool/arraysumAVX.cxx
+@@ -30,7 +30,7 @@ using namespace AVX;
+   */
+ static inline void sumAVX(__m256d& sum, __m256d& err, const __m256d& value)
+ {
+-    const __m256d ANNULATE_SIGN_BIT
++    static const __m256d ANNULATE_SIGN_BIT
+         = _mm256_castsi256_pd(_mm256_set1_epi64x(0x7FFF'FFFF'FFFF'FFFF));
+     // Temporal parameter
+     __m256d t = _mm256_add_pd(sum, value);
+-- 
+2.33.1
+

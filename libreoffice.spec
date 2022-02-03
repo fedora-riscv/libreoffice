@@ -72,11 +72,12 @@ Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c31
 Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/dtoa-20180411.tgz
-Source10:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source10:       %{external_url}/libcuckoo-93217f8d391718380c508a722ab9acd5e9081233.tar.gz
+Source11:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source11:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source12:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
+Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source13:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
@@ -1051,6 +1052,7 @@ touch autogen.lastrun
  --without-export-validation \
  --without-fonts \
  --without-lxml \
+ --without-system-cuckoo \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
  --with-gdrive-client-id="457862564325.apps.googleusercontent.com" \
  --enable-python=system \

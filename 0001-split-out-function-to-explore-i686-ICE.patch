@@ -1,0 +1,468 @@
+From 4358a5df96b0989b6074dde0509711598ab5d26e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 3 Feb 2022 14:29:21 +0000
+Subject: [PATCH] split out function to explore i686 ICE
+
+Change-Id: I75afe56b248236f30a96876e2aed96f5dd887df1
+---
+ sc/Library_sc.mk                 |   1 +
+ sc/source/core/tool/bahttext.cxx | 242 +++++++++++++++++++++++++++++++
+ sc/source/core/tool/interpr2.cxx | 181 -----------------------
+ 3 files changed, 243 insertions(+), 181 deletions(-)
+ create mode 100644 sc/source/core/tool/bahttext.cxx
+
+diff --git a/sc/Library_sc.mk b/sc/Library_sc.mk
+index 936ca33901ee..f31bbd3f5f8c 100644
+--- a/sc/Library_sc.mk
++++ b/sc/Library_sc.mk
+@@ -207,6 +207,7 @@ $(eval $(call gb_Library_add_exception_objects,sc,\
+     sc/source/core/tool/adiasync \
+     sc/source/core/tool/appoptio \
+     sc/source/core/tool/autoform \
++    sc/source/core/tool/bahttext \
+     sc/source/core/tool/calcconfig \
+     sc/source/core/tool/callform \
+     sc/source/core/tool/cellform \
+diff --git a/sc/source/core/tool/bahttext.cxx b/sc/source/core/tool/bahttext.cxx
+new file mode 100644
+index 000000000000..8d113019b2d8
+--- /dev/null
++++ b/sc/source/core/tool/bahttext.cxx
+@@ -0,0 +1,242 @@
++/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/*
++ * This file is part of the LibreOffice project.
++ *
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
++ *
++ * This file incorporates work covered by the following license notice:
++ *
++ *   Licensed to the Apache Software Foundation (ASF) under one or more
++ *   contributor license agreements. See the NOTICE file distributed
++ *   with this work for additional information regarding copyright
++ *   ownership. The ASF licenses this file to you under the Apache
++ *   License, Version 2.0 (the "License"); you may not use this file
++ *   except in compliance with the License. You may obtain a copy of
++ *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
++ */
++
++#include <memory>
++#include <interpre.hxx>
++#include <osl/diagnose.h>
++#include <sc.hrc>
++#include <string.h>
++
++using ::std::vector;
++using namespace com::sun::star;
++using namespace formula;
++
++// BAHTTEXT
++#define UTF8_TH_0 "\340\270\250\340\270\271\340\270\231\340\270\242\340\271\214"
++#define UTF8_TH_1 "\340\270\253\340\270\231\340\270\266\340\271\210\340\270\207"
++#define UTF8_TH_2 "\340\270\252\340\270\255\340\270\207"
++#define UTF8_TH_3 "\340\270\252\340\270\262\340\270\241"
++#define UTF8_TH_4 "\340\270\252\340\270\265\340\271\210"
++#define UTF8_TH_5 "\340\270\253\340\271\211\340\270\262"
++#define UTF8_TH_6 "\340\270\253\340\270\201"
++#define UTF8_TH_7 "\340\271\200\340\270\210\340\271\207\340\270\224"
++#define UTF8_TH_8 "\340\271\201\340\270\233\340\270\224"
++#define UTF8_TH_9 "\340\271\200\340\270\201\340\271\211\340\270\262"
++#define UTF8_TH_10 "\340\270\252\340\270\264\340\270\232"
++#define UTF8_TH_11 "\340\271\200\340\270\255\340\271\207\340\270\224"
++#define UTF8_TH_20 "\340\270\242\340\270\265\340\271\210"
++#define UTF8_TH_1E2 "\340\270\243\340\271\211\340\270\255\340\270\242"
++#define UTF8_TH_1E3 "\340\270\236\340\270\261\340\270\231"
++#define UTF8_TH_1E4 "\340\270\253\340\270\241\340\270\267\340\271\210\340\270\231"
++#define UTF8_TH_1E5 "\340\271\201\340\270\252\340\270\231"
++#define UTF8_TH_1E6 "\340\270\245\340\271\211\340\270\262\340\270\231"
++#define UTF8_TH_DOT0 "\340\270\226\340\271\211\340\270\247\340\270\231"
++#define UTF8_TH_BAHT "\340\270\232\340\270\262\340\270\227"
++#define UTF8_TH_SATANG "\340\270\252\340\270\225\340\270\262\340\270\207\340\270\204\340\271\214"
++#define UTF8_TH_MINUS "\340\270\245\340\270\232"
++
++// local functions
++namespace
++{
++void lclSplitBlock(double& rfInt, sal_Int32& rnBlock, double fValue, double fSize)
++{
++    rnBlock = static_cast<sal_Int32>(modf((fValue + 0.1) / fSize, &rfInt) * fSize + 0.1);
++}
++
++/** Appends a digit (0 to 9) to the passed string. */
++void lclAppendDigit(OStringBuffer& rText, sal_Int32 nDigit)
++{
++    switch (nDigit)
++    {
++        case 0:
++            rText.append(UTF8_TH_0);
++            break;
++        case 1:
++            rText.append(UTF8_TH_1);
++            break;
++        case 2:
++            rText.append(UTF8_TH_2);
++            break;
++        case 3:
++            rText.append(UTF8_TH_3);
++            break;
++        case 4:
++            rText.append(UTF8_TH_4);
++            break;
++        case 5:
++            rText.append(UTF8_TH_5);
++            break;
++        case 6:
++            rText.append(UTF8_TH_6);
++            break;
++        case 7:
++            rText.append(UTF8_TH_7);
++            break;
++        case 8:
++            rText.append(UTF8_TH_8);
++            break;
++        case 9:
++            rText.append(UTF8_TH_9);
++            break;
++        default:
++            OSL_FAIL("lclAppendDigit - illegal digit");
++    }
++}
++
++/** Appends a value raised to a power of 10: nDigit*10^nPow10.
++    @param nDigit  A digit in the range from 1 to 9.
++    @param nPow10  A value in the range from 2 to 5.
++ */
++void lclAppendPow10(OStringBuffer& rText, sal_Int32 nDigit, sal_Int32 nPow10)
++{
++    OSL_ENSURE((1 <= nDigit) && (nDigit <= 9), "lclAppendPow10 - illegal digit");
++    lclAppendDigit(rText, nDigit);
++    switch (nPow10)
++    {
++        case 2:
++            rText.append(UTF8_TH_1E2);
++            break;
++        case 3:
++            rText.append(UTF8_TH_1E3);
++            break;
++        case 4:
++            rText.append(UTF8_TH_1E4);
++            break;
++        case 5:
++            rText.append(UTF8_TH_1E5);
++            break;
++        default:
++            OSL_FAIL("lclAppendPow10 - illegal power");
++    }
++}
++
++/** Appends a block of 6 digits (value from 1 to 999,999) to the passed string. */
++void lclAppendBlock(OStringBuffer& rText, sal_Int32 nValue)
++{
++    OSL_ENSURE((1 <= nValue) && (nValue <= 999999), "lclAppendBlock - illegal value");
++    if (nValue >= 100000)
++    {
++        lclAppendPow10(rText, nValue / 100000, 5);
++        nValue %= 100000;
++    }
++    if (nValue >= 10000)
++    {
++        lclAppendPow10(rText, nValue / 10000, 4);
++        nValue %= 10000;
++    }
++    if (nValue >= 1000)
++    {
++        lclAppendPow10(rText, nValue / 1000, 3);
++        nValue %= 1000;
++    }
++    if (nValue >= 100)
++    {
++        lclAppendPow10(rText, nValue / 100, 2);
++        nValue %= 100;
++    }
++    if (nValue <= 0)
++        return;
++
++    sal_Int32 nTen = nValue / 10;
++    sal_Int32 nOne = nValue % 10;
++    if (nTen >= 1)
++    {
++        if (nTen >= 3)
++            lclAppendDigit(rText, nTen);
++        else if (nTen == 2)
++            rText.append(UTF8_TH_20);
++        rText.append(UTF8_TH_10);
++    }
++    if ((nTen > 0) && (nOne == 1))
++        rText.append(UTF8_TH_11);
++    else if (nOne > 0)
++        lclAppendDigit(rText, nOne);
++}
++
++} // namespace
++
++void ScInterpreter::ScBahtText()
++{
++    sal_uInt8 nParamCount = GetByte();
++    if (!MustHaveParamCount(nParamCount, 1))
++        return;
++
++    double fValue = GetDouble();
++    if (nGlobalError != FormulaError::NONE)
++    {
++        PushError(nGlobalError);
++        return;
++    }
++
++    // sign
++    bool bMinus = fValue < 0.0;
++    fValue = std::abs(fValue);
++
++    // round to 2 digits after decimal point, fValue contains Satang as integer
++    fValue = ::rtl::math::approxFloor(fValue * 100.0 + 0.5);
++
++    // split Baht and Satang
++    double fBaht = 0.0;
++    sal_Int32 nSatang = 0;
++    lclSplitBlock(fBaht, nSatang, fValue, 100.0);
++
++    OStringBuffer aText;
++
++    // generate text for Baht value
++    if (fBaht == 0.0)
++    {
++        if (nSatang == 0)
++            aText.append(UTF8_TH_0);
++    }
++    else
++        while (fBaht > 0.0)
++        {
++            OStringBuffer aBlock;
++            sal_Int32 nBlock = 0;
++            lclSplitBlock(fBaht, nBlock, fBaht, 1.0e6);
++            if (nBlock > 0)
++                lclAppendBlock(aBlock, nBlock);
++            // add leading "million", if there will come more blocks
++            if (fBaht > 0.0)
++                aBlock.insert(0, UTF8_TH_1E6);
++
++            aText.insert(0, aBlock.makeStringAndClear());
++        }
++    if (!aText.isEmpty())
++        aText.append(UTF8_TH_BAHT);
++
++    // generate text for Satang value
++    if (nSatang == 0)
++    {
++        aText.append(UTF8_TH_DOT0);
++    }
++    else
++    {
++        lclAppendBlock(aText, nSatang);
++        aText.append(UTF8_TH_SATANG);
++    }
++
++    // add the minus sign
++    if (bMinus)
++        aText.insert(0, UTF8_TH_MINUS);
++
++    PushString(OStringToOUString(aText.makeStringAndClear(), RTL_TEXTENCODING_UTF8));
++}
++
++/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sc/source/core/tool/interpr2.cxx b/sc/source/core/tool/interpr2.cxx
+index 6525f2a6784b..96f47f2e27ad 100644
+--- a/sc/source/core/tool/interpr2.cxx
++++ b/sc/source/core/tool/interpr2.cxx
+@@ -3307,187 +3307,6 @@ void ScInterpreter::ScEuroConvert()
+     }
+ }
+ 
+-// BAHTTEXT
+-#define UTF8_TH_0       "\340\270\250\340\270\271\340\270\231\340\270\242\340\271\214"
+-#define UTF8_TH_1       "\340\270\253\340\270\231\340\270\266\340\271\210\340\270\207"
+-#define UTF8_TH_2       "\340\270\252\340\270\255\340\270\207"
+-#define UTF8_TH_3       "\340\270\252\340\270\262\340\270\241"
+-#define UTF8_TH_4       "\340\270\252\340\270\265\340\271\210"
+-#define UTF8_TH_5       "\340\270\253\340\271\211\340\270\262"
+-#define UTF8_TH_6       "\340\270\253\340\270\201"
+-#define UTF8_TH_7       "\340\271\200\340\270\210\340\271\207\340\270\224"
+-#define UTF8_TH_8       "\340\271\201\340\270\233\340\270\224"
+-#define UTF8_TH_9       "\340\271\200\340\270\201\340\271\211\340\270\262"
+-#define UTF8_TH_10      "\340\270\252\340\270\264\340\270\232"
+-#define UTF8_TH_11      "\340\271\200\340\270\255\340\271\207\340\270\224"
+-#define UTF8_TH_20      "\340\270\242\340\270\265\340\271\210"
+-#define UTF8_TH_1E2     "\340\270\243\340\271\211\340\270\255\340\270\242"
+-#define UTF8_TH_1E3     "\340\270\236\340\270\261\340\270\231"
+-#define UTF8_TH_1E4     "\340\270\253\340\270\241\340\270\267\340\271\210\340\270\231"
+-#define UTF8_TH_1E5     "\340\271\201\340\270\252\340\270\231"
+-#define UTF8_TH_1E6     "\340\270\245\340\271\211\340\270\262\340\270\231"
+-#define UTF8_TH_DOT0    "\340\270\226\340\271\211\340\270\247\340\270\231"
+-#define UTF8_TH_BAHT    "\340\270\232\340\270\262\340\270\227"
+-#define UTF8_TH_SATANG  "\340\270\252\340\270\225\340\270\262\340\270\207\340\270\204\340\271\214"
+-#define UTF8_TH_MINUS   "\340\270\245\340\270\232"
+-
+-// local functions
+-namespace {
+-
+-void lclSplitBlock( double& rfInt, sal_Int32& rnBlock, double fValue, double fSize )
+-{
+-    rnBlock = static_cast< sal_Int32 >( modf( (fValue + 0.1) / fSize, &rfInt ) * fSize + 0.1 );
+-}
+-
+-/** Appends a digit (0 to 9) to the passed string. */
+-void lclAppendDigit( OStringBuffer& rText, sal_Int32 nDigit )
+-{
+-    switch( nDigit )
+-    {
+-        case 0: rText.append( UTF8_TH_0 ); break;
+-        case 1: rText.append( UTF8_TH_1 ); break;
+-        case 2: rText.append( UTF8_TH_2 ); break;
+-        case 3: rText.append( UTF8_TH_3 ); break;
+-        case 4: rText.append( UTF8_TH_4 ); break;
+-        case 5: rText.append( UTF8_TH_5 ); break;
+-        case 6: rText.append( UTF8_TH_6 ); break;
+-        case 7: rText.append( UTF8_TH_7 ); break;
+-        case 8: rText.append( UTF8_TH_8 ); break;
+-        case 9: rText.append( UTF8_TH_9 ); break;
+-        default:    OSL_FAIL( "lclAppendDigit - illegal digit" );
+-    }
+-}
+-
+-/** Appends a value raised to a power of 10: nDigit*10^nPow10.
+-    @param nDigit  A digit in the range from 1 to 9.
+-    @param nPow10  A value in the range from 2 to 5.
+- */
+-void lclAppendPow10( OStringBuffer& rText, sal_Int32 nDigit, sal_Int32 nPow10 )
+-{
+-    OSL_ENSURE( (1 <= nDigit) && (nDigit <= 9), "lclAppendPow10 - illegal digit" );
+-    lclAppendDigit( rText, nDigit );
+-    switch( nPow10 )
+-    {
+-        case 2: rText.append( UTF8_TH_1E2 );   break;
+-        case 3: rText.append( UTF8_TH_1E3 );   break;
+-        case 4: rText.append( UTF8_TH_1E4 );   break;
+-        case 5: rText.append( UTF8_TH_1E5 );   break;
+-        default:    OSL_FAIL( "lclAppendPow10 - illegal power" );
+-    }
+-}
+-
+-/** Appends a block of 6 digits (value from 1 to 999,999) to the passed string. */
+-void lclAppendBlock( OStringBuffer& rText, sal_Int32 nValue )
+-{
+-    OSL_ENSURE( (1 <= nValue) && (nValue <= 999999), "lclAppendBlock - illegal value" );
+-    if( nValue >= 100000 )
+-    {
+-        lclAppendPow10( rText, nValue / 100000, 5 );
+-        nValue %= 100000;
+-    }
+-    if( nValue >= 10000 )
+-    {
+-        lclAppendPow10( rText, nValue / 10000, 4 );
+-        nValue %= 10000;
+-    }
+-    if( nValue >= 1000 )
+-    {
+-        lclAppendPow10( rText, nValue / 1000, 3 );
+-        nValue %= 1000;
+-    }
+-    if( nValue >= 100 )
+-    {
+-        lclAppendPow10( rText, nValue / 100, 2 );
+-        nValue %= 100;
+-    }
+-    if( nValue <= 0 )
+-        return;
+-
+-    sal_Int32 nTen = nValue / 10;
+-    sal_Int32 nOne = nValue % 10;
+-    if( nTen >= 1 )
+-    {
+-        if( nTen >= 3 )
+-            lclAppendDigit( rText, nTen );
+-        else if( nTen == 2 )
+-            rText.append( UTF8_TH_20 );
+-        rText.append( UTF8_TH_10 );
+-    }
+-    if( (nTen > 0) && (nOne == 1) )
+-        rText.append( UTF8_TH_11 );
+-    else if( nOne > 0 )
+-        lclAppendDigit( rText, nOne );
+-}
+-
+-} // namespace
+-
+-void ScInterpreter::ScBahtText()
+-{
+-    sal_uInt8 nParamCount = GetByte();
+-    if ( !MustHaveParamCount( nParamCount, 1 ) )
+-        return;
+-
+-    double fValue = GetDouble();
+-    if( nGlobalError != FormulaError::NONE )
+-    {
+-        PushError( nGlobalError);
+-        return;
+-    }
+-
+-    // sign
+-    bool bMinus = fValue < 0.0;
+-    fValue = std::abs( fValue );
+-
+-    // round to 2 digits after decimal point, fValue contains Satang as integer
+-    fValue = ::rtl::math::approxFloor( fValue * 100.0 + 0.5 );
+-
+-    // split Baht and Satang
+-    double fBaht = 0.0;
+-    sal_Int32 nSatang = 0;
+-    lclSplitBlock( fBaht, nSatang, fValue, 100.0 );
+-
+-    OStringBuffer aText;
+-
+-    // generate text for Baht value
+-    if( fBaht == 0.0 )
+-    {
+-        if( nSatang == 0 )
+-            aText.append( UTF8_TH_0 );
+-    }
+-    else while( fBaht > 0.0 )
+-    {
+-        OStringBuffer aBlock;
+-        sal_Int32 nBlock = 0;
+-        lclSplitBlock( fBaht, nBlock, fBaht, 1.0e6 );
+-        if( nBlock > 0 )
+-            lclAppendBlock( aBlock, nBlock );
+-        // add leading "million", if there will come more blocks
+-        if( fBaht > 0.0 )
+-            aBlock.insert( 0, UTF8_TH_1E6 );
+-
+-        aText.insert(0, aBlock.makeStringAndClear());
+-    }
+-    if (!aText.isEmpty())
+-        aText.append( UTF8_TH_BAHT );
+-
+-    // generate text for Satang value
+-    if( nSatang == 0 )
+-    {
+-        aText.append( UTF8_TH_DOT0 );
+-    }
+-    else
+-    {
+-        lclAppendBlock( aText, nSatang );
+-        aText.append( UTF8_TH_SATANG );
+-    }
+-
+-    // add the minus sign
+-    if( bMinus )
+-        aText.insert( 0, UTF8_TH_MINUS );
+-
+-    PushString( OStringToOUString(aText.makeStringAndClear(), RTL_TEXTENCODING_UTF8) );
+-}
+-
+ void ScInterpreter::ScGetPivotData()
+ {
+     sal_uInt8 nParamCount = GetByte();
+-- 
+2.33.1
+

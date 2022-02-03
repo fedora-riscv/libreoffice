@@ -246,8 +246,10 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 # disable poor test
 Patch4: 0001-it-doesn-t-work-to-just-have-Roman-as-a-font-name-an.patch
+# disable another poor test
+Patch5: 0001-the-fedora-kacst-book-fonts-2.0-26-does-have-these-w.patch
 # see if ICE still happens
-Patch5: 0001-split-out-function-to-explore-i686-ICE.patch
+Patch6: 0001-split-out-function-to-explore-i686-ICE.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

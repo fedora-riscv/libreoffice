@@ -249,9 +249,9 @@ Patch4: 0001-it-doesn-t-work-to-just-have-Roman-as-a-font-name-an.patch
 # disable another poor test
 Patch5: 0001-the-fedora-kacst-book-fonts-2.0-26-does-have-these-w.patch
 Patch6: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
+Patch7: 0001-yet-another-naieve-font-reliant-test.patch
 # see if ICE still happens
-Patch7: 0001-split-out-function-to-explore-i686-ICE.patch
-
+Patch8: 0001-split-out-function-to-explore-i686-ICE.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

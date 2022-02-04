@@ -251,7 +251,7 @@ Patch5: 0001-the-fedora-kacst-book-fonts-2.0-26-does-have-these-w.patch
 Patch6: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
 Patch7: 0001-yet-another-naieve-font-reliant-test.patch
 # see if ICE still happens
-Patch8: 0001-split-out-function-to-explore-i686-ICE.patch
+Patch8: 0001-disable-ICEing-function-under-x86.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1466,7 +1466,9 @@ done
 %check
 # TEMP for gcc 12: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104007
 rm -rf hwpfilter/qa/cppunit/data/fail/skipblock-1.hwp
+%ifnarch %{ix86}
 make unitcheck slowcheck
+%endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 

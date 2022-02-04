@@ -1,14 +1,14 @@
-From bc39839446e13e31ad4e95943446c08876853eb9 Mon Sep 17 00:00:00 2001
+From 9ef5a52faecf9118ef46582911f537fd3b6efaad Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Thu, 3 Feb 2022 14:29:21 +0000
-Subject: [PATCH 2/2] split out function to explore i686 ICE
+Subject: [PATCH] disable ICEing function under x86
 
 Change-Id: I75afe56b248236f30a96876e2aed96f5dd887df1
 ---
  sc/Library_sc.mk                 |   1 +
- sc/source/core/tool/bahttext.cxx | 238 +++++++++++++++++++++++++++++++
+ sc/source/core/tool/bahttext.cxx | 243 +++++++++++++++++++++++++++++++
  sc/source/core/tool/interpr2.cxx | 181 -----------------------
- 3 files changed, 239 insertions(+), 181 deletions(-)
+ 3 files changed, 244 insertions(+), 181 deletions(-)
  create mode 100644 sc/source/core/tool/bahttext.cxx
 
 diff --git a/sc/Library_sc.mk b/sc/Library_sc.mk
@@ -25,10 +25,10 @@ index 936ca33901ee..f31bbd3f5f8c 100644
      sc/source/core/tool/cellform \
 diff --git a/sc/source/core/tool/bahttext.cxx b/sc/source/core/tool/bahttext.cxx
 new file mode 100644
-index 000000000000..76b99973271d
+index 000000000000..307a92e39c7c
 --- /dev/null
 +++ b/sc/source/core/tool/bahttext.cxx
-@@ -0,0 +1,238 @@
+@@ -0,0 +1,243 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/*
 + * This file is part of the LibreOffice project.
@@ -57,6 +57,10 @@ index 000000000000..76b99973271d
 +using ::std::vector;
 +using namespace com::sun::star;
 +using namespace formula;
++
++#if defined(X86)
++void ScInterpreter::ScBahtText() {}
++#else
 +
 +// BAHTTEXT
 +#define UTF8_TH_0 "\340\270\250\340\270\271\340\270\231\340\270\242\340\271\214"
@@ -265,6 +269,7 @@ index 000000000000..76b99973271d
 +
 +    PushString(OStringToOUString(aText.makeStringAndClear(), RTL_TEXTENCODING_UTF8));
 +}
++#endif
 +
 +/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 diff --git a/sc/source/core/tool/interpr2.cxx b/sc/source/core/tool/interpr2.cxx

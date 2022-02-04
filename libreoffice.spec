@@ -222,10 +222,11 @@ BuildRequires: pentaho-reporting-flow-engine
 # fonts needed for tests
 BuildRequires: dejavu-sans-fonts
 BuildRequires: google-crosextra-carlito-fonts
-BuildRequires: kacst-book-fonts
 BuildRequires: liberation-mono-fonts
 BuildRequires: liberation-sans-fonts
 BuildRequires: liberation-serif-fonts
+# KacstBook used in vcl/qa/cppunit tests
+BuildRequires: kacst-book-fonts
 
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-calc%{?_isa} = %{epoch}:%{version}-%{release}

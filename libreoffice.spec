@@ -1763,7 +1763,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/types/oovbaapi.rdb
 #share unopkg
 %dir %{baseinstdir}/share/extensions
-%{baseinstdir}/share/extensions/package.txt
 %{baseinstdir}/program/unopkg
 %{baseinstdir}/program/unopkg.bin
 %{baseinstdir}/program/bootstraprc

@@ -245,14 +245,14 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-# disable poor test
-Patch4: 0001-it-doesn-t-work-to-just-have-Roman-as-a-font-name-an.patch
+Patch4: 0001-the-real-font-used-for-Roman-is-arbitrary.patch
+Patch5: 0001-fix-direct-leaks-in-vcl-cppunit-tests.patch
+Patch6: 0001-this-test-assumes-KacstBook-has-no-Latin-glyphs.patch
+Patch7: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
 # disable another poor test
-Patch5: 0001-the-fedora-kacst-book-fonts-2.0-26-does-have-these-w.patch
-Patch6: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
-Patch7: 0001-yet-another-naieve-font-reliant-test.patch
+Patch8: 0001-yet-another-naieve-font-reliant-test.patch
 # see if ICE still happens
-Patch8: 0001-disable-ICEing-function-under-x86.patch
+Patch9: 0001-disable-ICEing-function-under-x86.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

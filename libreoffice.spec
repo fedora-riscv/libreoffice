@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -260,6 +260,7 @@ Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
 Patch7: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
+Patch8: 0001-qt5-crash-entering-with-french-IM.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2262,6 +2263,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Feb 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-5.UNBUILT
+- fix crash in qt5 on entering ë with french IM
+
 * Thu Feb 03 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-4
 - bump n-v-r to try a build after https://pagure.io/koji/issue/3236
 

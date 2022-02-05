@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -1467,7 +1467,7 @@ done
 %check
 # TEMP for gcc 12: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104007
 rm -rf hwpfilter/qa/cppunit/data/fail/skipblock-1.hwp
-# make unitcheck slowcheck
+make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
@@ -2188,6 +2188,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sat Feb 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.0.3-2
+- reenable tests
+
 * Wed Feb 02 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.0.3-1
 - 7.3.0 release
 - drop conditionals for rhel < 9

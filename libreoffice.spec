@@ -970,12 +970,9 @@ sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # ppc6
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # ppc64le
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
-sed -i -e /CppunitTest_sal_osl/d sal/Module_sal.mk
-sed -i -e /CppunitTest_emfio_emf/d emfio/Module_emfio.mk
 %ifarch s390x
 sed -i -e /CppunitTest_dbaccess_hsqlbinary_import/d dbaccess/Module_dbaccess.mk
 sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
-sed -i -e /CustomTarget_uno_test/d testtools/Module_testtools.mk
 %endif
 
 git commit -q -a -m 'temporarily disable failing tests'

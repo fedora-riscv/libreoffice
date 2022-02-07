@@ -249,8 +249,9 @@ Patch4: 0001-the-real-font-used-for-Roman-is-arbitrary.patch
 Patch5: 0001-fix-direct-leaks-in-vcl-cppunit-tests.patch
 Patch6: 0001-this-test-assumes-KacstBook-has-no-Latin-glyphs.patch
 Patch7: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
+Patch8: 0001-fix-big-endian-hsql-to-firebird-migration.patch
 # see if ICE still happens
-Patch8: 0001-disable-ICEing-function-under-x86.patch
+Patch9: 0001-disable-ICEing-function-under-x86.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -969,7 +970,6 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # pp
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 %ifarch s390x
-sed -i -e /CppunitTest_dbaccess_hsqlbinary_import/d dbaccess/Module_dbaccess.mk
 sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
 %endif
 

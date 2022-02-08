@@ -1,0 +1,49 @@
+From dad09df8cf2fd44105c7224203d76d0273ed04d9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 8 Feb 2022 08:37:34 +0000
+Subject: [PATCH] drop checksum assert that is platform dependant
+
+Change-Id: I3459d753a8f655ca34ecf6c25fdfd9655687c6d1
+---
+ emfio/qa/cppunit/emf/EmfImportTest.cxx | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/emfio/qa/cppunit/emf/EmfImportTest.cxx b/emfio/qa/cppunit/emf/EmfImportTest.cxx
+index 0f0bd76d199d..c9c2bcb94219 100644
+--- a/emfio/qa/cppunit/emf/EmfImportTest.cxx
++++ b/emfio/qa/cppunit/emf/EmfImportTest.cxx
+@@ -853,10 +853,6 @@ void Test::TestBitBltStretchBltWMF()
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]", "xy23", "406");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]", "height", "10");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]", "width", "10");
+-#if !defined(MACOSX)                                                                               \
+-    && !defined(_WIN32) // TODO Bitmap display needs to be aligned for macOS and Windows
+-    assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]", "checksum", "747141214295528493");
+-#endif
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]/data", 10);
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[1]/data[1]", "row",
+                 "000000,000000,000000,000000,000000,000000,000000,000000,000000,000000");
+@@ -874,10 +870,6 @@ void Test::TestBitBltStretchBltWMF()
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]", "height", "10");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]", "width", "10");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]/data", 10);
+-#if !defined(MACOSX)                                                                               \
+-    && !defined(_WIN32) // TODO Bitmap display needs to be aligned for macOS and Windows
+-    assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]", "checksum", "3134789313661517563");
+-#endif
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]/data[1]", "row",
+                 "000000,00001c,000038,000055,000071,00008d,0000aa,0000c6,0000e2,0000ff");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap[2]/data[5]", "row",
+@@ -1052,9 +1044,6 @@ void Test::TestStretchDIBWMF()
+ 
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap", "height", "10");
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap", "width", "10");
+-#if !defined(MACOSX) // TODO DIB display needs to be aligned for macOS
+-    assertXPath(pDocument, aXPathPrefix + "mask/bitmap", "checksum", "14148300367030905133");
+-#endif
+     assertXPath(pDocument, aXPathPrefix + "mask/bitmap/data", 10);
+     assertXPath(pDocument, aXPathPrefix + "/mask/bitmap/data[1]", "row",
+                 "000000,00001c,000038,000055,000071,00008d,0000aa,0000c6,0000e2,0000ff");
+-- 
+2.34.1
+

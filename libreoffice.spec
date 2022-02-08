@@ -250,8 +250,9 @@ Patch5: 0001-fix-direct-leaks-in-vcl-cppunit-tests.patch
 Patch6: 0001-this-test-assumes-KacstBook-has-no-Latin-glyphs.patch
 Patch7: 0001-Avoid-calling-AVX-code-in-library-static-initializat.patch
 Patch8: 0001-fix-big-endian-hsql-to-firebird-migration.patch
+Patch9: 0001-drop-checksum-assert-that-is-platform-dependant.patch
 # see if ICE still happens
-Patch9: 0001-disable-ICEing-function-under-x86.patch
+Patch10: 0001-disable-ICEing-function-under-x86.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

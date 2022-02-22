@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -272,6 +272,7 @@ Patch16: 0001-fix-comparison-when-searching-cache.patch
 Patch17: 0001-tdf-121546-sw-don-t-use-undo-array-s-m_pOutlineNodes.patch
 Patch18: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch19: 0001-EditTextObjectImpl-copy-ctor-doesn-t-exactly-copy-Ed.patch
+Patch20: 0001-CVE-2021-25636.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2276,6 +2277,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Feb 22 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.1.8.1-4
+- CVE-2021-25636
+
 * Sat Feb 19 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.1.8.1-3
 - tdf#147166 changing text color of list changes vertical spacing
 

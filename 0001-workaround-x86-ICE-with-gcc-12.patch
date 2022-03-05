@@ -1,0 +1,35 @@
+From 9fcb36d5ebb53f398c48024a1babcc36fc9625f3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 5 Mar 2022 21:42:33 +0000
+Subject: [PATCH] workaround x86 ICE with gcc 12
+
+Change-Id: I5c31cf31bf676fde4440e46e532595237cc41bab
+---
+ sc/source/core/tool/interpr2.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/sc/source/core/tool/interpr2.cxx b/sc/source/core/tool/interpr2.cxx
+index 6525f2a6784b..fd3aba045487 100644
+--- a/sc/source/core/tool/interpr2.cxx
++++ b/sc/source/core/tool/interpr2.cxx
+@@ -3421,6 +3421,9 @@ void lclAppendBlock( OStringBuffer& rText, sal_Int32 nValue )
+ 
+ } // namespace
+ 
++#if defined(X86)
++void ScInterpreter::ScBahtText() {}
++#else
+ void ScInterpreter::ScBahtText()
+ {
+     sal_uInt8 nParamCount = GetByte();
+@@ -3487,6 +3490,7 @@ void ScInterpreter::ScBahtText()
+ 
+     PushString( OStringToOUString(aText.makeStringAndClear(), RTL_TEXTENCODING_UTF8) );
+ }
++#endif
+ 
+ void ScInterpreter::ScGetPivotData()
+ {
+-- 
+2.35.1
+

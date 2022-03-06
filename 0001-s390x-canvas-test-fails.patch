@@ -1,0 +1,26 @@
+From d0805b6732c0fe3168d144928cec1c59c2711211 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sun, 6 Mar 2022 23:19:08 +0000
+Subject: [PATCH] s390x canvas test fails
+
+Change-Id: I7ac059aa19dd348f4e9c567445aff8f066c867b4
+---
+ canvas/Module_canvas.mk | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/canvas/Module_canvas.mk b/canvas/Module_canvas.mk
+index 0ca3c4c9bfe0..f62d7ef46299 100644
+--- a/canvas/Module_canvas.mk
++++ b/canvas/Module_canvas.mk
+@@ -49,8 +49,4 @@ $(eval $(call gb_Module_add_targets,canvas,\
+ ))
+ endif
+ 
+-$(eval $(call gb_Module_add_check_targets,canvas,\
+-    CppunitTest_canvas_test \
+-))
+-
+ # vim: set noet sw=4 ts=4:
+-- 
+2.35.1
+

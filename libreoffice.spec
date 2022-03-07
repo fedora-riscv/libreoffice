@@ -57,7 +57,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -298,7 +298,6 @@ Requires: %{name}-data = %{epoch}:%{version}-%{release}
 Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 %endif
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
-Requires: dejavu-sans-fonts, dejavu-serif-fonts, dejavu-sans-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
@@ -2179,6 +2178,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Mar 07 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.1.3-2
+- rhbz#2061268 finally drop the dependency on the dejavu fonts
+
 * Sat Mar 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.1.3-1
 - 7.3.1 release
 

@@ -42,8 +42,13 @@
 %endif
 
 # 'serverconfig' is tuned for non-interactive installs
+# defaults off except on rhel for s390[x] and aarch64
+%if 0%{?rhel}
 %ifarch s390 s390x aarch64
 %bcond_without serverconfig
+%else
+%bcond_with serverconfig
+%endif
 %else
 %bcond_with serverconfig
 %endif
@@ -57,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2178,6 +2183,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Mar 08 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.1.3-3
+- rhbz#2061598 No Icons Launcher of LibreOffice Apps in Raspberry Pi
+
 * Mon Mar 07 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.1.3-2
 - rhbz#2061268 finally drop the dependency on the dejavu fonts
 

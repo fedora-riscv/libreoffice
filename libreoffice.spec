@@ -42,8 +42,13 @@
 %endif
 
 # 'serverconfig' is tuned for non-interactive installs
+# defaults off except on rhel for s390[x] and aarch64
+%if 0%{?rhel}
 %ifarch s390 s390x aarch64
 %bcond_without serverconfig
+%else
+%bcond_with serverconfig
+%endif
 %else
 %bcond_with serverconfig
 %endif
@@ -2263,8 +2268,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Sat Feb 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-5.UNBUILT
+* Tue Mar 08 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-5
 - fix crash in qt5 on entering ë with french IM
+- rhbz#2061598 No Icons Launcher of LibreOffice Apps in Raspberry Pi
 
 * Thu Feb 03 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-4
 - bump n-v-r to try a build after https://pagure.io/koji/issue/3236

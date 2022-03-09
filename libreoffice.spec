@@ -266,6 +266,7 @@ Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
 Patch7: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 Patch8: 0001-qt5-crash-entering-with-french-IM.patch
+Patch9: 0001-configure.ac-Update-kf5-include-lib-check-to-work-wi.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

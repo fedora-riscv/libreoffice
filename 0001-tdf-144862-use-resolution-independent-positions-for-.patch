@@ -1,0 +1,2868 @@
+From abaae9bf594e183f16a20305e86330977fbf8758 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Mon, 20 Dec 2021 11:38:47 +0000
+Subject: [PATCH] tdf#144862 use resolution independent positions for writer's
+ screen-rendering
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+in favor of pushing it down to the text renderers and leave
+it to them to optimized as best they can the the rendering
+to make it look as well as possible.
+
+Change-Id: Ic0849c091a36e1a90453771b1c91b8ff706b679e
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/128418
+Tested-by: Caolán McNamara <caolanm@redhat.com>
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+(cherry picked from commit 4ed26badfd6fd9190cb6e54078b41eb38cb37dca)
+---
+ include/basegfx/tuple/Tuple2D.hxx        |   6 +
+ include/vcl/devicecoordinate.hxx         |  11 +-
+ include/vcl/outdev.hxx                   |  10 +-
+ include/vcl/vcllayout.hxx                |  17 +-
+ sw/qa/extras/layout/layout.cxx           |   2 +-
+ sw/source/core/inc/fntcache.hxx          |   8 +-
+ sw/source/core/inc/scriptinfo.hxx        |  10 +-
+ sw/source/core/text/itradj.cxx           |   6 +-
+ sw/source/core/text/porlay.cxx           |  10 +-
+ sw/source/core/text/portxt.cxx           |   4 +-
+ sw/source/core/txtnode/fntcache.cxx      | 201 ++++++++---------------
+ sw/source/uibase/config/usrpref.cxx      |   2 +-
+ vcl/inc/ImplLayoutArgs.hxx               |   6 +-
+ vcl/inc/impglyphitem.hxx                 |   4 +-
+ vcl/inc/quartz/salgdi.h                  |   4 +-
+ vcl/inc/salgdi.hxx                       |  11 ++
+ vcl/inc/sallayout.hxx                    |  18 +-
+ vcl/inc/skia/osx/gdiimpl.hxx             |   3 +-
+ vcl/inc/skia/win/gdiimpl.hxx             |   4 +
+ vcl/inc/win/DWriteTextRenderer.hxx       |  17 +-
+ vcl/inc/win/salgdi.h                     |   2 +-
+ vcl/inc/win/winlayout.hxx                |   8 +-
+ vcl/qt5/QtGraphics_Text.cxx              |  21 ++-
+ vcl/quartz/salgdi.cxx                    |  16 +-
+ vcl/skia/gdiimpl.cxx                     |   4 +-
+ vcl/skia/osx/gdiimpl.cxx                 |  11 +-
+ vcl/skia/win/gdiimpl.cxx                 |  78 ++++++++-
+ vcl/skia/x11/textrender.cxx              |  18 +-
+ vcl/source/gdi/CommonSalLayout.cxx       |  35 ++--
+ vcl/source/gdi/pdfwriter_impl.cxx        |  28 ++--
+ vcl/source/gdi/salgdilayout.cxx          |   3 +-
+ vcl/source/gdi/sallayout.cxx             | 102 +++++++-----
+ vcl/source/gdi/virdev.cxx                |   2 +
+ vcl/source/outdev/font.cxx               |  10 +-
+ vcl/source/outdev/map.cxx                |  25 ++-
+ vcl/source/outdev/outdev.cxx             |  19 ++-
+ vcl/source/outdev/text.cxx               | 150 ++++++++++-------
+ vcl/source/outdev/textline.cxx           |  18 +-
+ vcl/source/text/ImplLayoutArgs.cxx       |  18 +-
+ vcl/unx/generic/gdi/cairotextrender.cxx  |  23 ++-
+ vcl/unx/generic/print/genpspgraphics.cxx |   4 +-
+ vcl/win/gdi/DWriteTextRenderer.cxx       |  42 +++--
+ vcl/win/gdi/winlayout.cxx                |  31 ++--
+ 43 files changed, 618 insertions(+), 404 deletions(-)
+
+diff --git a/include/basegfx/tuple/Tuple2D.hxx b/include/basegfx/tuple/Tuple2D.hxx
+index 2007732543b6..b173ad3033c1 100644
+--- a/include/basegfx/tuple/Tuple2D.hxx
++++ b/include/basegfx/tuple/Tuple2D.hxx
+@@ -73,6 +73,12 @@ public:
+     /// Set Y-Coordinate of 2D Tuple
+     void setY(TYPE fY) { mnY = fY; }
+ 
++    /// Adjust X-Coordinate of 2D Tuple
++    void adjustX(TYPE fX) { mnX += fX; }
++
++    /// Adjust Y-Coordinate of 2D Tuple
++    void adjustY(TYPE fY) { mnY += fY; }
++
+     // comparators with tolerance
+ 
+     template <typename T = TYPE, std::enable_if_t<std::is_integral_v<T>, int> = 0>
+diff --git a/include/vcl/devicecoordinate.hxx b/include/vcl/devicecoordinate.hxx
+index acece32cc204..bd0bf1ee7963 100644
+--- a/include/vcl/devicecoordinate.hxx
++++ b/include/vcl/devicecoordinate.hxx
+@@ -7,23 +7,22 @@
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  */
+ 
+-#ifndef INCLUDED_VCL_DEVICE_COORDINATE_HXX
+-#define INCLUDED_VCL_DEVICE_COORDINATE_HXX
++#pragma once
+ 
+ #include <config_vcl.h>
+ #include <tools/long.hxx>
+ 
+-#if VCL_FLOAT_DEVICE_PIXEL
+ #include <basegfx/point/b2dpoint.hxx>
++typedef basegfx::B2DPoint DevicePoint;
++
++#if VCL_FLOAT_DEVICE_PIXEL
++
+ typedef double DeviceCoordinate;
+ 
+ #else /* !VCL_FLOAT_DEVICE_PIXEL */
+ 
+-#include <basegfx/point/b2ipoint.hxx>
+ typedef sal_Int32 DeviceCoordinate;
+ 
+ #endif /* ! Carpet Cushion */
+ 
+-#endif /* NDef INCLUDED_VCL_DEVICE_COORDINATE_HXX */
+-
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/include/vcl/outdev.hxx b/include/vcl/outdev.hxx
+index e8011412955c..85670e44dec3 100644
+--- a/include/vcl/outdev.hxx
++++ b/include/vcl/outdev.hxx
+@@ -242,6 +242,7 @@ private:
+     Point                           maRefPoint;
+     AntialiasingFlags               mnAntialiasing;
+     LanguageType                    meTextLanguage;
++    bool mbTextRenderModeForResolutionIndependentLayout;
+ 
+     mutable bool                    mbMap : 1;
+     mutable bool                    mbClipRegion : 1;
+@@ -489,6 +490,10 @@ public:
+     void                        SetAntialiasing( AntialiasingFlags nMode );
+     AntialiasingFlags           GetAntialiasing() const { return mnAntialiasing; }
+ 
++    // Render glyphs with a mode suitable for rendering of resolution-independent layout positions.
++    void                        SetTextRenderModeForResolutionIndependentLayout(bool bMode);
++    bool                        GetTextRenderModeForResolutionIndependentLayout() const { return mbTextRenderModeForResolutionIndependentLayout; }
++
+     void                        SetDrawMode( DrawModeFlags nDrawMode );
+     DrawModeFlags               GetDrawMode() const { return mnDrawMode; }
+ 
+@@ -1244,8 +1249,9 @@ public:
+                                             o3tl::span<const sal_Int32> pLogicDXArray={}, SalLayoutFlags flags = SalLayoutFlags::NONE,
+                                             vcl::text::TextLayoutCache const* = nullptr,
+                                             const SalLayoutGlyphs* pGlyphs = nullptr) const;
++
+     SAL_DLLPRIVATE vcl::text::ImplLayoutArgs ImplPrepareLayoutArgs( OUString&, const sal_Int32 nIndex, const sal_Int32 nLen,
+-                                                         DeviceCoordinate nPixelWidth, const DeviceCoordinate* pPixelDXArray,
++                                                         DeviceCoordinate nPixelWidth,
+                                                          SalLayoutFlags flags = SalLayoutFlags::NONE,
+                                                          vcl::text::TextLayoutCache const* = nullptr) const;
+     SAL_DLLPRIVATE std::unique_ptr<SalLayout>
+@@ -1693,6 +1699,7 @@ public:
+      @returns Physical point on the device.
+      */
+     SAL_DLLPRIVATE Point        ImplLogicToDevicePixel( const Point& rLogicPt ) const;
++    SAL_DLLPRIVATE DevicePoint  ImplLogicToDeviceFontCoordinate(const Point& rLogicPt) const;
+ 
+     /** Convert a logical width to a width in units of device pixels.
+ 
+@@ -1705,6 +1712,7 @@ public:
+      @returns Width in units of device pixels.
+      */
+     SAL_DLLPRIVATE tools::Long         ImplLogicWidthToDevicePixel( tools::Long nWidth ) const;
++    SAL_DLLPRIVATE double              ImplLogicWidthToDeviceFontWidth(tools::Long nWidth) const;
+ 
+     SAL_DLLPRIVATE DeviceCoordinate LogicWidthToDeviceCoordinate( tools::Long nWidth ) const;
+ 
+diff --git a/include/vcl/vcllayout.hxx b/include/vcl/vcllayout.hxx
+index 6ea9bc61bfbb..18d4da907375 100644
+--- a/include/vcl/vcllayout.hxx
++++ b/include/vcl/vcllayout.hxx
+@@ -70,11 +70,11 @@ class VCL_DLLPUBLIC SalLayout
+ public:
+     virtual         ~SalLayout();
+     // used by upper layers
+-    Point&          DrawBase()                              { return maDrawBase; }
+-    const Point&    DrawBase() const                        { return maDrawBase; }
++    DevicePoint&    DrawBase()                              { return maDrawBase; }
++    const DevicePoint& DrawBase() const                     { return maDrawBase; }
+     Point&          DrawOffset()                            { return maDrawOffset; }
+     const Point&    DrawOffset() const                      { return maDrawOffset; }
+-    Point           GetDrawPosition( const Point& rRelative = Point(0,0) ) const;
++    DevicePoint     GetDrawPosition( const DevicePoint& rRelative = DevicePoint(0,0) ) const;
+ 
+     virtual bool    LayoutText( vcl::text::ImplLayoutArgs&, const SalLayoutGlyphsImpl* ) = 0;  // first step of layouting
+     virtual void    AdjustLayout( vcl::text::ImplLayoutArgs& );    // adjusting after fallback etc.
+@@ -84,6 +84,11 @@ public:
+     int             GetUnitsPerPixel() const                { return mnUnitsPerPixel; }
+     Degree10        GetOrientation() const                  { return mnOrientation; }
+ 
++    void            SetTextRenderModeForResolutionIndependentLayout(bool bTextRenderModeForResolutionIndependentLayout)
++    {
++        mbTextRenderModeForResolutionIndependentLayout = bTextRenderModeForResolutionIndependentLayout;
++    }
++
+     // methods using string indexing
+     virtual sal_Int32 GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const = 0;
+     virtual DeviceCoordinate FillDXArray( std::vector<DeviceCoordinate>* pDXArray ) const = 0;
+@@ -92,7 +97,7 @@ public:
+     virtual bool    IsKashidaPosValid ( int /*nCharPos*/ ) const { return true; } // i60594
+ 
+     // methods using glyph indexing
+-    virtual bool    GetNextGlyph(const GlyphItem** pGlyph, Point& rPos, int& nStart,
++    virtual bool    GetNextGlyph(const GlyphItem** pGlyph, DevicePoint& rPos, int& nStart,
+                                  const LogicalFontInstance** ppGlyphFont = nullptr,
+                                  const vcl::font::PhysicalFontFace** pFallbackFont = nullptr) const = 0;
+     virtual bool GetOutline(basegfx::B2DPolyPolygonVector&) const;
+@@ -116,7 +121,9 @@ protected:
+     Degree10        mnOrientation;
+ 
+     mutable Point   maDrawOffset;
+-    Point           maDrawBase;
++    DevicePoint     maDrawBase;
++
++    bool            mbTextRenderModeForResolutionIndependentLayout;
+ };
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sw/qa/extras/layout/layout.cxx b/sw/qa/extras/layout/layout.cxx
+index 94edf650a359..267c20770bef 100644
+--- a/sw/qa/extras/layout/layout.cxx
++++ b/sw/qa/extras/layout/layout.cxx
+@@ -2823,7 +2823,7 @@ CPPUNIT_TEST_FIXTURE(SwLayoutWriter, testBtlrCell)
+     // Without the accompanying fix in place, this test would have failed with 'Expected: 1979;
+     // Actual  : 2129', i.e. the gray background of the "AAA2." text was too close to the right edge
+     // of the text portion. Now it's exactly behind the text portion.
+-    assertXPath(pXmlDoc, "//rect[@top='2159']", "left", "1979");
++    assertXPath(pXmlDoc, "(//rect)[2]", "left", "1979");
+ 
+     // Without the accompanying fix in place, this test would have failed with 'Expected: 269;
+     // Actual  : 0', i.e. the AAA2 frame was not visible due to 0 width.
+diff --git a/sw/source/core/inc/fntcache.hxx b/sw/source/core/inc/fntcache.hxx
+index 0bdc4757d9b3..4285165a3336 100644
+--- a/sw/source/core/inc/fntcache.hxx
++++ b/sw/source/core/inc/fntcache.hxx
+@@ -66,13 +66,13 @@ extern SwFntObj *pLastFont;
+  */
+ struct SwTextGlyphsKey
+ {
+-    VclPtr<OutputDevice> m_pOutputDevice;
++    VclPtr<const OutputDevice> m_pOutputDevice;
+     OUString m_aText;
+     sal_Int32 m_nIndex;
+     sal_Int32 m_nLength;
+     size_t mnHashCode;
+ 
+-    SwTextGlyphsKey(VclPtr<OutputDevice> const& pOutputDevice, const OUString & sText, sal_Int32 nIndex, sal_Int32 nLength);
++    SwTextGlyphsKey(const OutputDevice* pOutputDevice, const OUString & sText, sal_Int32 nIndex, sal_Int32 nLength);
+     bool operator==(SwTextGlyphsKey const & rhs) const;
+ };
+ struct SwTextGlyphsKeyHash
+@@ -113,6 +113,10 @@ class SwFntObj final : public SwCacheObj
+     /// Cache of already calculated layout glyphs and text widths.
+     SwTextGlyphsMap m_aTextGlyphs;
+ 
++    void GetTextArray(const OutputDevice& rOutputDevice, const OUString& rStr,
++                      std::vector<sal_Int32>& rDXAry, sal_Int32 nIndex, sal_Int32 nLen,
++                      bool bCaching);
++
+     static tools::Long s_nPixWidth;
+     static MapMode *s_pPixMap;
+ 
+diff --git a/sw/source/core/inc/scriptinfo.hxx b/sw/source/core/inc/scriptinfo.hxx
+index cd479034ed06..cfe9ef3e55fb 100644
+--- a/sw/source/core/inc/scriptinfo.hxx
++++ b/sw/source/core/inc/scriptinfo.hxx
+@@ -281,8 +281,6 @@ public:
+             positions in the kerning array.
+     @param  pKernArray
+                 The printers kerning array. Optional.
+-    @param  pScrArray
+-                The screen kerning array. Optional.
+     @param  nStt
+                 Start referring to the paragraph.
+     @param  nLen
+@@ -291,7 +289,7 @@ public:
+                 The value which has to be added to a kashida opportunity.
+     @return The number of kashida opportunities in the given range
+ */
+-    sal_Int32 KashidaJustify( sal_Int32* pKernArray, sal_Int32* pScrArray,
++    sal_Int32 KashidaJustify( sal_Int32* pKernArray,
+           TextFrameIndex nStt, TextFrameIndex nLen, tools::Long nSpaceAdd = 0) const;
+ 
+ /** Clears array of kashidas marked as invalid
+@@ -354,8 +352,6 @@ public:
+                 The String
+     @param  pKernArray
+                 The printers kerning array. Optional.
+-    @param  pScrArray
+-                The screen kerning array. Optional.
+     @param  nIdx
+                 Start referring to the paragraph.
+     @param  nLen
+@@ -365,7 +361,7 @@ public:
+     @return The number of extra spaces in the given range
+ */
+     static TextFrameIndex ThaiJustify( const OUString& rText, sal_Int32* pKernArray,
+-                                  sal_Int32* pScrArray, TextFrameIndex nIdx,
++                                  TextFrameIndex nIdx,
+                                   TextFrameIndex nLen,
+                                   TextFrameIndex nNumberOfBlanks = TextFrameIndex(0),
+                                   tools::Long nSpaceAdd = 0 );
+@@ -374,7 +370,7 @@ public:
+             TextFrameIndex nPos, TextFrameIndex nEnd, LanguageType aLang);
+ 
+     static void CJKJustify( const OUString& rText, sal_Int32* pKernArray,
+-                                  sal_Int32* pScrArray, TextFrameIndex nStt,
++                                  TextFrameIndex nStt,
+                                   TextFrameIndex nLen, LanguageType aLang,
+                                   tools::Long nSpaceAdd, bool bIsSpaceStop );
+ 
+diff --git a/sw/source/core/text/itradj.cxx b/sw/source/core/text/itradj.cxx
+index d664602bf3ce..a952ce7649c2 100644
+--- a/sw/source/core/text/itradj.cxx
++++ b/sw/source/core/text/itradj.cxx
+@@ -122,7 +122,7 @@ static bool lcl_CheckKashidaPositions( SwScriptInfo& rSI, SwTextSizeInfo& rInf,
+     // total number of kashida positions, or the number of kashida positions after some positions
+     // have been dropped.
+     // Here we want the clean total, which is OK: We have called ClearKashidaInvalid() before.
+-    rKashidas = rSI.KashidaJustify ( nullptr, nullptr, rItr.GetStart(), rItr.GetLength() );
++    rKashidas = rSI.KashidaJustify(nullptr, rItr.GetStart(), rItr.GetLength());
+ 
+     if (rKashidas <= 0) // nothing to do
+         return true;
+@@ -147,7 +147,7 @@ static bool lcl_CheckKashidaPositions( SwScriptInfo& rSI, SwTextSizeInfo& rInf,
+ 
+         if (nNext == TextFrameIndex(COMPLETE_STRING) || nNext > nEnd)
+             nNext = nEnd;
+-        sal_Int32 nKashidasInAttr = rSI.KashidaJustify ( nullptr, nullptr, nIdx, nNext - nIdx );
++        sal_Int32 nKashidasInAttr = rSI.KashidaJustify(nullptr, nIdx, nNext - nIdx);
+         if (nKashidasInAttr > 0)
+         {
+             // Kashida glyph looks suspicious, skip Kashida justification
+@@ -212,7 +212,7 @@ static bool lcl_CheckKashidaWidth ( SwScriptInfo& rSI, SwTextSizeInfo& rInf, SwT
+ 
+             if (nNext == TextFrameIndex(COMPLETE_STRING) || nNext > nEnd)
+                 nNext = nEnd;
+-            sal_Int32 nKashidasInAttr = rSI.KashidaJustify ( nullptr, nullptr, nIdx, nNext - nIdx );
++            sal_Int32 nKashidasInAttr = rSI.KashidaJustify(nullptr, nIdx, nNext - nIdx);
+ 
+             tools::Long nFontMinKashida = rInf.GetOut()->GetMinKashida();
+             if ( nFontMinKashida && nKashidasInAttr > 0 && SwScriptInfo::IsArabicText( rInf.GetText(), nIdx, nNext - nIdx ) )
+diff --git a/sw/source/core/text/porlay.cxx b/sw/source/core/text/porlay.cxx
+index 3db5d2ab0ac3..bd9d6a0e143c 100644
+--- a/sw/source/core/text/porlay.cxx
++++ b/sw/source/core/text/porlay.cxx
+@@ -2183,7 +2183,6 @@ tools::Long SwScriptInfo::Compress(sal_Int32* pKernArray, TextFrameIndex nIdx, T
+ // have been dropped, depending on the state of the m_KashidaInvalid set.
+ 
+ sal_Int32 SwScriptInfo::KashidaJustify( sal_Int32* pKernArray,
+-                                        sal_Int32* pScrArray,
+                                         TextFrameIndex const nStt,
+                                         TextFrameIndex const nLen,
+                                         tools::Long nSpaceAdd ) const
+@@ -2253,8 +2252,6 @@ sal_Int32 SwScriptInfo::KashidaJustify( sal_Int32* pKernArray,
+             while ( nArrayPos < nArrayEnd )
+             {
+                 pKernArray[ sal_Int32(nArrayPos) ] += nKashAdd;
+-                if ( pScrArray )
+-                    pScrArray[ sal_Int32(nArrayPos) ] += nKashAdd;
+                 ++nArrayPos;
+             }
+             nKashAdd += nSpaceAdd;
+@@ -2442,7 +2439,7 @@ void SwScriptInfo::MarkKashidasInvalid(sal_Int32 const nCnt,
+ }
+ 
+ TextFrameIndex SwScriptInfo::ThaiJustify( const OUString& rText, sal_Int32* pKernArray,
+-                                     sal_Int32* pScrArray, TextFrameIndex const nStt,
++                                     TextFrameIndex const nStt,
+                                      TextFrameIndex const nLen,
+                                      TextFrameIndex nNumberOfBlanks,
+                                      tools::Long nSpaceAdd )
+@@ -2474,7 +2471,6 @@ TextFrameIndex SwScriptInfo::ThaiJustify( const OUString& rText, sal_Int32* pKer
+         }
+ 
+         if ( pKernArray ) pKernArray[ nI ] += nSpaceSum;
+-        if ( pScrArray ) pScrArray[ nI ] += nSpaceSum;
+     }
+ 
+     return nCnt;
+@@ -2775,7 +2771,7 @@ TextFrameIndex SwScriptInfo::CountCJKCharacters(const OUString &rText,
+ }
+ 
+ void SwScriptInfo::CJKJustify( const OUString& rText, sal_Int32* pKernArray,
+-                                     sal_Int32* pScrArray, TextFrameIndex const nStt,
++                                     TextFrameIndex const nStt,
+                                      TextFrameIndex const nLen, LanguageType aLang,
+                                      tools::Long nSpaceAdd, bool bIsSpaceStop )
+ {
+@@ -2798,8 +2794,6 @@ void SwScriptInfo::CJKJustify( const OUString& rText, sal_Int32* pKernArray,
+                 nSpaceSum += nSpaceAdd;
+         }
+         pKernArray[ nI ] += nSpaceSum;
+-        if ( pScrArray )
+-            pScrArray[ nI ] += nSpaceSum;
+     }
+ }
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/sw/source/core/text/portxt.cxx b/sw/source/core/text/portxt.cxx
+index 7def7badcc7a..219036aa834d 100644
+--- a/sw/source/core/text/portxt.cxx
++++ b/sw/source/core/text/portxt.cxx
+@@ -113,7 +113,7 @@ static TextFrameIndex lcl_AddSpace(const SwTextSizeInfo &rInf,
+     {
+         if ( SwScriptInfo::IsArabicText( *pStr, nPos, nEnd - nPos ) && pSI->CountKashida() )
+         {
+-            const sal_Int32 nKashRes = pSI->KashidaJustify( nullptr, nullptr, nPos, nEnd - nPos );
++            const sal_Int32 nKashRes = pSI->KashidaJustify(nullptr, nPos, nEnd - nPos);
+             // i60591: need to check result of KashidaJustify
+             // determine if kashida justification is applicable
+             if (nKashRes != -1)
+@@ -129,7 +129,7 @@ static TextFrameIndex lcl_AddSpace(const SwTextSizeInfo &rInf,
+ 
+         if ( LANGUAGE_THAI == aLang )
+         {
+-            nCnt = SwScriptInfo::ThaiJustify( *pStr, nullptr, nullptr, nPos, nEnd - nPos );
++            nCnt = SwScriptInfo::ThaiJustify(*pStr, nullptr, nPos, nEnd - nPos);
+ 
+             const SwLinePortion* pPor = rPor.GetNextPortion();
+             if ( pPor && ( pPor->IsKernPortion() ||
+diff --git a/sw/source/core/txtnode/fntcache.cxx b/sw/source/core/txtnode/fntcache.cxx
+index 93e83c2013e9..6ceaeaf99206 100644
+--- a/sw/source/core/txtnode/fntcache.cxx
++++ b/sw/source/core/txtnode/fntcache.cxx
+@@ -77,11 +77,11 @@ static vcl::DeleteOnDeinit< VclPtr<OutputDevice> > s_pFntObjPixOut {};
+  * Defines a substring on a given output device, to be used as an std::unordered_map<>
+  * key.
+  */
+-SwTextGlyphsKey::SwTextGlyphsKey(VclPtr<OutputDevice> const& pOutputDevice, const OUString & sText, sal_Int32 nIndex, sal_Int32 nLength)
++SwTextGlyphsKey::SwTextGlyphsKey(const OutputDevice* pOutputDevice, const OUString & sText, sal_Int32 nIndex, sal_Int32 nLength)
+     : m_pOutputDevice(pOutputDevice), m_aText(sText), m_nIndex(nIndex), m_nLength(nLength)
+ {
+     mnHashCode = 0;
+-    o3tl::hash_combine(mnHashCode, pOutputDevice.get());
++    o3tl::hash_combine(mnHashCode, pOutputDevice);
+     o3tl::hash_combine(mnHashCode, m_nIndex);
+     o3tl::hash_combine(mnHashCode, m_nLength);
+     if(m_nLength >= 0 && m_nIndex >= 0 && m_nIndex + m_nLength <= m_aText.getLength())
+@@ -855,6 +855,18 @@ static void lcl_DrawLineForWrongListData(
+         rInf.GetOut().Pop();
+ }
+ 
++void SwFntObj::GetTextArray(const OutputDevice& rDevice, const OUString& rStr, std::vector<sal_Int32>& rDXAry,
++                            sal_Int32 nIndex, sal_Int32 nLen, bool bCaching)
++{
++    SalLayoutGlyphs* pLayoutCache = nullptr;
++    if (bCaching)
++    {
++        SwTextGlyphsKey aGlyphsKey{&rDevice, rStr, nIndex, nLen};
++        pLayoutCache = GetCachedSalLayoutGlyphs(aGlyphsKey);
++    }
++    rDevice.GetTextArray(rStr, &rDXAry, nIndex, nLen, nullptr, pLayoutCache);
++}
++
+ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+ {
+     OSL_ENSURE( rInf.GetShell(), "SwFntObj::DrawText without shell" );
+@@ -1031,11 +1043,11 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+             std::vector<sal_Int32> aKernArray;
+ 
+             if ( m_pPrinter )
+-                m_pPrinter->GetTextArray( rInf.GetText(), &aKernArray,
+-                            sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++                GetTextArray(*m_pPrinter, rInf.GetText(), aKernArray,
++                            sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
+             else
+-                rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                            sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++                GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                            sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
+ 
+             // Change the average width per character to an appropriate grid width
+             // basically get the ratio of the avg width to the grid unit width, then
+@@ -1138,11 +1150,11 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+             std::vector<sal_Int32> aKernArray;
+ 
+             if ( m_pPrinter )
+-                m_pPrinter->GetTextArray( rInf.GetText(), &aKernArray,
+-                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++                GetTextArray(*m_pPrinter, rInf.GetText(), aKernArray,
++                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
+             else
+-                rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++                GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
+             if ( bSwitchH2V )
+                 rInf.GetFrame()->SwitchHorizontalToVertical( aTextOriginPos );
+             if ( rInf.GetSpace() || rInf.GetKanaComp())
+@@ -1278,8 +1290,8 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+         if( rInf.GetSpace() || rInf.GetKanaComp() )
+         {
+             std::vector<sal_Int32> aKernArray;
+-            rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                           sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++            GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                         sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
+ 
+             if( bStretch )
+             {
+@@ -1337,7 +1349,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+ 
+                     if (!MsLangId::isKorean(aLang))
+                     {
+-                        SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(), nullptr,
++                        SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(),
+                                 rInf.GetIdx(), rInf.GetLen(), aLang, nSpaceAdd, rInf.IsSpaceStop() );
+ 
+                         bSpecialJust = true;
+@@ -1351,7 +1363,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                     if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+                     {
+                         if ( pSI && pSI->CountKashida() &&
+-                            pSI->KashidaJustify( aKernArray.data(), nullptr, rInf.GetIdx(),
++                            pSI->KashidaJustify( aKernArray.data(), rInf.GetIdx(),
+                                                  rInf.GetLen(), nSpaceAdd ) != -1 )
+                         {
+                             bSpecialJust = true;
+@@ -1369,7 +1381,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                     {
+                         // Use rInf.GetSpace() because it has more precision than
+                         // nSpaceAdd:
+-                        SwScriptInfo::ThaiJustify( rInf.GetText(), aKernArray.data(), nullptr,
++                        SwScriptInfo::ThaiJustify( rInf.GetText(), aKernArray.data(),
+                                                    rInf.GetIdx(), rInf.GetLen(),
+                                                    rInf.GetNumberOfBlanks(),
+                                                    rInf.GetSpace() );
+@@ -1478,6 +1490,10 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+ 
+     else
+     {
++        const bool bOrigTextRenderModeForResolutionIndependentLayout(rInf.GetOut().GetTextRenderModeForResolutionIndependentLayout());
++        // set text render mode to suit use of resolution independent text layout
++        rInf.GetOut().SetTextRenderModeForResolutionIndependentLayout(true);
++
+         const OUString* pStr = &rInf.GetText();
+ 
+         OUString aStr;
+@@ -1487,14 +1503,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+             bBullet = false;
+         std::vector<sal_Int32> aKernArray;
+         CreateScrFont( *rInf.GetShell(), rInf.GetOut() );
+-        tools::Long nScrPos;
+-
+-        // get screen array
+-        std::vector<sal_Int32> aScrArray;
+-        SwTextGlyphsKey aGlyphsKey{ &rInf.GetOut(), rInf.GetText(), sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()) };
+-        SalLayoutGlyphs* pGlyphs = GetCachedSalLayoutGlyphs(aGlyphsKey);
+-        rInf.GetOut().GetTextArray( rInf.GetText(), &aScrArray,
+-                        sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), nullptr, pGlyphs);
+ 
+         // OLE: no printer available
+         // OSL_ENSURE( pPrinter, "DrawText needs pPrinter" )
+@@ -1506,15 +1514,13 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 if( !m_pPrtFont->IsSameInstance( m_pPrinter->GetFont() ) )
+                     m_pPrinter->SetFont( *m_pPrtFont );
+             }
+-            aGlyphsKey = SwTextGlyphsKey{ m_pPrinter, rInf.GetText(), sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()) };
+-            pGlyphs = GetCachedSalLayoutGlyphs(aGlyphsKey);
+-            m_pPrinter->GetTextArray(rInf.GetText(), &aKernArray,
+-                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), nullptr, pGlyphs);
++            GetTextArray(*m_pPrinter, rInf.GetText(), aKernArray,
++                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), true);
+         }
+         else
+         {
+-            rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++            GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                    sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), true);
+         }
+ 
+         // Modify Printer and ScreenArrays for special justifications
+@@ -1532,10 +1538,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                  pSI && pSI->CountCompChg() &&
+                  lcl_IsMonoSpaceFont( rInf.GetOut() ) )
+             {
+-                Point aTmpPos( aTextOriginPos );
+-                pSI->Compress( aScrArray.data(), rInf.GetIdx(), rInf.GetLen(),
+-                               rInf.GetKanaComp(),
+-                               o3tl::narrowing<sal_uInt16>(m_aFont.GetFontSize().Height()), lcl_IsFullstopCentered( rInf.GetOut() ), &aTmpPos );
+                 pSI->Compress( aKernArray.data(), rInf.GetIdx(), rInf.GetLen(),
+                                rInf.GetKanaComp(),
+                                o3tl::narrowing<sal_uInt16>(m_aFont.GetFontSize().Height()), lcl_IsFullstopCentered( rInf.GetOut() ), &aTextOriginPos );
+@@ -1548,7 +1550,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+ 
+                 if (!MsLangId::isKorean(aLang))
+                 {
+-                    SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(), aScrArray.data(),
++                    SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(),
+                             rInf.GetIdx(), rInf.GetLen(), aLang, nSpaceAdd, rInf.IsSpaceStop() );
+ 
+                     nSpaceAdd = 0;
+@@ -1561,7 +1563,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+                 {
+                     if ( pSI && pSI->CountKashida() &&
+-                         pSI->KashidaJustify( aKernArray.data(), aScrArray.data(), rInf.GetIdx(),
++                         pSI->KashidaJustify( aKernArray.data(), rInf.GetIdx(),
+                                               rInf.GetLen(), nSpaceAdd ) != -1 )
+                         nSpaceAdd = 0;
+                     else
+@@ -1577,7 +1579,7 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 if ( LANGUAGE_THAI == aLang )
+                 {
+                     SwScriptInfo::ThaiJustify( rInf.GetText(), aKernArray.data(),
+-                                               aScrArray.data(), rInf.GetIdx(),
++                                               rInf.GetIdx(),
+                                                rInf.GetLen(),
+                                                rInf.GetNumberOfBlanks(),
+                                                rInf.GetSpace() );
+@@ -1588,8 +1590,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+             }
+         }
+ 
+-        nScrPos = aScrArray[ 0 ];
+-
+         if( bBullet )
+         {
+             // !!! HACK !!!
+@@ -1661,13 +1661,6 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+         }
+         else
+         {
+-            sal_Unicode nCh;
+-
+-            // In case of Pair Kerning the printer influence on the positioning
+-            // grows
+-            const int nMul = m_pPrtFont->GetKerning() != FontKerning::NONE ? 1 : 3;
+-            const int nDiv = nMul+1;
+-
+             // nSpaceSum contains the sum of the intermediate space distributed
+             // among Spaces by the Justification.
+             // The Spaces themselves will be positioned in the middle of the
+@@ -1686,43 +1679,25 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 nSpaceSum = nHalfSpace;
+             for (sal_Int32 i = 1; i < sal_Int32(nCnt); ++i, nKernSum += rInf.GetKern())
+             {
+-                nCh = rInf.GetText()[sal_Int32(rInf.GetIdx()) + i];
+-
+-                tools::Long nScr = aScrArray[ i ] - aScrArray[ i - 1 ];
++                sal_Unicode nCh = rInf.GetText()[sal_Int32(rInf.GetIdx()) + i];
+ 
+-                // If there is an (ex-)Space before us, position optimally,
+-                // i.e., our right margin to the 100% printer position;
+-                // if we _are_ an ex-Space, position us left-aligned to the
+-                // printer position.
+-                if ( nCh == CH_BLANK )
++                // Apply SpaceSum
++                if (cChPrev == CH_BLANK)
+                 {
+-                    nScrPos = aKernArray[i-1] + nScr;
++                    // no Pixel is lost:
++                    nSpaceSum += nOtherHalf;
++                }
+ 
+-                    if ( cChPrev == CH_BLANK )
+-                        nSpaceSum += nOtherHalf;
++                if (nCh == CH_BLANK)
++                {
+                     if (i + 1 == sal_Int32(nCnt))
+                         nSpaceSum += nSpaceAdd;
+                     else
+                         nSpaceSum += nHalfSpace;
+                 }
+-                else
+-                {
+-                    if ( cChPrev == CH_BLANK )
+-                    {
+-                        nScrPos = aKernArray[i-1] + nScr;
+-                        // no Pixel is lost:
+-                        nSpaceSum += nOtherHalf;
+-                    }
+-                    else if ( cChPrev == '-' )
+-                        nScrPos = aKernArray[i-1] + nScr;
+-                    else
+-                    {
+-                        nScrPos += nScr;
+-                        nScrPos = ( nMul * nScrPos + aKernArray[i] ) / nDiv;
+-                    }
+-                }
++
+                 cChPrev = nCh;
+-                aKernArray[i-1] = nScrPos - nScr + nKernSum + nSpaceSum;
++                aKernArray[i-1] += nKernSum + nSpaceSum;
+                 // In word line mode and for Arabic, we disabled the half space trick. If a portion
+                 // ends with a blank, the full nSpaceAdd value has been added to the character in
+                 // front of the blank. This leads to painting artifacts, therefore we remove the
+@@ -1843,8 +1818,8 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 sal_Int32 nTmpIdx = bBullet
+                             ? (rInf.GetIdx() ? 1 : 0)
+                             : sal_Int32(rInf.GetIdx());
+-                aGlyphsKey = SwTextGlyphsKey{ &rInf.GetOut(), *pStr, nTmpIdx, nLen };
+-                pGlyphs = GetCachedSalLayoutGlyphs(aGlyphsKey);
++                SwTextGlyphsKey aGlyphsKey{ &rInf.GetOut(), *pStr, nTmpIdx, nLen };
++                SalLayoutGlyphs* pGlyphs = GetCachedSalLayoutGlyphs(aGlyphsKey);
+                 rInf.GetOut().DrawTextArray( aTextOriginPos, *pStr, aKernArray,
+                                              nTmpIdx , nLen, SalLayoutFlags::NONE, pGlyphs );
+                 if (bBullet)
+@@ -1894,6 +1869,8 @@ void SwFntObj::DrawText( SwDrawTextInfo &rInf )
+                 }
+             }
+         }
++
++        rInf.GetOut().SetTextRenderModeForResolutionIndependentLayout(bOrigTextRenderModeForResolutionIndependentLayout);
+     }
+ }
+ 
+@@ -1997,17 +1974,14 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
+     {
+         if( !m_pPrtFont->IsSameInstance( m_pPrinter->GetFont() ) )
+             m_pPrinter->SetFont(*m_pPrtFont);
+-        aTextSize.setWidth( m_pPrinter->GetTextWidth( rInf.GetText(),
+-                               sal_Int32(rInf.GetIdx()), sal_Int32(nLn)));
+         aTextSize.setHeight( m_pPrinter->GetTextHeight() );
+         std::vector<sal_Int32> aKernArray;
+         CreateScrFont( *rInf.GetShell(), rInf.GetOut() );
+         if( !GetScrFont()->IsSameInstance( rInf.GetOut().GetFont() ) )
+             rInf.GetOut().SetFont( *m_pScrFont );
+-        tools::Long nScrPos;
+ 
+-        m_pPrinter->GetTextArray(rInf.GetText(), &aKernArray,
+-                sal_Int32(rInf.GetIdx()), sal_Int32(nLn));
++        GetTextArray(*m_pPrinter, rInf.GetText(), aKernArray,
++                sal_Int32(rInf.GetIdx()), sal_Int32(nLn), false);
+         if( bCompress )
+             rInf.SetKanaDiff( rInf.GetScriptInfo()->Compress( aKernArray.data(),
+                 rInf.GetIdx(), nLn, rInf.GetKanaComp(),
+@@ -2015,50 +1989,7 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
+         else
+             rInf.SetKanaDiff( 0 );
+ 
+-        if ( rInf.GetKanaDiff() )
+-            nScrPos = aKernArray[ sal_Int32(nLn) - 1 ];
+-        else
+-        {
+-            std::vector<sal_Int32> aScrArray;
+-            rInf.GetOut().GetTextArray( rInf.GetText(), &aScrArray,
+-                        sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
+-            nScrPos = aScrArray[ 0 ];
+-            TextFrameIndex nCnt(rInf.GetText().getLength());
+-            if ( nCnt < rInf.GetIdx() )
+-                nCnt = TextFrameIndex(0); // assert???
+-            else
+-                nCnt = nCnt - rInf.GetIdx();
+-            nCnt = std::min(nCnt, nLn);
+-            sal_Unicode nChPrev = rInf.GetText()[ sal_Int32(rInf.GetIdx()) ];
+-
+-            sal_Unicode nCh;
+-
+-            // In case of Pair Kerning the printer influence on the positioning
+-            // grows
+-            const int nMul = m_pPrtFont->GetKerning() != FontKerning::NONE ? 1 : 3;
+-            const int nDiv = nMul+1;
+-            for (sal_Int32 i = 1; i < sal_Int32(nCnt); i++)
+-            {
+-                nCh = rInf.GetText()[ sal_Int32(rInf.GetIdx()) + i ];
+-                tools::Long nScr = aScrArray[ i ] - aScrArray[ i - 1 ];
+-                if ( nCh == CH_BLANK )
+-                    nScrPos = aKernArray[i-1]+nScr;
+-                else
+-                {
+-                    if ( nChPrev == CH_BLANK || nChPrev == '-' )
+-                        nScrPos = aKernArray[i-1]+nScr;
+-                    else
+-                    {
+-                        nScrPos += nScr;
+-                        nScrPos = ( nMul * nScrPos + aKernArray[i] ) / nDiv;
+-                    }
+-                }
+-                nChPrev = nCh;
+-                aKernArray[i-1] = nScrPos - nScr;
+-            }
+-        }
+-
+-        aTextSize.setWidth( nScrPos );
++        aTextSize.setWidth(aKernArray[sal_Int32(nLn) - 1]);
+     }
+     else
+     {
+@@ -2067,8 +1998,8 @@ Size SwFntObj::GetTextSize( SwDrawTextInfo& rInf )
+         if( bCompress )
+         {
+             std::vector<sal_Int32> aKernArray;
+-            rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                                sal_Int32(rInf.GetIdx()), sal_Int32(nLn));
++            GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                         sal_Int32(rInf.GetIdx()), sal_Int32(nLn), false);
+             rInf.SetKanaDiff( rInf.GetScriptInfo()->Compress( aKernArray.data(),
+                 rInf.GetIdx(), nLn, rInf.GetKanaComp(),
+                 o3tl::narrowing<sal_uInt16>(m_aFont.GetFontSize().Height()) ,lcl_IsFullstopCentered( rInf.GetOut() ) ) );
+@@ -2110,14 +2041,14 @@ TextFrameIndex SwFntObj::GetModelPositionForViewPoint(SwDrawTextInfo &rInf)
+     {
+         m_pPrinter->SetLayoutMode( rInf.GetOut().GetLayoutMode() );
+         m_pPrinter->SetDigitLanguage( rInf.GetOut().GetDigitLanguage() );
+-        SwTextGlyphsKey aGlyphsKey{ m_pPrinter, rInf.GetText(), sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()) };
+-        SalLayoutGlyphs* pGlyphs = GetCachedSalLayoutGlyphs(aGlyphsKey);
+-        m_pPrinter->GetTextArray( rInf.GetText(), &aKernArray,
+-                sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), nullptr, pGlyphs);
++        GetTextArray(*m_pPrinter, rInf.GetText(), aKernArray,
++                     sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), true);
+     }
+     else
+-        rInf.GetOut().GetTextArray( rInf.GetText(), &aKernArray,
+-                sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()));
++    {
++        GetTextArray(rInf.GetOut(), rInf.GetText(), aKernArray,
++                     sal_Int32(rInf.GetIdx()), sal_Int32(rInf.GetLen()), false);
++    }
+ 
+     const SwScriptInfo* pSI = rInf.GetScriptInfo();
+     if ( rInf.GetFont() && rInf.GetLen() )
+@@ -2142,7 +2073,7 @@ TextFrameIndex SwFntObj::GetModelPositionForViewPoint(SwDrawTextInfo &rInf)
+ 
+             if (!MsLangId::isKorean(aLang))
+             {
+-                SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(), nullptr,
++                SwScriptInfo::CJKJustify( rInf.GetText(), aKernArray.data(),
+                         rInf.GetIdx(), rInf.GetLen(), aLang, nSpaceAdd, rInf.IsSpaceStop() );
+ 
+                 nSpaceAdd = 0;
+@@ -2156,7 +2087,7 @@ TextFrameIndex SwFntObj::GetModelPositionForViewPoint(SwDrawTextInfo &rInf)
+             if ( SwScriptInfo::IsArabicText( rInf.GetText(), rInf.GetIdx(), rInf.GetLen() ) )
+             {
+                 if ( pSI && pSI->CountKashida() &&
+-                    pSI->KashidaJustify( aKernArray.data(), nullptr, rInf.GetIdx(), rInf.GetLen(),
++                    pSI->KashidaJustify( aKernArray.data(), rInf.GetIdx(), rInf.GetLen(),
+                                          nSpaceAdd ) != -1 )
+                     nSpaceAdd = 0;
+             }
+@@ -2169,7 +2100,7 @@ TextFrameIndex SwFntObj::GetModelPositionForViewPoint(SwDrawTextInfo &rInf)
+ 
+             if ( LANGUAGE_THAI == aLang )
+             {
+-                SwScriptInfo::ThaiJustify( rInf.GetText(), aKernArray.data(), nullptr,
++                SwScriptInfo::ThaiJustify( rInf.GetText(), aKernArray.data(),
+                                            rInf.GetIdx(), rInf.GetLen(),
+                                            rInf.GetNumberOfBlanks(),
+                                            rInf.GetSpace() );
+diff --git a/sw/source/uibase/config/usrpref.cxx b/sw/source/uibase/config/usrpref.cxx
+index 0c759a78cf94..e7b43df54c34 100644
+--- a/sw/source/uibase/config/usrpref.cxx
++++ b/sw/source/uibase/config/usrpref.cxx
+@@ -388,7 +388,7 @@ void SwLayoutViewConfig::Load()
+                 case 16: m_rParent.SetViewLayoutBookMode(bSet); break;// "ViewLayout/BookMode",
+                 case 17: m_rParent.SetDefaultPageMode(bSet,true); break;// "Other/IsSquaredPageMode",
+                 case 18: m_rParent.SetApplyCharUnit(bSet, true); break;// "Other/ApplyUserChar"
+-                case 19: m_rParent.SetShowScrollBarTips(bSet); break;// "Window/ShowScrollBarTips",
++                case 29: m_rParent.SetShowScrollBarTips(bSet); break;// "Window/ShowScrollBarTips",
+             }
+         }
+     }
+diff --git a/vcl/inc/ImplLayoutArgs.hxx b/vcl/inc/ImplLayoutArgs.hxx
+index 865470b7897a..fa94562ca86c 100644
+--- a/vcl/inc/ImplLayoutArgs.hxx
++++ b/vcl/inc/ImplLayoutArgs.hxx
+@@ -35,7 +35,8 @@ public:
+     vcl::text::TextLayoutCache const* m_pTextLayoutCache;
+ 
+     // positioning related inputs
+-    const DeviceCoordinate* mpDXArray; // in pixel units
++    const DeviceCoordinate* mpDXArray; // in integer pixel units
++    const double* mpAltNaturalDXArray; // in floating point pixel units
+     DeviceCoordinate mnLayoutWidth; // in pixel units
+     Degree10 mnOrientation; // in 0-3600 system
+ 
+@@ -48,12 +49,15 @@ public:
+ 
+     void SetLayoutWidth(DeviceCoordinate nWidth);
+     void SetDXArray(const DeviceCoordinate* pDXArray);
++    void SetAltNaturalDXArray(const double* pDXArray);
+     void SetOrientation(Degree10 nOrientation);
+ 
+     void ResetPos();
+     bool GetNextPos(int* nCharPos, bool* bRTL);
+     bool GetNextRun(int* nMinRunPos, int* nEndRunPos, bool* bRTL);
+     void AddFallbackRun(int nMinRunPos, int nEndRunPos, bool bRTL);
++    bool HasDXArray() const { return mpDXArray || mpAltNaturalDXArray; }
++
+     // methods used by BiDi and glyph fallback
+     bool HasFallbackRun() const;
+     bool PrepareFallback(const SalLayoutGlyphsImpl* pGlyphsImpl);
+diff --git a/vcl/inc/impglyphitem.hxx b/vcl/inc/impglyphitem.hxx
+index ca9f7cf5c052..4fc48f1ca2a2 100644
+--- a/vcl/inc/impglyphitem.hxx
++++ b/vcl/inc/impglyphitem.hxx
+@@ -58,10 +58,10 @@ class VCL_DLLPUBLIC GlyphItem
+     GlyphItemFlags m_nFlags;
+ 
+ public:
+-    Point m_aLinearPos; // absolute position of non rotated string
++    DevicePoint m_aLinearPos; // absolute position of non rotated string
+     sal_Int32 m_nNewWidth; // width after adjustments
+ 
+-    GlyphItem(int nCharPos, int nCharCount, sal_GlyphId aGlyphId, const Point& rLinearPos,
++    GlyphItem(int nCharPos, int nCharCount, sal_GlyphId aGlyphId, const DevicePoint& rLinearPos,
+               GlyphItemFlags nFlags, int nOrigWidth, int nXOffset)
+         : m_nOrigWidth(nOrigWidth)
+         , m_nCharPos(nCharPos)
+diff --git a/vcl/inc/quartz/salgdi.h b/vcl/inc/quartz/salgdi.h
+index f0aa925c6083..569a14a6d3fc 100644
+--- a/vcl/inc/quartz/salgdi.h
++++ b/vcl/inc/quartz/salgdi.h
+@@ -297,7 +297,7 @@ public:
+                                    const tools::Rectangle &rControlRegion,
+                                    ControlState nState,
+                                    const ImplControlValue &aValue) = 0;
+-    virtual void drawTextLayout(const GenericSalLayout& layout) = 0;
++    virtual void drawTextLayout(const GenericSalLayout& layout, bool bTextRenderModeForResolutionIndependentLayout) = 0;
+     virtual void Flush() {}
+     virtual void Flush( const tools::Rectangle& ) {}
+ protected:
+@@ -446,7 +446,7 @@ public:
+                                    ControlState nState,
+                                    const ImplControlValue &aValue) override;
+ 
+-    virtual void drawTextLayout(const GenericSalLayout& layout) override;
++    virtual void drawTextLayout(const GenericSalLayout& layout, bool bTextRenderModeForResolutionIndependentLayout) override;
+ 
+     bool supportsOperation(OutDevSupportType eType) const override;
+ };
+diff --git a/vcl/inc/salgdi.hxx b/vcl/inc/salgdi.hxx
+index 716c9aa934a6..6f9ee67f69a4 100644
+--- a/vcl/inc/salgdi.hxx
++++ b/vcl/inc/salgdi.hxx
+@@ -96,6 +96,16 @@ public:
+         return m_bAntiAlias;
+     }
+ 
++    void setTextRenderModeForResolutionIndependentLayout(bool bNew)
++    {
++        m_bTextRenderModeForResolutionIndependentLayout = bNew;
++    }
++
++    bool getTextRenderModeForResolutionIndependentLayoutEnabled() const
++    {
++        return m_bTextRenderModeForResolutionIndependentLayout;
++    }
++
+     // public SalGraphics methods, the interface to the independent vcl part
+ 
+     // get device resolution
+@@ -631,6 +641,7 @@ private:
+ protected:
+     /// flags which hold the SetAntialiasing() value from OutputDevice
+     bool                        m_bAntiAlias : 1;
++    bool                        m_bTextRenderModeForResolutionIndependentLayout : 1;
+ 
+     inline tools::Long GetDeviceWidth(const OutputDevice& rOutDev) const;
+ 
+diff --git a/vcl/inc/sallayout.hxx b/vcl/inc/sallayout.hxx
+index ab29a2022985..847c22ace091 100644
+--- a/vcl/inc/sallayout.hxx
++++ b/vcl/inc/sallayout.hxx
+@@ -64,7 +64,7 @@ public:
+     sal_Int32       GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const override;
+     DeviceCoordinate FillDXArray(std::vector<DeviceCoordinate>* pDXArray) const override;
+     void            GetCaretPositions(int nArraySize, sal_Int32* pCaretXArray) const override;
+-    bool            GetNextGlyph(const GlyphItem** pGlyph, Point& rPos, int& nStart,
++    bool            GetNextGlyph(const GlyphItem** pGlyph, DevicePoint& rPos, int& nStart,
+                                  const LogicalFontInstance** ppGlyphFont = nullptr,
+                                  const vcl::font::PhysicalFontFace** pFallbackFont = nullptr) const override;
+     bool            GetOutline(basegfx::B2DPolyPolygonVector&) const override;
+@@ -82,7 +82,11 @@ public:
+ 
+     void SetIncomplete(bool bIncomplete);
+ 
+-public:
++    template<typename DC>
++    void            ImplAdjustMultiLayout(vcl::text::ImplLayoutArgs& rArgs,
++                                          vcl::text::ImplLayoutArgs& rMultiArgs,
++                                          const DC* pMultiDXArray);
++
+     virtual         ~MultiSalLayout() override;
+ 
+ private:
+@@ -97,7 +101,10 @@ private:
+ 
+ class VCL_DLLPUBLIC GenericSalLayout : public SalLayout
+ {
+-    friend void MultiSalLayout::AdjustLayout(vcl::text::ImplLayoutArgs&);
++    template<typename DC> friend void MultiSalLayout::ImplAdjustMultiLayout(
++            vcl::text::ImplLayoutArgs& rArgs,
++            vcl::text::ImplLayoutArgs& rMultiArgs,
++            const DC* pMultiDXArray);
+ 
+ public:
+                     GenericSalLayout(LogicalFontInstance&);
+@@ -121,7 +128,7 @@ public:
+     LogicalFontInstance& GetFont() const
+         { return *m_GlyphItems.GetFont(); }
+ 
+-    bool            GetNextGlyph(const GlyphItem** pGlyph, Point& rPos, int& nStart,
++    bool            GetNextGlyph(const GlyphItem** pGlyph, DevicePoint& rPos, int& nStart,
+                                  const LogicalFontInstance** ppGlyphFont = nullptr,
+                                  const vcl::font::PhysicalFontFace** pFallbackFont = nullptr) const override;
+ 
+@@ -136,7 +143,8 @@ private:
+                     GenericSalLayout( const GenericSalLayout& ) = delete;
+                     GenericSalLayout& operator=( const GenericSalLayout& ) = delete;
+ 
+-    void            ApplyDXArray(const DeviceCoordinate*, SalLayoutFlags nLayoutFlags);
++    template<typename DC>
++    void            ApplyDXArray(const DC*, SalLayoutFlags nLayoutFlags);
+     void            Justify(DeviceCoordinate nNewWidth);
+     void            ApplyAsianKerning(const OUString& rStr);
+ 
+diff --git a/vcl/inc/skia/osx/gdiimpl.hxx b/vcl/inc/skia/osx/gdiimpl.hxx
+index e59aa60f56df..71baf24625fc 100644
+--- a/vcl/inc/skia/osx/gdiimpl.hxx
++++ b/vcl/inc/skia/osx/gdiimpl.hxx
+@@ -38,7 +38,8 @@ public:
+                                    const tools::Rectangle& rControlRegion, ControlState nState,
+                                    const ImplControlValue& aValue) override;
+ 
+-    virtual void drawTextLayout(const GenericSalLayout& layout) override;
++    virtual void drawTextLayout(const GenericSalLayout& layout,
++                                bool bTextRenderModeForResolutionIndependentLayout) override;
+ 
+     virtual void Flush() override;
+     virtual void Flush(const tools::Rectangle&) override;
+diff --git a/vcl/inc/skia/win/gdiimpl.hxx b/vcl/inc/skia/win/gdiimpl.hxx
+index 58043e5f6a83..a8897d0d7c20 100644
+--- a/vcl/inc/skia/win/gdiimpl.hxx
++++ b/vcl/inc/skia/win/gdiimpl.hxx
+@@ -25,6 +25,8 @@
+ #include <SkFont.h>
+ #include <SkFontMgr.h>
+ 
++#include <dwrite_3.h>
++
+ class SkTypeface;
+ class ControlCacheKey;
+ 
+@@ -64,6 +66,8 @@ protected:
+     static void initFontInfo();
+     inline static sal::systools::COMReference<IDWriteFactory> dwriteFactory;
+     inline static sal::systools::COMReference<IDWriteGdiInterop> dwriteGdiInterop;
++    inline static sal::systools::COMReference<IDWriteFontSetBuilder> dwriteFontSetBuilder;
++    inline static sal::systools::COMReference<IDWriteFontCollection1> dwritePrivateCollection;
+     inline static sk_sp<SkFontMgr> dwriteFontMgr;
+     inline static bool dwriteDone = false;
+     static SkFont::Edging fontEdging;
+diff --git a/vcl/inc/win/DWriteTextRenderer.hxx b/vcl/inc/win/DWriteTextRenderer.hxx
+index 6e097546d1e2..b64cc48a1c6a 100644
+--- a/vcl/inc/win/DWriteTextRenderer.hxx
++++ b/vcl/inc/win/DWriteTextRenderer.hxx
+@@ -37,12 +37,13 @@ enum class D2DTextAntiAliasMode
+ class D2DWriteTextOutRenderer : public TextOutRenderer
+ {
+ public:
+-    explicit D2DWriteTextOutRenderer();
++    explicit D2DWriteTextOutRenderer(bool bRenderingModeNatural);
+     virtual ~D2DWriteTextOutRenderer() override;
+ 
+-    bool operator ()(GenericSalLayout const &rLayout,
++    bool operator()(GenericSalLayout const &rLayout,
+         SalGraphics &rGraphics,
+-        HDC hDC) override;
++        HDC hDC,
++        bool bRenderingModeNatural) override;
+ 
+     HRESULT BindDC(HDC hDC, tools::Rectangle const & rRect = tools::Rectangle(0, 0, 1, 1));
+ 
+@@ -54,12 +55,13 @@ public:
+     IDWriteFontFace   * GetFontFace() const { return mpFontFace; }
+     float               GetEmHeight() const { return mlfEmHeight; }
+ 
+-    HRESULT CreateRenderTarget();
++    HRESULT CreateRenderTarget(bool bRenderingModeNatural);
+ 
+     bool Ready() const;
+ 
+-    void applyTextAntiAliasMode();
+-    void changeTextAntiAliasMode(D2DTextAntiAliasMode eMode);
++    void applyTextAntiAliasMode(bool bRenderingModeNatural);
++
++    bool GetRenderingModeNatural() const { return mbRenderingModeNatural; }
+ 
+ private:
+     // This is a singleton object disable copy ctor and assignment operator
+@@ -67,7 +69,7 @@ private:
+     D2DWriteTextOutRenderer & operator = (const D2DWriteTextOutRenderer &) = delete;
+ 
+     bool GetDWriteFaceFromHDC(HDC hDC, IDWriteFontFace ** ppFontFace, float * lfSize) const;
+-    bool performRender(GenericSalLayout const &rLayout, SalGraphics &rGraphics, HDC hDC, bool& bRetry);
++    bool performRender(GenericSalLayout const &rLayout, SalGraphics &rGraphics, HDC hDC, bool& bRetry, bool bRenderingModeNatural);
+ 
+     ID2D1Factory        * mpD2DFactory;
+     IDWriteFactory      * mpDWriteFactory;
+@@ -78,6 +80,7 @@ private:
+     IDWriteFontFace * mpFontFace;
+     float             mlfEmHeight;
+     HDC               mhDC;
++    bool mbRenderingModeNatural;
+     D2DTextAntiAliasMode meTextAntiAliasMode;
+ };
+ 
+diff --git a/vcl/inc/win/salgdi.h b/vcl/inc/win/salgdi.h
+index b472ece0a256..7833f988bd18 100644
+--- a/vcl/inc/win/salgdi.h
++++ b/vcl/inc/win/salgdi.h
+@@ -316,7 +316,7 @@ public:
+ private:
+     // local helpers
+ 
+-    void                    DrawTextLayout(const GenericSalLayout&, HDC, bool bUseDWrite);
++    void DrawTextLayout(const GenericSalLayout&, HDC, bool bUseDWrite, bool bRenderingModeNatural);
+ 
+ public:
+     // public SalGraphics methods, the interface to the independent vcl part
+diff --git a/vcl/inc/win/winlayout.hxx b/vcl/inc/win/winlayout.hxx
+index 0b43ef4eeca1..5f56fe6b0c5e 100644
+--- a/vcl/inc/win/winlayout.hxx
++++ b/vcl/inc/win/winlayout.hxx
+@@ -75,13 +75,14 @@ protected:
+     TextOutRenderer & operator = (const TextOutRenderer &) = delete;
+ 
+ public:
+-    static TextOutRenderer & get(bool bUseDWrite);
++    static TextOutRenderer & get(bool bUseDWrite, bool bRenderingModeNatural);
+ 
+     virtual ~TextOutRenderer() = default;
+ 
+     virtual bool operator ()(GenericSalLayout const &rLayout,
+         SalGraphics &rGraphics,
+-        HDC hDC) = 0;
++        HDC hDC,
++        bool bRenderingModeNatural) = 0;
+ };
+ 
+ class ExTextOutRenderer : public TextOutRenderer
+@@ -94,7 +95,8 @@ public:
+ 
+     bool operator ()(GenericSalLayout const &rLayout,
+         SalGraphics &rGraphics,
+-        HDC hDC) override;
++        HDC hDC,
++        bool bRenderingModeNatural) override;
+ };
+ 
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/qt5/QtGraphics_Text.cxx b/vcl/qt5/QtGraphics_Text.cxx
+index b509c2a946bd..02158fca29db 100644
+--- a/vcl/qt5/QtGraphics_Text.cxx
++++ b/vcl/qt5/QtGraphics_Text.cxx
+@@ -294,11 +294,26 @@ std::unique_ptr<GenericSalLayout> QtGraphics::GetTextLayout(int nFallbackLevel)
+     return std::make_unique<QtCommonSalLayout>(*m_pTextStyle[nFallbackLevel]);
+ }
+ 
++static QRawFont GetRawFont(const QFont& rFont, bool bWithoutHintingInTextDirection)
++{
++    QFont::HintingPreference eHinting = rFont.hintingPreference();
++    bool bAllowedHintStyle
++        = !bWithoutHintingInTextDirection
++          || (eHinting == QFont::PreferNoHinting || eHinting == QFont::PreferVerticalHinting);
++    if (bWithoutHintingInTextDirection && !bAllowedHintStyle)
++    {
++        QFont aFont(rFont);
++        aFont.setHintingPreference(QFont::PreferVerticalHinting);
++        return QRawFont::fromFont(aFont);
++    }
++    return QRawFont::fromFont(rFont);
++}
++
+ void QtGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+ {
+     const QtFont* pFont = static_cast<const QtFont*>(&rLayout.GetFont());
+     assert(pFont);
+-    QRawFont aRawFont(QRawFont::fromFont(*pFont));
++    QRawFont aRawFont(GetRawFont(*pFont, getTextRenderModeForResolutionIndependentLayoutEnabled()));
+ 
+     QVector<quint32> glyphIndexes;
+     QVector<QPointF> positions;
+@@ -311,13 +326,13 @@ void QtGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+     if (nOrientation)
+         pQtLayout->SetOrientation(0_deg10);
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     int nStart = 0;
+     while (rLayout.GetNextGlyph(&pGlyph, aPos, nStart))
+     {
+         glyphIndexes.push_back(pGlyph->glyphId());
+-        positions.push_back(QPointF(aPos.X(), aPos.Y()));
++        positions.push_back(QPointF(aPos.getX(), aPos.getY()));
+     }
+ 
+     // seems to be common to try to layout an empty string...
+diff --git a/vcl/quartz/salgdi.cxx b/vcl/quartz/salgdi.cxx
+index 9928cc4df3a2..b8a3ac375655 100644
+--- a/vcl/quartz/salgdi.cxx
++++ b/vcl/quartz/salgdi.cxx
+@@ -363,10 +363,10 @@ bool AquaSalGraphics::AddTempDevFont(vcl::font::PhysicalFontCollection*,
+ 
+ void AquaSalGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+ {
+-    mpBackend->drawTextLayout(rLayout);
++    mpBackend->drawTextLayout(rLayout, getTextRenderModeForResolutionIndependentLayoutEnabled());
+ }
+ 
+-void AquaGraphicsBackend::drawTextLayout(const GenericSalLayout& rLayout)
++void AquaGraphicsBackend::drawTextLayout(const GenericSalLayout& rLayout, bool bTextRenderModeForResolutionIndependentLayout)
+ {
+ #ifdef IOS
+     if (!mrShared.checkContext())
+@@ -387,7 +387,7 @@ void AquaGraphicsBackend::drawTextLayout(const GenericSalLayout& rLayout)
+     CTFontRef pFont = static_cast<CTFontRef>(CFDictionaryGetValue(rStyle.GetStyleDict(), kCTFontAttributeName));
+     CGAffineTransform aRotMatrix = CGAffineTransformMakeRotation(-rStyle.mfFontRotation);
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     std::vector<CGGlyph> aGlyphIds;
+     std::vector<CGPoint> aGlyphPos;
+@@ -395,7 +395,7 @@ void AquaGraphicsBackend::drawTextLayout(const GenericSalLayout& rLayout)
+     int nStart = 0;
+     while (rLayout.GetNextGlyph(&pGlyph, aPos, nStart))
+     {
+-        CGPoint aGCPos = CGPointMake(aPos.X(), -aPos.Y());
++        CGPoint aGCPos = CGPointMake(aPos.getX(), -aPos.getY());
+ 
+         // Whether the glyph should be upright in vertical mode or not
+         bool bUprightGlyph = false;
+@@ -460,6 +460,14 @@ void AquaGraphicsBackend::drawTextLayout(const GenericSalLayout& rLayout)
+         CGContextSetTextDrawingMode(mrShared.maContextHolder.get(), kCGTextFillStroke);
+     }
+ 
++    if (bTextRenderModeForResolutionIndependentLayout)
++    {
++        CGContextSetAllowsFontSubpixelQuantization(mrShared.maContextHolder.get(), false);
++        CGContextSetShouldSubpixelQuantizeFonts(mrShared.maContextHolder.get(), false);
++        CGContextSetAllowsFontSubpixelPositioning(mrShared.maContextHolder.get(), true);
++        CGContextSetShouldSubpixelPositionFonts(mrShared.maContextHolder.get(), true);
++    }
++
+     auto aIt = aGlyphOrientation.cbegin();
+     while (aIt != aGlyphOrientation.cend())
+     {
+diff --git a/vcl/skia/gdiimpl.cxx b/vcl/skia/gdiimpl.cxx
+index 55fed5b84e72..6d027a6f860a 100644
+--- a/vcl/skia/gdiimpl.cxx
++++ b/vcl/skia/gdiimpl.cxx
+@@ -2206,7 +2206,7 @@ void SkiaSalGraphicsImpl::drawGenericLayout(const GenericSalLayout& layout, Colo
+     glyphIds.reserve(256);
+     glyphForms.reserve(256);
+     verticals.reserve(256);
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     int nStart = 0;
+     while (layout.GetNextGlyph(&pGlyph, aPos, nStart))
+@@ -2215,7 +2215,7 @@ void SkiaSalGraphicsImpl::drawGenericLayout(const GenericSalLayout& layout, Colo
+         Degree10 angle = layout.GetOrientation();
+         if (pGlyph->IsVertical())
+             angle += 900_deg10;
+-        SkRSXform form = SkRSXform::Make(toCos(angle), toSin(angle), aPos.X(), aPos.Y());
++        SkRSXform form = SkRSXform::Make(toCos(angle), toSin(angle), aPos.getX(), aPos.getY());
+         glyphForms.emplace_back(std::move(form));
+         verticals.emplace_back(pGlyph->IsVertical());
+     }
+diff --git a/vcl/skia/osx/gdiimpl.cxx b/vcl/skia/osx/gdiimpl.cxx
+index 126f43bb6ac3..4c9ae86dbadf 100644
+--- a/vcl/skia/osx/gdiimpl.cxx
++++ b/vcl/skia/osx/gdiimpl.cxx
+@@ -261,7 +261,8 @@ bool AquaSkiaSalGraphicsImpl::drawNativeControl(ControlType nType, ControlPart n
+     return bOK;
+ }
+ 
+-void AquaSkiaSalGraphicsImpl::drawTextLayout(const GenericSalLayout& rLayout)
++void AquaSkiaSalGraphicsImpl::drawTextLayout(const GenericSalLayout& rLayout,
++                                             bool bSubpixelPositioning)
+ {
+     const CoreTextStyle& rStyle = *static_cast<const CoreTextStyle*>(&rLayout.GetFont());
+     const vcl::font::FontSelectPattern& rFontSelect = rStyle.GetFontSelectPattern();
+@@ -295,8 +296,12 @@ void AquaSkiaSalGraphicsImpl::drawTextLayout(const GenericSalLayout& rLayout)
+     //    font.setScaleX(rStyle.mfFontStretch); TODO
+     if (rStyle.mbFauxBold)
+         font.setEmbolden(true);
+-    font.setEdging(!mrShared.mbNonAntialiasedText ? SkFont::Edging::kAntiAlias
+-                                                  : SkFont::Edging::kAlias);
++
++    SkFont::Edging ePreferredAliasing
++        = bSubpixelPositioning ? SkFont::Edging::kSubpixelAntiAlias : SkFont::Edging::kAntiAlias;
++    if (bSubpixelPositioning)
++        font.setSubpixel(true);
++    font.setEdging(mrShared.mbNonAntialiasedText ? SkFont::Edging::kAlias : ePreferredAliasing);
+ 
+     // Vertical font, use width as "height".
+     SkFont verticalFont(font);
+diff --git a/vcl/skia/win/gdiimpl.cxx b/vcl/skia/win/gdiimpl.cxx
+index a10351888eac..e9074340e66e 100644
+--- a/vcl/skia/win/gdiimpl.cxx
++++ b/vcl/skia/win/gdiimpl.cxx
+@@ -163,11 +163,7 @@ sk_sp<SkTypeface> WinSkiaSalGraphicsImpl::createDirectWriteTypeface(HDC hdc, HFO
+     // different version of the same font installed system-wide).
+     // For that CreateFromFaceFromHdc() is necessary. The simpler
+     // CreateFontFromLOGFONT() seems to search for the best matching font,
+-    // which may not be the exact font. Our private fonts are installed
+-    // using AddFontResourceExW( FR_PRIVATE ) and that apparently does
+-    // not make them available to DirectWrite (at least, they are not
+-    // included the DWrite system font collection). For such cases, we'll
+-    // need to fall back to Skia's GDI-based font rendering.
++    // which may not be the exact font.
+     HFONT oldFont = SelectFont(hdc, hfont);
+     sal::systools::COMReference<IDWriteFontFace> fontFace;
+     if (FAILED(CHECKHR(dwriteGdiInterop->CreateFontFaceFromHdc(hdc, &fontFace))))
+@@ -175,6 +171,7 @@ sk_sp<SkTypeface> WinSkiaSalGraphicsImpl::createDirectWriteTypeface(HDC hdc, HFO
+         SelectFont(hdc, oldFont);
+         return nullptr;
+     }
++
+     SelectFont(hdc, oldFont);
+     sal::systools::COMReference<IDWriteFontCollection> collection;
+     if (FAILED(CHECKHR(dwriteFactory->GetSystemFontCollection(&collection))))
+@@ -182,7 +179,66 @@ sk_sp<SkTypeface> WinSkiaSalGraphicsImpl::createDirectWriteTypeface(HDC hdc, HFO
+     sal::systools::COMReference<IDWriteFont> font;
+     // Do not use CHECKHR() here, as said above, this fails for our fonts.
+     if (FAILED(collection->GetFontFromFontFace(fontFace.get(), &font)))
+-        return nullptr;
++    {
++        // If not found in system collection, try our private font collection.
++        // If that's not possible we'll fall back to Skia's GDI-based font rendering.
++        if (!dwritePrivateCollection
++            || FAILED(dwritePrivateCollection->GetFontFromFontFace(fontFace.get(), &font)))
++        {
++            // Our private fonts are installed using AddFontResourceExW( FR_PRIVATE )
++            // and that does not make them available to the DWrite system font
++            // collection. For such cases attempt to update a collection of
++            // private fonts with this newly used font.
++
++            sal::systools::COMReference<IDWriteFactory3> dwriteFactory3;
++            if (FAILED(dwriteFactory->QueryInterface<IDWriteFactory3>(&dwriteFactory3)))
++                return nullptr;
++
++            if (!dwriteFontSetBuilder
++                && FAILED(dwriteFactory3->CreateFontSetBuilder(&dwriteFontSetBuilder)))
++                return nullptr;
++
++            UINT32 numberOfFiles;
++            if (FAILED(fontFace->GetFiles(&numberOfFiles, nullptr)) || numberOfFiles != 1)
++                return nullptr;
++
++            sal::systools::COMReference<IDWriteFontFile> fontFile;
++            if (FAILED(fontFace->GetFiles(&numberOfFiles, &fontFile)))
++                return nullptr;
++
++            BOOL isSupported;
++            DWRITE_FONT_FILE_TYPE fileType;
++            UINT32 numberOfFonts;
++            if (FAILED(fontFile->Analyze(&isSupported, &fileType, nullptr, &numberOfFonts))
++                || !isSupported)
++                return nullptr;
++
++            // For each font within the font file, get a font face reference and add to the builder.
++            for (UINT32 fontIndex = 0; fontIndex < numberOfFonts; ++fontIndex)
++            {
++                sal::systools::COMReference<IDWriteFontFaceReference> fontFaceReference;
++                if (FAILED(dwriteFactory3->CreateFontFaceReference(fontFile.get(), fontIndex,
++                                                                   DWRITE_FONT_SIMULATIONS_NONE,
++                                                                   &fontFaceReference)))
++                    continue;
++
++                // Leave it to DirectWrite to read properties directly out of the font files
++                dwriteFontSetBuilder->AddFontFaceReference(fontFaceReference.get());
++            }
++
++            dwritePrivateCollection.clear();
++            sal::systools::COMReference<IDWriteFontSet> fontSet;
++            if (SUCCEEDED(CHECKHR(dwriteFontSetBuilder->CreateFontSet(&fontSet))))
++                dwriteFactory3->CreateFontCollectionFromFontSet(fontSet.get(),
++                                                                &dwritePrivateCollection);
++        }
++
++        if (!dwritePrivateCollection)
++            return nullptr;
++        // CHECKHR because we expect to succeed here
++        if (FAILED(CHECKHR(dwritePrivateCollection->GetFontFromFontFace(fontFace.get(), &font))))
++            return nullptr;
++    }
+     sal::systools::COMReference<IDWriteFontFamily> fontFamily;
+     if (FAILED(CHECKHR(font->GetFontFamily(&fontFamily))))
+         return nullptr;
+@@ -231,8 +287,14 @@ bool WinSkiaSalGraphicsImpl::DrawTextLayout(const GenericSalLayout& rLayout)
+     }
+ 
+     SkFont font(typeface);
++
++    bool bSubpixelPositioning = mWinParent.getTextRenderModeForResolutionIndependentLayoutEnabled();
++    SkFont::Edging ePreferredAliasing
++        = bSubpixelPositioning ? SkFont::Edging::kSubpixelAntiAlias : fontEdging;
++    if (bSubpixelPositioning)
++        font.setSubpixel(true);
+     font.setEdging(logFont.lfQuality == NONANTIALIASED_QUALITY ? SkFont::Edging::kAlias
+-                                                               : fontEdging);
++                                                               : ePreferredAliasing);
+ 
+     const vcl::font::FontSelectPattern& rFSD = pWinFont->GetFontSelectPattern();
+     int nHeight = rFSD.mnHeight;
+@@ -296,6 +358,8 @@ void WinSkiaSalGraphicsImpl::initFontInfo()
+ void WinSkiaSalGraphicsImpl::ClearDevFontCache()
+ {
+     dwriteFontMgr.reset();
++    dwriteFontSetBuilder.clear();
++    dwritePrivateCollection.clear();
+     dwriteFactory.clear();
+     dwriteGdiInterop.clear();
+     dwriteDone = false;
+diff --git a/vcl/skia/x11/textrender.cxx b/vcl/skia/x11/textrender.cxx
+index a2d0dcbb36f6..9fda8ba6601c 100644
+--- a/vcl/skia/x11/textrender.cxx
++++ b/vcl/skia/x11/textrender.cxx
+@@ -57,8 +57,22 @@ void SkiaTextRender::DrawTextLayout(const GenericSalLayout& rLayout, const SalGr
+         font.setSkewX(1.0 * -0x4000L / 0x10000L);
+     if (rFont.NeedsArtificialBold())
+         font.setEmbolden(true);
+-    font.setEdging(rFont.GetAntialiasAdvice() ? SkFont::Edging::kAntiAlias
+-                                              : SkFont::Edging::kAlias);
++
++    bool bSubpixelPositioning = rGraphics.getTextRenderModeForResolutionIndependentLayoutEnabled();
++    SkFont::Edging ePreferredAliasing
++        = bSubpixelPositioning ? SkFont::Edging::kSubpixelAntiAlias : SkFont::Edging::kAntiAlias;
++    if (bSubpixelPositioning)
++    {
++        font.setSubpixel(true);
++
++        SkFontHinting eHinting = font.getHinting();
++        bool bAllowedHintStyle
++            = eHinting == SkFontHinting::kNone || eHinting == SkFontHinting::kSlight;
++        if (!bAllowedHintStyle)
++            font.setHinting(SkFontHinting::kSlight);
++    }
++
++    font.setEdging(rFont.GetAntialiasAdvice() ? ePreferredAliasing : SkFont::Edging::kAlias);
+ 
+     // Vertical font, use width as "height".
+     SkFont verticalFont(font);
+diff --git a/vcl/source/gdi/CommonSalLayout.cxx b/vcl/source/gdi/CommonSalLayout.cxx
+index 13bc53ebbdab..811849309d67 100644
+--- a/vcl/source/gdi/CommonSalLayout.cxx
++++ b/vcl/source/gdi/CommonSalLayout.cxx
+@@ -197,7 +197,9 @@ void GenericSalLayout::AdjustLayout(vcl::text::ImplLayoutArgs& rArgs)
+ {
+     SalLayout::AdjustLayout(rArgs);
+ 
+-    if (rArgs.mpDXArray)
++    if (rArgs.mpAltNaturalDXArray) // Used when "TextRenderModeForResolutionIndependentLayout" is set
++        ApplyDXArray(rArgs.mpAltNaturalDXArray, rArgs.mnFlags);
++    else if (rArgs.mpDXArray)   // Normal case
+         ApplyDXArray(rArgs.mpDXArray, rArgs.mnFlags);
+     else if (rArgs.mnLayoutWidth)
+         Justify(rArgs.mnLayoutWidth);
+@@ -331,7 +333,7 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
+     double nYScale = 0;
+     GetFont().GetScale(&nXScale, &nYScale);
+ 
+-    Point aCurrPos(0, 0);
++    DevicePoint aCurrPos(0, 0);
+     while (true)
+     {
+         int nBidiMinRunPos, nBidiEndRunPos;
+@@ -584,12 +586,12 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
+                 nXOffset = std::lround(nXOffset * nXScale);
+                 nYOffset = std::lround(nYOffset * nYScale);
+ 
+-                Point aNewPos(aCurrPos.X() + nXOffset, aCurrPos.Y() + nYOffset);
++                DevicePoint aNewPos(aCurrPos.getX() + nXOffset, aCurrPos.getY() + nYOffset);
+                 const GlyphItem aGI(nCharPos, nCharCount, nGlyphIndex, aNewPos, nGlyphFlags,
+                                     nAdvance, nXOffset);
+                 m_GlyphItems.push_back(aGI);
+ 
+-                aCurrPos.AdjustX(nAdvance );
++                aCurrPos.adjustX(nAdvance);
+             }
+         }
+     }
+@@ -635,12 +637,12 @@ void GenericSalLayout::GetCharWidths(std::vector<DeviceCoordinate>& rCharWidths)
+ //   * Check the above flag to decide whether to insert Kashidas or not.
+ //   * For any RTL glyph that has DX adjustment, insert enough Kashidas to
+ //     fill in the added space.
+-
+-void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutFlags nLayoutFlags)
++template<typename DC>
++void GenericSalLayout::ApplyDXArray(const DC* pDXArray, SalLayoutFlags nLayoutFlags)
+ {
+     int nCharCount = mnEndCharPos - mnMinCharPos;
+     std::vector<DeviceCoordinate> aOldCharWidths;
+-    std::unique_ptr<DeviceCoordinate[]> const pNewCharWidths(new DeviceCoordinate[nCharCount]);
++    std::unique_ptr<DC[]> const pNewCharWidths(new DC[nCharCount]);
+ 
+     // Get the natural character widths (i.e. before applying DX adjustments).
+     GetCharWidths(aOldCharWidths);
+@@ -671,7 +673,7 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+     std::map<size_t, DeviceCoordinate> pKashidas;
+ 
+     // The accumulated difference in X position.
+-    DeviceCoordinate nDelta = 0;
++    DC nDelta = 0;
+ 
+     // Apply the DX adjustments to glyph positions and widths.
+     size_t i = 0;
+@@ -680,7 +682,7 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+         // Accumulate the width difference for all characters corresponding to
+         // this glyph.
+         int nCharPos = m_GlyphItems[i].charPos() - mnMinCharPos;
+-        DeviceCoordinate nDiff = 0;
++        DC nDiff = 0;
+         for (int j = 0; j < m_GlyphItems[i].charCount(); j++)
+             nDiff += pNewCharWidths[nCharPos + j] - aOldCharWidths[nCharPos + j];
+ 
+@@ -689,14 +691,14 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+             // Adjust the width and position of the first (leftmost) glyph in
+             // the cluster.
+             m_GlyphItems[i].m_nNewWidth += nDiff;
+-            m_GlyphItems[i].m_aLinearPos.AdjustX(nDelta);
++            m_GlyphItems[i].m_aLinearPos.adjustX(nDelta);
+ 
+             // Adjust the position of the rest of the glyphs in the cluster.
+             while (++i < m_GlyphItems.size())
+             {
+                 if (!m_GlyphItems[i].IsInCluster())
+                     break;
+-                m_GlyphItems[i].m_aLinearPos.AdjustX(nDelta);
++                m_GlyphItems[i].m_aLinearPos.adjustX(nDelta);
+             }
+         }
+         else if (m_GlyphItems[i].IsInCluster())
+@@ -711,7 +713,7 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+             // the cluster.
+             // For RTL, we put all the adjustment to the left of the glyph.
+             m_GlyphItems[i].m_nNewWidth += nDiff;
+-            m_GlyphItems[i].m_aLinearPos.AdjustX(nDelta + nDiff);
++            m_GlyphItems[i].m_aLinearPos.adjustX(nDelta + nDiff);
+ 
+             // Adjust the X position of all glyphs in the cluster.
+             size_t j = i;
+@@ -720,7 +722,7 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+                 --j;
+                 if (!m_GlyphItems[j].IsInCluster())
+                     break;
+-                m_GlyphItems[j].m_aLinearPos.AdjustX(nDelta + nDiff);
++                m_GlyphItems[j].m_aLinearPos.adjustX(nDelta + nDiff);
+             }
+ 
+             // If this glyph is Kashida-justifiable, then mark this as a
+@@ -737,7 +739,7 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+                 {
+                     if (!m_GlyphItems[j].IsDiacritic())
+                         break;
+-                    m_GlyphItems[j--].m_aLinearPos.AdjustX(nDiff);
++                    m_GlyphItems[j--].m_aLinearPos.adjustX(nDiff);
+                 }
+             }
+             i++;
+@@ -779,15 +781,14 @@ void GenericSalLayout::ApplyDXArray(const DeviceCoordinate* pDXArray, SalLayoutF
+                 nOverlap = nExcess / (nCopies - 1);
+         }
+ 
+-        Point aPos(pGlyphIter->m_aLinearPos.getX() - nTotalWidth, 0);
++        DevicePoint aPos(pGlyphIter->m_aLinearPos.getX() - nTotalWidth, 0);
+         int nCharPos = pGlyphIter->charPos();
+         GlyphItemFlags const nFlags = GlyphItemFlags::IS_IN_CLUSTER | GlyphItemFlags::IS_RTL_GLYPH;
+         while (nCopies--)
+         {
+             GlyphItem aKashida(nCharPos, 0, nKashidaIndex, aPos, nFlags, nKashidaWidth, 0);
+             pGlyphIter = m_GlyphItems.insert(pGlyphIter, aKashida);
+-            aPos.AdjustX(nKashidaWidth );
+-            aPos.AdjustX( -nOverlap );
++            aPos.adjustX(nKashidaWidth - nOverlap);
+             ++pGlyphIter;
+             ++nInserted;
+         }
+diff --git a/vcl/source/gdi/pdfwriter_impl.cxx b/vcl/source/gdi/pdfwriter_impl.cxx
+index 0a971622d5bc..a3ad137230fd 100644
+--- a/vcl/source/gdi/pdfwriter_impl.cxx
++++ b/vcl/source/gdi/pdfwriter_impl.cxx
+@@ -3899,7 +3899,7 @@ void PDFWriterImpl::createDefaultCheckBoxAppearance( PDFWidget& rBox, const PDFW
+     // make sure OpenSymbol is embedded, and includes our checkmark
+     const sal_Unicode cMark=0x2713;
+     const GlyphItem aItem(0, 0, pMap->GetGlyphIndex(cMark),
+-                          Point(), GlyphItemFlags::NONE, 0, 0);
++                          DevicePoint(), GlyphItemFlags::NONE, 0, 0);
+     const std::vector<sal_Ucs> aCodeUnits={ cMark };
+     sal_uInt8 nMappedGlyph;
+     sal_Int32 nMappedFontObject;
+@@ -5808,9 +5808,9 @@ void PDFWriterImpl::drawShadow( SalLayout& rLayout, const OUString& rText, bool
+     tools::Long nOff = 1 + ((GetFontInstance()->mnLineHeight-24)/24);
+     if( rFont.IsOutline() )
+         nOff++;
+-    rLayout.DrawBase() += Point( nOff, nOff );
++    rLayout.DrawBase() += DevicePoint(nOff, nOff);
+     drawLayout( rLayout, rText, bTextLines );
+-    rLayout.DrawBase() -= Point( nOff, nOff );
++    rLayout.DrawBase() -= DevicePoint(nOff, nOff);
+ 
+     setFont( aSaveFont );
+     setTextLineColor( aSaveTextLineColor );
+@@ -6133,7 +6133,7 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+     std::vector< PDFGlyph > aGlyphs;
+     aGlyphs.reserve( nMaxGlyphs );
+     // first get all the glyphs and register them; coordinates still in Pixel
+-    Point aPos;
++    DevicePoint aPos;
+     while (rLayout.GetNextGlyph(&pGlyph, aPos, nIndex, nullptr, &pFallbackFont))
+     {
+         const auto* pFont = pFallbackFont ? pFallbackFont : pDevFont;
+@@ -6206,7 +6206,7 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+         if (bUseActualText || pGlyph->IsInCluster())
+             nCharPos = pGlyph->charPos();
+ 
+-        aGlyphs.emplace_back(aPos,
++        aGlyphs.emplace_back(Point(aPos.getX(), aPos.getY()),
+                              pGlyph,
+                              nGlyphWidth,
+                              nMappedFontObject,
+@@ -6229,7 +6229,8 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+         // The rectangle is the bounding box of the text, but also includes
+         // ascent / descent to match the on-screen rendering.
+         // This is the top left of the text without ascent / descent.
+-        tools::Rectangle aRectangle(PixelToLogic(rLayout.GetDrawPosition()),
++        DevicePoint aDrawPosition(rLayout.GetDrawPosition());
++        tools::Rectangle aRectangle(PixelToLogic(Point(aDrawPosition.getX(), aDrawPosition.getY())),
+                                     Size(ImplDevicePixelToLogicWidth(rLayout.GetTextWidth()), 0));
+         aRectangle.AdjustTop(-aRefDevFontMetric.GetAscent());
+         // This includes ascent / descent.
+@@ -6240,7 +6241,7 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+         {
+             // Adapt rectangle for rotated text.
+             tools::Polygon aPolygon(aRectangle);
+-            aPolygon.Rotate(PixelToLogic(rLayout.GetDrawPosition()), pFontInstance->mnOrientation);
++            aPolygon.Rotate(PixelToLogic(Point(aDrawPosition.getX(), aDrawPosition.getY())), pFontInstance->mnOrientation);
+             drawPolygon(aPolygon);
+         }
+         else
+@@ -6337,7 +6338,7 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+                 if (!pGlyph->IsSpacing())
+                 {
+                     if( !nWidth )
+-                        aStartPt = aPos;
++                        aStartPt = Point(aPos.getX(), aPos.getY());
+ 
+                     nWidth += pGlyph->m_nNewWidth;
+                 }
+@@ -6359,9 +6360,9 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+         }
+         else
+         {
+-            Point aStartPt = rLayout.GetDrawPosition();
++            DevicePoint aStartPt = rLayout.GetDrawPosition();
+             int nWidth = rLayout.GetTextWidth() / rLayout.GetUnitsPerPixel();
+-            drawTextLine( PixelToLogic( aStartPt ),
++            drawTextLine( PixelToLogic(Point(aStartPt.getX(), aStartPt.getY()) ),
+                           ImplDevicePixelToLogicWidth( nWidth ),
+                           eStrikeout, eUnderline, eOverline, bUnderlineAbove );
+         }
+@@ -6437,9 +6438,10 @@ void PDFWriterImpl::drawLayout( SalLayout& rLayout, const OUString& rText, bool
+ 
+             aAdjOffset -= Point( nEmphWidth2, nEmphHeight2 );
+ 
+-            aPos += aAdjOffset;
+-            aPos = PixelToLogic( aPos );
+-            drawEmphasisMark( aPos.X(), aPos.Y(),
++            Point aMarkPos(aPos.getX(), aPos.getY());
++            aMarkPos += aAdjOffset;
++            aMarkPos = PixelToLogic(aMarkPos);
++            drawEmphasisMark( aMarkPos.X(), aMarkPos.Y(),
+                               aEmphPoly, bEmphPolyLine,
+                               aEmphRect1, aEmphRect2 );
+         }
+diff --git a/vcl/source/gdi/salgdilayout.cxx b/vcl/source/gdi/salgdilayout.cxx
+index aafa8f157e70..b22d4594cafe 100644
+--- a/vcl/source/gdi/salgdilayout.cxx
++++ b/vcl/source/gdi/salgdilayout.cxx
+@@ -54,7 +54,8 @@ SalGraphics::SalGraphics()
+     m_aLastMirrorW(0),
+     m_nLastMirrorDeviceLTRButBiDiRtlTranslate(0),
+     m_bLastMirrorDeviceLTRButBiDiRtlSet(false),
+-    m_bAntiAlias(false)
++    m_bAntiAlias(false),
++    m_bTextRenderModeForResolutionIndependentLayout(false)
+ {
+     // read global RTL settings
+     if( AllSettings::GetLayoutRTL() )
+diff --git a/vcl/source/gdi/sallayout.cxx b/vcl/source/gdi/sallayout.cxx
+index ebf10bf8e17c..abad66427491 100644
+--- a/vcl/source/gdi/sallayout.cxx
++++ b/vcl/source/gdi/sallayout.cxx
+@@ -135,7 +135,8 @@ SalLayout::SalLayout()
+     mnEndCharPos( -1 ),
+     mnUnitsPerPixel( 1 ),
+     mnOrientation( 0 ),
+-    maDrawOffset( 0, 0 )
++    maDrawOffset( 0, 0 ),
++    mbTextRenderModeForResolutionIndependentLayout(false)
+ {}
+ 
+ SalLayout::~SalLayout()
+@@ -148,10 +149,11 @@ void SalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+     mnOrientation = rArgs.mnOrientation;
+ }
+ 
+-Point SalLayout::GetDrawPosition( const Point& rRelative ) const
++DevicePoint SalLayout::GetDrawPosition(const DevicePoint& rRelative) const
+ {
+-    Point aPos = maDrawBase;
+-    Point aOfs = rRelative + maDrawOffset;
++    DevicePoint aPos(maDrawBase);
++    DevicePoint aOfs(rRelative.getX() + maDrawOffset.X(),
++                     rRelative.getY() + maDrawOffset.Y());
+ 
+     if( mnOrientation == 0_deg10 )
+         aPos += aOfs;
+@@ -168,11 +170,20 @@ Point SalLayout::GetDrawPosition( const Point& rRelative ) const
+             fSin = sin( fRad );
+         }
+ 
+-        double fX = aOfs.X();
+-        double fY = aOfs.Y();
+-        tools::Long nX = static_cast<tools::Long>( +fCos * fX + fSin * fY );
+-        tools::Long nY = static_cast<tools::Long>( +fCos * fY - fSin * fX );
+-        aPos += Point( nX, nY );
++        double fX = aOfs.getX();
++        double fY = aOfs.getY();
++        if (mbTextRenderModeForResolutionIndependentLayout)
++        {
++            double nX = +fCos * fX + fSin * fY;
++            double nY = +fCos * fY - fSin * fX;
++            aPos += DevicePoint(nX, nY);
++        }
++        else
++        {
++            tools::Long nX = static_cast<tools::Long>( +fCos * fX + fSin * fY );
++            tools::Long nY = static_cast<tools::Long>( +fCos * fY - fSin * fX );
++            aPos += DevicePoint(nX, nY);
++        }
+     }
+ 
+     return aPos;
+@@ -185,7 +196,7 @@ bool SalLayout::GetOutline(basegfx::B2DPolyPolygonVector& rVector) const
+ 
+     basegfx::B2DPolyPolygon aGlyphOutline;
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     int nStart = 0;
+     const LogicalFontInstance* pGlyphFont;
+@@ -198,9 +209,9 @@ bool SalLayout::GetOutline(basegfx::B2DPolyPolygonVector& rVector) const
+         // only add non-empty outlines
+         if( bSuccess && (aGlyphOutline.count() > 0) )
+         {
+-            if( aPos.X() || aPos.Y() )
++            if( aPos.getX() || aPos.getY() )
+             {
+-                aGlyphOutline.transform(basegfx::utils::createTranslateB2DHomMatrix(aPos.X(), aPos.Y()));
++                aGlyphOutline.transform(basegfx::utils::createTranslateB2DHomMatrix(aPos.getX(), aPos.getY()));
+             }
+ 
+             // insert outline at correct position
+@@ -218,7 +229,7 @@ bool SalLayout::GetBoundRect(tools::Rectangle& rRect) const
+ 
+     tools::Rectangle aRectangle;
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     int nStart = 0;
+     const LogicalFontInstance* pGlyphFont;
+@@ -228,7 +239,7 @@ bool SalLayout::GetBoundRect(tools::Rectangle& rRect) const
+         if (pGlyph->GetGlyphBoundRect(pGlyphFont, aRectangle))
+         {
+             // merge rectangle
+-            aRectangle += aPos;
++            aRectangle += Point(aPos.getX(), aPos.getY());
+             if (rRect.IsEmpty())
+                 rRect = aRectangle;
+             else
+@@ -322,7 +333,7 @@ void GenericSalLayout::Justify( DeviceCoordinate nNewWidth )
+         for( pGlyphIter = m_GlyphItems.begin(); pGlyphIter != pGlyphIterRight; ++pGlyphIter )
+         {
+             // move glyph to justified position
+-            pGlyphIter->m_aLinearPos.AdjustX(nDeltaSum );
++            pGlyphIter->m_aLinearPos.adjustX(nDeltaSum);
+ 
+             // do not stretch non-stretchable glyphs
+             if( pGlyphIter->IsDiacritic() || (nStretchable <= 0) )
+@@ -438,7 +449,7 @@ void GenericSalLayout::ApplyAsianKerning(const OUString& rStr)
+ 
+         // adjust the glyph positions to the new glyph widths
+         if( pGlyphIter+1 != pGlyphIterEnd )
+-            pGlyphIter->m_aLinearPos.AdjustX(nOffset);
++            pGlyphIter->m_aLinearPos.adjustX(nOffset);
+     }
+ }
+ 
+@@ -491,7 +502,7 @@ sal_Int32 GenericSalLayout::GetTextBreak( DeviceCoordinate nMaxWidth, DeviceCoor
+ }
+ 
+ bool GenericSalLayout::GetNextGlyph(const GlyphItem** pGlyph,
+-                                    Point& rPos, int& nStart,
++                                    DevicePoint& rPos, int& nStart,
+                                     const LogicalFontInstance** ppGlyphFont,
+                                     const vcl::font::PhysicalFontFace**) const
+ {
+@@ -521,10 +532,10 @@ bool GenericSalLayout::GetNextGlyph(const GlyphItem** pGlyph,
+         *ppGlyphFont = m_GlyphItems.GetFont().get();
+ 
+     // calculate absolute position in pixel units
+-    Point aRelativePos = pGlyphIter->m_aLinearPos;
++    DevicePoint aRelativePos = pGlyphIter->m_aLinearPos;
+ 
+-    aRelativePos.setX( aRelativePos.X() / mnUnitsPerPixel );
+-    aRelativePos.setY( aRelativePos.Y() / mnUnitsPerPixel );
++    aRelativePos.setX( aRelativePos.getX() / mnUnitsPerPixel );
++    aRelativePos.setY( aRelativePos.getY() / mnUnitsPerPixel );
+     rPos = GetDrawPosition( aRelativePos );
+ 
+     return true;
+@@ -550,7 +561,7 @@ void GenericSalLayout::MoveGlyph( int nStart, tools::Long nNewXPos )
+     {
+         for( std::vector<GlyphItem>::iterator pGlyphIterEnd = m_GlyphItems.end(); pGlyphIter != pGlyphIterEnd; ++pGlyphIter )
+         {
+-            pGlyphIter->m_aLinearPos.AdjustX(nXDelta );
++            pGlyphIter->m_aLinearPos.adjustX(nXDelta);
+         }
+     }
+ }
+@@ -637,7 +648,7 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+     vcl::text::ImplLayoutArgs aMultiArgs = rArgs;
+     std::vector<DeviceCoordinate> aJustificationArray;
+ 
+-    if( !rArgs.mpDXArray && rArgs.mnLayoutWidth )
++    if( !rArgs.HasDXArray() && rArgs.mnLayoutWidth )
+     {
+         // for stretched text in a MultiSalLayout the target width needs to be
+         // distributed by individually adjusting its virtual character widths
+@@ -702,6 +713,17 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+         }
+     }
+ 
++    if (aMultiArgs.mpAltNaturalDXArray)
++        ImplAdjustMultiLayout(rArgs, aMultiArgs, aMultiArgs.mpAltNaturalDXArray);
++    else
++        ImplAdjustMultiLayout(rArgs, aMultiArgs, aMultiArgs.mpDXArray);
++}
++
++template<typename DC>
++void MultiSalLayout::ImplAdjustMultiLayout(vcl::text::ImplLayoutArgs& rArgs,
++                                           vcl::text::ImplLayoutArgs& rMultiArgs,
++                                           const DC* pMultiDXArray)
++{
+     // Compute rtl flags, since in some scripts glyphs/char order can be
+     // reversed for a few character sequences e.g. Myanmar
+     std::vector<bool> vRtl(rArgs.mnEndCharPos - rArgs.mnMinCharPos, false);
+@@ -721,17 +743,17 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+     const GlyphItem* pGlyphs[MAX_FALLBACK];
+     bool bValid[MAX_FALLBACK] = { false };
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     int nLevel = 0, n;
+     for( n = 0; n < mnLevel; ++n )
+     {
+         // now adjust the individual components
+         if( n > 0 )
+         {
+-            aMultiArgs.maRuns = maFallbackRuns[ n-1 ];
+-            aMultiArgs.mnFlags |= SalLayoutFlags::ForFallback;
++            rMultiArgs.maRuns = maFallbackRuns[ n-1 ];
++            rMultiArgs.mnFlags |= SalLayoutFlags::ForFallback;
+         }
+-        mpLayouts[n]->AdjustLayout( aMultiArgs );
++        mpLayouts[n]->AdjustLayout( rMultiArgs );
+ 
+         // remove unused parts of component
+         if( n > 0 )
+@@ -830,7 +852,7 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+         }
+ 
+         // skip to end of layout run and calculate its advance width
+-        DeviceCoordinate nRunAdvance = 0;
++        DC nRunAdvance = 0;
+         bool bKeepNotDef = (nFBLevel >= nLevel);
+         for(;;)
+         {
+@@ -886,7 +908,7 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+                 bKeepNotDef = bNeedFallback;
+             }
+             // check for reordered glyphs
+-            if (aMultiArgs.mpDXArray &&
++            if (pMultiDXArray &&
+                 nRunVisibleEndChar < mnEndCharPos &&
+                 nRunVisibleEndChar >= mnMinCharPos &&
+                 pGlyphs[n]->charPos() < mnEndCharPos &&
+@@ -894,14 +916,14 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+             {
+                 if (vRtl[nActiveCharPos - mnMinCharPos])
+                 {
+-                    if (aMultiArgs.mpDXArray[nRunVisibleEndChar-mnMinCharPos]
+-                        >= aMultiArgs.mpDXArray[pGlyphs[n]->charPos() - mnMinCharPos])
++                    if (pMultiDXArray[nRunVisibleEndChar-mnMinCharPos]
++                        >= pMultiDXArray[pGlyphs[n]->charPos() - mnMinCharPos])
+                     {
+                         nRunVisibleEndChar = pGlyphs[n]->charPos();
+                     }
+                 }
+-                else if (aMultiArgs.mpDXArray[nRunVisibleEndChar-mnMinCharPos]
+-                         <= aMultiArgs.mpDXArray[pGlyphs[n]->charPos() - mnMinCharPos])
++                else if (pMultiDXArray[nRunVisibleEndChar-mnMinCharPos]
++                         <= pMultiDXArray[pGlyphs[n]->charPos() - mnMinCharPos])
+                 {
+                     nRunVisibleEndChar = pGlyphs[n]->charPos();
+                 }
+@@ -910,7 +932,7 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+ 
+         // if a justification array is available
+         // => use it directly to calculate the corresponding run width
+-        if( aMultiArgs.mpDXArray )
++        if (pMultiDXArray)
+         {
+             // the run advance is the width from the first char
+             // in the run to the first char in the next run
+@@ -919,16 +941,16 @@ void MultiSalLayout::AdjustLayout( vcl::text::ImplLayoutArgs& rArgs )
+             if (nActiveCharIndex >= 0 && vRtl[nActiveCharIndex])
+             {
+               if (nRunVisibleEndChar > mnMinCharPos && nRunVisibleEndChar <= mnEndCharPos)
+-                  nRunAdvance -= aMultiArgs.mpDXArray[nRunVisibleEndChar - 1 - mnMinCharPos];
++                  nRunAdvance -= pMultiDXArray[nRunVisibleEndChar - 1 - mnMinCharPos];
+               if (nLastRunEndChar > mnMinCharPos && nLastRunEndChar <= mnEndCharPos)
+-                  nRunAdvance += aMultiArgs.mpDXArray[nLastRunEndChar - 1 - mnMinCharPos];
++                  nRunAdvance += pMultiDXArray[nLastRunEndChar - 1 - mnMinCharPos];
+             }
+             else
+             {
+                 if (nRunVisibleEndChar >= mnMinCharPos)
+-                  nRunAdvance += aMultiArgs.mpDXArray[nRunVisibleEndChar - mnMinCharPos];
++                  nRunAdvance += pMultiDXArray[nRunVisibleEndChar - mnMinCharPos];
+                 if (nLastRunEndChar >= mnMinCharPos)
+-                  nRunAdvance -= aMultiArgs.mpDXArray[nLastRunEndChar - mnMinCharPos];
++                  nRunAdvance -= pMultiDXArray[nLastRunEndChar - mnMinCharPos];
+             }
+             nLastRunEndChar = nRunVisibleEndChar;
+             nRunVisibleEndChar = pGlyphs[nFirstValid]->charPos();
+@@ -1105,7 +1127,7 @@ void MultiSalLayout::GetCaretPositions( int nMaxIndex, sal_Int32* pCaretXArray )
+ }
+ 
+ bool MultiSalLayout::GetNextGlyph(const GlyphItem** pGlyph,
+-                                  Point& rPos, int& nStart,
++                                  DevicePoint& rPos, int& nStart,
+                                   const LogicalFontInstance** ppGlyphFont,
+                                   const vcl::font::PhysicalFontFace** pFallbackFont) const
+ {
+@@ -1123,8 +1145,8 @@ bool MultiSalLayout::GetNextGlyph(const GlyphItem** pGlyph,
+             nStart |= nFontTag;
+             if (pFallbackFont)
+                 *pFallbackFont = pFontFace;
+-            rPos += maDrawBase;
+-            rPos += maDrawOffset;
++            rPos.adjustX(maDrawBase.getX() + maDrawOffset.X());
++            rPos.adjustY(maDrawBase.getY() + maDrawOffset.Y());
+             return true;
+         }
+     }
+diff --git a/vcl/source/gdi/virdev.cxx b/vcl/source/gdi/virdev.cxx
+index 6a44cc1cd136..87721c683d77 100644
+--- a/vcl/source/gdi/virdev.cxx
++++ b/vcl/source/gdi/virdev.cxx
+@@ -379,6 +379,8 @@ bool VirtualDevice::ImplSetOutputSizePixel( const Size& rNewSize, bool bErase,
+             mpAlphaVDev->SetMapMode( GetMapMode() );
+ 
+             mpAlphaVDev->SetAntialiasing( GetAntialiasing() );
++
++            mpAlphaVDev->SetTextRenderModeForResolutionIndependentLayout(GetTextRenderModeForResolutionIndependentLayout());
+         }
+ 
+         return true;
+diff --git a/vcl/source/outdev/font.cxx b/vcl/source/outdev/font.cxx
+index 5139f1fc03a4..71e4091e754e 100644
+--- a/vcl/source/outdev/font.cxx
++++ b/vcl/source/outdev/font.cxx
+@@ -1117,7 +1117,7 @@ void OutputDevice::ImplDrawEmphasisMarks( SalLayout& rSalLayout )
+     tools::Long nEmphasisHeight2 = nEmphasisHeight / 2;
+     aOffset += Point( nEmphasisWidth2, nEmphasisHeight2 );
+ 
+-    Point aOutPoint;
++    DevicePoint aOutPoint;
+     tools::Rectangle aRectangle;
+     const GlyphItem* pGlyph;
+     const LogicalFontInstance* pGlyphFont;
+@@ -1136,10 +1136,10 @@ void OutputDevice::ImplDrawEmphasisMarks( SalLayout& rSalLayout )
+                 Point aOriginPt(0, 0);
+                 aOriginPt.RotateAround( aAdjPoint, mpFontInstance->mnOrientation );
+             }
+-            aOutPoint += aAdjPoint;
+-            aOutPoint -= Point( nEmphasisWidth2, nEmphasisHeight2 );
+-            ImplDrawEmphasisMark( rSalLayout.DrawBase().X(),
+-                                  aOutPoint.X(), aOutPoint.Y(),
++            aOutPoint.adjustX(aAdjPoint.X() - nEmphasisWidth2);
++            aOutPoint.adjustY(aAdjPoint.Y() - nEmphasisHeight2);
++            ImplDrawEmphasisMark( rSalLayout.DrawBase().getX(),
++                                  aOutPoint.getX(), aOutPoint.getY(),
+                                   aPolyPoly, bPolyLine, aRect1, aRect2 );
+         }
+     }
+diff --git a/vcl/source/outdev/map.cxx b/vcl/source/outdev/map.cxx
+index 227905f075a8..bb4683f37a19 100644
+--- a/vcl/source/outdev/map.cxx
++++ b/vcl/source/outdev/map.cxx
+@@ -1879,11 +1879,32 @@ DeviceCoordinate OutputDevice::LogicWidthToDeviceCoordinate( tools::Long nWidth
+         return static_cast<DeviceCoordinate>(nWidth);
+ 
+ #if VCL_FLOAT_DEVICE_PIXEL
+-    return (double)nWidth * maMapRes.mfScaleX * mnDPIX;
++    return ImplLogicToPixel(static_cast<double>(nWidth), mnDPIX, maMapRes.mnMapScNumX, maMapRes.mnMapScDenomX);
+ #else
+-
+     return ImplLogicToPixel(nWidth, mnDPIX, maMapRes.mnMapScNumX, maMapRes.mnMapScDenomX);
+ #endif
+ }
+ 
++double OutputDevice::ImplLogicWidthToDeviceFontWidth(tools::Long nWidth) const
++{
++    if (!mbMap)
++        return nWidth;
++
++    return ImplLogicToPixel(static_cast<double>(nWidth), mnDPIX,
++                            maMapRes.mnMapScNumX, maMapRes.mnMapScDenomX);
++}
++
++DevicePoint OutputDevice::ImplLogicToDeviceFontCoordinate(const Point& rPoint) const
++{
++    if (!mbMap)
++        return DevicePoint(rPoint.X() + mnOutOffX, rPoint.Y() + mnOutOffY);
++
++    return DevicePoint(ImplLogicToPixel(static_cast<double>(rPoint.X() + maMapRes.mnMapOfsX), mnDPIX,
++                                        maMapRes.mnMapScNumX, maMapRes.mnMapScDenomX)
++                                        + mnOutOffX + mnOutOffOrigX,
++                       ImplLogicToPixel(static_cast<double>(rPoint.Y() + maMapRes.mnMapOfsY), mnDPIY,
++                                        maMapRes.mnMapScNumY, maMapRes.mnMapScDenomY)
++                                        + mnOutOffY + mnOutOffOrigY);
++}
++
+ /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+diff --git a/vcl/source/outdev/outdev.cxx b/vcl/source/outdev/outdev.cxx
+index 9231f7779a6b..1ad7a2e71dd0 100644
+--- a/vcl/source/outdev/outdev.cxx
++++ b/vcl/source/outdev/outdev.cxx
+@@ -105,6 +105,7 @@ OutputDevice::OutputDevice(OutDevType eOutDevType) :
+     meRasterOp                      = RasterOp::OverPaint;
+     mnAntialiasing                  = AntialiasingFlags::NONE;
+     meTextLanguage                  = LANGUAGE_SYSTEM;  // TODO: get default from configuration?
++    mbTextRenderModeForResolutionIndependentLayout = false;
+     mbLineColor                     = true;
+     mbFillColor                     = true;
+     mbInitLineColor                 = true;
+@@ -354,16 +355,28 @@ void OutputDevice::SetAntialiasing( AntialiasingFlags nMode )
+         mnAntialiasing = nMode;
+         mbInitFont = true;
+ 
+-        if(mpGraphics)
+-        {
++        if (mpGraphics)
+             mpGraphics->setAntiAlias(bool(mnAntialiasing & AntialiasingFlags::Enable));
+-        }
+     }
+ 
+     if( mpAlphaVDev )
+         mpAlphaVDev->SetAntialiasing( nMode );
+ }
+ 
++void OutputDevice::SetTextRenderModeForResolutionIndependentLayout(bool bMode)
++{
++    if (mbTextRenderModeForResolutionIndependentLayout!= bMode)
++    {
++        mbTextRenderModeForResolutionIndependentLayout = bMode;
++
++        if (mpGraphics)
++            mpGraphics->setTextRenderModeForResolutionIndependentLayout(bMode);
++    }
++
++    if (mpAlphaVDev)
++        mpAlphaVDev->SetTextRenderModeForResolutionIndependentLayout(bMode);
++}
++
+ void OutputDevice::SetDrawMode(DrawModeFlags nDrawMode)
+ {
+     mnDrawMode = nDrawMode;
+diff --git a/vcl/source/outdev/text.cxx b/vcl/source/outdev/text.cxx
+index a28dc49e5ebd..3d773e56d488 100644
+--- a/vcl/source/outdev/text.cxx
++++ b/vcl/source/outdev/text.cxx
+@@ -168,9 +168,9 @@ void OutputDevice::ImplDrawTextRect( tools::Long nBaseX, tools::Long nBaseY,
+ void OutputDevice::ImplDrawTextBackground( const SalLayout& rSalLayout )
+ {
+     const tools::Long nWidth = rSalLayout.GetTextWidth() / rSalLayout.GetUnitsPerPixel();
+-    const Point aBase = rSalLayout.DrawBase();
+-    const tools::Long nX = aBase.X();
+-    const tools::Long nY = aBase.Y();
++    const DevicePoint aBase = rSalLayout.DrawBase();
++    const tools::Long nX = aBase.getX();
++    const tools::Long nY = aBase.getY();
+ 
+     if ( mbLineColor || mbInitLineColor )
+     {
+@@ -187,9 +187,9 @@ void OutputDevice::ImplDrawTextBackground( const SalLayout& rSalLayout )
+ 
+ tools::Rectangle OutputDevice::ImplGetTextBoundRect( const SalLayout& rSalLayout ) const
+ {
+-    Point aPoint = rSalLayout.GetDrawPosition();
+-    tools::Long nX = aPoint.X();
+-    tools::Long nY = aPoint.Y();
++    DevicePoint aPoint = rSalLayout.GetDrawPosition();
++    tools::Long nX = aPoint.getX();
++    tools::Long nY = aPoint.getY();
+ 
+     tools::Long nWidth = rSalLayout.GetTextWidth();
+     tools::Long nHeight = mpFontInstance->mnLineHeight + mnEmphasisAscent + mnEmphasisDescent;
+@@ -225,11 +225,11 @@ tools::Rectangle OutputDevice::ImplGetTextBoundRect( const SalLayout& rSalLayout
+ 
+ bool OutputDevice::ImplDrawRotateText( SalLayout& rSalLayout )
+ {
+-    tools::Long nX = rSalLayout.DrawBase().X();
+-    tools::Long nY = rSalLayout.DrawBase().Y();
++    tools::Long nX = rSalLayout.DrawBase().getX();
++    tools::Long nY = rSalLayout.DrawBase().getY();
+ 
+     tools::Rectangle aBoundRect;
+-    rSalLayout.DrawBase() = Point( 0, 0 );
++    rSalLayout.DrawBase() = DevicePoint( 0, 0 );
+     rSalLayout.DrawOffset() = Point( 0, 0 );
+     if (!rSalLayout.GetBoundRect(aBoundRect))
+     {
+@@ -261,7 +261,8 @@ bool OutputDevice::ImplDrawRotateText( SalLayout& rSalLayout )
+     pVDev->ImplInitTextColor();
+ 
+     // draw text into upper left corner
+-    rSalLayout.DrawBase() -= aBoundRect.TopLeft();
++    rSalLayout.DrawBase().adjustX(-aBoundRect.Left());
++    rSalLayout.DrawBase().adjustY(-aBoundRect.Top());
+     rSalLayout.DrawText( *pVDev->mpGraphics );
+ 
+     Bitmap aBmp = pVDev->GetBitmap( Point(), aBoundRect.GetSize() );
+@@ -302,18 +303,18 @@ void OutputDevice::ImplDrawTextDirect( SalLayout& rSalLayout,
+         if( ImplDrawRotateText( rSalLayout ) )
+             return;
+ 
+-    tools::Long nOldX = rSalLayout.DrawBase().X();
++    auto nOldX = rSalLayout.DrawBase().getX();
+     if( HasMirroredGraphics() )
+     {
+         tools::Long w = IsVirtual() ? mnOutWidth : mpGraphics->GetGraphicsWidth();
+-        tools::Long x = rSalLayout.DrawBase().X();
++        auto x = rSalLayout.DrawBase().getX();
+         rSalLayout.DrawBase().setX( w - 1 - x );
+         if( !IsRTLEnabled() )
+         {
+             OutputDevice *pOutDevRef = this;
+             // mirror this window back
+             tools::Long devX = w-pOutDevRef->mnOutWidth-pOutDevRef->mnOutOffX;   // re-mirrored mnOutOffX
+-            rSalLayout.DrawBase().setX( devX + ( pOutDevRef->mnOutWidth - 1 - (rSalLayout.DrawBase().X() - devX) ) ) ;
++            rSalLayout.DrawBase().setX( devX + ( pOutDevRef->mnOutWidth - 1 - (rSalLayout.DrawBase().getX() - devX) ) ) ;
+         }
+     }
+     else if( IsRTLEnabled() )
+@@ -322,7 +323,7 @@ void OutputDevice::ImplDrawTextDirect( SalLayout& rSalLayout,
+ 
+         // mirror this window back
+         tools::Long devX = pOutDevRef->mnOutOffX;   // re-mirrored mnOutOffX
+-        rSalLayout.DrawBase().setX( pOutDevRef->mnOutWidth - 1 - (rSalLayout.DrawBase().X() - devX) + devX );
++        rSalLayout.DrawBase().setX( pOutDevRef->mnOutWidth - 1 - (rSalLayout.DrawBase().getX() - devX) + devX );
+     }
+ 
+     rSalLayout.DrawText( *mpGraphics );
+@@ -345,7 +346,7 @@ void OutputDevice::ImplDrawSpecialText( SalLayout& rSalLayout )
+     Color       aOldOverlineColor   = GetOverlineColor();
+     FontRelief  eRelief             = maFont.GetRelief();
+ 
+-    Point aOrigPos = rSalLayout.DrawBase();
++    DevicePoint aOrigPos = rSalLayout.DrawBase();
+     if ( eRelief != FontRelief::NONE )
+     {
+         Color   aReliefColor( COL_LIGHTGRAY );
+@@ -413,9 +414,9 @@ void OutputDevice::ImplDrawSpecialText( SalLayout& rSalLayout )
+             else
+                 SetTextColor( COL_BLACK );
+             ImplInitTextColor();
+-            rSalLayout.DrawBase() += Point( nOff, nOff );
++            rSalLayout.DrawBase() += DevicePoint( nOff, nOff );
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() -= Point( nOff, nOff );
++            rSalLayout.DrawBase() -= DevicePoint( nOff, nOff );
+             SetTextColor( aOldColor );
+             SetTextLineColor( aOldTextLineColor );
+             SetOverlineColor( aOldOverlineColor );
+@@ -427,21 +428,21 @@ void OutputDevice::ImplDrawSpecialText( SalLayout& rSalLayout )
+ 
+         if ( maFont.IsOutline() )
+         {
+-            rSalLayout.DrawBase() = aOrigPos + Point(-1,-1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(-1,-1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(+1,+1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(+1,+1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(-1,+0);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(-1,+0);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(-1,+1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(-1,+1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(+0,+1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(+0,+1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(+0,-1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(+0,-1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(+1,-1);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(+1,-1);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+-            rSalLayout.DrawBase() = aOrigPos + Point(+1,+0);
++            rSalLayout.DrawBase() = aOrigPos + DevicePoint(+1,+0);
+             ImplDrawTextDirect( rSalLayout, mbTextLines );
+             rSalLayout.DrawBase() = aOrigPos;
+ 
+@@ -468,7 +469,7 @@ void OutputDevice::ImplDrawText( SalLayout& rSalLayout )
+     if( mbInitTextColor )
+         ImplInitTextColor();
+ 
+-    rSalLayout.DrawBase() += Point( mnTextOffX, mnTextOffY );
++    rSalLayout.DrawBase() += DevicePoint(mnTextOffX, mnTextOffY);
+ 
+     if( IsTextFillColor() )
+         ImplDrawTextBackground( rSalLayout );
+@@ -986,12 +987,13 @@ tools::Long OutputDevice::GetTextArray( const OUString& rStr, std::vector<sal_In
+     }
+ 
+ #if VCL_FLOAT_DEVICE_PIXEL
+-    std::unique_ptr<DeviceCoordinate[]> pDXPixelArray;
++    std::unique_ptr<std::vector<DeviceCoordinate>> xDXPixelArray;
+     if(pDXAry)
+     {
+-        pDXPixelArray.reset(new DeviceCoordinate[nLen]);
++        xDXPixelArray.reset(new std::vector<DeviceCoordinate>(nLen));
+     }
+-    DeviceCoordinate nWidth = pSalLayout->FillDXArray( pDXPixelArray.get() );
++    std::vector<DeviceCoordinate>* pDXPixelArray = xDXPixelArray.get();
++    DeviceCoordinate nWidth = pSalLayout->FillDXArray(pDXPixelArray);
+     int nWidthFactor = pSalLayout->GetUnitsPerPixel();
+ 
+     // convert virtual char widths to virtual absolute positions
+@@ -999,7 +1001,7 @@ tools::Long OutputDevice::GetTextArray( const OUString& rStr, std::vector<sal_In
+     {
+         for( int i = 1; i < nLen; ++i )
+         {
+-            pDXPixelArray[ i ] += pDXPixelArray[ i-1 ];
++            (*pDXPixelArray)[i] += (*pDXPixelArray)[i - 1];
+         }
+     }
+     if( mbMap )
+@@ -1008,7 +1010,7 @@ tools::Long OutputDevice::GetTextArray( const OUString& rStr, std::vector<sal_In
+         {
+             for( int i = 0; i < nLen; ++i )
+             {
+-                pDXPixelArray[i] = ImplDevicePixelToLogicWidth( pDXPixelArray[i] );
++                (*pDXPixelArray)[i] = ImplDevicePixelToLogicWidth((*pDXPixelArray)[i]);
+             }
+         }
+         nWidth = ImplDevicePixelToLogicWidth( nWidth );
+@@ -1019,7 +1021,7 @@ tools::Long OutputDevice::GetTextArray( const OUString& rStr, std::vector<sal_In
+         {
+             for( int i = 0; i < nLen; ++i )
+             {
+-                pDXPixelArray[i] /= nWidthFactor;
++                (*pDXPixelArray)[i] /= nWidthFactor;
+             }
+         }
+         nWidth /= nWidthFactor;
+@@ -1029,7 +1031,7 @@ tools::Long OutputDevice::GetTextArray( const OUString& rStr, std::vector<sal_In
+         pDXAry->resize(nLen);
+         for( int i = 0; i < nLen; ++i )
+         {
+-            (*pDXAry)[i] = basegfx::fround(pDXPixelArray[i]);
++            (*pDXAry)[i] = basegfx::fround((*pDXPixelArray)[i]);
+         }
+     }
+     return basegfx::fround(nWidth);
+@@ -1148,7 +1150,7 @@ void OutputDevice::DrawStretchText( const Point& rStartPt, sal_uLong nWidth,
+ 
+ vcl::text::ImplLayoutArgs OutputDevice::ImplPrepareLayoutArgs( OUString& rStr,
+                                                     const sal_Int32 nMinIndex, const sal_Int32 nLen,
+-                                                    DeviceCoordinate nPixelWidth, const DeviceCoordinate* pDXArray,
++                                                    DeviceCoordinate nPixelWidth,
+                                                     SalLayoutFlags nLayoutFlags,
+          vcl::text::TextLayoutCache const*const pLayoutCache) const
+ {
+@@ -1241,7 +1243,6 @@ vcl::text::ImplLayoutArgs OutputDevice::ImplPrepareLayoutArgs( OUString& rStr,
+     aLayoutArgs.SetOrientation( nOrientation );
+ 
+     aLayoutArgs.SetLayoutWidth( nPixelWidth );
+-    aLayoutArgs.SetDXArray( pDXArray );
+ 
+     return aLayoutArgs;
+ }
+@@ -1338,21 +1339,47 @@ std::unique_ptr<SalLayout> OutputDevice::ImplLayout(const OUString& rOrigStr,
+         nPixelWidth = LogicWidthToDeviceCoordinate( nLogicalWidth );
+     }
+ 
++    vcl::text::ImplLayoutArgs aLayoutArgs = ImplPrepareLayoutArgs( aStr, nMinIndex, nLen,
++            nPixelWidth, flags, pLayoutCache);
++
++    bool bTextRenderModeForResolutionIndependentLayout(false);
++    DeviceCoordinate nEndGlyphCoord(0);
+     std::unique_ptr<DeviceCoordinate[]> xDXPixelArray;
+-    DeviceCoordinate* pDXPixelArray(nullptr);
++    std::unique_ptr<double[]> xNaturalDXPixelArray;
+     if( !pDXArray.empty() )
+     {
+-        if(mbMap)
++        DeviceCoordinate* pDXPixelArray(nullptr);
++        if (mbMap)
+         {
+-            // convert from logical units to font units using a temporary array
+-            xDXPixelArray.reset(new DeviceCoordinate[nLen]);
+-            pDXPixelArray = xDXPixelArray.get();
+-            // using base position for better rounding a.k.a. "dancing characters"
+-            DeviceCoordinate nPixelXOfs2 = LogicWidthToDeviceCoordinate(rLogicalPos.X() * 2);
+-            for( int i = 0; i < nLen; ++i )
++            if (GetTextRenderModeForResolutionIndependentLayout())
+             {
+-                pDXPixelArray[i] = (LogicWidthToDeviceCoordinate((rLogicalPos.X() + pDXArray[i]) * 2) - nPixelXOfs2) / 2;
++                bTextRenderModeForResolutionIndependentLayout = true;
++
++                // convert from logical units to font units using a temporary array
++                xNaturalDXPixelArray.reset(new double[nLen]);
++
++                for (int i = 0; i < nLen; ++i)
++                    xNaturalDXPixelArray[i] = ImplLogicWidthToDeviceFontWidth(pDXArray[i]);
++
++                aLayoutArgs.SetAltNaturalDXArray(xNaturalDXPixelArray.get());
++                nEndGlyphCoord = std::lround(xNaturalDXPixelArray[nLen - 1]);
+             }
++            else
++            {
++                // convert from logical units to font units using a temporary array
++                xDXPixelArray.reset(new DeviceCoordinate[nLen]);
++                pDXPixelArray = xDXPixelArray.get();
++                // using base position for better rounding a.k.a. "dancing characters"
++                DeviceCoordinate nPixelXOfs2 = LogicWidthToDeviceCoordinate(rLogicalPos.X() * 2);
++                for( int i = 0; i < nLen; ++i )
++                {
++                    pDXPixelArray[i] = (LogicWidthToDeviceCoordinate((rLogicalPos.X() + pDXArray[i]) * 2) - nPixelXOfs2) / 2;
++                }
++
++                aLayoutArgs.SetDXArray(pDXPixelArray);
++                nEndGlyphCoord = pDXPixelArray[nLen - 1];
++            }
++
+         }
+         else
+         {
+@@ -1361,17 +1388,17 @@ std::unique_ptr<SalLayout> OutputDevice::ImplLayout(const OUString& rOrigStr,
+             pDXPixelArray = xDXPixelArray.get();
+             for( int i = 0; i < nLen; ++i )
+             {
+-                pDXPixelArray[i] = (*pDXArray)[i];
++                pDXPixelArray[i] = pDXArray[i];
+             }
+ #else /* !VCL_FLOAT_DEVICE_PIXEL */
+             pDXPixelArray = const_cast<DeviceCoordinate*>(pDXArray.data());
+ #endif /* !VCL_FLOAT_DEVICE_PIXEL */
++
++            aLayoutArgs.SetDXArray(pDXPixelArray);
++            nEndGlyphCoord = pDXPixelArray[nLen - 1];
+         }
+     }
+ 
+-    vcl::text::ImplLayoutArgs aLayoutArgs = ImplPrepareLayoutArgs( aStr, nMinIndex, nLen,
+-            nPixelWidth, pDXPixelArray, flags, pLayoutCache);
+-
+     // get matching layout object for base font
+     std::unique_ptr<SalLayout> pSalLayout = mpGraphics->GetTextLayout(0);
+ 
+@@ -1384,6 +1411,8 @@ std::unique_ptr<SalLayout> OutputDevice::ImplLayout(const OUString& rOrigStr,
+     if( !pSalLayout )
+         return nullptr;
+ 
++    pSalLayout->SetTextRenderModeForResolutionIndependentLayout(bTextRenderModeForResolutionIndependentLayout);
++
+     // do glyph fallback if needed
+     // #105768# avoid fallback for very small font sizes
+     if (aLayoutArgs.HasFallbackRun() && mpFontInstance->GetFontSelectPattern().mnHeight >= 3)
+@@ -1396,13 +1425,21 @@ std::unique_ptr<SalLayout> OutputDevice::ImplLayout(const OUString& rOrigStr,
+ 
+     // position, justify, etc. the layout
+     pSalLayout->AdjustLayout( aLayoutArgs );
+-    pSalLayout->DrawBase() = ImplLogicToDevicePixel( rLogicalPos );
++
++    if (bTextRenderModeForResolutionIndependentLayout)
++        pSalLayout->DrawBase() = ImplLogicToDeviceFontCoordinate(rLogicalPos);
++    else
++    {
++        Point aDevicePos = ImplLogicToDevicePixel(rLogicalPos);
++        pSalLayout->DrawBase() = DevicePoint(aDevicePos.X(), aDevicePos.Y());
++    }
++
+     // adjust to right alignment if necessary
+     if( aLayoutArgs.mnFlags & SalLayoutFlags::RightAlign )
+     {
+         DeviceCoordinate nRTLOffset;
+-        if( pDXPixelArray )
+-            nRTLOffset = pDXPixelArray[ nLen - 1 ];
++        if (!pDXArray.empty())
++            nRTLOffset = nEndGlyphCoord;
+         else if( nPixelWidth )
+             nRTLOffset = nPixelWidth;
+         else
+@@ -1425,7 +1462,7 @@ std::shared_ptr<vcl::text::TextLayoutCache> OutputDevice::CreateTextLayoutCache(
+ bool OutputDevice::GetTextIsRTL( const OUString& rString, sal_Int32 nIndex, sal_Int32 nLen ) const
+ {
+     OUString aStr( rString );
+-    vcl::text::ImplLayoutArgs aArgs = ImplPrepareLayoutArgs( aStr, nIndex, nLen, 0, nullptr );
++    vcl::text::ImplLayoutArgs aArgs = ImplPrepareLayoutArgs(aStr, nIndex, nLen, 0);
+     bool bRTL = false;
+     int nCharPos = -1;
+     if (!aArgs.GetNextPos(&nCharPos, &bRTL))
+@@ -2365,7 +2402,8 @@ bool OutputDevice::GetTextBoundRect( tools::Rectangle& rRect,
+             }
+ 
+             Point aRotatedOfs( mnTextOffX, mnTextOffY );
+-            aRotatedOfs -= pSalLayout->GetDrawPosition( Point( nXOffset, 0 ) );
++            DevicePoint aPos = pSalLayout->GetDrawPosition(DevicePoint(nXOffset, 0));
++            aRotatedOfs -= Point(aPos.getX(), aPos.getY());
+             aPixelRect += aRotatedOfs;
+             rRect = PixelToLogic( aPixelRect );
+             if( mbMap )
+@@ -2432,9 +2470,9 @@ bool OutputDevice::GetTextOutlines( basegfx::B2DPolyPolygonVector& rVector,
+             int nWidthFactor = pSalLayout->GetUnitsPerPixel();
+             if( nXOffset | mnTextOffX | mnTextOffY )
+             {
+-                Point aRotatedOfs( mnTextOffX*nWidthFactor, mnTextOffY*nWidthFactor );
+-                aRotatedOfs -= pSalLayout->GetDrawPosition( Point( nXOffset, 0 ) );
+-                aMatrix.translate( aRotatedOfs.X(), aRotatedOfs.Y() );
++                DevicePoint aRotatedOfs( mnTextOffX*nWidthFactor, mnTextOffY*nWidthFactor );
++                aRotatedOfs -= pSalLayout->GetDrawPosition(DevicePoint(nXOffset, 0));
++                aMatrix.translate( aRotatedOfs.getX(), aRotatedOfs.getY() );
+             }
+ 
+             if( nWidthFactor > 1 )
+diff --git a/vcl/source/outdev/textline.cxx b/vcl/source/outdev/textline.cxx
+index c4fcb33bf5d0..7c8af3db9220 100644
+--- a/vcl/source/outdev/textline.cxx
++++ b/vcl/source/outdev/textline.cxx
+@@ -710,7 +710,7 @@ void OutputDevice::ImplDrawStrikeoutChar( tools::Long nBaseX, tools::Long nBaseY
+     SetTextColor( aColor );
+     ImplInitTextColor();
+ 
+-    pLayout->DrawBase() = Point( nBaseX+mnTextOffX, nBaseY+mnTextOffY );
++    pLayout->DrawBase() = DevicePoint(nBaseX + mnTextOffX, nBaseY + mnTextOffY);
+ 
+     tools::Rectangle aPixelRect;
+     aPixelRect.SetLeft( nBaseX+mnTextOffX );
+@@ -811,10 +811,10 @@ void OutputDevice::ImplDrawTextLines( SalLayout& rSalLayout, FontStrikeout eStri
+     if( bWordLine )
+     {
+         // draw everything relative to the layout base point
+-        const Point aStartPt = rSalLayout.DrawBase();
++        const DevicePoint aStartPt = rSalLayout.DrawBase();
+ 
+         // calculate distance of each word from the base point
+-        Point aPos;
++        DevicePoint aPos;
+         DeviceCoordinate nDist = 0;
+         DeviceCoordinate nWidth = 0;
+         const GlyphItem* pGlyph;
+@@ -827,10 +827,10 @@ void OutputDevice::ImplDrawTextLines( SalLayout& rSalLayout, FontStrikeout eStri
+                 if( !nWidth )
+                 {
+                     // get the distance to the base point (as projected to baseline)
+-                    nDist = aPos.X() - aStartPt.X();
++                    nDist = aPos.getX() - aStartPt.getX();
+                     if( mpFontInstance->mnOrientation )
+                     {
+-                        const tools::Long nDY = aPos.Y() - aStartPt.Y();
++                        const DeviceCoordinate nDY = aPos.getY() - aStartPt.getY();
+                         const double fRad = toRadians(mpFontInstance->mnOrientation);
+                         nDist = FRound( nDist*cos(fRad) - nDY*sin(fRad) );
+                     }
+@@ -842,7 +842,7 @@ void OutputDevice::ImplDrawTextLines( SalLayout& rSalLayout, FontStrikeout eStri
+             else if( nWidth > 0 )
+             {
+                 // draw the textline for each word
+-                ImplDrawTextLine( aStartPt.X(), aStartPt.Y(), nDist, nWidth,
++                ImplDrawTextLine( aStartPt.getX(), aStartPt.getY(), nDist, nWidth,
+                                   eStrikeout, eUnderline, eOverline, bUnderlineAbove );
+                 nWidth = 0;
+             }
+@@ -851,14 +851,14 @@ void OutputDevice::ImplDrawTextLines( SalLayout& rSalLayout, FontStrikeout eStri
+         // draw textline for the last word
+         if( nWidth > 0 )
+         {
+-            ImplDrawTextLine( aStartPt.X(), aStartPt.Y(), nDist, nWidth,
++            ImplDrawTextLine( aStartPt.getX(), aStartPt.getY(), nDist, nWidth,
+                               eStrikeout, eUnderline, eOverline, bUnderlineAbove );
+         }
+     }
+     else
+     {
+-        Point aStartPt = rSalLayout.GetDrawPosition();
+-        ImplDrawTextLine( aStartPt.X(), aStartPt.Y(), 0,
++        DevicePoint aStartPt = rSalLayout.GetDrawPosition();
++        ImplDrawTextLine( aStartPt.getX(), aStartPt.getY(), 0,
+                           rSalLayout.GetTextWidth() / rSalLayout.GetUnitsPerPixel(),
+                           eStrikeout, eUnderline, eOverline, bUnderlineAbove );
+     }
+diff --git a/vcl/source/text/ImplLayoutArgs.cxx b/vcl/source/text/ImplLayoutArgs.cxx
+index 7957d1ace824..55e01d2737b8 100644
+--- a/vcl/source/text/ImplLayoutArgs.cxx
++++ b/vcl/source/text/ImplLayoutArgs.cxx
+@@ -37,6 +37,7 @@ ImplLayoutArgs::ImplLayoutArgs(const OUString& rStr, int nMinCharPos, int nEndCh
+     , mnEndCharPos(nEndCharPos)
+     , m_pTextLayoutCache(pLayoutCache)
+     , mpDXArray(nullptr)
++    , mpAltNaturalDXArray(nullptr)
+     , mnLayoutWidth(0)
+     , mnOrientation(0)
+ {
+@@ -101,6 +102,11 @@ void ImplLayoutArgs::SetLayoutWidth(DeviceCoordinate nWidth) { mnLayoutWidth = n
+ 
+ void ImplLayoutArgs::SetDXArray(DeviceCoordinate const* pDXArray) { mpDXArray = pDXArray; }
+ 
++void ImplLayoutArgs::SetAltNaturalDXArray(double const* pDXArray)
++{
++    mpAltNaturalDXArray = pDXArray;
++}
++
+ void ImplLayoutArgs::SetOrientation(Degree10 nOrientation) { mnOrientation = nOrientation; }
+ 
+ void ImplLayoutArgs::ResetPos() { maRuns.ResetPos(); }
+@@ -304,7 +310,7 @@ std::ostream& operator<<(std::ostream& s, vcl::text::ImplLayoutArgs const& rArgs
+     s << "\"";
+ 
+     s << ",DXArray=";
+-    if (rArgs.mpDXArray)
++    if (rArgs.mpDXArray || rArgs.mpAltNaturalDXArray)
+     {
+         s << "[";
+         int count = rArgs.mnEndCharPos - rArgs.mnMinCharPos;
+@@ -313,7 +319,10 @@ std::ostream& operator<<(std::ostream& s, vcl::text::ImplLayoutArgs const& rArgs
+             lim = 7;
+         for (int i = 0; i < lim; i++)
+         {
+-            s << rArgs.mpDXArray[i];
++            if (rArgs.mpDXArray)
++                s << rArgs.mpDXArray[i];
++            else
++                s << rArgs.mpAltNaturalDXArray[i];
+             if (i < lim - 1)
+                 s << ",";
+         }
+@@ -321,7 +330,10 @@ std::ostream& operator<<(std::ostream& s, vcl::text::ImplLayoutArgs const& rArgs
+         {
+             if (count > lim + 1)
+                 s << "...";
+-            s << rArgs.mpDXArray[count - 1];
++            if (rArgs.mpDXArray)
++                s << rArgs.mpDXArray[count - 1];
++            else
++                s << rArgs.mpAltNaturalDXArray[count - 1];
+         }
+         s << "]";
+     }
+diff --git a/vcl/unx/generic/gdi/cairotextrender.cxx b/vcl/unx/generic/gdi/cairotextrender.cxx
+index b14c018652a4..c403c2f3246b 100644
+--- a/vcl/unx/generic/gdi/cairotextrender.cxx
++++ b/vcl/unx/generic/gdi/cairotextrender.cxx
+@@ -125,15 +125,15 @@ void CairoTextRender::DrawTextLayout(const GenericSalLayout& rLayout, const SalG
+     std::vector<int> glyph_extrarotation;
+     cairo_glyphs.reserve( 256 );
+ 
+-    Point aPos;
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     int nStart = 0;
+     while (rLayout.GetNextGlyph(&pGlyph, aPos, nStart))
+     {
+         cairo_glyph_t aGlyph;
+         aGlyph.index = pGlyph->glyphId();
+-        aGlyph.x = aPos.X();
+-        aGlyph.y = aPos.Y();
++        aGlyph.x = aPos.getX();
++        aGlyph.y = aPos.getY();
+         cairo_glyphs.push_back(aGlyph);
+ 
+         if (pGlyph->IsVertical())
+@@ -172,12 +172,25 @@ void CairoTextRender::DrawTextLayout(const GenericSalLayout& rLayout, const SalG
+     if (const cairo_font_options_t* pFontOptions = pSVData->mpDefInst->GetCairoFontOptions())
+     {
+         const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
+-        if (!rStyleSettings.GetUseFontAAFromSystem() && !rGraphics.getAntiAlias())
++        bool bDisableAA = !rStyleSettings.GetUseFontAAFromSystem() && !rGraphics.getAntiAlias();
++
++        const bool bResolutionIndependentLayoutEnabled = rGraphics.getTextRenderModeForResolutionIndependentLayoutEnabled();
++        cairo_hint_style_t eHintStyle = cairo_font_options_get_hint_style(pFontOptions);
++        cairo_hint_metrics_t eHintMetricsStyle = cairo_font_options_get_hint_metrics(pFontOptions);
++        bool bAllowedHintStyle = !bResolutionIndependentLayoutEnabled || (eHintStyle == CAIRO_HINT_STYLE_NONE || eHintStyle == CAIRO_HINT_STYLE_SLIGHT);
++        bool bAllowedHintMetricStyle = !bResolutionIndependentLayoutEnabled || (eHintMetricsStyle == CAIRO_HINT_METRICS_OFF);
++
++        if (bDisableAA || !bAllowedHintStyle || !bAllowedHintMetricStyle)
+         {
+             // Disable font AA in case global AA setting is supposed to affect
+             // font rendering (not the default) and AA is disabled.
+             cairo_font_options_t* pOptions = cairo_font_options_copy(pFontOptions);
+-            cairo_font_options_set_antialias(pOptions, CAIRO_ANTIALIAS_NONE);
++            if (bDisableAA)
++                cairo_font_options_set_antialias(pOptions, CAIRO_ANTIALIAS_NONE);
++            if (!bAllowedHintStyle)
++                cairo_font_options_set_hint_style(pOptions, CAIRO_HINT_STYLE_SLIGHT);
++            if (!bAllowedHintMetricStyle)
++                cairo_font_options_set_hint_metrics(pOptions, CAIRO_HINT_METRICS_OFF);
+             cairo_set_font_options(cr, pOptions);
+             cairo_font_options_destroy(pOptions);
+         }
+diff --git a/vcl/unx/generic/print/genpspgraphics.cxx b/vcl/unx/generic/print/genpspgraphics.cxx
+index 359c33026cfd..da0a406dea0b 100644
+--- a/vcl/unx/generic/print/genpspgraphics.cxx
++++ b/vcl/unx/generic/print/genpspgraphics.cxx
+@@ -149,10 +149,10 @@ void PspSalLayout::InitFont() const
+ void GenPspGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+ {
+     const GlyphItem* pGlyph;
+-    Point aPos;
++    DevicePoint aPos;
+     int nStart = 0;
+     while (rLayout.GetNextGlyph(&pGlyph, aPos, nStart))
+-        m_pPrinterGfx->DrawGlyph(aPos, *pGlyph);
++        m_pPrinterGfx->DrawGlyph(Point(aPos.getX(), aPos.getY()), *pGlyph);
+ }
+ 
+ FontCharMapRef GenPspGraphics::GetFontCharMap() const
+diff --git a/vcl/win/gdi/DWriteTextRenderer.cxx b/vcl/win/gdi/DWriteTextRenderer.cxx
+index edd0b700bdf6..1ec441b00592 100644
+--- a/vcl/win/gdi/DWriteTextRenderer.cxx
++++ b/vcl/win/gdi/DWriteTextRenderer.cxx
+@@ -99,7 +99,7 @@ HRESULT checkResult(HRESULT hr, const char* file, size_t line)
+ 
+ } // end anonymous namespace
+ 
+-D2DWriteTextOutRenderer::D2DWriteTextOutRenderer()
++D2DWriteTextOutRenderer::D2DWriteTextOutRenderer(bool bRenderingModeNatural)
+     : mpD2DFactory(nullptr),
+     mpDWriteFactory(nullptr),
+     mpGdiInterop(nullptr),
+@@ -110,6 +110,7 @@ D2DWriteTextOutRenderer::D2DWriteTextOutRenderer()
+     mpFontFace(nullptr),
+     mlfEmHeight(0.0f),
+     mhDC(nullptr),
++    mbRenderingModeNatural(bRenderingModeNatural),
+     meTextAntiAliasMode(D2DTextAntiAliasMode::Default)
+ {
+     HRESULT hr = S_OK;
+@@ -118,7 +119,7 @@ D2DWriteTextOutRenderer::D2DWriteTextOutRenderer()
+     if (SUCCEEDED(hr))
+     {
+         hr = mpDWriteFactory->GetGdiInterop(&mpGdiInterop);
+-        hr = CreateRenderTarget();
++        hr = CreateRenderTarget(bRenderingModeNatural);
+     }
+     meTextAntiAliasMode = lclGetSystemTextAntiAliasMode();
+ }
+@@ -135,7 +136,7 @@ D2DWriteTextOutRenderer::~D2DWriteTextOutRenderer()
+         mpD2DFactory->Release();
+ }
+ 
+-void D2DWriteTextOutRenderer::applyTextAntiAliasMode()
++void D2DWriteTextOutRenderer::applyTextAntiAliasMode(bool bRenderingModeNatural)
+ {
+     D2D1_TEXT_ANTIALIAS_MODE eTextAAMode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+     DWRITE_RENDERING_MODE eRenderingMode = DWRITE_RENDERING_MODE_DEFAULT;
+@@ -160,11 +161,15 @@ void D2DWriteTextOutRenderer::applyTextAntiAliasMode()
+         default:
+             break;
+     }
++
++    if (bRenderingModeNatural)
++        eRenderingMode = DWRITE_RENDERING_MODE_CLEARTYPE_NATURAL;
++
+     mpRT->SetTextRenderingParams(lclSetRenderingMode(mpDWriteFactory, eRenderingMode));
+     mpRT->SetTextAntialiasMode(eTextAAMode);
+ }
+ 
+-HRESULT D2DWriteTextOutRenderer::CreateRenderTarget()
++HRESULT D2DWriteTextOutRenderer::CreateRenderTarget(bool bRenderingModeNatural)
+ {
+     if (mpRT)
+     {
+@@ -173,19 +178,10 @@ HRESULT D2DWriteTextOutRenderer::CreateRenderTarget()
+     }
+     HRESULT hr = CHECKHR(mpD2DFactory->CreateDCRenderTarget(&mRTProps, &mpRT));
+     if (SUCCEEDED(hr))
+-        applyTextAntiAliasMode();
++        applyTextAntiAliasMode(bRenderingModeNatural);
+     return hr;
+ }
+ 
+-void D2DWriteTextOutRenderer::changeTextAntiAliasMode(D2DTextAntiAliasMode eMode)
+-{
+-    if (meTextAntiAliasMode != eMode)
+-    {
+-        meTextAntiAliasMode = eMode;
+-        applyTextAntiAliasMode();
+-    }
+-}
+-
+ bool D2DWriteTextOutRenderer::Ready() const
+ {
+     return mpGdiInterop && mpRT;
+@@ -199,7 +195,7 @@ HRESULT D2DWriteTextOutRenderer::BindDC(HDC hDC, tools::Rectangle const & rRect)
+     return CHECKHR(mpRT->BindDC(hDC, &rc));
+ }
+ 
+-bool D2DWriteTextOutRenderer::operator ()(GenericSalLayout const & rLayout, SalGraphics& rGraphics, HDC hDC)
++bool D2DWriteTextOutRenderer::operator()(GenericSalLayout const & rLayout, SalGraphics& rGraphics, HDC hDC, bool bRenderingModeNatural)
+ {
+     bool bRetry = false;
+     bool bResult = false;
+@@ -207,13 +203,13 @@ bool D2DWriteTextOutRenderer::operator ()(GenericSalLayout const & rLayout, SalG
+     do
+     {
+        bRetry = false;
+-       bResult = performRender(rLayout, rGraphics, hDC, bRetry);
++       bResult = performRender(rLayout, rGraphics, hDC, bRetry, bRenderingModeNatural);
+        nCount++;
+     } while (bRetry && nCount < 3);
+     return bResult;
+ }
+ 
+-bool D2DWriteTextOutRenderer::performRender(GenericSalLayout const & rLayout, SalGraphics& rGraphics, HDC hDC, bool& bRetry)
++bool D2DWriteTextOutRenderer::performRender(GenericSalLayout const & rLayout, SalGraphics& rGraphics, HDC hDC, bool& bRetry, bool bRenderingModeNatural)
+ {
+     if (!Ready())
+         return false;
+@@ -223,14 +219,14 @@ bool D2DWriteTextOutRenderer::performRender(GenericSalLayout const & rLayout, Sa
+ 
+     if (hr == D2DERR_RECREATE_TARGET)
+     {
+-        CreateRenderTarget();
++        CreateRenderTarget(bRenderingModeNatural);
+         bRetry = true;
+         return false;
+     }
+     if (FAILED(hr))
+     {
+         // If for any reason we can't bind fallback to legacy APIs.
+-        return ExTextOutRenderer()(rLayout, rGraphics, hDC);
++        return ExTextOutRenderer()(rLayout, rGraphics, hDC, bRenderingModeNatural);
+     }
+ 
+     mlfEmHeight = 0;
+@@ -261,15 +257,15 @@ bool D2DWriteTextOutRenderer::performRender(GenericSalLayout const & rLayout, Sa
+         mpRT->BeginDraw();
+ 
+         int nStart = 0;
+-        Point aPos(0, 0);
++        DevicePoint aPos;
+         const GlyphItem* pGlyph;
+         while (rLayout.GetNextGlyph(&pGlyph, aPos, nStart))
+         {
+             UINT16 glyphIndices[] = { pGlyph->glyphId() };
+             FLOAT glyphAdvances[] = { static_cast<FLOAT>(pGlyph->m_nNewWidth) / fHScale };
+             DWRITE_GLYPH_OFFSET glyphOffsets[] = { { 0.0f, 0.0f }, };
+-            D2D1_POINT_2F baseline = { static_cast<FLOAT>(aPos.X() - bounds.Left()) / fHScale,
+-                                       static_cast<FLOAT>(aPos.Y() - bounds.Top()) };
++            D2D1_POINT_2F baseline = { static_cast<FLOAT>(aPos.getX() - bounds.Left()) / fHScale,
++                                       static_cast<FLOAT>(aPos.getY() - bounds.Top()) };
+             WinFontTransformGuard aTransformGuard(mpRT, fHScale, rLayout, baseline, pGlyph->IsVertical());
+             DWRITE_GLYPH_RUN glyphs = {
+                 mpFontFace,
+@@ -295,7 +291,7 @@ bool D2DWriteTextOutRenderer::performRender(GenericSalLayout const & rLayout, Sa
+ 
+     if (hr == D2DERR_RECREATE_TARGET)
+     {
+-        CreateRenderTarget();
++        CreateRenderTarget(bRenderingModeNatural);
+         bRetry = true;
+     }
+ 
+diff --git a/vcl/win/gdi/winlayout.cxx b/vcl/win/gdi/winlayout.cxx
+index 83033e9f6be8..c55dbbf978e5 100644
+--- a/vcl/win/gdi/winlayout.cxx
++++ b/vcl/win/gdi/winlayout.cxx
+@@ -52,7 +52,7 @@
+ #include <shlwapi.h>
+ #include <winver.h>
+ 
+-TextOutRenderer& TextOutRenderer::get(bool bUseDWrite)
++TextOutRenderer& TextOutRenderer::get(bool bUseDWrite, bool bRenderingModeNatural)
+ {
+     SalData* const pSalData = GetSalData();
+ 
+@@ -64,9 +64,13 @@ TextOutRenderer& TextOutRenderer::get(bool bUseDWrite)
+ 
+     if (bUseDWrite)
+     {
+-        if (!pSalData->m_pD2DWriteTextOutRenderer)
++        if (!pSalData->m_pD2DWriteTextOutRenderer
++            || static_cast<D2DWriteTextOutRenderer*>(pSalData->m_pD2DWriteTextOutRenderer.get())
++                       ->GetRenderingModeNatural()
++                   != bRenderingModeNatural)
+         {
+-            pSalData->m_pD2DWriteTextOutRenderer.reset(new D2DWriteTextOutRenderer());
++            pSalData->m_pD2DWriteTextOutRenderer.reset(
++                new D2DWriteTextOutRenderer(bRenderingModeNatural));
+         }
+         return *pSalData->m_pD2DWriteTextOutRenderer;
+     }
+@@ -78,10 +82,10 @@ TextOutRenderer& TextOutRenderer::get(bool bUseDWrite)
+ }
+ 
+ bool ExTextOutRenderer::operator()(GenericSalLayout const& rLayout, SalGraphics& /*rGraphics*/,
+-                                   HDC hDC)
++                                   HDC hDC, bool /*bRenderingModeNatural*/)
+ {
+     int nStart = 0;
+-    Point aPos(0, 0);
++    DevicePoint aPos;
+     const GlyphItem* pGlyph;
+     const WinFontInstance* pWinFont = static_cast<const WinFontInstance*>(&rLayout.GetFont());
+     UINT nTextAlign = GetTextAlign(hDC);
+@@ -106,8 +110,8 @@ bool ExTextOutRenderer::operator()(GenericSalLayout const& rLayout, SalGraphics&
+         if (nCurTextAlign != nNewTextAlign)
+             SetTextAlign(hDC, nNewTextAlign);
+ 
+-        ExtTextOutW(hDC, aPos.X(), aPos.Y() + nYOffset, ETO_GLYPH_INDEX, nullptr, &glyphWStr, 1,
+-                    nullptr);
++        ExtTextOutW(hDC, aPos.getX(), aPos.getY() + nYOffset, ETO_GLYPH_INDEX, nullptr, &glyphWStr,
++                    1, nullptr);
+ 
+         nCurTextAlign = nNewTextAlign;
+     }
+@@ -294,10 +298,11 @@ void WinFontInstance::SetGraphics(WinSalGraphics* pGraphics)
+     SelectObject(hDC, hOrigFont);
+ }
+ 
+-void WinSalGraphics::DrawTextLayout(const GenericSalLayout& rLayout, HDC hDC, bool bUseDWrite)
++void WinSalGraphics::DrawTextLayout(const GenericSalLayout& rLayout, HDC hDC, bool bUseDWrite,
++                                    bool bRenderingModeNatural)
+ {
+-    TextOutRenderer& render = TextOutRenderer::get(bUseDWrite);
+-    render(rLayout, *this, hDC);
++    TextOutRenderer& render = TextOutRenderer::get(bUseDWrite, bRenderingModeNatural);
++    render(rLayout, *this, hDC, bRenderingModeNatural);
+ }
+ 
+ void WinSalGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+@@ -313,7 +318,11 @@ void WinSalGraphics::DrawTextLayout(const GenericSalLayout& rLayout)
+     const HFONT hOrigFont = ::SelectFont(hDC, hLayoutFont);
+ 
+     // DWrite text renderer performs vertical writing better except printing.
+-    DrawTextLayout(rLayout, hDC, !mbPrinter && rLayout.GetFont().GetFontSelectPattern().mbVertical);
++    const bool bVerticalScreenText
++        = !mbPrinter && rLayout.GetFont().GetFontSelectPattern().mbVertical;
++    const bool bRenderingModeNatural = getTextRenderModeForResolutionIndependentLayoutEnabled();
++    const bool bUseDWrite = bVerticalScreenText || bRenderingModeNatural;
++    DrawTextLayout(rLayout, hDC, bUseDWrite, bRenderingModeNatural);
+ 
+     ::SelectFont(hDC, hOrigFont);
+ }
+-- 
+2.35.1
+

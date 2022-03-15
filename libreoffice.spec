@@ -971,6 +971,7 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # pp
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 %ifarch s390x
+sed -i -e /CppunitTest_drawinglayer_processors/d drawinglayer/Module_drawinglayer.mk
 sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
 %endif
 

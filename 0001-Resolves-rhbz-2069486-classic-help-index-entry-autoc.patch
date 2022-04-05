@@ -1,0 +1,71 @@
+From 2dbe49b050376f3c4f50efddc73417f3533a00de Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 5 Apr 2022 16:44:39 +0100
+Subject: [PATCH] Resolves: rhbz#2069486 classic help index entry autocompletes
+ on del/backspace
+
+when it shouldn't
+
+Change-Id: I90fa338479e0d5612d7b09f94c45e356ea71f89e
+---
+ sfx2/source/appl/newhelp.cxx | 17 ++++++++++++++++-
+ sfx2/source/appl/newhelp.hxx |  1 +
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/sfx2/source/appl/newhelp.cxx b/sfx2/source/appl/newhelp.cxx
+index fb0516fedfd4..c1c9e86ff403 100644
+--- a/sfx2/source/appl/newhelp.cxx
++++ b/sfx2/source/appl/newhelp.cxx
+@@ -396,6 +396,7 @@ IndexTabPage_Impl::IndexTabPage_Impl(weld::Widget* pParent, SfxHelpIndexWindow_I
+     , bIsActivated(false)
+     , nRowHeight(m_xIndexList->get_height_rows(1))
+     , nAllHeight(0)
++    , nLastCharCode(0)
+ {
+     m_xIndexList->set_size_request(m_xIndexList->get_approximate_digit_width() * 30, -1);
+ 
+@@ -465,7 +466,19 @@ IMPL_LINK_NOARG(IndexTabPage_Impl, TreeChangeHdl, weld::TreeView&, void)
+ 
+ IMPL_LINK_NOARG(IndexTabPage_Impl, EntryChangeHdl, weld::Entry&, void)
+ {
+-    aAutoCompleteIdle.Start();
++    switch (nLastCharCode)
++    {
++        case css::awt::Key::DELETE_WORD_BACKWARD:
++        case css::awt::Key::DELETE_WORD_FORWARD:
++        case css::awt::Key::DELETE_TO_BEGIN_OF_LINE:
++        case css::awt::Key::DELETE_TO_END_OF_LINE:
++        case KEY_BACKSPACE:
++        case KEY_DELETE:
++            break;
++        default:
++            aAutoCompleteIdle.Start();
++            break;
++    }
+ }
+ 
+ IMPL_LINK(IndexTabPage_Impl, KeyInputHdl, const KeyEvent&, rKEvt, bool)
+@@ -530,6 +543,8 @@ IMPL_LINK(IndexTabPage_Impl, KeyInputHdl, const KeyEvent&, rKEvt, bool)
+ //        m_bTreeChange = false;
+         return true;
+     }
++
++    nLastCharCode = nCode;
+     return false;
+ }
+ 
+diff --git a/sfx2/source/appl/newhelp.hxx b/sfx2/source/appl/newhelp.hxx
+index 7d22336ecf83..f26bf93379a9 100644
+--- a/sfx2/source/appl/newhelp.hxx
++++ b/sfx2/source/appl/newhelp.hxx
+@@ -102,6 +102,7 @@ private:
+     bool                bIsActivated;
+     int                 nRowHeight;
+     int                 nAllHeight;
++    sal_uInt16          nLastCharCode;
+ 
+     void                InitializeIndex();
+     void                ClearIndex();
+-- 
+2.35.1
+

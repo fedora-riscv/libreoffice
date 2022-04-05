@@ -264,6 +264,7 @@ Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
+Patch7: 0001-Resolves-rhbz-2069486-classic-help-index-entry-autoc.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2268,6 +2269,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.6.2-1
 - latest version
+- Resolves: rhbz#2069486 help index entry autocompleted on del/backspace
 
 * Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-6
 - fix an a11y related crash on switching calc tabs

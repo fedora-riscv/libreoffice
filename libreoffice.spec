@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        6%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -267,6 +267,7 @@ Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
 Patch7: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 Patch8: 0001-qt5-crash-entering-with-french-IM.patch
 Patch9: 0001-configure.ac-Update-kf5-include-lib-check-to-work-wi.patch
+Patch10: 0001-tdf-145090-LO-Calc-Crash-with-drop-down-menu.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2269,6 +2270,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-6
+- fix an a11y related crash on switching calc tabs
+
 * Tue Mar 08 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-5
 - fix crash in qt5 on entering ë with french IM
 - rhbz#2061598 No Icons Launcher of LibreOffice Apps in Raspberry Pi

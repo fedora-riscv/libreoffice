@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.2.5
+%global libo_version 7.2.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        6%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -263,11 +263,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-make-with-idlc-cpp-cpp-work-for-gcc-cpp-as-a-ucpp-re.patch
 Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
-Patch6: 0001-tdf-146971-changing-a11y-desc-to-replace-PRODUCTNAME.patch
-Patch7: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
-Patch8: 0001-qt5-crash-entering-with-french-IM.patch
-Patch9: 0001-configure.ac-Update-kf5-include-lib-check-to-work-wi.patch
-Patch10: 0001-tdf-145090-LO-Calc-Crash-with-drop-down-menu.patch
+Patch6: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2270,6 +2266,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.6.2-1
+- latest version
+
 * Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.5.2-6
 - fix an a11y related crash on switching calc tabs
 

@@ -1,4 +1,4 @@
-From 5d5e890efe77686c4be1f534cce8949fb083897c Mon Sep 17 00:00:00 2001
+From b275830f03d3565d76f074d7110c4940e935b8f3 Mon Sep 17 00:00:00 2001
 From: Stephan Bergmann <sbergman@redhat.com>
 Date: Tue, 19 Apr 2022 22:03:37 +0200
 Subject: [PATCH] Fix determining ZXING_CFLAGS for --with-system-zxing
@@ -21,51 +21,54 @@ the typical location for these include files).
 
 However, for e.g. a Fedora Flatpak-from-RPM build of --with-system-zxing
 LibreOffice, the include files will be in /app/include/ZXing/ rather than in
-/usr/include/ZXing/.  (And which AC_CHECK_HEADER would find via CXXFLAGS
-containing -I/app/include for such a build.  But the hardcoded ZXING_CFLAGS then
-caused compiling e.g. cui/source/dialogs/QrCodeGenDialog.cxx to fail because it
-didn't find BarcodeFormat.h etc. in the hardcoded /usr/include/ZXing/.)
+/usr/include/ZXing/.  (And which AC_CHECK_HEADER would find via
+CPLUS_INCLUDE_PATH containing /app/include for such a build.  But the hardcoded
+ZXING_CFLAGS then caused compiling e.g. cui/source/dialogs/QrCodeGenDialog.cxx
+to fail because it didn't find BarcodeFormat.h etc. in the hardcoded
+/usr/include/ZXing/.)
 
-So honor any -I* options in CXXFLAGS when checking for the sample zxing include
-file (MultiFormatWriter.h), trying them one by one in order (and with a fallback
-to /usr/include).  (The explicit unset ac_cv_header_MultiFormatWriter_h is
-needed so that the second and later iterations of the for loop don't erroneously
-reuse a cached "no" result.)
+So when checking for the sample zxing include file (MultiFormatWriter.h), try
+any $CPLUS_INCLUDE_PATH paths one by one (and with a fallback to /usr/include).
+(The explicit unset ac_cv_header_MultiFormatWriter_h is needed so that the
+second and later iterations of the for loop don't erroneously reuse a cached
+"no" result.)
 
 Change-Id: Id85f9960ffd3759c7960ef3a81982b85bc3c04c1
 ---
- configure.ac | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ configure.ac | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index e4fe7891ddf2..8a1b71577cf3 100644
+index e4fe7891ddf2..e27988c1ff5e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -11153,10 +11153,30 @@ else
+@@ -11153,10 +11153,32 @@ else
      if test "$with_system_zxing" = "yes"; then
          AC_MSG_RESULT([external])
          SYSTEM_ZXING=TRUE
-+        my_CXXFLAGS=
-+        my_INCLUDES=
-+        for i in $CXXFLAGS; do
-+            case "$i" in
-+            -I*)
-+                my_INCLUDES="$my_INCLUDES $i"
-+                ;;
-+            *)
-+                my_CXXFLAGS="$my_CXXFLAGS $i"
-+                ;;
-+            esac
-+        done
 +        ZXING_CFLAGS=
          AC_LANG_PUSH([C++])
 -        AC_CHECK_HEADER(ZXing/MultiFormatWriter.h, [],
 -            [AC_MSG_ERROR(zxing headers not found.)], [#include <stdexcept>])
 -        ZXING_CFLAGS=-I/usr/include/ZXing
 +        save_CXXFLAGS=$CXXFLAGS
-+        for i in $my_INCLUDES -I/usr/include; do
-+            CXXFLAGS="$my_CXXFLAGS $i/ZXing"
-+            AC_CHECK_HEADER(MultiFormatWriter.h, [ZXING_CFLAGS=$i/ZXing; break],
++        save_IFS=$IFS
++        IFS=$P_SEP
++        for i in $CPLUS_INCLUDE_PATH /usr/include; do
++            dnl Reset IFS as soon as possible, to avoid unexpected side effects (and the
++            dnl "/usr/include" fallback makes sure we get here at least once; resetting rather than
++            dnl unsetting follows the advice at <http://git.savannah.gnu.org/gitweb/?p=autoconf.git;
++            dnl a=commit;h=e51c9919f2cf70185b7916ac040bc0bbfd0f743b> "Add recommendation on (not)
++            dnl unsetting IFS."):
++            IFS=$save_IFS
++            dnl TODO: GCC and Clang treat empty paths in CPLUS_INCLUDE_PATH like ".", but we simply
++            dnl ignore them here:
++            if test -z "$i"; then
++                continue
++            fi
++            dnl TODO: White space in $i would cause problems:
++            CXXFLAGS="$save_CXXFLAGS -I$i/ZXing"
++            AC_CHECK_HEADER(MultiFormatWriter.h, [ZXING_CFLAGS=-I$i/ZXing; break],
 +                [unset ac_cv_header_MultiFormatWriter_h], [#include <stdexcept>])
 +        done
 +        CXXFLAGS=$save_CXXFLAGS

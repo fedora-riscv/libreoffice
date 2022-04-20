@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -265,6 +265,7 @@ Patch4: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 Patch7: 0001-Resolves-rhbz-2069486-classic-help-index-entry-autoc.patch
+Patch8: 0001-Fix-determining-ZXING_CFLAGS-for-with-system-zxing.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2267,6 +2268,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Apr 19 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.2.6.2-2-UNBUILT
+- Fix determining ZXING_CFLAGS for Flatpak build
+
 * Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.6.2-1
 - latest version
 - Resolves: rhbz#2069486 help index entry autocompleted on del/backspace

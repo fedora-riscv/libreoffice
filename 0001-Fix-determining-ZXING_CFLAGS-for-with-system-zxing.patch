@@ -1,0 +1,80 @@
+From 5d5e890efe77686c4be1f534cce8949fb083897c Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Tue, 19 Apr 2022 22:03:37 +0200
+Subject: [PATCH] Fix determining ZXING_CFLAGS for --with-system-zxing
+
+While at least Linux distros typically provide the zxing include files in a
+dedicated ZXing sub-directory (i.e., /usr/include/ZXing/), the bundled
+external/zxing does not (it rather provides them in
+workdir/UnpackedTarball/zxing/core/src/, cf. RepositoryExternal.mk).  Therefore,
+source files like cui/source/dialogs/QrCodeGenDialog.cxx
+
+  #include <BarcodeFormat.h>
+
+etc. rather than
+
+  #include <ZXing/BarcodeFormat.h>
+
+etc., and for --with-system-zxing ad92c7dfa64c9e08aa2bcf612a9a4a68e9deae22 "fix
+system zxing build" simply hardcoded ZXING_CFLAGS=-I/usr/include/ZXing (i.e.,
+the typical location for these include files).
+
+However, for e.g. a Fedora Flatpak-from-RPM build of --with-system-zxing
+LibreOffice, the include files will be in /app/include/ZXing/ rather than in
+/usr/include/ZXing/.  (And which AC_CHECK_HEADER would find via CXXFLAGS
+containing -I/app/include for such a build.  But the hardcoded ZXING_CFLAGS then
+caused compiling e.g. cui/source/dialogs/QrCodeGenDialog.cxx to fail because it
+didn't find BarcodeFormat.h etc. in the hardcoded /usr/include/ZXing/.)
+
+So honor any -I* options in CXXFLAGS when checking for the sample zxing include
+file (MultiFormatWriter.h), trying them one by one in order (and with a fallback
+to /usr/include).  (The explicit unset ac_cv_header_MultiFormatWriter_h is
+needed so that the second and later iterations of the for loop don't erroneously
+reuse a cached "no" result.)
+
+Change-Id: Id85f9960ffd3759c7960ef3a81982b85bc3c04c1
+---
+ configure.ac | 26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index e4fe7891ddf2..8a1b71577cf3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -11153,10 +11153,30 @@ else
+     if test "$with_system_zxing" = "yes"; then
+         AC_MSG_RESULT([external])
+         SYSTEM_ZXING=TRUE
++        my_CXXFLAGS=
++        my_INCLUDES=
++        for i in $CXXFLAGS; do
++            case "$i" in
++            -I*)
++                my_INCLUDES="$my_INCLUDES $i"
++                ;;
++            *)
++                my_CXXFLAGS="$my_CXXFLAGS $i"
++                ;;
++            esac
++        done
++        ZXING_CFLAGS=
+         AC_LANG_PUSH([C++])
+-        AC_CHECK_HEADER(ZXing/MultiFormatWriter.h, [],
+-            [AC_MSG_ERROR(zxing headers not found.)], [#include <stdexcept>])
+-        ZXING_CFLAGS=-I/usr/include/ZXing
++        save_CXXFLAGS=$CXXFLAGS
++        for i in $my_INCLUDES -I/usr/include; do
++            CXXFLAGS="$my_CXXFLAGS $i/ZXing"
++            AC_CHECK_HEADER(MultiFormatWriter.h, [ZXING_CFLAGS=$i/ZXing; break],
++                [unset ac_cv_header_MultiFormatWriter_h], [#include <stdexcept>])
++        done
++        CXXFLAGS=$save_CXXFLAGS
++        if test -z "$ZXING_CFLAGS"; then
++            AC_MSG_ERROR(zxing headers not found.)
++        fi
+         AC_CHECK_LIB([ZXing], [main], [ZXING_LIBS=-lZXing],
+             [ AC_CHECK_LIB([ZXingCore], [main], [ZXING_LIBS=-lZXingCore],
+             [ AC_MSG_ERROR(zxing C++ library not found.) ])], [])
+-- 
+2.35.1
+

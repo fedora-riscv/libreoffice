@@ -266,6 +266,7 @@ Patch5: 0001-annocheck-warning-about-missing-.note.gnu.property-s.patch
 Patch6: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 Patch7: 0001-Resolves-rhbz-2069486-classic-help-index-entry-autoc.patch
 Patch8: 0001-Fix-determining-ZXING_CFLAGS-for-with-system-zxing.patch
+Patch9: 0001-tdf-143135-Qt-break-recursive-IM-QueryCursorRect.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2268,7 +2269,8 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Tue Apr 19 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.2.6.2-2-UNBUILT
+* Tue Apr 19 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.2.6.2-2
+- rhbz#2081652 backport qt recursive-IM-QueryCursorRect fix
 - Fix determining ZXING_CFLAGS for Flatpak build
 
 * Tue Apr 05 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.6.2-1

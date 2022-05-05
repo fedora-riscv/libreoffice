@@ -1,0 +1,118 @@
+From d5b054afabc07b528b3e545a00bdc19194c47f98 Mon Sep 17 00:00:00 2001
+From: Jan-Marek Glogowski <glogow@fbihome.de>
+Date: Wed, 6 Apr 2022 18:59:10 +0200
+Subject: [PATCH] tdf#143135 Qt break recursive IM QueryCursorRect
+
+To reproduce the Impress crash, you need an IM, e.g. fcitx / ibus.
+This is triggered by having an active input, like double-clicking
+one of a presentations text fields, then leaving the window and
+switching back to it.
+
+This results in a stack exhaustion in a few seconds. The backtrace
+is basically:
+
+QWidget::setFocus
+QtFrame::ToTop
+sd::Window::GrabFocus
+ImplHandleExtTextInputPos
+QtWidget::inputMethodQuery
+QInputMethod::cursorRectangle
+QWidget::setFocus
+QApplication::setActiveWindow
+QtInstance::DoYield
+main
+
+I scratched my head over the longer backtrace for while, but there
+seems to be no good way to prevent this from LO's POV. The only
+alternative from the Qt VCL plugin is QtFrame::ToTop. That code
+is less ugly (no mutable or cached result), but QtWidget::
+inputMethodQuery is earlier in the backtrace.
+
+Change-Id: Ief3a8e44bca295cc676e75050d52d70a1da98a88
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/132643
+Tested-by: Jenkins
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+Reviewed-by: Jan-Marek Glogowski <glogow@fbihome.de>
+(cherry picked from commit e81385277c091dabb1f6542a94229d7dcc77289b)
+---
+ vcl/inc/qt5/Qt5Widget.hxx |  3 +++
+ vcl/qt5/Qt5Frame.cxx      |  5 +++--
+ vcl/qt5/Qt5Widget.cxx     | 18 +++++++++++++-----
+ 3 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/vcl/inc/qt5/Qt5Widget.hxx b/vcl/inc/qt5/Qt5Widget.hxx
+index 7bf7ead6ae9a..cfdabc4abe01 100644
+--- a/vcl/inc/qt5/Qt5Widget.hxx
++++ b/vcl/inc/qt5/Qt5Widget.hxx
+@@ -19,6 +19,7 @@
+ 
+ #pragma once
+ 
++#include <QtCore/QRect>
+ #include <QtWidgets/QWidget>
+ #include <rtl/ustring.hxx>
+ 
+@@ -36,6 +37,8 @@ class Qt5Widget : public QWidget
+ 
+     Qt5Frame& m_rFrame;
+     bool m_bNonEmptyIMPreeditSeen;
++    mutable bool m_bInInputMethodQueryCursorRectangle;
++    mutable QRect m_aImCursorRectangle;
+     int m_nDeltaX;
+     int m_nDeltaY;
+ 
+diff --git a/vcl/qt5/Qt5Frame.cxx b/vcl/qt5/Qt5Frame.cxx
+index 322f293828cd..36c2e6a580d3 100644
+--- a/vcl/qt5/Qt5Frame.cxx
++++ b/vcl/qt5/Qt5Frame.cxx
+@@ -771,8 +771,9 @@ void Qt5Frame::ToTop(SalFrameToTop nFlags)
+         pWidget->activateWindow();
+     else if ((nFlags & SalFrameToTop::GrabFocus) || (nFlags & SalFrameToTop::GrabFocusOnly))
+     {
+-        pWidget->activateWindow();
+-        pWidget->setFocus();
++        if (!(nFlags & SalFrameToTop::GrabFocusOnly))
++            pWidget->activateWindow();
++        pWidget->setFocus(Qt::OtherFocusReason);
+     }
+ }
+ 
+diff --git a/vcl/qt5/Qt5Widget.cxx b/vcl/qt5/Qt5Widget.cxx
+index 02bc22ee3d44..f23646ae781a 100644
+--- a/vcl/qt5/Qt5Widget.cxx
++++ b/vcl/qt5/Qt5Widget.cxx
+@@ -602,6 +602,7 @@ Qt5Widget::Qt5Widget(Qt5Frame& rFrame, Qt::WindowFlags f)
+     : QWidget(Q_NULLPTR, f)
+     , m_rFrame(rFrame)
+     , m_bNonEmptyIMPreeditSeen(false)
++    , m_bInInputMethodQueryCursorRectangle(false)
+     , m_nDeltaX(0)
+     , m_nDeltaY(0)
+ {
+@@ -776,11 +777,18 @@ QVariant Qt5Widget::inputMethodQuery(Qt::InputMethodQuery property) const
+         }
+         case Qt::ImCursorRectangle:
+         {
+-            const qreal fRatio = m_rFrame.devicePixelRatioF();
+-            SalExtTextInputPosEvent aPosEvent;
+-            m_rFrame.CallCallback(SalEvent::ExtTextInputPos, &aPosEvent);
+-            return QVariant(QRect(aPosEvent.mnX / fRatio, aPosEvent.mnY / fRatio,
+-                                  aPosEvent.mnWidth / fRatio, aPosEvent.mnHeight / fRatio));
++            if (!m_bInInputMethodQueryCursorRectangle)
++            {
++                m_bInInputMethodQueryCursorRectangle = true;
++                SalExtTextInputPosEvent aPosEvent;
++                m_rFrame.CallCallback(SalEvent::ExtTextInputPos, &aPosEvent);
++                const qreal fRatio = m_rFrame.devicePixelRatioF();
++                m_aImCursorRectangle.setRect(aPosEvent.mnX / fRatio, aPosEvent.mnY / fRatio,
++                                             aPosEvent.mnWidth / fRatio,
++                                             aPosEvent.mnHeight / fRatio);
++                m_bInInputMethodQueryCursorRectangle = false;
++            }
++            return QVariant(m_aImCursorRectangle);
+         }
+         case Qt::ImAnchorPosition:
+         {
+-- 
+2.35.1
+

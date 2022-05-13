@@ -267,6 +267,7 @@ Patch6: 0001-rhbz-2047319-drop-the-SolarMutex-during-QApplication.patch
 Patch7: 0001-Resolves-rhbz-2069486-classic-help-index-entry-autoc.patch
 Patch8: 0001-Fix-determining-ZXING_CFLAGS-for-with-system-zxing.patch
 Patch9: 0001-tdf-143135-Qt-break-recursive-IM-QueryCursorRect.patch
+Patch10: 0001-disable-test-for-arm.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch

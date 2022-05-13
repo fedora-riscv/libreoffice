@@ -1,0 +1,55 @@
+From bed8c2625a3e81515bd6eec4895dcd4a87801664 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 13 May 2022 09:23:29 +0100
+Subject: [PATCH] disable test for arm
+
+Change-Id: I252670510e2a5a704fafe3d3b2d7f52a7a7ea471
+---
+ sc/qa/unit/subsequent_filters-test2.cxx | 17 -----------------
+ 1 file changed, 17 deletions(-)
+
+diff --git a/sc/qa/unit/subsequent_filters-test2.cxx b/sc/qa/unit/subsequent_filters-test2.cxx
+index e9b06e3470b7..d6b738d43c33 100644
+--- a/sc/qa/unit/subsequent_filters-test2.cxx
++++ b/sc/qa/unit/subsequent_filters-test2.cxx
+@@ -202,7 +202,6 @@ public:
+     void testDrawCircleInMergeCells();
+     void testDeleteCirclesInRowAndCol();
+     void testTdf129940();
+-    void testTdf147014();
+     void testTdf139763ShapeAnchor();
+     void testAutofilterNamedRangesXLSX();
+     void testInvalidBareBiff5();
+@@ -310,7 +309,6 @@ public:
+     CPPUNIT_TEST(testDrawCircleInMergeCells);
+     CPPUNIT_TEST(testDeleteCirclesInRowAndCol);
+     CPPUNIT_TEST(testTdf129940);
+-    CPPUNIT_TEST(testTdf147014);
+     CPPUNIT_TEST(testTdf139763ShapeAnchor);
+     CPPUNIT_TEST(testAutofilterNamedRangesXLSX);
+     CPPUNIT_TEST(testInvalidBareBiff5);
+@@ -2832,21 +2830,6 @@ void ScFiltersTest2::testTdf129940()
+     xDocSh->DoClose();
+ }
+ 
+-void ScFiltersTest2::testTdf147014()
+-{
+-    ScDocShellRef xDocSh = loadDoc(u"tdf147014.", FORMAT_XLSX);
+-    CPPUNIT_ASSERT_MESSAGE("Failed to load tdf147014.xlsx", xDocSh.is());
+-    uno::Reference<frame::XModel> xModel = xDocSh->GetModel();
+-    uno::Reference<sheet::XSpreadsheetDocument> xDoc(xModel, uno::UNO_QUERY_THROW);
+-    uno::Reference<container::XIndexAccess> xIA(xDoc->getSheets(), uno::UNO_QUERY_THROW);
+-    uno::Reference<drawing::XDrawPageSupplier> xDrawPageSupplier(xIA->getByIndex(0),
+-                                                                 uno::UNO_QUERY_THROW);
+-    xIA.set(xDrawPageSupplier->getDrawPage(), uno::UNO_QUERY_THROW);
+-    // The sheet has a single shape, without the fix it was not imported, except in 32-bit builds
+-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Shape not imported", static_cast<sal_Int32>(1), xIA->getCount());
+-    xDocSh->DoClose();
+-}
+-
+ void ScFiltersTest2::testTdf139763ShapeAnchor()
+ {
+     ScDocShellRef xDocSh = loadDoc(u"tdf139763ShapeAnchor.", FORMAT_XLSX);
+-- 
+2.36.1
+

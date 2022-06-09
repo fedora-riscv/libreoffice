@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.3.3
+%global libo_version 7.3.4
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -2185,6 +2185,12 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jun 09 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.4.2-1
+- 7.3.4 release
+
+* Wed May 04 2022 Thomas Rodgers <trodgers@redhat.com> - 1:7.3.3.2-2
+- Rebuilt for Boost 1.78
+
 * Mon May 02 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.3.2-1
 - 7.3.3 release
 

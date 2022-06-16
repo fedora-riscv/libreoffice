@@ -254,6 +254,7 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
+Patch7: 0001-rhbz-2097411-Avoid-obsolete-PyThreadState_Delete-cra.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

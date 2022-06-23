@@ -844,7 +844,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt_BR -y pt_BR -m pt -a pt -p pt_BR -T -X -g pt_BR
 
-else
+%else
 
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR

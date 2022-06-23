@@ -842,7 +842,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %if 0%{?fedora} > 36 || 0%{?rhel} > 9
 
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt_BR -y pt_BR -m pt -a pt -p pt_BR -T -X -g pt_BR
+%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -H -Y -m pt -a pt -p pt_BR -T -X -g pt_BR
 
 %else
 

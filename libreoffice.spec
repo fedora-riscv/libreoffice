@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -840,7 +840,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 
 %define langpack_lang Brazilian Portuguese
-%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt_BR -y pt_BR -m pt -a pt -p pt_BR -T -X -g pt_BR
 
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
@@ -2184,6 +2184,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jun 23 2022 Parag Nemade <pnemade AT redhat DOT com> - 1:7.3.4.2-3
+- Fix Requires: hunspell-pt-BR and hyphen-pt-BR for libreoffice-langpack-pt-BR
+
 * Mon Jun 13 2022 Python Maint <python-maint@redhat.com> - 1:7.3.4.2-2
 - Rebuilt for Python 3.11
 

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -255,6 +255,7 @@ Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
 Patch7: 0001-rhbz-2097411-Avoid-obsolete-PyThreadState_Delete-cra.patch
+Patch8: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2193,6 +2194,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jul 11 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.1.3.2-3
+- Resolves: rhbz#2104545 Avoid call to utl::IsYounger if possible
+
 * Thu Jun 23 2022 Parag Nemade <pnemade AT redhat DOT com> - 1:7.3.4.2-3
 - Fix Requires: hunspell-pt-BR and hyphen-pt-BR for libreoffice-langpack-pt-BR
 

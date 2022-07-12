@@ -1,0 +1,70 @@
+From c3afc3ba94500f726475adc895de6c92814ae8bb Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Fri, 8 Jul 2022 16:47:01 +0200
+Subject: [PATCH] rhbz#2104545: Only call utl::IsYounger when its result is
+ actually used
+
+...as it may be expensive, or even throw (uncaught) exceptions (as apparently
+happened at rhbz#2104545, throwing some css::uno::RuntimeException while aMedObj
+was an sftp URL).
+
+The two branches in the if statement's condition that will now potentially call
+physObjIsOlder are disjoint (one for aMedObj being a file URL, the other for
+aMedObj being any WebDAV-related URL), so there is no chance that this change
+accidentally causes utl::IsYounger to be called more often than it used to be
+called.
+
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/136904
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+(cherry picked from commit 27ffdcf096a7e9863489599dd80528b088d1e9b8)
+Conflicts:
+	sfx2/source/view/viewfrm.cxx
+
+Change-Id: I29a5f18a12a8b83ec603366db26451175b5622c9
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/136909
+Tested-by: Jenkins
+Reviewed-by: Michael Stahl <michael.stahl@allotropia.de>
+---
+ sfx2/source/view/viewfrm.cxx | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/sfx2/source/view/viewfrm.cxx b/sfx2/source/view/viewfrm.cxx
+index ecae96b5d945..7f3bf1a6bcc2 100644
+--- a/sfx2/source/view/viewfrm.cxx
++++ b/sfx2/source/view/viewfrm.cxx
+@@ -270,6 +270,11 @@ bool AskPasswordToModify_Impl( const uno::Reference< task::XInteractionHandler >
+ 
+     return bResult;
+ }
++
++bool physObjIsOlder(INetURLObject const & aMedObj, INetURLObject const & aPhysObj) {
++    return ::utl::UCBContentHelper::IsYounger(aMedObj.GetMainURL( INetURLObject::DecodeMechanism::NONE),
++                                           aPhysObj.GetMainURL( INetURLObject::DecodeMechanism::NONE ) );
++}
+ }
+ 
+ void SfxViewFrame::ExecReload_Impl( SfxRequest& rReq )
+@@ -438,8 +443,6 @@ void SfxViewFrame::ExecReload_Impl( SfxRequest& rReq )
+             // etag tells that the cache representation (e.g. in LO) is different from the one on the server,
+             // but tells nothing about the age
+             // Details at this link: http://tools.ietf.org/html/rfc4918#section-15, section 15.7
+-            bool bPhysObjIsYounger = ::utl::UCBContentHelper::IsYounger( aMedObj.GetMainURL( INetURLObject::DecodeMechanism::NONE ),
+-                                                                         aPhysObj.GetMainURL( INetURLObject::DecodeMechanism::NONE ) );
+             bool bIsWebDAV = aMedObj.isAnyKnownWebDAVScheme();
+ 
+             // tdf#118938 Reload the document when the user enters the editing password,
+@@ -447,8 +450,8 @@ void SfxViewFrame::ExecReload_Impl( SfxRequest& rReq )
+             if ( ( !bNeedsReload && ( ( aMedObj.GetProtocol() == INetProtocol::File &&
+                                         ( aMedObj.getFSysPath( FSysStyle::Detect ) != aPhysObj.getFSysPath( FSysStyle::Detect )
+                                           || bPasswordEntered ) &&
+-                                        !bPhysObjIsYounger )
+-                                      || ( bIsWebDAV && !bPhysObjIsYounger )
++                                        !physObjIsOlder(aMedObj, aPhysObj) )
++                                      || ( bIsWebDAV && !physObjIsOlder(aMedObj, aPhysObj) )
+                                       || ( pMed->IsRemote() && !bIsWebDAV ) ) )
+                  || pVersionItem )
+             // <- tdf#82744
+-- 
+2.36.1
+

@@ -1,0 +1,75 @@
+From 1638b4f78af70b7b97d0a081ed51390dd87bf1f9 Mon Sep 17 00:00:00 2001
+From: Stephan Bergmann <sbergman@redhat.com>
+Date: Thu, 16 Jun 2022 18:58:18 +0200
+Subject: [PATCH] rhbz#2097411 Avoid obsolete PyThreadState_Delete crashing
+ Python 3.11
+
+1fb53a637597f76bea86514b62ddfad34f60c889 "pyuno_loader::CreateInstance: delete
+the initial PyThreadState" had added the PyThreadState_Delete for claimed
+benefits but whose details appear lost to history (cf. the comment thread
+starting at
+<https://gerrit.libreoffice.org/c/core/+/3452/2#message-602ff52abdd1c95fd5c13cfe405b5fadd0048c5f>
+"pyuno_loader::CreateInstance: delete the initial PyThreadState").  And at least
+a recent master Linux --enable-python=fully-internal build with the bundled
+Python 3.8.12 appears to succeed `make check` just fine with the
+PyThreadState_Delete temporarily removed.
+
+But on the other hand, building against upcoming Python 3.11 now started to make
+CppunitTest_services fail with
+
+> Fatal Python error: init_threadstate: thread state already initialized
+> Python runtime state: initialized
+> Thread 0x0000ffff81c8b020 (most recent call first):
+>   <no Python frame>
+> Fatal exception: Signal 6
+> Stack:
+> /builddir/build/BUILD/libreoffice-7.3.4.2/instdir/program/libuno_sal.so.3(+0x37c28)[0xffff81be7c28]
+> /builddir/build/BUILD/libreoffice-7.3.4.2/instdir/program/libuno_sal.so.3(+0x37e40)[0xffff81be7e40]
+> linux-vdso.so.1(__kernel_rt_sigreturn+0x0)[0xffff81ccb7ec]
+> /lib64/libc.so.6(+0x82878)[0xffff81742878]
+> /lib64/libc.so.6(raise+0x20)[0xffff816fae00]
+> /lib64/libc.so.6(abort+0xe8)[0xffff816e72b8]
+> /lib64/libpython3.11.so.1.0(+0x104e28)[0xfffee4de4e28]
+> /lib64/libpython3.11.so.1.0(+0x105200)[0xfffee4de5200]
+> /lib64/libpython3.11.so.1.0(PyThread_get_thread_native_id+0x0)[0xfffee4ed6764]
+> /lib64/libpython3.11.so.1.0(PyThreadState_New+0x14)[0xfffee4ed6628]
+> /builddir/build/BUILD/libreoffice-7.3.4.2/instdir/program/libpyuno.so(_ZN5pyuno14PyThreadAttachC2EP3_is+0x78)[0xfffee4c8c52c]
+> /builddir/build/BUILD/libreoffice-7.3.4.2/instdir/program/libpythonloaderlo.so(pyuno_Loader_get_implementation+0x5c)[0xfffee5243060]
+> /builddir/build/BUILD/libreoffice-7.3.4.2/instdir/program/libuno_cppuhelpergcc3.so.3(+0x544b4)[0xffff815544b4]
+
+because of the PyThreadState_Delete.  (The deleted PyThreadState, while not
+reused again directly, is still recorded in the state obtained from
+PyInterpreterState_Head() later.)
+
+So conservatively keep the PyThreadState_Delete of unclear benefit for older
+Python versions and only drop it for 3.11 where it is known to have negative
+effects now.
+
+Change-Id: I9b99f1e947f0b165ddc95c2bfbd764858dda39db
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/136006
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+ pyuno/source/loader/pyuno_loader.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/pyuno/source/loader/pyuno_loader.cxx b/pyuno/source/loader/pyuno_loader.cxx
+index c9b8248c1b25..da0467f450c6 100644
+--- a/pyuno/source/loader/pyuno_loader.cxx
++++ b/pyuno/source/loader/pyuno_loader.cxx
+@@ -229,10 +229,12 @@ void pythonInit() {
+ 
+     PyThreadState *tstate = PyThreadState_Get();
+     PyEval_ReleaseThread( tstate );
++#if PY_VERSION_HEX < 0x030B0000
+     // This tstate is never used again, so delete it here.
+     // This prevents an assertion in PyThreadState_Swap on the
+     // PyThreadAttach below.
+     PyThreadState_Delete(tstate);
++#endif
+ }
+ 
+ }
+-- 
+2.36.1
+

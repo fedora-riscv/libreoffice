@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        4%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -254,6 +254,8 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
+Patch7: 0001-rhbz-2097411-Avoid-obsolete-PyThreadState_Delete-cra.patch
+Patch8: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -838,8 +840,17 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 
+%if 0%{?fedora} > 36 || 0%{?rhel} > 9
+
+%define langpack_lang Brazilian Portuguese
+%langpack -l pt-BR -n %{langpack_lang} -f pt_BR -H -Y -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%else
+
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -h pt -y pt -m pt -a pt -p pt_BR -T -X -g pt_BR
+
+%endif
 
 %langpack -l pt-PT -n Portuguese -f pt -h pt -y pt -m pt -a pt -p pt_PT -T -L pt -x pt
 %langpack -l ro -n Romanian -A -F -H -Y -M -T -X
@@ -2185,6 +2196,15 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jul 11 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.1.3.2-3
+- Resolves: rhbz#2104545 Avoid call to utl::IsYounger if possible
+
+* Thu Jun 23 2022 Parag Nemade <pnemade AT redhat DOT com> - 1:7.3.4.2-3
+- Fix Requires: hunspell-pt-BR and hyphen-pt-BR for libreoffice-langpack-pt-BR
+
+* Mon Jun 13 2022 Python Maint <python-maint@redhat.com> - 1:7.3.4.2-2
+- Rebuilt for Python 3.11
+
 * Thu Jun 09 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.4.2-1
 - 7.3.4 release
 

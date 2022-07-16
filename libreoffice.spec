@@ -2194,7 +2194,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Mon Jul 11 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.1.3.2-3
+* Mon Jul 11 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.3.4.2-4
 - Resolves: rhbz#2104545 Avoid call to utl::IsYounger if possible
 
 * Thu Jun 23 2022 Parag Nemade <pnemade AT redhat DOT com> - 1:7.3.4.2-3

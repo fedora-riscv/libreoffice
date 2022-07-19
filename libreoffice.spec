@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        5%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -218,11 +218,13 @@ BuildRequires: pkgconfig(mdds-2.0)
 BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
 
+%ifarch %{java_arches}
 # java stuff
 BuildRequires: ant
 BuildRequires: java-devel
 BuildRequires: junit
 BuildRequires: pentaho-reporting-flow-engine
+%endif
 
 # fonts needed for tests
 BuildRequires: dejavu-sans-fonts
@@ -308,8 +310,15 @@ Requires: %{name}-plugin%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: liberation-sans-fonts, liberation-serif-fonts, liberation-mono-fonts
 Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
+%ifarch %{java_arches}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
 Requires: java-headless >= 1:1.6
+%else
+Obsoletes: libreoffice-nlpsolver < 1:7.4.0.0
+Obsoletes: libreoffice-officebean < 1:7.4.0.0
+Obsoletes: libreoffice-officebean-common < 1:7.4.0.0
+Obsoletes: libreoffice-wiki-publisher < 1:7.4.0.0
+%endif
 Obsoletes: libreoffice-headless < 1:4.4.0.0
 Obsoletes: libreoffice-math-debuginfo < 1:6.4.7.2
 Provides: libreoffice-headless = %{epoch}:%{version}-%{release}
@@ -347,6 +356,8 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 %description base
 GUI database front-end for LibreOffice. Allows creation and management of 
 databases through a GUI.
+
+%ifarch %{java_arches}
 
 %package officebean
 Summary: JavaBean for LibreOffice Components
@@ -386,6 +397,8 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 %description nlpsolver
 A non-linear solver engine for Calc as an alternative to the default linear
 programming model when more complex, nonlinear programming is required.
+
+%endif
 
 %package ogltrans
 Summary: 3D OpenGL slide transitions for LibreOffice
@@ -508,9 +521,12 @@ creation and management of PostgreSQL databases through a GUI.
 
 %package ure
 Summary: UNO Runtime Environment
-#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
 Requires: %{name}-ure-common = %{epoch}:%{version}-%{release}
-Requires: unzip%{?_isa}, libjvm.so%{?mark64}
+Requires: unzip%{?_isa}
+%ifarch %{java_arches}
+#rhbz#1164551 we want to ensure that a libjvm.so of this arch is available
+Requires: libjvm.so%{?mark64}
+%endif
 
 %description ure
 UNO is the component model of LibreOffice. UNO offers interoperability between
@@ -531,7 +547,10 @@ Arch-independent part of %{name}-ure.
 Summary: Software Development Kit for LibreOffice
 Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: unzip%{?_isa}, java-devel
+Requires: unzip%{?_isa}
+%ifarch %{java_arches}
+Requires: java-devel
+%endif
 
 %description sdk
 The LibreOffice SDK is an add-on for the LibreOffice office suite. It provides
@@ -1019,6 +1038,12 @@ export CXXFLAGS=$ARCH_FLAGS
 %define distrooptions --enable-eot --enable-kf5
 %endif
 
+%ifarch %{java_arches}
+%define javaoptions --with-java --enable-ext-nlpsolver --enable-ext-wiki-publisher
+%else
+%define javaoptions --without-java
+%endif
+
 %if %{with langpacks}
 %define with_lang --with-lang='%{langpack_langs}'
 %endif
@@ -1048,8 +1073,6 @@ touch autogen.lastrun
  --disable-skia \
  --enable-dconf \
  --enable-evolution2 \
- --enable-ext-nlpsolver \
- --enable-ext-wiki-publisher \
  --enable-introspection \
  --enable-odk \
  --enable-release-build \
@@ -1069,6 +1092,7 @@ touch autogen.lastrun
  --enable-python=system \
  --with-idlc-cpp=cpp \
  --disable-scripting-beanshell --disable-scripting-javascript \
+ %{javaoptions} \
  %{distrooptions} \
  %{?bundling_options} \
  %{?archoptions} \
@@ -1460,6 +1484,7 @@ solenv/bin/assemble-flatpak-appdata-step2.sh \
 rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 
+%ifarch %{java_arches}
 # rhbz#1247399 - move stable API jars to noarch java location
 install -m 0755 -d %{buildroot}%{_javadir}/%{name}
 for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
@@ -1471,6 +1496,12 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
             ;;
     esac
 done
+%else
+# make sure something creates this dir
+install -m 0755 -d %{buildroot}%{baseinstdir}/share/extensions
+# and remove this
+rm -f %{buildroot}%{baseinstdir}/program/officebean.abignore
+%endif
 
 %check
 make unitcheck slowcheck
@@ -1497,6 +1528,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libbasprovlo.so
 %{baseinstdir}/program/libcairocanvaslo.so
 %{baseinstdir}/program/libcanvasfactorylo.so
+%ifarch %{java_arches}
 %dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/commonwizards.jar
 %{baseinstdir}/program/classes/form.jar
@@ -1508,6 +1540,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/classes/unoil.jar
 %{baseinstdir}/program/classes/XMergeBridge.jar
 %{baseinstdir}/program/classes/xmerge.jar
+%endif
 %{baseinstdir}/program/libcmdmaillo.so
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so
@@ -1560,7 +1593,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
+%ifarch %{java_arches}
 %{baseinstdir}/program/libjdbclo.so
+%endif
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
 %{baseinstdir}/program/liblocaledata_en.so
@@ -1662,7 +1697,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %dir %{baseinstdir}/share/fonts/truetype
 %{baseinstdir}/share/fonts/truetype/fc_local.conf
 %dir %{baseinstdir}/share/Scripts
+%ifarch %{java_arches}
 %{baseinstdir}/share/Scripts/java
+%endif
 %dir %{baseinstdir}/share/autotext
 %dir %{_datadir}/autocorr
 %{baseinstdir}/share/autocorr
@@ -1805,10 +1842,12 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_mandir}/man1/ooviewdoc.1*
 
 %files base
+%ifarch %{java_arches}
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
+%endif
 %{baseinstdir}/program/access2base.py
 %if 0%{?fedora}
 %{baseinstdir}/program/base.abignore
@@ -1818,12 +1857,16 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %if 0%{?fedora}
 %{baseinstdir}/program/libfirebird_sdbclo.so
 %endif
+%ifarch %{java_arches}
 %{baseinstdir}/program/libhsqldb.so
 %{baseinstdir}/program/librptlo.so
 %{baseinstdir}/program/librptuilo.so
 %{baseinstdir}/program/librptxmllo.so
+%endif
 %{baseinstdir}/share/registry/base.xcd
+%ifarch %{java_arches}
 %{baseinstdir}/share/registry/reportbuilder.xcd
+%endif
 %{baseinstdir}/program/sbase
 %if 0%{?flatpak}
 %{_datadir}/applications/org.libreoffice.LibreOffice.base.desktop
@@ -1833,6 +1876,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
 %{_bindir}/oobase
 %{_mandir}/man1/oobase.1*
+
+%ifarch %{java_arches}
 
 %files wiki-publisher
 %docdir %{baseinstdir}/share/extensions/wiki-publisher/license
@@ -1851,6 +1896,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
 %files officebean-common
 %{_javadir}/%{name}/officebean.jar
+
+%endif
 
 %files ogltrans
 %if 0%{?fedora}
@@ -2024,6 +2071,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/registry/postgresql.xcd
 
 %files ure
+%ifarch %{java_arches}
 %{baseinstdir}/program/classes/java_uno.jar
 %{baseinstdir}/program/classes/juh.jar
 %{baseinstdir}/program/classes/jurt.jar
@@ -2034,6 +2082,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/javavendors.xml
 %{baseinstdir}/program/jvmfwk3rc
 %{baseinstdir}/program/JREProperties.class
+%endif
 %if 0%{?fedora}
 %{baseinstdir}/program/ure.abignore
 %endif
@@ -2046,6 +2095,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libinvocadaptlo.so
 %{baseinstdir}/program/libinvocationlo.so
 %{baseinstdir}/program/libiolo.so
+%ifarch %{java_arches}
 %{baseinstdir}/program/libjava_uno.so
 %{baseinstdir}/program/libjavaloaderlo.so
 %{baseinstdir}/program/libjavavmlo.so
@@ -2054,6 +2104,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libjuhx.so
 %{baseinstdir}/program/libjvmaccesslo.so
 %{baseinstdir}/program/libjvmfwklo.so
+%endif
 %{baseinstdir}/program/liblog_uno_uno.so
 %{baseinstdir}/program/libnamingservicelo.so
 %{baseinstdir}/program/libproxyfaclo.so
@@ -2080,12 +2131,14 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/unorc
 
 %files ure-common
+%ifarch %{java_arches}
 %dir %{_javadir}/%{name}
 %{_javadir}/%{name}/juh.jar
 %{_javadir}/%{name}/jurt.jar
 %{_javadir}/%{name}/libreoffice.jar
 %{_javadir}/%{name}/ridl.jar
 %{_javadir}/%{name}/unoloader.jar
+%endif
 %license instdir/LICENSE
 
 %files sdk
@@ -2137,9 +2190,10 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{_datadir}/icons/hicolor/*/*/org.libreoffice.LibreOffice.*
 %endif
 %{_datadir}/mime/packages/libreoffice.xml
-# TODO: rename -data to -core-common?
+%ifarch %{java_arches}
 %dir %{_javadir}/%{name}
 %{_javadir}/%{name}/unoil.jar
+%endif
 %dir %{datadir}
 %doc instdir/CREDITS.fodt
 %doc instdir/LICENSE.html
@@ -2194,6 +2248,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Jul 19 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.4.2-5
+- rhbz#2104072 build on i686 without java support
+
 * Mon Jul 11 2022 Stephan Bergmann <sbergman@redhat.com> - 1:7.3.4.2-4
 - Resolves: rhbz#2104545 Avoid call to utl::IsYounger if possible
 

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.3.4
+%global libo_version 7.3.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        5%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -256,8 +256,7 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
-Patch7: 0001-rhbz-2097411-Avoid-obsolete-PyThreadState_Delete-cra.patch
-Patch8: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
+Patch7: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2248,6 +2247,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jul 21 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.5.2-1
+- latest version
+
 * Tue Jul 19 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.4.2-5
 - rhbz#2104072 build on i686 without java support
 

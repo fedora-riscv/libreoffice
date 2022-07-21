@@ -586,7 +586,6 @@ DTP.
 
 %package data
 Summary: LibreOffice data files
-BuildArch: noarch
 
 %description data
 %{name}-data contains platform-independent data files.

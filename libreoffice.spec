@@ -1504,7 +1504,9 @@ rm -f %{buildroot}%{baseinstdir}/program/officebean.abignore
 %endif
 
 %check
+%ifnarch s390x
 make unitcheck slowcheck
+%endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 

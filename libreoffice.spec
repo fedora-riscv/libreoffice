@@ -538,7 +538,6 @@ an appropriate bridge or adapter exists
 
 %package ure-common
 Summary: Common UNO Runtime Environment
-BuildArch: noarch
 
 %description ure-common
 Arch-independent part of %{name}-ure.

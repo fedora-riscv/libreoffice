@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -2247,6 +2247,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Aug 03 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.5.2-3
+- Rebuilt for poppler 22.08.0
+
 * Tue Aug 02 2022 Frantisek Zatloukal <fzatlouk@redhat.com> - 1:7.3.5.2-2
 - Rebuilt for ICU 71.1
 

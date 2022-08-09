@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.3.5
+%global libo_version 7.4.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -151,6 +151,7 @@ BuildRequires: pkgconfig(gobject-introspection-1.0)
 BuildRequires: pkgconfig(gstreamer-1.0)
 BuildRequires: pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires: pkgconfig(gtk+-3.0)
+BuildRequires: pkgconfig(gtk+-4.0)
 BuildRequires: pkgconfig(hunspell)
 BuildRequires: pkgconfig(ice)
 BuildRequires: pkgconfig(icu-i18n)
@@ -252,11 +253,6 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-# ICE
-Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
-Patch5: 0001-s390x-canvas-test-fails.patch
-Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
-Patch7: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -610,6 +606,15 @@ Supplements: (%{name}-core%{?_isa} and gtk3%{?_isa})
 
 %description gtk3
 A plug-in for LibreOffice that enables integration into GTK+ 3 environment.
+
+%package gtk4
+Summary: LibreOffice GTK+ 4 experimental integration plug-in
+Requires: %{name}-core%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
+Supplements: (%{name}-core%{?_isa} and gtk4%{?_isa})
+
+%description gtk4
+An experimental plug-in for LibreOffice that enables integration into GTK+ 4 environment.
 
 %if 0%{?fedora}
 
@@ -1089,6 +1094,7 @@ touch autogen.lastrun
  --enable-python=system \
  --with-idlc-cpp=cpp \
  --disable-scripting-beanshell --disable-scripting-javascript \
+ --enable-gtk4 \
  %{javaoptions} \
  %{distrooptions} \
  %{?bundling_options} \
@@ -1370,7 +1376,7 @@ install -m 0644 -p mime/packages/libreoffice$PRODUCTVERSION.xml %{buildroot}%{_d
 
 %if 0%{?fedora}
 # restrict abipkgdiff to shared objects that actually have a stable ABI
-for pkg in core base officebean ogltrans pdfimport calc writer impress graphicfilter postgresql ure pyuno x11 gtk3 kf5 libreofficekit; do
+for pkg in core base officebean ogltrans pdfimport calc writer impress graphicfilter postgresql ure pyuno x11 gtk3 gtk4 kf5 libreofficekit; do
     cat > %{buildroot}%{baseinstdir}/program/${pkg}.abignore << _EOF
 [suppress_file]
 file_name_not_regexp=.*\.so\.[0-9]+
@@ -1501,9 +1507,7 @@ rm -f %{buildroot}%{baseinstdir}/program/officebean.abignore
 %endif
 
 %check
-%ifnarch s390x
 make unitcheck slowcheck
-%endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
@@ -2224,6 +2228,12 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %endif
 %{baseinstdir}/program/libvclplug_gtk3lo.so
 
+%files gtk4
+%if 0%{?fedora}
+%{baseinstdir}/program/gtk4.abignore
+%endif
+%{baseinstdir}/program/libvclplug_gtk4lo.so
+
 %if 0%{?fedora}
 
 %files kf5
@@ -2247,6 +2257,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Aug 09 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.0.2-1
+- 7.4 version
+
 * Wed Aug 03 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.5.2-3
 - Rebuilt for poppler 22.08.0
 

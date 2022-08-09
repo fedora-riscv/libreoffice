@@ -14,7 +14,7 @@ diff --git a/desktop/source/app/app.cxx b/desktop/source/app/app.cxx
 index c54aea9dd4f7..a613fe12cef2 100644
 --- a/desktop/source/app/app.cxx
 +++ b/desktop/source/app/app.cxx
-@@ -1147,14 +1147,12 @@ void Desktop::Exception(ExceptionCategory nCategory)
+@@ -1165,8 +1165,6 @@
      if( bRestart )
      {
          RequestHandler::Disable();
@@ -22,8 +22,10 @@ index c54aea9dd4f7..a613fe12cef2 100644
 -            osl_removeSignalHandler( pSignalHandler );
  
          restartOnMac(false);
-         if ( m_rSplashScreen.is() )
+ #if !ENABLE_WASM_STRIP_SPLASH
+@@ -1174,7 +1172,7 @@
              m_rSplashScreen->reset();
+ #endif
  
 -        _exit( EXITHELPER_CRASH_WITH_RESTART );
 +        return;

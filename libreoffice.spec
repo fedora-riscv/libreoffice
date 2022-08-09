@@ -1105,11 +1105,11 @@ touch autogen.lastrun
  %{?archoptions} \
  %{?flatpakoptions}
 
-if ! make verbose=true build-nocheck; then
+if ! make verbose=true build; then
     echo "build attempt 1 failed"
-    if ! make verbose=true build-nocheck; then
+    if ! make verbose=true build; then
         echo "build attempt 2 failed"
-        make verbose=true GMAKE_OPTIONS=-rj1 build-nocheck
+        make verbose=true GMAKE_OPTIONS=-rj1 build
     fi
 fi
 

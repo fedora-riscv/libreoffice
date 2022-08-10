@@ -1,0 +1,25 @@
+From 83fcf65c2c6abf0b35693c13fc9907ee4f4eb442 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 10 Aug 2022 19:41:40 +0100
+Subject: [PATCH] debug missing font
+
+Change-Id: I4ebdd577d68fb12a01c3e2efb8b7d7cea8f998cf
+---
+ vcl/unx/generic/fontmanager/fontconfig.cxx | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+index f259277304d0..d0d1f12868ce 100644
+--- a/vcl/unx/generic/fontmanager/fontconfig.cxx
++++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
+@@ -1185,6 +1185,7 @@ void PrintFontManager::Substitute(vcl::font::FontSelectPattern &rPattern, OUStri
+             // ImplFontMetricData::ImplInitTextLineSize
+             return;
+         }
++        fprintf(stderr, "missing %s\n", rPattern.maTargetName.toUtf8().getStr());
+         SAL_WARN("vcl.fonts", "PrintFontManager::Substitute: missing font: '" << rPattern.maTargetName <<
+                               "' try: " << rPattern.maSearchName << " instead");
+         std::abort();
+-- 
+2.37.1
+

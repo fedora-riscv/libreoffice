@@ -1,4 +1,4 @@
-From f05dbf2bfb27ef32b075becb3b21713456059306 Mon Sep 17 00:00:00 2001
+From a537480c5738bef1a16e90484d44b8777bd573fd Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Wed, 10 Aug 2022 09:00:34 +0100
 Subject: [PATCH] some --disable-pdfium fixes
@@ -6,11 +6,11 @@ Subject: [PATCH] some --disable-pdfium fixes
 Change-Id: I33867397cd5783adb90e9dc2c62b037ced131e26
 ---
  desktop/qa/desktop_lib/test_desktop_lib.cxx | 2 ++
- filter/qa/pdf.cxx                           | 2 ++
+ filter/qa/pdf.cxx                           | 9 ++++++++-
  svx/qa/unit/core.cxx                        | 2 ++
  svx/source/svdraw/svdpdf.cxx                | 2 +-
  vcl/qa/cppunit/filter/ipdf/ipdf.cxx         | 2 ++
- 5 files changed, 9 insertions(+), 1 deletion(-)
+ 5 files changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/desktop/qa/desktop_lib/test_desktop_lib.cxx b/desktop/qa/desktop_lib/test_desktop_lib.cxx
 index 12e34a58ee5a..aa52f3edc16b 100644
@@ -26,18 +26,39 @@ index 12e34a58ee5a..aa52f3edc16b 100644
          = pPDFium->openDocument(aMemory.GetData(), aMemory.GetSize(), OString());
      CPPUNIT_ASSERT(pPdfDocument);
 diff --git a/filter/qa/pdf.cxx b/filter/qa/pdf.cxx
-index 3500bb5dae28..b812cb2f7342 100644
+index 3500bb5dae28..29129f2b08f2 100644
 --- a/filter/qa/pdf.cxx
 +++ b/filter/qa/pdf.cxx
-@@ -100,6 +100,8 @@ CPPUNIT_TEST_FIXTURE(Test, testSignCertificateSubjectName)
+@@ -59,6 +59,10 @@ constexpr OUStringLiteral DATA_DIRECTORY = u"/filter/qa/data/";
  
-     // Then make sure the resulting PDF has a signature:
-     std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
+ CPPUNIT_TEST_FIXTURE(Test, testSignCertificateSubjectName)
+ {
++    std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
 +    if (!pPDFium)
 +        return;
++
+     uno::Reference<xml::crypto::XSEInitializer> xSEInitializer
+         = xml::crypto::SEInitializer::create(mxComponentContext);
+     uno::Reference<xml::crypto::XXMLSecurityContext> xSecurityContext
+@@ -99,7 +103,6 @@ CPPUNIT_TEST_FIXTURE(Test, testSignCertificateSubjectName)
+     xFilter->filter(aDescriptor);
+ 
+     // Then make sure the resulting PDF has a signature:
+-    std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
      std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument
          = pPDFium->openDocument(aStream.GetData(), aStream.GetSize(), OString());
      // Without the accompanying fix in place, this test would have failed, as signing was enabled
+@@ -110,6 +113,10 @@ CPPUNIT_TEST_FIXTURE(Test, testSignCertificateSubjectName)
+ 
+ CPPUNIT_TEST_FIXTURE(Test, testPdfDecompositionSize)
+ {
++    std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPDFium)
++        return;
++
+     // Given an empty Writer document:
+     getComponent().set(
+         loadFromDesktop("private:factory/swriter", "com.sun.star.text.TextDocument"));
 diff --git a/svx/qa/unit/core.cxx b/svx/qa/unit/core.cxx
 index 27e5783e20db..3966010012e6 100644
 --- a/svx/qa/unit/core.cxx

@@ -1,0 +1,82 @@
+From f05dbf2bfb27ef32b075becb3b21713456059306 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 10 Aug 2022 09:00:34 +0100
+Subject: [PATCH] some --disable-pdfium fixes
+
+Change-Id: I33867397cd5783adb90e9dc2c62b037ced131e26
+---
+ desktop/qa/desktop_lib/test_desktop_lib.cxx | 2 ++
+ filter/qa/pdf.cxx                           | 2 ++
+ svx/qa/unit/core.cxx                        | 2 ++
+ svx/source/svdraw/svdpdf.cxx                | 2 +-
+ vcl/qa/cppunit/filter/ipdf/ipdf.cxx         | 2 ++
+ 5 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/desktop/qa/desktop_lib/test_desktop_lib.cxx b/desktop/qa/desktop_lib/test_desktop_lib.cxx
+index 12e34a58ee5a..aa52f3edc16b 100644
+--- a/desktop/qa/desktop_lib/test_desktop_lib.cxx
++++ b/desktop/qa/desktop_lib/test_desktop_lib.cxx
+@@ -697,6 +697,8 @@ void DesktopLOKTest::testSaveAsJsonOptions()
+     SvMemoryStream aMemory;
+     aMemory.WriteStream(aFile);
+     std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPDFium)
++        return;
+     std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument
+         = pPDFium->openDocument(aMemory.GetData(), aMemory.GetSize(), OString());
+     CPPUNIT_ASSERT(pPdfDocument);
+diff --git a/filter/qa/pdf.cxx b/filter/qa/pdf.cxx
+index 3500bb5dae28..b812cb2f7342 100644
+--- a/filter/qa/pdf.cxx
++++ b/filter/qa/pdf.cxx
+@@ -100,6 +100,8 @@ CPPUNIT_TEST_FIXTURE(Test, testSignCertificateSubjectName)
+ 
+     // Then make sure the resulting PDF has a signature:
+     std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPDFium)
++        return;
+     std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument
+         = pPDFium->openDocument(aStream.GetData(), aStream.GetSize(), OString());
+     // Without the accompanying fix in place, this test would have failed, as signing was enabled
+diff --git a/svx/qa/unit/core.cxx b/svx/qa/unit/core.cxx
+index 27e5783e20db..3966010012e6 100644
+--- a/svx/qa/unit/core.cxx
++++ b/svx/qa/unit/core.cxx
+@@ -70,6 +70,8 @@ CPPUNIT_TEST_FIXTURE(Test, testChartExportToPdf)
+ 
+     // Then make sure we get a valid, non-empty PDF:
+     auto pPdfium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPdfium)
++        return;
+     SvMemoryStream aMemory;
+     aMemory.WriteStream(*aTempFile.GetStream(StreamMode::READ));
+     std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument
+diff --git a/svx/source/svdraw/svdpdf.cxx b/svx/source/svdraw/svdpdf.cxx
+index 13a75fddbb3a..fb608bd2c5cf 100644
+--- a/svx/source/svdraw/svdpdf.cxx
++++ b/svx/source/svdraw/svdpdf.cxx
+@@ -115,7 +115,7 @@ ImpSdrPdfImport::ImpSdrPdfImport(SdrModel& rModel, SdrLayerID nLay, const tools:
+     auto const& rVectorGraphicData = rGraphic.getVectorGraphicData();
+     auto* pData = rVectorGraphicData->getBinaryDataContainer().getData();
+     sal_Int32 nSize = rVectorGraphicData->getBinaryDataContainer().getSize();
+-    mpPdfDocument = mpPDFium->openDocument(pData, nSize, OString());
++    mpPdfDocument = mpPDFium ? mpPDFium->openDocument(pData, nSize, OString()) : nullptr;
+     if (!mpPdfDocument)
+         return;
+ 
+diff --git a/vcl/qa/cppunit/filter/ipdf/ipdf.cxx b/vcl/qa/cppunit/filter/ipdf/ipdf.cxx
+index 3beedaad0dc0..fa8b7374c5d6 100644
+--- a/vcl/qa/cppunit/filter/ipdf/ipdf.cxx
++++ b/vcl/qa/cppunit/filter/ipdf/ipdf.cxx
+@@ -128,6 +128,8 @@ CPPUNIT_TEST_FIXTURE(VclFilterIpdfTest, testPDFAddVisibleSignatureLastPage)
+ 
+     // Then: count the # of shapes on the signature widget/annotation.
+     std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPDFium)
++        return;
+     SvFileStream aFile(aTempFile.GetURL(), StreamMode::READ);
+     SvMemoryStream aMemory;
+     aMemory.WriteStream(aFile);
+-- 
+2.37.1
+

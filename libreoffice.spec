@@ -258,6 +258,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-Fix-CppunitTest_vcl_svm_test-for-big-endian.patch
 Patch5: 0001-Fix-endian-dependent-test-for-good.patch
+Patch6: 0001-some-disable-pdfium-fixes.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1007,7 +1008,6 @@ sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # ppc6
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # ppc64le
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
-sed -i -e /CppunitTest_filter_pdf/d filter/Module_filter.mk
 
 git commit -q -a -m 'temporarily disable failing tests'
 

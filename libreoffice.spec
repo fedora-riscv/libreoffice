@@ -1011,6 +1011,9 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # pp
 sed -i -e /CppunitTest_xmlsecurity_signing/d xmlsecurity/Module_xmlsecurity.mk
 sed -i -e /CppunitTest_xmlsecurity_pdfsigning/d xmlsecurity/Module_xmlsecurity.mk
 
+#see rhbz#2072615
+git rm vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
+
 git commit -q -a -m 'temporarily disable failing tests'
 
 # Seeing .git dir makes some of the build tools change their behavior.

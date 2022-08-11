@@ -232,6 +232,7 @@ BuildRequires: pentaho-reporting-flow-engine
 
 # fonts needed for tests
 BuildRequires: dejavu-sans-fonts
+BuildRequires: dejavu-serif-fonts
 BuildRequires: google-carlito-fonts
 # KacstBook used in vcl/qa/cppunit tests
 BuildRequires: kacst-book-fonts

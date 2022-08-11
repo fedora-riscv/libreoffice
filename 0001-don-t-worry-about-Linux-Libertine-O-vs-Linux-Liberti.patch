@@ -1,0 +1,26 @@
+From 9c17267569e5f5c0e2bcf3d3da81871242c355f9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 11 Aug 2022 16:05:55 +0100
+Subject: [PATCH] don't worry about Linux Libertine O vs Linux Libertine G
+
+Change-Id: I3f7418380e655b6c25e675493d859444e343d646
+---
+ vcl/unx/generic/fontmanager/fontconfig.cxx | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vcl/unx/generic/fontmanager/fontconfig.cxx b/vcl/unx/generic/fontmanager/fontconfig.cxx
+index 24ff67b4b893..0be8062cbadf 100644
+--- a/vcl/unx/generic/fontmanager/fontconfig.cxx
++++ b/vcl/unx/generic/fontmanager/fontconfig.cxx
+@@ -1185,6 +1185,8 @@ void PrintFontManager::Substitute(vcl::font::FontSelectPattern &rPattern, OUStri
+             // ImplFontMetricData::ImplInitTextLineSize
+             return;
+         }
++        if (rPattern.maTargetName == "Linux Libertine G" && rPattern.maSearchName == "Linux Libertine O")
++            return;
+         SAL_WARN("vcl.fonts", "PrintFontManager::Substitute: missing font: '" << rPattern.maTargetName <<
+                               "' try: " << rPattern.maSearchName << " instead");
+         std::abort();
+-- 
+2.37.1
+

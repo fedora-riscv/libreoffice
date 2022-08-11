@@ -258,6 +258,9 @@ Patch7: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
+# RISC-V suppport
+Patch1000: 4d243ec.diff
+
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
 %global sdkinstdir %{baseinstdir}/sdk
@@ -972,6 +975,10 @@ git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard
 %apply_patch -q %{PATCH500}
 %endif
 
+%ifarch riscv64
+/usr/bin/git apply %{PATCH1000}
+%endif
+
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
 sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk # ppc64*
@@ -1003,13 +1010,17 @@ for i in $RPM_OPT_FLAGS; do
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
-%ifarch s390 %{arm} aarch64
+%ifarch s390 %{arm} aarch64 riscv64
 # these builders typically do not have enough memory to link the big libs with -g2
 ARCH_FLAGS="$ARCH_FLAGS -g1"
 %endif
 export ARCH_FLAGS
 export CFLAGS=$ARCH_FLAGS
 export CXXFLAGS=$ARCH_FLAGS
+
+%ifarch riscv64
+%global archoptions -with-boost-libdir=/usr/lib64
+%endif
 
 %if 0%{?rhel}
 %define distrooptions --disable-eot --disable-firebird-sdbc
@@ -1472,7 +1483,7 @@ for jar in %{buildroot}%{baseinstdir}/program/classes/*.jar; do
 done
 
 %check
-%ifnarch s390x
+%ifnarch s390x riscv64
 make unitcheck slowcheck
 %endif
 # we don't need this anymore

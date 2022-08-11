@@ -261,9 +261,9 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-Fix-CppunitTest_vcl_svm_test-for-big-endian.patch
 Patch5: 0001-Fix-endian-dependent-test-for-good.patch
 Patch6: 0001-some-disable-pdfium-fixes.patch
-Patch7: 0001-debug-missing-font.patch
-Patch8: 0001-turn-off-font-combobox-preview-if-SAL_ABORT_ON_NON_A.patch
-Patch9: 0001-don-t-worry-about-Linux-Libertine-O-vs-Linux-Liberti.patch
+Patch7: 0001-turn-off-font-combobox-preview-if-SAL_ABORT_ON_NON_A.patch
+Patch8: 0001-don-t-worry-about-Linux-Libertine-O-vs-Linux-Liberti.patch
+Patch9: 0001-debug-missing-font.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

@@ -234,6 +234,7 @@ BuildRequires: pentaho-reporting-flow-engine
 BuildRequires: dejavu-sans-fonts
 BuildRequires: dejavu-serif-fonts
 BuildRequires: google-carlito-fonts
+BuildRequires: google-rubik-fonts
 # KacstBook used in vcl/qa/cppunit tests
 BuildRequires: kacst-book-fonts
 BuildRequires: liberation-mono-fonts

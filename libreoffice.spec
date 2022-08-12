@@ -1597,6 +1597,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdict_ja.so
 %{baseinstdir}/program/libdict_zh.so
 %{baseinstdir}/program/libdrawinglayerlo.so
+%{baseinstdir}/program/libdrawinglayercorelo.so
 %{baseinstdir}/program/libeditenglo.so
 %{baseinstdir}/program/libembobj.so
 %{baseinstdir}/program/libemboleobj.so
@@ -1615,6 +1616,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %ifarch %{java_arches}
 %{baseinstdir}/program/libjdbclo.so
 %endif
+%{baseinstdir}/program/libLanguageToollo.so
 %{baseinstdir}/program/liblnglo.so
 %{baseinstdir}/program/libloglo.so
 %{baseinstdir}/program/liblocaledata_en.so
@@ -1730,6 +1732,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_breeze_dark_svg.zip
 %{baseinstdir}/share/config/images_colibre.zip
 %{baseinstdir}/share/config/images_colibre_svg.zip
+%{baseinstdir}/share/config/images_colibre_dark.zip
+%{baseinstdir}/share/config/images_colibre_dark_svg.zip
 %{baseinstdir}/share/config/images_elementary.zip
 %{baseinstdir}/share/config/images_elementary_svg.zip
 %{baseinstdir}/share/config/images_helpimg.zip

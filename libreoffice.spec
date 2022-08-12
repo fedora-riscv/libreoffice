@@ -266,7 +266,8 @@ Patch6: 0001-some-disable-pdfium-fixes.patch
 Patch7: 0001-turn-off-font-combobox-preview-if-SAL_ABORT_ON_NON_A.patch
 Patch8: 0001-Arial-Narrow-Liberation-Sans-Narrow.patch
 Patch9: 0001-don-t-worry-about-Linux-Libertine-O-vs-Linux-Liberti.patch
-Patch10: 0001-debug-missing-font.patch
+Patch10: 0001-fix-various-glyph-substitution-asserts-when-using-wi.patch
+Patch11: 0001-debug-missing-font.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

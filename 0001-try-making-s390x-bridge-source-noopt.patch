@@ -1,25 +1,26 @@
-From 20362dacacdf08156af960184d2533fe19218103 Mon Sep 17 00:00:00 2001
+From 7158218227c9b436eb4a17c005272fb06da1c2f1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
 Date: Sat, 13 Aug 2022 16:02:30 +0100
 Subject: [PATCH] try making s390x bridge source noopt
 
 Change-Id: I344812ae4fa9fe085c6b195d2b0e87e9267062cb
 ---
- bridges/Library_cpp_uno.mk | 1 +
- 1 file changed, 1 insertion(+)
+ bridges/Library_cpp_uno.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/bridges/Library_cpp_uno.mk b/bridges/Library_cpp_uno.mk
-index e2de3c1678b4..5aadae6e2115 100644
+index e2de3c1678b4..7b2cd3d1301f 100644
 --- a/bridges/Library_cpp_uno.mk
 +++ b/bridges/Library_cpp_uno.mk
-@@ -145,6 +145,7 @@ else ifeq ($(CPUNAME),S390X)
+@@ -145,7 +145,7 @@ else ifeq ($(CPUNAME),S390X)
  
  ifneq ($(filter DRAGONFLY FREEBSD LINUX NETBSD OPENBSD,$(OS)),)
  bridges_SELECTED_BRIDGE := gcc3_linux_s390x
+-bridge_exception_objects := cpp2uno except uno2cpp
 +bridge_noopt_objects := cpp2uno except uno2cpp
- bridge_exception_objects := cpp2uno except uno2cpp
  endif
  
+ else ifeq ($(CPUNAME),SPARC)
 -- 
 2.37.1
 

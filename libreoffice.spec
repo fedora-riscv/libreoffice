@@ -267,7 +267,6 @@ Patch7: 0001-turn-off-font-combobox-preview-if-SAL_ABORT_ON_NON_A.patch
 Patch8: 0001-Arial-Narrow-Liberation-Sans-Narrow.patch
 Patch9: 0001-don-t-worry-about-Linux-Libertine-O-vs-Linux-Liberti.patch
 Patch10: 0001-fix-various-glyph-substitution-asserts-when-using-wi.patch
-Patch11: 0001-try-making-s390x-bridge-source-noopt.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1037,6 +1036,14 @@ for i in $RPM_OPT_FLAGS; do
         case "$i" in
                 -pipe|-Wall|-Werror*|-fexceptions) continue;;
         esac
+%ifarch s390x
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106355
+        case "$i" in
+                -O2)
+                ARCH_FLAGS="$ARCH_FLAGS -O1"
+                continue;;
+        esac
+%endif
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
 %ifarch s390 %{arm} aarch64

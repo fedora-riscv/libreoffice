@@ -1039,8 +1039,7 @@ for i in $RPM_OPT_FLAGS; do
 %ifarch s390x
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106355
         case "$i" in
-                -O2)
-                ARCH_FLAGS="$ARCH_FLAGS -O0"
+                -O2|-Wp,-D_FORTIFY_SOURCE=2)
                 continue;;
         esac
 %endif

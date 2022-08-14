@@ -1040,7 +1040,7 @@ for i in $RPM_OPT_FLAGS; do
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106355
         case "$i" in
                 -O2)
-                ARCH_FLAGS="$ARCH_FLAGS -O1"
+                ARCH_FLAGS="$ARCH_FLAGS -O0"
                 continue;;
         esac
 %endif

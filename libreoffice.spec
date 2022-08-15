@@ -875,7 +875,7 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l pa -n Punjabi -F -H -Y -s ctl -L pa-IN -g pa_IN -X
 %langpack -l pl -n Polish -F -H -Y -M -A -T -X
 
-%if 0%{?fedora} > 36 || 0%{?rhel} > 9
+%if 0%{?rhel} > 9
 
 %define langpack_lang Brazilian Portuguese
 %langpack -l pt-BR -n %{langpack_lang} -f pt_BR -H -Y -m pt -a pt -p pt_BR -T -X -g pt_BR

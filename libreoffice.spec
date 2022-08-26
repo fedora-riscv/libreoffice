@@ -137,6 +137,7 @@ BuildRequires: firebird-devel
 BuildRequires: glm-devel
 BuildRequires: hyphen-devel
 BuildRequires: libjpeg-turbo-devel
+BuildRequires: libpq-devel
 BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
@@ -168,7 +169,6 @@ BuildRequires: pkgconfig(libmspub-0.1)
 BuildRequires: pkgconfig(libmwaw-0.3)
 BuildRequires: pkgconfig(libodfgen-0.1)
 BuildRequires: pkgconfig(libpagemaker-0.0)
-BuildRequires: pkgconfig(libpq)
 BuildRequires: pkgconfig(librevenge-0.0)
 BuildRequires: pkgconfig(libstaroffice-0.0)
 BuildRequires: pkgconfig(libvisio-0.1)

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.3.5
+%global libo_version 7.3.6
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -254,7 +254,6 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
-Patch7: 0001-rhbz-2104545-Only-call-utl-IsYounger-when-its-result.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2195,6 +2194,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Sep 08 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.6.2-1
+- latest version
+
 * Thu Jul 21 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.5.2-1
 - latest version
 

@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.4.0
+%global libo_version 7.4.1
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -61,7 +61,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
+Version:        %{libo_version}.2
 Release:        1%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
@@ -77,13 +77,12 @@ Source7:        http://dev-www.libreoffice.org/extern/185d60944ea767075d27247c31
 Source8:        libreoffice-multiliblauncher.sh
 
 Source9:        %{external_url}/dtoa-20180411.tgz
-Source10:       %{external_url}/libcuckoo-93217f8d391718380c508a722ab9acd5e9081233.tar.gz
-Source11:       %{external_url}/dragonbox-1.1.0.tar.gz
-Source12:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
+Source10:       %{external_url}/dragonbox-1.1.0.tar.gz
+Source11:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zip
 #Unfortunately later versions of hsqldb changed the file format, so if we use a later version we loose
 #backwards compatability.
-Source13:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
-Source14:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
+Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
+Source13:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
@@ -260,13 +259,6 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-Patch4: 0001-Fix-CppunitTest_vcl_svm_test-for-big-endian.patch
-Patch5: 0001-Fix-endian-dependent-test-for-good.patch
-Patch6: 0001-some-disable-pdfium-fixes.patch
-Patch7: 0001-turn-off-font-combobox-preview-if-SAL_ABORT_ON_NON_A.patch
-Patch8: 0001-Arial-Narrow-Liberation-Sans-Narrow.patch
-Patch9: 0001-don-t-worry-about-Linux-Libertine-O-vs-Linux-Liberti.patch
-Patch10: 0001-fix-various-glyph-substitution-asserts-when-using-wi.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1106,7 +1098,6 @@ touch autogen.lastrun
  --without-export-validation \
  --without-fonts \
  --without-lxml \
- --without-system-cuckoo \
  --without-system-dragonbox \
  --without-system-libfixmath \
  --with-gdrive-client-secret="GYWrDtzyZQZ0_g5YoBCC6F0I" \
@@ -2281,6 +2272,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 16 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.1.2-1
+- 7.4.1 release
+
 * Thu Aug 18 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.0.3-1
 - 7.4.0 release
 

@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -254,6 +254,7 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-workaround-x86-ICE-with-gcc-12.patch
 Patch5: 0001-s390x-canvas-test-fails.patch
 Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
+Patch7: 0001-rhbz-2122948-sw-fix-ODF-import-of-fieldmark-in-redli.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2194,6 +2195,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Sep 23 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.6.2-2
+- Resolves: rhbz#2122948 redline + cursor crash in Writer
+
 * Thu Sep 08 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.6.2-1
 - latest version
 

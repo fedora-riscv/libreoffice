@@ -1,0 +1,56 @@
+From 0930fae474d1f5f7039575ccaeb4a0de545819e1 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <michael.stahl@allotropia.de>
+Date: Fri, 23 Sep 2022 18:11:56 +0200
+Subject: [PATCH] rhbz#2122948 sw: fix ODF import of fieldmark in redline
+
+The problem is that SwXText::compareRegionStarts() calls
+SwXText::CreateCursor() which creates a cursor on the last node in the
+body text, but it's actually a redline.
+
+Override SwXRedlineText::CreateCursor() to create a cursor in the
+redline text.
+
+Complete mystery why SwXText has 2 virtual functions to create
+cursors in the first place.
+
+(regression from commit 463178fef5c22f1a04d10e54491852d56e2038b0)
+
+Change-Id: I0f3bcf4eda25f1ac7e1c1b0cf47a920f8302d2b7
+---
+ sw/inc/unoredline.hxx                 | 3 +++
+ sw/source/core/unocore/unoredline.cxx | 5 +++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/sw/inc/unoredline.hxx b/sw/inc/unoredline.hxx
+index a73ede766af6..3a7273a199d7 100644
+--- a/sw/inc/unoredline.hxx
++++ b/sw/inc/unoredline.hxx
+@@ -39,6 +39,9 @@ class SwXRedlineText final :
+     SwNodeIndex m_aNodeIndex;
+     virtual const SwStartNode *GetStartNode() const override;
+ 
++    virtual css::uno::Reference< css::text::XTextCursor >
++        CreateCursor() override;
++
+ public:
+     SwXRedlineText(SwDoc* pDoc, const SwNodeIndex& aNodeIndex);
+ 
+diff --git a/sw/source/core/unocore/unoredline.cxx b/sw/source/core/unocore/unoredline.cxx
+index f0d784658f57..ac73156c4528 100644
+--- a/sw/source/core/unocore/unoredline.cxx
++++ b/sw/source/core/unocore/unoredline.cxx
+@@ -89,6 +89,11 @@ uno::Sequence<sal_Int8> SwXRedlineText::getImplementationId()
+     return css::uno::Sequence<sal_Int8>();
+ }
+ 
++uno::Reference<text::XTextCursor> SwXRedlineText::CreateCursor()
++{
++    return createTextCursor();
++}
++
+ uno::Reference<text::XTextCursor> SwXRedlineText::createTextCursor()
+ {
+     SolarMutexGuard aGuard;
+-- 
+2.37.3
+

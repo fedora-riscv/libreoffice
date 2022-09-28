@@ -1,9 +1,8 @@
-From 4cac125f90e0a3d6828d879cb06f3a4bac14321b Mon Sep 17 00:00:00 2001
-From: David Tardon <dtardon@redhat.com>
-Date: Thu, 21 Aug 2014 16:10:51 +0200
+From 0b613b941c3ffbe432934269f8865bc1f9e59cde Mon Sep 17 00:00:00 2001
+From: rpm-build <rpm-build>
+Date: Tue, 27 Sep 2022 15:13:59 -0700
 Subject: [PATCH] disable libe-book support
 
-Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
 ---
  configure.ac                                     | 3 ---
  external/Module_external.mk                      | 1 -
@@ -11,14 +10,14 @@ Change-Id: Ie915a9bd2acf7f3aeb8b0933252da33c17043bc4
  writerperfect/Library_wpftwriter.mk              | 2 --
  writerperfect/qa/unit/WpftFilterFixture.hxx      | 4 ----
  writerperfect/qa/unit/WpftWriterFilterTest.cxx   | 5 -----
- writerperfect/source/writer/wpftwriter.component | 5 -----
- 7 files changed, 28 deletions(-)
+ writerperfect/source/writer/wpftwriter.component | 6 ------
+ 7 files changed, 29 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index fe425319b8f8..4b8f6a95472c 100644
+index 8babc85..e7733de 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -8566,9 +8566,6 @@ libo_PKG_VERSION([ETONYEK], [libetonyek-0.1], [0.1.8])
+@@ -9606,9 +9606,6 @@ libo_PKG_VERSION([ETONYEK], [libetonyek-0.1], [0.1.10])
  
  libo_CHECK_SYSTEM_MODULE([libfreehand],[FREEHAND],[libfreehand-0.1])
  
@@ -29,25 +28,25 @@ index fe425319b8f8..4b8f6a95472c 100644
  
  libo_CHECK_SYSTEM_MODULE([libpagemaker],[PAGEMAKER],[libpagemaker-0.0])
 diff --git a/external/Module_external.mk b/external/Module_external.mk
-index 41e018d2ef3f..1b7627a1b3e2 100644
+index 366fff2..bc987d1 100644
 --- a/external/Module_external.mk
 +++ b/external/Module_external.mk
-@@ -33,7 +33,6 @@ $(eval $(call gb_Module_add_moduledirs,external,\
- 	$(call gb_Helper_optional,CT2N,ct2n) \
+@@ -31,7 +31,6 @@ $(eval $(call gb_Module_add_moduledirs,external,\
  	$(call gb_Helper_optional,CURL,curl) \
+ 	$(call gb_Helper_optional,DRAGONBOX,dragonbox) \
  	dtoa \
 -	$(call gb_Helper_optional,EBOOK,libebook) \
  	$(call gb_Helper_optional,EPM,epm) \
  	$(call gb_Helper_optional,EPOXY,epoxy) \
  	$(call gb_Helper_optional,EPUBGEN,libepubgen) \
 diff --git a/filter/Configuration_filter.mk b/filter/Configuration_filter.mk
-index e71ffacf8f25..74d2ef05c4aa 100644
+index a58b839..526b447 100644
 --- a/filter/Configuration_filter.mk
 +++ b/filter/Configuration_filter.mk
-@@ -358,10 +358,6 @@ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu
- 	writer_OOXML \
+@@ -359,10 +359,6 @@ $(eval $(call filter_Configuration_add_types,fcfg_langpack,fcfg_writer_types.xcu
  	writer_OOXML_Template \
  	writer_layout_dump_xml \
+ 	writer_indexing_export_xml \
 -	writer_BroadBand_eBook \
 -	writer_FictionBook_2 \
 -	writer_PalmDoc \
@@ -55,10 +54,10 @@ index e71ffacf8f25..74d2ef05c4aa 100644
  	writer_ApplePages \
  	MWAW_Text_Document \
  	Palm_Text_Document \
-@@ -406,10 +402,6 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
- 	OOXML_Text \
+@@ -409,10 +405,6 @@ $(eval $(call filter_Configuration_add_filters,fcfg_langpack,fcfg_writer_filters
  	OOXML_Text_Template \
  	writer_layout_dump \
+ 	writer_indexing_export \
 -	BroadBand_eBook \
 -	FictionBook_2 \
 -	PalmDoc \
@@ -67,30 +66,30 @@ index e71ffacf8f25..74d2ef05c4aa 100644
  	MWAW_Text_Document \
  	Palm_Text_Document \
 diff --git a/writerperfect/Library_wpftwriter.mk b/writerperfect/Library_wpftwriter.mk
-index 8993cca31490..b6e11f356d97 100644
+index 840a86f..70a8933 100644
 --- a/writerperfect/Library_wpftwriter.mk
 +++ b/writerperfect/Library_wpftwriter.mk
-@@ -53,7 +53,6 @@ $(eval $(call gb_Library_use_libraries,wpftwriter,\
+@@ -64,7 +64,6 @@ endif
  $(eval $(call gb_Library_use_externals,wpftwriter,\
  	abw \
  	boost_headers \
 -	ebook \
- 	epubgen \
- 	etonyek \
+     $(if $(ENABLE_WASM_STRIP_SWEXPORTS),,etonyek) \
  	icu_headers \
-@@ -73,7 +72,6 @@ $(eval $(call gb_Library_use_externals,wpftwriter,\
- 
+ 	icui18n \
+@@ -93,7 +92,6 @@ endif
+ ifneq ($(ENABLE_WASM_STRIP_SWEXPORTS),TRUE)
  $(eval $(call gb_Library_add_exception_objects,wpftwriter,\
  	writerperfect/source/writer/AbiWordImportFilter \
 -	writerperfect/source/writer/EBookImportFilter \
- 	writerperfect/source/writer/EPUBExportDialog \
- 	writerperfect/source/writer/EPUBExportFilter \
- 	writerperfect/source/writer/EPUBExportUIComponent \
+ 	writerperfect/source/writer/MSWorksImportFilter \
+ 	writerperfect/source/writer/MWAWImportFilter \
+ 	writerperfect/source/writer/PagesImportFilter \
 diff --git a/writerperfect/qa/unit/WpftFilterFixture.hxx b/writerperfect/qa/unit/WpftFilterFixture.hxx
-index f32478165617..f42edb0d7f55 100644
+index 2fdd6a2..dbdd672 100644
 --- a/writerperfect/qa/unit/WpftFilterFixture.hxx
 +++ b/writerperfect/qa/unit/WpftFilterFixture.hxx
-@@ -26,10 +26,6 @@
+@@ -25,10 +25,6 @@
          || ((major) == (req_major)                                                                 \
              && ((minor) > (req_minor) || ((minor) == (req_minor) && ((micro) >= (req_micro)))))
  
@@ -102,7 +101,7 @@ index f32478165617..f42edb0d7f55 100644
      REQUIRE_VERSION(ETONYEK_VERSION_MAJOR, ETONYEK_VERSION_MINOR, ETONYEK_VERSION_MICRO, major,    \
                      minor, micro)
 diff --git a/writerperfect/qa/unit/WpftWriterFilterTest.cxx b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
-index 8bc4c7cadbb3..eca43caf8d8c 100644
+index 78d24dc..39924f9 100644
 --- a/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 +++ b/writerperfect/qa/unit/WpftWriterFilterTest.cxx
 @@ -30,9 +30,6 @@ WpftWriterFilterTest::WpftWriterFilterTest()
@@ -115,31 +114,32 @@ index 8bc4c7cadbb3..eca43caf8d8c 100644
      const writerperfect::test::WpftOptionalMap_t aEtonyekOptional{
          { "Pages_4.pages", REQUIRE_ETONYEK_VERSION(0, 1, 2) },
          { "Pages_5.pages", REQUIRE_ETONYEK_VERSION(0, 1, 8) },
-@@ -54,8 +51,6 @@ void WpftWriterFilterTest::test()
+@@ -59,8 +56,6 @@ void WpftWriterFilterTest::test()
  
      doTest("com.sun.star.comp.Writer.AbiWordImportFilter",
-            "/writerperfect/qa/unit/data/writer/libabw/");
+            u"/writerperfect/qa/unit/data/writer/libabw/");
 -    doTest("org.libreoffice.comp.Writer.EBookImportFilter",
--           "/writerperfect/qa/unit/data/writer/libe-book/", aEBookOptional);
+-           u"/writerperfect/qa/unit/data/writer/libe-book/", aEBookOptional);
      doTest("com.sun.star.comp.Writer.MSWorksImportFilter",
-            "/writerperfect/qa/unit/data/writer/libwps/", aWpsOptional);
+            u"/writerperfect/qa/unit/data/writer/libwps/", aWpsOptional);
      doTest("com.sun.star.comp.Writer.MWAWImportFilter",
 diff --git a/writerperfect/source/writer/wpftwriter.component b/writerperfect/source/writer/wpftwriter.component
-index 8ab436634052..2720023baedf 100644
+index 176d487..0c89217 100644
 --- a/writerperfect/source/writer/wpftwriter.component
 +++ b/writerperfect/source/writer/wpftwriter.component
-@@ -38,11 +38,6 @@
-     <service name="com.sun.star.document.ExtendedTypeDetection"/>
+@@ -42,12 +42,6 @@
      <service name="com.sun.star.document.ImportFilter"/>
+     <optional/>
    </implementation>
 -  <implementation name="org.libreoffice.comp.Writer.EBookImportFilter"
 -      constructor="org_libreoffice_comp_Writer_EBookImportFilter_get_implementation">
 -    <service name="com.sun.star.document.ExtendedTypeDetection"/>
 -    <service name="com.sun.star.document.ImportFilter"/>
+-    <optional/>
 -  </implementation>
    <implementation name="org.libreoffice.comp.Writer.PagesImportFilter"
        constructor="org_libreoffice_comp_Writer_PagesImportFilter_get_implementation">
      <service name="com.sun.star.document.ExtendedTypeDetection"/>
 -- 
-2.25.1
+2.31.1
 

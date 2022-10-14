@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -268,6 +268,7 @@ Patch7: 0001-Resolves-rhbz-2069486-classic-help-index-entry-autoc.patch
 Patch8: 0001-Fix-determining-ZXING_CFLAGS-for-with-system-zxing.patch
 Patch9: 0001-tdf-143135-Qt-break-recursive-IM-QueryCursorRect.patch
 Patch10: 0001-disable-test-for-arm.patch
+Patch11: CVE-2022-3140.patch
 
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
@@ -2270,6 +2271,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Oct 14 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.7.2-2
+- Resolves: rhbz#2134698 CVE-2022-3140
+
 * Thu May 12 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.2.7.2-1
 - latest version
 

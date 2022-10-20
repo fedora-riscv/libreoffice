@@ -1,0 +1,49 @@
+From d075959a3eb0daf205818c4d547af8f06466faa5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Oct 2022 11:14:44 +0100
+Subject: [PATCH] Resolves: rhbz#2136050 crash on input method
+ "retrieve-surrounding"
+
+select the largest graphic on page 1 and press delete
+
+Change-Id: Ieb5860d9c3f80df010f4f04e2bace4d9641af315
+---
+ sw/source/uibase/docvw/edtwin.cxx | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/sw/source/uibase/docvw/edtwin.cxx b/sw/source/uibase/docvw/edtwin.cxx
+index c013c002cca0..99a0587f6665 100644
+--- a/sw/source/uibase/docvw/edtwin.cxx
++++ b/sw/source/uibase/docvw/edtwin.cxx
+@@ -6465,13 +6465,14 @@ Selection SwEditWin::GetSurroundingTextSelection() const
+     if (rSh.HasDrawView() && rSh.GetDrawView()->IsTextEdit())
+         return rSh.GetDrawView()->GetTextEditOutlinerView()->GetSurroundingTextSelection();
+ 
++    Selection aSel(0, 0);
+     if( rSh.HasSelection() )
+     {
+         OUString sReturn;
+         rSh.GetSelectedText( sReturn, ParaBreakType::ToOnlyCR  );
+-        return Selection( 0, sReturn.getLength() );
++        aSel = Selection( 0, sReturn.getLength() );
+     }
+-    else
++    else if (rSh.GetCursor()->GetPoint()->GetNode().GetTextNode())
+     {
+         bool bUnLockView = !rSh.IsViewLocked();
+         rSh.LockView(true);
+@@ -6494,8 +6495,10 @@ Selection SwEditWin::GetSurroundingTextSelection() const
+         if (bUnLockView)
+             rSh.LockView(false);
+ 
+-        return Selection(sal_Int32(nPos - nStartPos), sal_Int32(nPos - nStartPos));
++        aSel = Selection(sal_Int32(nPos - nStartPos), sal_Int32(nPos - nStartPos));
+     }
++
++    return aSel;
+ }
+ 
+ bool SwEditWin::DeleteSurroundingText(const Selection& rSelection)
+-- 
+2.37.3
+

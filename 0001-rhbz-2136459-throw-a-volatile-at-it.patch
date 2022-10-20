@@ -1,0 +1,26 @@
+From dc6b3068dad63792dcd223ac32651f70341b4006 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 20 Oct 2022 12:50:14 +0100
+Subject: [PATCH] rhbz#2136459 throw a volatile at it
+
+Change-Id: I4fd734e8169fdb6d4d4779c76c80b6303eea2412
+---
+ bridges/source/cpp_uno/gcc3_linux_s390x/cpp2uno.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bridges/source/cpp_uno/gcc3_linux_s390x/cpp2uno.cxx b/bridges/source/cpp_uno/gcc3_linux_s390x/cpp2uno.cxx
+index ed48be648bca..17a50e244370 100644
+--- a/bridges/source/cpp_uno/gcc3_linux_s390x/cpp2uno.cxx
++++ b/bridges/source/cpp_uno/gcc3_linux_s390x/cpp2uno.cxx
+@@ -533,7 +533,7 @@ long privateSnippetExecutor(long r2, long r3, long r4, long r5, long r6, long fi
+             }
+             //deliberate fall through
+         case typelib_TypeClass_DOUBLE:
+-            __asm__ ( "ld 0,%0\n\t"
++            __asm__ volatile ( "ld 0,%0\n\t"
+                 : : "m" (*((double*)nRegReturn)) );
+             break;
+     }
+-- 
+2.37.3
+

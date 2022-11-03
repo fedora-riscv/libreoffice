@@ -1,0 +1,180 @@
+From da003dceefb059ad0720e77dca58f3048d0e613f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Thu, 3 Nov 2022 10:08:35 +0000
+Subject: [PATCH] Resolves: tdf#149932 honour preedit
+ PANGO_UNDERLINE_NONE/PANGO_UNDERLINE_DOUBLE
+
+a)
+
+Related: tdf#149932 honour PANGO_UNDERLINE_NONE for preedit underline
+
+at least don't show an underline for PANGO_UNDERLINE_NONE
+
+Change-Id: I190f44e1dfb7da1c663ce588973278d0da591c46
+
+b)
+
+Related: tdf#149932 honour PANGO_UNDERLINE_DOUBLE for preedit underline
+
+we already have support for double underline so that's an easy add
+
+Change-Id: I1bba5620038e396765bd79050ff6a520096f9476
+
+c)
+
+Related: tdf#149932 map NSUnderlineStyleDouble to new DoubleUnderline
+
+and NSUnderlineStyleThick to ExtTextInputAttr::BoldUnderline
+
+Change-Id: I66696cfd24ccd2cf02a2af63290419ac584079e9
+---
+ editeng/source/editeng/impedit3.cxx |  2 ++
+ include/vcl/commandevent.hxx        | 19 ++++++++++---------
+ sw/source/core/text/redlnitr.cxx    |  2 ++
+ vcl/osx/salframeview.mm             |  4 ++--
+ vcl/source/control/edit.cxx         |  2 ++
+ vcl/source/edit/texteng.cxx         |  2 ++
+ vcl/unx/gtk3/gtkframe.cxx           | 17 +++++++++++++++--
+ 7 files changed, 35 insertions(+), 13 deletions(-)
+
+diff --git a/editeng/source/editeng/impedit3.cxx b/editeng/source/editeng/impedit3.cxx
+index f0f6c0e728d1..7d59b24f7599 100644
+--- a/editeng/source/editeng/impedit3.cxx
++++ b/editeng/source/editeng/impedit3.cxx
+@@ -2894,6 +2894,8 @@ void ImpEditEngine::SeekCursor( ContentNode* pNode, sal_Int32 nPos, SvxFont& rFo
+     ExtTextInputAttr nAttr = mpIMEInfos->pAttribs[ nPos - mpIMEInfos->aPos.GetIndex() - 1 ];
+     if ( nAttr & ExtTextInputAttr::Underline )
+         rFont.SetUnderline( LINESTYLE_SINGLE );
++    else if ( nAttr & ExtTextInputAttr::DoubleUnderline )
++        rFont.SetUnderline( LINESTYLE_DOUBLE );
+     else if ( nAttr & ExtTextInputAttr::BoldUnderline )
+         rFont.SetUnderline( LINESTYLE_BOLD );
+     else if ( nAttr & ExtTextInputAttr::DottedUnderline )
+diff --git a/include/vcl/commandevent.hxx b/include/vcl/commandevent.hxx
+index 883147fad491..a22f751d6477 100644
+--- a/include/vcl/commandevent.hxx
++++ b/include/vcl/commandevent.hxx
+@@ -44,18 +44,19 @@ enum class CommandEventId;
+ 
+ enum class ExtTextInputAttr {
+     NONE                  = 0x0000,
+-    GrayWaveline          = 0x0100,
+-    Underline             = 0x0200,
+-    BoldUnderline         = 0x0400,
+-    DottedUnderline       = 0x0800,
+-    DashDotUnderline      = 0x1000,
+-    Highlight             = 0x2000,
+-    RedText               = 0x4000,
+-    HalfToneText          = 0x8000
++    GrayWaveline          = 0x0010,
++    Underline             = 0x0020,
++    BoldUnderline         = 0x0040,
++    DottedUnderline       = 0x0080,
++    DashDotUnderline      = 0x0100,
++    DoubleUnderline       = 0x0200,
++    Highlight             = 0x0400,
++    RedText               = 0x0800,
++    HalfToneText          = 0x1000
+ };
+ namespace o3tl
+ {
+-    template<> struct typed_flags<ExtTextInputAttr> : is_typed_flags<ExtTextInputAttr, 0xff00> {};
++    template<> struct typed_flags<ExtTextInputAttr> : is_typed_flags<ExtTextInputAttr, 0x1ff0> {};
+ }
+ 
+ #define EXTTEXTINPUT_CURSOR_INVISIBLE           (sal_uInt16(0x0001))
+diff --git a/sw/source/core/text/redlnitr.cxx b/sw/source/core/text/redlnitr.cxx
+index 352b642b294b..12e4fea9fc9c 100644
+--- a/sw/source/core/text/redlnitr.cxx
++++ b/sw/source/core/text/redlnitr.cxx
+@@ -1049,6 +1049,8 @@ void SwExtend::ActualizeFont( SwFont &rFnt, ExtTextInputAttr nAttr )
+ {
+     if ( nAttr & ExtTextInputAttr::Underline )
+         rFnt.SetUnderline( LINESTYLE_SINGLE );
++    else if ( nAttr & ExtTextInputAttr::DoubleUnderline )
++        rFnt.SetUnderline( LINESTYLE_DOUBLE );
+     else if ( nAttr & ExtTextInputAttr::BoldUnderline )
+         rFnt.SetUnderline( LINESTYLE_BOLD );
+     else if ( nAttr & ExtTextInputAttr::DottedUnderline )
+diff --git a/vcl/osx/salframeview.mm b/vcl/osx/salframeview.mm
+index ee245af64820..2923e0f8ef1c 100644
+--- a/vcl/osx/salframeview.mm
++++ b/vcl/osx/salframeview.mm
+@@ -1578,10 +1578,10 @@ static AquaSalFrame* getMouseContainerFrame()
+                 aInputFlags[i] = ExtTextInputAttr::Underline;
+                 break;
+             case NSUnderlineStyleThick:
+-                aInputFlags[i] = ExtTextInputAttr::Underline | ExtTextInputAttr::Highlight;
++                aInputFlags[i] = ExtTextInputAttr::BoldUnderline;
+                 break;
+             case NSUnderlineStyleDouble:
+-                aInputFlags[i] = ExtTextInputAttr::BoldUnderline;
++                aInputFlags[i] = ExtTextInputAttr::DoubleUnderline;
+                 break;
+             default:
+                 aInputFlags[i] = ExtTextInputAttr::Highlight;
+diff --git a/vcl/source/control/edit.cxx b/vcl/source/control/edit.cxx
+index 7bcc11266719..72b55c528099 100644
+--- a/vcl/source/control/edit.cxx
++++ b/vcl/source/control/edit.cxx
+@@ -638,6 +638,8 @@ void Edit::ImplRepaint(vcl::RenderContext& rRenderContext, const tools::Rectangl
+                         vcl::Font aFont = rRenderContext.GetFont();
+                         if (nAttr & ExtTextInputAttr::Underline)
+                             aFont.SetUnderline(LINESTYLE_SINGLE);
++                        else if (nAttr & ExtTextInputAttr::DoubleUnderline)
++                            aFont.SetUnderline(LINESTYLE_DOUBLE);
+                         else if (nAttr & ExtTextInputAttr::BoldUnderline)
+                             aFont.SetUnderline( LINESTYLE_BOLD);
+                         else if (nAttr & ExtTextInputAttr::DottedUnderline)
+diff --git a/vcl/source/edit/texteng.cxx b/vcl/source/edit/texteng.cxx
+index 2b940ed9b6b9..6171e0417c7a 100644
+--- a/vcl/source/edit/texteng.cxx
++++ b/vcl/source/edit/texteng.cxx
+@@ -1382,6 +1382,8 @@ void TextEngine::SeekCursor( sal_uInt32 nPara, sal_Int32 nPos, vcl::Font& rFont,
+     ExtTextInputAttr nAttr = mpIMEInfos->pAttribs[ nPos - mpIMEInfos->aPos.GetIndex() - 1 ];
+     if ( nAttr & ExtTextInputAttr::Underline )
+         rFont.SetUnderline( LINESTYLE_SINGLE );
++    else if ( nAttr & ExtTextInputAttr::DoubleUnderline )
++        rFont.SetUnderline( LINESTYLE_DOUBLE );
+     else if ( nAttr & ExtTextInputAttr::BoldUnderline )
+         rFont.SetUnderline( LINESTYLE_BOLD );
+     else if ( nAttr & ExtTextInputAttr::DottedUnderline )
+diff --git a/vcl/unx/gtk3/gtkframe.cxx b/vcl/unx/gtk3/gtkframe.cxx
+index 3684dd560593..2c4af7274bf6 100644
+--- a/vcl/unx/gtk3/gtkframe.cxx
++++ b/vcl/unx/gtk3/gtkframe.cxx
+@@ -5604,8 +5604,21 @@ OUString GtkSalFrame::GetPreeditDetails(GtkIMContext* pIMContext, std::vector<Ex
+                     rCursorFlags |= EXTTEXTINPUT_CURSOR_INVISIBLE;
+                     break;
+                 case PANGO_ATTR_UNDERLINE:
+-                    sal_attr |= ExtTextInputAttr::Underline;
++                {
++                    PangoAttrInt* pango_underline = pango_attribute_as_int(pango_attr);
++                    switch (pango_underline->value)
++                    {
++                        case PANGO_UNDERLINE_NONE:
++                            break;
++                        case PANGO_UNDERLINE_DOUBLE:
++                            sal_attr |= ExtTextInputAttr::DoubleUnderline;
++                            break;
++                        default:
++                            sal_attr |= ExtTextInputAttr::Underline;
++                            break;
++                    }
+                     break;
++                }
+                 case PANGO_ATTR_STRIKETHROUGH:
+                     sal_attr |= ExtTextInputAttr::RedText;
+                     break;
+@@ -5615,7 +5628,7 @@ OUString GtkSalFrame::GetPreeditDetails(GtkIMContext* pIMContext, std::vector<Ex
+             pango_attribute_destroy (pango_attr);
+             tmp_list = tmp_list->next;
+         }
+-        if (sal_attr == ExtTextInputAttr::NONE)
++        if (!attr_list)
+             sal_attr |= ExtTextInputAttr::Underline;
+         g_slist_free (attr_list);
+ 
+-- 
+2.38.1
+

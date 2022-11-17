@@ -1,0 +1,48 @@
+From 3f472b496be39a0fc1630cd31bfc5f1b9747127e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 22 Oct 2022 15:05:51 +0100
+Subject: [PATCH] =?UTF-8?q?Resolves:=20tdf#151699=C2=A0show/hide=20the=20o?=
+ =?UTF-8?q?verlay=20along=20with=20the=20edit?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+if its present
+
+Change-Id: I9f167117329b9fa33a79271c1f97fcb10ab9de32
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/141590
+Tested-by: Jenkins
+Reviewed-by: Michael Stahl <michael.stahl@allotropia.de>
+---
+ vcl/unx/gtk3/gtkinst.cxx | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/vcl/unx/gtk3/gtkinst.cxx b/vcl/unx/gtk3/gtkinst.cxx
+index cd9bb63ae4ce..886375486336 100644
+--- a/vcl/unx/gtk3/gtkinst.cxx
++++ b/vcl/unx/gtk3/gtkinst.cxx
+@@ -13242,6 +13242,21 @@ public:
+     }
+ 
+ #if !GTK_CHECK_VERSION(4, 0, 0)
++
++    virtual void show() override
++    {
++        GtkInstanceEditable::show();
++        if (m_pPlaceHolderReplacement)
++            gtk_widget_show(GTK_WIDGET(m_pPlaceHolderReplacement));
++    }
++
++    virtual void hide() override
++    {
++        if (m_pPlaceHolderReplacement)
++            gtk_widget_hide(GTK_WIDGET(m_pPlaceHolderReplacement));
++        GtkInstanceEditable::hide();
++    }
++
+     virtual ~GtkInstanceEntry() override
+     {
+         if (m_nUpdatePlaceholderReplacementIdle)
+-- 
+2.38.1
+

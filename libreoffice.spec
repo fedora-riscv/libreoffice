@@ -34,13 +34,6 @@
 # effect
 %bcond_without langpacks
 
-# remove workdir at the end of %%build, to allow build on space-constrained machines
-%ifarch s390 s390x
-%bcond_without smallbuild
-%else
-%bcond_with smallbuild
-%endif
-
 # 'serverconfig' is tuned for non-interactive installs
 # defaults off except on rhel for s390[x] and aarch64
 %if 0%{?rhel}
@@ -62,8 +55,18 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
-License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
+Release:        2%{?libo_prerelease}%{?dist}
+# default new files are: MPLv2
+# older files are typically: MPLv2 incorporating work under ASLv2
+# nlpsolver is: LGPLv3
+# icon-themes/karasa_jaga/COPYING: LGPLv3+
+# icon-themes/colibre/COPYING-ICONS: CC0
+# lotuswordpro is: Either LGPL 2.1 or SISSL 1.1
+# wizards/source/access2base: Either MPLv2 or LGPLv3+
+# writerperfect/source/common/DirectoryStream.cxx: MPLv2 or LGPLv2+
+# extras/source/autocorr/lang/hr/license.md: GPL 2.0 or LGPL2 or MPLv1.1
+# odk/examples/java/...: 3 clause BSD
+License:        MPL-2.0 and Apache-2.0 and LGPL-3.0-only and LGPL-3.0-or-later and CC0-1.0 and BSD-3-Clause and (LGPL-2.1-only or SISSL) and (MPL-2.0 or LGPL-3.0-or-later) and (MPL-2.0 or LGPL-2.1-or-later) and (MPL-1.1 or GPL-2.0-only or LGPL-2.1-only)
 URL:            http://www.libreoffice.org/
 
 Source0:        %{source_url}/libreoffice-%{version}%{?libo_prerelease}%{?libo_buildfix}.tar.xz
@@ -259,6 +262,7 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
+Patch4: 0001-Resolves-tdf-151699-show-hide-the-overlay-along-with.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1026,16 +1030,9 @@ for i in $RPM_OPT_FLAGS; do
         case "$i" in
                 -pipe|-Wall|-Werror*|-fexceptions) continue;;
         esac
-%ifarch s390x
-        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106355
-        case "$i" in
-                -O2|-Wp,-D_FORTIFY_SOURCE=2)
-                continue;;
-        esac
-%endif
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
-%ifarch s390 %{arm} aarch64
+%ifarch s390 s390x %{arm} aarch64
 # these builders typically do not have enough memory to link the big libs with -g2
 ARCH_FLAGS="$ARCH_FLAGS -g1"
 %endif
@@ -1136,14 +1133,11 @@ mkdir $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/output/usr/share/* $WORKDIR/os-integration
 cp -pr $WORKDIR/CustomTarget/sysui/share/libreoffice/LOKDocView-%{girapiversion}.* $WORKDIR/os-integration
 
-%if %{with smallbuild}
-# remove the biggest offenders
-# NOTE: not removing complete LinkTarget, as some libs are needed for smoketest
-rm -rf $WORKDIR/CxxObject $WORKDIR/GenCxxObject $WORKDIR/HelpTarget $WORKDIR/LinkTarget/CppunitTest
-%endif
-
-
 %install
+# remove workdir before install, to allow build on space-constrained machines
+# remove the biggest offenders
+rm -rf $WORKDIR/CxxObject $WORKDIR/GenCxxObject $WORKDIR/HelpTarget $WORKDIR/LinkTarget
+
 # TODO investigate use of make distro-pack-install
 #figure out the icon version
 . ./bin/get_config_variables PRODUCTVERSIONSHORT PRODUCTVERSION SRCDIR WORKDIR
@@ -2272,6 +2266,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 17 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.2.3-2
+- Resolves: rhbz#2143431 fix autofilter missing search entry
+
 * Thu Oct 13 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.2.3-1
 - 7.4.2 release
 

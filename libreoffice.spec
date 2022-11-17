@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -262,8 +262,7 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-# rhbz#2136459
-Patch4: 0001-rhbz-2136459-throw-a-volatile-at-it.patch
+Patch4: 0001-Resolves-tdf-151699-show-hide-the-overlay-along-with.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2267,6 +2266,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 17 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.2.3-2
+- Resolves: rhbz#2143431 fix autofilter missing search entry
+
 * Thu Oct 13 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.2.3-1
 - 7.4.2 release
 

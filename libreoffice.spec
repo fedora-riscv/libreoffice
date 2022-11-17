@@ -1030,6 +1030,13 @@ for i in $RPM_OPT_FLAGS; do
         case "$i" in
                 -pipe|-Wall|-Werror*|-fexceptions) continue;;
         esac
+%ifarch s390x
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106355
+        case "$i" in
+                -O2|-Wp,-D_FORTIFY_SOURCE=2)
+                continue;;
+        esac
+%endif
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
 %ifarch s390 s390x %{arm} aarch64

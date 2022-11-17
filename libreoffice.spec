@@ -262,7 +262,6 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-Patch4: 0001-Resolves-tdf-151699-show-hide-the-overlay-along-with.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

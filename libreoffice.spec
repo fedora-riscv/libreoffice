@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.4.2
+%global libo_version 7.4.3
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.2
+Release:        1%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -2266,6 +2266,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Nov 17 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.3.2-1
+- 7.4.3 release
+
 * Thu Nov 17 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.4.2.3-2
 - Resolves: rhbz#2143431 fix autofilter missing search entry
 

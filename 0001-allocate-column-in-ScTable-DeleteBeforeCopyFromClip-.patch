@@ -1,0 +1,36 @@
+From 93be300342344b0873944c2942faf7cd77e450d3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Lubo=C5=A1=20Lu=C5=88=C3=A1k?= <l.lunak@collabora.com>
+Date: Wed, 15 Jun 2022 09:29:20 +0200
+Subject: [PATCH] allocate column in ScTable::DeleteBeforeCopyFromClip()
+ (tdf#149554)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I22607f1dd0ec1c083f6a52a2ecccb976fc133687
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/135864
+Tested-by: Jenkins
+Reviewed-by: Luboš Luňák <l.lunak@collabora.com>
+(cherry picked from commit e445eac863ac616fb99c9d6bf5510b965fd15957)
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/135949
+(cherry picked from commit b2b8cfe9c8d035be6ba86e5e13f295059c105384)
+---
+ sc/source/core/data/table7.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sc/source/core/data/table7.cxx b/sc/source/core/data/table7.cxx
+index 3b9c872fb87a..cc09154611f9 100644
+--- a/sc/source/core/data/table7.cxx
++++ b/sc/source/core/data/table7.cxx
+@@ -115,7 +115,7 @@ void ScTable::DeleteBeforeCopyFromClip(
+             if (nClipCol > aClipRange.aEnd.Col())
+                 nClipCol = aClipRange.aStart.Col(); // loop through columns.
+ 
+-            const ScColumn& rClipCol = rClipTab.aCol[nClipCol];
++            const ScColumn& rClipCol = const_cast<ScTable&>(rClipTab).CreateColumnIfNotExists(nClipCol);
+             aCol[nCol].DeleteBeforeCopyFromClip(rCxt, rClipCol, rBroadcastSpans);
+         }
+     }
+-- 
+2.38.1
+

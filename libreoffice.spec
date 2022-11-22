@@ -62,7 +62,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 License:        (MPLv1.1 or LGPLv3+) and LGPLv3 and LGPLv2+ and BSD and (MPLv1.1 or GPLv2 or LGPLv2 or Netscape) and Public Domain and ASL 2.0 and MPLv2.0 and CC0
 URL:            http://www.libreoffice.org/
 
@@ -257,6 +257,7 @@ Patch6: 0001-tdf-144862-use-resolution-independent-positions-for-.patch
 Patch7: 0001-rhbz-2122948-sw-fix-ODF-import-of-fieldmark-in-redli.patch
 Patch8: 0001-Resolves-rhbz-2136050-crash-on-input-method-retrieve.patch
 Patch9: 0001-Resolves-tdf-149932-honour-preedit-PANGO_UNDERLINE_N.patch
+Patch10: 0001-allocate-column-in-ScTable-DeleteBeforeCopyFromClip-.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2197,6 +2198,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Tue Nov 22 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.7.2-2
+- Resolves: rhbz#2139829 backport calc paste crash fix
+
 * Mon Nov 07 2022 Caolán McNamara <caolanm@redhat.com> - 1:7.3.7.2-1
 - latest version
 

@@ -1,0 +1,28 @@
+From abcb6bc97c45fe8b442be0698533fd4976d82e5f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Wed, 18 Jan 2023 15:07:29 +0000
+Subject: [PATCH] don't crash with --disable-pdfium
+
+Change-Id: Ibc88d9f32ae86f7137c24e2fe1d581ff1cd64497
+---
+ desktop/qa/desktop_lib/test_desktop_lib.cxx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/desktop/qa/desktop_lib/test_desktop_lib.cxx b/desktop/qa/desktop_lib/test_desktop_lib.cxx
+index 181366e6a19e..98c734c8190a 100644
+--- a/desktop/qa/desktop_lib/test_desktop_lib.cxx
++++ b/desktop/qa/desktop_lib/test_desktop_lib.cxx
+@@ -687,6 +687,10 @@ void DesktopLOKTest::testSaveAsJsonOptions()
+     OString aOptions("{\"PageRange\":{\"type\":\"string\",\"value\":\"2-\"}}");
+     CPPUNIT_ASSERT(pDocument->pClass->saveAs(pDocument, maTempFile.GetURL().toUtf8().getStr(), "pdf", aOptions.getStr()));
+ 
++    std::shared_ptr<vcl::pdf::PDFium> pPDFium = vcl::pdf::PDFiumLibrary::get();
++    if (!pPDFium)
++        return;
++
+     // Then make sure the resulting PDF has 2 pages:
+     std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument
+         = parsePDFExport();
+-- 
+2.39.0
+

@@ -1,0 +1,98 @@
+From e71c92e3bd0c6f755aa2e15e78a62d4bdfac8d19 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 20 Jan 2023 09:43:39 +0000
+Subject: [PATCH] std::abort() during CppunitTest_sw_layoutwriter
+
+seen in fedora distro build. Probably since:
+
+commit 4170b94c443b3bd68b4cc75b8c344ecca3c249b0
+Date:   Tue Nov 8 18:27:05 2022 +0100
+
+    SwModelTestBase: inherit from UnoApiXmlTest
+
+See original discussion in https://gerrit.libreoffice.org/c/core/+/142465
+
+use an alternative approach to solve this
+
+[_RUN_____] testTdf143239::TestBody
+Fatal exception: Signal 6
+Stack:
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libuno_sal.so.3(+0x48bd8)[0xffff95428bd8]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libuno_sal.so.3(+0x4fd8c)[0xffff9542fd8c]
+linux-vdso.so.1(__kernel_rt_sigreturn+0x0)[0xffff955247fc]
+/lib64/libc.so.6(+0x8d568)[0xffff94f2d568]
+/lib64/libc.so.6(gsignal+0x20)[0xffff94ee3e80]
+/lib64/libc.so.6(abort+0xf4)[0xffff94ed0284]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN3psp16PrintFontManager10SubstituteERN3vcl4font17FontSelectPatternERN3rtl8OUStringE+0xbc4)[0xffff91980de4]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(+0x891ea8)[0xffff91981ea8]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK3vcl4font22PhysicalFontCollection20GetGlyphFallbackFontERNS0_17FontSelectPatternEP19LogicalFontInstanceRN3rtl8OUStringEi+0xd0)[0xffff9186a7c0]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK12OutputDevice10ImplLayoutERKN3rtl8OUStringEiiRK5Pointl13KernArraySpanN4o3tl4spanIKhEE14SalLayoutFlagsPKN3vcl4text15TextLayoutCacheEPK15SalLayoutGlyphs+0x112c)[0xffff915be0c0]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK12OutputDevice12GetTextArrayERKN3rtl8OUStringEP9KernArrayiibPKN3vcl4text15TextLayoutCacheEPK15SalLayoutGlyphs+0x2c4)[0xffff915bf2b8]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN18ImplFontMetricData20ImplInitTextLineSizeEPK12OutputDevice+0x74)[0xffff91873da4]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK12OutputDevice11ImplNewFontEv+0x1c8)[0xffff915b7318]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(+0x4c5f70)[0xffff915b5f70]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK12OutputDevice14GetFontCharMapERN5tools5SvRefI11FontCharMapEE+0x34)[0xffff915b9004]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZNK12OutputDevice9HasGlyphsERKN3vcl4FontESt17basic_string_viewIDsSt11char_traitsIDsEEii+0x90)[0xffff915b9300]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libsvtlo.so(+0xff560)[0xffff8cadf560]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libsvtlo.so(_ZN11FontNameBox12CachePreviewEmP5Point+0x288)[0xffff8cae0168]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libsvtlo.so(+0x100448)[0xffff8cae0448]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN9Scheduler22CallbackTaskSchedulingEv+0x30c)[0xffff917b050c]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN14SvpSalInstance12CheckTimeoutEb+0x140)[0xffff919790a0]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN14SvpSalInstance9ImplYieldEbb+0x98)[0xffff91979818]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN14SvpSalInstance7DoYieldEbb+0xe0)[0xffff91979b70]
+/builddir/build/BUILD/libreoffice-7.5.0.2/instdir/program/libvcllo.so(_ZN9Scheduler19ProcessEventsToIdleEv+0x40)[0xffff917bac84]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/CppunitTest/libtest_sw_layoutwriter.so(+0x5520c)[0xffff8d87520c]
+/lib64/libcppunit-1.15.so.1(+0x1e4dc)[0xffff9549e4dc]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/Library/unoexceptionprotector.so(+0x107ec)[0xffff94e107ec]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit16DefaultProtector7protectERKNS_7FunctorERKNS_16ProtectorContextE+0x3c)[0xffff9549e1cc]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit14ProtectorChain7protectERKNS_7FunctorERKNS_16ProtectorContextE+0x320)[0xffff954969f4]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit10TestResult7protectERKNS_7FunctorEPNS_4TestERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE+0x80)[0xffff954a06d0]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit8TestCase3runEPNS_10TestResultE+0x11c)[0xffff954a993c]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit13TestComposite15doRunChildTestsEPNS_10TestResultE+0xe0)[0xffff9549e980]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit13TestComposite3runEPNS_10TestResultE+0x58)[0xffff9549e6a8]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit13TestComposite15doRunChildTestsEPNS_10TestResultE+0xe0)[0xffff9549e980]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit13TestComposite3runEPNS_10TestResultE+0x58)[0xffff9549e6a8]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit10TestResult7runTestEPNS_4TestE+0x38)[0xffff9549f5a8]
+/lib64/libcppunit-1.15.so.1(_ZN7CppUnit10TestRunner3runERNS_10TestResultERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE+0x70)[0xffff954a6b70]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/Executable/cppunittester(+0x1443c)[0xaaaac255443c]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/Executable/cppunittester(+0x15390)[0xaaaac2555390]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/Executable/cppunittester(+0x10a38)[0xaaaac2550a38]
+/lib64/libc.so.6(+0x30588)[0xffff94ed0588]
+/lib64/libc.so.6(__libc_start_main+0x9c)[0xffff94ed0660]
+/builddir/build/BUILD/libreoffice-7.5.0.2/workdir/LinkTarget/Executable/cppunittester(+0x10ab0)[0xaaaac2550ab0]
+which: no gdb in (/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/lib/jvm/java-17-openjdk-17.0.6.0.9-0.2.ea.fc38.aarch64/bin)
+You need gdb in your path to show backtraces
+Error: a unit test failed, please do one of:
+make CppunitTest_sw_layoutwriter CPPUNITTRACE="gdb --args"
+    # for interactive debugging on Linux
+make CppunitTest_sw_layoutwriter VALGRIND=memcheck
+    # for memory checking
+make CppunitTest_sw_layoutwriter DEBUGCPPUNIT=TRUE
+    # for exception catching
+You can limit the execution to just one particular test by:
+
+Change-Id: Ife968c5d1d49081b1d28d50a557bc90d59980fc0
+---
+ svtools/source/control/ctrlbox.cxx | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/svtools/source/control/ctrlbox.cxx b/svtools/source/control/ctrlbox.cxx
+index 32f82f6884c8..5aec7838c015 100644
+--- a/svtools/source/control/ctrlbox.cxx
++++ b/svtools/source/control/ctrlbox.cxx
+@@ -504,9 +504,11 @@ void FontNameBox::Fill( const FontList* pList )
+         set_active_or_entry_text(aOldText);
+ }
+ 
++static bool IsRunningUnitTest() { return getenv("LO_TESTNAME") != nullptr; }
++
+ void FontNameBox::EnableWYSIWYG(bool bEnable)
+ {
+-    if (comphelper::LibreOfficeKit::isActive())
++    if (comphelper::LibreOfficeKit::isActive() || IsRunningUnitTest())
+         return;
+     if (mbWYSIWYG == bEnable)
+         return;
+-- 
+2.39.0
+

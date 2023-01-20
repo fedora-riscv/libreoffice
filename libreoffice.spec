@@ -264,6 +264,8 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-Related-tdf-151898-fix-gtk4-build-in-7-4.patch
+Patch5: 0001-rhbz-2162658-backtrace-showing-endlessly-recursive-S.patch
+Patch6: 0001-Resolves-tdf-153059-after-ChangeHeaderOrFooter-the-c.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2267,8 +2269,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Thu Jan 12 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.4.4.2-1
+* Fri Jan 20 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.4.4.2-1
 - 7.4.4 release
+- Resolves: rhbz#2162658 ScInputWindow::Resize() crash
 
 * Sat Dec 31 2022 Pete Walter <pwalter@fedoraproject.org> - 1:7.4.3.2-4
 - Rebuild for ICU 72

@@ -1,0 +1,39 @@
+From 71831f56b0db6b052c000d1f333e81589aff75a7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 20 Jan 2023 12:47:42 +0000
+Subject: [PATCH] rhbz#2162658 backtrace showing endlessly recursive
+ ScInputWindow::Resize
+
+Change-Id: I2d10fd1ebfb1c25cf213ebb68e7d34e39fadde13
+---
+ sc/source/ui/app/inputwin.cxx | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/sc/source/ui/app/inputwin.cxx b/sc/source/ui/app/inputwin.cxx
+index 739fe5c12965..d7db674dabf9 100644
+--- a/sc/source/ui/app/inputwin.cxx
++++ b/sc/source/ui/app/inputwin.cxx
+@@ -465,7 +465,8 @@ void ScInputWindow::Resize()
+ {
+     ToolBox::Resize();
+ 
+-    Size aSize = GetSizePixel();
++    Size aStartSize = GetSizePixel();
++    Size aSize = aStartSize;
+ 
+     //(-10) to allow margin between sidebar and formulabar
+     tools::Long margin = (comphelper::LibreOfficeKit::isActive()) ? 10 : 0;
+@@ -489,7 +490,9 @@ void ScInputWindow::Resize()
+             aSize.setHeight(aGroupBarSize.Height() + 2 * (pGroupBar->GetVertOffset() + 1));
+         }
+     }
+-    SetSizePixel(aSize);
++
++    if (aStartSize != aSize)
++        SetSizePixel(aSize);
+ 
+     Invalidate();
+ }
+-- 
+2.39.0
+

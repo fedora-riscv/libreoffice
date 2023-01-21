@@ -1,0 +1,44 @@
+From 403259fb4b24fe8427930b6c83f4c737f61950c1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Sat, 21 Jan 2023 16:20:29 +0000
+Subject: [PATCH] rhbz#2162862 null pFrame during teardown
+
+Change-Id: Iad2de93f0400b0ec49dae4c3d6979957784114f4
+---
+ sw/source/core/access/accpara.cxx | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/sw/source/core/access/accpara.cxx b/sw/source/core/access/accpara.cxx
+index aea0d2b3518f..8121d1c62389 100644
+--- a/sw/source/core/access/accpara.cxx
++++ b/sw/source/core/access/accpara.cxx
+@@ -431,15 +431,18 @@ bool SwAccessibleParagraph::HasCursor()
+ void SwAccessibleParagraph::UpdatePortionData()
+ {
+     // obtain the text frame
+-    OSL_ENSURE( GetFrame() != nullptr, "The text frame has vanished!" );
+-    OSL_ENSURE( GetFrame()->IsTextFrame(), "The text frame has mutated!" );
+     const SwTextFrame* pFrame = static_cast<const SwTextFrame*>( GetFrame() );
+-
+-    // build new portion data
+-    m_pPortionData.reset( new SwAccessiblePortionData(
+-        pFrame, GetMap()->GetShell()->GetViewOptions()) );
+-    pFrame->VisitPortions( *m_pPortionData );
+-
++    OSL_ENSURE( pFrame != nullptr, "The text frame has vanished!" );
++    if (!pFrame)
++        ClearPortionData();
++    else
++    {
++        OSL_ENSURE( pFrame->IsTextFrame(), "The text frame has mutated!" );
++        // build new portion data
++        m_pPortionData.reset( new SwAccessiblePortionData(
++            pFrame, GetMap()->GetShell()->GetViewOptions()) );
++        pFrame->VisitPortions( *m_pPortionData );
++    }
+     OSL_ENSURE( m_pPortionData != nullptr, "UpdatePortionData() failed" );
+ }
+ 
+-- 
+2.39.0
+

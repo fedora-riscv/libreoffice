@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.4.4
+%global libo_version 7.4.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -54,7 +54,7 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.1
 Release:        1%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
@@ -265,8 +265,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-Related-tdf-151898-fix-gtk4-build-in-7-4.patch
 Patch5: 0001-rhbz-2162658-backtrace-showing-endlessly-recursive-S.patch
-Patch6: 0001-Resolves-tdf-153059-after-ChangeHeaderOrFooter-the-c.patch
-Patch7: 0001-rhbz-2162862-null-pFrame-during-teardown.patch
+Patch6: 0001-rhbz-2162862-null-pFrame-during-teardown.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -2270,6 +2269,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Jan 26 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.4.5.1-1
+- 7.4.5 release
+
 * Sat Jan 21 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.4.4.2-1
 - 7.4.4 release
 - Resolves: rhbz#2162658 ScInputWindow::Resize() crash

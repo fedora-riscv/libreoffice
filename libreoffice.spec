@@ -269,6 +269,7 @@ Patch6: 0001-change-test-to-use-Calibri-instead-of-Cambria.patch
 Patch7: 0001-std-abort-during-CppunitTest_sw_layoutwriter.patch
 # TODO investigate these
 Patch8: 0001-aarch64-failing-here.patch
+Patch9: 0001-include-filename-if-the-test-fails.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

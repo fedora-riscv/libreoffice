@@ -1,0 +1,177 @@
+From 7c15ffd4e3bf002c3d4edd758bb3af27b1f6a34e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Tue, 22 Nov 2022 13:09:17 +0000
+Subject: [PATCH] Related: rhbz#2136459 use a value which is exactly
+ representable as a float
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+20 builds in a row with the old value all succeeded for me on F38 anyway,
+so if the problem still exists this almost certainly doesn't do anything.
+But it's nice for debugging to use something that is printed the same by a debugger as seen in the source.
+
+also see: tdf#125978
+
+Change-Id: I42dc5f18c22acc006bffb57578bacb65dbc16013
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/143116
+Tested-by: Jenkins
+Reviewed-by: Caolán McNamara <caolanm@redhat.com>
+---
+ stoc/test/testiadapter.cxx                             | 2 +-
+ testtools/source/bridgetest/bridgetest.cxx             | 8 ++++----
+ testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx | 8 ++++----
+ testtools/source/bridgetest/cli/cli_cs_bridgetest.cs   | 8 ++++----
+ testtools/source/bridgetest/cli/cli_vb_bridgetest.vb   | 8 ++++----
+ 5 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/stoc/test/testiadapter.cxx b/stoc/test/testiadapter.cxx
+index d9fd9560c13a..ca5afc4029f4 100644
+--- a/stoc/test/testiadapter.cxx
++++ b/stoc/test/testiadapter.cxx
+@@ -750,7 +750,7 @@ sal_Bool performTest( const Reference<XLanguageBindingTest > & xLBT )
+                 sal_True, '@', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+                 SAL_CONST_INT64(0x123456789abcdef0),
+                 SAL_CONST_UINT64(0xfedcba9876543210),
+-                (float)17.0815, M_PI, TestEnum_LOLA, OUString("dumdidum"), xI,
++                (float)17.03125, M_PI, TestEnum_LOLA, OUString("dumdidum"), xI,
+                 Any( &xI, cppu::UnoType<XInterface>::get()) );
+ 
+         OSL_ENSURE( aData.Any == xI, "### unexpected any!" );
+diff --git a/testtools/source/bridgetest/bridgetest.cxx b/testtools/source/bridgetest/bridgetest.cxx
+index 6067e3a5235a..7de0ee794720 100644
+--- a/testtools/source/bridgetest/bridgetest.cxx
++++ b/testtools/source/bridgetest/bridgetest.cxx
+@@ -376,7 +376,7 @@ static bool performTest(
+         assign(
+             static_cast<TestElement &>(aData), true, '@', 17, 0x1234, 0xFEDC,
+             0x12345678, 0xFEDCBA98, SAL_CONST_INT64(0x123456789ABCDEF0),
+-            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.0815f, M_PI,
++            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.03125f, M_PI,
+             TestEnum_LOLA, STRING_TEST_CONSTANT, 18, 0x5678, xI,
+             Any(&xI, cppu::UnoType<XInterface>::get()));
+         bRet &= check(aData.Any == xI, "### unexpected any!");
+@@ -732,19 +732,19 @@ static bool performTest(
+         assign(
+             _arStruct[0], true, '@', 17, 0x1234, 0xFEDC, 0x12345678, 0xFEDCBA98,
+             SAL_CONST_INT64(0x123456789ABCDEF0),
+-            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.0815f, M_PI,
++            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.03125f, M_PI,
+             TestEnum_LOLA, STRING_TEST_CONSTANT, 18, 0x5678, _arObj[0],
+             Any(&_arObj[0], cppu::UnoType<XInterface>::get()));
+         assign(
+             _arStruct[1], true, 'A', 17, 0x1234, 0xFEDC, 0x12345678, 0xFEDCBA98,
+             SAL_CONST_INT64(0x123456789ABCDEF0),
+-            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.0815f, M_PI,
++            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.03125f, M_PI,
+             TestEnum_TWO, STRING_TEST_CONSTANT, 18, 0x5678, _arObj[1],
+             Any(&_arObj[1], cppu::UnoType<XInterface>::get()));
+         assign(
+             _arStruct[2], true, 'B', 17, 0x1234, 0xFEDC, 0x12345678, 0xFEDCBA98,
+             SAL_CONST_INT64(0x123456789ABCDEF0),
+-            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.0815f, M_PI,
++            SAL_CONST_UINT64(0xFEDCBA9876543210), 17.03125f, M_PI,
+             TestEnum_CHECK, STRING_TEST_CONSTANT, 18, 0x5678, _arObj[2],
+             Any(&_arObj[2], cppu::UnoType<XInterface>::get()));
+         {
+diff --git a/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx b/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
+index 04d9b3066f62..8f2f1a0cf675 100644
+--- a/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
++++ b/testtools/source/bridgetest/cli/cli_cpp_bridgetest.cxx
+@@ -376,7 +376,7 @@ static bool performTest(XBridgeTest* xLBT)
+         assign( static_cast<TestElement*>(aData),
+                 true, '@', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+                 0x123456789abcdef0, 0xfedcba9876543210,
+-                17.0815f, M_PI, TestEnum::LOLA,
++                17.03125f, M_PI, TestEnum::LOLA,
+                 Constants::STRING_TEST_CONSTANT, xI,
+                 aAny);
+ 
+@@ -651,15 +651,15 @@ static bool performSequenceTest(XBridgeTest* xBT)
+     arStruct[0] = new TestElement(); arStruct[1] = new TestElement();
+     arStruct[2] = new TestElement();
+     assign( arStruct[0], true, '@', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+-             0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, M_PI,
++             0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, M_PI,
+             TestEnum::LOLA, Constants::STRING_TEST_CONSTANT, 18, 0x5678, arObject[0],
+             Any( __typeof(Object),  arObject[0]) );
+     assign( arStruct[1], true, 'A', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+-            0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, M_PI,
++            0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, M_PI,
+             TestEnum::TWO, Constants::STRING_TEST_CONSTANT, 18, 0x5678, arObject[1],
+             Any( __typeof(Object), arObject[1]) );
+     assign( arStruct[2], true, 'B', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+-            0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, M_PI,
++            0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, M_PI,
+             TestEnum::CHECK, Constants::STRING_TEST_CONSTANT, 18, 0x5678, arObject[2],
+             Any( __typeof(Object), arObject[2] ) );
+     {
+diff --git a/testtools/source/bridgetest/cli/cli_cs_bridgetest.cs b/testtools/source/bridgetest/cli/cli_cs_bridgetest.cs
+index 3552f3f730af..6774821c378e 100644
+--- a/testtools/source/bridgetest/cli/cli_cs_bridgetest.cs
++++ b/testtools/source/bridgetest/cli/cli_cs_bridgetest.cs
+@@ -366,7 +366,7 @@ bool performTest(XBridgeTest xLBT)
+     assign( (TestElement)aData,
+             true, '@', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+             0x123456789abcdef0, 0xfedcba9876543210,
+-            17.0815f, 3.1415926359, TestEnum.LOLA,
++            17.03125f, 3.1415926359, TestEnum.LOLA,
+             Constants.STRING_TEST_CONSTANT, xI,
+             aAny);
+ 
+@@ -719,15 +719,15 @@ static bool performSequenceTest(XBridgeTest xBT)
+     TestElement[] arStruct = {new TestElement(), new TestElement(),
+                                new TestElement()};
+     assign( arStruct[0], true, '@', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+- 			0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, 3.1415926359,
++ 			0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, 3.1415926359,
+             TestEnum.LOLA, Constants.STRING_TEST_CONSTANT, arObject[0],
+             new Any( typeof(Object),  arObject[0]) );
+     assign( arStruct[1], true, 'A', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+-			0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, 3.1415926359,
++			0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, 3.1415926359,
+             TestEnum.TWO, Constants.STRING_TEST_CONSTANT, arObject[1],
+             new Any( typeof(Object), arObject[1]) );
+     assign( arStruct[2], true, 'B', 17, 0x1234, 0xfedc, 0x12345678, 0xfedcba98,
+-			0x123456789abcdef0, 0xfedcba9876543210, 17.0815f, 3.1415926359,
++			0x123456789abcdef0, 0xfedcba9876543210, 17.03125f, 3.1415926359,
+             TestEnum.CHECK, Constants.STRING_TEST_CONSTANT, arObject[2],
+             new Any( typeof(Object), arObject[2] ) );
+ 
+diff --git a/testtools/source/bridgetest/cli/cli_vb_bridgetest.vb b/testtools/source/bridgetest/cli/cli_vb_bridgetest.vb
+index 18abd584bbab..9e095a33a15d 100644
+--- a/testtools/source/bridgetest/cli/cli_vb_bridgetest.vb
++++ b/testtools/source/bridgetest/cli/cli_vb_bridgetest.vb
+@@ -243,17 +243,17 @@ Public Class BridgeTest
+                                New TestElement()}
+         assign( arStruct(0), True, "@"C, 17, &H1234, Convert.ToUInt16(&Hfedc), _
+             &H12345678, Convert.ToUInt32(&H123456), &H123456789abcdef0, _
+-            Convert.ToUInt64(123456788), 17.0815F, 3.1415926359, _
++            Convert.ToUInt64(123456788), 17.03125F, 3.1415926359, _
+             TestEnum.LOLA, CONSTANTS.STRING_TEST_CONSTANT, 18, &H5678, arObject(0), _
+             New Any(GetType(System.Object), arObject(0)))
+         assign( arStruct(1), True, "A"C, 17, &H1234, Convert.ToUInt16(&Hfedc), _
+             &H12345678, Convert.ToUInt32(&H123456), &H123456789abcdef0, _
+-            Convert.ToUInt64(12345678), 17.0815F, 3.1415926359, _
++            Convert.ToUInt64(12345678), 17.03125F, 3.1415926359, _
+             TestEnum.TWO, CONSTANTS.STRING_TEST_CONSTANT, 18, &H5678, arObject(1), _
+             New Any(GetType(System.Object), arObject(1)) )
+         assign( arStruct(2), True, "B"C, 17, &H1234, Convert.ToUInt16(&Hfedc), _ 
+             &H12345678, Convert.ToUInt32(654321), &H123456789abcdef0, _
+-            Convert.ToUInt64(87654321), 17.0815F, 3.1415926359, _ 
++            Convert.ToUInt64(87654321), 17.03125F, 3.1415926359, _ 
+             TestEnum.CHECK, Constants.STRING_TEST_CONSTANT, 18, &H5678, arObject(2), _
+             New Any(GetType(System.Object), arObject(2)))
+ 
+@@ -561,7 +561,7 @@ Public Class BridgeTest
+ 			True, "@"C, 17, &H1234, Convert.ToUInt16(&HdcS), &H12345678, _
+             Convert.ToUInt32(4294967294), _
+ 			&H123456789abcdef0, Convert.ToUInt64(14294967294), _
+-			17.0815f, 3.1415926359, TestEnum.LOLA, _
++			17.03125f, 3.1415926359, TestEnum.LOLA, _
+ 			CONSTANTS.STRING_TEST_CONSTANT, xI, _
+ 			aAny)
+ 
+-- 
+2.39.1
+

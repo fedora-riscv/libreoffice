@@ -265,11 +265,10 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-don-t-crash-with-disable-pdfium.patch
 Patch5: 0002-don-t-crash-with-disable-pdfium.patch
-Patch6: 0001-change-test-to-use-Calibri-instead-of-Cambria.patch
-Patch7: 0001-std-abort-during-CppunitTest_sw_layoutwriter.patch
+Patch6: 0001-std-abort-during-CppunitTest_sw_layoutwriter.patch
 # TODO investigate these
-Patch8: 0001-aarch64-failing-here.patch
-Patch9: 0001-include-filename-if-the-test-fails.patch
+Patch7: 0001-aarch64-failing-here.patch
+Patch8: 0001-include-filename-if-the-test-fails.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

@@ -54,8 +54,8 @@
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        1%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -2273,6 +2273,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu Feb 02 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.5.0.3-1
+- 7.5.0 release
+
 * Fri Jan 20 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.5.0.2-1
 - 7.5.0 beta
 

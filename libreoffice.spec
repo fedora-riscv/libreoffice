@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.1
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}.rv64%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -269,6 +269,9 @@ Patch6: 0001-rhbz-2162862-null-pFrame-during-teardown.patch
 Patch7: 0001-Related-rhbz-2136459-use-a-value-which-is-exactly-re.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
+
+# Patches for riscv64 support from Arch Linux
+Patch1000:  riscv64-support.patch
 
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
@@ -1006,6 +1009,10 @@ git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard
 %autopatch -M 99
 %if 0%{?rhel}
 %patch500 -p1
+%endif
+
+%ifarch riscv64
+%patch1000 -p1
 %endif
 
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
@@ -2270,6 +2277,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Feb 27 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 1:7.4.5.1-1.rv64
+- Add riscv64 support patch from Arch Linux.
+
 * Thu Jan 26 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.4.5.1-1
 - 7.4.5 release
 

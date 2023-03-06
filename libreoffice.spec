@@ -121,7 +121,7 @@ BuildRequires: libtool-ltdl-devel
 BuildRequires: make
 BuildRequires: mariadb-connector-c-devel
 BuildRequires: patch
-BuildRequires: perl-FindBin
+BuildRequires: perl(FindBin)
 BuildRequires: perl(Digest::MD5)
 BuildRequires: perl(base)
 %if 0%{?fedora}

@@ -1,0 +1,178 @@
+From e1464f8601289630d3fd4aed2f4163c07163a52d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 10 Mar 2023 11:41:45 +0000
+Subject: [PATCH] Use sifr and sifr_dark for gnome
+
+explicitly use:
+ breeze/breeze_dark for plasma
+ sukapura/sukapura_dark for macOS
+ colibre/colibre_dark for win
+
+originally we only had one dark theme so in a dark theme there was only
+one option available, but there's now a bunch to choose from.
+
+https://pagure.io/fedora-workstation/issue/361
+
+"Fedora Workstation currently uses the rather outdated-looking
+Elementary icon theme for LibreOffice, instead of the Sifr icon theme
+which was designed to fit in with GNOME's icons. The Sifr theme saw a
+nice update with LibreOffice 7.5, the version being shipped in Fedora
+Linux 38, which makes the icons fit better with the current GNOME design
+language.
+
+Also, in Fedora Workstation 38, if you change GNOME to dark mode,
+LibreOffice's icons change from the colourful Elementary icon set to the
+monochrome Breeze Dark set, which is a jarring change. The Sifr icons
+have both a light and dark theme, so it would be much more conistent to
+use them. It's also worth noting that the Breeze icons were designed for
+KDE Plasma, not GNOME, so they look even more out of place than the
+Elementary icons."
+
+Change-Id: Ic37bbe8e7ad754ab070ead06dc0b006c6ccf3adb
+---
+ vcl/inc/IconThemeSelector.hxx                 |  8 ++--
+ vcl/qa/cppunit/app/test_IconThemeSelector.cxx |  6 +--
+ vcl/source/app/IconThemeSelector.cxx          | 42 +++++++++++++------
+ 3 files changed, 36 insertions(+), 20 deletions(-)
+
+diff --git a/vcl/inc/IconThemeSelector.hxx b/vcl/inc/IconThemeSelector.hxx
+index 8dab03d3a8d2..0bfbf2034858 100644
+--- a/vcl/inc/IconThemeSelector.hxx
++++ b/vcl/inc/IconThemeSelector.hxx
+@@ -77,12 +77,12 @@ private:
+     static OUString
+     ReturnFallback(const std::vector<IconThemeInfo>& installedThemes);
+ 
+-    /** The name of the icon theme which is used as fallback */
+-    static constexpr OUStringLiteral FALLBACK_ICON_THEME_ID = u"colibre";
+-
++    /** The name of the icon themes which are used as fallbacks */
++    static constexpr OUStringLiteral FALLBACK_LIGHT_ICON_THEME_ID = u"colibre";
++    static constexpr OUStringLiteral FALLBACK_DARK_ICON_THEME_ID = u"colibre_dark";
+ 
+     static OUString
+-    GetIconThemeForDesktopEnvironment(const OUString& desktopEnvironment);
++    GetIconThemeForDesktopEnvironment(const OUString& desktopEnvironment, bool bPreferDarkIconTheme);
+ 
+     OUString mPreferredIconTheme;
+     bool mUseHighContrastTheme;
+diff --git a/vcl/qa/cppunit/app/test_IconThemeSelector.cxx b/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
+index 94d53b43d309..8d1aea0c3889 100644
+--- a/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
++++ b/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
+@@ -85,7 +85,7 @@ IconThemeSelectorTest::ElementaryIsReturnedForGnomeDesktop()
+     std::vector<vcl::IconThemeInfo> themes = GetFakeInstalledThemes();
+     vcl::IconThemeSelector s;
+     OUString r = s.SelectIconThemeForDesktopEnvironment(themes, "gnome");
+-    CPPUNIT_ASSERT_EQUAL_MESSAGE("'elementary' theme is returned for gnome desktop", OUString("elementary"), r);
++    CPPUNIT_ASSERT_EQUAL_MESSAGE("'sifr' theme is returned for gnome desktop", OUString("sifr"), r);
+ }
+ 
+ void
+@@ -96,7 +96,7 @@ IconThemeSelectorTest::ThemeIsOverriddenByPreferredTheme()
+     s.SetPreferredIconTheme(preferred, false);
+     std::vector<vcl::IconThemeInfo> themes = GetFakeInstalledThemes();
+     OUString selected = s.SelectIconThemeForDesktopEnvironment(themes, "gnome");
+-    CPPUNIT_ASSERT_EQUAL_MESSAGE("'elementary' theme is overridden by breeze", preferred, selected);
++    CPPUNIT_ASSERT_EQUAL_MESSAGE("'sifr' theme is overridden by breeze", preferred, selected);
+ }
+ 
+ void
+@@ -148,7 +148,7 @@ IconThemeSelectorTest::FallbackThemeIsReturnedForEmptyInput()
+     vcl::IconThemeSelector s;
+     OUString selected = s.SelectIconTheme(std::vector<vcl::IconThemeInfo>(), "colibre");
+     CPPUNIT_ASSERT_EQUAL_MESSAGE("fallback is returned for empty input",
+-            OUString(vcl::IconThemeSelector::FALLBACK_ICON_THEME_ID), selected);
++            OUString(vcl::IconThemeSelector::FALLBACK_LIGHT_ICON_THEME_ID), selected);
+ }
+ 
+ void
+diff --git a/vcl/source/app/IconThemeSelector.cxx b/vcl/source/app/IconThemeSelector.cxx
+index fd32008d9414..ee30e577f3f5 100644
+--- a/vcl/source/app/IconThemeSelector.cxx
++++ b/vcl/source/app/IconThemeSelector.cxx
+@@ -51,30 +51,50 @@ IconThemeSelector::IconThemeSelector()
+ }
+ 
+ /*static*/ OUString
+-IconThemeSelector::GetIconThemeForDesktopEnvironment(const OUString& desktopEnvironment)
++IconThemeSelector::GetIconThemeForDesktopEnvironment(const OUString& desktopEnvironment, bool bPreferDarkIconTheme)
+ {
+     if (comphelper::LibreOfficeKit::isActive())
+-        return "colibre";
++    {
++        if (!bPreferDarkIconTheme)
++            return "colibre";
++        else
++            return "colibre_dark";
++    }
+ 
+ #ifdef _WIN32
+     (void)desktopEnvironment;
+-    return "colibre";
++    if (!bPreferDarkIconTheme)
++        return "colibre";
++    else
++        return "colibre_dark";
+ #else
+     OUString r;
+     if ( desktopEnvironment.equalsIgnoreAsciiCase("plasma5") ||
+          desktopEnvironment.equalsIgnoreAsciiCase("lxqt") ) {
+-        r = "breeze";
++        if (!bPreferDarkIconTheme)
++            r = "breeze";
++        else
++            r = "breeze_dark";
+     }
+     else if ( desktopEnvironment.equalsIgnoreAsciiCase("macosx") ) {
+-        r = "sukapura";
++        if (!bPreferDarkIconTheme)
++            r = "sukapura";
++        else
++            r = "sukapura_dark";
+     }
+     else if ( desktopEnvironment.equalsIgnoreAsciiCase("gnome") ||
+          desktopEnvironment.equalsIgnoreAsciiCase("mate") ||
+          desktopEnvironment.equalsIgnoreAsciiCase("unity") ) {
+-        r = "elementary";
++        if (!bPreferDarkIconTheme)
++            r = "sifr";
++        else
++            r = "sifr_dark";
+     } else
+     {
+-        r = FALLBACK_ICON_THEME_ID;
++        if (!bPreferDarkIconTheme)
++            r = FALLBACK_LIGHT_ICON_THEME_ID;
++        else
++            r = FALLBACK_DARK_ICON_THEME_ID;
+     }
+     return r;
+ #endif // _WIN32
+@@ -89,13 +109,9 @@ IconThemeSelector::SelectIconThemeForDesktopEnvironment(
+         if (icon_theme_is_in_installed_themes(mPreferredIconTheme, installedThemes)) {
+             return mPreferredIconTheme;
+         }
+-        //if a dark variant is preferred, and we didn't have an exact match, then try our one and only dark theme
+-        if (mPreferDarkIconTheme && icon_theme_is_in_installed_themes("breeze_dark", installedThemes)) {
+-            return "breeze_dark";
+-        }
+     }
+ 
+-    OUString themeForDesktop = GetIconThemeForDesktopEnvironment(desktopEnvironment);
++    OUString themeForDesktop = GetIconThemeForDesktopEnvironment(desktopEnvironment, mPreferDarkIconTheme);
+     if (icon_theme_is_in_installed_themes(themeForDesktop, installedThemes)) {
+         return themeForDesktop;
+     }
+@@ -177,7 +193,7 @@ IconThemeSelector::ReturnFallback(const std::vector<IconThemeInfo>& installedThe
+         return installedThemes.front().GetThemeId();
+     }
+     else {
+-        return FALLBACK_ICON_THEME_ID;
++        return FALLBACK_LIGHT_ICON_THEME_ID;
+     }
+ }
+ 
+-- 
+2.39.2
+

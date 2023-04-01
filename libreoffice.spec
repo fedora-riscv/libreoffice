@@ -1718,6 +1718,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_sifr_svg.zip
 %{baseinstdir}/share/config/images_sukapura.zip
 %{baseinstdir}/share/config/images_sukapura_svg.zip
+%{baseinstdir}/share/config/images_sukapura_dark.zip
+%{baseinstdir}/share/config/images_sukapura_dark_svg.zip
 %dir %{baseinstdir}/share/tipoftheday
 %{baseinstdir}/share/tipoftheday/*
 %dir %{baseinstdir}/share/toolbarmode

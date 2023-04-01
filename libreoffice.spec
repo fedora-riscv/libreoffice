@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.5.1
+%global libo_version 7.5.2
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        4%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -265,14 +265,12 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
 Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
-Patch4: 0001-don-t-crash-with-disable-pdfium.patch
-Patch5: 0001-tdf-152073-tdf-153895-basicide-Set-bg-color-for-bord.patch
-Patch6: 0001-Use-sifr-and-sifr_dark-for-gnome.patch
-Patch7: 0001-rhbz-2171265-Report-fatal-InitApplicationServiceMana.patch
-Patch8: 0001-rhbz-2171265-Filter-out-all-non-.rdb-files.patch
+Patch4: 0001-Use-sifr-and-sifr_dark-for-gnome.patch
+Patch5: 0001-rhbz-2171265-Report-fatal-InitApplicationServiceMana.patch
+Patch6: 0001-rhbz-2171265-Filter-out-all-non-.rdb-files.patch
 # TODO investigate these
-Patch9: 0001-aarch64-failing-here.patch
-Patch10: 0001-include-filename-if-the-test-fails.patch
+Patch7: 0001-aarch64-failing-here.patch
+Patch8: 0001-include-filename-if-the-test-fails.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -1468,36 +1466,11 @@ done
 export DESTDIR=%{buildroot}
 ./solenv/bin/install-gdb-printers -a %{_datadir}/gdb/auto-load%{baseinstdir} -c -i %{baseinstdir} -p %{_datadir}/libreoffice/gdb
 
-%if 0%{?fedora}
-# Update the screenshot shown in the software center
-#
-# NOTE: It would be *awesome* if this file was pushed upstream.
-#
-# See http://people.freedesktop.org/~hughsient/appdata/#screenshots for more details.
-#
-appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-writer.appdata.xml \
-  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
-  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-calc.appdata.xml \
-  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-draw.appdata.xml \
-  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png 
-appstream-util replace-screenshots %{buildroot}%{_datadir}/metainfo/libreoffice-impress.appdata.xml \
-  https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png 
-%endif
 %if 0%{?flatpak}
 # Assemble the libreoffice-*.appdata.xml files into a single
 # org.libreoffice.LibreOffice.appdata.xml; first create the single file:
 solenv/bin/assemble-flatpak-appdata-step1.sh \
  %{buildroot}%{_datadir}/metainfo/ 0
-# ...then update the screenshots in the single file (see above):
-appstream-util replace-screenshots \
- %{buildroot}%{_datadir}/metainfo/org.libreoffice.LibreOffice.appdata.xml \
- https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/a.png \
- https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-writer/b.png \
- https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-calc/a.png \
- https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-draw/a.png \
- https://raw.githubusercontent.com/hughsie/fedora-appstream/master/screenshots-extra/libreoffice-impress/a.png
 # ...then append the original files to the single file:
 solenv/bin/assemble-flatpak-appdata-step2.sh \
  %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
@@ -2276,6 +2249,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Fri Mar 31 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.5.2.2-1
+- latest version
+
 * Wed Mar 22 2023 Stephan Bergmann <sbergman@redhat.com> - 1:7.5.1.2-4
 - Resolves: rhbz#2171265 Failure to start with junk in program/services/
 

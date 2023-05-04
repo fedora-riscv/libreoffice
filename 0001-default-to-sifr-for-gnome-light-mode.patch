@@ -1,0 +1,58 @@
+From ffceb48dd576ababe346c9548b12ca18f31d3293 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Caol=C3=A1n=20McNamara?= <caolanm@redhat.com>
+Date: Fri, 10 Mar 2023 11:41:45 +0000
+Subject: [PATCH] default to sifr for gnome light mode
+
+https://pagure.io/fedora-workstation/issue/361
+
+"Fedora Workstation currently uses the rather outdated-looking
+Elementary icon theme for LibreOffice, instead of the Sifr icon theme
+which was designed to fit in with GNOME's icons. The Sifr theme saw a
+nice update with LibreOffice 7.5, the version being shipped in Fedora
+Linux 38, which makes the icons fit better with the current GNOME design
+language."
+
+Change-Id: Ic37bbe8e7ad754ab070ead06dc0b006c6ccf3adb
+---
+ vcl/qa/cppunit/app/test_IconThemeSelector.cxx | 4 ++--
+ vcl/source/app/IconThemeSelector.cxx          | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/vcl/qa/cppunit/app/test_IconThemeSelector.cxx b/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
+index 72ee344b1437..8d1aea0c3889 100644
+--- a/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
++++ b/vcl/qa/cppunit/app/test_IconThemeSelector.cxx
+@@ -85,7 +85,7 @@ IconThemeSelectorTest::ElementaryIsReturnedForGnomeDesktop()
+     std::vector<vcl::IconThemeInfo> themes = GetFakeInstalledThemes();
+     vcl::IconThemeSelector s;
+     OUString r = s.SelectIconThemeForDesktopEnvironment(themes, "gnome");
+-    CPPUNIT_ASSERT_EQUAL_MESSAGE("'elementary' theme is returned for gnome desktop", OUString("elementary"), r);
++    CPPUNIT_ASSERT_EQUAL_MESSAGE("'sifr' theme is returned for gnome desktop", OUString("sifr"), r);
+ }
+ 
+ void
+@@ -96,7 +96,7 @@ IconThemeSelectorTest::ThemeIsOverriddenByPreferredTheme()
+     s.SetPreferredIconTheme(preferred, false);
+     std::vector<vcl::IconThemeInfo> themes = GetFakeInstalledThemes();
+     OUString selected = s.SelectIconThemeForDesktopEnvironment(themes, "gnome");
+-    CPPUNIT_ASSERT_EQUAL_MESSAGE("'elementary' theme is overridden by breeze", preferred, selected);
++    CPPUNIT_ASSERT_EQUAL_MESSAGE("'sifr' theme is overridden by breeze", preferred, selected);
+ }
+ 
+ void
+diff --git a/vcl/source/app/IconThemeSelector.cxx b/vcl/source/app/IconThemeSelector.cxx
+index 6b8dfc0f42c7..ee30e577f3f5 100644
+--- a/vcl/source/app/IconThemeSelector.cxx
++++ b/vcl/source/app/IconThemeSelector.cxx
+@@ -86,7 +86,7 @@ IconThemeSelector::GetIconThemeForDesktopEnvironment(const OUString& desktopEnvi
+          desktopEnvironment.equalsIgnoreAsciiCase("mate") ||
+          desktopEnvironment.equalsIgnoreAsciiCase("unity") ) {
+         if (!bPreferDarkIconTheme)
+-            r = "elementary";
++            r = "sifr";
+         else
+             r = "sifr_dark";
+     } else
+-- 
+2.40.1
+

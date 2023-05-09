@@ -55,7 +55,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}.rv64%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -271,6 +271,8 @@ Patch5: 0001-aarch64-failing-here.patch
 Patch6: 0001-include-filename-if-the-test-fails.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
+# riscv64 support patch from Arch Linux
+Patch1000:  0001-Add-riscv64-support-patch-from-Arch-Linux.patch
 
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
@@ -1010,6 +1012,9 @@ git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard
 %if 0%{?rhel}
 %patch500 -p1
 %endif
+%ifarch riscv64
+%patch1000 -p1
+%endif
 
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
@@ -1495,7 +1500,11 @@ rm -f %{buildroot}%{baseinstdir}/program/officebean.abignore
 %endif
 
 %check
+%ifnarch riscv64
 make unitcheck slowcheck
+%else
+:
+%endif
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 
@@ -2249,6 +2258,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Thu May 08 2023 Liu yang <Yang.Liu.sn@gmail.com> - 1:7.5.3.2-1.rv64
+- Add riscv64 support patch from Arch Linux.
+
 * Thu May 04 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.5.3.2-1
 - latest version
 

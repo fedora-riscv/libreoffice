@@ -992,7 +992,7 @@ rm -rf git-hooks */git-hooks
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
 %global __scm git_am
-%__scm_setup_git_am
+%__scm_setup_git_am -q
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \

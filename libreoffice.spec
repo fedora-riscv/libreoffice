@@ -51,6 +51,9 @@
 
 %global bundling_options %{nil}
 
+# https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
+ExcludeArch:    %{ix86}
+
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1

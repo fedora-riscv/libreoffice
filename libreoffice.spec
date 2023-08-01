@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.5.3
+%global libo_version 7.5.5
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -51,11 +51,14 @@
 
 %global bundling_options %{nil}
 
+# https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
+ExcludeArch:    %{ix86}
+
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        1%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -147,7 +150,6 @@ BuildRequires: lpsolve-devel
 BuildRequires: openldap-devel
 BuildRequires: pam-devel
 BuildRequires: pkgconfig(bluez)
-BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: pkgconfig(dconf)
 BuildRequires: pkgconfig(epoxy)
 BuildRequires: pkgconfig(evolution-data-server-1.2)
@@ -269,7 +271,10 @@ Patch4: 0001-default-to-sifr-for-gnome-light-mode.patch
 # TODO investigate these
 Patch5: 0001-aarch64-failing-here.patch
 Patch6: 0001-include-filename-if-the-test-fails.patch
-Patch7: 0001-tdf-155161-Always-embed-fonts-with-CFF2-table-as-PDF.patch
+# backported
+Patch7: 0001-fix-testSignDocument_PEM_PDF.patch
+Patch8: 0001-Only-pass-I.-arguments-to-g-ir-scanner-by-using-pkg-.patch
+Patch9: 0001-Adapt-test-code-to-cURL-8.2.0.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -324,7 +329,7 @@ Requires: google-crosextra-caladea-fonts, google-crosextra-carlito-fonts
 Requires: %{name}-langpack-en = %{epoch}:%{version}-%{release}
 %ifarch %{java_arches}
 # rhbz#949106 libreoffice-core drags in both openjdk 1.7.0 and 1.8.0
-Requires: java-headless >= 1:1.6
+Recommends: java-headless >= 1:1.6
 %else
 Obsoletes: libreoffice-nlpsolver < 1:7.4.0.0
 Obsoletes: libreoffice-officebean < 1:7.4.0.0
@@ -356,6 +361,9 @@ to be written in python.
 Summary: Database front-end for LibreOffice
 %if 0%{?fedora}
 Requires: firebird
+%endif
+%ifarch %{java_arches}
+Requires: java-headless >= 1:1.6
 %endif
 Requires: pentaho-reporting-flow-engine
 Requires: postgresql-jdbc
@@ -993,7 +1001,7 @@ rm -rf git-hooks */git-hooks
 # This is normally done by %%autosetup -S git_am,
 # but that does not work with multiple -b options, so we use plain %%setup above
 %global __scm git_am
-%__scm_setup_git_am
+%__scm_setup_git_am -q
 
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
@@ -2250,6 +2258,32 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Mon Jul 31 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-1
+- 7.5.5.2
+
+* Thu Jul 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 1:7.5.4.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Tue Jul 11 2023 František Zatloukal <fzatlouk@redhat.com> - 1:7.5.4.2-4
+- Rebuilt for ICU 73.2
+
+* Fri Jun 30 2023 Vitaly Zaitsev <vitaly@easycoding.org> - 1:7.5.4.2-3
+- Make Java optional. Fixes rhbz#2084071.
+
+* Mon Jun 19 2023 Mamoru TASAKA <mtasaka@fedoraproject.org> - 1:7.5.4.2-2
+- Backport upstream fix for testSignDocument_PEM_PDF test failure
+- Enable test again
+
+* Fri Jun 16 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.4.2-1
+- 7.5.4.2
+- Drop 0001-tdf-155161-Always-embed-fonts-with-CFF2-table-as-PDF.patch, upstreamed.
+
+* Thu Jun 15 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.3.2-4
+- Disable tests temporarily to resolve FTBFS.
+
+* Thu Jun 15 2023 Python Maint <python-maint@redhat.com> - 1:7.5.3.2-3
+- Rebuilt for Python 3.12
+
 * Tue May 09 2023 Caolán McNamara <caolanm@redhat.com> - 1:7.5.3.2-2
 - rhbz#2192915 Japanese font not printed
 

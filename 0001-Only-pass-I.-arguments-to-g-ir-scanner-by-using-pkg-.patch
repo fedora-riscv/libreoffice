@@ -1,0 +1,36 @@
+From caddaaa6afd2709f72dfb6160a485d405ac03966 Mon Sep 17 00:00:00 2001
+From: Rico Tzschichholz <ricotz@ubuntu.com>
+Date: Tue, 11 Jul 2023 20:21:15 +0200
+Subject: [PATCH] Only pass -I... arguments to g-ir-scanner by using
+ pkg-config's --cflags-only-I
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Otherwise it is possible that e.g. -Wl,--export-dynamic is passed which is fatal.
+
+Change-Id: I1735641e3149c86456e1164b67509a719e09d446
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/154340
+Reviewed-by: René Engelhard <rene@debian.org>
+Tested-by: Caolán McNamara <caolan.mcnamara@collabora.com>
+Reviewed-by: Caolán McNamara <caolan.mcnamara@collabora.com>
+---
+ sysui/CustomTarget_share.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sysui/CustomTarget_share.mk b/sysui/CustomTarget_share.mk
+index b86521a3a80f..912048b2ad66 100644
+--- a/sysui/CustomTarget_share.mk
++++ b/sysui/CustomTarget_share.mk
+@@ -167,7 +167,7 @@ $(share_WORKDIR)/%/LOKDocView-0.1.gir: \
+ 	mkdir -p $(dir $@)
+ 	PYTHONWARNINGS=default g-ir-scanner "${SRCDIR}/include/LibreOfficeKit/LibreOfficeKitGtk.h" \
+ 				 "${SRCDIR}/libreofficekit/source/gtk/lokdocview.cxx" \
+-                 `${PKG_CONFIG} --cflags gobject-introspection-1.0 gtk+-3.0` \
++                 `${PKG_CONFIG} --cflags-only-I gobject-introspection-1.0 gtk+-3.0` \
+ 				 -I"${SRCDIR}/include/" \
+                  --include=GLib-2.0 --include=GObject-2.0 --include=Gio-2.0 \
+                  --library=libreofficekitgtk --library-path="${INSTDIR}/program" \
+-- 
+2.41.0
+

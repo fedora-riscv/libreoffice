@@ -274,6 +274,7 @@ Patch6: 0001-include-filename-if-the-test-fails.patch
 # backported
 Patch7: 0001-fix-testSignDocument_PEM_PDF.patch
 Patch8: 0001-Only-pass-I.-arguments-to-g-ir-scanner-by-using-pkg-.patch
+Patch9: 0001-Adapt-test-code-to-cURL-8.2.0.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 

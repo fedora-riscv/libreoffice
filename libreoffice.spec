@@ -115,7 +115,6 @@ BuildRequires: findutils
 BuildRequires: flex
 BuildRequires: gcc-c++
 BuildRequires: gettext
-BuildRequires: git
 BuildRequires: gnupg2
 BuildRequires: gperf
 BuildRequires: hunspell-en-US
@@ -998,11 +997,6 @@ gpgv2 --keyring ./keyring.gpg %{SOURCE5} %{SOURCE4}
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 4
 rm -rf git-hooks */git-hooks
 
-# This is normally done by %%autosetup -S git_am,
-# but that does not work with multiple -b options, so we use plain %%setup above
-%global __scm git_am
-%__scm_setup_git_am -q
-
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e '  <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1012,7 +1006,6 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -M 99
@@ -1020,6 +1013,7 @@ git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard
 %patch500 -p1
 %endif
 
+# Temporarily disable failig tests
 sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
 sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk # ppc64*
@@ -1029,14 +1023,7 @@ sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # pp
 sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk # s390x
 
 #see rhbz#2072615
-git rm vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
-
-git commit -q -a -m 'temporarily disable failing tests'
-
-# Seeing .git dir makes some of the build tools change their behavior.
-# We do not want that. Note: it is still possible to use
-# git --git-dir=.git-rpm
-mv .git .git-rpm
+rm -f vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
 
 %build
 # path to external tarballs

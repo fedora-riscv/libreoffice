@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -1008,7 +1008,7 @@ rm -rf git-hooks */git-hooks
 mv -f redhat.soc extras/source/palettes/standard.soc
 
 # apply patches
-%autopatch -M 99
+%autopatch -p1 -M 99
 %if 0%{?rhel}
 %patch500 -p1
 %endif
@@ -2242,6 +2242,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Sun Aug 06 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.5.5.2-3
+- Do not setup sources as git repo during build.
+
 * Wed Aug 02 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-2
 - Poppler rebuild.
 

@@ -1475,12 +1475,9 @@ export DESTDIR=%{buildroot}
 
 %if 0%{?flatpak}
 # Assemble the libreoffice-*.appdata.xml files into a single
-# org.libreoffice.LibreOffice.appdata.xml; first create the single file:
-solenv/bin/assemble-flatpak-appdata-step1.sh \
+# org.libreoffice.LibreOffice.appdata.xml:
+solenv/bin/assemble-flatpak-appdata.sh \
  %{buildroot}%{_datadir}/metainfo/ 0
-# ...then append the original files to the single file:
-solenv/bin/assemble-flatpak-appdata-step2.sh \
- %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
 rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 

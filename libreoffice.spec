@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.2
-Release:        1%{?libo_prerelease}%{?dist}
+Release:        2%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -1475,12 +1475,9 @@ export DESTDIR=%{buildroot}
 
 %if 0%{?flatpak}
 # Assemble the libreoffice-*.appdata.xml files into a single
-# org.libreoffice.LibreOffice.appdata.xml; first create the single file:
-solenv/bin/assemble-flatpak-appdata-step1.sh \
+# org.libreoffice.LibreOffice.appdata.xml:
+solenv/bin/assemble-flatpak-appdata.sh \
  %{buildroot}%{_datadir}/metainfo/ 0
-# ...then append the original files to the single file:
-solenv/bin/assemble-flatpak-appdata-step2.sh \
- %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
 rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 
@@ -2258,6 +2255,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Aug 02 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-2
+- Poppler rebuild.
+
 * Mon Jul 31 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-1
 - 7.5.5.2
 

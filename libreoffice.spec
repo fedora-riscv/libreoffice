@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 7.5.5
+%global libo_version 7.6.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -57,8 +57,8 @@ ExcludeArch:    %{ix86}
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
-Release:        3%{?libo_prerelease}%{?dist}
+Version:        %{libo_version}.3
+Release:        2%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -126,6 +126,7 @@ BuildRequires: patch
 BuildRequires: perl(Digest::MD5)
 BuildRequires: perl(FindBin)
 BuildRequires: perl(base)
+BuildRequires: perl(lib)
 %if 0%{?fedora}
 BuildRequires: glibc-all-langpacks
 BuildRequires: libappstream-glib
@@ -223,10 +224,11 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
-BuildRequires: pkgconfig(liborcus-0.17)
-BuildRequires: pkgconfig(mdds-2.0)
+BuildRequires: pkgconfig(liborcus-0.18)
+BuildRequires: pkgconfig(mdds-2.1)
 BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
+BuildRequires: frozen-static
 
 %ifarch %{java_arches}
 # java stuff
@@ -243,6 +245,7 @@ BuildRequires: google-carlito-fonts
 BuildRequires: google-rubik-fonts
 # Amiri used in vcl/qa/cppunit tests
 BuildRequires: amiri-fonts
+BuildRequires: amiri-quran-fonts
 BuildRequires: liberation-mono-fonts
 BuildRequires: liberation-narrow-fonts
 BuildRequires: liberation-sans-fonts
@@ -269,11 +272,10 @@ Patch3: 0001-Revert-tdf-101630-gdrive-support-w-oAuth-and-Drive-A.patch
 Patch4: 0001-default-to-sifr-for-gnome-light-mode.patch
 # TODO investigate these
 Patch5: 0001-aarch64-failing-here.patch
-Patch6: 0001-include-filename-if-the-test-fails.patch
 # backported
-Patch7: 0001-fix-testSignDocument_PEM_PDF.patch
 Patch8: 0001-Only-pass-I.-arguments-to-g-ir-scanner-by-using-pkg-.patch
 Patch9: 0001-Adapt-test-code-to-cURL-8.2.0.patch
+Patch10: 0002-Fix-heap-use-after-free.patch
 # not upstreamed
 Patch500: 0001-disable-libe-book-support.patch
 
@@ -997,6 +999,11 @@ gpgv2 --keyring ./keyring.gpg %{SOURCE5} %{SOURCE4}
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 4
 rm -rf git-hooks */git-hooks
 
+# This is normally done by %%autosetup -S git_am,
+# but that does not work with multiple -b options, so we use plain %%setup above
+%global __scm git_am
+%__scm_setup_git_am -q
+
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e '  <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1006,6 +1013,7 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
+git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -p1 -M 99
@@ -1013,14 +1021,25 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %patch500 -p1
 %endif
 
-# Temporarily disable failig tests
-sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk # ppc64le
-sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk # aarch64/ppc64*/s390x
-sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk # ppc64*
-sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk # aarch64/ppc64*
-sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk # ppc64le
-sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk # ppc64le
-sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk # s390x
+# Temporarily disable failing tests
+%ifarch ppc64le
+sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk
+sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
+sed -i -e /CppunitTest_sc_financial_functions_test/d sc/Module_sc.mk
+sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk
+sed -i -e /CppunitTest_dbaccess_hsqldb_test/d dbaccess/Module_dbaccess.mk
+sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk
+%endif
+%ifarch aarch64
+sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
+sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk
+%endif
+%ifarch s390x
+sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
+sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
+# https://bugs.documentfoundation.org/show_bug.cgi?id=125978
+sed -i -e s/CustomTarget_uno_test// testtools/Module_testtools.mk
+%endif
 
 #see rhbz#2072615
 rm -f vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
@@ -1113,12 +1132,9 @@ touch autogen.lastrun
  %{?archoptions} \
  %{?flatpakoptions}
 
-if ! make verbose=true build; then
-    echo "build attempt 1 failed"
-    if ! make verbose=true build; then
-        echo "build attempt 2 failed"
-        make verbose=true GMAKE_OPTIONS=-rj1 build
-    fi
+if ! %make_build; then
+  echo "build attempt 1 failed"
+  make verbose=true build
 fi
 
 #generate the icons and mime type stuff
@@ -1465,6 +1481,9 @@ export DESTDIR=%{buildroot}
 # org.libreoffice.LibreOffice.appdata.xml:
 solenv/bin/assemble-flatpak-appdata.sh \
  %{buildroot}%{_datadir}/metainfo/ 0
+# ...then append the original files to the single file:
+solenv/bin/assemble-flatpak-appdata-step2.sh \
+ %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
 rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 
@@ -1529,7 +1548,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so
 %{baseinstdir}/program/libdlgprovlo.so
-%{baseinstdir}/program/libexpwraplo.so
+#%%{baseinstdir}/program/libexpwraplo.so
 %{baseinstdir}/program/libfps_officelo.so
 %{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
@@ -1561,6 +1580,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdesktop_detectorlo.so
 %{baseinstdir}/program/libdict_ja.so
 %{baseinstdir}/program/libdict_zh.so
+%{baseinstdir}/program/libdocmodello.so
 %{baseinstdir}/program/libdrawinglayerlo.so
 %{baseinstdir}/program/libdrawinglayercorelo.so
 %{baseinstdir}/program/libeditenglo.so
@@ -2002,7 +2022,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/impress.abignore
 %endif
 %{baseinstdir}/program/libPresentationMinimizerlo.so
-%{baseinstdir}/program/libPresenterScreenlo.so
+#%%{baseinstdir}/program/libPresenterScreenlo.so
 %{baseinstdir}/program/libwpftimpresslo.so
 %dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
@@ -2242,8 +2262,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
-* Sun Aug 06 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.5.5.2-3
-- Do not setup sources as git repo during build.
+* Tue Aug 15 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-2
+- Disable unreliable test under s390x
+- Try verbose make if first build attempt fails
 
 * Wed Aug 02 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-2
 - Poppler rebuild.

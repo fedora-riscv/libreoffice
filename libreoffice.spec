@@ -137,7 +137,11 @@ BuildRequires: zip
 BuildRequires: %{libo_python}-devel
 BuildRequires: %{libo_python}-setuptools
 BuildRequires: Box2D-devel
+%ifarch ppc64le
+BuildRequires: boost1.78-devel
+%else
 BuildRequires: boost-devel
+%endif
 BuildRequires: cups-devel
 BuildRequires: fontpackages-devel
 %if 0%{?fedora}

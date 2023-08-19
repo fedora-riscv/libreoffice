@@ -375,7 +375,7 @@ Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description base
-GUI database front-end for LibreOffice. Allows creation and management of 
+GUI database front-end for LibreOffice. Allows creation and management of
 databases through a GUI.
 
 %ifarch %{java_arches}
@@ -446,7 +446,7 @@ BuildArch: noarch
 
 %description %{fontname}-fonts
 A dingbats font, OpenSymbol, suitable for use by LibreOffice for bullets and
-mathematical symbols. 
+mathematical symbols.
 
 %package writer
 Summary: LibreOffice Word Processor Application
@@ -460,7 +460,7 @@ Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 The LibreOffice Word Processor application.
 
 %package emailmerge
-Summary: Email mail-merge component for LibreOffice 
+Summary: Email mail-merge component for LibreOffice
 Requires: %{name}-writer%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -510,7 +510,7 @@ Requires: %{name}-pdfimport%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-pyuno%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-ure%{?_isa} = %{epoch}:%{version}-%{release}
 
-%description math 
+%description math
 The LibreOffice Equation Editor Application.
 
 %package graphicfilter
@@ -999,11 +999,6 @@ gpgv2 --keyring ./keyring.gpg %{SOURCE5} %{SOURCE4}
 %setup -q -n %{name}-%{version}%{?libo_prerelease} -b 2 -b 4
 rm -rf git-hooks */git-hooks
 
-# This is normally done by %%autosetup -S git_am,
-# but that does not work with multiple -b options, so we use plain %%setup above
-%global __scm git_am
-%__scm_setup_git_am -q
-
 #Customize Palette to add Red Hat colours
 (head -n -1 extras/source/palettes/standard.soc && \
  echo -e '  <draw:color draw:name="Red Hat 1" draw:color="#cc0000"/>
@@ -1013,7 +1008,6 @@ rm -rf git-hooks */git-hooks
   <draw:color draw:name="Red Hat 5" draw:color="#4e376b"/>' && \
  tail -n 1 extras/source/palettes/standard.soc) > redhat.soc
 mv -f redhat.soc extras/source/palettes/standard.soc
-git commit -q -m 'add Red Hat colors to palette' extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -p1 -M 99
@@ -1236,7 +1230,7 @@ pushd %{buildroot}%{baseinstdir}/share/autocorr
 
 %make_autocorr_aliases -l en-GB en-AG en-AU en-BS en-BW en-BZ en-CA en-DK en-GH en-HK en-IE en-IN en-JM en-NG en-NZ en-SG en-TT
 %make_autocorr_aliases -l en-US en-PH
-#en-ZA exists and has a good autocorrect file with two or three extras that make sense for 
+#en-ZA exists and has a good autocorrect file with two or three extras that make sense for
 #neighbouring english speaking territories
 %make_autocorr_aliases -l en-ZA en-NA en-ZW
 %if %{with langpacks}
@@ -1296,7 +1290,7 @@ rm -f %{buildroot}%{baseinstdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/LICENSE
 ln -sr %{buildroot}%{lodatadocdir}/CREDITS.fodt %{buildroot}%{baseinstdir}/CREDITS.fodt
 ln -sr %{buildroot}%{lodatadocdir}/LICENSE.html %{buildroot}%{baseinstdir}/LICENSE.html
 
-#ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs 
+#ensure that no sneaky un-prelinkable, un-fpic or non executable shared libs
 #have snuck through
 pic=0
 executable=0
@@ -1481,9 +1475,6 @@ export DESTDIR=%{buildroot}
 # org.libreoffice.LibreOffice.appdata.xml:
 solenv/bin/assemble-flatpak-appdata.sh \
  %{buildroot}%{_datadir}/metainfo/ 0
-# ...then append the original files to the single file:
-solenv/bin/assemble-flatpak-appdata-step2.sh \
- %{buildroot}%{_datadir}/metainfo/ %{buildroot}%{_datadir}/metainfo/
 rm %{buildroot}%{_datadir}/metainfo/libreoffice-*.appdata.xml
 %endif
 
@@ -2265,6 +2256,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 * Tue Aug 15 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-2
 - Disable unreliable test under s390x
 - Try verbose make if first build attempt fails
+
+* Sun Aug 13 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-1
+- 7.6.0.3
 
 * Wed Aug 02 2023 Gwyn Ciesla <gwync@protonmail.com> - 1:7.5.5.2-2
 - Poppler rebuild.

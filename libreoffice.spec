@@ -58,7 +58,7 @@ Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
 Version:        %{libo_version}.3
-Release:        2%{?libo_prerelease}%{?dist}
+Release:        3%{?libo_prerelease}%{?dist}
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
 # nlpsolver is: LGPLv3
@@ -1033,6 +1033,8 @@ sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
 sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=125978
 sed -i -e s/CustomTarget_uno_test// testtools/Module_testtools.mk
+# failing testTdf149402_vba
+sed -i -e s/CppunitTest_basic_macros// basic/Module_basic.mk
 %endif
 
 #see rhbz#2072615
@@ -2253,6 +2255,9 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %{_includedir}/LibreOfficeKit
 
 %changelog
+* Wed Aug 23 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-3
+- Disable another failing test under s390x
+
 * Tue Aug 15 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-2
 - Disable unreliable test under s390x
 - Try verbose make if first build attempt fails

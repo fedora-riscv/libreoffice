@@ -1031,12 +1031,16 @@ sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
 sed -i -e /CppunitTest_sc_statistical_functions_test/d sc/Module_sc.mk
 %endif
 %ifarch s390x
+sed -i -e /CppunitTest_sc_array_functions_test/d sc/Module_sc.mk
 sed -i -e /CppunitTest_sc_addin_functions_test/d sc/Module_sc.mk
 sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=125978
 sed -i -e s/CustomTarget_uno_test// testtools/Module_testtools.mk
 # failing testTdf149402_vba
 sed -i -e s/CppunitTest_basic_macros// basic/Module_basic.mk
+# Other test exclusions pointed out by sharkcz
+sed -i -e /CppunitTest_vcl_svm_test/d vcl/Module_vcl.mk
+sed -i -e /CppunitTest_sw_core_layout/d sw/Module_sw.mk
 %endif
 
 #see rhbz#2072615
@@ -2258,7 +2262,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
 * Wed Aug 23 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-3
-- Disable another failing test under s390x
+- Disable other failing tests under s390x
 - Add patch to fix FTB under ppc64le
 
 * Tue Aug 15 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-2

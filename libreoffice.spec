@@ -277,6 +277,8 @@ Patch8: 0001-Only-pass-I.-arguments-to-g-ir-scanner-by-using-pkg-.patch
 Patch9: 0001-Adapt-test-code-to-cURL-8.2.0.patch
 Patch10: 0002-Fix-heap-use-after-free.patch
 # not upstreamed
+# fix FTB in ppc64le from sharkcz
+Patch11: lo-7.6-ppc64le-tests.patch
 Patch500: 0001-disable-libe-book-support.patch
 
 %global instdir %{_libdir}
@@ -2257,6 +2259,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Wed Aug 23 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-3
 - Disable another failing test under s390x
+- Add patch to fix FTB under ppc64le
 
 * Tue Aug 15 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-2
 - Disable unreliable test under s390x

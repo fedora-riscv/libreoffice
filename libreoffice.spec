@@ -1054,7 +1054,7 @@ for i in $RPM_OPT_FLAGS; do
         esac
         ARCH_FLAGS="$ARCH_FLAGS $i"
 done
-%ifarch s390 s390x %{arm} aarch64
+%ifarch s390 s390x %{arm}
 # these builders typically do not have enough memory to link the big libs with -g2
 ARCH_FLAGS="$ARCH_FLAGS -g1"
 %endif
@@ -2260,6 +2260,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %changelog
 * Sun Aug 27 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-4
 - Remove test exclusions from aarch64
+- Link aarch64 executable with standard -g level
 
 * Wed Aug 23 2023 Mattia Verga <mattia.verga@proton.me> - 1:7.6.0.3-3
 - Disable other failing tests under s390x

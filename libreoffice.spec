@@ -276,6 +276,7 @@ Patch9: 0001-Adapt-test-code-to-cURL-8.2.0.patch
 Patch10: 0002-Fix-heap-use-after-free.patch
 # not upstreamed
 # fix FTB in ppc64le from sharkcz
+# https://lists.freedesktop.org/archives/libreoffice/2023-August/090870.html
 Patch11: lo-7.6-ppc64le-tests.patch
 Patch500: 0001-disable-libe-book-support.patch
 

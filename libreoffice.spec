@@ -275,6 +275,7 @@ Patch4: 0001-default-to-sifr-for-gnome-light-mode.patch
 Patch5: 0001-Only-pass-I.-arguments-to-g-ir-scanner-by-using-pkg-.patch
 # not upstreamed
 # fix FTB in ppc64le from sharkcz
+# https://lists.freedesktop.org/archives/libreoffice/2023-August/090870.html
 Patch11: lo-7.6-ppc64le-tests.patch
 Patch500: 0001-disable-libe-book-support.patch
 

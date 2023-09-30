@@ -1,0 +1,32 @@
+From 3426c96d0e32e0c83e4ce5fdb3405787a0c81e6c Mon Sep 17 00:00:00 2001
+From: Dan Horák <dan@danny.cz>
+Date: Fri, 01 Sep 2023 18:45:42 +0200
+Subject: [PATCH] limit tests giving dubious results to x86_64
+
+We have confirmed that ArrayFunctionsTest::testDubiousArrayFormulasFODS
+gives different results depending on the -ffp-contract setting on
+ppc64le and likely also on s390x in addition to aarch64. Thus limit the
+check only to x86_64 where it's known to give consistent results.
+
+Change-Id: Iedb63fb4340cfe9a88e374c7498d97574bcdfcc7
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/156453
+Tested-by: Jenkins
+Reviewed-by: Stephan Bergmann <sbergman@redhat.com>
+---
+
+diff --git a/sc/qa/unit/functions_array.cxx b/sc/qa/unit/functions_array.cxx
+index 7584c4e..2053c44 100644
+--- a/sc/qa/unit/functions_array.cxx
++++ b/sc/qa/unit/functions_array.cxx
+@@ -27,8 +27,9 @@
+ {
+     //TODO: sc/qa/unit/data/functions/array/dubious/fods/linest.fods produces widely different
+     // values when built with -ffp-contract enabled (-ffp-contract=on default on Clang 14,
+-    // -ffp-contract=fast default when building with optimizations on GCC) on at least aarch64:
+-#if !((defined __clang__ || defined __GNUC__) && defined __aarch64__)
++    // -ffp-contract=fast default when building with optimizations on GCC) on at least aarch64
++    // and ppc64le. Thus limit the check only to platforms with consistent results.
++#if defined X86_64
+     OUString aDirectoryURL
+         = m_directories.getURLFromSrc(u"/sc/qa/unit/data/functions/array/dubious/fods/");
+     recursiveScan(test::pass, "OpenDocument Spreadsheet Flat XML", aDirectoryURL,

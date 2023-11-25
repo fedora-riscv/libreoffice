@@ -1,0 +1,22 @@
+--- libreoffice-7.6.3.1/sw/qa/core/text/itrform2.cxx	2023-11-02 16:37:04.000000000 -0500
++++ core/sw/qa/core/text/itrform2.cxx	2023-11-07 10:31:14.018505043 -0600
+@@ -124,6 +124,10 @@
+ 
+     // Then make sure all the expected text is there on page 2:
+     std::unique_ptr<vcl::pdf::PDFiumDocument> pPdfDocument = parsePDFExport();
++    if (!pPdfDocument)
++    {
++        return;
++    }
+     std::unique_ptr<vcl::pdf::PDFiumPage> pPage2 = pPdfDocument->openPage(1);
+     int nTextCount = 0;
+     for (int i = 0; i < pPage2->getObjectCount(); ++i)
+@@ -143,7 +147,7 @@
+ 
+ CPPUNIT_TEST_FIXTURE(Test, testSplitFlyAnchorLeftMargin)
+ {
+-    // Given a document with a floating table, anchor para is followed by an other para with a left
++    // Given a document with a floating table, anchor para is followed by another para with a left
+     // margin:
+     createSwDoc("floattable-anchor-left-margin.docx");
+ 

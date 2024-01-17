@@ -1,3 +1,5 @@
+%global _lto_cflags %nil
+
 # download path contains version without the last (fourth) digit
 %global libo_version 24.2.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually

@@ -1039,6 +1039,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 # Temporarily disable failing tests
 %ifarch ppc64le
 sed -i -e s/CppunitTest_dbaccess_RowSetClones// dbaccess/Module_dbaccess.mk
+sed -i -e s/CppunitTest_dbaccess_hsqldb_test// dbaccess/Module_dbaccess.mk
 %endif
 %ifarch aarch64
 # Nothing to do

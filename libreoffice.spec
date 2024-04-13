@@ -741,7 +741,7 @@ A plug-in for LibreOffice that enables integration into the KDE Frameworks 6.
 
 %package -n libreofficekit
 Summary: A library providing access to LibreOffice functionality
-License: MPLv2.0
+License: MPL-2.0
 
 %description -n libreofficekit
 LibreOfficeKit can be used to access LibreOffice functionality
@@ -753,7 +753,7 @@ experimental tiled rendering API).
 %package -n libreofficekit-devel
 Summary: Development files for libreofficekit
 Requires: libreofficekit%{?_isa} = %{epoch}:%{version}-%{release}
-License: MPLv2.0
+License: MPL-2.0
 
 %description -n libreofficekit-devel
 The libreofficekit-devel package contains libraries and header files for

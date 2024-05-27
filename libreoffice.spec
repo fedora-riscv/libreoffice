@@ -777,7 +777,7 @@ This package provides gdb pretty printers for package %{name}.
 
 %define _langpack_common(Eg:j:l:) \
 %{!-E: \
-%{baseinstdir}/program/resource/%{-g:%{-g*}}%{!-g:%{-l*}}/LC_MESSAGES/*.mo  \
+%{baseinstdir}/program/resource/%{-g:%{-g*}}%{!-g:%{-l*}} \
 %{baseinstdir}/share/registry/res/registry_%{-l*}.xcd \
 } \
 %{baseinstdir}/share/template/%{-l*} \
@@ -1601,12 +1601,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/help/main_transform.xsl
 %{baseinstdir}/presets
 %dir %{baseinstdir}/program
-%if 0%{?fedora}
-%{baseinstdir}/program/core.abignore
-%endif
-%{baseinstdir}/program/libbasprovlo.so
-%{baseinstdir}/program/libcairocanvaslo.so
-%{baseinstdir}/program/libcanvasfactorylo.so
+%{baseinstdir}/program/bootstraprc
 %ifarch %{java_arches}
 %dir %{baseinstdir}/program/classes
 %{baseinstdir}/program/classes/commonwizards.jar
@@ -1620,26 +1615,32 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/classes/XMergeBridge.jar
 %{baseinstdir}/program/classes/xmerge.jar
 %endif
-%{baseinstdir}/program/libcmdmaillo.so
-%{baseinstdir}/program/libdeployment.so
-%{baseinstdir}/program/libdeploymentgui.so
-%{baseinstdir}/program/libdlgprovlo.so
-%{baseinstdir}/program/libfps_officelo.so
+%if 0%{?fedora}
+%{baseinstdir}/program/core.abignore
+%endif
+%{baseinstdir}/program/fundamentalrc
 %{baseinstdir}/program/gdbtrace
 %{baseinstdir}/program/gengal
 %{baseinstdir}/program/gengal.bin
-%{baseinstdir}/program/libi18nsearchlo.so
-%{baseinstdir}/program/libldapbe2lo.so
+%{baseinstdir}/program/intro.png
+%{baseinstdir}/program/intro-highres.png
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libanimcorelo.so
 %{baseinstdir}/program/libavmedia*.so
 %{baseinstdir}/program/libbasctllo.so
+%{baseinstdir}/program/libbasegfxlo.so
+%{baseinstdir}/program/libbasprovlo.so
 %{baseinstdir}/program/libbiblo.so
 %{baseinstdir}/program/libcached1.so
+%{baseinstdir}/program/libcairocanvaslo.so
+%{baseinstdir}/program/libcanvasfactorylo.so
 %{baseinstdir}/program/libcanvastoolslo.so
 %{baseinstdir}/program/libchart*lo.so
 %{baseinstdir}/program/libclewlo.so
+%{baseinstdir}/program/libcmdmaillo.so
 %{baseinstdir}/program/libcollator_data.so
+%{baseinstdir}/program/libcomphelper.so
+%{baseinstdir}/program/libconfigmgrlo.so
 %{baseinstdir}/program/libcppcanvaslo.so
 %{baseinstdir}/program/libctllo.so
 %{baseinstdir}/program/libcuilo.so
@@ -1650,10 +1651,14 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdbpool2.so
 %{baseinstdir}/program/libdbtoolslo.so
 %{baseinstdir}/program/libdbulo.so
+%{baseinstdir}/program/libdeployment.so
+%{baseinstdir}/program/libdeploymentgui.so
 %{baseinstdir}/program/libdeploymentmisclo.so
 %{baseinstdir}/program/libdesktop_detectorlo.so
+%{baseinstdir}/program/libdesktopbe1lo.so
 %{baseinstdir}/program/libdict_ja.so
 %{baseinstdir}/program/libdict_zh.so
+%{baseinstdir}/program/libdlgprovlo.so
 %{baseinstdir}/program/libdocmodello.so
 %{baseinstdir}/program/libdrawinglayerlo.so
 %{baseinstdir}/program/libdrawinglayercorelo.so
@@ -1663,39 +1668,56 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libemfiolo.so
 %{baseinstdir}/program/libevoab*.so
 %{baseinstdir}/program/libevtattlo.so
+%{baseinstdir}/program/libfps_officelo.so
+%{baseinstdir}/program/libfwklo.so
 %{baseinstdir}/program/libicglo.so
 %{baseinstdir}/program/libindex_data.so
 %{baseinstdir}/program/libfilelo.so
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
 %{baseinstdir}/program/libfrmlo.so
+%{baseinstdir}/program/libfsstoragelo.so
 %{baseinstdir}/program/libguesslanglo.so
 %{baseinstdir}/program/libhelplinkerlo.so
 %{baseinstdir}/program/libhyphenlo.so
+%{baseinstdir}/program/libi18npoollo.so
+%{baseinstdir}/program/libi18nsearchlo.so
+%{baseinstdir}/program/libi18nutil.so
+%{baseinstdir}/program/libldapbe2lo.so
 %ifarch %{java_arches}
 %{baseinstdir}/program/libjdbclo.so
 %endif
 %{baseinstdir}/program/libLanguageToollo.so
 %{baseinstdir}/program/liblnglo.so
+%{baseinstdir}/program/liblnthlo.so
 %{baseinstdir}/program/libloglo.so
+%{baseinstdir}/program/liblocalebe1lo.so
 %{baseinstdir}/program/liblocaledata_en.so
 %{baseinstdir}/program/liblocaledata_es.so
 %{baseinstdir}/program/liblocaledata_euro.so
 %{baseinstdir}/program/liblocaledata_others.so
+%{baseinstdir}/program/liblosessioninstalllo.so
+%{baseinstdir}/program/libmigrationoo2lo.so
+%{baseinstdir}/program/libmigrationoo3lo.so
 %{baseinstdir}/program/libmozbootstraplo.so
 %{baseinstdir}/program/libmsfilterlo.so
+%{baseinstdir}/program/libmsformslo.so
 %{baseinstdir}/program/libmtfrendererlo.so
 %{baseinstdir}/program/libmysql_jdbclo.so
 %{baseinstdir}/program/libmysqlclo.so
 %{baseinstdir}/program/libodbclo.so
+%{baseinstdir}/program/libodfflatxmllo.so
 %{baseinstdir}/program/liboglcanvaslo.so
 %{baseinstdir}/program/liboffacclo.so
 %{baseinstdir}/program/libooxlo.so
 %{baseinstdir}/program/libopencllo.so
+%{baseinstdir}/program/libpackage2.so
+%{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/libpcrlo.so
 %{baseinstdir}/program/libpdffilterlo.so
 %{baseinstdir}/program/libprotocolhandlerlo.so
 %{baseinstdir}/program/libsaxlo.so
+%{baseinstdir}/program/libsblo.so
 %{baseinstdir}/program/libscnlo.so
 %{baseinstdir}/program/libscriptframe.so
 %{baseinstdir}/program/libsdlo.so
@@ -1703,85 +1725,96 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libsdbtlo.so
 %{baseinstdir}/program/libsddlo.so
 %{baseinstdir}/program/libsduilo.so
+%{baseinstdir}/program/libsfxlo.so
+%{baseinstdir}/program/libsimplecanvaslo.so
+%{baseinstdir}/program/libslideshowlo.so
+%{baseinstdir}/program/libsmlo.so
+%{baseinstdir}/program/libsmdlo.so
+%{baseinstdir}/program/libsofficeapp.so
+%{baseinstdir}/program/libsotlo.so
 %{baseinstdir}/program/libspelllo.so
+%{baseinstdir}/program/libspllo.so
+%{baseinstdir}/program/libstringresourcelo.so
 %{baseinstdir}/program/libsrtrs1.so
 %{baseinstdir}/program/libstoragefdlo.so
 %{baseinstdir}/program/libsvgiolo.so
+%{baseinstdir}/program/libsvllo.so
+%{baseinstdir}/program/libsvtlo.so
 %{baseinstdir}/program/libsvxlo.so
 %{baseinstdir}/program/libsvxcorelo.so
 %{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswlo.so
+%{baseinstdir}/program/libsysshlo.so
 %{baseinstdir}/program/libtextconv_dict.so
 %{baseinstdir}/program/libtextconversiondlgslo.so
 %{baseinstdir}/program/libtextfdlo.so
-%{baseinstdir}/program/libodfflatxmllo.so
-# TODO: shouldn't it have lo suffix?
+%{baseinstdir}/program/libtklo.so
+%{baseinstdir}/program/libtllo.so
+%{baseinstdir}/program/libucb1.so
 %{baseinstdir}/program/libucbhelper.so
 %{baseinstdir}/program/libucpchelp1.so
+%{baseinstdir}/program/libucpcmis1lo.so
 %{baseinstdir}/program/libucpdav1.so
+%{baseinstdir}/program/libucpexpand1lo.so
+%{baseinstdir}/program/libucpextlo.so
+%{baseinstdir}/program/libucpfile1.so
+%{baseinstdir}/program/libucpgio1lo.so
+%{baseinstdir}/program/libucpimagelo.so
+%{baseinstdir}/program/libucptdoc1lo.so
 %{baseinstdir}/program/libucphier1.so
 %{baseinstdir}/program/libucppkg1.so
 %{baseinstdir}/program/libunordflo.so
 %{baseinstdir}/program/libunopkgapp.so
 %{baseinstdir}/program/libunoxmllo.so
+%{baseinstdir}/program/libutllo.so
+%{baseinstdir}/program/libupdatefeedlo.so
 %{baseinstdir}/program/libuuilo.so
+%{baseinstdir}/program/libvbaeventslo.so
 %{baseinstdir}/program/libvbahelperlo.so
+%{baseinstdir}/program/libvclcanvaslo.so
+%{baseinstdir}/program/libvcllo.so
+%{baseinstdir}/program/libwriterperfectlo.so
 %{baseinstdir}/program/libxmlfalo.so
 %{baseinstdir}/program/libxmlfdlo.so
+%{baseinstdir}/program/libxmlscriptlo.so
+%{baseinstdir}/program/libxmlsecurity.so
 %{baseinstdir}/program/libxoflo.so
+%{baseinstdir}/program/libxolo.so
 %{baseinstdir}/program/libxsec_xmlsec.so
 %{baseinstdir}/program/libxsltdlglo.so
 %{baseinstdir}/program/libxsltfilterlo.so
 %{baseinstdir}/program/libxstor.so
-# TODO how useful this is in Fedora?
-%{baseinstdir}/program/liblosessioninstalllo.so
-%{baseinstdir}/program/libmigrationoo2lo.so
-%{baseinstdir}/program/libmigrationoo3lo.so
-%{baseinstdir}/program/libmsformslo.so
+%{baseinstdir}/program/lounorc
+%{baseinstdir}/program/oosplash
 %{baseinstdir}/program/opencl
+%{baseinstdir}/program/opencltest
 %dir %{baseinstdir}/program/opengl
 %{baseinstdir}/program/opengl/*.glsl
-%{baseinstdir}/program/types/offapi.rdb
-%{baseinstdir}/program/libpasswordcontainerlo.so
 %{baseinstdir}/program/pagein-common
+%{baseinstdir}/program/redirectrc
 %dir %{baseinstdir}/program/resource
 %dir %{baseinstdir}/program/resource/common
 %dir %{baseinstdir}/program/resource/common/fonts
 %{baseinstdir}/program/senddoc
 %dir %{baseinstdir}/program/services
 %{baseinstdir}/program/services/services.rdb
-%{baseinstdir}/program/libsimplecanvaslo.so
-%{baseinstdir}/program/libslideshowlo.so
-%{baseinstdir}/program/libsmlo.so
-%{baseinstdir}/program/libsmdlo.so
-%{baseinstdir}/program/libsofficeapp.so
-%{baseinstdir}/program/libstringresourcelo.so
-%{baseinstdir}/program/libsysshlo.so
-%{baseinstdir}/program/libucpcmis1lo.so
-%{baseinstdir}/program/libucpexpand1lo.so
-%{baseinstdir}/program/libucpextlo.so
-%{baseinstdir}/program/libucpimagelo.so
-%{baseinstdir}/program/libucptdoc1lo.so
-%{baseinstdir}/program/lounorc
-%{baseinstdir}/program/libupdatefeedlo.so
+%{baseinstdir}/program/setuprc
+%{baseinstdir}/program/shell/
+%{baseinstdir}/program/soffice
+%{baseinstdir}/program/soffice.bin
+%{baseinstdir}/program/sofficerc
+%{baseinstdir}/program/types
+%{baseinstdir}/program/unoinfo
+%{baseinstdir}/program/unopkg
+%{baseinstdir}/program/unopkg.bin
 %{baseinstdir}/program/uri-encode
-%{baseinstdir}/program/libvbaeventslo.so
-%{baseinstdir}/program/libvclcanvaslo.so
 %{baseinstdir}/program/versionrc
 %dir %{baseinstdir}/share
+%{baseinstdir}/share/autocorr
+%dir %{baseinstdir}/share/autotext
+%{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/classification
 %{baseinstdir}/share/classification/example*.xml
-%dir %{baseinstdir}/share/fonts
-%dir %{baseinstdir}/share/fonts/truetype
-%{baseinstdir}/share/fonts/truetype/fc_local.conf
-%dir %{baseinstdir}/share/Scripts
-%ifarch %{java_arches}
-%{baseinstdir}/share/Scripts/java
-%endif
-%dir %{baseinstdir}/share/autotext
-%dir %{_datadir}/autocorr
-%{baseinstdir}/share/autocorr
-%{baseinstdir}/share/basic
 %dir %{baseinstdir}/share/config
 %{baseinstdir}/share/config/images_breeze.zip
 %{baseinstdir}/share/config/images_breeze_svg.zip
@@ -1804,23 +1837,47 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/images_sukapura_svg.zip
 %{baseinstdir}/share/config/images_sukapura_dark.zip
 %{baseinstdir}/share/config/images_sukapura_dark_svg.zip
-%dir %{baseinstdir}/share/tipoftheday
-%{baseinstdir}/share/tipoftheday/*
-%dir %{baseinstdir}/share/toolbarmode
-%{baseinstdir}/share/toolbarmode/*
 %dir %{baseinstdir}/share/config/soffice.cfg
+%{baseinstdir}/share/config/soffice.cfg/cui
+%{baseinstdir}/share/config/soffice.cfg/dbaccess
+%{baseinstdir}/share/config/soffice.cfg/desktop
+%{baseinstdir}/share/config/soffice.cfg/editeng
+%{baseinstdir}/share/config/soffice.cfg/filter
+%{baseinstdir}/share/config/soffice.cfg/formula
+%{baseinstdir}/share/config/soffice.cfg/fps
 %{baseinstdir}/share/config/soffice.cfg/modules
+%{baseinstdir}/share/config/soffice.cfg/sfx
+%{baseinstdir}/share/config/soffice.cfg/svx
+%{baseinstdir}/share/config/soffice.cfg/svt
+%{baseinstdir}/share/config/soffice.cfg/uui
+%{baseinstdir}/share/config/soffice.cfg/vcl
+%{baseinstdir}/share/config/soffice.cfg/writerperfect
+%{baseinstdir}/share/config/soffice.cfg/xmlsec
 %{baseinstdir}/share/config/soffice.cfg/*/ui
-%{baseinstdir}/share/palette
 %{baseinstdir}/share/config/wizard
 %dir %{baseinstdir}/share/dtd
 %{baseinstdir}/share/dtd/officedocument
+%dir %{baseinstdir}/share/extensions
+%dir %{baseinstdir}/share/filter
+%{baseinstdir}/share/filter/oox-drawingml-adj-names
+%{baseinstdir}/share/filter/oox-drawingml-cs-presets
+%{baseinstdir}/share/filter/signature-line.svg
+%{baseinstdir}/share/filter/signature-line-draw.svg
+%{baseinstdir}/share/filter/vml-shape-types
+%dir %{baseinstdir}/share/fonts
+%dir %{baseinstdir}/share/fonts/truetype
+%{baseinstdir}/share/fonts/truetype/fc_local.conf
 %{baseinstdir}/share/gallery
 %dir %{baseinstdir}/share/labels
 %{baseinstdir}/share/labels/labels.xml
+%{baseinstdir}/share/palette
 %dir %{baseinstdir}/share/psprint
 %config %{baseinstdir}/share/psprint/psprint.conf
 %{baseinstdir}/share/psprint/driver
+%dir %{baseinstdir}/share/Scripts
+%ifarch %{java_arches}
+%{baseinstdir}/share/Scripts/java
+%endif
 %dir %{baseinstdir}/share/registry
 %{baseinstdir}/share/registry/draw.xcd
 %{baseinstdir}/share/registry/gnome.xcd
@@ -1842,95 +1899,46 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/template/common/wizard
 %{baseinstdir}/share/template/common/l10n/
 %{baseinstdir}/share/template/wizard
+%dir %{baseinstdir}/share/tipoftheday
+%{baseinstdir}/share/tipoftheday/*
+%dir %{baseinstdir}/share/toolbarmode
+%{baseinstdir}/share/toolbarmode/*
+%dir %{baseinstdir}/share/wizards
 %dir %{baseinstdir}/share/wordbook
 %{baseinstdir}/share/wordbook/en-GB.dic
 %{baseinstdir}/share/wordbook/en-US.dic
 %{baseinstdir}/share/wordbook/technical.dic
-%{baseinstdir}/program/liblnthlo.so
-%{_bindir}/unopkg
-%{_mandir}/man1/unopkg.1*
-%{baseinstdir}/program/libxmlsecurity.so
-%{baseinstdir}/program/libconfigmgrlo.so
-%{baseinstdir}/program/libdesktopbe1lo.so
-%{baseinstdir}/program/libfsstoragelo.so
-%{baseinstdir}/program/libi18npoollo.so
-%{baseinstdir}/program/libbasegfxlo.so
-# TODO: shouldn't it have lo suffix?
-%{baseinstdir}/program/libcomphelper.so
-%{baseinstdir}/program/libfwklo.so
-# TODO: shouldn't it have lo suffix?
-%{baseinstdir}/program/libi18nutil.so
-%{baseinstdir}/program/libpackage2.so
-%{baseinstdir}/program/libsblo.so
-%{baseinstdir}/program/libsfxlo.so
-%{baseinstdir}/program/libsotlo.so
-%{baseinstdir}/program/libspllo.so
-%{baseinstdir}/program/libsvllo.so
-%{baseinstdir}/program/libsvtlo.so
-%{baseinstdir}/program/libtklo.so
-%{baseinstdir}/program/libtllo.so
-%{baseinstdir}/program/libucb1.so
-%{baseinstdir}/program/libucpfile1.so
-%{baseinstdir}/program/libutllo.so
-%{baseinstdir}/program/libvcllo.so
-%{baseinstdir}/program/libwriterperfectlo.so
-%{baseinstdir}/program/libxmlscriptlo.so
-%{baseinstdir}/program/libxolo.so
-%{baseinstdir}/program/liblocalebe1lo.so
-%{baseinstdir}/program/libucpgio1lo.so
-%{baseinstdir}/program/types/oovbaapi.rdb
-#share unopkg
-%dir %{baseinstdir}/share/extensions
-%{baseinstdir}/program/unopkg
-%{baseinstdir}/program/unopkg.bin
-%{baseinstdir}/program/bootstraprc
-%{baseinstdir}/program/fundamentalrc
-%{baseinstdir}/program/setuprc
-%{baseinstdir}/program/intro.png
-%{baseinstdir}/program/intro-highres.png
-%{baseinstdir}/program/opencltest
-%{baseinstdir}/program/soffice
-%{baseinstdir}/program/soffice.bin
-%{baseinstdir}/program/sofficerc
-%{baseinstdir}/program/unoinfo
-%{baseinstdir}/program/oosplash
-%{baseinstdir}/program/shell/
-%dir %{baseinstdir}/share/filter
-%{baseinstdir}/share/filter/oox-drawingml-adj-names
-%{baseinstdir}/share/filter/oox-drawingml-cs-presets
-%{baseinstdir}/share/filter/signature-line.svg
-%{baseinstdir}/share/filter/signature-line-draw.svg
-%{baseinstdir}/share/filter/vml-shape-types
 %{baseinstdir}/share/xdg/
-%{baseinstdir}/program/redirectrc
+%{_bindir}/libreoffice
+%{_bindir}/openoffice.org
+%{_bindir}/ooffice
+%{_bindir}/ooviewdoc
+%{_bindir}/soffice
+%{_bindir}/unopkg
+%dir %{_datadir}/autocorr
 %if 0%{?flatpak}
 %{_datadir}/metainfo/org.libreoffice.LibreOffice.appdata.xml
 %{_datadir}/applications/org.libreoffice.LibreOffice.desktop
 %else
 %{_datadir}/applications/libreoffice-startcenter.desktop
 %endif
-#launchers
-%{_bindir}/libreoffice
-%{_bindir}/openoffice.org
-%{_bindir}/soffice
-%{_bindir}/ooffice
-%{_bindir}/ooviewdoc
 %{_mandir}/man1/libreoffice.1*
 %{_mandir}/man1/openoffice.org.1*
 %{_mandir}/man1/soffice.1*
 %{_mandir}/man1/ooffice.1*
 %{_mandir}/man1/ooviewdoc.1*
+%{_mandir}/man1/unopkg.1*
 
 %files base
+%{baseinstdir}/program/access2base.py
+%if 0%{?fedora}
+%{baseinstdir}/program/base.abignore
+%endif
 %ifarch %{java_arches}
 %{baseinstdir}/program/classes/hsqldb.jar
 %{baseinstdir}/program/classes/reportbuilder.jar
 %{baseinstdir}/program/classes/reportbuilderwizard.jar
 %{baseinstdir}/program/classes/sdbc_hsqldb.jar
-%endif
-%{baseinstdir}/program/access2base.py
-%if 0%{?fedora}
-%{baseinstdir}/program/base.abignore
 %endif
 %{baseinstdir}/program/libabplo.so
 %{baseinstdir}/program/libdbplo.so
@@ -2035,7 +2043,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libsolverlo.so
 %{baseinstdir}/program/libwpftcalclo.so
 %{baseinstdir}/program/libvbaobjlo.so
-%{baseinstdir}/share/calc/styles.xml
+%{baseinstdir}/share/calc
 %{baseinstdir}/share/registry/calc.xcd
 %{baseinstdir}/program/pagein-calc
 %{baseinstdir}/program/scalc

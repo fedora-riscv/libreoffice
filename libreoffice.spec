@@ -953,8 +953,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l ml -n Malayalam -F -H -Y -X
 %langpack -l mr -n Marathi -F -H -Y -X
 %langpack -l nb -n Bokmal -F -H -Y -M -T -X
-%langpack -l nl -n Dutch -F -H -Y -M -A -T -X -X
-%langpack -l nn -n Nynorsk -F -H -Y -M -T
+%langpack -l nl -n Dutch -F -H -Y -M -A -T -X
+%langpack -l nn -n Nynorsk -F -H -Y -M -T -X
 %define langpack_lang Southern Ndebele
 %langpack -l nr -n %{langpack_lang} -F -H -X
 %define langpack_lang Northern Sotho

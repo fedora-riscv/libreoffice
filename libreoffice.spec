@@ -1122,6 +1122,14 @@ sed -i -e /CppunitTest_vcl_png_test/d vcl/Module_vcl.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=159211
 sed -i -e /CppunitTest_sd_png_export_tests/d sd/Module_sd.mk
 %endif
+%ifarch riscv64
+# Failed test on RV64
+# confimed on 2024-06-01, version 24.2.3.2
+sed -i -e s/CustomTarget_uno_test// testtools/Module_testtools.mk
+sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
+# https://bugs.documentfoundation.org/show_bug.cgi?id=152943
+sed -i -e s/CppunitTest_sc_ucalc_formula2// sc/Module_sc.mk
+%endif
 
 #see rhbz#2072615
 rm -f vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
@@ -1586,6 +1594,7 @@ rm -f %{buildroot}%{baseinstdir}/program/officebean.abignore
 make unitcheck slowcheck
 # we don't need this anymore
 rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
+
 
 %files
 

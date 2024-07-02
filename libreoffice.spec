@@ -1856,6 +1856,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/share/config/soffice.cfg/fps
 %{baseinstdir}/share/config/soffice.cfg/modules
 %{baseinstdir}/share/config/soffice.cfg/sfx
+%dir %{baseinstdir}/share/config/soffice.cfg/simpress
+%{baseinstdir}/share/config/soffice.cfg/simpress/styles.xml
+%{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/config/soffice.cfg/svx
 %{baseinstdir}/share/config/soffice.cfg/svt
 %{baseinstdir}/share/config/soffice.cfg/uui
@@ -2018,7 +2021,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/opengl/vortexFragmentShader.glsl
 %{baseinstdir}/program/opengl/vortexGeometryShader.glsl
 %{baseinstdir}/program/opengl/vortexVertexShader.glsl
-%{baseinstdir}/share/config/soffice.cfg/simpress/transitions-ogl.xml
 %{baseinstdir}/share/registry/ogltrans.xcd
 
 %files pdfimport
@@ -2112,11 +2114,9 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %endif
 %{baseinstdir}/program/libPresentationMinimizerlo.so
 %{baseinstdir}/program/libwpftimpresslo.so
-%dir %{baseinstdir}/share/config/soffice.cfg/simpress
 %{baseinstdir}/share/config/soffice.cfg/simpress/effects.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/layoutlist.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/objectlist.xml
-%{baseinstdir}/share/config/soffice.cfg/simpress/styles.xml
 %{baseinstdir}/share/config/soffice.cfg/simpress/transitions.xml
 %{baseinstdir}/share/registry/impress.xcd
 %{baseinstdir}/program/pagein-impress

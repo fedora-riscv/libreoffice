@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 24.2.5
+%global libo_version 24.8.0
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -81,7 +81,7 @@ ExcludeArch:    %{ix86}
 Summary:        Free Software Productivity Suite
 Name:           libreoffice
 Epoch:          1
-Version:        %{libo_version}.2
+Version:        %{libo_version}.3
 %if 0%{?libo_prerelease}
 Release:        %autorelease -e %{?libo_prerelease}
 %else
@@ -318,9 +318,9 @@ Patch1: 0001-disble-tip-of-the-day-dialog-by-default.patch
 # rhbz#1736810 disable opencl by default again
 Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # backported
-Patch3: 0001-default-to-sifr-for-gnome-light-mode.patch
+#Patch3: 0001-default-to-sifr-for-gnome-light-mode.patch
 # backported
-Patch4: py313.patch
+#Patch4: py313.patch
 # not upstreamed
 # fix FTB in ppc64le from sharkcz
 # https://lists.freedesktop.org/archives/libreoffice/2023-August/090870.html
@@ -328,7 +328,7 @@ Patch11: lo-7.6-ppc64le-tests.patch
 # icu 74 compatibility patch, from gentoo, via arch linux
 # https://bugs.gentoo.org/917618
 # https://bugs.documentfoundation.org/show_bug.cgi?id=158108
-Patch12: libreoffice-7.5.8.2-icu-74-compatibility.patch
+#Patch12: libreoffice-7.5.8.2-icu-74-compatibility.patch
 Patch500: 0001-disable-libe-book-support.patch
 # https://lists.freedesktop.org/archives/libreoffice/2023-September/090948.html
 Patch501: kahansum_test_fix_for_aarc64_s390x.patch
@@ -1169,8 +1169,8 @@ export CXXFLAGS="$ARCH_FLAGS -I%{_includedir}/zxcvbn -I%{_includedir}/KF6/KConfi
 %define with_lang --with-lang='%{langpack_langs}'
 %endif
 
-aclocal -I m4
-autoconf
+#aclocal -I m4
+#autoconf
 
 SMP_MFLAGS=%{?_smp_mflags}
 SMP_MFLAGS=$[${SMP_MFLAGS/-j/}]

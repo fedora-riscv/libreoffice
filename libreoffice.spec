@@ -1088,7 +1088,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -p1 -M 99
-%if 0%{?rhel}
+%if ! (0%{?fedora} || 0%{?rhel} >= 10)
 %patch -P 500 -p1
 %endif
 

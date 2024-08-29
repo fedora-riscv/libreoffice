@@ -7,7 +7,7 @@
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
-%if 0%{?rhel}
+%if 0%{?rhel} && ! 0%{?epel} && ! 0%{?eln}
 %global vendoroption --with-vendor="Red Hat, Inc."
 %endif
 %if 0%{?fedora}

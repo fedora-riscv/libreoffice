@@ -1130,6 +1130,12 @@ sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=152943
 sed -i -e s/CppunitTest_sc_ucalc_formula2// sc/Module_sc.mk
 %endif
+%ifarch x86_64
+%if 0%{?rhel} >= 10
+# Test already limited to x86, also fails with x86-64-v3
+sed -i -e 's/defined X86_64/0/' sc/qa/unit/functions_array.cxx
+%endif
+%endif
 
 #see rhbz#2072615
 rm -f vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff

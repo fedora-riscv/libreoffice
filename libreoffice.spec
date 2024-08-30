@@ -7,7 +7,7 @@
 # Should contain any suffix of release tarball name, e.g., -buildfix1.
 %global libo_buildfix %{nil}
 # rhbz#715152 state vendor
-%if 0%{?rhel}
+%if 0%{?rhel} && ! 0%{?epel} && ! 0%{?eln}
 %global vendoroption --with-vendor="Red Hat, Inc."
 %endif
 %if 0%{?fedora}
@@ -1088,7 +1088,7 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 
 # apply patches
 %autopatch -p1 -M 99
-%if 0%{?rhel}
+%if ! (0%{?fedora} || 0%{?rhel} >= 10)
 %patch -P 500 -p1
 %endif
 
@@ -1129,6 +1129,12 @@ sed -i -e s/CustomTarget_uno_test// testtools/Module_testtools.mk
 sed -i -e s/CppunitTest_sw_macros_test// sw/Module_sw.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=152943
 sed -i -e s/CppunitTest_sc_ucalc_formula2// sc/Module_sc.mk
+%endif
+%ifarch x86_64
+%if 0%{?rhel} >= 10
+# Test already limited to x86, also fails with x86-64-v3
+sed -i -e 's/defined X86_64/0/' sc/qa/unit/functions_array.cxx
+%endif
 %endif
 
 #see rhbz#2072615

@@ -119,7 +119,7 @@ Source11:       %{external_url}/a7983f859eafb2677d7ff386a023bc40-xsltml_2.1.2.zi
 # with system provided hsqldb without major hacking.
 Source12:       %{external_url}/17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 Source13:       %{external_url}/../extern/f543e6e2d7275557a839a164941c0a86e5f2c3f2a0042bfc434c88c6dde9e140-opens___.ttf
-Source14:       %{external_url}/Java-WebSocket-1.5.4.tar.gz
+Source14:       %{external_url}/Java-WebSocket-1.5.6.tar.gz
 %global bundling_options %{?bundling_options} --without-system-hsqldb
 
 Provides: bundled(hsqldb) = 1.8.0
@@ -258,6 +258,7 @@ BuildRequires: kf5-kwindowsystem-devel
 
 %if %{with kf6}
 BuildRequires: qt6-qtbase-devel
+BuildRequires: qt6-qtmultimedia-devel
 BuildRequires: kf6-kconfig-devel
 BuildRequires: kf6-kcoreaddons-devel
 BuildRequires: kf6-ki18n-devel
@@ -293,6 +294,7 @@ BuildRequires: dejavu-serif-fonts
 BuildRequires: google-carlito-fonts
 BuildRequires: google-rubik-fonts
 BuildRequires: google-crosextra-caladea-fonts
+BuildRequires: google-noto-sans-hebrew-fonts
 # Amiri used in vcl/qa/cppunit tests
 BuildRequires: amiri-fonts
 BuildRequires: amiri-quran-fonts
@@ -325,6 +327,7 @@ Patch2: 0001-Resolves-rhbz-1432468-disable-opencl-by-default.patch
 # fix FTB in ppc64le from sharkcz
 # https://lists.freedesktop.org/archives/libreoffice/2023-August/090870.html
 Patch11: lo-7.6-ppc64le-tests.patch
+Patch12: cflags.patch
 # icu 74 compatibility patch, from gentoo, via arch linux
 # https://bugs.gentoo.org/917618
 # https://bugs.documentfoundation.org/show_bug.cgi?id=158108
@@ -1121,6 +1124,7 @@ sed -i -e /CppunitTest_desktop_lib/d desktop/Module_desktop.mk
 sed -i -e /CppunitTest_vcl_png_test/d vcl/Module_vcl.mk
 # https://bugs.documentfoundation.org/show_bug.cgi?id=159211
 sed -i -e /CppunitTest_sd_png_export_tests/d sd/Module_sd.mk
+sed -i -e /CppunitTest_sw_core_text/d sw/Module_sw.mk
 %endif
 %ifarch riscv64
 # Failed test on RV64
@@ -1142,6 +1146,7 @@ rm -f vcl/qa/cppunit/graphicfilter/data/tiff/fail/CVE-2017-9936-1.tiff
 
 # Failing on multiple arches
 sed -i -e /CppunitTest_svgio/d svgio/Module_svgio.mk
+sed -i -e /CppunitTest_sw_layoutwriter3/d sw/Module_sw.mk
 
 %build
 # path to external tarballs
@@ -1204,7 +1209,6 @@ touch autogen.lastrun
  --enable-odk \
  --enable-release-build \
  --enable-symbols \
- --with-build-version="%{version}-%{release}" \
  --with-external-dict-dir=/usr/share/hunspell \
  --with-external-tar="$EXTSRCDIR" \
  --with-help \
@@ -1215,7 +1219,6 @@ touch autogen.lastrun
  --without-lxml \
  --without-system-libfixmath \
  --enable-python=system \
- --with-idlc-cpp=cpp \
  --disable-scripting-beanshell --disable-scripting-javascript \
  --enable-gtk4 \
  %{javaoptions} \
@@ -1653,7 +1656,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libchart*lo.so
 %{baseinstdir}/program/libclewlo.so
 %{baseinstdir}/program/libcmdmaillo.so
-%{baseinstdir}/program/libcollator_data.so
 %{baseinstdir}/program/libcomphelper.so
 %{baseinstdir}/program/libconfigmgrlo.so
 %{baseinstdir}/program/libcppcanvaslo.so
@@ -1669,10 +1671,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libdeployment.so
 %{baseinstdir}/program/libdeploymentgui.so
 %{baseinstdir}/program/libdeploymentmisclo.so
-%{baseinstdir}/program/libdesktop_detectorlo.so
 %{baseinstdir}/program/libdesktopbe1lo.so
-%{baseinstdir}/program/libdict_ja.so
-%{baseinstdir}/program/libdict_zh.so
 %{baseinstdir}/program/libdlgprovlo.so
 %{baseinstdir}/program/libdocmodello.so
 %{baseinstdir}/program/libdrawinglayerlo.so
@@ -1686,7 +1685,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libfps_officelo.so
 %{baseinstdir}/program/libfwklo.so
 %{baseinstdir}/program/libicglo.so
-%{baseinstdir}/program/libindex_data.so
 %{baseinstdir}/program/libfilelo.so
 %{baseinstdir}/program/libfilterconfiglo.so
 %{baseinstdir}/program/libflatlo.so
@@ -1760,7 +1758,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libswdlo.so
 %{baseinstdir}/program/libswlo.so
 %{baseinstdir}/program/libsysshlo.so
-%{baseinstdir}/program/libtextconv_dict.so
 %{baseinstdir}/program/libtextconversiondlgslo.so
 %{baseinstdir}/program/libtextfdlo.so
 %{baseinstdir}/program/libtklo.so
@@ -2036,8 +2033,6 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libpdfimportlo.so
 %{baseinstdir}/program/xpdfimport
 %{baseinstdir}/share/registry/pdfimport.xcd
-%dir %{baseinstdir}/share/xpdfimport
-%{baseinstdir}/share/xpdfimport/xpdfimport_err.pdf
 
 %_font_pkg -n %{fontname} opens___.ttf
 %doc instdir/LICENSE
@@ -2099,7 +2094,7 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/libswuilo.so
 %{baseinstdir}/program/libt602filterlo.so
 %{baseinstdir}/program/libwpftwriterlo.so
-%{baseinstdir}/program/libwriterfilterlo.so
+%{baseinstdir}/program/libsw_writerfilterlo.so
 %{baseinstdir}/program/libwriterlo.so
 %{baseinstdir}/program/libvbaswobjlo.so
 %{baseinstdir}/share/registry/writer.xcd

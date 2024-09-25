@@ -1636,7 +1636,8 @@ rm -f %{buildroot}%{baseinstdir}/program/classes/smoketest.jar
 %{baseinstdir}/program/intro-highres.png
 %{baseinstdir}/program/libacclo.so
 %{baseinstdir}/program/libanimcorelo.so
-%{baseinstdir}/program/libavmedia*.so
+%{baseinstdir}/program/libavmediagst.so
+%{baseinstdir}/program/libavmedialo.so
 %{baseinstdir}/program/libbasctllo.so
 %{baseinstdir}/program/libbasegfxlo.so
 %{baseinstdir}/program/libbasprovlo.so
@@ -2318,6 +2319,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %if 0%{?fedora}
 %{baseinstdir}/program/gtk4.abignore
 %endif
+%{baseinstdir}/program/libavmediagtk.so
 %{baseinstdir}/program/libvclplug_gtk4lo.so
 
 %if %{with kf5}
@@ -2332,6 +2334,7 @@ gtk-update-icon-cache -q %{_datadir}/icons/hicolor &>/dev/null || :
 %if %{with kf6}
 
 %files kf6
+%{baseinstdir}/program/libavmediaqt6.so
 %{baseinstdir}/program/libvclplug_kf6lo.so
 %{baseinstdir}/program/libvclplug_qt6lo.so
 

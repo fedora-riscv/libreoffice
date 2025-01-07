@@ -1,0 +1,171 @@
+From f0efcb917049547ad0496c004830ff0153602071 Mon Sep 17 00:00:00 2001
+From: Michael Stahl <michael.stahl@allotropia.de>
+Date: Tue, 07 Jan 2025 15:22:22 +0100
+Subject: [PATCH] xmlsecurity: fix CppunitTest_xmlsecurity_xmlsec with F41 system NSS
+
+    xmlsecurity/qa/xmlsec/xmlsec.cxx:102:(anonymous namespace)::testInsertPrivateKey::TestBody
+    equality assertion failed
+    - Expected: 1
+    - Actual  : 0
+
+Just copying the NSS setup code from the other tests lets the test pass.
+
+Also sync all the copies of the setup code while at it.
+
+Change-Id: Idcaebec4dff29f37e0ed0f05d6d7d62782947325
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/179893
+Tested-by: Jenkins
+Reviewed-by: Michael Stahl <michael.stahl@allotropia.de>
+---
+
+diff --git a/xmlsecurity/CppunitTest_xmlsecurity_xmlsec.mk b/xmlsecurity/CppunitTest_xmlsecurity_xmlsec.mk
+index 526bb85..53691195 100644
+--- a/xmlsecurity/CppunitTest_xmlsecurity_xmlsec.mk
++++ b/xmlsecurity/CppunitTest_xmlsecurity_xmlsec.mk
+@@ -15,6 +15,15 @@
+     boost_headers \
+ ))
+ 
++ifneq ($(OS),WNT)
++ifneq (,$(ENABLE_NSS))
++$(eval $(call gb_CppunitTest_use_externals,xmlsecurity_xmlsec,\
++    nssutil3 \
++    nss3 \
++))
++endif
++endif
++
+ $(eval $(call gb_CppunitTest_add_exception_objects,xmlsecurity_xmlsec, \
+     xmlsecurity/qa/xmlsec/xmlsec \
+ ))
+diff --git a/xmlsecurity/qa/unit/pdfsigning/pdfsigning.cxx b/xmlsecurity/qa/unit/pdfsigning/pdfsigning.cxx
+index 5762bae..97d8163 100644
+--- a/xmlsecurity/qa/unit/pdfsigning/pdfsigning.cxx
++++ b/xmlsecurity/qa/unit/pdfsigning/pdfsigning.cxx
+@@ -79,7 +79,7 @@
+     uno::Reference<xml::crypto::XXMLSecurityContext> xSecurityContext
+         = xSEInitializer->createSecurityContext(OUString());
+ #if USE_CRYPTO_NSS
+-#ifdef NSS_USE_ALG_IN_ANY_SIGNATURE
++#ifdef NSS_USE_ALG_IN_SIGNATURE
+     // policy may disallow using SHA1 for signatures but unit test documents
+     // have such existing signatures (call this after createSecurityContext!)
+     NSS_SetAlgorithmPolicy(SEC_OID_SHA1, NSS_USE_ALG_IN_SIGNATURE, 0);
+diff --git a/xmlsecurity/qa/unit/signing/signing.cxx b/xmlsecurity/qa/unit/signing/signing.cxx
+index e6c2031..00a83511 100644
+--- a/xmlsecurity/qa/unit/signing/signing.cxx
++++ b/xmlsecurity/qa/unit/signing/signing.cxx
+@@ -102,7 +102,7 @@
+     mxSEInitializer = xml::crypto::SEInitializer::create(m_xContext);
+     mxSecurityContext = mxSEInitializer->createSecurityContext(OUString());
+ #if USE_CRYPTO_NSS
+-#ifdef NSS_USE_ALG_IN_ANY_SIGNATURE
++#ifdef NSS_USE_ALG_IN_SIGNATURE
+     // policy may disallow using SHA1 for signatures but unit test documents
+     // have such existing signatures (call this after createSecurityContext!)
+     NSS_SetAlgorithmPolicy(SEC_OID_SHA1, NSS_USE_ALG_IN_SIGNATURE, 0);
+diff --git a/xmlsecurity/qa/unit/signing/signing2.cxx b/xmlsecurity/qa/unit/signing/signing2.cxx
+index 1854c9e..5eb4ce7 100644
+--- a/xmlsecurity/qa/unit/signing/signing2.cxx
++++ b/xmlsecurity/qa/unit/signing/signing2.cxx
+@@ -13,6 +13,7 @@
+ 
+ #if USE_CRYPTO_NSS
+ #include <secoid.h>
++#include <nss.h>
+ #endif
+ 
+ #include <test/unoapixml_test.hxx>
+@@ -62,10 +63,12 @@
+     mxSEInitializer = xml::crypto::SEInitializer::create(m_xContext);
+     mxSecurityContext = mxSEInitializer->createSecurityContext(OUString());
+ #if USE_CRYPTO_NSS
+-#ifdef NSS_USE_ALG_IN_ANY_SIGNATURE
++#ifdef NSS_USE_ALG_IN_SIGNATURE
+     // policy may disallow using SHA1 for signatures but unit test documents
+     // have such existing signatures (call this after createSecurityContext!)
+-    NSS_SetAlgorithmPolicy(SEC_OID_SHA1, NSS_USE_ALG_IN_ANY_SIGNATURE, 0);
++    NSS_SetAlgorithmPolicy(SEC_OID_SHA1, NSS_USE_ALG_IN_SIGNATURE, 0);
++    // the minimum is 2048 in Fedora 40
++    NSS_OptionSet(NSS_RSA_MIN_KEY_SIZE, 1024);
+ #endif
+ #endif
+ }
+diff --git a/xmlsecurity/qa/xmlsec/xmlsec.cxx b/xmlsecurity/qa/xmlsec/xmlsec.cxx
+index cc24b7e..a455aec 100644
+--- a/xmlsecurity/qa/xmlsec/xmlsec.cxx
++++ b/xmlsecurity/qa/xmlsec/xmlsec.cxx
+@@ -7,6 +7,13 @@
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  */
+ 
++#include <config_crypto.h>
++
++#if USE_CRYPTO_NSS
++#include <secoid.h>
++#include <nss.h>
++#endif
++
+ #include <test/unoapi_test.hxx>
+ 
+ #include <com/sun/star/embed/XStorage.hpp>
+@@ -25,6 +32,10 @@
+ /// Covers xmlsecurity/source/xmlsec/ fixes.
+ class Test : public UnoApiTest
+ {
++protected:
++    uno::Reference<xml::crypto::XSEInitializer> mxSEInitializer;
++    uno::Reference<xml::crypto::XXMLSecurityContext> mxSecurityContext;
++
+ public:
+     Test()
+         : UnoApiTest("/xmlsecurity/qa/xmlsec/data/")
+@@ -35,6 +46,19 @@
+     {
+         UnoApiTest::setUp();
+         MacrosTest::setUpX509(m_directories, "xmlsecurity_xmlsec");
++
++        // Initialize crypto after setting up the environment variables.
++        mxSEInitializer = xml::crypto::SEInitializer::create(m_xContext);
++        mxSecurityContext = mxSEInitializer->createSecurityContext(OUString());
++#if USE_CRYPTO_NSS
++#ifdef NSS_USE_ALG_IN_SIGNATURE
++        // policy may disallow using SHA1 for signatures but unit test documents
++        // have such existing signatures (call this after createSecurityContext!)
++        NSS_SetAlgorithmPolicy(SEC_OID_SHA1, NSS_USE_ALG_IN_SIGNATURE, 0);
++        // the minimum is 2048 in Fedora 40
++        NSS_OptionSet(NSS_RSA_MIN_KEY_SIZE, 1024);
++#endif
++#endif
+     }
+ };
+ 
+@@ -47,10 +71,6 @@
+ CPPUNIT_TEST_FIXTURE(Test, testInsertPrivateKey)
+ {
+     // Given a view that has CA/cert/key data associated:
+-    uno::Reference<xml::crypto::XSEInitializer> mxSEInitializer
+-        = xml::crypto::SEInitializer::create(getComponentContext());
+-    uno::Reference<xml::crypto::XXMLSecurityContext> xSecurityContext
+-        = mxSEInitializer->createSecurityContext(OUString());
+     loadFromURL("private:factory/swriter");
+     save("writer8");
+     DocumentSignatureManager aManager(getComponentContext(), DocumentSignatureMode::Content);
+@@ -79,7 +99,7 @@
+ 
+     // When getting the certificate flags and signing:
+     uno::Reference<xml::crypto::XSecurityEnvironment> xSecurityEnvironment
+-        = xSecurityContext->getSecurityEnvironment();
++        = mxSecurityContext->getSecurityEnvironment();
+     // Get the certificate flags, the certificate chooser dialog does this:
+     xSecurityEnvironment->getCertificateCharacters(xCertificate);
+     OUString aDescription;
+@@ -87,7 +107,7 @@
+     svl::crypto::SigningContext aSigningContext;
+     aSigningContext.m_xCertificate = xCertificate;
+     CPPUNIT_ASSERT(
+-        aManager.add(aSigningContext, xSecurityContext, aDescription, nSecurityId, false));
++        aManager.add(aSigningContext, mxSecurityContext, aDescription, nSecurityId, false));
+ 
+     // Then make sure that signing succeeds:
+     aManager.read(/*bUseTempStream=*/true);

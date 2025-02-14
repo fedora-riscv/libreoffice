@@ -1,0 +1,73 @@
+From 5d5de7fc2b17f518e63044159f91c97930c9a9a3 Mon Sep 17 00:00:00 2001
+From: Michael Weghorn <m.weghorn@posteo.de>
+Date: Fri, 14 Feb 2025 10:38:13 +0100
+Subject: [PATCH] tdf#165238 qt: Rely on Qt for "text/plain" and UTF-8 clipboard text
+
+QMimeData::text implements handling for the
+"text/plain;charset=utf-8" and "text/plain" MIME types
+(see [1]).
+
+Rely on that instead of implementing our own handling for
+these MIME types.
+
+This fixes copying Greek characters from Firefox as plain
+text into Writer with qt6 on Wayland (tdf#165238).
+
+This approach was already mentioned as an idea in
+
+    commit 5b3227fac58dcbd588e2389e205679cd77842bac
+    Author: Michael Weghorn <m.weghorn@posteo.de>
+    Date:   Wed Apr 6 13:51:59 2022 +0200
+
+        tdf#147285 qt: Prefer "text/plain;charset=utf-8" over "text/plain"
+
+> (An alternative solution to adding our own handling for
+> "text/plain;charset=utf-8" and making assumptions for the
+> encoding of "text/plain" data would be to let Qt handle
+> this and just call `QMimeData::text()` for the
+> `m_bProvideUTF16FromOtherEncoding=true` case
+> in `QtTransferable::getTransferData`.
+> Since qtbase commit 589a01ff6b1eacf81e74a5fc4801572135214f43
+> ("QMimeData: Prefer UTF-8 when multiple charsets are available",
+> contained in Qt >= 5.13), that one handles MIME type
+> "text/plain;charset=utf-8" in addition to "text/plain".)
+
+[1] https://code.qt.io/cgit/qt/qtbase.git/tree/src/corelib/kernel/qmimedata.cpp?id=6c61d7b0f804ae5c048af95abef4d41ecc8862df#n383
+
+Change-Id: Iee695f62e836f3a8776b719ca95afb8fbddea82f
+Reviewed-on: https://gerrit.libreoffice.org/c/core/+/181660
+Tested-by: Jenkins
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+(cherry picked from commit ec95d529b51e95b074adaafb9f113904fed636c7)
+---
+
+diff --git a/vcl/qt5/QtTransferable.cxx b/vcl/qt5/QtTransferable.cxx
+index 16f2476..6d4f002 100644
+--- a/vcl/qt5/QtTransferable.cxx
++++ b/vcl/qt5/QtTransferable.cxx
+@@ -131,23 +131,16 @@
+     if (rFlavor.MimeType == "text/plain;charset=utf-16")
+     {
+         OUString aString;
+-        // use existing UTF-16 encoded text/plain or convert to UTF-16 as needed
++        // use existing UTF-16 encoded MIME data if present
+         if (m_pMimeData->hasFormat("text/plain;charset=utf-16"))
+         {
+             QByteArray aByteData(m_pMimeData->data(toQString(rFlavor.MimeType)));
+             aString = OUString(reinterpret_cast<const sal_Unicode*>(aByteData.data()),
+                                aByteData.size() / 2);
+         }
+-        else if (m_pMimeData->hasFormat("text/plain;charset=utf-8"))
+-        {
+-            QByteArray aByteData(m_pMimeData->data(QStringLiteral("text/plain;charset=utf-8")));
+-            aString = OUString::fromUtf8(reinterpret_cast<const char*>(aByteData.data()));
+-        }
+         else
+         {
+-            QByteArray aByteData(m_pMimeData->data(QStringLiteral("text/plain")));
+-            aString = OUString(reinterpret_cast<const char*>(aByteData.data()), aByteData.size(),
+-                               osl_getThreadTextEncoding());
++            aString = toOUString(m_pMimeData->text());
+         }
+         aAny <<= aString;
+     }

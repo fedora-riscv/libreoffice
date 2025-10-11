@@ -1,9 +1,9 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 25.8.1
+%global libo_version 25.8.2
 # This is the last (fourth) digit of LO version
-%global libo_min_version 1
+%global libo_min_version 2
 # Set this to 1 if this is a prerelease build
-%global prerelease 1
+%global prerelease %{nil}
 # Should contain .alphaX / .betaX, if this is pre-release (actually
 # pre-RC) version. The pre-release string is part of tarball file names,
 # so we need a way to define it easily at one place.
@@ -270,7 +270,11 @@ BuildRequires: pkgconfig(harfbuzz)
 BuildRequires: pkgconfig(libeot)
 BuildRequires: pkgconfig(libepubgen-0.1)
 BuildRequires: pkgconfig(libqxp-0.0)
+%if 0%{?fedora} > 43
+BuildRequires: pkgconfig(liborcus-0.21)
+%else
 BuildRequires: pkgconfig(liborcus-0.20)
+%endif
 BuildRequires: pkgconfig(mdds-3.0)
 BuildRequires: pkgconfig(zxing)
 BuildRequires: libnumbertext-devel
@@ -324,6 +328,9 @@ Patch12: cflags.patch
 Patch13: fix_or_exclude-tests-with-missing-glyphs.patch
 # https://lists.freedesktop.org/archives/libreoffice/2023-September/090948.html
 Patch501: kahansum_test_fix_for_aarc64_s390x.patch
+%if 0%{?fedora} > 43
+Patch502: orcus.patch
+%endif
 
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
@@ -1093,6 +1100,9 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %ifarch aarch64 s390x ppc64le
 %patch -P 501 -p1
 %endif
+%if 0%{?fedora} > 43
+%patch -P 502 -p0
+%endif
 
 # Temporarily disable failing tests
 %ifarch ppc64le
@@ -1154,7 +1164,7 @@ sed -i -e /CppunitTest_sc_solverobj/d sc/Module_sc.mk
 
 # testStatusBarPageNumber it is said to "fail from time to time"...
 # started to fail in 25.2.0.0
-# works in 25.8.0.0
+# works in 25.8.0.0 / 25.8.1.1
 #sed -i -e /CppunitTest_sw_tiledrendering2/d sw/Module_sw.mk
 
 # fails testInsertSignatureLineExternal
@@ -1167,7 +1177,8 @@ sed -i -e /CppunitTest_sd_tiledrendering2/d sd/Module_sd.mk
 # fails testTdf154311
 # cppunittester: xls_xml_auto_filter_context.cpp:196: void orcus::xls_xml_auto_filter_context::end_auto_filter(): Assertion `m_filter_node_stack.size() == 1u' failed.
 # Started to fail in 25.8.0.0
-sed -i -e /CppunitTest_sc_subsequent_filters_test2/d sc/Module_sc.mk
+# Works in 25.8.1.1
+#sed -i -e /CppunitTest_sc_subsequent_filters_test2/d sc/Module_sc.mk
 
 # fails testTdf129810
 # equality assertion failed
@@ -1177,6 +1188,10 @@ sed -i -e /CppunitTest_sc_subsequent_filters_test2/d sc/Module_sc.mk
 sed -i -e /CppunitTest_sw_core_text/d sw/Module_sw.mk
 
 # starts to fail with 25.8.0.1
+# Test name: testTdf154104::TestBody
+# equality assertion failed
+# - Expected: 4
+# - Actual  : 5
 sed -i -e /CppunitTest_vcl_text/d vcl/Module_vcl.mk
 
 %build

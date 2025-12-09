@@ -78,10 +78,10 @@ Name:           libreoffice
 Epoch:          1
 %if 0%{?prerelease}
 Version:        %{libo_version}.%{libo_min_version}%{?libo_prerelease}
-Release:        %autorelease -p
+Release:        %autorelease -e rv64 -p
 %else
 Version:        %{libo_version}.%{libo_min_version}
-Release:        %autorelease
+Release:        %autorelease -e rv64
 %endif
 # default new files are: MPLv2
 # older files are typically: MPLv2 incorporating work under ASLv2
@@ -331,6 +331,9 @@ Patch501: kahansum_test_fix_for_aarc64_s390x.patch
 %if 0%{?fedora} > 43 || 0%{?rhel} > 10
 Patch502: orcus.patch
 %endif
+
+# Patches for riscv64 support from Arch Linux
+Patch601:  riscv64-support.patch
 
 %global instdir %{_libdir}
 %global baseinstdir %{instdir}/libreoffice
@@ -1102,6 +1105,10 @@ mv -f redhat.soc extras/source/palettes/standard.soc
 %endif
 %if 0%{?fedora} > 43 || 0%{?rhel} > 10
 %patch -P 502 -p0
+%endif
+
+%ifarch riscv64
+%patch -P 601 -p1
 %endif
 
 # Temporarily disable failing tests

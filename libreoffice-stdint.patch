@@ -8,3 +8,13 @@
  
  #include <com/sun/star/util/DateTime.hpp>
  
+--- libreoffice-26.2.0.1/oox/inc/drawingml/textbodycontext.hxx~	2026-01-14 20:45:34.712221028 +0000
++++ libreoffice-26.2.0.1/oox/inc/drawingml/textbodycontext.hxx	2026-01-14 20:45:38.434319255 +0000
+@@ -23,6 +23,7 @@
+ #include <drawingml/textbody.hxx>
+ #include <drawingml/textrun.hxx>
+ #include <oox/core/contexthandler2.hxx>
++#include <stdint.h>
+ 
+ namespace oox::drawingml {
+ 

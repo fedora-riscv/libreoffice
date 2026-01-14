@@ -18,3 +18,13 @@
  
  namespace oox::drawingml {
  
+--- libreoffice-26.2.0.1/oox/inc/drawingml/textparagraphpropertiescontext.hxx~	2026-01-14 21:17:49.730802524 +0000
++++ libreoffice-26.2.0.1/oox/inc/drawingml/textparagraphpropertiescontext.hxx	2026-01-14 21:17:51.924074095 +0000
+@@ -21,6 +21,7 @@
+ #define INCLUDED_OOX_DRAWINGML_TEXTPARAGRAPHPROPERTIESCONTEXT_HXX
+ 
+ #include <vector>
++#include <stdint.h>
+ 
+ #include <com/sun/star/style/TabStop.hpp>
+ #include <drawingml/textparagraphproperties.hxx>

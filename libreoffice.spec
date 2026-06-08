@@ -1,5 +1,5 @@
 # download path contains version without the last (fourth) digit
-%global libo_version 26.2.2
+%global libo_version 26.2.4
 # This is the last (fourth) digit of LO version
 %global libo_min_version 2
 # Set this to 1 if this is a prerelease build
@@ -329,8 +329,6 @@ Patch12: cflags.patch
 # glyphs. This patch tries to adapt those tests for our needs instead of
 # fully excluding them from being run
 Patch13: fix_or_exclude-tests-with-missing-glyphs.patch
-# error: ‘uint8_t’ was not declared in this scope
-Patch14: libreoffice-stdint.patch
 # https://lists.freedesktop.org/archives/libreoffice/2023-September/090948.html
 Patch501: kahansum_test_fix_for_aarc64_s390x.patch
 
@@ -936,6 +934,8 @@ Rules for auto-correcting common %{langname} typing errors. \
 %langpack -l de -n German -F -H -Y -M -A -T -X
 %langpack -l dz -n Dzongkha -F -s ctl -T -X
 %langpack -l el -n Greek -F -H -Y -M -A -T -X
+%define langpack_lang British English
+%langpack -l en-GB -n %{langpack_lang} -F -h en -y en -m en -a en -T -X -g en_GB
 %langpack -l eo -n Esperanto -F -H -M -T -X
 %langpack -l es -n Spanish -F -H -Y -M -A -T -X
 %langpack -l et -n Estonian -F -H -Y -T -X
